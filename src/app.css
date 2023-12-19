@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:global(body) {
+    font-family: 'Inter', sans-serif;
+}
+::-webkit-scrollbar {
+    width: 3px;
+    height: 7px;
+}
+
+::-webkit-scrollbar:after {
+    display: hidden;
+}
+
+::-webkit-scrollbar-thumb {
+    border: 0px solid rgba(0, 0, 0, 0);
+    border-radius: 50px;
+    background-color: #e4e4e4;
+}

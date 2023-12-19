@@ -1,0 +1,108 @@
+<script lang="ts">
+    import { goto } from '$app/navigation';
+    import SvgEllipsisCircle from '$lib/assets/svg/SvgEllipsisCircle.svelte';
+    import FormButton from '$lib/components/buttons/FormButton.svelte';
+    import IconButton from '$lib/components/buttons/IconButton.svelte';
+    import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
+    import DataTable from '$lib/components/data-table/DataTable.svelte';
+    import DtTableBody from '$lib/components/data-table/DtTableBody.svelte';
+    import DtTableDataCell from '$lib/components/data-table/DtTableDataCell.svelte';
+    import DtTableHead from '$lib/components/data-table/DtTableHead.svelte';
+    import DtTableHeadCell from '$lib/components/data-table/DtTableHeadCell.svelte';
+    import DtTableRow from '$lib/components/data-table/DtTableRow.svelte';
+    import FilterContainer from '$lib/components/filter-container/FilterContainer.svelte';
+    import FilterDateSelector from '$lib/components/filter/FilterDateSelector.svelte';
+    import FilterSelectInput from '$lib/components/filter/FilterSelectInput.svelte';
+    import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
+    import { mockRekodKuarters } from '$lib/mocks/pinjaman-kuarters/mockRekodKuarters';
+    import { status } from '$lib/mocks/status/status';
+    import { currencyFormatter } from '$lib/service/services';
+    import { selectedRecordId } from '$lib/stores/globalState';
+    let selectedCategory = 'all';
+    let allQuartersRecord = mockRekodKuarters.filter(
+        (rec) => rec.typeOfRequest == 'Masuk',
+    );
+    let currentData: IntRekodPinjaman;
+</script>
+
+<section class="flex w-full flex-col items-start justify-start">
+    <ContentHeader
+        title="Rekod Permohonan Kuarters"
+        description="Hal-hal berkaitan menguruskan kuarters"
+        ><FormButton
+            type="new-application-outside"
+            onClick={() => {
+                goto('permohonan-menduduki-kuarter/baru-luar');
+            }}
+        ></FormButton></ContentHeader
+    >
+</section>
+<section
+    class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col justify-start overflow-y-auto bg-bgr-primary p-3"
+>
+    <div
+        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 pb-2.5"
+    >
+        <FilterContainer>
+            <FilterTextInput label="No. Pemohon"></FilterTextInput>
+            <FilterTextInput label="Nama Pemohon"></FilterTextInput>
+            <FilterSelectInput
+                label="Status"
+                options={status}
+                selectedVal={selectedCategory}
+            ></FilterSelectInput>
+            <FilterDateSelector handleDateChange label="Tarikh Mohon"
+            ></FilterDateSelector>
+        </FilterContainer>
+    </div>
+    <div
+        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
+    >
+        <DataTable title="Senarai Rekod Permohonan Kuarters">
+            <DtTableHead>
+                <DtTableHeadCell title="Bil."></DtTableHeadCell>
+                <DtTableHeadCell title="No. Pemohon"></DtTableHeadCell>
+                <DtTableHeadCell title="Nama Pemohon"></DtTableHeadCell>
+                <DtTableHeadCell title="No. Kad Pengenalan"></DtTableHeadCell>
+                <DtTableHeadCell title="Jenis Pemohon"></DtTableHeadCell>
+                <DtTableHeadCell title="Tarikh Mohon"></DtTableHeadCell>
+                <DtTableHeadCell title="Status"></DtTableHeadCell>
+                <DtTableHeadCell title="Catatan"></DtTableHeadCell>
+                <DtTableHeadCell title="Tindakan"></DtTableHeadCell>
+            </DtTableHead>
+            <DtTableBody>
+                {#each allQuartersRecord as item}
+                    <DtTableRow>
+                        <DtTableDataCell value={item.id}></DtTableDataCell>
+                        <DtTableDataCell value={item.employeeNumber}
+                        ></DtTableDataCell>
+                        <DtTableDataCell value={item.employeeName}
+                        ></DtTableDataCell>
+                        <DtTableDataCell value={item.identityDocumentNumber}
+                        ></DtTableDataCell>
+                        <DtTableDataCell value={item.typeOfRequestor}
+                        ></DtTableDataCell>
+                        <DtTableDataCell value={item.applicationDate}
+                        ></DtTableDataCell>
+                        <DtTableDataCell value={item.status}></DtTableDataCell>
+                        <DtTableDataCell
+                            value={item.remarks != '' ? item.remarks : '-'}
+                        ></DtTableDataCell>
+                        <DtTableDataCell>
+                            <IconButton
+                                onClick={() => {
+                                    selectedRecordId.set(item.id);
+                                    goto(
+                                        'permohonan-menduduki-kuarter/butiran',
+                                    );
+                                }}
+                            >
+                                <SvgEllipsisCircle></SvgEllipsisCircle>
+                            </IconButton>
+                        </DtTableDataCell>
+                    </DtTableRow>
+                {/each}
+            </DtTableBody>
+        </DataTable>
+    </div>
+</section>

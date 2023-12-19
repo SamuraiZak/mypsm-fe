@@ -1,0 +1,28 @@
+export const mockFinalSalaryCert: IntFinalSalaryCert[] = [
+    {
+        employeeNumber: '00001',
+        officerName: 'Ali bin Ahmad',
+        identityDocumentNumber: '990909-13-5076',
+        gred: 'E29',
+        position: 'Penolong Pegawai Ehwal Ekonomi',
+        grossSalary: 5283.57,
+        allowances: 155,
+        salaryDeduction: 153,
+        typeOfRetirement: 'Paksa',
+        status: 'Menunggu Kelulusan',
+        remarkAndActions: 'Muat Turun Sijil',
+    },
+    {
+        employeeNumber: '00002',
+        officerName: 'Mohd. Johari Bin Ismail',
+        identityDocumentNumber: '991129-13-6122',
+        gred: 'W33',
+        position: 'Pegawai Ehwal Ekonomi',
+        grossSalary: 8256.82,
+        allowances: 320,
+        salaryDeduction: 125,
+        typeOfRetirement: 'Terbitan',
+        status: 'Menunggu Kelulusan',
+        remarkAndActions: 'Muat Turun Sijil',
+    },
+];

@@ -1,0 +1,26 @@
+export const mockWorkAllowance: IntWorkAllowance[] = [
+    {
+        id: 1,
+        employeeId: 34243,
+        employeeName: 'Ali Bin Ahmad',
+        identityDocumentNumber: '001122113344',
+        currentPosition: '',
+        workAllowancePosition: '',
+        currentPlacement: '',
+        workAllowancePlacement: '',
+        status: 'SOKONG - Pengarah Bahagian/Negeri',
+        remark: '',
+    },
+    {
+        id: 2,
+        employeeId: 12312,
+        employeeName: 'Abu Bin Bakar',
+        identityDocumentNumber: '001122113344',
+        currentPosition: '',
+        workAllowancePosition: '',
+        currentPlacement: '',
+        workAllowancePlacement: '',
+        status: 'Dalam Proses',
+        remark: '',
+    },
+];

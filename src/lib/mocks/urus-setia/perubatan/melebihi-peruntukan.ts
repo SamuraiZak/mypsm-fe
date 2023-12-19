@@ -1,0 +1,38 @@
+export const melebihiPeruntukan = [
+    {
+        employeeId: 'K2313',
+        staffName: 'Ali Bin Abu',
+        idNumber: '111111-11-1111',
+        totalToBePaid: '50.00',
+        totalPayment: '950.00',
+        paymentMethod: 'Atas Talian',
+        status: 'Baru',
+    },
+    {
+        employeeId: 'K2313',
+        staffName: 'Ali Bin Abu',
+        idNumber: '111111-11-1111',
+        totalToBePaid: '50.00',
+        totalPayment: '950.00',
+        paymentMethod: 'Penolakan Gaji',
+        status: 'LULUS - Urus Setia Perubatan',
+    },
+    {
+        employeeId: 'K2313',
+        staffName: 'Ali Bin Abu',
+        idNumber: '111111-11-1111',
+        totalToBePaid: '50.00',
+        totalPayment: '950.00',
+        paymentMethod: 'Atas Talian',
+        status: 'SOKONG - Penyokong',
+    },
+    {
+        employeeId: 'K2313',
+        staffName: 'Ali Bin Abu',
+        idNumber: '111111-11-1111',
+        totalToBePaid: '50.00',
+        totalPayment: '950.00',
+        paymentMethod: 'Penolakan Gaji',
+        status: 'LULUS - Pelulus',
+    },
+];

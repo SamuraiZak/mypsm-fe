@@ -1,0 +1,38 @@
+export const maklumatPengalaman: MaklumatPengalaman[] = [
+    {
+        id: '1809',
+        namaMajikan: 'Kementerian Pertanian dan Industri Asas Tani',
+        alamatMajikan: 'Jalan Sultan Salahuddin, 50632 Kuala Lumpur',
+        jawatan: 'Juruteknik Komputer',
+        kodJawatan: '-',
+        tempohPerkhidmatan: '03/03/2000 - 05/03/2000',
+        gaji: 2000,
+    },
+    {
+        id: '1809',
+        namaMajikan: 'Kumpulan Wang Simpanan Pekerja',
+        alamatMajikan: 'Jalan Haji Taha, 50632 Kuala Lumpur',
+        jawatan: 'Pegawai Komputer',
+        kodJawatan: '-',
+        tempohPerkhidmatan: '03/03/2000 - 05/03/2000',
+        gaji: 2500,
+    },
+    {
+        id: '1810',
+        namaMajikan: 'MisaTech Sdn. Bhd.',
+        alamatMajikan: 'Jalan Kerahan, 50632 Kuala Lumpur',
+        jawatan: 'Pegawai Teknologi Maklumat',
+        kodJawatan: 'F44',
+        tempohPerkhidmatan: '03/03/2000 - 05/03/2000',
+        gaji: 2200,
+    },
+    {
+        id: '1811',
+        namaMajikan: 'Heli-Tech Sdn. Bhd.',
+        alamatMajikan: 'Jalan Hang Tuah, 50632 Kuala Lumpur',
+        jawatan: 'Jurutera Perisian',
+        kodJawatan: '-',
+        tempohPerkhidmatan: '03/03/2000 - 05/03/2000',
+        gaji: 2500,
+    },
+];

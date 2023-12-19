@@ -1,0 +1,32 @@
+export const permohonan = [
+    {
+        staff: 'Ali Bin Abu',
+        idNumber: '111111-11-1111',
+        totalGcrDays: '33',
+        status: 'SOKONG - Ketua Seksyen',
+        applicationDate: '1 Jan',
+        withdrawalType: 'Pengeluaran Awal',
+        validDate: '10 Jan',
+        cashAward: '20,000',
+    },
+    {
+        staff: 'Ali Bin Abu',
+        idNumber: '111111-11-1111',
+        totalGcrDays: '33',
+        status: 'SOKONG - Ketua Seksyen',
+        applicationDate: '1 Jan',
+        withdrawalType: 'Pencen',
+        validDate: '10 Jan',
+        cashAward: '20,000',
+    },
+    {
+        staff: 'Ali Bin Abu',
+        idNumber: '111111-11-1111',
+        totalGcrDays: '33',
+        status: 'LULUS - Pengarah Bahagian',
+        applicationDate: '1 Jan',
+        withdrawalType: 'Meninggal Dunia',
+        validDate: '10 Jan',
+        cashAward: '20,000',
+    },
+];

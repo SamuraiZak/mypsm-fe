@@ -1,0 +1,26 @@
+export const permohonanTanggungKerja = [
+    {
+        id: 1,
+        employeeNumber: '34243',
+        employeeName: 'Ali Bin Ahmad',
+        identityDocumentNumber: '001122113344',
+        currentPosition: '',
+        workAllowancePosition: '',
+        currentPlacement: '',
+        workAllowancePlacement: '',
+        status: 'SOKONG - Pengarah Bahagian/Negeri',
+        remark: '',
+    },
+    {
+        id: 2,
+        employeeNumber: '12312',
+        employeeName: 'Abu Bin Bakar',
+        identityDocumentNumber: '001122113344',
+        currentPosition: '',
+        workAllowancePosition: '',
+        currentPlacement: '',
+        workAllowancePlacement: '',
+        status: 'SOKONG - Pengarah Bahagian/Negeri',
+        remark: '',
+    },
+];

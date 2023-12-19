@@ -1,0 +1,43 @@
+export const maklumatBilRawatan = [
+    {
+        nama: 'Ali',
+        noKP: '111111-11-1111',
+        namaPesakit: 'Ahmad',
+        kodKlinik: 'K213213',
+        namaKlinik: 'Klinik Ali',
+        pejabat: '',
+        status: 'Baru',
+        tindakan: '',
+    },
+    {
+        nama: 'Ali',
+        noKP: '111111-11-1111',
+        namaPesakit: 'Ahmad',
+        kodKlinik: 'K213213',
+        namaKlinik: 'Klinik Ali',
+        pejabat: '',
+        status: 'Sedang Diproses',
+        tindakan: '',
+    },
+    {
+        nama: 'Ali',
+        noKP: '111111-11-1111',
+        namaPesakit: 'Ahmad',
+        kodKlinik: 'K213213',
+        namaKlinik: 'Klinik Ali',
+        pejabat: '',
+        status: 'Ditolak',
+        tindakan: '',
+    },
+    {
+        nama: 'Ali',
+        noKP: '111111-11-1111',
+        namaPesakit: 'Ahmad',
+        kodKlinik: 'K213213',
+        namaKlinik: 'Klinik Ali',
+        pejabat: '',
+        status: 'Selesai',
+        tindakan: '',
+    },
+    
+];

@@ -1,0 +1,38 @@
+export const kakitanganPeruntukan = [
+    {
+        noPekerja: 'K2313',
+        namaKakitangan: 'Ali Bin Abu',
+        noKadPengenalan: '111111-11-1111',
+        jumlahPeruntukan: '1000.00',
+        bakiPeruntukan: '500.00',
+        jumlahYangPerluDibayar: '0',
+        tindakan: 'Baru',
+    },
+    {
+        noPekerja: 'K2313',
+        namaKakitangan: 'Ali Bin Abu',
+        noKadPengenalan: '111111-11-1111',
+        jumlahPeruntukan: '1000.00',
+        bakiPeruntukan: '-45.00',
+        jumlahYangPerluDibayar: '45.00',
+        tindakan: 'Baru',
+    },
+    {
+        noPekerja: 'K2313',
+        namaKakitangan: 'Ali Bin Abu',
+        noKadPengenalan: '111111-11-1111',
+        jumlahPeruntukan: '1000.00',
+        bakiPeruntukan: '-45.00',
+        jumlahYangPerluDibayar: '45.00',
+        tindakan: 'Baru',
+    },
+    {
+        noPekerja: 'K2313',
+        namaKakitangan: 'Ali Bin Abu',
+        noKadPengenalan: '111111-11-1111',
+        jumlahPeruntukan: '1000.00',
+        bakiPeruntukan: '-45.00',
+        jumlahYangPerluDibayar: '45.00',
+        tindakan: 'Baru',
+    },
+];

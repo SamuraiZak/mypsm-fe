@@ -1,0 +1,26 @@
+export const penamatanTanggungKerja = [
+    {
+        id: 1,
+        employeeNumber: '0282378L',
+        employeeName: 'Ali Bin Ahmad',
+        identityDocumentNumber: '001122113344',
+        currentPosition: '',
+        workAllowancePosition: '',
+        currentPlacement: '',
+        workAllowancePlacement: '',
+        status: 'Dalam Proses',
+        remark: '',
+    },
+    {
+        id: 2,
+        employeeNumber: '0282379L',
+        employeeName: 'Abu Bin Bakar',
+        identityDocumentNumber: '001122113344',
+        currentPosition: '',
+        workAllowancePosition: '',
+        currentPlacement: '',
+        workAllowancePlacement: '',
+        status: 'Selesai',
+        remark: '',
+    },
+];
