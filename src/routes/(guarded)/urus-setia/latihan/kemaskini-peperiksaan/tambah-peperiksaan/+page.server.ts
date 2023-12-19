@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { mockExams } from '$lib/mocks/latihan/mockExams.js';
 import { fail } from '@sveltejs/kit';
+import { z } from 'zod';
 
 export async function load() {
     const data: IntExams[] = await mockExams;
@@ -33,20 +34,46 @@ function getNextExamNumber(existingData: IntExams[]) {
     const maxId: number = Math.max(...existingIds);
     return maxId !== -Infinity ? maxId + 1 : 1; // If no records, start with ID 1
 }
+// z validation schema for the exam form fields
+const examFormSchema = z.object({
+    examType: z.string({ required_error: 'Jenis latihan perlu dipilih.' }),
+    examTitle: z
+        .string({ required_error: 'Tajuk latihan tidak boleh kosong.' })
+        .min(4, { message: 'Tajuk hendaklah lebih daripada 4 karakter.' })
+        .max(64, { message: 'Tajuk tidak boleh melebihi 64 karakter.' })
+        .trim(),
+    applOpenDate: z.string({
+        required_error: 'Tarikh tidak boleh dibiar kosong',
+    }),
+    applCloseDate: z.string({
+        required_error: 'Tarikh tidak boleh dibiar kosong',
+    }),
+    examDate: z.string({ required_error: 'Tarikh tidak boleh dibiar kosong' }),
+    // examDate: z.date().min(new Date(), {
+    //     message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+    // }),
+    examLocation: z
+        .string({ required_error: 'Lokasi tidak boleh kosong.' })
+        .min(4, { message: 'Lokasi hendaklah lebih daripada 4 karakter.' })
+        .max(124, { message: 'Lokasi tidak boleh melebihi 124 karakter.' })
+        .trim(),
+});
 
 export const actions = {
-    create: async ({ request }) => {
-        await new Promise((fulfil) => setTimeout(fulfil, 1000));
-
-        const data = await request.formData();
+    default: async ({ request }) => {
+        const formData = Object.fromEntries(await request.formData());
 
         try {
-            console.log(data);
-            //code
-        } catch (err: unknown) {
-            return fail(422, {
-                //code
-            });
+            const result = examFormSchema.parse(formData);
+            console.log('SUCCESS', result);
+        } catch (err) {
+            console.log(err.flatten());
+            const { fieldErrors: errors } = err.flatten();
+            const { ...rest } = formData;
+            return {
+                data: rest,
+                errors,
+            };
         }
     },
 };
