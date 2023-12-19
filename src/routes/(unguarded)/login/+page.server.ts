@@ -15,11 +15,11 @@ export const actions = {
             cookies.set('logged_in', 'true', {
                 path: '/',
             });
-            throw redirect(
-                303,
-                url.searchParams.get('redirectTo') ??
-                    '/kakitangan/halaman-utama',
-            );
+            redirect(
+                            303,
+                            url.searchParams.get('redirectTo') ??
+                                '/kakitangan/halaman-utama',
+                        );
         }
     },
 };
