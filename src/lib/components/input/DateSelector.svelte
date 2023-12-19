@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let selectedDate = '2022-02-02';
+    export let selectedDate: any = '2022-02-02';
     export let handleDateChange: any = () => {};
     let fontBlack = 'text-txt-primary';
     let fontGray = 'text-txt-tertiary';
@@ -8,6 +8,7 @@
     export let labelBlack = true;
     export let disabled = false;
     export let labelType = 'default';
+    export let isError = false;
 </script>
 
 <div class="flex w-full flex-row items-center justify-between">
@@ -23,7 +24,11 @@
         >{label}</label
     ><input
         {disabled}
-        class="border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary {disabled
+        class="
+        {isError
+            ? 'border-system-danger focus:border-system-danger'
+            : 'hover:border-system-primary focus:border-system-primary'}
+        border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary {disabled
             ? 'hover:border-bdr-primary'
             : 'hover:border-system-primary'} focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary"
         type="date"
