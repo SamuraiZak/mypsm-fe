@@ -10,6 +10,8 @@
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import { Checkbox } from 'flowbite-svelte';
+    import DynamicTable from '$lib/components/table/DynamicTable.svelte';
+    import { senaraiTuntutan } from '$lib/mocks/urus-setia/perubatan/senarai-tuntutan';
 
     export let disabled: boolean = true;
 </script>
@@ -127,8 +129,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
-                    <div class="flex w-full">
+                <div
+                    class="h-fit w-full space-y-2.5 rounded-[3px] border p-2.5"
+                >
+                    <div class="flex">
                         <div
                             class="flex w-1/3 flex-row items-start pt-4 text-sm"
                         >
@@ -136,34 +140,26 @@
                             <div class="font-bold">Tuntutan 1</div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-10">
-                        <div class="space-y-2.5">
+                    <div class="flex w-full flex-row gap-x-2.5">
+                        <div class="w-1/3 space-y-2.5">
                             <TextField
+                                labelType="top"
                                 type="text"
                                 id="namaKakitangan"
                                 label="Nama Kakitangan"
                                 value="Mohd Safwan Adam"
                             ></TextField>
                             <TextField
+                                labelType="top"
                                 type="text"
                                 id="noKP"
                                 label="No. Kad Pengenalan"
                                 value="111111-11-1111"
                             ></TextField>
                         </div>
-                        <div class="space-y-2.5">
-                            <TextField
-                                type="text"
-                                id="namaPesakit"
-                                label="Nama Pesakit"
-                                value="Mohd Safwan Adam"
-                            ></TextField>
-                            <TextField
-                                type="text"
-                                id="noKP"
-                                label="No. Kad Pengenalan"
-                                value="111111-11-1111"
-                            ></TextField>
+                        <div class="w-2/3 space-y-2.5 space-y-2.5">
+                            <DynamicTable tableItems={senaraiTuntutan}
+                            ></DynamicTable>
                         </div>
                     </div>
                     <FormButton
@@ -174,8 +170,10 @@
                         }}
                     />
                 </div>
-                <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
-                    <div class="flex w-full">
+                <div
+                    class="h-fit w-full space-y-2.5 rounded-[3px] border p-2.5"
+                >
+                    <div class="flex">
                         <div
                             class="flex w-1/3 flex-row items-start pt-4 text-sm"
                         >
@@ -183,34 +181,26 @@
                             <div class="font-bold">Tuntutan 2</div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-10">
-                        <div class="space-y-2.5">
+                    <div class="flex w-full flex-row gap-x-2.5">
+                        <div class="w-1/3 space-y-2.5">
                             <TextField
+                                labelType="top"
                                 type="text"
                                 id="namaKakitangan"
                                 label="Nama Kakitangan"
-                                value="Jackson"
+                                value="Mohd Safwan Adam"
                             ></TextField>
                             <TextField
+                                labelType="top"
                                 type="text"
                                 id="noKP"
                                 label="No. Kad Pengenalan"
-                                value="222222-22-2222"
+                                value="111111-11-1111"
                             ></TextField>
                         </div>
-                        <div class="space-y-2.5">
-                            <TextField
-                                type="text"
-                                id="namaPesakit"
-                                label="Nama Pesakit"
-                                value="Jackson"
-                            ></TextField>
-                            <TextField
-                                type="text"
-                                id="noKP"
-                                label="No. Kad Pengenalan"
-                                value="222222-22-2222"
-                            ></TextField>
+                        <div class="w-2/3 space-y-2.5 space-y-2.5">
+                            <DynamicTable tableItems={senaraiTuntutan}
+                            ></DynamicTable>
                         </div>
                     </div>
                     <FormButton
@@ -221,8 +211,10 @@
                         }}
                     />
                 </div>
-                <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
-                    <div class="flex w-full">
+                <div
+                    class="h-fit w-full space-y-2.5 rounded-[3px] border p-2.5"
+                >
+                    <div class="flex">
                         <div
                             class="flex w-1/3 flex-row items-start pt-4 text-sm"
                         >
@@ -230,34 +222,26 @@
                             <div class="font-bold">Tuntutan 3</div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-10">
-                        <div class="space-y-2.5">
+                    <div class="flex w-full flex-row gap-x-2.5">
+                        <div class="w-1/3 space-y-2.5">
                             <TextField
+                                labelType="top"
                                 type="text"
                                 id="namaKakitangan"
                                 label="Nama Kakitangan"
-                                value="Senah Binti Adam"
+                                value="Mohd Safwan Adam"
                             ></TextField>
                             <TextField
+                                labelType="top"
                                 type="text"
                                 id="noKP"
                                 label="No. Kad Pengenalan"
-                                value="333333-33-3333"
+                                value="111111-11-1111"
                             ></TextField>
                         </div>
-                        <div class="space-y-2.5">
-                            <TextField
-                                type="text"
-                                id="namaPesakit"
-                                label="Nama Pesakit"
-                                value="Ali Bin Abu"
-                            ></TextField>
-                            <TextField
-                                type="text"
-                                id="noKP"
-                                label="No. Kad Pengenalan"
-                                value="121212-12-1212"
-                            ></TextField>
+                        <div class="w-2/3 space-y-2.5 space-y-2.5">
+                            <DynamicTable tableItems={senaraiTuntutan}
+                            ></DynamicTable>
                         </div>
                     </div>
                     <FormButton

@@ -12,14 +12,15 @@
     import { persaraanPaksaan } from '$lib/mocks/perjawatan/persaraan/persaraan-paksaan';
     import { persaraanPilihanStatus } from '$lib/mocks/perjawatan/persaraan/persaraan-pilihan-status';
     import { goto } from '$app/navigation';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader
         title="Senarai Rekod Persaraan"
         description="Senarai permohonan persaraan"
-    >
-    </ContentHeader>
+    ></ContentHeader>
 </section>
 
 <section
@@ -86,7 +87,14 @@
         </CustomTabContent>
         <CustomTabContent title="Persaraan Lain-lain">
             <SectionHeader title="Senarai Rekod Kumpulan Persaraan Lain-lain"
-            ></SectionHeader>
+                ><TextIconButton
+                    primary
+                    label="Kumpulan Baru"
+                    onClick={() => {
+                        goto('/urus-setia/perjawatan/persaraan/butiran-persaraan-lain-lain');
+                    }}><SvgPlus /></TextIconButton
+                ></SectionHeader
+            >
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
@@ -96,7 +104,7 @@
                     actionOptions={['detail']}
                     detailActions={() => {
                         goto(
-                            '/urus-setia/perjawatan/persaraan/butiran-persaraan-lain-lain',
+                            '',
                         );
                     }}
                 ></DynamicTable>

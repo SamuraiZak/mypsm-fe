@@ -16,7 +16,6 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import FileInputField from '$lib/components/input/FileInputField.svelte';
-    import { mockEmployeeDocumentLists } from '$lib/mocks/database/mockEmployeeDocumentLists';
 
     export let disabled: boolean = true;
     export let selectedFiles: any = [];
@@ -52,7 +51,6 @@
         },
     ];
 
-    const currentEmployeeUploadedDocuments = mockEmployeeDocumentLists;
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">

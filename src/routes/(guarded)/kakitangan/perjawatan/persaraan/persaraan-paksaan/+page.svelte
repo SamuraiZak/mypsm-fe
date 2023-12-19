@@ -14,7 +14,7 @@
     import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
     import FileInputField from '$lib/components/input/FileInputField.svelte';
 
-    export let disabled: boolean = false;
+    export let disabled: boolean = true;
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -35,7 +35,7 @@
         <StepperContentHeader title="Perakuan Dari Unit Integriti"
         ></StepperContentHeader>
         <StepperContentBody
-            ><!-- Perakuan Dari Unit Integriti -->
+            >
             <div class="flex w-full flex-col gap-2">
                 <p class="text-sm font-bold">Urus Setia Unit Integriti</p>
                 <div
@@ -66,7 +66,7 @@
         <StepperContentHeader title="Pengesahan Permohonan Persaraan"
         ></StepperContentHeader>
         <StepperContentBody
-            ><!-- Perakuan Dari Unit Integriti -->
+            >
             <div class="flex w-full flex-col gap-2">
                 <p class="text-sm font-bold">Urus Setia Persaraan</p>
                 <div

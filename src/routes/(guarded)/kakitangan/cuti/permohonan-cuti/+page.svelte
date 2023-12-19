@@ -30,7 +30,7 @@
     import CutiMenjagaAnakTanpaGaji from './forms/CutiMenjagaAnakTanpaGaji.svelte';
     import FileInputField from '$lib/components/input/FileInputField.svelte';
 
-    export let disabled: boolean = true;
+    export let disabled: boolean = false;
     let selectedCuti = '';
 
     let selectedDate = new Date();
@@ -48,13 +48,7 @@
 <ContentHeader
     title="Permohonan Cuti"
     description="Sila isi borang permohonan cuti di bawah dengan butiran yang tepat dan lengkap."
-    ><FormButton
-        type="close"
-        onClick={() => {
-            goto('/kakitangan/cuti/permohonan-cuti');
-        }}
-    /></ContentHeader
->
+></ContentHeader>
 
 <Stepper>
     <StepperContent>

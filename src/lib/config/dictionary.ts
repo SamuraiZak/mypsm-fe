@@ -403,7 +403,9 @@ const dictionary: { [key: string]: string } = {
     totalToBePaid: 'Jumlah Yang Perlu Dibayar (RM)',
     totalPayment: 'Jumlah Bayaran (RM)',
     paymentMethod: 'Cara Pembayaran',
-    totalClaim: 'Jumlah (RM)',
+    claimTotal: 'Jumlah (RM)',
+    patientName: 'Nama Pesakit',
+    treatment: 'Rawatan',
 
     // PDP
     disciplinaryReview: 'Tapisan Tatatertib',
