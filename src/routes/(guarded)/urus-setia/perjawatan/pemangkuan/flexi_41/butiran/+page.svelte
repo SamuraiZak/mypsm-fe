@@ -413,7 +413,7 @@ export let selectedFiles: any = [];
         <!-- Senarai Kakitangan Yang Terpilih -->
         <!-- =========================================================== -->
         <StepperContent>
-            <StepperContentHeader title="Swnarai Kakitangan Yang Terpilih">
+            <StepperContentHeader title="Senarai Kakitangan Yang Terpilih">
                 <TextIconButton
                 label="Seterusnya"
                 primary
