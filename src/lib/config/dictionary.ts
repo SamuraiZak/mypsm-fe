@@ -411,4 +411,10 @@ const dictionary: { [key: string]: string } = {
     disciplinaryReview: 'Tapisan Tatatertib',
     firstAppointedPositionOnBoard: 'Jawatan Pertama Dilantik Di Lembaga',
     appointDate: 'Tarikh Lantikan',
+
+    // Audit
+    usernameId: 'No. Pengguna',
+    module: 'Modul',
+    subModule: "Sub-Modul",
+    setemMasa: 'Setem Masa',
 };

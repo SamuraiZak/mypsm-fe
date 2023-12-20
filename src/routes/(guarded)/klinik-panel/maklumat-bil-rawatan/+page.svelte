@@ -153,7 +153,25 @@
                             <DtTableDataCell>
                                 <IconButton
                                     onClick={() => {
-                                        goto('');
+                                        if (item.status === 'Selesai') {
+                                            goto(
+                                                '/klinik-panel/maklumat-bil-rawatan/butiran-bil-rawatan/selesai',
+                                            );
+                                        } else if (item.status === 'Baru') {
+                                            goto(
+                                                '/klinik-panel/maklumat-bil-rawatan/butiran-bil-rawatan/baru',
+                                            );
+                                        } else if (item.status === 'Ditolak') {
+                                            goto(
+                                                '/klinik-panel/maklumat-bil-rawatan/butiran-bil-rawatan/ditolak',
+                                            );
+                                        } else if (
+                                            item.status === 'Sedang Diproses'
+                                        ) {
+                                            goto(
+                                                '/klinik-panel/maklumat-bil-rawatan/butiran-bil-rawatan/sedang-diproses',
+                                            );
+                                        }
                                     }}
                                     ><SvgEllipsisCircle
                                     ></SvgEllipsisCircle></IconButton

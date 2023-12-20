@@ -18,7 +18,6 @@
     import { sejarahTuntutan } from '$lib/mocks/klinik-panel/sejarah-tuntutan';
     import SvgEllipsisCircle from '$lib/assets/svg/SvgEllipsisCircle.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
-
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -100,13 +99,16 @@
             </div>
         </div></FilterContainer
     >
-    <SectionHeader title="Simpan semua tuntutan yang dipilih dibawah"><FormButton type="simpan"></FormButton></SectionHeader>
+    <SectionHeader title="Simpan semua tuntutan yang dipilih dibawah"
+        ><FormButton type="simpan"></FormButton></SectionHeader
+    >
     <div class="flex max-h-full w-full flex-col items-start justify-start">
         <section class="h-full w-full">
             <DataTable title="Senarai Rekod">
                 <DtTableHead>
                     <DtTableHeadCell title="Nama Kakitangan"></DtTableHeadCell>
-                    <DtTableHeadCell title="No. Kad Pengenalan"></DtTableHeadCell>
+                    <DtTableHeadCell title="No. Kad Pengenalan"
+                    ></DtTableHeadCell>
                     <DtTableHeadCell title="Nama Pesakit"></DtTableHeadCell>
                     <DtTableHeadCell title="Pejabat LKIM"></DtTableHeadCell>
                     <DtTableHeadCell title="Status"></DtTableHeadCell>
@@ -118,26 +120,37 @@
                         <DtTableRow>
                             <DtTableDataCell value={item.nama}
                             ></DtTableDataCell>
-                            <DtTableDataCell value={item.noKP}></DtTableDataCell>
-                            <DtTableDataCell value={item.namaPesakit}></DtTableDataCell>
-                            <DtTableDataCell value={item.pejabat}></DtTableDataCell>
+                            <DtTableDataCell value={item.noKP}
+                            ></DtTableDataCell>
+                            <DtTableDataCell value={item.namaPesakit}
+                            ></DtTableDataCell>
+                            <DtTableDataCell value={item.pejabat}
+                            ></DtTableDataCell>
                             <DtTableDataCell value="">
                                 {#if item.status == 'Selesai'}
                                     <Badge rounded color="green"
                                         >{item.status}</Badge
                                     >
                                 {:else}
-                                    <Badge rounded color="red">{item.status}</Badge
+                                    <Badge rounded color="red"
+                                        >{item.status}</Badge
                                     >
                                 {/if}
                             </DtTableDataCell>
-                            <DtTableDataCell value={item.tindakan}></DtTableDataCell>
+                            <DtTableDataCell value={item.tindakan}
+                            ></DtTableDataCell>
                             <DtTableDataCell>
                                 <IconButton
                                     onClick={() => {
-                                        goto(
-                                            '',
-                                        );
+                                        if (item.status === 'Selesai') {
+                                            goto(
+                                                '/klinik-panel/sejarah-tuntutan/selesai',
+                                            );
+                                        } else if (item.status === 'Ditolak') {
+                                            goto(
+                                                '/klinik-panel/sejarah-tuntutan/ditolak',
+                                            );
+                                        }
                                     }}
                                     ><SvgEllipsisCircle
                                     ></SvgEllipsisCircle></IconButton
