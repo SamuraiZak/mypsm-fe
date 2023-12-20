@@ -3,7 +3,7 @@ export const mockExams: IntExams[] = [
         id: 1,
         examTitle:
             'Peperiksaan Perkhidmatan Kumpulan Pengurusan Dan Professional Dan Kumpulan Pelaksana 1 (Gred 41 dan 29)',
-        examType: 'Perkhidmatan',
+        examType: 'perkhidmatan',
         examApplicationOpenDate: '2024-01-01',
         examApplicationCloseDate: '2024-01-10',
         examDate: '2024-01-30',
@@ -13,7 +13,7 @@ export const mockExams: IntExams[] = [
     {
         id: 2,
         examTitle: 'Profesional',
-        examType: 'Peningkatan Secara Lantikan (PSL)',
+        examType: 'psl',
         examApplicationOpenDate: '2024-01-01',
         examApplicationCloseDate: '2024-01-10',
         examDate: '2024-01-30',
