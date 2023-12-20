@@ -24,10 +24,11 @@
     export let checked2 = false;
     export let checked3 = false;
     export let name = '';
-    export let value = '';
+    export let value: any = '';
     export let value2 = '';
     export let placeholder = '';
     export let onChange = () => {};
+    export let isError = false;
     // Tooltip icon
     const questionMarkIcon: string = `<svg
                             width="12"
@@ -56,8 +57,12 @@
         {id}
         items={options}
         placeholder="Sila Pilih"
-        class="block h-[32px] w-fit rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
-        bind:value={index}
+        class="
+        {isError
+            ? 'border-system-danger focus:border-system-danger'
+            : 'hover:border-system-primary focus:border-system-primary'}
+        block h-[32px] w-fit rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
+        bind:value
         on:change={() => {
             onSelect();
         }}
@@ -81,7 +86,11 @@
             {id}
             items={options}
             placeholder="Sila Pilih"
-            class="block h-[32px] w-full rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary  focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
+            class="
+            {isError
+                ? 'border-system-danger focus:border-system-danger'
+                : 'hover:border-system-primary focus:border-system-primary'}
+            block h-[32px] w-full rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary  focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
             bind:value
             on:change={() => {
                 onSelect();
@@ -110,7 +119,11 @@
             {id}
             items={options}
             placeholder="Sila Pilih"
-            class="block h-[32px] w-full rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary  focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
+            class="
+            {isError
+                ? 'border-system-danger focus:border-system-danger'
+                : 'hover:border-system-primary focus:border-system-primary'}
+            block h-[32px] w-full rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary  focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
             bind:value
             on:change={() => {
                 onSelect();
@@ -137,7 +150,11 @@
             {id}
             items={options}
             placeholder="Sila Pilih"
-            class="block h-[32px] w-fit rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary  focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
+            class="
+            {isError
+                ? 'border-system-danger focus:border-system-danger'
+                : 'hover:border-system-primary focus:border-system-primary'}
+            block h-[32px] w-fit rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary  focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
             bind:value
             on:change={() => {
                 onSelect();
@@ -165,7 +182,11 @@
             {id}
             items={options}
             placeholder="Sila Pilih"
-            class="block h-[32px] w-fit rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary  focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
+            class="
+            {isError
+                ? 'border-system-danger focus:border-system-danger'
+                : 'hover:border-system-primary focus:border-system-primary'}
+            block h-[32px] w-fit rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary  focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
             bind:value
             on:change={() => {
                 onSelect();
@@ -178,7 +199,11 @@
         {id}
         items={options}
         placeholder="Sila Pilih"
-        class="block h-[32px] w-fit rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary  focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
+        class="
+        {isError
+            ? 'border-system-danger focus:border-system-danger'
+            : 'hover:border-system-primary focus:border-system-primary'}
+        block h-[32px] w-fit rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary  focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
         bind:value
         on:change={() => {
             onSelect();
@@ -208,8 +233,12 @@
                     {id}
                     items={options}
                     placeholder="Sila Pilih"
-                    class="block h-[32px] w-full rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary  focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
-                    bind:value={value}
+                    class="
+                    {isError
+                        ? 'border-system-danger focus:border-system-danger'
+                        : 'hover:border-system-primary focus:border-system-primary'}
+                    block h-[32px] w-full rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary  focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
+                    bind:value
                     on:change={() => {
                         onSelect();
                     }}

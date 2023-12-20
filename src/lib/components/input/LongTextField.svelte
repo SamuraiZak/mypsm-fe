@@ -14,6 +14,7 @@
     export let labelType = 'default';
     export let labelFor = '';
     export let onChange: any = null;
+    export let isError = false;
 </script>
 
 {#if labelType === 'default'}
@@ -33,7 +34,11 @@
             {value}
             {disabled}
             {rows}
-            class="border-1 active:border-1  w-full rounded-[3px] border-bdr-primary bg-bgr-primary text-[12px] placeholder:text-txt-tertiary hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary"
+            class="
+            {isError
+                ? 'border-system-danger focus:border-system-danger'
+                : 'hover:border-system-primary focus:border-system-primary'}
+            border-1 active:border-1  w-full rounded-[3px] border-bdr-primary bg-bgr-primary text-[12px] placeholder:text-txt-tertiary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary"
         ></Textarea>
     </div>
 {:else if labelType === 'top'}
@@ -52,7 +57,11 @@
             {value}
             {disabled}
             {rows}
-            class="border-1 active:border-1  w-full rounded-[3px] border-bdr-primary bg-bgr-primary text-[12px] placeholder:text-txt-tertiary hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary"
+            class="
+            {isError
+                ? 'border-system-danger focus:border-system-danger'
+                : 'hover:border-system-primary focus:border-system-primary'}
+            border-1 active:border-1  w-full rounded-[3px] border-bdr-primary bg-bgr-primary text-[12px] placeholder:text-txt-tertiary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary"
         ></Textarea>
     </div>
 {/if}

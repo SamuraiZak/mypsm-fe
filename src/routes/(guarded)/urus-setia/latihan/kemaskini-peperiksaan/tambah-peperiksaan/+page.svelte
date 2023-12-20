@@ -13,10 +13,30 @@
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import { goto } from '$app/navigation';
-    export let data;
+    import type { ActionData, PageData, SubmitFunction } from './$types.js';
+    import toast from 'svelte-french-toast';
+    import { enhance } from '$app/forms';
+    import { Select } from 'flowbite-svelte';
+    export let data: PageData;
+    export let form: ActionData;
     let activeStepper = 0;
     let disabled = true;
-    // let isEditable = data.record.currentEmployee.status === 'baru' ? true : false;
+    let selected: any = '';
+
+    const submitCreateNote: SubmitFunction = ({ formData }) => {
+        toast.success('Berjaya disimpan!');
+
+        return async ({ result, update }) => {
+            switch (result.type) {
+                case 'success':
+                    toast.success('Berjaya disimpan!');
+                    break;
+                default:
+                    break;
+            }
+            await update({ reset: false });
+        };
+    };
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -35,52 +55,84 @@
 <Stepper activeIndex={activeStepper}>
     <StepperContent>
         <StepperContentHeader title="Maklumat Peperiksaan LKIM"
-            ><TextIconButton primary label="Simpan" /></StepperContentHeader
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="examForm"
+            /></StepperContentHeader
         >
         <StepperContentBody>
             <form
-                action="?/create"
+                id="examForm"
                 method="POST"
+                use:enhance={submitCreateNote}
                 class="flex w-full flex-col gap-2"
             >
                 <DropdownSelect
+                    isError={form?.errors.examType ? true : false}
                     dropdownType="label-left-full"
-                    name="exam-type-dropdown"
+                    name="examType"
                     label="Jenis Peperiksaan"
-                    bind:value={data.record.newExam.examType}
+                    bind:value={selected}
                     options={examTypes}
                 ></DropdownSelect>
+                <!-- {form?.data.examType} -->
+                {#if form?.errors.examType}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{form?.errors?.examType[0]}</span
+                    >
+                {/if}
+
+                <!-- <Select class="mt-2" items={examTypes} bind:value={selected} /> -->
+
                 <TextField
-                    name="exam-title"
+                    isError={form?.errors.examTitle ? true : false}
+                    name="examTitle"
                     label="Tajuk Peperiksaan"
                     type="text"
-                    bind:value={data.record.newExam.examTitle}
+                    value={form?.data.examTitle}
                 />
+                {#if form?.errors.examTitle}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{form?.errors?.examTitle[0]}</span
+                    >
+                {/if}
                 <DateSelector
-                    name="appl-open-date"
+                    isError={form?.errors.applOpenDate ? true : false}
+                    name="applOpenDate"
                     handleDateChange
                     label="Tarikh Mula Permohonam"
-                    bind:selectedDate={data.record.newExam
-                        .examApplicationOpenDate}
+                    selectedDate={form?.data.applOpenDate}
                 ></DateSelector>
                 <DateSelector
-                    name="appl-close-date"
+                    isError={form?.errors.applCloseDate ? true : false}
+                    name="applCloseDate"
                     handleDateChange
                     label="Tarikh Mesyuarat"
-                    bind:selectedDate={data.record.newExam
-                        .examApplicationCloseDate}
+                    selectedDate={form?.data.applCloseDate}
                 ></DateSelector>
-                <TextField
-                    name="exam-date"
+                <DateSelector
+                    isError={form?.errors.examDate ? true : false}
+                    name="examDate"
+                    handleDateChange
                     label="Tarikh Peperiksaan"
-                    type="date"
-                    bind:value={data.record.newExam.examDate}
-                />
+                    selectedDate={form?.data.newExam}
+                ></DateSelector>
                 <LongTextField
-                    name="exam-location"
+                    isError={form?.errors.examLocation ? true : false}
+                    name="examLocation"
                     label="Lokasi Peperiksaan"
-                    bind:value={data.record.newExam.examLocation}
+                    value={form?.data.examLocation}
                 />
+                {form?.data.examLocation}
+                {#if form?.errors.examLocation}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{form?.errors?.examLocation[0]}</span
+                    >
+                {/if}
             </form>
         </StepperContentBody>
     </StepperContent>

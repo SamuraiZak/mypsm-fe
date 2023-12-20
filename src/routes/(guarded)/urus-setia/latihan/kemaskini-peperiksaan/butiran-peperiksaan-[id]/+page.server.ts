@@ -18,6 +18,7 @@ export async function load({ params }) {
     };
 }
 
+// z validation schema for the exam form fields
 const examFormSchema = z.object({
     // 'exam-type-dropdown': z.string(),
     examTitle: z
@@ -25,9 +26,16 @@ const examFormSchema = z.object({
         .min(4, { message: 'Tajuk hendaklah lebih daripada 4 karakter.' })
         .max(64, { message: 'Tajuk tidak boleh melebihi 64 karakter.' })
         .trim(),
-    applOpenDate: z.string(),
-    applCloseDate: z.string(),
-    examDate: z.string(),
+    applOpenDate: z.string({
+        required_error: 'Tarikh tidak boleh dibiar kosong',
+    }),
+    applCloseDate: z.string({
+        required_error: 'Tarikh tidak boleh dibiar kosong',
+    }),
+    examDate: z.string({ required_error: 'Tarikh tidak boleh dibiar kosong' }),
+    // examDate: z.date().min(new Date(), {
+    //     message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+    // }),
     examLocation: z
         .string({ required_error: 'Lokasi tidak boleh kosong.' })
         .min(4, { message: 'Lokasi hendaklah lebih daripada 4 karakter.' })
@@ -43,7 +51,6 @@ export const actions = {
             const result = examFormSchema.parse(formData);
             console.log('SUCCESS', result);
         } catch (err) {
-            console.log(err);
             const { fieldErrors: errors } = err.flatten();
             const { ...rest } = formData;
             return {
