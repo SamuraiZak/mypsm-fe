@@ -28,7 +28,7 @@
     export let value2 = '';
     export let placeholder = '';
     export let onChange = () => {};
-    export let isError = false;
+    export let hasError = false;
     // Tooltip icon
     const questionMarkIcon: string = `<svg
                             width="12"
@@ -58,7 +58,7 @@
         items={options}
         placeholder="Sila Pilih"
         class="
-        {isError
+        {hasError
             ? 'border-system-danger focus:border-system-danger'
             : 'hover:border-system-primary focus:border-system-primary'}
         block h-[32px] w-fit rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
@@ -87,10 +87,10 @@
             items={options}
             placeholder="Sila Pilih"
             class="
-            {isError
+            {hasError
                 ? 'border-system-danger focus:border-system-danger'
                 : 'hover:border-system-primary focus:border-system-primary'}
-            block h-[32px] w-full rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary  focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
+            border-1 block h-[32px] w-full rounded-[3px] bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
             bind:value
             on:change={() => {
                 onSelect();
@@ -120,10 +120,10 @@
             items={options}
             placeholder="Sila Pilih"
             class="
-            {isError
+            {hasError
                 ? 'border-system-danger focus:border-system-danger'
                 : 'hover:border-system-primary focus:border-system-primary'}
-            block h-[32px] w-full rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary  focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
+            border-1 block h-[32px] w-full rounded-[3px] bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
             bind:value
             on:change={() => {
                 onSelect();
@@ -151,10 +151,10 @@
             items={options}
             placeholder="Sila Pilih"
             class="
-            {isError
+            {hasError
                 ? 'border-system-danger focus:border-system-danger'
                 : 'hover:border-system-primary focus:border-system-primary'}
-            block h-[32px] w-fit rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary  focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
+            border-1 block h-[32px] w-full rounded-[3px] bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
             bind:value
             on:change={() => {
                 onSelect();
@@ -183,10 +183,10 @@
             items={options}
             placeholder="Sila Pilih"
             class="
-            {isError
+            {hasError
                 ? 'border-system-danger focus:border-system-danger'
                 : 'hover:border-system-primary focus:border-system-primary'}
-            block h-[32px] w-fit rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary  focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
+            border-1 block h-[32px] w-full rounded-[3px] bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
             bind:value
             on:change={() => {
                 onSelect();
@@ -200,10 +200,10 @@
         items={options}
         placeholder="Sila Pilih"
         class="
-        {isError
+        {hasError
             ? 'border-system-danger focus:border-system-danger'
             : 'hover:border-system-primary focus:border-system-primary'}
-        block h-[32px] w-fit rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary  focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
+        border-1 block h-[32px] w-full rounded-[3px] bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
         bind:value
         on:change={() => {
             onSelect();
@@ -234,10 +234,10 @@
                     items={options}
                     placeholder="Sila Pilih"
                     class="
-                    {isError
+                    {hasError
                         ? 'border-system-danger focus:border-system-danger'
                         : 'hover:border-system-primary focus:border-system-primary'}
-                    block h-[32px] w-full rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer hover:border-system-primary  focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
+                    border-1 block h-[32px] w-full rounded-[3px] bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
                     bind:value
                     on:change={() => {
                         onSelect();
