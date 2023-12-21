@@ -8,7 +8,7 @@
     export let labelBlack = true;
     export let disabled = false;
     export let labelType = 'default';
-    export let isError = false;
+    export let hasError = false;
 </script>
 
 <div class="flex w-full flex-row items-center justify-between">
@@ -25,7 +25,7 @@
     ><input
         {disabled}
         class="
-        {isError
+        {hasError
             ? 'border-system-danger focus:border-system-danger'
             : 'hover:border-system-primary focus:border-system-primary'}
         {disabled ? 'hover:border-bdr-primary' : ''}
