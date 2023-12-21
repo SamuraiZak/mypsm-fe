@@ -11,7 +11,7 @@ export const maklumatBilRawatan = [
     },
     {
         nama: 'Ali',
-        noKP: '111111-11-1111',
+        noKP: '111111-11-1112',
         namaPesakit: 'Ahmad',
         kodKlinik: 'K213213',
         namaKlinik: 'Klinik Ali',
@@ -21,7 +21,7 @@ export const maklumatBilRawatan = [
     },
     {
         nama: 'Ali',
-        noKP: '111111-11-1111',
+        noKP: '111111-11-1113',
         namaPesakit: 'Ahmad',
         kodKlinik: 'K213213',
         namaKlinik: 'Klinik Ali',
@@ -31,7 +31,7 @@ export const maklumatBilRawatan = [
     },
     {
         nama: 'Ali',
-        noKP: '111111-11-1111',
+        noKP: '111111-11-1114',
         namaPesakit: 'Ahmad',
         kodKlinik: 'K213213',
         namaKlinik: 'Klinik Ali',
@@ -39,5 +39,4 @@ export const maklumatBilRawatan = [
         status: 'Selesai',
         tindakan: '',
     },
-    
 ];

@@ -17,6 +17,7 @@
     import { Badge } from 'flowbite-svelte';
     import SvgEllipsisCircle from '$lib/assets/svg/SvgEllipsisCircle.svelte';
     import { maklumatBilRawatan } from '$lib/mocks/klinik-panel/maklumat-bil-rawatan';
+    import { selectedPatientTreatmentId } from '$lib/stores/globalState';
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -153,25 +154,11 @@
                             <DtTableDataCell>
                                 <IconButton
                                     onClick={() => {
-                                        if (item.status === 'Selesai') {
-                                            goto(
-                                                '/klinik-panel/maklumat-bil-rawatan/butiran-bil-rawatan/selesai',
-                                            );
-                                        } else if (item.status === 'Baru') {
-                                            goto(
-                                                '/klinik-panel/maklumat-bil-rawatan/butiran-bil-rawatan/baru',
-                                            );
-                                        } else if (item.status === 'Ditolak') {
-                                            goto(
-                                                '/klinik-panel/maklumat-bil-rawatan/butiran-bil-rawatan/ditolak',
-                                            );
-                                        } else if (
-                                            item.status === 'Sedang Diproses'
-                                        ) {
-                                            goto(
-                                                '/klinik-panel/maklumat-bil-rawatan/butiran-bil-rawatan/sedang-diproses',
-                                            );
-                                        }
+                                        $selectedPatientTreatmentId =
+                                            '111111-11-1111';
+                                        goto(
+                                            '/klinik-panel/maklumat-bil-rawatan/butiran-bil-rawatan',
+                                        );
                                     }}
                                     ><SvgEllipsisCircle
                                     ></SvgEllipsisCircle></IconButton

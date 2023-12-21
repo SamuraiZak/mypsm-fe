@@ -24,14 +24,7 @@
     <ContentHeader
         title="Maklumat Rawatan"
         description="Hal-hal berkaitan dengan pengurusan perubatan kakitangan LKIM"
-        ><TextIconButton
-            primary
-            label="Tambah Rekod"
-            onClick={() => {
-                goto('');
-            }}><SvgPlus /></TextIconButton
-        ></ContentHeader
-    >
+    ></ContentHeader>
 </section>
 
 <section

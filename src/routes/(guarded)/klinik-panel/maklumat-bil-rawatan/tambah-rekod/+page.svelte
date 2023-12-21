@@ -121,12 +121,6 @@
                                 <TreatmentList {key} />
                             </div>
                         {/each}
-
-                        <!-- <TextField
-                            id="jumlah"
-                            label={'Jumlah (RM)'}
-                            value={'5,323'}
-                        ></TextField> -->
                     </div>
                 </div></StepperContentBody
             >
