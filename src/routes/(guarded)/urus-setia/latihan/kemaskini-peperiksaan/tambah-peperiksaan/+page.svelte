@@ -6,51 +6,21 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import { years } from '$lib/mocks/dateSelection/years.js';
     import TextField from '$lib/components/input/TextField.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import { examTypes } from '$lib/mocks/latihan/mockExamTypes.js';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import { goto } from '$app/navigation';
-    import type { PageData } from './$types.js';
     import toast from 'svelte-french-toast';
-    import { enhance } from '$app/forms';
-    import { Select } from 'flowbite-svelte';
-    import { fail, type SubmitFunction } from '@sveltejs/kit';
     import { z } from 'zod';
-    export let data: PageData;
+    // export let data: PageData;
     // export let form;
     let activeStepper = 0;
     let disabled = true;
     let selected: any = '';
 
-    // z validation schema for the exam form fields
-    const examFormSchema = z.object({
-        examType: z.enum(['perkhidmatan', 'psl'], {
-            required_error: 'Jenis latihan perlu dipilih.',
-        }),
-        examTitle: z
-            .string({ required_error: 'Tajuk latihan tidak boleh kosong.' })
-            .min(4, { message: 'Tajuk hendaklah lebih daripada 4 karakter.' })
-            .max(84, { message: 'Tajuk tidak boleh melebihi 84 karakter.' })
-            .trim(),
-        applOpenDate: z.coerce.date().min(new Date(), {
-            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
-        }),
-        applCloseDate: z.coerce.date().min(new Date(), {
-            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
-        }),
-        examDate: z.coerce.date().min(new Date(), {
-            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
-        }),
-        examLocation: z
-            .string({ required_error: 'Lokasi tidak boleh kosong.' })
-            .min(4, { message: 'Lokasi hendaklah lebih daripada 4 karakter.' })
-            .max(124, { message: 'Lokasi tidak boleh melebihi 124 karakter.' })
-            .trim(),
-    });
-
+    // z validation schema for the exam form fields=========================================================
     let examType: string = '';
     let examTitle: string = '';
     let applOpenDate: string = '';
@@ -58,6 +28,43 @@
     let examDate: string = '';
     let examLocation: string = '';
     let errorData: any;
+
+    const dateScheme = z.coerce
+        .date({
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_date'
+                        ? 'Tarikh tidak boleh dibiar kosong.'
+                        : defaultError,
+            }),
+        })
+        .min(new Date(), {
+            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+        });
+
+    const examFormSchema = z.object({
+        examType: z.enum(['perkhidmatan', 'psl'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Jenis latihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+        examTitle: z
+            .string({ required_error: 'Tajuk latihan tidak boleh kosong.' })
+            .min(4, { message: 'Tajuk hendaklah lebih daripada 4 karakter.' })
+            .max(84, { message: 'Tajuk tidak boleh melebihi 84 karakter.' })
+            .trim(),
+        applOpenDate: dateScheme,
+        applCloseDate: dateScheme,
+        examDate: dateScheme,
+        examLocation: z
+            .string({ required_error: 'Lokasi tidak boleh kosong.' })
+            .min(4, { message: 'Lokasi hendaklah lebih daripada 4 karakter.' })
+            .max(124, { message: 'Lokasi tidak boleh melebihi 124 karakter.' })
+            .trim(),
+    });
 
     const submitExamForm = async () => {
         toast.success('Berjaya disimpan!');
@@ -72,14 +79,11 @@
         };
         try {
             const result = examFormSchema.parse(examFormData);
-            console.log('SUCCESS', result);
-        } catch (err) {
-            if (err instanceof z.ZodError) {
-                console.log(err.issues);
-            }
-            const { fieldErrors: errors } = err.flatten();
+            console.log('SUCCESS!', result);
+        } catch (err: unknown) {
+            const { fieldErrors: errors } = (err as Error).flatten();
             errorData = errors;
-            console.log(errorData);
+            console.log('ERROR!', errorData);
         }
     };
 </script>
@@ -113,7 +117,7 @@
                 class="flex w-full flex-col gap-2"
             >
                 <DropdownSelect
-                    isError={errorData?.examType ? true : false}
+                    hasError={errorData?.examType}
                     dropdownType="label-left-full"
                     name="examType"
                     label="Jenis Peperiksaan"
@@ -127,7 +131,7 @@
                     >
                 {/if}
                 <TextField
-                    isError={errorData?.examTitle ? true : false}
+                    hasError={errorData?.examTitle}
                     name="examTitle"
                     label="Tajuk Peperiksaan"
                     type="text"
@@ -140,7 +144,7 @@
                     >
                 {/if}
                 <DateSelector
-                    isError={errorData?.applOpenDate ? true : false}
+                    hasError={errorData?.applOpenDate}
                     name="applOpenDate"
                     handleDateChange
                     label="Tarikh Mula Permohonam"
@@ -153,10 +157,10 @@
                     >
                 {/if}
                 <DateSelector
-                    isError={errorData?.applCloseDate ? true : false}
+                    hasError={errorData?.applCloseDate}
                     name="applCloseDate"
                     handleDateChange
-                    label="Tarikh Mesyuarat"
+                    label="Tarikh Tutup Permohonan"
                     bind:selectedDate={applCloseDate}
                 ></DateSelector>
                 {#if errorData?.applCloseDate}
@@ -166,20 +170,20 @@
                     >
                 {/if}
                 <DateSelector
-                    isError={errorData?.examDate ? true : false}
+                    hasError={errorData?.examDate}
                     name="examDate"
                     handleDateChange
                     label="Tarikh Peperiksaan"
                     bind:selectedDate={examDate}
                 ></DateSelector>
-                {#if errorData?.newExam}
+                {#if errorData?.examDate}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.newExam[0]}</span
+                        >{errorData?.examDate[0]}</span
                     >
                 {/if}
                 <LongTextField
-                    isError={errorData?.examLocation ? true : false}
+                    hasError={errorData?.examLocation}
                     name="examLocation"
                     label="Lokasi Peperiksaan"
                     bind:value={examLocation}
