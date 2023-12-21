@@ -11,6 +11,9 @@
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
+    import SectionHeader from '$lib/components/header/SectionHeader.svelte';
+    import TreatmentList from '$lib/components/klinik-panel/TreatmentList.svelte';
+    import PatientList from '$lib/components/klinik-panel/PatientList.svelte';
 
     export let disabled: boolean = true;
 
@@ -26,6 +29,15 @@
         });
         console.log(formattedDate);
     }
+
+    export const mockTreatment = {
+        1: {
+            namaPesakit: 'Alyaa Binti Samad',
+        },
+        2: {
+            namaPesakit: 'Danial',
+        },
+    };
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -86,29 +98,7 @@
             ></StepperContentHeader>
             <StepperContentBody>
                 <div class="flex max-h-full w-full flex-col gap-2.5">
-                    <TextField
-                        id="namaPesakit"
-                        label={'Nama Pesakit'}
-                        value={'Ali Bin Abu'}
-                    ></TextField>
-                    <DropdownSelect
-                        id="hubunganDropdown"
-                        label="Hubungan"
-                        dropdownType="label-left-full"
-                        bind:index={selectedHubungan}
-                        options={hubungan}
-                    ></DropdownSelect>
-                    <TextField
-                        id="noKadPengenalan"
-                        label={'No. K/P'}
-                        value={'111111-11-1111'}
-                    ></TextField>
-                    <TextField
-                        id="pejabatLkim"
-                        label={'Pejabat LKIM'}
-                        value={'Bahagian Teknologi Maklumat'}
-                    ></TextField>
-                    <DateSelector {handleDateChange} label={'Tarikh'} />
+                    <PatientList />
                 </div></StepperContentBody
             >
         </StepperContent>
@@ -117,10 +107,29 @@
             ></StepperContentHeader>
             <StepperContentBody>
                 <div class="flex w-full flex-col gap-2">
-                    <TextField id="jumlah" label={'Jumlah (RM)'} value={'5,323'}
-                    ></TextField>
-                </div>
-            </StepperContentBody>
+                    <div class="flex w-full flex-col gap-2">
+                        {#each Object.entries(mockTreatment) as [key, result], index}
+                            <div
+                                class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
+                            >
+                                <SectionHeader
+                                    color="system-primary"
+                                    title="Pesakit #{key}: {result.namaPesakit}"
+                                ></SectionHeader>
+                                <hr />
+
+                                <TreatmentList {key} />
+                            </div>
+                        {/each}
+
+                        <!-- <TextField
+                            id="jumlah"
+                            label={'Jumlah (RM)'}
+                            value={'5,323'}
+                        ></TextField> -->
+                    </div>
+                </div></StepperContentBody
+            >
         </StepperContent>
     </Stepper>
 </section>

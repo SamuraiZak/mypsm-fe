@@ -13,29 +13,74 @@
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import { goto } from '$app/navigation';
-    import type { ActionData, PageData, SubmitFunction } from './$types.js';
+    import type { PageData } from './$types.js';
     import toast from 'svelte-french-toast';
     import { enhance } from '$app/forms';
     import { Select } from 'flowbite-svelte';
+    import { fail, type SubmitFunction } from '@sveltejs/kit';
+    import { z } from 'zod';
     export let data: PageData;
-    export let form: ActionData;
+    // export let form;
     let activeStepper = 0;
     let disabled = true;
     let selected: any = '';
 
-    const submitCreateNote: SubmitFunction = ({ formData }) => {
+    // z validation schema for the exam form fields
+    const examFormSchema = z.object({
+        examType: z.enum(['perkhidmatan', 'psl'], {
+            required_error: 'Jenis latihan perlu dipilih.',
+        }),
+        examTitle: z
+            .string({ required_error: 'Tajuk latihan tidak boleh kosong.' })
+            .min(4, { message: 'Tajuk hendaklah lebih daripada 4 karakter.' })
+            .max(84, { message: 'Tajuk tidak boleh melebihi 84 karakter.' })
+            .trim(),
+        applOpenDate: z.coerce.date().min(new Date(), {
+            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+        }),
+        applCloseDate: z.coerce.date().min(new Date(), {
+            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+        }),
+        examDate: z.coerce.date().min(new Date(), {
+            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+        }),
+        examLocation: z
+            .string({ required_error: 'Lokasi tidak boleh kosong.' })
+            .min(4, { message: 'Lokasi hendaklah lebih daripada 4 karakter.' })
+            .max(124, { message: 'Lokasi tidak boleh melebihi 124 karakter.' })
+            .trim(),
+    });
+
+    let examType: string = '';
+    let examTitle: string = '';
+    let applOpenDate: string = '';
+    let applCloseDate: string = '';
+    let examDate: string = '';
+    let examLocation: string = '';
+    let errorData: any;
+
+    const submitExamForm = async () => {
         toast.success('Berjaya disimpan!');
 
-        return async ({ result, update }) => {
-            switch (result.type) {
-                case 'success':
-                    toast.success('Berjaya disimpan!');
-                    break;
-                default:
-                    break;
-            }
-            await update({ reset: false });
+        const examFormData = {
+            examType,
+            examTitle,
+            applOpenDate,
+            applCloseDate,
+            examDate,
+            examLocation,
         };
+        try {
+            const result = examFormSchema.parse(examFormData);
+            console.log('SUCCESS', result);
+        } catch (err) {
+            if (err instanceof z.ZodError) {
+                console.log(err.issues);
+            }
+            const { fieldErrors: errors } = err.flatten();
+            errorData = errors;
+            console.log(errorData);
+        }
     };
 </script>
 
@@ -64,73 +109,85 @@
         <StepperContentBody>
             <form
                 id="examForm"
-                method="POST"
-                use:enhance={submitCreateNote}
+                on:submit|preventDefault={submitExamForm}
                 class="flex w-full flex-col gap-2"
             >
                 <DropdownSelect
-                    isError={form?.errors.examType ? true : false}
+                    isError={errorData?.examType ? true : false}
                     dropdownType="label-left-full"
                     name="examType"
                     label="Jenis Peperiksaan"
-                    bind:value={selected}
+                    bind:value={examType}
                     options={examTypes}
                 ></DropdownSelect>
-                <!-- {form?.data.examType} -->
-                {#if form?.errors.examType}
+                {#if errorData?.examType}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{form?.errors?.examType[0]}</span
+                        >{errorData?.examType[0]}</span
                     >
                 {/if}
-
-                <!-- <Select class="mt-2" items={examTypes} bind:value={selected} /> -->
-
                 <TextField
-                    isError={form?.errors.examTitle ? true : false}
+                    isError={errorData?.examTitle ? true : false}
                     name="examTitle"
                     label="Tajuk Peperiksaan"
                     type="text"
-                    value={form?.data.examTitle}
+                    bind:value={examTitle}
                 />
-                {#if form?.errors.examTitle}
+                {#if errorData?.examTitle}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{form?.errors?.examTitle[0]}</span
+                        >{errorData?.examTitle[0]}</span
                     >
                 {/if}
                 <DateSelector
-                    isError={form?.errors.applOpenDate ? true : false}
+                    isError={errorData?.applOpenDate ? true : false}
                     name="applOpenDate"
                     handleDateChange
                     label="Tarikh Mula Permohonam"
-                    selectedDate={form?.data.applOpenDate}
+                    bind:selectedDate={applOpenDate}
                 ></DateSelector>
+                {#if errorData?.applOpenDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.applOpenDate[0]}</span
+                    >
+                {/if}
                 <DateSelector
-                    isError={form?.errors.applCloseDate ? true : false}
+                    isError={errorData?.applCloseDate ? true : false}
                     name="applCloseDate"
                     handleDateChange
                     label="Tarikh Mesyuarat"
-                    selectedDate={form?.data.applCloseDate}
+                    bind:selectedDate={applCloseDate}
                 ></DateSelector>
+                {#if errorData?.applCloseDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.applCloseDate[0]}</span
+                    >
+                {/if}
                 <DateSelector
-                    isError={form?.errors.examDate ? true : false}
+                    isError={errorData?.examDate ? true : false}
                     name="examDate"
                     handleDateChange
                     label="Tarikh Peperiksaan"
-                    selectedDate={form?.data.newExam}
+                    bind:selectedDate={examDate}
                 ></DateSelector>
-                <LongTextField
-                    isError={form?.errors.examLocation ? true : false}
-                    name="examLocation"
-                    label="Lokasi Peperiksaan"
-                    value={form?.data.examLocation}
-                />
-                {form?.data.examLocation}
-                {#if form?.errors.examLocation}
+                {#if errorData?.newExam}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{form?.errors?.examLocation[0]}</span
+                        >{errorData?.newExam[0]}</span
+                    >
+                {/if}
+                <LongTextField
+                    isError={errorData?.examLocation ? true : false}
+                    name="examLocation"
+                    label="Lokasi Peperiksaan"
+                    bind:value={examLocation}
+                />
+                {#if errorData?.examLocation}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.examLocation[0]}</span
                     >
                 {/if}
             </form>

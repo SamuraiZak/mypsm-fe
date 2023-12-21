@@ -28,9 +28,9 @@
         {isError
             ? 'border-system-danger focus:border-system-danger'
             : 'hover:border-system-primary focus:border-system-primary'}
-        border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary {disabled
-            ? 'hover:border-bdr-primary'
-            : 'hover:border-system-primary'} focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary"
+        {disabled ? 'hover:border-bdr-primary' : ''}
+        border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary
+        focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary"
         type="date"
         id="date-selector"
         {name}
