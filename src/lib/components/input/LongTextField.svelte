@@ -14,7 +14,7 @@
     export let labelType = 'default';
     export let labelFor = '';
     export let onChange: any = null;
-    export let isError = false;
+    export let hasError = false;
 </script>
 
 {#if labelType === 'default'}
@@ -25,7 +25,8 @@
                 ? fontBlack
                 : fontGray} font-medium"
             >{label}
-        </label><Textarea
+        </label>
+        <Textarea
             {id}
             {name}
             on:blur={onBlur}
@@ -35,10 +36,10 @@
             {disabled}
             {rows}
             class="
-            {isError
+            {hasError
                 ? 'border-system-danger focus:border-system-danger'
                 : 'hover:border-system-primary focus:border-system-primary'}
-            w-full rounded-[3px] bg-bgr-primary text-[12px] placeholder:text-txt-tertiary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary"
+            border-1 w-full rounded-[3px] bg-bgr-primary text-[12px] placeholder:text-txt-tertiary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary"
         ></Textarea>
     </div>
 {:else if labelType === 'top'}
@@ -58,10 +59,10 @@
             {disabled}
             {rows}
             class="
-            {isError
+            {hasError
                 ? 'border-system-danger focus:border-system-danger'
                 : 'hover:border-system-primary focus:border-system-primary'}
-            w-full rounded-[3px] bg-bgr-primary text-[12px] placeholder:text-txt-tertiary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary"
+            border-1 w-full rounded-[3px] bg-bgr-primary text-[12px] placeholder:text-txt-tertiary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary"
         ></Textarea>
     </div>
 {/if}
