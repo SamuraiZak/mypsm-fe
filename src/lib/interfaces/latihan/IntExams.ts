@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface IntExams {
-    id: number;
+    id: string;
     examTitle: string;
     examType: string;
     examApplicationOpenDate: string;
