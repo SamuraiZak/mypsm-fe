@@ -28,7 +28,6 @@
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
-    import TestTable from '$lib/components/table/TestTable.svelte';
     import { lantikanKeGredTable } from '$lib/mocks/kakitangan/pengesahan/lantikan-ke-gred/lantikan-ke-gred-table';
     import { melebihi3TahunTable } from '$lib/mocks/kakitangan/pengesahan/melebihi-tempoh-3-tahun/melebihi-tempoh-3-tahun-table';
     import { lantikanBaruTable } from '$lib/mocks/kakitangan/pengesahan/pengesahan-lantikan-baru/lantikan-baru-table';
@@ -225,7 +224,7 @@
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
-                <!-- <TestTable
+                <DynamicTable
                     tableItems={lantikanKeGredTable}
                     withActions
                     actionOptions={['detail']}
@@ -247,30 +246,7 @@
                             );
                     }}
                     bind:passData
-                ></TestTable> -->
-                <TestTable
-                    tableItems={lantikanBaruTable}
-                    withActions
-                    actionOptions={['detail']}
-                    detailActions={() => {
-                        if (passData.status === 'Baru')
-                            goto(
-                                '/urus-setia/perjawatan/pengesahan-dalam-perkhidmatan/butiran-pengesahan-latihan-ke-gred/baru',
-                            );
-                        else if (
-                            passData.status ===
-                            'DIPERAKU - Pengarah Negeri/Bahagian'
-                        )
-                            goto(
-                                '/urus-setia/perjawatan/pengesahan-dalam-perkhidmatan/butiran-pengesahan-latihan-ke-gred/diperaku-pengarah-negeri-bahagian',
-                            );
-                        else if (passData.status === 'Selesai')
-                            goto(
-                                '/urus-setia/perjawatan/pengesahan-dalam-perkhidmatan/butiran-pengesahan-latihan-ke-gred/selesai',
-                            );
-                    }}
-                    bind:passData
-                ></TestTable>
+                ></DynamicTable>
             </div>
         </CustomTabContent>
     </CustomTab>
