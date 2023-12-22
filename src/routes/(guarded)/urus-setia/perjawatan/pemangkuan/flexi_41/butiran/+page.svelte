@@ -404,7 +404,7 @@
                 </TextIconButton>
             </StepperContentHeader>
 
-            <!-- Search content -->
+            <!-- Search Kakitangan Yang Dipilih -->
             <StepperContentBody>
                 <SectionHeader title=" Senarai Kakitangan Yang Dipilih">
                     <TextIconButton label="cetak" primary onClick={() => {}}>
@@ -443,7 +443,7 @@
                             subTitle="Tekan tombol tolak untuk kelarkan nama kakitangan daripada senarai kakitangan yang terpilih"
                         ></SectionHeader>
 
-                          <!-- Table senarai kakitangan yang dipilih -->
+                        <!-- Table Senarai Kakitangan Yang Dipilih -->
                         <DynamicTable
                             tableItems={mockPerjawatanPemangkuan}
                             withRowSelection
@@ -494,7 +494,7 @@
                 </TextIconButton>
             </StepperContentHeader>
 
-            <!-- Maklumat peraku keputusan mesyuarat -->
+            <!-- Maklumat Peraku Keputusan Mesyuarat -->
             <StepperContentBody>
                 <div
                     class="my-2 w-full border-b-8 border-l-2 border-r-2 border-t-8 p-2.5"
@@ -520,7 +520,7 @@
                         />
                     </div>
 
-                    <!-- Search content -->
+                    <!-- Search Kakitangan Yang Dipilih -->
                     <CustomTabContent title="Senarai Kakitangan Yang Dipilih">
                         <CustomCard borderClass="border-system-primary">
                             <CustomCardBody>
@@ -772,8 +772,7 @@
                             <div
                                 class="flex w-full flex-wrap items-center gap-2.5"
                             >
-                                 <FilterTextInput label="Gred"
-                                 ></FilterTextInput>
+                                <FilterTextInput label="Gred"></FilterTextInput>
                                 <FilterTextInput label="Jawatan"
                                 ></FilterTextInput>
                                 <FilterTextInput label="Nama"></FilterTextInput>
@@ -820,7 +819,7 @@
                                 console.log('pop selected here');
                             }}
                             editable
-                            onEditClick={() =>  editingCandidateList = true}
+                            onEditClick={() => (editingCandidateList = true)}
                             columnKeys={[
                                 'nomborPekerja',
                                 'namaPekerja',
@@ -836,7 +835,9 @@
                     </div>
                 </StepperContentBody>
             {:else}
-                <StepperContentHeader title="Semak Pengesahan Keputusan Mesyuarat Pemilihan Calon">
+                <StepperContentHeader
+                    title="Semak Pengesahan Keputusan Mesyuarat Pemilihan Calon"
+                >
                     <TextIconButton
                         label="Seterusnya"
                         primary
@@ -850,7 +851,8 @@
 
                 <!-- Maklumat Calon -->
                 <StepperContentBody>
-                    <SectionHeader title=" Maklumat Peraku Keputusan Mesyuarat "></SectionHeader>
+                    <SectionHeader title=" Maklumat Peraku Keputusan Mesyuarat "
+                    ></SectionHeader>
                     <div class="flex w-full flex-col gap-2">
                         <TextField
                             {disabled}
@@ -891,12 +893,12 @@
                                 title="Senarai Calon Yang Terpilih Mengikut Keputusan Mesyuarat"
                             ></SectionHeader>
                             <DynamicTable
-                            tableItems={mockPerjawatanPemangkuan}
-                            withRowSelection
-                            onSelect={() => {
-                                console.log('pop selected here');
-                            }}
-                            editable
+                                tableItems={mockPerjawatanPemangkuan}
+                                withRowSelection
+                                onSelect={() => {
+                                    console.log('pop selected here');
+                                }}
+                                editable
                                 columnKeys={[
                                     'nomborPekerja',
                                     'namaPekerja',
@@ -969,10 +971,10 @@
                         >
                             <SectionHeader title="Hasil Carian"></SectionHeader>
                             <DynamicTable
-                            tableItems={mockPerjawatanPemangkuan}
-                            onSelect={() => {
-                                console.log('pop selected here');
-                            }}
+                                tableItems={mockPerjawatanPemangkuan}
+                                onSelect={() => {
+                                    console.log('pop selected here');
+                                }}
                                 editable
                                 onEditClick={() =>
                                     (editingCandidateList = true)}
@@ -1027,7 +1029,7 @@
                     </TextIconButton>
                 </StepperContentHeader>
 
-                 <!-- Maklumat Calon -->
+                <!-- Maklumat Calon -->
                 <StepperContentBody>
                     <SectionHeader title=" Maklumat Calon"></SectionHeader>
                     <div class="flex w-full flex-col gap-2">
@@ -1043,7 +1045,7 @@
                         ></TextField>
                     </div>
 
-                 <!-- Keputusan Temuduga -->
+                    <!-- Keputusan Temuduga -->
                     <SectionHeader title=" Keputusan Temuduga "></SectionHeader>
                     <DateSelector
                         {handleDateChange}
@@ -1056,7 +1058,6 @@
                         ></TextField>
                     </div>
                 </StepperContentBody>
-
             {/if}
         </StepperContent>
 
@@ -1079,6 +1080,8 @@
                         <SvgArrowRight></SvgArrowRight>
                     </TextIconButton>
                 </StepperContentHeader>
+
+                <!-- Search senarai Calon Yang Terpilih -->
                 <StepperContentBody>
                     <SectionHeader title=" Senarai Calon Yang Terpilih"
                     ></SectionHeader>
@@ -1104,6 +1107,7 @@
                         </CustomCardBody>
                     </CustomCard>
 
+                    <!-- Table Keputusan Mesyuarat kenaikan Pangkat -->
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start"
                     >
@@ -1163,6 +1167,8 @@
                         <SvgCheck></SvgCheck>
                     </TextIconButton>
                 </StepperContentHeader>
+
+                <!-- Maklumat Calon -->
                 <StepperContentBody>
                     <SectionHeader title=" Maklumat Calon "></SectionHeader>
                     <div class="flex w-full flex-col gap-2">
@@ -1181,6 +1187,8 @@
                             value={'Sah'}
                         ></TextField>
                     </div>
+
+                    <!-- Keputusan Mesyuarat -->
                     <SectionHeader title=" Keputusan Mesyuarat"></SectionHeader>
 
                     <div class="flex w-full flex-col gap-2.5">
@@ -1193,7 +1201,6 @@
                         />
                     </div>
                 </StepperContentBody>
-
             {/if}
         </StepperContent>
 
@@ -1220,6 +1227,7 @@
                     <SectionHeader title=" Senarai Calon Yang Terpilih"
                     ></SectionHeader>
 
+                    <!-- Search senarai Calon Yang Terpilih -->
                     <CustomCard borderClass="border-system-primary ">
                         <CustomCardBody>
                             <div
@@ -1242,12 +1250,14 @@
                         </CustomCardBody>
                     </CustomCard>
 
+                    <!-- Table Keputusan Mesyuarat Penempatan Kakitangan -->
+
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start"
                     >
                         <SectionHeader title="Hasil Carian"></SectionHeader>
                         <DynamicTable
-                         tableItems={mockPerjawatanPemangkuan}
+                            tableItems={mockPerjawatanPemangkuan}
                             editable
                             onEditClick={() => (editingCandidateList = true)}
                             columnKeys={[
@@ -1300,6 +1310,8 @@
                         <SvgCheck></SvgCheck>
                     </TextIconButton>
                 </StepperContentHeader>
+
+                <!-- Maklumat Calon -->
                 <StepperContentBody>
                     <SectionHeader title=" Maklumat Calon "></SectionHeader>
                     <div class="flex w-full flex-col gap-2">
@@ -1319,6 +1331,8 @@
                         ></TextField>
                     </div>
 
+                    <!-- Keputusan Mesyuarat -->
+
                     <SectionHeader title=" Keputusan Mesyuarat"></SectionHeader>
 
                     <div class="flex w-full flex-col gap-2.5">
@@ -1337,7 +1351,6 @@
                         label={'Tarikh Lapor Diri'}
                     />
                 </StepperContentBody>
-
             {/if}
         </StepperContent>
 
@@ -1364,6 +1377,8 @@
                     <SectionHeader title=" Senarai Calon Yang Terpilih"
                     ></SectionHeader>
 
+                    <!-- Search Senarai Calon Yang Terpilih  -->
+
                     <CustomCard borderClass="border-system-primary">
                         <CustomCardBody>
                             <div
@@ -1385,13 +1400,15 @@
                             </div>
                         </CustomCardBody>
                     </CustomCard>
+
+                    <!-- Table Keputusan Permohonan Penangguhan/Pindaan Penempatan Dari Kakitangan -->
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start"
                     >
                         <SectionHeader title="Hasil Carian"></SectionHeader>
                         <DynamicTable
-                        tableItems={mockPerjawatanPemangkuan}
-                        editable
+                            tableItems={mockPerjawatanPemangkuan}
+                            editable
                             onEditClick={() => (editingCandidateList = true)}
                             columnKeys={[
                                 'nomborPekerja',
@@ -1443,6 +1460,8 @@
                         <SvgCheck></SvgCheck>
                     </TextIconButton>
                 </StepperContentHeader>
+
+                <!-- Maklum Balas Kakitangan -->
                 <StepperContentBody>
                     <SectionHeader title=" Maklum Balas Kakitangan "
                     ></SectionHeader>
@@ -1453,6 +1472,8 @@
                             label={'Kakitangan memerlukan Panangguhan'}
                             value={'-'}
                         ></TextField>
+
+                        <!-- Download file for surat Permohonan Penangguhan/Pindaan Penempatan-->
                         <div
                             class="justidy-between flex w-full flex-row items-center"
                         >
@@ -1492,6 +1513,8 @@
                             subTitle="Sekiranya kakitangan memilih untuk tidak membuat Permohonan Penangguhan/Pindaan Penempatan sila isi butiran penangguhan berikut mengikut surat penangguhan yang disediakan oleh kakitangan"
                         ></SectionHeader>
 
+                        <!-- Butiran Penangguhan -->
+
                         <SectionHeader title=" Butiran Penangguhan "
                         ></SectionHeader>
                         <div class="flex w-full flex-col gap-2.5">
@@ -1510,9 +1533,7 @@
                             ></LongTextField>
                         </div>
 
-                        <SectionHeader
-                            title=" Butiran Pelulus"
-                        ></SectionHeader>
+                        <SectionHeader title=" Butiran Pelulus"></SectionHeader>
 
                         <div class="flex w-full flex-col gap-2.5">
                             <DropdownSelect
@@ -1546,6 +1567,8 @@
                     <SvgArrowRight></SvgArrowRight>
                 </TextIconButton>
             </StepperContentHeader>
+
+            <!-- Search Senarai Calon yang Terpilih -->
             <StepperContentBody>
                 <SectionHeader title=" Senarai Calon Yang Terpilih"
                 ></SectionHeader>
@@ -1572,8 +1595,10 @@
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
                     <SectionHeader title="Hasil Carian"></SectionHeader>
+
+                    <!-- Table Keputusan Permohonan Penangguhan/Pindaan Penempatan -->
                     <DynamicTable
-                    tableItems={mockPerjawatanPemangkuan}
+                        tableItems={mockPerjawatanPemangkuan}
                         editable
                         onSelect={() => {
                             // popSelected(currentData);
@@ -1610,6 +1635,8 @@
                         <SvgArrowRight></SvgArrowRight>
                     </TextIconButton>
                 </StepperContentHeader>
+
+                <!-- Search Senarai Calon yang Terpilih -->
                 <StepperContentBody>
                     <SectionHeader title=" Senarai Calon Yang Terpilih"
                     ></SectionHeader>
@@ -1635,23 +1662,25 @@
                             </div>
                         </CustomCardBody>
                     </CustomCard>
+
+                    <!-- Table Kemaskini Keputusan Pemangkuan -->
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start"
                     >
                         <SectionHeader title="Hasil Carian"></SectionHeader>
                         <DynamicTable
-                        tableItems={mockPerjawatanPemangkuan}
+                            tableItems={mockPerjawatanPemangkuan}
                             editable
                             onEditClick={() => (editingCandidateList = true)}
                             columnKeys={[
-                            'nomborPekerja',
-                            'namaPekerja',
-                            'noKadPengenalan',
-                            'gredSemasa',
-                            'namaJawatan',
-                            'penempatanSekarang',
-                            'permohonanPenangguhanPindaanPenempatan',
-                            'keputusanPermohonanPenangguhanPindaanPenempatan',
+                                'nomborPekerja',
+                                'namaPekerja',
+                                'noKadPengenalan',
+                                'gredSemasa',
+                                'namaJawatan',
+                                'penempatanSekarang',
+                                'permohonanPenangguhanPindaanPenempatan',
+                                'keputusanPermohonanPenangguhanPindaanPenempatan',
                             ]}
                         ></DynamicTable>
                     </div>
@@ -1691,6 +1720,8 @@
                         <SvgCheck></SvgCheck>
                     </TextIconButton>
                 </StepperContentHeader>
+
+                <!-- Maklumat Calon -->
                 <StepperContentBody>
                     <SectionHeader title=" Maklumat Calon "></SectionHeader>
                     <div class="flex w-full flex-col gap-2.5">
@@ -1705,6 +1736,8 @@
                         <TextField {disabled} id="" label={'No.K/P'} value={'-'}
                         ></TextField>
                     </div>
+
+                    <!-- Butiran Pemangkuan -->
 
                     <SectionHeader title=" Butiran Pemangkuan "></SectionHeader>
                     <div class="flex w-full flex-col gap-2.5">
@@ -1781,6 +1814,8 @@
                         <SvgArrowRight></SvgArrowRight>
                     </TextIconButton>
                 </StepperContentHeader>
+
+                <!-- Search Pengesahan Keputusan Pemangkuan -->
                 <StepperContentBody>
                     <SectionHeader title=" Senarai Calon Yang Terpilih"
                     ></SectionHeader>
@@ -1806,13 +1841,15 @@
                             </div>
                         </CustomCardBody>
                     </CustomCard>
+
+                    <!-- Table Pengesahan Keputusan Pemangkuan-->
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start"
                     >
                         <SectionHeader title="Hasil Carian"></SectionHeader>
                         <DynamicTable
-                        tableItems={mockPerjawatanPemangkuan}
-                        editable
+                            tableItems={mockPerjawatanPemangkuan}
+                            editable
                             onEditClick={() => (editingCandidateList = true)}
                             columnKeys={[
                                 'nomborPekerja',
@@ -1840,6 +1877,7 @@
                     </TextIconButton>
                 </StepperContentHeader>
                 <StepperContentBody>
+                    <!-- Maklumat Calon -->
                     <SectionHeader title=" Maklumat Calon "></SectionHeader>
                     <div class="flex w-full flex-col gap-2.5">
                         <TextField
@@ -1854,6 +1892,7 @@
                         ></TextField>
                     </div>
 
+                    <!-- Butiran Pemangkuan -->
                     <SectionHeader title=" Butiran Pemangkuan "></SectionHeader>
                     <div class="flex w-full flex-col gap-2.5">
                         <TextField
@@ -1888,6 +1927,7 @@
                         ></TextField>
                     </div>
 
+                    <!-- Pengesahan Keputusan -->
                     <SectionHeader title=" Pengesahan Keputusan "
                     ></SectionHeader>
                     <div class="flex w-full flex-col gap-2.5">
