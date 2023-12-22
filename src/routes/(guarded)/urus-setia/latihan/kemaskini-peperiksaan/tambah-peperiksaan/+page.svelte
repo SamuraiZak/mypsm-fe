@@ -12,8 +12,9 @@
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import { goto } from '$app/navigation';
-    import toast from 'svelte-french-toast';
-    import { z } from 'zod';
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { ZodError, z } from 'zod';
+    import { mockExams } from '$lib/mocks/latihan/mockExams';
     // export let data: PageData;
     // export let form;
     let activeStepper = 0;
@@ -23,8 +24,8 @@
     // z validation schema for the exam form fields=========================================================
     let examType: string = '';
     let examTitle: string = '';
-    let applOpenDate: string = '';
-    let applCloseDate: string = '';
+    let examApplicationOpenDate: string = '';
+    let examApplicationCloseDate: string = '';
     let examDate: string = '';
     let examLocation: string = '';
     let errorData: any;
@@ -56,8 +57,8 @@
             .min(4, { message: 'Tajuk hendaklah lebih daripada 4 karakter.' })
             .max(84, { message: 'Tajuk tidak boleh melebihi 84 karakter.' })
             .trim(),
-        applOpenDate: dateScheme,
-        applCloseDate: dateScheme,
+        examApplicationOpenDate: dateScheme,
+        examApplicationCloseDate: dateScheme,
         examDate: dateScheme,
         examLocation: z
             .string({ required_error: 'Lokasi tidak boleh kosong.' })
@@ -67,23 +68,37 @@
     });
 
     const submitExamForm = async () => {
-        toast.success('Berjaya disimpan!');
-
         const examFormData = {
             examType,
             examTitle,
-            applOpenDate,
-            applCloseDate,
+            examApplicationOpenDate,
+            examApplicationCloseDate,
             examDate,
             examLocation,
         };
         try {
             const result = examFormSchema.parse(examFormData);
-            console.log('SUCCESS!', result);
+            if (result) {
+                errorData = [];
+
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData: IntExams = { ...examFormData, id };
+
+                console.log('SUCCESS!', JSON.stringify(validatedExamFormData));
+
+                mockExams.push(validatedExamFormData);
+                window.history.back();
+                toast.success('Berjaya disimpan!');
+            }
         } catch (err: unknown) {
-            const { fieldErrors: errors } = (err as Error).flatten();
-            errorData = errors;
-            console.log('ERROR!', errorData);
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                );
+                console.log('ERROR!', JSON.stringify(errorData));
+            }
         }
     };
 </script>
@@ -144,29 +159,29 @@
                     >
                 {/if}
                 <DateSelector
-                    hasError={errorData?.applOpenDate}
-                    name="applOpenDate"
+                    hasError={errorData?.examApplicationOpenDate}
+                    name="examApplicationOpenDate"
                     handleDateChange
                     label="Tarikh Mula Permohonam"
-                    bind:selectedDate={applOpenDate}
+                    bind:selectedDate={examApplicationOpenDate}
                 ></DateSelector>
-                {#if errorData?.applOpenDate}
+                {#if errorData?.examApplicationOpenDate}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.applOpenDate[0]}</span
+                        >{errorData?.examApplicationOpenDate[0]}</span
                     >
                 {/if}
                 <DateSelector
-                    hasError={errorData?.applCloseDate}
-                    name="applCloseDate"
+                    hasError={errorData?.examApplicationCloseDate}
+                    name="examApplicationCloseDate"
                     handleDateChange
                     label="Tarikh Tutup Permohonan"
-                    bind:selectedDate={applCloseDate}
+                    bind:selectedDate={examApplicationCloseDate}
                 ></DateSelector>
-                {#if errorData?.applCloseDate}
+                {#if errorData?.examApplicationCloseDate}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.applCloseDate[0]}</span
+                        >{errorData?.examApplicationCloseDate[0]}</span
                     >
                 {/if}
                 <DateSelector
@@ -198,3 +213,5 @@
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+
+<Toaster />
