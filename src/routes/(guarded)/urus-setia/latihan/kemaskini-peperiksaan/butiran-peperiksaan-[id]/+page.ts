@@ -2,10 +2,10 @@ import { mockExams } from '$lib/mocks/latihan/mockExams.js';
 // import { z } from 'zod';
 
 export async function load({ params }) {
-    const data: IntExams[] = await mockExams;
+    const data: IntExams[] = mockExams;
 
     const currentExam: IntExams | undefined = data.find(
-        (exam) => exam.id === Number(params.id),
+        (exam) => exam.id === params.id,
     );
 
     if (!currentExam) throw new Error('Record not found');
