@@ -28,6 +28,7 @@
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
+    import TestTable from '$lib/components/table/TestTable.svelte';
     import { lantikanKeGredTable } from '$lib/mocks/kakitangan/pengesahan/lantikan-ke-gred/lantikan-ke-gred-table';
     import { melebihi3TahunTable } from '$lib/mocks/kakitangan/pengesahan/melebihi-tempoh-3-tahun/melebihi-tempoh-3-tahun-table';
     import { lantikanBaruTable } from '$lib/mocks/kakitangan/pengesahan/pengesahan-lantikan-baru/lantikan-baru-table';
@@ -35,6 +36,7 @@
     import { status } from '$lib/mocks/status/status';
     import IconButton from '$lib/components/buttons/IconButton.svelte';
     import type { fromJSON } from 'postcss';
+    import { TableBodyRow } from 'flowbite-svelte';
 
     let selectedStatus = status[0].value;
     let selectedPos: string = positions[0].value;
@@ -75,7 +77,7 @@
             <SectionHeader title="Senarai Kakitangan"></SectionHeader>
             <ComplexTable title="">
                 <CxTableHead>
-                    <CxTableRow>
+                    <CxTableRow headerColor>
                         <CxTableHeadCell rowSize={2} title="Bil."/>
                         <CxTableHeadCell rowSize={2} title="No. Pekerja"/>
                         <CxTableHeadCell rowSize={2} title="Nama Pekerja"/>
@@ -89,7 +91,7 @@
                         <CxTableHeadCell rowSize={2} title="Status"/>
                         <CxTableHeadCell rowSize={2} title=""/>
                     </CxTableRow>
-                    <CxTableRow>
+                    <CxTableRow headerColor>
                         <CxTableHeadCell title="Program Transformasi Media"/>
                         <CxTableHeadCell columnSize={2} title="Peperiksaan JPA Bahagian A/B"/>
                         <CxTableHeadCell columnSize={3} title="Peperiksaan Jabatan Bahagian II/III,IV"/>
@@ -125,188 +127,29 @@
                         </CxTableDataCell>
                         <CxTableDataCell value={item.status}/>
                         <CxTableDataCell><IconButton
-                            onClick={() => alert("function here")}>
+                            onClick={() => {
+                                if (item.status === 'Baru')
+                            goto(
+                                '/urus-setia/perjawatan/pengesahan-dalam-perkhidmatan/butiran-pengesahan-lantikan-baru/baru',
+                            );
+                        else if (
+                            item.status ===
+                            'DIPERAKU - Pengarah Negeri/Bahagian'
+                        )
+                            goto(
+                                '/urus-setia/perjawatan/pengesahan-dalam-perkhidmatan/butiran-pengesahan-lantikan-baru/diperaku-pengarah-negeri-bahagian',
+                            );
+                        else if (item.status === 'Selesai')
+                            goto(
+                                '/urus-setia/perjawatan/pengesahan-dalam-perkhidmatan/butiran-pengesahan-lantikan-baru/selesai',
+                            );                            
+                            }}>
                                 <SvgEdit/>
                         </IconButton></CxTableDataCell>
                     </CxTableRow>
                     {/each}
                 </CxTableBody>
             </ComplexTable>
-
-            <div
-                class="flex max-h-full w-full flex-col items-start justify-start"
-            >
-                <!-- <DynamicTable
-                    tableItems={lantikanBaruTable}
-                    withActions
-                    actionOptions={['detail']}
-                    detailActions={() => {
-                        if (passData.status === 'Baru')
-                            goto('/urus-setia/perjawatan/pengesahan-dalam-perkhidmatan/butiran-pengesahan-lantikan-baru/baru');
-                        else if (passData.status === 'DIPERAKU - Pengarah Negeri/Bahagian')
-                            goto('/urus-setia/perjawatan/pengesahan-dalam-perkhidmatan/butiran-pengesahan-lantikan-baru/diperaku-pengarah-negeri-bahagian');
-                        else if (passData.status === 'Selesai')
-                            goto('/urus-setia/perjawatan/pengesahan-dalam-perkhidmatan/butiran-pengesahan-lantikan-baru/selesai');
-                    }}
-                    bind:passData
-                ></DynamicTable> -->
-
-                <!-- DataTable -->
-
-                <!-- <DataTable title="">
-                    <DtTableHead>
-                        <DtTableHeadCell title="Bil. " />
-                        <DtTableHeadCell title="No. Pekerja" />
-                        <DtTableHeadCell title="Nama Pekerja" />
-                        <DtTableHeadCell title="No. Kad Pengenalan" />
-                        <DtTableHeadCell
-                            title="Jawatan Pertama Dilantik Di Lembaga"
-                        />
-                        <DtTableHeadCell title="Tarikh Lantikan" />
-                        <DtTableHeadCell title="Jawatan Semasa" />
-                        <DtTableHeadCell title="Penempatan Semasa" />
-
-                        
-                
-                            <div class="px-6 py-2 text-center border">
-                                <span class="text-center text-sm font-bold text-txt-secondary">
-                                    Peperiksaan Perkhidmatan/Kursus Induksi
-                                </span>
-                            </div>
-                                <div class="flex">
-                                <DtTableHeadCell
-                                    title="Program Transformasi Minda"
-                                ></DtTableHeadCell>
-                                <DtTableHeadCell
-                                    title="Peperiksaan JPA Bahagian A/B"
-                                />
-                                <DtTableHeadCell
-                                    title="Peperiksaan Jabatan Bahagian II/III,IV"
-                                />
-                                <DtTableHeadCell title="ISAC" />
-                                <DtTableHeadCell title="ISAC (PTSU)" />
-                            </div>
-
-                        <DtTableHeadCell title="LNPT" />
-                        <DtTableHeadCell title="Status" />
-                        <DtTableHeadCell></DtTableHeadCell>
-                    </DtTableHead>
-                    <DtTableBody>
-                        {#each lantikanBaruTable as item, i (i)}
-                            <DtTableRow>
-                                <DtTableDataCell value={i + 1} />
-                                <DtTableDataCell value={item.employeeId} />
-                                <DtTableDataCell value={item.employeeName} />
-                                <DtTableDataCell value={item.idNumber} />
-                                <DtTableDataCell
-                                    value={item.jawatanPertamaDilantikDiLembaga}
-                                />
-                                <DtTableDataCell value={item.tarikhLantikan} />
-                                <DtTableDataCell value={item.jawatanSemasa} />
-                                <DtTableDataCell
-                                    value={item.penempatanSemasa}
-                                />
-                                
-                                <td class="p-2 cursor-pointer text-gray-900 dark:text-white whitespace-nowrap border px-3 py-2 text-center text-sm font-medium">
-                                    <div class="flex w-full">
-                                        <div class="flex h-full flex-row items-center justify-center">
-                                            {item.employeeName}
-                                        </div>
-                                        <div class="flex h-full flex-row items-center justify-center">
-                                            {item.employeeName}
-                                        </div>
-                                    </div>
-                                    
-                                </td>
-                                <DtTableDataCell>
-                                    {#if item.LNPT === true}
-                                        <SvgCheck />
-                                    {:else}
-                                        <SvgXMark />
-                                    {/if}
-                                </DtTableDataCell>
-                                <DtTableDataCell value={item.status} />
-                                <DtTableDataCell>
-                                    <IconButton
-                                    onClick={() => alert("function here")}>
-                                        <SvgEdit/>
-                                    </IconButton>
-                                </DtTableDataCell>
-                            </DtTableRow>
-                        {/each}
-                    </DtTableBody>
-                </DataTable> -->
-                <div
-                class="flex h-full max-h-full w-full flex-col justify-start overflow-x-hidden"
-                >
-                <div class="h-full max-h-full w-full overflow-x-auto overflow-y-auto">
-                <div class="h-fit bg-bgr-primary">
-                    <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-                        <thead class="text-xs uppercase text-gray-700 dark:text-gray-400 bg-gray-50 dark:bg-gray-700">
-                            <tr class="border-b last:border-b-0 bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
-                                <th class="py-2 text-center border px-2.5" rowspan="2">Bil.</th>
-                                <th class="py-2 text-center border px-2.5" rowspan="2">No. Pekerja</th>
-                                <th class="py-2 text-center border px-2.5" rowspan="2">Nama Pekerja</th>
-                                <th class="py-2 text-center border px-2.5" rowspan="2"><div class="flex flex-row items-center justify-center gap-1"><span class="text-center text-sm font-bold text-txt-secondary">No. Kad Pengenalan</span></div></th>
-                                <th class="py-2 text-center border px-2.5" rowspan="2">Jawatan Pertaman Dilantik Di Lembaga</th>
-                                <th class="py-2 text-center border px-2.5" rowspan="2">Tarikh Lantikan</th>
-                                <th class="py-2 text-center border px-2.5" rowspan="2">Jawatan Semasa</th>
-                                <th class="py-2 text-center border px-2.5" rowspan="2">Penempatan Semasa</th>
-                                <th class="py-2 text-center border px-2.5" colspan="8">Peperiksaan Perkhidmatan/Kursus Induksi</th>
-                                <th class="py-2 text-center border px-2.5" rowspan="2">LNPT</th>
-                                <th class="py-2 text-center border px-2.5" rowspan="2">Status</th>
-                                <th class="py-2 text-center border px-2.5" rowspan="2"></th>
-                            </tr>
-                            <tr>
-                                <th class="py-2 text-center border px-2.5">Program Transformasi Media</th>
-                                <th class="py-2 text-center border px-2.5" colspan="2">Peperiksaan JPA Bahagian A/B</th>
-                                <th class="py-2 text-center border px-2.5" colspan="3">Peperiksaan Jabatan Bahagian II/III,IV</th>
-                                <th class="py-2 text-center border px-2.5">ISAC</th>
-                                <th class="py-2 text-center border px-2.5">ISAC (PTSU)</th>
-                            </tr>
-                        </thead>
-                        <tbody class="h-fit">
-                            {#each lantikanBaruTable as item, i(i)}
-                            <tr class="border-b last:border-b-0 bg-white dark:bg-gray-800 dark:border-gray-700">
-                                <td class="p-2 cursor-pointer text-gray-900 dark:text-white whitespace-nowrap border px-3 py-2 text-center text-sm font-medium">{i+1}</td>
-                                <td class="p-2 cursor-pointer text-gray-900 dark:text-white whitespace-nowrap border px-3 py-2 text-center text-sm font-medium">{item.employeeId}</td>
-                                <td class="p-2 cursor-pointer text-gray-900 dark:text-white whitespace-nowrap border px-3 py-2 text-center text-sm font-medium"><div class="flex h-full flex-row items-center justify-center">{item.employeeName}</div></td>
-                                <td class="p-2 cursor-pointer text-gray-900 dark:text-white whitespace-nowrap border px-3 py-2 text-center text-sm font-medium">{item.idNumber}</td>
-                                <td class="p-2 cursor-pointer text-gray-900 dark:text-white whitespace-nowrap border px-3 py-2 text-center text-sm font-medium">{item.jawatanPertamaDilantikDiLembaga}</td>
-                                <td class="p-2 cursor-pointer text-gray-900 dark:text-white whitespace-nowrap border px-3 py-2 text-center text-sm font-medium">{item.tarikhLantikan}</td>
-                                <td class="p-2 cursor-pointer text-gray-900 dark:text-white whitespace-nowrap border px-3 py-2 text-center text-sm font-medium">{item.jawatanSemasa}</td>
-                                <td class="p-2 cursor-pointer text-gray-900 dark:text-white whitespace-nowrap border px-3 py-2 text-center text-sm font-medium">{item.penempatanSemasa}</td>
-                                <td class="p-2 cursor-pointer text-gray-900 dark:text-white whitespace-nowrap border px-3 py-2 text-center text-sm font-medium"><div class="flex h-full flex-row items-center justify-center"><SvgCheck/></div></td>
-                                <td class="p-2 cursor-pointer text-gray-900 dark:text-white whitespace-nowrap border px-3 py-2 text-center text-sm font-medium"><div class="flex h-full flex-row items-center justify-center"><SvgCheck/></div></td>
-                                <td class="p-2 cursor-pointer text-gray-900 dark:text-white whitespace-nowrap border px-3 py-2 text-center text-sm font-medium"><div class="flex h-full flex-row items-center justify-center"><SvgCheck/></div></td>
-                                <td class="p-2 cursor-pointer text-gray-900 dark:text-white whitespace-nowrap border px-3 py-2 text-center text-sm font-medium"><div class="flex h-full flex-row items-center justify-center"><SvgCheck/></div></td>
-                                <td class="p-2 cursor-pointer text-gray-900 dark:text-white whitespace-nowrap border px-3 py-2 text-center text-sm font-medium"><div class="flex h-full flex-row items-center justify-center"><SvgXMark/></div></td>
-                                <td class="p-2 cursor-pointer text-gray-900 dark:text-white whitespace-nowrap border px-3 py-2 text-center text-sm font-medium"><div class="flex h-full flex-row items-center justify-center"><SvgCheck/></div></td>
-                                <td class="p-2 cursor-pointer text-gray-900 dark:text-white whitespace-nowrap border px-3 py-2 text-center text-sm font-medium"><div class="flex h-full flex-row items-center justify-center"><SvgCheck/></div></td>
-                                <td class="p-2 cursor-pointer text-gray-900 dark:text-white whitespace-nowrap border px-3 py-2 text-center text-sm font-medium"><div class="flex h-full flex-row items-center justify-center"><SvgCheck/></div></td>
-                                <td class="p-2 cursor-pointer text-gray-900 dark:text-white whitespace-nowrap border px-3 py-2 text-center text-sm font-medium"><div class="flex h-full flex-row items-center justify-center">
-                                    {#if item.LNPT === true}
-                                    <SvgCheck/>
-                                    {:else}
-                                    <SvgXMark/>
-                                    {/if}
-                                </div>
-                                </td>
-                                <td class="p-2 cursor-pointer text-gray-900 dark:text-white whitespace-nowrap border px-3 py-2 text-center text-sm font-medium">{item.status}</td>
-                                <td class="p-2 cursor-pointer text-gray-900 dark:text-white whitespace-nowrap border px-3 py-2 text-center text-sm font-medium">
-                                    <IconButton
-                                        onClick={() => alert("function here")}>
-                                            <SvgEdit/>
-                                    </IconButton>
-                                </td>
-                            </tr>
-                            {/each}
-                        </tbody>
-                    </table>
-                </div>
-                </div>
-                </div>
-            </div>
         </CustomTabContent>
         <CustomTabContent title="Pengesahan Yang Melebihi Tempoh 3 Tahun">
             <FilterContainer>
@@ -331,7 +174,7 @@
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
-                <DynamicTable
+                <!-- <DynamicTable
                     tableItems={melebihi3TahunTable}
                     withActions
                     actionOptions={['detail']}
@@ -353,7 +196,7 @@
                             );
                     }}
                     bind:passData
-                ></DynamicTable>
+                ></DynamicTable> -->
             </div>
         </CustomTabContent>
         <CustomTabContent
@@ -382,7 +225,7 @@
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
-                <DynamicTable
+                <!-- <TestTable
                     tableItems={lantikanKeGredTable}
                     withActions
                     actionOptions={['detail']}
@@ -404,7 +247,30 @@
                             );
                     }}
                     bind:passData
-                ></DynamicTable>
+                ></TestTable> -->
+                <TestTable
+                    tableItems={lantikanBaruTable}
+                    withActions
+                    actionOptions={['detail']}
+                    detailActions={() => {
+                        if (passData.status === 'Baru')
+                            goto(
+                                '/urus-setia/perjawatan/pengesahan-dalam-perkhidmatan/butiran-pengesahan-latihan-ke-gred/baru',
+                            );
+                        else if (
+                            passData.status ===
+                            'DIPERAKU - Pengarah Negeri/Bahagian'
+                        )
+                            goto(
+                                '/urus-setia/perjawatan/pengesahan-dalam-perkhidmatan/butiran-pengesahan-latihan-ke-gred/diperaku-pengarah-negeri-bahagian',
+                            );
+                        else if (passData.status === 'Selesai')
+                            goto(
+                                '/urus-setia/perjawatan/pengesahan-dalam-perkhidmatan/butiran-pengesahan-latihan-ke-gred/selesai',
+                            );
+                    }}
+                    bind:passData
+                ></TestTable>
             </div>
         </CustomTabContent>
     </CustomTab>
