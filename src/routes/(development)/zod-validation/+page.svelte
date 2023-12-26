@@ -1,27 +1,14 @@
 <script lang="ts">
-    import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
-    import Stepper from '$lib/components/stepper/Stepper.svelte';
-    import StepperContent from '$lib/components/stepper/StepperContent.svelte';
-    import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
-    import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
-    import FormButton from '$lib/components/buttons/FormButton.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
-    import { goto } from '$app/navigation';
-    import { fail, type SubmitFunction } from '@sveltejs/kit';
     import toast, { Toaster } from 'svelte-french-toast';
     import { z, ZodError } from 'zod';
-    import { onMount } from 'svelte';
-    import { mockExams } from '$lib/mocks/latihan/mockExams.js';
-    import { page } from '$app/stores';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import { Checkbox } from 'flowbite-svelte';
-    // import { z } from 'zod';
     export let data;
-    let activeStepper = 0;
 
     const options: RadioOption[] = [
         {
@@ -34,28 +21,14 @@
         },
     ];
 
-    let isExPoliceSoldier = '';
     let isChecked: boolean = false;
 
-    // export let form;
-    // let currentData: IntExams;
-    const getExams = async () => {
-        const data: IntExams[] = await mockExams;
-
-        const currentDataData: IntExams | undefined = data.find(
-            (exam) => exam.id === $page.params.id,
-        );
-
-        if (!currentDataData) return fail(404, { missing: true });
-
-        return {
-            currentDataData,
-        };
-    };
-
-    // z validation schema for the exam form fields=========================================================
+    // =================================================================================
+    // z validation schema for the example form fields==================================
+    // =================================================================================
     let errorData: any;
 
+    // date common schema
     const dateScheme = z.coerce
         .date({
             errorMap: (issue, { defaultError }) => ({
@@ -69,9 +42,9 @@
             message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
         });
 
-    const examFormSchema = z.object({
+    const exampleFormSchema = z.object({
         // checkbox schema
-        radioButtonExample: z.enum(['1', '2', '3', '4'], {
+        radioButtonExample: z.enum(['true', 'false'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
                     issue.code === 'invalid_enum_value'
@@ -80,74 +53,78 @@
             }),
         }),
         checkboxExample: z.enum(['on'], {
-            required_error: 'Sila tandakan kotak semak.',
-        }),
-        selectOptionExample: z.enum(['perkhidmatan', 'psl'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
                     issue.code === 'invalid_enum_value'
-                        ? 'Jenis latihan perlu dipilih.'
+                        ? 'Sila tandakan kotak semak.'
+                        : defaultError,
+            }),
+        }),
+        selectOptionExample: z.enum(['1', '2', '3', '4'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
                         : defaultError,
             }),
         }),
         textFieldExample: z
-            .string({ required_error: 'Tajuk latihan tidak boleh kosong.' })
-            .min(4, { message: 'Tajuk hendaklah lebih daripada 4 karakter.' })
-            .max(124, { message: 'Tajuk tidak boleh melebihi 124 karakter.' })
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
             .trim(),
         dateSelectorExample: dateScheme,
-        examApplicationCloseDate: dateScheme,
-        examDate: dateScheme,
         longTextExample: z
-            .string({ required_error: 'Lokasi tidak boleh kosong.' })
-            .min(4, { message: 'Lokasi hendaklah lebih daripada 4 karakter.' })
-            .max(124, { message: 'Lokasi tidak boleh melebihi 124 karakter.' })
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
             .trim(),
     });
 
+    // =================================================================================
+    // submit form function==================================
+    // =================================================================================
     const submitForm = async (event: Event) => {
-        // toast.success('Berjaya disimpan!');
-
         const formData = new FormData(event.target as HTMLFormElement);
         const selectOptionExampleSelector = document.getElementById(
             'selectOptionExample',
         ) as HTMLSelectElement;
-        console.log('HERE', formData.get('checkboxExample'));
 
-        const examFormData = {
-            selectOptionExample: String(selectOptionExampleSelector.value),
+        const exampleFormData = {
             radioButtonExample: String(formData.get('radioButtonExample')),
+            checkboxExample: String(formData.get('checkboxExample')),
+            selectOptionExample: String(selectOptionExampleSelector.value),
             textFieldExample: String(formData.get('textFieldExample')),
             dateSelectorExample: String(formData.get('dateSelectorExample')),
-            examApplicationCloseDate: String(
-                formData.get('examApplicationCloseDate'),
-            ),
-            examDate: String(formData.get('examDate')),
             longTextExample: String(formData.get('longTextExample')),
         };
-        // console.log(examFormData);
         try {
-            const result = examFormSchema.parse(examFormData);
+            const result = exampleFormSchema.parse(exampleFormData);
             if (result) {
                 errorData = [];
                 toast.success('Berjaya disimpan!', {
                     style: 'background: #333; color: #fff;',
                 });
-                if (formData.get('id') !== data.record.currentData.id) {
-                    // window.history.back();
-                } else {
-                    console.log(
-                        formData.get('id') +
-                            ' has already existed => ' +
-                            data.record.currentData.id,
-                    );
-                }
+
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData = { ...exampleFormData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedExamFormData),
+                );
             }
         } catch (err: unknown) {
             if (err instanceof ZodError) {
                 const { fieldErrors: errors } = err.flatten();
                 errorData = errors;
-                const { ...rest } = formData;
                 console.log('ERROR!', err.flatten());
                 toast.error(
                     'Sila pastikan maklumat adalah lengkap dengan tepat.',
@@ -162,7 +139,7 @@
 
 <div class="flex flex-col gap-y-5 p-5">
     <div
-        class="flex flex-row items-center justify-between rounded border-2 p-2.5"
+        class="flex flex-row items-center justify-between rounded border-2 border-system-accent p-2.5"
     >
         <p class="text-base font-bold">Zod validation example</p>
         <TextIconButton primary label="Simpan" form="formValidation" />
@@ -200,10 +177,7 @@
                 <label for="checkboxExample" class="w-[220px] text-sm"
                     >Checkbox Input</label
                 >
-                <Checkbox
-                    color={errorData?.checkboxExample ? 'red' : 'primary'}
-                    name="checkboxExample"
-                    bind:checked={isChecked}
+                <Checkbox name="checkboxExample" bind:checked={isChecked}
                     >You have to agree! Check the box on the left.</Checkbox
                 >
             </div>
@@ -234,6 +208,8 @@
                     >{errorData?.selectOptionExample[0]}</span
                 >
             {/if}
+
+            <!-- Text Field options -->
             <TextField
                 hasError={errorData?.textFieldExample}
                 name="textFieldExample"
@@ -247,6 +223,8 @@
                     >{errorData?.textFieldExample[0]}</span
                 >
             {/if}
+
+            <!-- Date Selector options -->
             <DateSelector
                 hasError={errorData?.dateSelectorExample}
                 name="dateSelectorExample"
@@ -260,6 +238,8 @@
                     >{errorData?.dateSelectorExample[0]}</span
                 >
             {/if}
+
+            <!-- Text Area options -->
             <LongTextField
                 hasError={errorData?.longTextExample}
                 name="longTextExample"
@@ -276,4 +256,5 @@
     </div>
 </div>
 
+<!-- Svelte French Toast UI Component -->
 <Toaster />
