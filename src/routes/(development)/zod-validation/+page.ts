@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 
-interface IDataTest {
+export interface IDataTest {
     id: string;
     radioChosen: string;
     isAgreed: string;
@@ -14,9 +14,9 @@ const mockTest: IDataTest[] = [
         id: 'string',
         radioChosen: '',
         isAgreed: '',
-        textInput: 'EZ',
+        textInput: 'You',
         formDate: '',
-        address: 'GG!',
+        address: 'Go!',
     },
 ];
 
