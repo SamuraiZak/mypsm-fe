@@ -11,17 +11,14 @@
     import { examTypes } from '$lib/mocks/latihan/mockExamTypes.js';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
-    import { goto } from '$app/navigation';
+    import { goto, invalidateAll } from '$app/navigation';
     import toast, { Toaster } from 'svelte-french-toast';
-    import { ZodError, z } from 'zod';
-    import { mockExams } from '$lib/mocks/latihan/mockExams';
-    // export let data: PageData;
-    // export let form;
+    import { z } from 'zod';
     let activeStepper = 0;
-    let disabled = true;
-    let selected: any = '';
 
-    // z validation schema for the exam form fields=========================================================
+    // =====================================================================================
+    // z validation schema for the exam form fields=========================================
+    // =====================================================================================
     let examType: string = '';
     let examTitle: string = '';
     let examApplicationOpenDate: string = '';
@@ -42,7 +39,6 @@
         .min(new Date(), {
             message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
         });
-
     const examFormSchema = z.object({
         examType: z.enum(['perkhidmatan', 'psl'], {
             errorMap: (issue, { defaultError }) => ({
@@ -54,28 +50,60 @@
         }),
         examTitle: z
             .string({ required_error: 'Tajuk latihan tidak boleh kosong.' })
-            .min(4, { message: 'Tajuk hendaklah lebih daripada 4 karakter.' })
+            .min(4, {
+                message: 'Tajuk hendaklah lebih daripada 4 karakter.',
+            })
             .max(84, { message: 'Tajuk tidak boleh melebihi 84 karakter.' })
             .trim(),
         examApplicationOpenDate: dateScheme,
-        examApplicationCloseDate: dateScheme,
-        examDate: dateScheme,
+        examApplicationCloseDate: dateScheme.refine(
+            (data) => data >= new Date(examApplicationOpenDate),
+            {
+                message:
+                    'Tarikh tutup tidak boleh lebih awal daripada tarikh buka permohonan',
+            },
+        ),
+        examDate: dateScheme.refine(
+            (data) => data >= new Date(examApplicationCloseDate),
+            {
+                message:
+                    'Tarikh peperiksaan tidak boleh lebih awal daripada tarikh tutup permohonan',
+            },
+        ),
         examLocation: z
             .string({ required_error: 'Lokasi tidak boleh kosong.' })
-            .min(4, { message: 'Lokasi hendaklah lebih daripada 4 karakter.' })
-            .max(124, { message: 'Lokasi tidak boleh melebihi 124 karakter.' })
+            .min(4, {
+                message: 'Lokasi hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Lokasi tidak boleh melebihi 124 karakter.',
+            })
             .trim(),
     });
 
-    const submitExamForm = async () => {
+    // =====================================================================================
+    // exam form fields submit function=====================================================
+    // =====================================================================================
+    const submitExamForm = async (event: Event) => {
+        const formElement = event.target as HTMLFormElement;
+        const formData = new FormData(formElement);
+        const examTypeSelector = document.getElementById(
+            'examType',
+        ) as HTMLSelectElement;
+
         const examFormData = {
-            examType,
-            examTitle,
-            examApplicationOpenDate,
-            examApplicationCloseDate,
-            examDate,
-            examLocation,
+            examType: String(examTypeSelector.value),
+            examTitle: String(formData.get('examTitle')),
+            examApplicationOpenDate: String(
+                formData.get('examApplicationOpenDate'),
+            ),
+            examApplicationCloseDate: String(
+                formData.get('examApplicationCloseDate'),
+            ),
+            examDate: String(formData.get('examDate')),
+            examLocation: String(formData.get('examLocation')),
         };
+
         try {
             const result = examFormSchema.parse(examFormData);
             if (result) {
@@ -84,20 +112,25 @@
                 const id = crypto.randomUUID().toString();
                 const validatedExamFormData: IntExams = { ...examFormData, id };
 
-                console.log('SUCCESS!', JSON.stringify(validatedExamFormData));
+                console.log(JSON.stringify(validatedExamFormData));
 
-                mockExams.push(validatedExamFormData);
-                window.history.back();
-                toast.success('Berjaya disimpan!');
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                await invalidateAll();
             }
         } catch (err: unknown) {
-            if (err instanceof ZodError) {
+            if (err instanceof z.ZodError) {
                 const { fieldErrors: errors } = err.flatten();
                 errorData = errors;
                 toast.error(
                     'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
                 );
-                console.log('ERROR!', JSON.stringify(errorData));
+                console.log('ERROR!', errorData);
             }
         }
     };
@@ -134,7 +167,7 @@
                 <DropdownSelect
                     hasError={errorData?.examType}
                     dropdownType="label-left-full"
-                    name="examType"
+                    id="examType"
                     label="Jenis Peperiksaan"
                     bind:value={examType}
                     options={examTypes}

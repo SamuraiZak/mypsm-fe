@@ -12,49 +12,14 @@
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import { goto } from '$app/navigation';
-    import { fail, type SubmitFunction } from '@sveltejs/kit';
     import toast, { Toaster } from 'svelte-french-toast';
-    import { z, ZodError } from 'zod';
-    import { onMount } from 'svelte';
-    import { mockExams } from '$lib/mocks/latihan/mockExams.js';
-    import { page } from '$app/stores';
-    import RadioSingle from '$lib/components/input/RadioSingle.svelte';
-    import { Checkbox } from 'flowbite-svelte';
-    // import { z } from 'zod';
+    import { z } from 'zod';
     export let data;
     let activeStepper = 0;
 
-    const options: RadioOption[] = [
-        {
-            value: 'true',
-            label: 'YA',
-        },
-        {
-            value: 'false',
-            label: 'TIDAK',
-        },
-    ];
-
-    let isExPoliceSoldier = '';
-    let isChecked: boolean = false;
-
-    // export let form;
-    // let currentExam: IntExams;
-    const getExams = async () => {
-        const data: IntExams[] = await mockExams;
-
-        const currentExamData: IntExams | undefined = data.find(
-            (exam) => exam.id === $page.params.id,
-        );
-
-        if (!currentExamData) return fail(404, { missing: true });
-
-        return {
-            currentExamData,
-        };
-    };
-
-    // z validation schema for the exam form fields=========================================================
+    // =========================================================================
+    // z validation schema for the exam form fields=============================
+    // =========================================================================
     let errorData: any;
 
     const dateScheme = z.coerce
@@ -71,36 +36,38 @@
         });
 
     const examFormSchema = z.object({
-        isSoldier: z.enum(['true', 'false'], {
+        examType: z.enum(['perkhidmatan', 'psl'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
                     issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
+                        ? 'Jenis latihan perlu dipilih.'
                         : defaultError,
             }),
         }),
-        checkDay: z.enum(['on'], {
-            required_error: 'Sila tandakan kotak semak.',
-        }),
-        // examType: z.enum(['perkhidmatan', 'psl'], {
-        //     errorMap: (issue, { defaultError }) => ({
-        //         message:
-        //             issue.code === 'invalid_enum_value'
-        //                 ? 'Jenis latihan perlu dipilih.'
-        //                 : defaultError,
-        //     }),
-        // }),
-        // examType: z
-        //     .string({ required_error: 'Tajuk latihan tidak boleh kosong.' })
-        //     .min(1, { message: 'Jenis latihan perlu dipilih.' }),
         examTitle: z
             .string({ required_error: 'Tajuk latihan tidak boleh kosong.' })
             .min(4, { message: 'Tajuk hendaklah lebih daripada 4 karakter.' })
             .max(124, { message: 'Tajuk tidak boleh melebihi 124 karakter.' })
             .trim(),
         examApplicationOpenDate: dateScheme,
-        examApplicationCloseDate: dateScheme,
-        examDate: dateScheme,
+        examApplicationCloseDate: dateScheme.refine(
+            (value) =>
+                value >=
+                new Date(data.record.currentExam.examApplicationOpenDate),
+            {
+                message:
+                    'Tarikh tutup tidak boleh lebih awal daripada tarikh buka permohonan',
+            },
+        ),
+        examDate: dateScheme.refine(
+            (value) =>
+                value >=
+                new Date(data.record.currentExam.examApplicationCloseDate),
+            {
+                message:
+                    'Tarikh peperiksaan tidak boleh lebih awal daripada tarikh tutup permohonan',
+            },
+        ),
         examLocation: z
             .string({ required_error: 'Lokasi tidak boleh kosong.' })
             .min(4, { message: 'Lokasi hendaklah lebih daripada 4 karakter.' })
@@ -108,18 +75,17 @@
             .trim(),
     });
 
+    // =========================================================================
+    // exam form fields submit function=========================================
+    // =========================================================================
     const submitExamForm = async (event: Event) => {
-        // toast.success('Berjaya disimpan!');
-
         const formData = new FormData(event.target as HTMLFormElement);
         const examTypeSelector = document.getElementById(
             'examType',
         ) as HTMLSelectElement;
-        console.log('HERE', formData.get('checkDay'));
 
         const examFormData = {
             examType: String(examTypeSelector.value),
-            isSoldier: String(formData.get('isSoldier')),
             examTitle: String(formData.get('examTitle')),
             examApplicationOpenDate: String(
                 formData.get('examApplicationOpenDate'),
@@ -130,30 +96,20 @@
             examDate: String(formData.get('examDate')),
             examLocation: String(formData.get('examLocation')),
         };
-        // console.log(examFormData);
+
         try {
             const result = examFormSchema.parse(examFormData);
+            // const currentExamId = String(formData.get('id'));
             if (result) {
                 errorData = [];
                 toast.success('Berjaya disimpan!', {
                     style: 'background: #333; color: #fff;',
                 });
-                if (formData.get('id') !== data.record.currentExam.id) {
-                    // window.history.back();
-                } else {
-                    console.log(
-                        formData.get('id') +
-                            ' has already existed => ' +
-                            data.record.currentExam.id,
-                    );
-                }
             }
         } catch (err: unknown) {
-            if (err instanceof ZodError) {
+            if (err instanceof z.ZodError) {
                 const { fieldErrors: errors } = err.flatten();
                 errorData = errors;
-                const { ...rest } = formData;
-                console.log('ERROR!', err.flatten());
                 toast.error(
                     'Sila pastikan maklumat adalah lengkap dengan tepat.',
                     {
@@ -197,36 +153,6 @@
                     bind:value={data.record.currentExam.id}
                 />
 
-                <RadioSingle
-                    disabled={false}
-                    {options}
-                    name="isSoldier"
-                    legend={'Radio Button'}
-                    bind:userSelected={isExPoliceSoldier}
-                ></RadioSingle>
-                {#if errorData?.isSoldier}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.isSoldier[0]}</span
-                    >
-                {/if}
-                <div class="flex flex-row">
-                    <label for="checkDay" class="w-[220px] text-sm"
-                        >Checkbox</label
-                    >
-                    <Checkbox
-                        color={errorData?.checkDay ? 'red' : 'primary'}
-                        name="checkDay"
-                        bind:checked={isChecked}
-                        >You have to agree! Check the box on the left.</Checkbox
-                    >
-                </div>
-                {#if errorData?.checkDay}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.checkDay[0]}</span
-                    >
-                {/if}
                 <DropdownSelect
                     hasError={errorData?.examType}
                     dropdownType="label-left-full"
