@@ -1,3 +1,19 @@
+<!-- -------------------------------------Note:----------------------------------- -->
+<!-- This is a zod validation example with a toast component (Svelte frence toast) -->
+<!-- To show red borders on the input field when error is detected, -->
+<!-- use the 'hasError' prop on each of the field -->
+<!-- ----------------------------------------------------------------------------- -->
+<!-- ----------------------------------------------------------------------------- -->
+<!-- To show the error message, put the following code below the input field: -->
+<!-- {#if errorData.accessor}-->
+<!--    <span -->
+<!--        class="ml-[220px] font-sans text-sm italic text-system-danger"> -->
+<!--        {errorData?.errorMessage[0]} -->
+<!--    </span> -->
+<!-- {/if}  -->
+<!-- ----------------------------------------------------------------------------- -->
+<!-- ----------------------------------------------------------------------------- -->
+
 <script lang="ts">
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
@@ -90,7 +106,7 @@
     });
 
     // =================================================================================
-    // submit form function==================================
+    // submit form function=============================================================
     // =================================================================================
     const submitForm = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);

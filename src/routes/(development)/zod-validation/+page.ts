@@ -1,3 +1,5 @@
+// a module to exports the load function that fetches data for the +page.svelte.
+
 import { error } from '@sveltejs/kit';
 
 export interface IDataTest {
