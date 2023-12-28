@@ -199,4 +199,18 @@
         label="Tindakan"
         {onClick}
     />
+{:else if type === 'failed'}
+    <GeneralButton
+        buttonType="red"
+        pathD="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+        label="Tidak LULUS"
+        {onClick}
+    />
+{:else if type === 'passed'}
+    <GeneralButton
+        buttonType="green"
+        pathD="M4 14L9 19L20 8M6 8.88889L9.07692 12L16 5"
+        label="LULUS"
+        {onClick}
+    />
 {/if}

@@ -263,7 +263,10 @@ const dictionary: { [key: string]: string } = {
     newGrade: 'Gred Baharu',
     newPlacement: 'Penempatan Baru',
     currentPlacement: 'Penempatan Sekarang',
-    applicantID: 'ID Pemohon',
+    applicantID: 'No. Pemohon',
+    applicantName: 'Nama Pemohon',
+    applicantType: 'Jenis Pemohon',
+    applicationType: 'Jenis Permohonan',
     applicationResult: 'Keputusan Permohonan',
     staffName: 'Nama Kakitangan',
     scheme: 'Skim',
@@ -271,7 +274,8 @@ const dictionary: { [key: string]: string } = {
     workAllowancePosition: 'Jawatan yang Ditanggung Kerja',
     workAllowancePlacement: 'Penempatan yang Ditanggung kerja',
     result: 'Keputusan',
-    peperiksaanPerkhidmatanKursusInduksi: 'Peperiksaan Perkhidmatan/Kursus Induksi',
+    peperiksaanPerkhidmatanKursusInduksi:
+        'Peperiksaan Perkhidmatan/Kursus Induksi',
 
     //cuti
     gcrToBeCollected: 'GCR Untuk Dikumpul',
@@ -371,6 +375,8 @@ const dictionary: { [key: string]: string } = {
     //Pinjaman dan Kuarters
     loanStartDate: 'Tarikh Mula Pinjaman',
     loanEndDate: 'Tarikh Tamat Pinjaman',
+    quartersEntryDate: 'Tarikh Masuk Kuarter',
+    unitAndQuarter: 'Unit Dan Kuarter',
 
     // Add more dictionary here...
     LNPT: 'LNPT',
@@ -415,6 +421,8 @@ const dictionary: { [key: string]: string } = {
     // Audit
     usernameId: 'No. Pengguna',
     module: 'Modul',
-    subModule: "Sub-Modul",
+    subModule: 'Sub-Modul',
     setemMasa: 'Setem Masa',
+
+    // GCR
 };

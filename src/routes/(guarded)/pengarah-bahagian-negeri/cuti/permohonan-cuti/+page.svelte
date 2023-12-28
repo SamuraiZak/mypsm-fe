@@ -7,14 +7,10 @@
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { goto } from '$app/navigation';
     import StaffSelector from '$lib/components/staff-selector/StaffSelector.svelte';
-    import { tahun } from '$lib/mocks/ketua-seksyen/cuti/tahun';
     import { jenisCuti } from '$lib/mocks/ketua-pengarah/cuti/jenis-cuti';
     import { permohonanCuti } from '$lib/mocks/pengarah-bahagian-negeri/cuti/permohonan-cuti/permohonan-cuti';
-    import SvgMinusCircle from '$lib/assets/svg/SvgMinusCircle.svelte';
-    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
-    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import { Select } from 'flowbite-svelte';
-    import SvgArrowDownTail from '$lib/assets/svg/SvgArrowDownTail.svelte';
+    import FormButton from '$lib/components/buttons/FormButton.svelte';
 
     let selectedJenisCuti = jenisCuti[0].value;
 </script>
@@ -130,15 +126,11 @@
     <ContentHeader
         title="Tindakan: Tetapkan untuk semua kakitangan berkaitan."
         description=""
-        ><TextIconButton label="Tidak Lulus" onClick={() => {}}>
-            <SvgMinusCircle />
-        </TextIconButton>
-        <TextIconButton primary label="Lulus" onClick={() => {}}>
-            <SvgCheck />
-        </TextIconButton></ContentHeader
+        ><FormButton type="failed"></FormButton><FormButton type="passed"
+        ></FormButton></ContentHeader
     >
     <SectionHeader title="Senarai Cuti-Cuti Kakitangan"></SectionHeader>
-    <div class="flex max-h-full w-full flex-col items-start justify-start">
+    <div class="flex max-h-full w-full flex-col items-start justify-start overflow-x-auto overflow-y-auto">
         <DynamicTable
             hasCheckbox
             tableItems={permohonanCuti}
