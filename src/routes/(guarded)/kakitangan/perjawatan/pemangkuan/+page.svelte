@@ -1,12 +1,9 @@
 <script lang="ts">
-    import OptionButton from '$lib/components/buttons/OptionButton.svelte';
+    import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
-    import CustomTable from '$lib/components/table/CustomTable.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
-    import { mockActingBatch } from '$lib/mocks/database/mockActingBatch';
 
     // TODO: Get list of pemangkuan records
 
@@ -29,6 +26,23 @@
         },
     ];
 
+    let pemangkuanRecords = [
+        {
+            idPemangkuan: 'PMGK-1234',
+            tarikhTawaran: '01/08/2023',
+            gred: 'N32',
+            jawatan: 'Setiausaha Pejabat',
+            keputusanPemangkuan: 'Belum Dikemaskini',
+        },
+        {
+            idPemangkuan: 'PMGK-1234',
+            tarikhTawaran: '01/08/2023',
+            gred: 'N32',
+            jawatan: 'Setiausaha Pejabat',
+            keputusanPemangkuan: 'Belum Dikemaskini',
+        },
+    ]
+
     let currentData: any = {};
 
     let editMode = false;
@@ -36,9 +50,13 @@
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader
+    <!-- <ContentHeader
         title="Pemangkuan"
         description="Hal-hal berkaitan urusan pemangkuan"
+    ></ContentHeader> -->
+    <ContentHeader
+        title="Pemangkuan"
+        description="Sila semak senarai tawaran yang diberikan dan lihat butiran untuk tindakan seterusnya"
     ></ContentHeader>
 </section>
 
@@ -47,12 +65,13 @@
 <section
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
 >
-    <CustomTab>
+    <!-- <CustomTab> -->
         <!-- Sejarah Pemangkuan -->
         <CustomTabContent title="Sejarah Pemangkuan">
-            <SectionHeader
+            <!-- <SectionHeader
                 subTitle="Senarai rekod pemangkuan yang berkenaan dengan anda"
-            ></SectionHeader>
+            ></SectionHeader> -->
+            <SectionHeader title="Senarai Tawaran Pemangkuan"/>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
@@ -61,45 +80,18 @@
                     actionOptions={['edit']}
                     bind:passData={currentData}
                     editActions={() => {
-                        editMode = true;
+                        // editMode = true;
+                        goto('/kakitangan/perjawatan/pemangkuan/butiran')
                     }}
-                    tableItems={sejarahPemangkuan}
+                    tableItems={pemangkuanRecords}
                     columnKeys={[
-                        'kodJawatanMemangku',
-                        'gelaranJawatanMemangku',
-                        'tarikhKuatkuasa',
-                        'tarikhCukupTempohPemangkuan',
-                        'status',
+                        'idPemangkuan',
+                        'tarikhTawaran',
+                        'gred',
+                        'jawatan',
+                        'keputusanPemangkuan',
                     ]}
                 ></DynamicTable>
             </div>
         </CustomTabContent>
-
-        <!-- Gred Flexi 41 -->
-        <CustomTabContent title="Tawaran Pemangkuan Baru">
-            <SectionHeader
-                subTitle="Semak dan kemaskini maklumat anda untuk melanjutkan proses pemangkuan yang tersebut"
-            ></SectionHeader>
-            <div
-                class="flex max-h-full w-full flex-col items-start justify-start"
-            >
-                <DynamicTable
-                    withActions
-                    actionOptions={['edit']}
-                    bind:passData={currentData}
-                    editActions={() => {
-                        editMode = true;
-                    }}
-                    tableItems={sejarahPemangkuan}
-                    columnKeys={[
-                        'kodJawatanMemangku',
-                        'gelaranJawatanMemangku',
-                        'tarikhKuatkuasa',
-                        'tarikhCukupTempohPemangkuan',
-                        'status',
-                    ]}
-                ></DynamicTable>
-            </div>
-        </CustomTabContent>
-    </CustomTab>
 </section>
