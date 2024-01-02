@@ -5,8 +5,6 @@
     import { goto } from '$app/navigation';
     import { Select } from 'flowbite-svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
-    import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import IconButton from '$lib/components/buttons/IconButton.svelte';
     import DataTable from '$lib/components/data-table/DataTable.svelte';
     import DtTableBody from '$lib/components/data-table/DtTableBody.svelte';
@@ -18,6 +16,7 @@
     import { sejarahTuntutan } from '$lib/mocks/klinik-panel/sejarah-tuntutan';
     import SvgEllipsisCircle from '$lib/assets/svg/SvgEllipsisCircle.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
+
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -135,15 +134,11 @@
                             <DtTableDataCell>
                                 <IconButton
                                     onClick={() => {
-                                        if (item.status === 'Selesai') {
-                                            goto(
-                                                '/klinik-panel/sejarah-tuntutan/selesai',
-                                            );
-                                        } else if (item.status === 'Ditolak') {
-                                            goto(
-                                                '/klinik-panel/sejarah-tuntutan/ditolak',
-                                            );
-                                        }
+                                        const $selectedPatientTreatmentId =
+                                            '111111-11-1111';
+                                        goto(
+                                            '/klinik-panel/sejarah-tuntutan/butiran-sejarah-tuntutan',
+                                        );
                                     }}
                                     ><SvgEllipsisCircle
                                     ></SvgEllipsisCircle></IconButton

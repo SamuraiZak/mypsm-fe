@@ -1,22 +1,15 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
-    import SvgAddCircle from '$lib/assets/svg/SvgAddCircle.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
     import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
-
     import ComplexTable from '$lib/components/complex-table/ComplexTable.svelte';
     import CxTableBody from '$lib/components/complex-table/CxTableBody.svelte';
     import CxTableDataCell from '$lib/components/complex-table/CxTableDataCell.svelte';
     import CxTableHead from '$lib/components/complex-table/CxTableHead.svelte';
     import CxTableHeadCell from '$lib/components/complex-table/CxTableHeadCell.svelte';
     import CxTableRow from '$lib/components/complex-table/CxTableRow.svelte';
-
-    import SvgExcel from '$lib/assets/svg/SvgExcel.svelte';
-    import SvgPDF2 from '$lib/assets/svg/SvgPDF2.svelte';
-    import IconButton from '$lib/components/buttons/IconButton.svelte';
-    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import FilterContainer from '$lib/components/filter-container/FilterContainer.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
@@ -24,13 +17,11 @@
     import StaffSelector from '$lib/components/staff-selector/StaffSelector.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
-    import DynamicTable from '$lib/components/table/DynamicTable.svelte';
-    import { lantikanKeGredTable } from '$lib/mocks/kakitangan/pengesahan/lantikan-ke-gred/lantikan-ke-gred-table';
-    import { melebihi3TahunTable } from '$lib/mocks/kakitangan/pengesahan/melebihi-tempoh-3-tahun/melebihi-tempoh-3-tahun-table';
+    // import TestTable from '$lib/components/table/TestTable.svelte';
     import { lantikanBaruTable } from '$lib/mocks/kakitangan/pengesahan/pengesahan-lantikan-baru/lantikan-baru-table';
     import { positions } from '$lib/mocks/positions/positions';
     import { status } from '$lib/mocks/status/status';
-    import type { fromJSON } from 'postcss';
+    import IconButton from '$lib/components/buttons/IconButton.svelte';
 
     let selectedStatus = status[0].value;
     let selectedPos: string = positions[0].value;

@@ -9,9 +9,15 @@
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
+    import { selectedPatientTreatmentId } from '$lib/stores/globalState';
+    import { maklumatBilRawatan } from '$lib/mocks/klinik-panel/maklumat-bil-rawatan';
+    import SectionHeader from '$lib/components/header/SectionHeader.svelte';
+    import TreatmentList from '$lib/components/klinik-panel/TreatmentList.svelte';
 
-    export let disabled: boolean = true;
+    $selectedPatientTreatmentId;
 
+    let selectedPatientDetail: IStaffPatient | undefined;
+    let staffDetail: any;
     let selectedDate = new Date();
 
     function handleDateChange(event: any) {
@@ -22,6 +28,58 @@
             year: 'numeric',
         });
         console.log(formattedDate);
+    }
+
+    export let disabled: boolean = true;
+
+    export const mockPatients: IPatient = {
+        1: {
+            patient: 'Alyaa Binti Samad',
+            noKP: '121111-11-1111',
+            treatment: {
+                1: {
+                    treatment: 'Demam',
+                    amount: '1000',
+                },
+                2: {
+                    treatment: 'Selesema',
+                    amount: '1000',
+                },
+            },
+        },
+        2: {
+            patient: 'Danial',
+            noKP: '131111-11-1112',
+            treatment: {
+                1: {
+                    treatment: 'Fever',
+                    amount: '1000',
+                },
+                2: {
+                    treatment: 'Flu',
+                    amount: '1000',
+                },
+            },
+        },
+    };
+
+    export const mockStaffPatient: IStaffPatient[] = [
+        {
+            name: 'Ali',
+            noKp: '111111-11-1111',
+            patients: mockPatients,
+        },
+    ];
+
+    $: {
+        staffDetail = maklumatBilRawatan.find(
+            (mock) => mock.noKP === $selectedPatientTreatmentId,
+        );
+        selectedPatientDetail = mockStaffPatient.find(
+            (mock) => mock.noKp === String(selectedPatientTreatmentId),
+        );
+        console.log($selectedPatientTreatmentId);
+        if (!staffDetail) console.log('TIDAK WUJUD!');
     }
 </script>
 
@@ -69,7 +127,7 @@
                         {disabled}
                         id="noKP"
                         label={'No. K/P'}
-                        value={'111111-11-1111'}
+                        value={'781y2712'}
                     ></TextField>
                     <TextField
                         {disabled}
@@ -115,16 +173,27 @@
             >
         </StepperContent>
         <StepperContent>
-            <StepperContentHeader title="Dokumen Rawatan"
+            <StepperContentHeader title="Dokumen Rawatan/Ubat"
             ></StepperContentHeader>
             <StepperContentBody>
                 <div class="flex w-full flex-col gap-2">
-                    <TextField
-                        {disabled}
-                        id="jumlah"
-                        label={'Jumlah (RM)'}
-                        value={'423.00'}
-                    ></TextField>
+                    <div class="flex w-full flex-col gap-2">
+                        {#each Object.entries(mockPatients) as [key, result], index}
+                            <div
+                                class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
+                            >
+                                <SectionHeader
+                                    color="system-primary"
+                                    title="Pesakit #{key}: {result.patient}"
+                                ></SectionHeader>
+                                <hr />
+                                <TreatmentList
+                                    {key}
+                                    bind:treatmentData={result.treatment}
+                                />
+                            </div>
+                        {/each}
+                    </div>
                 </div>
             </StepperContentBody>
         </StepperContent>

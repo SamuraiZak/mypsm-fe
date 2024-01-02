@@ -14,8 +14,8 @@
     import { selectedPatientTreatmentId } from '$lib/stores/globalState';
     import { maklumatBilRawatan } from '$lib/mocks/klinik-panel/maklumat-bil-rawatan';
 
-    export let disabled: boolean = true;
     $selectedPatientTreatmentId;
+
     let selectedPatientDetail: IStaffPatient | undefined;
     let staffDetail: any;
     let selectedDate = new Date();
@@ -29,6 +29,8 @@
         });
         console.log(formattedDate);
     }
+
+    export let disabled: boolean = true;
 
     export const mockPatients: IPatient = {
         1: {
