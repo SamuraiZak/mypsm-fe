@@ -662,30 +662,31 @@
                 <p class={stepperFormTitleClass}>Maklumat Perkhidmatan</p>
                 <TextField
                     disabled={false}
-                    name="gredSemasa"
+                    name="currentGrade"
                     label={'Gred Semasa'}
                     value={data.record.currentEmployeeGrade.code}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    name="jawatan"
+                    name="position"
                     label={'Jawatan'}
                     value={data.record.currentEmployeePosition.name}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    name="penempatan"
+                    name="placement"
                     label={'Penempatan'}
                     value={data.record.currentEmployeeService.placement}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    name="tarafPerkhidmatan"
+                    name="serviceLevel"
                     label={'Taraf Perkhidmatan'}
                     value={data.record.currentEmployeeServiceType.name}
                 ></TextField>
                 <DateSelector
                     {handleDateChange}
+                    name="currentEmploymentDateOfEffect"
                     disabled={false}
                     label={'Tarikh Kuatkuasa Lantikan Semasa'}
                     selectedDate={dateFormatter(
@@ -694,25 +695,26 @@
                 ></DateSelector>
                 <RadioSingle
                     disabled={false}
+                    name="pensionBenefits"
                     options={faedahPersaraanOptions}
                     legend={'Faedah Persaraan'}
                     bind:userSelected={isKWSP}
                 ></RadioSingle>
                 <TextField
                     disabled={false}
-                    name="noKWSP"
+                    name="kwspNumber"
                     label={'No. KWSP'}
                     value={'1234-5678-9012'}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    name="noSOCSO"
+                    name="socsoNumber"
                     label={'No. SOCSO'}
                     value={'1234-5678-9012'}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    name="noCukai"
+                    name="taxNumber"
                     label={'No. Cukai (LHDN)'}
                     value={'1234-5678-9012'}
                 ></TextField>
@@ -724,7 +726,7 @@
                 ></TextField>
                 <TextField
                     disabled={false}
-                    name="noAkaun"
+                    name="accountNumber"
                     label={'No. Akaun'}
                     value={'1234-5678-9012'}
                 ></TextField>
@@ -736,7 +738,7 @@
                 ></TextField>
                 <TextField
                     disabled={false}
-                    name="kelayakanCuti"
+                    name="leaveEntitlement"
                     label={'Kelayakan Cuti'}
                     value={getEmployeeLeave(
                         data.record.currentEmployee.employeeNumber,
@@ -745,6 +747,7 @@
 
                 <DateSelector
                     {handleDateChange}
+                    name="govEmploymentHiredDate"
                     disabled={false}
                     label={'Mula Dilantik Perkhidmatan Kerajaan'}
                     selectedDate={dateFormatter(
@@ -753,6 +756,7 @@
                 ></DateSelector>
                 <DateSelector
                     {handleDateChange}
+                    name="lkimEmploymentHiredDate"
                     disabled={false}
                     label={'Mula Dilantik Perkhidmatan LKIM'}
                     selectedDate={dateFormatter(
@@ -761,6 +765,7 @@
                 ></DateSelector>
                 <DateSelector
                     {handleDateChange}
+                    name="currentEmploymentHiredDate"
                     disabled={false}
                     label={'Mula Dilantik Perkhidmatan Sekarang'}
                     selectedDate={dateFormatter(
@@ -769,6 +774,7 @@
                 ></DateSelector>
                 <DateSelector
                     {handleDateChange}
+                    name="confirmedFirstLkimPositionData"
                     disabled={false}
                     label={'Disahkan Dalam Jawatan Pertama LKIM'}
                     selectedDate={dateFormatter(
@@ -777,6 +783,7 @@
                 ></DateSelector>
                 <DateSelector
                     {handleDateChange}
+                    name="confirmedCurrentLkimPositionData"
                     disabled={false}
                     label={'Disahkan Dalam Jawatan Semasa LKIM'}
                     selectedDate={dateFormatter(
@@ -806,6 +813,7 @@
                 </AccordianField>
                 <DateSelector
                     {handleDateChange}
+                    name="approvedPreviousServiceMergingDate"
                     disabled={false}
                     label={'Tarikh Kelulusan Percantuman Perkhidmatan Lepas'}
                     selectedDate={dateFormatter(
@@ -814,42 +822,43 @@
                 ></DateSelector>
                 <TextField
                     disabled={false}
-                    name="pemangkuanSekarang"
+                    name="currentActing"
                     label={'Pemangkuan Sekarang'}
                     value={'-'}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    name="tanggungKerjaSekarang"
+                    name="currentInterim"
                     label={'Tanggung Kerja Sekarang'}
                     value={'-'}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    name="skimPencen"
+                    name="pensionScheme"
                     label={'Skim Pencen'}
                     value={'-'}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    name="kenaikanGajiAkhir"
+                    name="finalIncreament"
                     label={'Kenaikan Gaji Akhir'}
                     value={'-'}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    name="kenaikanPangkatAkhir"
+                    name="finalPromotion"
                     label={'Kenaikan Pangkat Akhir'}
                     value={'-'}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    name="bulanKGT"
+                    name="kgtMonth"
                     label={'Bulan KGT'}
                     value={'-'}
                 ></TextField>
                 <DateSelector
                     {handleDateChange}
+                    name="retirementDate"
                     disabled={false}
                     label={'Tarikh Bersara'}
                     selectedDate={dateFormatter(
@@ -863,19 +872,19 @@
                     <div class="space-y-2.5">
                         <TextField
                             disabled={false}
-                            name="tarikhBerkuatkuasa"
+                            name="salaryDateOfEffect"
                             label={'Tarikh Berkuatkuasa'}
                             value={'12/12/2021'}
                         ></TextField>
                         <TextField
                             disabled={false}
-                            name="tanggaGaji"
+                            name="salaryBenchmark"
                             label={'Tangga Gaji'}
                             value={currencyFormatter(1234.56)}
                         ></TextField>
                         <TextField
                             disabled={false}
-                            name="gajiPokok"
+                            name="salary"
                             label={'Gaji Pokok'}
                             value={currencyFormatter(1234.56)}
                         ></TextField>
@@ -939,7 +948,7 @@
                     >
                 </div>
                 <LongTextField
-                    name="supporter-remark"
+                    name="employmentSecretary"
                     label="Tindakan/Ulasan"
                     value=""
                 ></LongTextField>
