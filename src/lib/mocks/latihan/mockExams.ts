@@ -22,7 +22,7 @@ export const mockExams: IntExams[] = [
     },
     {
         id: '3',
-        examTitle: 'Profesional',
+        examTitle: 'Profesional Gemilang',
         examType: 'psl',
         examApplicationOpenDate: '2024-01-12',
         examApplicationCloseDate: '2024-01-13',
