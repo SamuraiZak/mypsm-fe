@@ -11,20 +11,18 @@
     import { examTypes } from '$lib/mocks/latihan/mockExamTypes.js';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
-    import { goto } from '$app/navigation';
-    import toast from 'svelte-french-toast';
+    import { goto, invalidateAll } from '$app/navigation';
+    import toast, { Toaster } from 'svelte-french-toast';
     import { z } from 'zod';
-    // export let data: PageData;
-    // export let form;
     let activeStepper = 0;
-    let disabled = true;
-    let selected: any = '';
 
-    // z validation schema for the exam form fields=========================================================
+    // =====================================================================================
+    // z validation schema for the exam form fields=========================================
+    // =====================================================================================
     let examType: string = '';
     let examTitle: string = '';
-    let applOpenDate: string = '';
-    let applCloseDate: string = '';
+    let examApplicationOpenDate: string = '';
+    let examApplicationCloseDate: string = '';
     let examDate: string = '';
     let examLocation: string = '';
     let errorData: any;
@@ -41,7 +39,6 @@
         .min(new Date(), {
             message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
         });
-
     const examFormSchema = z.object({
         examType: z.enum(['perkhidmatan', 'psl'], {
             errorMap: (issue, { defaultError }) => ({
@@ -53,37 +50,88 @@
         }),
         examTitle: z
             .string({ required_error: 'Tajuk latihan tidak boleh kosong.' })
-            .min(4, { message: 'Tajuk hendaklah lebih daripada 4 karakter.' })
+            .min(4, {
+                message: 'Tajuk hendaklah lebih daripada 4 karakter.',
+            })
             .max(84, { message: 'Tajuk tidak boleh melebihi 84 karakter.' })
             .trim(),
-        applOpenDate: dateScheme,
-        applCloseDate: dateScheme,
-        examDate: dateScheme,
+        examApplicationOpenDate: dateScheme,
+        examApplicationCloseDate: dateScheme.refine(
+            (data) => data >= new Date(examApplicationOpenDate),
+            {
+                message:
+                    'Tarikh tutup tidak boleh lebih awal daripada tarikh buka permohonan',
+            },
+        ),
+        examDate: dateScheme.refine(
+            (data) => data >= new Date(examApplicationCloseDate),
+            {
+                message:
+                    'Tarikh peperiksaan tidak boleh lebih awal daripada tarikh tutup permohonan',
+            },
+        ),
         examLocation: z
             .string({ required_error: 'Lokasi tidak boleh kosong.' })
-            .min(4, { message: 'Lokasi hendaklah lebih daripada 4 karakter.' })
-            .max(124, { message: 'Lokasi tidak boleh melebihi 124 karakter.' })
+            .min(4, {
+                message: 'Lokasi hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Lokasi tidak boleh melebihi 124 karakter.',
+            })
             .trim(),
     });
 
-    const submitExamForm = async () => {
-        toast.success('Berjaya disimpan!');
+    // =====================================================================================
+    // exam form fields submit function=====================================================
+    // =====================================================================================
+    const submitExamForm = async (event: Event) => {
+        const formElement = event.target as HTMLFormElement;
+        const formData = new FormData(formElement);
+        const examTypeSelector = document.getElementById(
+            'examType',
+        ) as HTMLSelectElement;
 
         const examFormData = {
-            examType,
-            examTitle,
-            applOpenDate,
-            applCloseDate,
-            examDate,
-            examLocation,
+            examType: String(examTypeSelector.value),
+            examTitle: String(formData.get('examTitle')),
+            examApplicationOpenDate: String(
+                formData.get('examApplicationOpenDate'),
+            ),
+            examApplicationCloseDate: String(
+                formData.get('examApplicationCloseDate'),
+            ),
+            examDate: String(formData.get('examDate')),
+            examLocation: String(formData.get('examLocation')),
         };
+
         try {
             const result = examFormSchema.parse(examFormData);
-            console.log('SUCCESS!', result);
+            if (result) {
+                errorData = [];
+
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData: IntExams = { ...examFormData, id };
+
+                console.log(JSON.stringify(validatedExamFormData));
+
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                await invalidateAll();
+            }
         } catch (err: unknown) {
-            const { fieldErrors: errors } = (err as Error).flatten();
-            errorData = errors;
-            console.log('ERROR!', errorData);
+            if (err instanceof z.ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+                console.log('ERROR!', errorData);
+            }
         }
     };
 </script>
@@ -119,7 +167,7 @@
                 <DropdownSelect
                     hasError={errorData?.examType}
                     dropdownType="label-left-full"
-                    name="examType"
+                    id="examType"
                     label="Jenis Peperiksaan"
                     bind:value={examType}
                     options={examTypes}
@@ -144,29 +192,29 @@
                     >
                 {/if}
                 <DateSelector
-                    hasError={errorData?.applOpenDate}
-                    name="applOpenDate"
+                    hasError={errorData?.examApplicationOpenDate}
+                    name="examApplicationOpenDate"
                     handleDateChange
                     label="Tarikh Mula Permohonam"
-                    bind:selectedDate={applOpenDate}
+                    bind:selectedDate={examApplicationOpenDate}
                 ></DateSelector>
-                {#if errorData?.applOpenDate}
+                {#if errorData?.examApplicationOpenDate}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.applOpenDate[0]}</span
+                        >{errorData?.examApplicationOpenDate[0]}</span
                     >
                 {/if}
                 <DateSelector
-                    hasError={errorData?.applCloseDate}
-                    name="applCloseDate"
+                    hasError={errorData?.examApplicationCloseDate}
+                    name="examApplicationCloseDate"
                     handleDateChange
                     label="Tarikh Tutup Permohonan"
-                    bind:selectedDate={applCloseDate}
+                    bind:selectedDate={examApplicationCloseDate}
                 ></DateSelector>
-                {#if errorData?.applCloseDate}
+                {#if errorData?.examApplicationCloseDate}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.applCloseDate[0]}</span
+                        >{errorData?.examApplicationCloseDate[0]}</span
                     >
                 {/if}
                 <DateSelector
@@ -198,3 +246,5 @@
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+
+<Toaster />

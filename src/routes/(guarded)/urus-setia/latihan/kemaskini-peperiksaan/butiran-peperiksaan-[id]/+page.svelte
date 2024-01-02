@@ -12,33 +12,14 @@
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import { goto } from '$app/navigation';
-    import { fail, type SubmitFunction } from '@sveltejs/kit';
-    import toast from 'svelte-french-toast';
+    import toast, { Toaster } from 'svelte-french-toast';
     import { z } from 'zod';
-    import { onMount } from 'svelte';
-    import { mockExams } from '$lib/mocks/latihan/mockExams.js';
-    import { page } from '$app/stores';
-    // import { z } from 'zod';
     export let data;
     let activeStepper = 0;
 
-    // export let form;
-    // let currentExam: IntExams;
-    const getExams = async () => {
-        const data: IntExams[] = await mockExams;
-
-        const currentExamData: IntExams | undefined = data.find(
-            (exam) => exam.id === Number($page.params.id),
-        );
-
-        if (!currentExamData) return fail(404, { missing: true });
-
-        return {
-            currentExamData,
-        };
-    };
-
-    // z validation schema for the exam form fields=========================================================
+    // =========================================================================
+    // z validation schema for the exam form fields=============================
+    // =========================================================================
     let errorData: any;
 
     const dateScheme = z.coerce
@@ -66,11 +47,27 @@
         examTitle: z
             .string({ required_error: 'Tajuk latihan tidak boleh kosong.' })
             .min(4, { message: 'Tajuk hendaklah lebih daripada 4 karakter.' })
-            .max(84, { message: 'Tajuk tidak boleh melebihi 84 karakter.' })
+            .max(124, { message: 'Tajuk tidak boleh melebihi 124 karakter.' })
             .trim(),
         examApplicationOpenDate: dateScheme,
-        examApplicationCloseDate: dateScheme,
-        examDate: dateScheme,
+        examApplicationCloseDate: dateScheme.refine(
+            (value) =>
+                value >=
+                new Date(data.record.currentExam.examApplicationOpenDate),
+            {
+                message:
+                    'Tarikh tutup tidak boleh lebih awal daripada tarikh buka permohonan',
+            },
+        ),
+        examDate: dateScheme.refine(
+            (value) =>
+                value >=
+                new Date(data.record.currentExam.examApplicationCloseDate),
+            {
+                message:
+                    'Tarikh peperiksaan tidak boleh lebih awal daripada tarikh tutup permohonan',
+            },
+        ),
         examLocation: z
             .string({ required_error: 'Lokasi tidak boleh kosong.' })
             .min(4, { message: 'Lokasi hendaklah lebih daripada 4 karakter.' })
@@ -78,21 +75,48 @@
             .trim(),
     });
 
+    // =========================================================================
+    // exam form fields submit function=========================================
+    // =========================================================================
     const submitExamForm = async (event: Event) => {
-        toast.success('Berjaya disimpan!');
-
         const formData = new FormData(event.target as HTMLFormElement);
-        console.log(formData.get('examType'));
-        console.log(Object.fromEntries(formData));
-        try {
-            const result = examFormSchema.parse(Object.fromEntries(formData));
+        const examTypeSelector = document.getElementById(
+            'examType',
+        ) as HTMLSelectElement;
 
-            console.log('SUCCESS!', result);
+        const examFormData = {
+            examType: String(examTypeSelector.value),
+            examTitle: String(formData.get('examTitle')),
+            examApplicationOpenDate: String(
+                formData.get('examApplicationOpenDate'),
+            ),
+            examApplicationCloseDate: String(
+                formData.get('examApplicationCloseDate'),
+            ),
+            examDate: String(formData.get('examDate')),
+            examLocation: String(formData.get('examLocation')),
+        };
+
+        try {
+            const result = examFormSchema.parse(examFormData);
+            // const currentExamId = String(formData.get('id'));
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+            }
         } catch (err: unknown) {
-            const { fieldErrors: errors } = (err as Error).flatten();
-            errorData = errors;
-            const { ...rest } = formData;
-            // console.log('ERROR!', err.flatten());
+            if (err instanceof z.ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
         }
     };
 </script>
@@ -122,10 +146,17 @@
                 on:submit|preventDefault={submitExamForm}
                 class="flex w-full flex-col gap-2"
             >
+                <input
+                    type="text"
+                    name="id"
+                    hidden
+                    bind:value={data.record.currentExam.id}
+                />
+
                 <DropdownSelect
                     hasError={errorData?.examType}
-                    name="examType"
                     dropdownType="label-left-full"
+                    id="examType"
                     label="Jenis Peperiksaan"
                     bind:value={data.record.currentExam.examType}
                     options={examTypes}
@@ -206,3 +237,5 @@
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+
+<Toaster />
