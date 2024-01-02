@@ -22,6 +22,11 @@
     import { positions } from '$lib/mocks/positions/positions';
     import { status } from '$lib/mocks/status/status';
     import IconButton from '$lib/components/buttons/IconButton.svelte';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import SvgPdf2 from '$lib/assets/svg/SvgPDF2.svelte';
+    import SvgExcel from '$lib/assets/svg/SvgExcel.svelte';
+    import { lantikanKeGredTable } from '$lib/mocks/kakitangan/pengesahan/lantikan-ke-gred/lantikan-ke-gred-table';
+    import { melebihi3TahunTable } from '$lib/mocks/kakitangan/pengesahan/melebihi-tempoh-3-tahun/melebihi-tempoh-3-tahun-table';
 
     let selectedStatus = status[0].value;
     let selectedPos: string = positions[0].value;
@@ -61,7 +66,7 @@
 
             <SectionHeader title="Senarai Kakitangan">
                 <TextIconButton label="" primary
-                    ><SvgPDF2></SvgPDF2>
+                    ><SvgPdf2></SvgPdf2>
                 </TextIconButton>
                 <TextIconButton label="" primary
                     ><SvgExcel></SvgExcel>
@@ -187,7 +192,7 @@
             </FilterContainer>
             <SectionHeader title="Senarai Kakitangan">
                 <TextIconButton label="" primary
-                    ><SvgPDF2></SvgPDF2>
+                    ><SvgPdf2></SvgPdf2>
                 </TextIconButton>
                 <TextIconButton label="" primary
                     ><SvgExcel></SvgExcel>
@@ -342,7 +347,7 @@
             </FilterContainer>
             <SectionHeader title="Senarai Rekod Kumpulan Persaraan Lain-lain">
                 <TextIconButton label="" primary
-                    ><SvgPDF2></SvgPDF2>
+                    ><SvgPdf2></SvgPdf2>
                 </TextIconButton>
                 <TextIconButton label="" primary
                     ><SvgExcel></SvgExcel>
