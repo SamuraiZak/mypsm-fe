@@ -1,6 +1,5 @@
 <script lang="ts">
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
-    import DateSelector from '$lib/components/input/DateSelector.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
@@ -10,6 +9,7 @@
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
+    import RadioSingle from '$lib/components/input/RadioSingle.svelte';
 
     export let disabled: boolean = true;
 
@@ -24,11 +24,12 @@
         console.log(formattedDate);
     }
 
-    let activeClasses =
-        'text-system-primary text-sm h-full px-4 border-b-2 border-system-primary';
-
-    let stepperFormTitleClass =
-        'w-full h-fit mt-2 bg-bgr-primary text-system-primary text-sm font-medium';
+    const options: RadioOption[] = [
+        {
+            value: 'false',
+            label: 'Meninggal Dunia',
+        },
+    ];
 </script>
 
 <ContentHeader
@@ -49,11 +50,8 @@
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2">
                 <p class="text-sm font-bold">Maklumat Kakitangan</p>
-                <TextField
-                    {disabled}
-                    label={'Jenis Kakitangan'}
-                    value={'• Meninggal Dunia'}
-                ></TextField>
+                <RadioSingle {disabled} legend="Jenis Kakitangan" {options}
+                ></RadioSingle>
                 <TextField
                     {disabled}
                     id="nama"
@@ -99,13 +97,17 @@
                 primary
                 label="Hantar"
                 onClick={() => {
-                    goto('/urus-setia/cuti/pengeluaran-gantian-cuti-rehat-awal');
+                    goto(
+                        '/urus-setia/cuti/pengeluaran-gantian-cuti-rehat-awal',
+                    );
                 }}><SvgPaperAirplane /></TextIconButton
             ></StepperContentHeader
         >
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2">
-                <p class="text-sm font-bold">Butiran Gantian Cuti Rehat (GCR) Sedia Ada</p>
+                <p class="text-sm font-bold">
+                    Butiran Gantian Cuti Rehat (GCR) Sedia Ada
+                </p>
                 <TextField
                     {disabled}
                     id="jumlahGcrTerkumpul"

@@ -130,6 +130,7 @@
                 >
                     {#each senaraiTuntutan as item, index}
                         <DynamicAccordionForm
+                            hasDelete
                             header="Tuntutan #{index + 1}"
                             open
                             ><div

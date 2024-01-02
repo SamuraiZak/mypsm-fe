@@ -8,6 +8,8 @@
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import { Select } from 'flowbite-svelte';
     import { permohonanKuarters } from '$lib/mocks/pengarah-bahagian-negeri/pinjaman/permohonan-kuarters';
+
+    let passData: any;
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -108,14 +110,27 @@
         class="flex max-h-full w-full flex-col items-start justify-start overflow-x-auto overflow-y-auto"
     >
         <DynamicTable
-            hasCheckbox
             tableItems={permohonanKuarters}
             withActions
             actionOptions={['detail']}
             detailActions={() => {
-                ''
+                if (
+                    passData.applicationType[0] === 'Permohonan Masuk' &&
+                    passData.applicationType[1] === '(Kakitangan LKIM)'
+                ) {
+                    goto(
+                        '/pengarah-bahagian-negeri/pinjaman/permohonan-kuarters/butiran-permohonan-kuarters/masuk',
+                    );
+                } else if (
+                    passData.applicationType[0] === 'Permohonan Keluar' &&
+                    passData.applicationType[1] === '(Kakitangan LKIM)'
+                ) {
+                    goto(
+                        '/pengarah-bahagian-negeri/pinjaman/permohonan-kuarters/butiran-permohonan-kuarters/keluar',
+                    );
+                }
             }}
-            
+            bind:passData
         ></DynamicTable>
     </div>
 </section>

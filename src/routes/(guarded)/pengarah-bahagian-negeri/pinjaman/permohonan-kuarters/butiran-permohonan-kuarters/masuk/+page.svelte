@@ -3,12 +3,9 @@
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
-    import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import { onMount } from 'svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
-    import { senaraiPeperiksaanPerkhidmatan } from '$lib/mocks/urus-setia/pengesahan/pengesahan-lantikan-ke-gred/senarai-peperiksaan-perkhidmatan';
-    import { tapisanTatatertib } from '$lib/mocks/pengarah-bahagian-negeri/pengesahan/tapisan-tatatertib';
     import { goto } from '$app/navigation';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
@@ -16,37 +13,17 @@
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
-    import DataTable from '$lib/components/data-table/DataTable.svelte';
-    import DtTableHead from '$lib/components/data-table/DtTableHead.svelte';
-    import DtTableHeadCell from '$lib/components/data-table/DtTableHeadCell.svelte';
-    import DtTableBody from '$lib/components/data-table/DtTableBody.svelte';
-    import DtTableRow from '$lib/components/data-table/DtTableRow.svelte';
-    import DtTableDataCell from '$lib/components/data-table/DtTableDataCell.svelte';
-    import IconButton from '$lib/components/buttons/IconButton.svelte';
-    import SvgPdf from '$lib/assets/svg/SvgPDF.svelte';
-    import { Badge, Tooltip } from 'flowbite-svelte';
+    import { Badge, Radio } from 'flowbite-svelte';
     import DownloadAttachment from '$lib/components/input/DownloadAttachment.svelte';
 
     export let disabled: boolean = true;
-    export let selectedFiles: any = [];
     let target: any;
     let appealMeetingResult: string = 'pass';
+    let kadarBayaran = '3';
 
     onMount(() => {
         target = document.getElementById('hello');
     });
-
-    function handleOnChange() {
-        const files = target.files;
-        if (files) {
-            for (let i = 0; i < files.length; i++) {
-                selectedFiles.push(files[i]);
-            }
-        }
-    }
-    function handleDelete(index: number) {
-        selectedFiles.splice(index, 1);
-    }
 
     let selectedDate = new Date();
     function handleDateChange(event: any) {
@@ -58,8 +35,6 @@
         });
         console.log(formattedDate);
     }
-
-    let radioValue: any = 'ya';
 
     const appealMeetingOptions: RadioOption[] = [
         {
@@ -82,64 +57,6 @@
             label: 'Agensi / Jabatan Luar',
         },
     ];
-
-    const decisionOptions: RadioOption[] = [
-        {
-            value: 'sah',
-            label: 'Sah',
-        },
-        {
-            value: 'tidakSah',
-            label: 'Tidak Sah',
-        },
-    ];
-
-    const perakukanOptions: RadioOption[] = [
-        {
-            value: 'perakukan',
-            label: 'Perakukan',
-        },
-        {
-            value: 'tidakPerakukan',
-            label: 'Tidak Perakukan',
-        },
-    ];
-
-    function currencyFormatter(amount: number) {
-        const formatter = new Intl.NumberFormat('ms-MY', {
-            style: 'currency',
-            currency: 'MYR',
-        });
-        return formatter.format(Number(amount)).toString();
-    }
-    let tooltipContent: string = '';
-    const itkaTooltip: string = 'ITKA bermaksud ...';
-    const itpTooltip: string = 'ITP bermaksud ...';
-    const epwTooltip: string = 'EPW bermaksud ...';
-    const colaTooltip: string = 'COLA bermaksud ...';
-    // function to assign the content  of the tooltip
-    function assignContent(ev: CustomEvent<HTMLDivElement>) {
-        {
-            let eventName = (ev.target as HTMLDivElement).id.split('-')[1];
-
-            switch (eventName) {
-                case 'itka':
-                    tooltipContent = itkaTooltip;
-                    break;
-                case 'itp':
-                    tooltipContent = itpTooltip;
-                    break;
-                case 'epw':
-                    tooltipContent = epwTooltip;
-                    break;
-                case 'cola':
-                    tooltipContent = colaTooltip;
-                    break;
-                default:
-                    tooltipContent = 'no tooltip available';
-            }
-        }
-    }
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -243,7 +160,85 @@
             title="Kadar Bayaran Sewa Kuarters (Unit Pengurusan Fasiliti)"
         ></StepperContentHeader>
         <StepperContentBody
-            ><div class="flex w-full flex-col gap-2"></div></StepperContentBody
+            ><div class="flex w-full flex-col gap-2">
+                <div class="flex flex-col gap-5">
+                    <ul
+                        class="bg-white dark:divide-gray-600 dark:border-gray-600 dark:bg-gray-800"
+                    >
+                        <li>
+                            <Radio
+                                class="p-1"
+                                bind:group={kadarBayaran}
+                                value="1"
+                            >
+                                <div
+                                    class="flex flex-col pl-2 text-sm {kadarBayaran ==
+                                    '1'
+                                        ? 'text-txt-primary'
+                                        : 'text-txt-tertiary'}"
+                                >
+                                    <p>
+                                        Simpan Balik Kes Kepada JKTT untuk
+                                        Dipertimbangkan Semula
+                                    </p>
+                                </div></Radio
+                            >
+                        </li>
+                        <li>
+                            <Radio
+                                class="p-1"
+                                bind:group={kadarBayaran}
+                                value="2"
+                            >
+                                <div
+                                    class="flex flex-col pl-2 text-sm {kadarBayaran ==
+                                    '2'
+                                        ? 'text-txt-primary'
+                                        : 'text-txt-tertiary'}"
+                                >
+                                    <p>Mengesahkan Keputusan JKTT</p>
+                                </div></Radio
+                            >
+                        </li>
+                        <li>
+                            <Radio
+                                class="p-1"
+                                bind:group={kadarBayaran}
+                                value="3"
+                            >
+                                <div
+                                    class="flex flex-col pl-2 text-sm {kadarBayaran ==
+                                    '3'
+                                        ? 'text-txt-primary'
+                                        : 'text-txt-tertiary'}"
+                                >
+                                    <p>
+                                        Mengesahkan Keputusan JKTT Tetapi
+                                        Mengubah Kepada Hukuman Yang Lebih
+                                        Ringan
+                                    </p>
+                                </div></Radio
+                            >
+                        </li>
+                        <li>
+                            <Radio
+                                class="p-1"
+                                bind:group={kadarBayaran}
+                                value="4"
+                            >
+                                <div
+                                    class="flex flex-col pl-2 text-sm {kadarBayaran ==
+                                    '4'
+                                        ? 'text-txt-primary'
+                                        : 'text-txt-tertiary'}"
+                                >
+                                    <p>Mengakas dan Membebaskan</p>
+                                </div></Radio
+                            >
+                        </li>
+                    </ul>
+                </div>
+            </div></StepperContentBody
         >
     </StepperContent>
     <StepperContent>
@@ -263,7 +258,7 @@
                     value={'Uni 5 Kuarter 10'}
                 ></TextField>
                 <p
-                    class="mt-2 h-fit w-full bg-bgr-primary text-sm italic text-system-accent"
+                    class="mt-2 h-fit w-full bg-bgr-primary text-sm text-system-accent"
                 >
                     Borang Pemeriksaan Keluar Kuarters:
                 </p>
@@ -285,7 +280,7 @@
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
                 <p
-                    class="mt-2 h-fit w-full bg-bgr-primary text-sm italic text-system-accent"
+                    class="mt-2 h-fit w-full bg-bgr-primary text-sm text-system-accent"
                 >
                     ● Keputusan akan dihantar ke email klinik dan Urus Setia
                     berkaitan
@@ -332,7 +327,7 @@
                         value="Mat Irdam bin Inu"
                     />
                     <p
-                        class="mt-2 h-fit w-full bg-bgr-primary text-sm italic text-system-accent"
+                        class="mt-2 h-fit w-full bg-bgr-primary text-sm text-system-accent"
                     >
                         ● Menunggu keputusan daripada PENGARAH BAHAGIAN/NEGERI..
                     </p>
