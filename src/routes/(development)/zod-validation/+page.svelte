@@ -1,17 +1,24 @@
 <!-- -------------------------------------Note:----------------------------------- -->
 <!-- This is a zod validation example with a toast component (Svelte frence toast) -->
-<!-- To show red borders on the input field when error is detected, -->
-<!-- use the 'hasError' prop on each of the field -->
+<!-- ----------------------------------------------------------------------------- -->
+<!-- 1. Firstly, run: npm install -->
 <!-- ----------------------------------------------------------------------------- -->
 <!-- ----------------------------------------------------------------------------- -->
-<!-- To show the error message, put the following code below the input field: -->
-<!-- {#if errorData.accessor}-->
-<!--    <span -->
-<!--        class="ml-[220px] font-sans text-sm italic text-system-danger"> -->
-<!--        {errorData?.errorMessage[0]} -->
-<!--    </span> -->
-<!-- {/if}  -->
+<!-- 2. To show red borders on the input field when error is detected, -->
+<!--    use the 'hasError' prop on each of the field and write the condition -->
 <!-- ----------------------------------------------------------------------------- -->
+<!-- ----------------------------------------------------------------------------- -->
+<!-- 3. To show the error message, put the following code below the input field: -->
+<!--    {#if errorData.accessor}-->
+<!--        <span -->
+<!--            class="ml-[220px] font-sans text-sm italic text-system-danger"> -->
+<!--            {errorData?.errorMessage[0]} -->
+<!--        </span> -->
+<!--    {/if}  -->
+<!-- ----------------------------------------------------------------------------- -->
+<!-- ----------------------------------------------------------------------------- -->
+<!-- 4. And for toaster UI to be invoked, insert the Svelte French Toast component: -->
+<!--    < Toaster /> at the end of the file -->
 <!-- ----------------------------------------------------------------------------- -->
 
 <script lang="ts">
@@ -85,7 +92,7 @@
             }),
         }),
         textFieldExample: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
             .min(4, {
                 message: 'Medan ini hendaklah lebih daripada 4 karakter.',
             })
@@ -122,6 +129,7 @@
             dateSelectorExample: String(formData.get('dateSelectorExample')),
             longTextExample: String(formData.get('longTextExample')),
         };
+
         try {
             const result = exampleFormSchema.parse(exampleFormData);
             if (result) {
