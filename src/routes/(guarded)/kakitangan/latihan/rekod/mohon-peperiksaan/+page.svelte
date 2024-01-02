@@ -35,7 +35,9 @@
                         : defaultError,
             }),
         }),
-        selectedExams: 
+        selectedExams: z.any().array().nonempty({
+            message: 'Sila pilih sekurang - kurangnya satu peperiksaan',
+        }),
     });
 
     // =========================================================================
@@ -44,22 +46,20 @@
     const submitExamApplicationForm = async () => {
         for (let index = 0; index < selectedExams.length; index++) {
             const element = selectedExams[index];
-            console.log(element);
+            console.log(element.examApplicationOpenDate);
         }
-        // console.table(selectedExams);
-        // const formData = new FormData(event.target as HTMLFormElement);
         const examTypeSelector = document.getElementById(
             'examType',
         ) as HTMLSelectElement;
 
         const examApplicationData = {
             examType: String(examTypeSelector.value),
+            selectedExams: selectedExams,
         };
-        // console.log(examApplicationSchema.parse(examApplicationData));
+        console.log('ARRAY!', examApplicationData.selectedExams);
 
         try {
             const result = examApplicationSchema.parse(examApplicationData);
-            // const currentExamId = String(formData.get('id'));
             if (result) {
                 errorData = [];
                 toast.success('Permohonan berjaya dihantar!', {
@@ -129,6 +129,12 @@
                     >
                         <SectionHeader title="Senarai Peperiksaan"
                         ></SectionHeader>
+                        {#if errorData?.selectedExams}
+                            <span
+                                class="font-sans text-sm italic text-system-danger"
+                                >{errorData?.selectedExams[0]}</span
+                            >
+                        {/if}
                         <DynamicTable
                             hasCheckbox
                             bind:checkedItems={selectedExams}
