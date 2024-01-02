@@ -658,6 +658,14 @@
             {#if !editingCandidateList}
                 <StepperContentHeader title="Kemaskini Maklumat Temuduga">
                     <TextIconButton
+                        label="Kembali"
+                        onClick={() => {
+                            goPrevious();
+                        }}
+                    >
+                        <SvgXMark></SvgXMark>
+                    </TextIconButton>
+                    <TextIconButton
                         label="Seterusnya"
                         primary
                         onClick={() => {
@@ -1006,25 +1014,7 @@
                     >
                         <SvgXMark></SvgXMark>
                     </TextIconButton>
-                    <TextIconButton
-                        primary
-                        label="Simpan"
-                        onClick={() => {
-                            let tempData = selectedCandidatesList.filter(
-                                (item) => item != currentData,
-                            );
-
-                            tempData.push(placeholderData);
-
-                            selectedCandidatesList = tempData;
-
-                            selectedCandidatesList.sort(
-                                createCompareFn('nomborPekerja', 'asc'),
-                            );
-
-                            editingCandidateList = false;
-                        }}
-                    >
+                    <TextIconButton primary label="Simpan" onClick={() => {}}>
                         <SvgCheck></SvgCheck>
                     </TextIconButton>
                 </StepperContentHeader>
@@ -1145,25 +1135,7 @@
                     >
                         <SvgXMark></SvgXMark>
                     </TextIconButton>
-                    <TextIconButton
-                        primary
-                        label="Simpan"
-                        onClick={() => {
-                            let tempData = selectedCandidatesList.filter(
-                                (item) => item != currentData,
-                            );
-
-                            tempData.push(placeholderData);
-
-                            selectedCandidatesList = tempData;
-
-                            selectedCandidatesList.sort(
-                                createCompareFn('nomborPekerja', 'asc'),
-                            );
-
-                            editingCandidateList = false;
-                        }}
-                    >
+                    <TextIconButton primary label="Simpan" onClick={() => {}}>
                         <SvgCheck></SvgCheck>
                     </TextIconButton>
                 </StepperContentHeader>
@@ -1288,25 +1260,7 @@
                     >
                         <SvgXMark></SvgXMark>
                     </TextIconButton>
-                    <TextIconButton
-                        primary
-                        label="Simpan"
-                        onClick={() => {
-                            let tempData = selectedCandidatesList.filter(
-                                (item) => item != currentData,
-                            );
-
-                            tempData.push(placeholderData);
-
-                            selectedCandidatesList = tempData;
-
-                            selectedCandidatesList.sort(
-                                createCompareFn('nomborPekerja', 'asc'),
-                            );
-
-                            editingCandidateList = false;
-                        }}
-                    >
+                    <TextIconButton primary label="Simpan" onClick={() => {}}>
                         <SvgCheck></SvgCheck>
                     </TextIconButton>
                 </StepperContentHeader>
@@ -1438,25 +1392,7 @@
                     >
                         <SvgXMark></SvgXMark>
                     </TextIconButton>
-                    <TextIconButton
-                        primary
-                        label="Simpan"
-                        onClick={() => {
-                            let tempData = selectedCandidatesList.filter(
-                                (item) => item != currentData,
-                            );
-
-                            tempData.push(placeholderData);
-
-                            selectedCandidatesList = tempData;
-
-                            selectedCandidatesList.sort(
-                                createCompareFn('nomborPekerja', 'asc'),
-                            );
-
-                            editingCandidateList = false;
-                        }}
-                    >
+                    <TextIconButton primary label="Simpan" onClick={() => {}}>
                         <SvgCheck></SvgCheck>
                     </TextIconButton>
                 </StepperContentHeader>
@@ -1698,25 +1634,7 @@
                     >
                         <SvgXMark></SvgXMark>
                     </TextIconButton>
-                    <TextIconButton
-                        primary
-                        label="Simpan"
-                        onClick={() => {
-                            let tempData = selectedCandidatesList.filter(
-                                (item) => item != currentData,
-                            );
-
-                            tempData.push(placeholderData);
-
-                            selectedCandidatesList = tempData;
-
-                            selectedCandidatesList.sort(
-                                createCompareFn('nomborPekerja', 'asc'),
-                            );
-
-                            editingCandidateList = false;
-                        }}
-                    >
+                    <TextIconButton primary label="Simpan" onClick={() => {}}>
                         <SvgCheck></SvgCheck>
                     </TextIconButton>
                 </StepperContentHeader>
@@ -1804,15 +1722,12 @@
                 <StepperContentHeader
                     title="Semak Pengesahan Keputusan Pemangkuan"
                 >
-                    <TextIconButton
-                        label="Selesai"
-                        primary
+                    <FormButton
+                        type="done"
                         onClick={() => {
-                            ('/urus-setia/perjawatan/pemangkuan/flexi_41/butiran');
+                            window.history.back();
                         }}
-                    >
-                        <SvgArrowRight></SvgArrowRight>
-                    </TextIconButton>
+                    />
                 </StepperContentHeader>
 
                 <!-- Search Pengesahan Keputusan Pemangkuan -->
