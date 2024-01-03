@@ -31,10 +31,13 @@
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
-
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { z, ZodError } from 'zod';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     export let employeeNumber: string = '00001';
     export let disabled: boolean = true;
 
+    let isEditing: boolean = false;
     let currentEmployee = mockEmployees.find((employee) => {
         return employee.employeeNumber === employeeNumber;
     })!;
@@ -131,6 +134,79 @@
     function isBlueOrRedIC(isMalaysian: boolean) {
         return isMalaysian ? 'Biru' : 'Merah';
     }
+
+    // =================================================================================
+    // z validation schema for the example form fields==================================
+    // =================================================================================
+    let errorData: any;
+
+    // date common schema
+    const dateScheme = z.coerce
+        .date({
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_date'
+                        ? 'Tarikh tidak boleh dibiar kosong.'
+                        : defaultError,
+            }),
+        })
+        .min(new Date(), {
+            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+        });
+
+    const exampleFormSchema = z.object({
+        noPerkeja: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+    });
+
+    // =================================================================================
+    // submit form function=============================================================
+    // =================================================================================
+    const submitForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+        const selectOptionExampleSelector = document.getElementById(
+            'selectOptionExample',
+        ) as HTMLSelectElement;
+
+        const exampleFormData = {
+            noPerkeja: String(formData.get('noPerkeja')),
+        };
+        try {
+            const result = exampleFormSchema.parse(exampleFormData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData = { ...exampleFormData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedExamFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
 
     // Stepper Classes
 
@@ -233,41 +309,169 @@
 
 <Stepper>
     <StepperContent>
-        <StepperContentHeader title="Maklumat Peribadi"></StepperContentHeader>
+        <StepperContentHeader title="Maklumat Peribadi">
+            {#if !disabled}
+                <TextIconButton primary label="Simpan" form="formValidation" />
+            {/if}
+        </StepperContentHeader>
         <StepperContentBody
             ><!-- Maklumat Peribadi -->
-            <div class="flex w-full flex-col gap-2.5">
+            <form
+                id="formValidation"
+                on:submit|preventDefault={submitForm}
+                class="flex w-full flex-col gap-2"
+            >
                 <p class={stepperFormTitleClass}>Maklumat Peribadi</p>
                 <TextField
                     {disabled}
-                    id="noPerkeja"
+                    hasError={errorData?.noPekerja}
+                    name="noPerkeja"
                     label={'No. Pekerja'}
-                    value={currentEmployee.employeeNumber}
+                    type="text"
+                    bind:value={currentEmployee.employeeNumber}
                 ></TextField>
+
+                {#if errorData?.noPerkeja}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.noPerkeja[0]}</span
+                    >
+                {/if}
                 <TextField
                     {disabled}
-                    id="statusPekerjaan"
+                    hasError={errorData?.noPekerja}
+                    name="statusPekerjaan"
                     label={'Status Pekerjaan'}
-                    value={currentEmployeeStatus.name}
+                    type="text"
+                    bind:value={currentEmployeeStatus.name}
                 ></TextField>
+
+                {#if errorData?.noPerkeja}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.noPerkeja[0]}</span
+                    >
+                {/if}
+
                 <TextField
                     {disabled}
-                    id="noKadPengenalan"
+                    hasError={errorData?.noPekerja}
+                    name="noKadPengenalan"
                     label={'No. Kad Pengenalan'}
-                    value={currentEmployee.identityDocumentNumber}
+                    type="text"
+                    bind:value={currentEmployee.identityDocumentNumber}
                 ></TextField>
+
+                {#if errorData?.noPerkeja}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.noPerkeja[0]}</span
+                    >
+                {/if}
+
                 <TextField
                     {disabled}
-                    id="namaPenuh"
+                    hasError={errorData?.noPekerja}
+                    name="namaPenuh"
                     label={'Nama Penuh'}
-                    value={currentEmployee.name}
+                    type="text"
+                    bind:value={currentEmployee.name}
                 ></TextField>
+
+                {#if errorData?.noPerkeja}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.noPerkeja[0]}</span
+                    >
+                {/if}
+
                 <TextField
                     {disabled}
-                    id="namaLain"
+                    hasError={errorData?.noPekerja}
+                    name="namaLain"
                     label={'Nama Lain'}
-                    value={currentEmployee.alternativeName}
+                    type="text"
+                    bind:value={currentEmployee.alternativeName}
                 ></TextField>
+
+                {#if errorData?.noPerkeja}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.noPerkeja[0]}</span
+                    >
+                {/if}
+
+                <TextField
+                    {disabled}
+                    hasError={errorData?.noPekerja}
+                    name="warnaKadPengenalan"
+                    label={'Warna Kad Pengenalan'}
+                    type="text"
+                    bind:value={currentEmployee.employeeNumber}
+                ></TextField>
+
+                {#if errorData?.noPerkeja}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.noPerkeja[0]}</span
+                    >
+                {/if}
+
+                <!-- ---date   ------------ -->
+
+                <TextField
+                    {disabled}
+                    hasError={errorData?.noPekerja}
+                    name="tempatLahir"
+                    label={'Tempat Lahir'}
+                    type="text"
+                    bind:value={currentEmployeeBirthState.name}
+                ></TextField>
+
+                {#if errorData?.noPerkeja}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.noPerkeja[0]}</span
+                    >
+                {/if}
+
+                <TextField
+                    {disabled}
+                    hasError={errorData?.noPekerja}
+                    name="warganegara"
+                    label={'Warganegara'}
+                    type="text"
+                    bind:value={currentEmployee.isMalaysian }
+                ></TextField>
+
+                {#if errorData?.noPerkeja}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.noPerkeja[0]}</span
+                    >
+                {/if}
+
+                <TextField
+                    {disabled}
+                    hasError={errorData?.noPekerja}
+                    name="bangsa"
+                    label={'Bangsa'}
+                    type="text"
+                    bind:value={currentEmployeeRace.name}
+                ></TextField>
+
+                {#if errorData?.noPerkeja}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.noPerkeja[0]}</span
+                    >
+                {/if}
+
+               
+
+            </form>
+            <div class="flex w-full flex-col gap-2.5">
+
                 <TextField
                     {disabled}
                     id="warnaKadPengenalan"
@@ -940,3 +1144,4 @@
         >
     </StepperContent>
 </Stepper>
+<Toaster />

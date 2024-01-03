@@ -147,7 +147,7 @@
                     actionOptions={['detail']}
                     bind:passData={currentData}
                     detailActions={() => {
-                       
+                         goto('/penyokong/perjawatan/pemangkuan/gred-1_41')
                     }}
                     tableItems={senaraiPermohonan}
                     columnKeys={[
