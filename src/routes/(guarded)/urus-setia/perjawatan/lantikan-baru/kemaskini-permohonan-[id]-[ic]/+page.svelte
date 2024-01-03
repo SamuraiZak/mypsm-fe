@@ -35,6 +35,7 @@
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import { goto } from '$app/navigation';
+    import { any, z } from 'zod';
     export let data;
     let employeeLists: SelectOptionType<any>[] = [];
     let selectedSupporter: string;
@@ -153,12 +154,16 @@
         });
         return formatter.format(Number(amount)).toString();
     }
+
+    // =========================================================================
+    // function to assign the content  of the tooltip
+    // =========================================================================
     let tooltipContent: string = '';
     const itkaTooltip: string = 'ITKA bermaksud ...';
     const itpTooltip: string = 'ITP bermaksud ...';
     const epwTooltip: string = 'EPW bermaksud ...';
     const colaTooltip: string = 'COLA bermaksud ...';
-    // function to assign the content  of the tooltip
+
     function assignContent(ev: CustomEvent<HTMLDivElement>) {
         {
             let eventName = (ev.target as HTMLDivElement).id.split('-')[1];
@@ -181,6 +186,27 @@
             }
         }
     }
+
+    // =========================================================================
+    // z validation schema for the new employment details form fields
+    // =========================================================================
+    let errorData: any;
+
+    const newEmploymentServiceSchema = z.object({
+        textFieldExample: z
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+    });
+
+    // =========================================================================
+    // new employment details form fields submit function
+    // =========================================================================
 </script>
 
 <ContentHeader
@@ -662,30 +688,35 @@
                 <p class={stepperFormTitleClass}>Maklumat Perkhidmatan</p>
                 <TextField
                     disabled={false}
+                    hasError={true}
                     name="currentGrade"
                     label={'Gred Semasa'}
                     value={data.record.currentEmployeeGrade.code}
                 ></TextField>
                 <TextField
                     disabled={false}
+                    hasError={true}
                     name="position"
                     label={'Jawatan'}
                     value={data.record.currentEmployeePosition.name}
                 ></TextField>
                 <TextField
                     disabled={false}
+                    hasError={true}
                     name="placement"
                     label={'Penempatan'}
                     value={data.record.currentEmployeeService.placement}
                 ></TextField>
                 <TextField
                     disabled={false}
+                    hasError={true}
                     name="serviceLevel"
                     label={'Taraf Perkhidmatan'}
                     value={data.record.currentEmployeeServiceType.name}
                 ></TextField>
                 <DateSelector
                     {handleDateChange}
+                    hasError={true}
                     name="currentEmploymentDateOfEffect"
                     disabled={false}
                     label={'Tarikh Kuatkuasa Lantikan Semasa'}
@@ -702,42 +733,49 @@
                 ></RadioSingle>
                 <TextField
                     disabled={false}
+                    hasError={true}
                     name="kwspNumber"
                     label={'No. KWSP'}
                     value={'1234-5678-9012'}
                 ></TextField>
                 <TextField
                     disabled={false}
+                    hasError={true}
                     name="socsoNumber"
                     label={'No. SOCSO'}
                     value={'1234-5678-9012'}
                 ></TextField>
                 <TextField
                     disabled={false}
+                    hasError={true}
                     name="taxNumber"
                     label={'No. Cukai (LHDN)'}
                     value={'1234-5678-9012'}
                 ></TextField>
                 <TextField
                     disabled={false}
+                    hasError={true}
                     name="bank"
                     label={'Bank'}
                     value={'Maybank Berhad'}
                 ></TextField>
                 <TextField
                     disabled={false}
+                    hasError={true}
                     name="accountNumber"
                     label={'No. Akaun'}
                     value={'1234-5678-9012'}
                 ></TextField>
                 <TextField
                     disabled={false}
+                    hasError={true}
                     name="program"
                     label={'Program'}
                     value={'-'}
                 ></TextField>
                 <TextField
                     disabled={false}
+                    hasError={true}
                     name="leaveEntitlement"
                     label={'Kelayakan Cuti'}
                     value={getEmployeeLeave(
@@ -747,6 +785,7 @@
 
                 <DateSelector
                     {handleDateChange}
+                    hasError={true}
                     name="govEmploymentHiredDate"
                     disabled={false}
                     label={'Mula Dilantik Perkhidmatan Kerajaan'}
@@ -756,6 +795,7 @@
                 ></DateSelector>
                 <DateSelector
                     {handleDateChange}
+                    hasError={true}
                     name="lkimEmploymentHiredDate"
                     disabled={false}
                     label={'Mula Dilantik Perkhidmatan LKIM'}
@@ -765,6 +805,7 @@
                 ></DateSelector>
                 <DateSelector
                     {handleDateChange}
+                    hasError={true}
                     name="currentEmploymentHiredDate"
                     disabled={false}
                     label={'Mula Dilantik Perkhidmatan Sekarang'}
@@ -774,6 +815,7 @@
                 ></DateSelector>
                 <DateSelector
                     {handleDateChange}
+                    hasError={true}
                     name="confirmedFirstLkimPositionData"
                     disabled={false}
                     label={'Disahkan Dalam Jawatan Pertama LKIM'}
@@ -783,6 +825,7 @@
                 ></DateSelector>
                 <DateSelector
                     {handleDateChange}
+                    hasError={true}
                     name="confirmedCurrentLkimPositionData"
                     disabled={false}
                     label={'Disahkan Dalam Jawatan Semasa LKIM'}
@@ -813,6 +856,7 @@
                 </AccordianField>
                 <DateSelector
                     {handleDateChange}
+                    hasError={true}
                     name="approvedPreviousServiceMergingDate"
                     disabled={false}
                     label={'Tarikh Kelulusan Percantuman Perkhidmatan Lepas'}
@@ -822,42 +866,49 @@
                 ></DateSelector>
                 <TextField
                     disabled={false}
+                    hasError={true}
                     name="currentActing"
                     label={'Pemangkuan Sekarang'}
                     value={'-'}
                 ></TextField>
                 <TextField
                     disabled={false}
+                    hasError={true}
                     name="currentInterim"
                     label={'Tanggung Kerja Sekarang'}
                     value={'-'}
                 ></TextField>
                 <TextField
                     disabled={false}
+                    hasError={true}
                     name="pensionScheme"
                     label={'Skim Pencen'}
                     value={'-'}
                 ></TextField>
                 <TextField
                     disabled={false}
+                    hasError={true}
                     name="finalIncreament"
                     label={'Kenaikan Gaji Akhir'}
                     value={'-'}
                 ></TextField>
                 <TextField
                     disabled={false}
+                    hasError={true}
                     name="finalPromotion"
                     label={'Kenaikan Pangkat Akhir'}
                     value={'-'}
                 ></TextField>
                 <TextField
                     disabled={false}
+                    hasError={true}
                     name="kgtMonth"
                     label={'Bulan KGT'}
                     value={'-'}
                 ></TextField>
                 <DateSelector
                     {handleDateChange}
+                    hasError={true}
                     name="retirementDate"
                     disabled={false}
                     label={'Tarikh Bersara'}
@@ -872,18 +923,21 @@
                     <div class="space-y-2.5">
                         <TextField
                             disabled={false}
+                            hasError={true}
                             name="salaryDateOfEffect"
                             label={'Tarikh Berkuatkuasa'}
                             value={'12/12/2021'}
                         ></TextField>
                         <TextField
                             disabled={false}
+                            hasError={true}
                             name="salaryBenchmark"
                             label={'Tangga Gaji'}
                             value={currencyFormatter(1234.56)}
                         ></TextField>
                         <TextField
                             disabled={false}
+                            hasError={true}
                             name="salary"
                             label={'Gaji Pokok'}
                             value={currencyFormatter(1234.56)}
@@ -894,6 +948,7 @@
                             hasTooltip={true}
                             toolTipID="type-itka"
                             disabled={false}
+                            hasError={true}
                             name="itka"
                             label={'ITKA'}
                             value={currencyFormatter(123.45)}
@@ -902,6 +957,7 @@
                             hasTooltip={true}
                             toolTipID="type-itp"
                             disabled={false}
+                            hasError={true}
                             name="itp"
                             label={'ITP'}
                             value={currencyFormatter(123.45)}
@@ -910,6 +966,7 @@
                             hasTooltip={true}
                             toolTipID="type-epw"
                             disabled={false}
+                            hasError={true}
                             name="epw"
                             label={'EPW'}
                             value={currencyFormatter(123.45)}
@@ -918,6 +975,7 @@
                             hasTooltip={true}
                             toolTipID="type-cola"
                             disabled={false}
+                            hasError={true}
                             name="cola"
                             label={'COLA'}
                             value={currencyFormatter(123.45)}
