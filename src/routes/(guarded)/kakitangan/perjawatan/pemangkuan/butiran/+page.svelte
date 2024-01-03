@@ -3,8 +3,6 @@
     import SvgArrowLeft from '$lib/assets/svg/SvgArrowLeft.svelte';
     import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
     import SvgCircleF2 from '$lib/assets/svg/SvgCircleF2.svelte';
-    import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
-    import SvgPrinter from '$lib/assets/svg/SvgPrinter.svelte';
     import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
@@ -22,7 +20,10 @@
     import CustomTable from '$lib/components/table/CustomTable.svelte';
     import { mockCalonPemangkuanList } from '$lib/mocks/perjawatan/pemangkuan/senaraiCalonPemangkuan';
     import { fileSelectionList } from '$lib/stores/globalState';
+    import { error } from '@sveltejs/kit';
     import { onMount } from 'svelte';
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { z, ZodError } from 'zod';
 
     let checkedItems: Object[] = [];
 
@@ -40,15 +41,15 @@
     //Date Selector for Tarikh Lapor Diri - Kemaskini Keputusan Mesyuarat Penempatan Kakitangan
     let selectedDate = new Date();
 
-    function handleDateChange(event: any) {
-        selectedDate = new Date(event.target.value);
-        const formattedDate = selectedDate.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-        });
-        console.log(formattedDate);
-    }
+    // function handleDateChange(event: any) {
+    //     selectedDate = new Date(event.target.value);
+    //     const formattedDate = selectedDate.toLocaleDateString('en-GB', {
+    //         day: '2-digit',
+    //         month: '2-digit',
+    //         year: 'numeric',
+    //     });
+    //     console.log(formattedDate);
+    // }
 
     //upload files for Kemaskini Maklumat Temuduga
     export let selectedFiles: any = [];
@@ -75,6 +76,88 @@
     function handleDelete(index: number) {
         selectedFiles.splice(index, 1);
     }
+
+    // =================================================================================
+    // z validation schema for the example form fields==================================
+    // =================================================================================
+    let errorData: any;
+    // date common schema
+    const dateScheme = z.coerce
+        .date({
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_date'
+                        ? 'Tarikh tidak boleh dibiar kosong.'
+                        : defaultError,
+            }),
+        })
+        .min(new Date(), {
+            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+        });
+
+    const exampleFormSchema = z.object({
+        amendmentDropdown: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+        placementAmendment: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+        dateSelector: dateScheme,
+    });
+
+    const submitForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+        const amendmentDropdown = document.getElementById(
+            'amendmentDropdown',
+        ) as HTMLSelectElement;
+        const placementAmendment = document.getElementById(
+            'placementAmendment',
+        ) as HTMLSelectElement;
+
+        const exampleFormData = {
+            amendmentDropdown: String(amendmentDropdown.value),
+            placementAmendment: String(placementAmendment.value),
+            dateSelector: String(formData.get('dateSelector')),
+        };
+        try {
+            const result = exampleFormSchema.parse(exampleFormData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData = { ...exampleFormData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedExamFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
 </script>
 
 <!-- header section -->
@@ -276,39 +359,67 @@
                 ><TextIconButton
                     primary
                     label="Seterusnya"
-                    onClick={() => goNext()}><SvgArrowRight /></TextIconButton
+                    form="formValidation"><SvgArrowRight /></TextIconButton
                 ></StepperContentHeader
             >
             <StepperContentBody>
                 <SectionHeader title="Permohonan Penangguhan/Pindaan Penempatan"
                 ></SectionHeader>
-                <DropdownSelect
-                    id="position-dropdown"
-                    label="Adakah anda memerlukan penangguhan/Pindaan Penempatan?"
-                    labelBlack={false}
-                    dropdownType="label-left-full"
-                    options={[
-                        { value: 'Ya', name: 'Ya' },
-                        { value: 'Tidak', name: 'Tidak' },
-                    ]}
-                />
 
-                <DateSelector
-                    {handleDateChange}
-                    labelBlack={false}
-                    label={'Tarikh Lapor Diri yang Dipohon'}
-                />
+                <form
+                    id="formValidation"
+                    on:submit|preventDefault={submitForm}
+                    class="flex w-full flex-col gap-2"
+                >
+                    <DropdownSelect
+                        hasError={errorData?.amendmentDropdown}
+                        id="amendmentDropdown"
+                        label="Adakah anda memerlukan penangguhan/Pindaan Penempatan?"
+                        labelBlack={false}
+                        dropdownType="label-left-full"
+                        options={[
+                            { value: 'true', name: 'Ya' },
+                            { value: 'false', name: 'Tidak' },
+                        ]}
+                    />
+                    {#if errorData?.amendmentDropdown}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.amendmentDropdown[0]}</span
+                        >
+                    {/if}
 
-                <DropdownSelect
-                    id="pindaan-penempatan-dipohon"
-                    label="Pindaan Penempatan Dipohon"
-                    labelBlack={false}
-                    dropdownType="label-left-full"
-                    options={[
-                        { value: 'Ya', name: 'Ya' },
-                        { value: 'Tidak', name: 'Tidak' },
-                    ]}
-                />
+                    <DateSelector
+                        hasError={errorData?.dateSelector}
+                        name="dateSelector"
+                        selectedDate={selectedDate}
+                        labelBlack={false}
+                        label={'Tarikh Lapor Diri yang Dipohon'}
+                    />
+                    {#if errorData?.dateSelector}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.dateSelector[0]}</span
+                        >
+                    {/if}
+
+                    <DropdownSelect
+                        id="placementAmendment"
+                        label="Pindaan Penempatan Dipohon"
+                        labelBlack={false}
+                        dropdownType="label-left-full"
+                        options={[
+                            { value: 'true', name: 'Ya' },
+                            { value: 'false', name: 'Tidak' },
+                        ]}
+                    />
+                    {#if errorData?.placementAmendment}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.placementAmendment[0]}</span
+                        >
+                    {/if}
+                </form>
 
                 <SectionHeader title="Dokumen-Dokumen yang Berkaitan">
                     <div hidden={$fileSelectionList.length == 0}>
@@ -427,7 +538,7 @@
                 />
                 <DateSelector
                     disabled
-                    {handleDateChange}
+                    handleDateChange
                     labelBlack={false}
                     label={'Kelulusan Tarikh Lapor Diri Baru'}
                 />
@@ -455,7 +566,7 @@
                 ><TextIconButton
                     primary
                     label="Selesai"
-                    onClick={() => goto('/kakitangan/perjawatan/pemangkuan')}
+                    form="formValidation"
                     ><SvgCircleF2 /></TextIconButton
                 ></StepperContentHeader
             >
@@ -548,3 +659,6 @@
         </StepperContent>
     </Stepper>
 </section>
+
+
+<Toaster/>
