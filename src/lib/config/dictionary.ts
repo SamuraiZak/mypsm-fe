@@ -252,6 +252,7 @@ const dictionary: { [key: string]: string } = {
     // retirement
     earlyRetirementApplicationDate: 'Tarikh Permohonan Bersara Awal',
     retirementType: 'Jenis Persaraan',
+    earlyRetirementDate: 'Tarikh Bersara Awal',
 
     //perjawatan
     staffId: 'No. Pekerja',
@@ -395,6 +396,7 @@ const dictionary: { [key: string]: string } = {
     cutiYangTelahDiambil: 'Cuti Yang Telah Diambil (Hari)',
     bakiCuti: 'Baki Cuti (Hari)',
     halHalLain: 'Hal-hal Lain',
+    applicationPurpose: 'Tujuan Permohonan',
 
     // Perubatan
     clinicCode: 'Kod Klinik',

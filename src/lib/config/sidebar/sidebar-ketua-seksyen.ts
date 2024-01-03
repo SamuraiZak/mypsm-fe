@@ -26,7 +26,7 @@ export const sidebarKetuaSeksyen = [
         dropdown: [
             {
                 name: "Pinjaman Komputer, Telefon Pintar dan Kenderaan",
-                redirect: "/ketua-seksyen/pinjaman/senarai-rekod"
+                redirect: "/ketua-seksyen/pinjaman"
             },
         ],
     },
