@@ -184,7 +184,7 @@
                     bind:passData={currentData}
                     detailActions={() => {
                         goto(
-                            '/pengarah-bahagian-negeri/perjawatan/pemangkuan/gred-flexi_41',
+                            '/pengarah-bahagian-negeri/perjawatan/pemangkuan/gred-1_41',
                         );
                     }}
                     tableItems={senaraiPermohonanDiperaku}
