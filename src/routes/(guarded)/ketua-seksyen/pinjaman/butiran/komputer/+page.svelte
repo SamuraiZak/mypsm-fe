@@ -1,16 +1,73 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
-    import SvgArrowLeft from '$lib/assets/svg/SvgArrowLeft.svelte';
-    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
-    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
+    import { goto } from '$app/navigation';
+    import Stepper from '$lib/components/stepper/Stepper.svelte';
+    import StepperContent from '$lib/components/stepper/StepperContent.svelte';
+    import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
+    import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
+    import CustomTab from '$lib/components/tab/CustomTab.svelte';
+    import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
+    import CustomCardHeader from '$lib/components/cards/CustomCardHeader.svelte';
+    import CustomCard from '$lib/components/cards/CustomCard.svelte';
+    import CustomCardBody from '$lib/components/cards/CustomCardBody.svelte';
+    import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
+    import { meetings } from '$lib/mocks/mesyuarat/mesyuarat.js';
+    import { Checkbox, Radio, Tooltip } from 'flowbite-svelte';
+    import FormButton from '$lib/components/buttons/FormButton.svelte';
+    import IconButton from '$lib/components/buttons/IconButton.svelte';
+
     import DownloadAttachment from '$lib/components/input/DownloadAttachment.svelte';
+    import { mockPerjawatanPemangkuan } from '$lib/mocks/database/mockPerjawatanPemangkuan';
+    import { loanOptions } from '$lib/mocks/pinjaman-kuarters/loanOptions';
+    import type {
+        CalonPemangkuan,
+        DtoCalonPemangkuan,
+        IntActingApplication,
+        MesyuaratPemilihanCalonPemangkuan,
+    } from '$lib/interfaces/database/actingApplication';
+    import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
-    import { Badge } from 'flowbite-svelte';
+    import { greds } from '$lib/mocks/gred/gred.js';
+    import DateSelector from '$lib/components/input/DateSelector.svelte';
+    import SvgTrash from '$lib/assets/svg/SvgTrash.svelte';
+    import {
+        fileSelectionList,
+        selectedRecordId,
+    } from '$lib/stores/globalState';
+    import { onMount } from 'svelte';
+    import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
+
+    export let disabled: boolean = true;
+
+    let suppliers: any[] = [
+        {
+            name: '',
+            address: '',
+        },
+    ];
+    const addPembekal = () => {
+        suppliers = [...suppliers, { name: '', address: '' }];
+    };
+
+    let selectedMeetingType: string = meetings[0].value;
+    let selectedSalaryMonth: string = '1';
+    let selectedGred: string = greds[0].value;
+
+    const options: RadioOption[] = [
+        {
+            value: 'true',
+            label: 'Ya',
+        },
+        {
+            value: 'false',
+            label: 'Tidak',
+        },
+    ];
 
     const supportOptions: RadioOption[] = [
         {
@@ -23,41 +80,89 @@
         },
     ];
 
-    const uploadedFiles = [
-        {
-            id: 1,
-            value: 'Surat Belian.pdf',
-        },
-        {
-            id: 2,
-            value: 'Surat Gaji.pdf',
-        },
-    ];
+    export let selectedFiles: any = [];
+    let target: any;
+    let texthidden = false;
+
+    onMount(() => {
+        target = document.getElementById('fileInput');
+    });
+
+    // Function to handle the file changes
+    function handleOnChange() {
+        texthidden = true;
+        const files = target.files;
+        if (files) {
+            for (let i = 0; i < files.length; i++) {
+                selectedFiles.push(files[i]);
+            }
+        }
+
+        fileSelectionList.set(selectedFiles);
+    }
+
+    // Function to handle the file deletion
+    function handleDelete(index: number) {
+        selectedFiles.splice(index, 1);
+        fileSelectionList.set(selectedFiles);
+    }
+
+    //===================== Stepper controls =====================
+    let stepperIndex = 0;
+
+    function goNext() {
+        stepperIndex += 1;
+    }
+
+    function goPrevious() {
+        stepperIndex -= 1;
+    }
+
+    let stepperFormTitleClass =
+        'w-full h-fit mt-2 bg-bgr-primary text-system-primary text-sm font-medium';
+
+    //===================== Page Init Data =====================
+
+    //Date Selector
+    let selectedDate = new Date();
+
+    function handleDateChange(event: any) {
+        selectedDate = new Date(event.target.value);
+        const formattedDate = selectedDate.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+        });
+        console.log(formattedDate);
+    }
+
+    let selectedCandidatesList: DtoCalonPemangkuan[] = [];
+
+    let tempSelectedCandidatesList: DtoCalonPemangkuan[] = [];
+
+    let currentData: any = {};
+
+    let placeholderData: any = {};
+
+    let editMode: boolean = false;
+
+    //===================== Step 1 =====================
 </script>
 
 <!-- header section -->
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader
-        title="Semak Maklumat Pinjaman 001023"
-        description="Hal-hal berkaitan menguruskan pinjaman kakitangan LKIM"
+        title="Semak Maklumat Pinjaman K34221B"
+        description="Hal - hal berkaitan menguruskan pinjaman kakitangan LKIM"
     >
         <!-- TODO: put buttons in this area if necessary -->
         <TextIconButton
-            label="Kembali"
+            label="Tutup"
             onClick={() => {
-                goto('/ketua-seksyen/pinjaman');
+                goto('/ketua-seksyen/halaman-utama');
             }}
         >
-            <SvgArrowLeft />
-        </TextIconButton>
-        <TextIconButton
-            primary
-            label="Simpan"
-            onClick={() => {
-                alert('save function');
-            }}
-        >
-            <SvgCheck />
+            <SvgXMark></SvgXMark>
         </TextIconButton>
     </ContentHeader>
 </section>
@@ -68,208 +173,641 @@
     class="flex h-full max-h-[100vh-172px] w-full flex-col items-start justify-start overflow-y-hidden"
 >
     <!-- start your content with this div and style it with your own preference -->
-    <div
-        class="flex max-h-full w-full flex-row items-start justify-start gap-2.5"
-    >
-        <div
-            class="flex max-h-full w-[50%] flex-col items-start justify-start gap-2.5"
-        >
-            <CustomTabContent>
-                <SectionHeader title="Maklumat Peminjam"></SectionHeader>
-                <TextField
-                    disabled
-                    labelBlack={false}
-                    id="nama-penuh"
-                    label="Name Penuh (Mengikut Kad Pengenalan)"
-                    value="Mohd Irfan Bin Abu"
-                ></TextField>
-                <TextField
-                    disabled
-                    labelBlack={false}
-                    id="no-kp"
-                    label="No. K/P"
-                    value="890701-13-5667"
-                ></TextField>
-                <TextField
-                    disabled
-                    labelBlack={false}
-                    id="tarikh-lahir"
-                    label="Tarikh Lahir"
-                    value="01/07/1989"
-                ></TextField>
-                <TextField
-                    disabled
-                    labelBlack={false}
-                    id="warganegara"
-                    label="Warganegara"
-                    value="Malaysia"
-                ></TextField>
-                <TextField
-                    disabled
-                    labelBlack={false}
-                    id="gred"
-                    label="Gred"
-                    value=""
-                ></TextField>
-                <TextField
-                    disabled
-                    labelBlack={false}
-                    id="jawatan"
-                    label="Jawatan"
-                    value="Pegawai IT"
-                ></TextField>
-                <TextField
-                    disabled
-                    labelBlack={false}
-                    id="penempatan"
-                    label="Penempatan"
-                    value="00105 - BHG. Teknologi Maklumat"
-                ></TextField>
-            <div
-                class="flex max-h-full w-full flex-col items-start border-t"
-            />
-                <SectionHeader title="Maklumat Jenis Pinjaman"></SectionHeader>
-                <SectionHeader
-                    color={'system-primary'}
-                    title="Pinjaman Komputer"
-                />
-                <TextField
-                    disabled
-                    labelBlack={false}
-                    id="jumlah-dipohon"
-                    label="Jumlah Yang Dipohon (RM)"
-                    value="6,999.00 "
-                ></TextField>
-                <TextField
-                    disabled
-                    labelBlack={false}
-                    id="tempoh-pembayaran"
-                    label="Tempoh Pembayaran"
-                    value="12 Bulan"
-                ></TextField>
-                <div
-                class="flex max-h-full w-full flex-col items-start border-t"
-            />
-                <SectionHeader
-                    title="Dokumen-Dokumen Sokongan yang Berkaitan"
-                />
-                <div
-                    class="flex h-[40px] max-h-[40px] min-h-[40px] w-full flex-row items-center justify-between"
+    <Stepper bind:activeIndex={stepperIndex} dataId="#01" dataStatus="Draf">
+        <!-- =========================================================== -->
+        <!-- Maklumat Peminjam -->
+        <!-- =========================================================== -->
+        <StepperContent>
+            <StepperContentHeader title="Maklumat Peminjam">
+                <TextIconButton
+                    label="Seterusnya"
+                    primary
+                    onClick={() => {
+                        goNext();
+                    }}
                 >
+                    <SvgArrowRight></SvgArrowRight>
+                </TextIconButton>
+            </StepperContentHeader>
+
+            <!-- Butiran -->
+            <StepperContentBody>
+                <SectionHeader title=" Butiran Peminjam"></SectionHeader>
+                <div
+                    class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
+                >
+                    <TextField
+                        {disabled}
+                        id=""
+                        label={'Nama Penuh'}
+                        value={'Mohd Irfan Bin Abu'}
+                    ></TextField>
+                    <TextField
+                        {disabled}
+                        id=""
+                        label={'No. K/P'}
+                        value={'890707-13-5667'}
+                    ></TextField>
+                    <TextField
+                        {disabled}
+                        id=""
+                        label={'Tarikh Lahir'}
+                        value={'12/5/1991'}
+                    ></TextField>
+                    <TextField
+                        {disabled}
+                        id=""
+                        label={'Umur Pada Tarikh Memohon'}
+                        value={'32'}
+                    ></TextField>
+                    <TextField
+                        {disabled}
+                        id=""
+                        label={'Jawatan Sekarang'}
+                        value={'Jurutektik'}
+                    ></TextField>
+                    <TextField
+                        {disabled}
+                        id=""
+                        label={'Kumpulan Perkhidmatan'}
+                        value={'Teknologi Maklumat'}
+                    ></TextField>
+                    <TextField
+                        {disabled}
+                        id=""
+                        label={'Gred Jawatan'}
+                        value={'F41'}
+                    ></TextField>
+                    <TextField
+                        {disabled}
+                        id=""
+                        label={'Kementerian'}
+                        value={'-'}
+                    ></TextField>
+                    <TextField {disabled} id="" label={'Jabatan'} value={'-'}
+                    ></TextField>
+                    <TextField
+                        {disabled}
+                        id=""
+                        label={'Alamat Penuh Tempat Bertugas'}
+                        value={'-'}
+                    ></TextField>
+                    <TextField
+                        {disabled}
+                        id=""
+                        label={'Tarikh Pengesahan Dalam Perkhidmatan'}
+                        value={'-'}
+                    ></TextField>
+                    <TextField
+                        {disabled}
+                        id=""
+                        label={'Tarikh Persaraan Wajib'}
+                        value={'-'}
+                    ></TextField>
+                    <TextField
+                        {disabled}
+                        id=""
+                        label={'Gaji Pokok (RM)'}
+                        value={'0'}
+                    ></TextField>
+                    <TextField
+                        {disabled}
+                        id=""
+                        label={'Jumlah Elaun-elaun (RM)'}
+                        value={'0'}
+                    ></TextField>
+                    <TextField
+                        {disabled}
+                        id=""
+                        label={'Jumlah Potongan'}
+                        value={'0'}
+                    ></TextField>
+                </div>
+            </StepperContentBody>
+        </StepperContent>
+
+        <!-- =========================================================== -->
+        <!-- Maklumat Pinjaman -->
+        <!-- =========================================================== -->
+        <StepperContent>
+            <StepperContentHeader title="Maklumat Pinjaman">
+                <TextIconButton
+                    label="Seterusnya"
+                    primary
+                    onClick={() => {
+                        goNext();
+                    }}
+                >
+                    <SvgArrowRight></SvgArrowRight>
+                </TextIconButton>
+            </StepperContentHeader>
+
+            <!-- Butiran -->
+            <StepperContentBody>
+                <SectionHeader title=" Maklumat Pinjaman "></SectionHeader>
+                <div
+                    class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
+                >
+                    <TextField
+                        {disabled}
+                        id=""
+                        label={'Jenis Permohonan'}
+                        value={'komputer'}
+                    ></TextField>
+                    <TextField
+                        {disabled}
+                        id=""
+                        label={'Jumlah Yang Dipohon(RM)'}
+                        value={'6,999.00'}
+                    ></TextField>
+                    <TextField
+                        {disabled}
+                        id=""
+                        label={'Tempoh Pembayaran'}
+                        value={'12 Bulan'}
+                    ></TextField>
+                </div>
+            </StepperContentBody>
+        </StepperContent>
+
+        <!-- =========================================================== -->
+        <!-- Dokumen Sokongan yang Berkaitan  -->
+        <!-- =========================================================== -->
+
+        <StepperContent>
+            <StepperContentHeader title="Dokumen Sokongan yang Berkaitan">
+                <TextIconButton
+                    label="Seterusnya"
+                    primary
+                    onClick={() => {
+                        goNext();
+                    }}
+                >
+                    <SvgArrowRight></SvgArrowRight>
+                </TextIconButton>
+            </StepperContentHeader>
+
+            <!-- Butiran -->
+            <StepperContentBody>
+                <SectionHeader title=" Dokumen Pinjaman "></SectionHeader>
+                <div class="flex w-full flex-col gap-2">
                     <div
-                        class="flex h-full max-h-full flex-col items-start justify-center"
+                        class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
                     >
-                        <span class="text-sm text-system-primary"
-                            >Fail-fail yang dimuat naik:
-                        </span>
+                        <p class={stepperFormTitleClass}>
+                            Fail-fail yang dimuat naik:
+                        </p>
+                        <DownloadAttachment fileName="SALINAN SEBUT HARGA"
+                        ></DownloadAttachment>
+                        <DownloadAttachment fileName="SALINAN KAD PENGENALAN"
+                        ></DownloadAttachment>
+                        <DownloadAttachment fileName="SLIP GAJI TERKINI"
+                        ></DownloadAttachment>
+                    </div>
+                </div></StepperContentBody
+            >
+        </StepperContent>
+
+        <!-- =========================================================== -->
+        <!-- Pengesahan Permohonan Pinjaman -->
+        <!-- =========================================================== -->
+        <StepperContent>
+            <StepperContentHeader title="Pengesahan Permohonan Pinjaman">
+                <TextIconButton
+                    label="Seterusnya"
+                    primary
+                    onClick={() => {
+                        goNext();
+                    }}
+                >
+                    <SvgArrowRight></SvgArrowRight>
+                </TextIconButton>
+            </StepperContentHeader>
+
+            <!-- Butiran -->
+            <StepperContentBody>
+                <SectionHeader title=" Masukkan Nama Penyokong dan Pelulus "
+                ></SectionHeader>
+                <div
+                    class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
+                >
+                    <DropdownSelect
+                        dropdownType="label-left-full"
+                        label="Nama Penyokong"
+                        options={meetings}
+                    />
+                    <DropdownSelect
+                        dropdownType="label-left-full"
+                        label="Nama Pelulus"
+                        options={meetings}
+                    />
+                </div></StepperContentBody
+            >
+        </StepperContent>
+
+        <!-- =========================================================== -->
+        <!-- Kemaskini Maklumat Pinjaman -->
+        <!-- =========================================================== -->
+        <StepperContent>
+            <StepperContentHeader title="Kemaskini Maklumat Pinjaman">
+                <TextIconButton
+                    label="Seterusnya"
+                    primary
+                    onClick={() => {
+                        goNext();
+                    }}
+                >
+                    <SvgArrowRight></SvgArrowRight>
+                </TextIconButton>
+            </StepperContentHeader>
+            <CustomTab>
+                <!-- Maklumat Kelaykan -->
+                <CustomTabContent title="Maklumat Kelaykan">
+                    <SectionHeader title="Maklumat Kelayakan"></SectionHeader>
+                    <div
+                        class="flex w-full flex-col items-start justify-start gap-2.5"
+                    >
+                        <p class="text-sm text-system-primary">
+                            Gaji Pokok Sahaja
+                        </p>
+                        <TextField
+                            {disabled}
+                            labelType="auto-calculate-percentage"
+                            hasTooltip
+                            percentageVal={'100.00' + '%'}
+                            label={'Gaji Pokok (RM)'}
+                            value={'2672.56'}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            labelType="auto-calculate-percentage"
+                            hasTooltip
+                            percentageVal={'0.00' + '%'}
+                            label={'Potongan (RM)'}
+                            value={'2,000.00'}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            labelType="auto-calculate-percentage"
+                            hasTooltip
+                            percentageVal={'0.00' + '%'}
+                            label={'Baki (RM)'}
+                            value={'-'}
+                        ></TextField>
+                    </div>
+
+                    <div
+                        class="flex w-full flex-col items-start justify-start gap-2.5"
+                    >
+                        <p class="text-sm text-system-primary">
+                            Gaji Pokok Sahaja
+                        </p>
+                        <TextField
+                            {disabled}
+                            labelType="auto-calculate-percentage"
+                            hasTooltip
+                            percentageVal={'100.00' + '%'}
+                            label={'Gaji Pokok dan Elaun (RM)'}
+                            value={'2672.56'}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            labelType="auto-calculate-percentage"
+                            hasTooltip
+                            percentageVal={'0.00' + '%'}
+                            label={'Potongan (RM)'}
+                            value={'2,000.00'}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            labelType="auto-calculate-percentage"
+                            hasTooltip
+                            percentageVal={'0.00' + '%'}
+                            label={'Potongan Baru (RM)'}
+                            value={'-'}
+                        ></TextField>
+
+                        <TextField
+                            {disabled}
+                            labelType="auto-calculate-percentage"
+                            hasTooltip
+                            percentageVal={'0.00' + '%'}
+                            label={'Baki (RM)'}
+                            value={'-'}
+                        ></TextField>
+                    </div>
+                </CustomTabContent>
+
+                <!-- Maklumat Kelulusan dan Tawaran -->
+                <CustomTabContent title="Maklumat Kelulusan dan Tawaran">
+                    <SectionHeader title="Maklumat Kelulusan dan Tawaran"
+                    ></SectionHeader>
+                    <div
+                        class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
+                    >
+                        <div
+                            class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
+                        >
+                            <DropdownSelect
+                                dropdownType="label-left-full"
+                                label="Jenis Pembelian"
+                                options={loanOptions}
+                            />
+                            <TextField
+                                {disabled}
+                                id=""
+                                label={'Harga Belian Dengan Kerajaan (RM)'}
+                                value={'10,000.00'}
+                            ></TextField>
+                            <TextField
+                                {disabled}
+                                id=""
+                                label={'Bayaran Muka (RM)'}
+                                value={'2,000.00'}
+                            ></TextField>
+                            <TextField
+                                {disabled}
+                                id=""
+                                label={'Bayaran Amaun Pembiayaan Dan Keuntungan Kerajaan (RM)'}
+                                value={'500.00'}
+                            ></TextField>
+                            <TextField
+                                {disabled}
+                                id=""
+                                label={'Amaun Pembiayaan Kerajaan (RM)'}
+                                value={'501.00'}
+                            ></TextField>
+                            <TextField
+                                {disabled}
+                                id=""
+                                label={'Harga Jualan Kepada Pegawai(RM)'}
+                                value={'6,999.00'}
+                            ></TextField>
+                            <TextField
+                                {disabled}
+                                id=""
+                                label={'Ansuran Bulanan (RM)'}
+                                value={'583.25'}
+                            ></TextField>
+                            <TextField
+                                {disabled}
+                                id=""
+                                label={'Tempoh'}
+                                value={'12 Bulan'}
+                            ></TextField>
+                        </div>
+                    </div>
+                </CustomTabContent>
+
+                <!-- Jadual Pertama -->
+                <CustomTabContent title="Jadual Pertama">
+                    <SectionHeader title="Masukkan Maklumat Pembekal">
+                        <FormButton type="add-supplier" onClick={addPembekal}
+                        ></FormButton>
+                    </SectionHeader>
+
+                    <div
+                        class="flex w-full flex-col items-start justify-start gap-2.5"
+                    >
+                        {#each suppliers as item, index}
+                            <div
+                                class="flex w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+                            >
+                                <div
+                                    class="flex w-full items-start justify-between"
+                                >
+                                    <p class="text-sm text-system-primary">
+                                        Pembekal #{index + 1}
+                                    </p>
+                                    {#if index != 0}
+                                        <button
+                                            on:click={() => {
+                                                suppliers.splice(index, 1);
+                                                suppliers = suppliers;
+                                            }}
+                                        >
+                                            <div class="text-system-danger">
+                                                <SvgTrash></SvgTrash>
+                                            </div></button
+                                        >
+                                    {/if}
+                                </div>
+                                <TextField
+                                    placeholder="Nama Pembekal"
+                                    label="Nama Pembekal"
+                                    bind:value={item.name}
+                                ></TextField>
+                                <TextField
+                                    placeholder="Alamat Pembekal"
+                                    label="Alamat"
+                                    bind:value={item.address}
+                                ></TextField>
+                            </div>
+                        {/each}
+                    </div>
+
+                    <SectionHeader title="Masukkan Masukkan Maklumat Pembelian"
+                    ></SectionHeader>
+                    <div
+                        class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
+                    >
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Jumlah Harga Belian (RM)'}
+                            value={'-'}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Bayaran Baki (RM)'}
+                            value={'-'}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Amaun Pembiayaan Kerajaan (RM)'}
+                            value={'-'}
+                        ></TextField>
+                    </div>
+                </CustomTabContent>
+
+                <!-- Jadual Kedua -->
+                <CustomTabContent title="Jadual Kedua">
+                    <SectionHeader title="Masukkan Maklumat harga Jualan"
+                    ></SectionHeader>
+                    <div
+                        class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
+                    >
+                        <TextField
+                            id=""
+                            label={'Jumlah Harga Belian (RM)'}
+                            value={'-'}
+                        ></TextField>
+                        <TextField id="" label={'Bayaran Baki (RM)'} value={'-'}
+                        ></TextField>
+                        <TextField
+                            id=""
+                            label={'Amaun Pembiayaan dan Keuntungan Kerajaan (RM)'}
+                            value={'-'}
+                        ></TextField>
+                    </div>
+
+                    <SectionHeader
+                        title="Masukkan Masukkan Amaun dan Keuntungan Kerajaan"
+                    ></SectionHeader>
+                    <div
+                        class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
+                    >
+                        <TextField
+                            label="Amaun Pembiayaan dan Keuntungan Kerajaan"
+                            value="-"
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Ansuran Bulanan (RM)'}
+                            value={'583.25'}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Tempoh'}
+                            value={'12 bulan'}
+                        ></TextField>
+                    </div></CustomTabContent
+                >
+            </CustomTab>
+        </StepperContent>
+
+        <!-- =========================================================== -->
+        <!-- Senarai Semak Surat Perjanjian -->
+        <!-- =========================================================== -->
+
+        <StepperContent>
+            <StepperContentHeader title="Senarai Semak Surat Perjanjian">
+                <TextIconButton
+                    label="Seterusnya"
+                    primary
+                    onClick={() => {
+                        goNext();
+                    }}
+                >
+                    <SvgArrowRight></SvgArrowRight>
+                </TextIconButton>
+            </StepperContentHeader>
+
+            <!-- Butiran -->
+            <StepperContentBody>
+                <SectionHeader
+                    title=" Masukkan Maklumat Senarai Semak Surat Perjanjian "
+                ></SectionHeader>
+                <div
+                    class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
+                >
+                    <RadioSingle {disabled} {options} legend={'Disediakan'}
+                    ></RadioSingle>
+                    <RadioSingle {disabled} {options} legend={'Disemak'}
+                    ></RadioSingle>
+                </div></StepperContentBody
+            >
+        </StepperContent>
+
+        <!-- =========================================================== -->
+        <!-- Muat Turun Resit dan Invois -->
+        <!-- =========================================================== -->
+        <StepperContent>
+            <StepperContentHeader title=" Muat Turun Resit dan Invois">
+                <TextIconButton
+                    label="Seterusnya"
+                    primary
+                    onClick={() => {
+                        goNext();
+                    }}
+                >
+                    <SvgArrowRight></SvgArrowRight>
+                </TextIconButton>
+            </StepperContentHeader>
+
+            <!-- Butiran -->
+            <StepperContentBody>
+                <SectionHeader title=" Dokumen Resit dan Invois "
+                ></SectionHeader>
+                <div class="flex w-full flex-col gap-2">
+                    <div
+                        class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
+                    >
+                        <p class={stepperFormTitleClass}>
+                            Fail-fail yang dimuat naik:
+                        </p>
+                        <DownloadAttachment fileName="SALINAN RESIT"
+                        ></DownloadAttachment>
+                        <DownloadAttachment fileName="SALINAN INVOIS"
+                        ></DownloadAttachment>
+                    </div>
+                </div></StepperContentBody
+            >
+        </StepperContent>
+        <!-- =========================================================== -->
+        <!-- Tetapan Sokongan -->
+        <!-- =========================================================== -->
+
+        <StepperContent>
+            <StepperContentHeader title="Tetapan Sokongan">
+                <FormButton
+                    type="done"
+                    onClick={() => {
+                        window.history.back();
+                    }}
+                ></FormButton>
+            </StepperContentHeader>
+
+            <!-- Butiran -->
+            <StepperContentBody>
+                <SectionHeader title=" Keputusan daripada Penyokong "
+                ></SectionHeader>
+                <div class="flex w-full flex-col gap-2.5">
+                    <div
+                        class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
+                    >
+                        <p class={stepperFormTitleClass}>
+                            Keputusan akan dihantar ke peranan - peranan
+                            berkaitan:
+                        </p>
+
+                        <LongTextField
+                            id="tindakanUlasan"
+                            label={'Tindakan/ Ulasan'}
+                            value={'Butiran lengkap..'}
+                        ></LongTextField>
+
+                        <RadioSingle options={supportOptions} disabled />
                     </div>
                 </div>
-                {#each uploadedFiles as item}
-                    <DownloadAttachment fileName={item.value} />
-                {/each}
-                <div
-                class="flex max-h-full w-full flex-col items-start border-t"
-            />
-                <SectionHeader title="Maklumat Kelayakan" />
-                <TextField
-                    labelType="auto-calculate-percentage"
-                    disabled
-                    hasTooltip
-                    labelBlack={false}
-                    percentageVal={'0%'}
-                    id="gaji-pokok"
-                    label="Gaji Pokok & Elaun (RM) "
-                    value="4,672.56"
-                ></TextField>
-                <TextField
-                    labelType="auto-calculate-percentage"
-                    disabled
-                    hasTooltip
-                    labelBlack={false}
-                    percentageVal={'0%'}
-                    id="potongan"
-                    label="Potongan (RM)"
-                    value="2,000.00"
-                ></TextField>
-                <TextField
-                    labelType="auto-calculate-percentage"
-                    disabled
-                    hasTooltip
-                    percentageVal={'0%'}
-                    labelBlack={false}
-                    id="baki"
-                    label="Baki (RM)"
-                    value="2,672.56"
-                ></TextField>
-            </CustomTabContent>
-        </div>
-        <div
-            class="flex max-h-full w-[50%] flex-col items-start justify-start gap-2.5"
-        >
-            <CustomTabContent>
-                <SectionHeader title="Ulasan Sokongan daripada Ketua Seksyen" />
-                <div
-                    class="flex h-[40px] max-h-[40px] min-h-[40px] w-full flex-row items-center justify-between"
-                >
-                    <span class="text-sm italic text-system-primary"
-                        >&#x2022; Keputusan akan dihantar ke email klinik dan
-                        Urus Setia berkaitan</span
-                    >
-                </div>
-                <LongTextField
-                    rows={2}
-                    labelBlack={false}
-                    id="tindakan"
-                    label="Tindakan/Ulasan"
-                    value="Butiran lengkap.."
-                ></LongTextField>
-                <RadioSingle options={supportOptions} />
-                <div
-                class="flex max-h-full w-full flex-col items-start border-t"
-            />
+
                 <SectionHeader
-                    title="Keputusan Daripada Peranan-Peranan Lain"
-                />
-                <SectionHeader color={'system-primary'} title="Pelulus" />
-                <TextField
-                    labelBlack={false}
-                    disabled
-                    id="nama"
-                    label="Nama"
-                    value="Ramdan Bin Mat"
-                />
-                <div
-                    class="flex h-[40px] max-h-[40px] min-h-[40px] w-full flex-row items-center justify-between"
-                >
-                    <span class="text-sm italic text-system-primary"
-                        >&#x2022; Menunggu keputusan daripada KETUA SEKSYEN</span
+                    title=" Keputusan Daripada Peranan - Peranan Lain "
+                ></SectionHeader>
+                <div class="flex w-full flex-col gap-2.5">
+                    <div
+                        class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
                     >
+                        <p class={stepperFormTitleClass}>Pelulus:</p>
+
+                        <TextField
+                            id=""
+                            label={'Nama'}
+                            value={'Mustaqim Bin Ahmad.'}
+                        ></TextField>
+
+                        <p
+                            class="mt-2 h-fit w-full bg-bgr-primary text-sm italic text-system-accent"
+                        >
+                            ● Menunggu keputusan daripada PENYOKONG..
+                        </p>
+                    </div>
                 </div>
-                <SectionHeader
-                    color={'system-primary'}
-                    title="Urus Setia Pentadbiran"
-                />
-                <TextField
-                    labelBlack={false}
-                    disabled
-                    id="nama"
-                    label="Nama"
-                    value="Mat Irdam Bin Murni"
-                />
-                <LongTextField
-                    rows={2}
-                    disabled
-                    labelBlack={false}
-                    id="ulasan"
-                    label="Tindakan/Ulasan"
-                    value="Sah untuk mohon."
-                />
-                <div class="flex w-full flex-row text-sm">
-                    <span class="w-[220px] text-txt-tertiary"
-                        >Keputusan</span
-                    ><Badge border color="green">SAH</Badge>
-                </div>
-            </CustomTabContent>
-        </div>
-    </div>
+            </StepperContentBody>
+        </StepperContent>
+    </Stepper>
 </section>
