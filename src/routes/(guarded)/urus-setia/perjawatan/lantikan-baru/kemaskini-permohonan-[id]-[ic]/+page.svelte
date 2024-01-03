@@ -35,6 +35,7 @@
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import { goto } from '$app/navigation';
+    import { any, z } from 'zod';
     export let data;
     let employeeLists: SelectOptionType<any>[] = [];
     let selectedSupporter: string;
@@ -153,12 +154,16 @@
         });
         return formatter.format(Number(amount)).toString();
     }
+
+    // =========================================================================
+    // function to assign the content  of the tooltip
+    // =========================================================================
     let tooltipContent: string = '';
     const itkaTooltip: string = 'ITKA bermaksud ...';
     const itpTooltip: string = 'ITP bermaksud ...';
     const epwTooltip: string = 'EPW bermaksud ...';
     const colaTooltip: string = 'COLA bermaksud ...';
-    // function to assign the content  of the tooltip
+
     function assignContent(ev: CustomEvent<HTMLDivElement>) {
         {
             let eventName = (ev.target as HTMLDivElement).id.split('-')[1];
@@ -181,6 +186,27 @@
             }
         }
     }
+
+    // =========================================================================
+    // z validation schema for the new employment details form fields
+    // =========================================================================
+    let errorData: any;
+
+    const newEmploymentServiceSchema = z.object({
+        textFieldExample: z
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+    });
+
+    // =========================================================================
+    // new employment details form fields submit function
+    // =========================================================================
 </script>
 
 <ContentHeader
@@ -202,37 +228,37 @@
                 <p class={stepperFormTitleClass}>Maklumat Peribadi</p>
                 <!-- <TextField
                     {disabled}
-                    id="noPerkeja"
+                    name="noPerkeja"
                     label={'No. Pekerja'}
                     value={currentEmployee.employeeNumber}
                 ></TextField>
                 <TextField
                     {disabled}
-                    id="statusPekerjaan"
+                    name="statusPekerjaan"
                     label={'Status Pekerjaan'}
                     value={currentEmployeeStatus.name}
                 ></TextField> -->
                 <TextField
                     {disabled}
-                    id="noKadPengenalan"
+                    name="noKadPengenalan"
                     label={'No. Kad Pengenalan'}
                     value={data.record.currentEmployee.identityDocumentNumber}
                 ></TextField>
                 <TextField
                     {disabled}
-                    id="namaPenuh"
+                    name="namaPenuh"
                     label={'Nama Penuh'}
                     value={data.record.currentEmployee.name}
                 ></TextField>
                 <TextField
                     {disabled}
-                    id="namaLain"
+                    name="namaLain"
                     label={'Nama Lain'}
                     value={data.record.currentEmployee.alternativeName}
                 ></TextField>
                 <TextField
                     {disabled}
-                    id="warnaKadPengenalan"
+                    name="warnaKadPengenalan"
                     label={'Warna Kad Pengenalan'}
                     value={isBlueOrRedIC(
                         data.record.currentEmployee.isMalaysian,
@@ -248,13 +274,13 @@
                 ></DateSelector>
                 <TextField
                     {disabled}
-                    id="tempatLahir"
+                    name="tempatLahir"
                     label={'Tempat Lahir'}
                     value={data.record.currentEmployeeBirthState.name}
                 ></TextField>
                 <TextField
                     {disabled}
-                    id="warganegara"
+                    name="warganegara"
                     label={'Warganegara'}
                     value={data.record.currentEmployee.isMalaysian
                         ? 'Malaysia'
@@ -262,61 +288,61 @@
                 ></TextField>
                 <TextField
                     {disabled}
-                    id="bangsa"
+                    name="bangsa"
                     label={'Bangsa'}
                     value={data.record.currentEmployeeRace.name}
                 ></TextField>
                 <TextField
                     {disabled}
-                    id="agama"
+                    name="agama"
                     label={'Agama'}
                     value={data.record.currentEmployeeReligion.name}
                 ></TextField>
                 <TextField
                     {disabled}
-                    id="jantina"
+                    name="jantina"
                     label={'Jantina'}
                     value={data.record.currentEmployee.gender}
                 ></TextField>
                 <TextField
                     {disabled}
-                    id="status"
+                    name="status"
                     label={'Status'}
                     value={data.record.currentEmployee.marital}
                 ></TextField>
                 <TextField
                     {disabled}
-                    id="emel"
+                    name="emel"
                     label={'Emel'}
                     value={data.record.currentEmployee.email}
                 ></TextField>
                 <LongTextField
                     {disabled}
-                    id="alamatRumah"
+                    name="alamatRumah"
                     label={'Alamat Rumah'}
                     value={data.record.currentEmployee.homeAddress}
                 ></LongTextField>
                 <LongTextField
                     {disabled}
-                    id="alamatSuratMenyurat"
+                    name="alamatSuratMenyurat"
                     label={'Alamat Surat Menyurat (jika berlainan dari alamat rumah'}
                     value={data.record.currentEmployee.mailAddress}
                 ></LongTextField>
                 <TextField
                     {disabled}
-                    id="perumahan"
+                    name="perumahan"
                     label={'Perumahan'}
                     value={'-'}
                 ></TextField>
                 <TextField
                     {disabled}
-                    id="pinjPerumahan"
+                    name="pinjPerumahan"
                     label={'Pinjaman Perumahan'}
                     value={'-'}
                 ></TextField>
                 <TextField
                     {disabled}
-                    id="pinjKenderaan"
+                    name="pinjKenderaan"
                     label={'Pinjaman Kenderaan'}
                     value={'-'}
                 ></TextField>
@@ -343,26 +369,26 @@
                 {#if isInRelationshipWithLKIMStaff === 'true'}
                     <TextField
                         {disabled}
-                        id="noPekerjaPasangan"
+                        name="noPekerjaPasangan"
                         label={'No. Pekerja LKIM'}
                         value={data.record.currentEmployeeSpouseEmployeeInfo
                             ?.employeeNumber}
                     ></TextField>
                     <TextField
                         {disabled}
-                        id="namaPasangan"
+                        name="namaPasangan"
                         label={'Nama Kakitangan LKIM'}
                         value={data.record.currentEmployeeSpouse.name}
                     ></TextField>
                     <TextField
                         {disabled}
-                        id="jawatanPasangan"
+                        name="jawatanPasangan"
                         label={'Jawatan Kakitangan LKIM'}
                         value={data.record.currentEmployeeSpouse.position}
                     ></TextField>
                     <TextField
                         {disabled}
-                        id="hubungan"
+                        name="hubungan"
                         label={'Hubungan'}
                         value={data.record.currentEmployeeSpouse.relationship}
                     ></TextField>
@@ -383,26 +409,26 @@
                     </p>
                     <TextField
                         {disabled}
-                        id="sekolah"
+                        name="sekolah"
                         label={'Sekolah'}
                         value={edu.instituteName}
                     ></TextField>
                     <TextField
                         {disabled}
-                        id="tahunHabis"
+                        name="tahunHabis"
                         label={'Tahun'}
                         value={edu.completionYear}
                     ></TextField>
                     <TextField
                         {disabled}
-                        id="gredSekolah"
+                        name="gredSekolah"
                         label={edu.type == 'Ijazah' ? 'CGPA' : 'Gred'}
                         value={edu.finalGrade}
                     ></TextField>
                     {#if edu.type == 'Ijazah'}
                         <TextField
                             {disabled}
-                            id="bidang"
+                            name="bidang"
                             label={'Bidang'}
                             value={edu.course}
                         ></TextField>
@@ -439,13 +465,13 @@
                     {#if item.company !== '-'}
                         <TextField
                             {disabled}
-                            id="namaMajikan"
+                            name="namaMajikan"
                             label={'Nama Majikan'}
                             value={item.company}
                         ></TextField>
                         <TextField
                             {disabled}
-                            id="alamatMajikan"
+                            name="alamatMajikan"
                             label={'Alamat Majikan'}
                             value="{item.address}, {item.postcode}, {item.city}, {mockLookupStates.find(
                                 (state) => state.id === item.stateId,
@@ -453,19 +479,19 @@
                         ></TextField>
                         <TextField
                             {disabled}
-                            id="jawatan"
+                            name="jawatan"
                             label={'Jawatan'}
                             value={item.position}
                         ></TextField>
                         <TextField
                             {disabled}
-                            id="kodJawatan"
+                            name="kodJawatan"
                             label={'Kod Jawatan (Jika ada)'}
                             value={item.grade}
                         ></TextField>
                         <TextField
                             {disabled}
-                            id="tempohPerkhidmatan"
+                            name="tempohPerkhidmatan"
                             label={'Tempoh Perkhidmatan (Tahun)'}
                             value={getDurationYear(
                                 item.startDate,
@@ -474,42 +500,46 @@
                         ></TextField>
                         <TextField
                             {disabled}
-                            id="gaji"
+                            name="gaji"
                             label={'Gaji'}
                             value={currencyFormatter(parseInt(item.salary))}
                         ></TextField>
                     {:else}
                         <TextField
                             {disabled}
-                            id="namaMajikan"
+                            name="namaMajikan"
                             label={'Nama Majikan'}
                             value="-"
                         ></TextField>
                         <TextField
                             {disabled}
-                            id="alamatMajikan"
+                            name="alamatMajikan"
                             label={'Alamat Majikan'}
                             value="-"
                         ></TextField>
                         <TextField
                             {disabled}
-                            id="jawatan"
+                            name="jawatan"
                             label={'Jawatan'}
                             value="-"
                         ></TextField>
                         <TextField
                             {disabled}
-                            id="kodJawatan"
+                            name="kodJawatan"
                             label={'Kod Jawatan (Jika ada)'}
                             value="-"
                         ></TextField>
                         <TextField
                             {disabled}
-                            id="tempohPerkhidmatan"
+                            name="tempohPerkhidmatan"
                             label={'Tempoh Perkhidmatan (Tahun)'}
                             value="-"
                         ></TextField>
-                        <TextField {disabled} id="gaji" label={'Gaji'} value="-"
+                        <TextField
+                            {disabled}
+                            name="gaji"
+                            label={'Gaji'}
+                            value="-"
                         ></TextField>{/if}
                 {/each}
             </div></StepperContentBody
@@ -548,13 +578,13 @@
             ><div class="flex w-full flex-col gap-2.5">
                 <TextField
                     {disabled}
-                    id="namaWaris"
+                    name="namaWaris"
                     label={'Nama Waris'}
                     value={data.record.currentEmployeeNextOfKins.name}
                 ></TextField>
                 <TextField
                     {disabled}
-                    id="noKP"
+                    name="noKP"
                     label={'No. Kad Pengenalan'}
                     value={data.record.currentEmployeeNextOfKins
                         .identityDocumentNumber}
@@ -569,7 +599,7 @@
                 ></DateSelector>
                 <TextField
                     {disabled}
-                    id="hubungan"
+                    name="hubungan"
                     label={'Hubungan Dengan Waris'}
                     value={data.record.currentEmployeeNextOfKins.relationship}
                 ></TextField>
@@ -586,7 +616,7 @@
                 ></DateSelector>
                 <TextField
                     {disabled}
-                    id="warnaKP"
+                    name="warnaKP"
                     label={'Warna Kad Pengenalan'}
                     value={isBlueOrRedIC(
                         data.record.currentEmployeeNextOfKins.isMalaysian,
@@ -594,31 +624,31 @@
                 ></TextField>
                 <TextField
                     {disabled}
-                    id="telefonRumah"
+                    name="telefonRumah"
                     label={'Telefon (R)'}
                     value={data.record.currentEmployeeNextOfKins.homeNumber}
                 ></TextField>
                 <TextField
                     {disabled}
-                    id="telefonPeribadi"
+                    name="telefonPeribadi"
                     label={'Telefon (P)'}
                     value={data.record.currentEmployeeNextOfKins.mobileNumber}
                 ></TextField>
                 <TextField
                     {disabled}
-                    id="pekerjaan"
+                    name="pekerjaan"
                     label={'Pekerjaan'}
                     value={data.record.currentEmployeeNextOfKins.position}
                 ></TextField>
                 <TextField
                     {disabled}
-                    id="namaMajikan"
+                    name="namaMajikan"
                     label={'Nama Majikan'}
                     value={data.record.currentEmployeeNextOfKins.company}
                 ></TextField>
                 <LongTextField
                     {disabled}
-                    id="alamatMajikan"
+                    name="alamatMajikan"
                     label={'Alamat Majikan'}
                     value={data.record.currentEmployeeNextOfKins.companyAddress}
                 ></LongTextField>
@@ -658,30 +688,36 @@
                 <p class={stepperFormTitleClass}>Maklumat Perkhidmatan</p>
                 <TextField
                     disabled={false}
-                    id="gredSemasa"
+                    hasError={true}
+                    name="currentGrade"
                     label={'Gred Semasa'}
                     value={data.record.currentEmployeeGrade.code}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    id="jawatan"
+                    hasError={true}
+                    name="position"
                     label={'Jawatan'}
                     value={data.record.currentEmployeePosition.name}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    id="penempatan"
+                    hasError={true}
+                    name="placement"
                     label={'Penempatan'}
                     value={data.record.currentEmployeeService.placement}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    id="tarafPerkhidmatan"
+                    hasError={true}
+                    name="serviceLevel"
                     label={'Taraf Perkhidmatan'}
                     value={data.record.currentEmployeeServiceType.name}
                 ></TextField>
                 <DateSelector
                     {handleDateChange}
+                    hasError={true}
+                    name="currentEmploymentDateOfEffect"
                     disabled={false}
                     label={'Tarikh Kuatkuasa Lantikan Semasa'}
                     selectedDate={dateFormatter(
@@ -690,49 +726,57 @@
                 ></DateSelector>
                 <RadioSingle
                     disabled={false}
+                    name="pensionBenefits"
                     options={faedahPersaraanOptions}
                     legend={'Faedah Persaraan'}
                     bind:userSelected={isKWSP}
                 ></RadioSingle>
                 <TextField
                     disabled={false}
-                    id="noKWSP"
+                    hasError={true}
+                    name="kwspNumber"
                     label={'No. KWSP'}
                     value={'1234-5678-9012'}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    id="noSOCSO"
+                    hasError={true}
+                    name="socsoNumber"
                     label={'No. SOCSO'}
                     value={'1234-5678-9012'}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    id="noCukai"
+                    hasError={true}
+                    name="taxNumber"
                     label={'No. Cukai (LHDN)'}
                     value={'1234-5678-9012'}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    id="bank"
+                    hasError={true}
+                    name="bank"
                     label={'Bank'}
                     value={'Maybank Berhad'}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    id="noAkaun"
+                    hasError={true}
+                    name="accountNumber"
                     label={'No. Akaun'}
                     value={'1234-5678-9012'}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    id="program"
+                    hasError={true}
+                    name="program"
                     label={'Program'}
                     value={'-'}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    id="kelayakanCuti"
+                    hasError={true}
+                    name="leaveEntitlement"
                     label={'Kelayakan Cuti'}
                     value={getEmployeeLeave(
                         data.record.currentEmployee.employeeNumber,
@@ -741,6 +785,8 @@
 
                 <DateSelector
                     {handleDateChange}
+                    hasError={true}
+                    name="govEmploymentHiredDate"
                     disabled={false}
                     label={'Mula Dilantik Perkhidmatan Kerajaan'}
                     selectedDate={dateFormatter(
@@ -749,6 +795,8 @@
                 ></DateSelector>
                 <DateSelector
                     {handleDateChange}
+                    hasError={true}
+                    name="lkimEmploymentHiredDate"
                     disabled={false}
                     label={'Mula Dilantik Perkhidmatan LKIM'}
                     selectedDate={dateFormatter(
@@ -757,6 +805,8 @@
                 ></DateSelector>
                 <DateSelector
                     {handleDateChange}
+                    hasError={true}
+                    name="currentEmploymentHiredDate"
                     disabled={false}
                     label={'Mula Dilantik Perkhidmatan Sekarang'}
                     selectedDate={dateFormatter(
@@ -765,6 +815,8 @@
                 ></DateSelector>
                 <DateSelector
                     {handleDateChange}
+                    hasError={true}
+                    name="confirmedFirstLkimPositionData"
                     disabled={false}
                     label={'Disahkan Dalam Jawatan Pertama LKIM'}
                     selectedDate={dateFormatter(
@@ -773,6 +825,8 @@
                 ></DateSelector>
                 <DateSelector
                     {handleDateChange}
+                    hasError={true}
+                    name="confirmedCurrentLkimPositionData"
                     disabled={false}
                     label={'Disahkan Dalam Jawatan Semasa LKIM'}
                     selectedDate={dateFormatter(
@@ -802,6 +856,8 @@
                 </AccordianField>
                 <DateSelector
                     {handleDateChange}
+                    hasError={true}
+                    name="approvedPreviousServiceMergingDate"
                     disabled={false}
                     label={'Tarikh Kelulusan Percantuman Perkhidmatan Lepas'}
                     selectedDate={dateFormatter(
@@ -810,42 +866,50 @@
                 ></DateSelector>
                 <TextField
                     disabled={false}
-                    id="pemangkuanSekarang"
+                    hasError={true}
+                    name="currentActing"
                     label={'Pemangkuan Sekarang'}
                     value={'-'}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    id="tanggungKerjaSekarang"
+                    hasError={true}
+                    name="currentInterim"
                     label={'Tanggung Kerja Sekarang'}
                     value={'-'}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    id="skimPencen"
+                    hasError={true}
+                    name="pensionScheme"
                     label={'Skim Pencen'}
                     value={'-'}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    id="kenaikanGajiAkhir"
+                    hasError={true}
+                    name="finalIncreament"
                     label={'Kenaikan Gaji Akhir'}
                     value={'-'}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    id="kenaikanPangkatAkhir"
+                    hasError={true}
+                    name="finalPromotion"
                     label={'Kenaikan Pangkat Akhir'}
                     value={'-'}
                 ></TextField>
                 <TextField
                     disabled={false}
-                    id="bulanKGT"
+                    hasError={true}
+                    name="kgtMonth"
                     label={'Bulan KGT'}
                     value={'-'}
                 ></TextField>
                 <DateSelector
                     {handleDateChange}
+                    hasError={true}
+                    name="retirementDate"
                     disabled={false}
                     label={'Tarikh Bersara'}
                     selectedDate={dateFormatter(
@@ -859,19 +923,22 @@
                     <div class="space-y-2.5">
                         <TextField
                             disabled={false}
-                            id="tarikhBerkuatkuasa"
+                            hasError={true}
+                            name="salaryDateOfEffect"
                             label={'Tarikh Berkuatkuasa'}
                             value={'12/12/2021'}
                         ></TextField>
                         <TextField
                             disabled={false}
-                            id="tanggaGaji"
+                            hasError={true}
+                            name="salaryBenchmark"
                             label={'Tangga Gaji'}
                             value={currencyFormatter(1234.56)}
                         ></TextField>
                         <TextField
                             disabled={false}
-                            id="gajiPokok"
+                            hasError={true}
+                            name="salary"
                             label={'Gaji Pokok'}
                             value={currencyFormatter(1234.56)}
                         ></TextField>
@@ -881,7 +948,8 @@
                             hasTooltip={true}
                             toolTipID="type-itka"
                             disabled={false}
-                            id="itka"
+                            hasError={true}
+                            name="itka"
                             label={'ITKA'}
                             value={currencyFormatter(123.45)}
                         ></TextField>
@@ -889,7 +957,8 @@
                             hasTooltip={true}
                             toolTipID="type-itp"
                             disabled={false}
-                            id="itp"
+                            hasError={true}
+                            name="itp"
                             label={'ITP'}
                             value={currencyFormatter(123.45)}
                         ></TextField>
@@ -897,7 +966,8 @@
                             hasTooltip={true}
                             toolTipID="type-epw"
                             disabled={false}
-                            id="epw"
+                            hasError={true}
+                            name="epw"
                             label={'EPW'}
                             value={currencyFormatter(123.45)}
                         ></TextField>
@@ -905,7 +975,8 @@
                             hasTooltip={true}
                             toolTipID="type-cola"
                             disabled={false}
-                            id="cola"
+                            hasError={true}
+                            name="cola"
                             label={'COLA'}
                             value={currencyFormatter(123.45)}
                         ></TextField>
@@ -935,7 +1006,7 @@
                     >
                 </div>
                 <LongTextField
-                    id="supporter-remark"
+                    name="employmentSecretary"
                     label="Tindakan/Ulasan"
                     value=""
                 ></LongTextField>
@@ -959,14 +1030,14 @@
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2">
                 <DropdownSelect
-                    id="staffs-supporter"
+                    name="staffs-supporter"
                     label="Nama Penyokong"
                     dropdownType="label-left-full"
                     options={employeeLists}
                     bind:index={selectedSupporter}
                 />
                 <DropdownSelect
-                    id="staffs-approver"
+                    name="staffs-approver"
                     label="Nama Pelulus"
                     dropdownType="label-left-full"
                     options={employeeLists}
@@ -987,13 +1058,13 @@
                     <TextField
                         disabled
                         type="text"
-                        id="supporter-name"
+                        name="supporter-name"
                         label="Nama"
                         value="Mohd Rahim Ismail"
                     ></TextField>
                     <LongTextField
                         disabled
-                        id="supporter-remark"
+                        name="supporter-remark"
                         label="Tindakan/Ulasan"
                         value="Layak"
                     ></LongTextField>
@@ -1015,13 +1086,13 @@
                     <TextField
                         disabled
                         type="text"
-                        id="approver-name"
+                        name="approver-name"
                         label="Nama"
                         value="Mohd Safwan Adam"
                     ></TextField>
                     <LongTextField
                         disabled
-                        id="approver-remark"
+                        name="approver-remark"
                         label="Tindakan/Ulasan"
                         value="Layak"
                     ></LongTextField>
@@ -1044,13 +1115,13 @@
                     <TextField
                         disabled
                         type="text"
-                        id="service-secretary-name"
+                        name="service-secretary-name"
                         label="Nama"
                         value="Ikhwan bin Salem"
                     ></TextField>
                     <LongTextField
                         disabled
-                        id="service-secretary-remark"
+                        name="service-secretary-remark"
                         label="Tindakan/Ulasan"
                         value="Layak"
                     ></LongTextField>
@@ -1073,7 +1144,7 @@
             <div class="flex w-full flex-col gap-2">
                 <TextField
                     {disabled}
-                    id="staff-number"
+                    name="staff-number"
                     label={'No. Pekerja (Dijana secara automatik)'}
                     value={data.record.currentEmployee.employeeNumber}
                 ></TextField>
