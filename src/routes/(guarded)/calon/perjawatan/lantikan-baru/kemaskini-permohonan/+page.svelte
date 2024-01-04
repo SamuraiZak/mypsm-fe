@@ -43,7 +43,7 @@
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import { getEmployees } from '$lib/service/employees/staff-service';
+    // import { getEmployees } from '$lib/service/employees/staff-service';
     import type { SelectOptionType } from 'flowbite-svelte';
     import { onMount } from 'svelte';
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
@@ -54,7 +54,7 @@
     let selectedApprover: string;
 
     onMount(async () => {
-        const staffs: IntEmployees[] = await getEmployees();
+        const staffs: IntEmployees[] = mockEmployees;
 
         employeeLists = staffs.map((staff) => ({
             value: staff.id.toString(),
@@ -742,90 +742,88 @@
         >
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Kemaskini Lantikan Baru"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
-                <SvgCheck></SvgCheck>
-            </TextIconButton>
-        </StepperContentHeader>
+        <StepperContentHeader
+            title="Kemaskini Lantikan Baru"
+        ></StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2.5">
                 <p class={stepperFormTitleClass}>Maklumat Perkhidmatan</p>
                 <TextField
-                    disabled={false}
+                    disabled={true}
                     id="gredSemasa"
                     label={'Gred Semasa'}
                     value={currentEmployeeGrade.code}
                 ></TextField>
                 <TextField
-                    disabled={false}
+                    disabled={true}
                     id="jawatan"
                     label={'Jawatan'}
                     value={currentEmployeePosition.name}
                 ></TextField>
                 <TextField
-                    disabled={false}
+                    disabled={true}
                     id="penempatan"
                     label={'Penempatan'}
                     value={currentEmployeeService.placement}
                 ></TextField>
                 <TextField
-                    disabled={false}
+                    disabled={true}
                     id="tarafPerkhidmatan"
                     label={'Taraf Perkhidmatan'}
                     value={currentEmployeeServiceType.name}
                 ></TextField>
                 <DateSelector
                     {handleDateChange}
-                    disabled={false}
+                    disabled={true}
                     label={'Tarikh Kuatkuasa Lantikan Semasa'}
                     selectedDate={dateFormatter(
                         currentEmployeeService.currentServiceDate,
                     )}
                 ></DateSelector>
                 <RadioSingle
-                    disabled={false}
+                    disabled={true}
                     options={faedahPersaraanOptions}
                     legend={'Faedah Persaraan'}
                     bind:userSelected={isKWSP}
                 ></RadioSingle>
                 <TextField
-                    disabled={false}
+                    disabled={true}
                     id="noKWSP"
                     label={'No. KWSP'}
                     value={'1234-5678-9012'}
                 ></TextField>
                 <TextField
-                    disabled={false}
+                    disabled={true}
                     id="noSOCSO"
                     label={'No. SOCSO'}
                     value={'1234-5678-9012'}
                 ></TextField>
                 <TextField
-                    disabled={false}
+                    disabled={true}
                     id="noCukai"
                     label={'No. Cukai (LHDN)'}
                     value={'1234-5678-9012'}
                 ></TextField>
                 <TextField
-                    disabled={false}
+                    disabled={true}
                     id="bank"
                     label={'Bank'}
                     value={'Maybank Berhad'}
                 ></TextField>
                 <TextField
-                    disabled={false}
+                    disabled={true}
                     id="noAkaun"
                     label={'No. Akaun'}
                     value={'1234-5678-9012'}
                 ></TextField>
                 <TextField
-                    disabled={false}
+                    disabled={true}
                     id="program"
                     label={'Program'}
                     value={'-'}
                 ></TextField>
                 <TextField
-                    disabled={false}
+                    disabled={true}
                     id="kelayakanCuti"
                     label={'Kelayakan Cuti'}
                     value={getEmployeeLeave(currentEmployee.employeeNumber)}
@@ -833,7 +831,7 @@
 
                 <DateSelector
                     {handleDateChange}
-                    disabled={false}
+                    disabled={true}
                     label={'Mula Dilantik Perkhidmatan Kerajaan'}
                     selectedDate={dateFormatter(
                         currentEmployeeService.firstServiceDate,
@@ -841,7 +839,7 @@
                 ></DateSelector>
                 <DateSelector
                     {handleDateChange}
-                    disabled={false}
+                    disabled={true}
                     label={'Mula Dilantik Perkhidmatan LKIM'}
                     selectedDate={dateFormatter(
                         currentEmployeeService.currentServiceDate,
@@ -849,7 +847,7 @@
                 ></DateSelector>
                 <DateSelector
                     {handleDateChange}
-                    disabled={false}
+                    disabled={true}
                     label={'Mula Dilantik Perkhidmatan Sekarang'}
                     selectedDate={dateFormatter(
                         currentEmployeeService.currentServiceDate,
@@ -857,7 +855,7 @@
                 ></DateSelector>
                 <DateSelector
                     {handleDateChange}
-                    disabled={false}
+                    disabled={true}
                     label={'Disahkan Dalam Jawatan Pertama LKIM'}
                     selectedDate={dateFormatter(
                         currentEmployeeService.firstServiceDate,
@@ -865,7 +863,7 @@
                 ></DateSelector>
                 <DateSelector
                     {handleDateChange}
-                    disabled={false}
+                    disabled={true}
                     label={'Disahkan Dalam Jawatan Semasa LKIM'}
                     selectedDate={dateFormatter(
                         currentEmployeeService.currentServiceDate,
@@ -894,51 +892,51 @@
                 </AccordianField>
                 <DateSelector
                     {handleDateChange}
-                    disabled={false}
+                    disabled={true}
                     label={'Tarikh Kelulusan Percantuman Perkhidmatan Lepas'}
                     selectedDate={dateFormatter(
                         currentEmployeeService.firstServiceDate,
                     )}
                 ></DateSelector>
                 <TextField
-                    disabled={false}
+                    disabled={true}
                     id="pemangkuanSekarang"
                     label={'Pemangkuan Sekarang'}
                     value={'-'}
                 ></TextField>
                 <TextField
-                    disabled={false}
+                    disabled={true}
                     id="tanggungKerjaSekarang"
                     label={'Tanggung Kerja Sekarang'}
                     value={'-'}
                 ></TextField>
                 <TextField
-                    disabled={false}
+                    disabled={true}
                     id="skimPencen"
                     label={'Skim Pencen'}
                     value={'-'}
                 ></TextField>
                 <TextField
-                    disabled={false}
+                    disabled={true}
                     id="kenaikanGajiAkhir"
                     label={'Kenaikan Gaji Akhir'}
                     value={'-'}
                 ></TextField>
                 <TextField
-                    disabled={false}
+                    disabled={true}
                     id="kenaikanPangkatAkhir"
                     label={'Kenaikan Pangkat Akhir'}
                     value={'-'}
                 ></TextField>
                 <TextField
-                    disabled={false}
+                    disabled={true}
                     id="bulanKGT"
                     label={'Bulan KGT'}
                     value={'-'}
                 ></TextField>
                 <DateSelector
                     {handleDateChange}
-                    disabled={false}
+                    disabled={true}
                     label={'Tarikh Bersara'}
                     selectedDate={dateFormatter(
                         currentEmployeePensions.retiredDate,
@@ -950,19 +948,19 @@
                 <div class="grid grid-cols-2 gap-10">
                     <div class="space-y-2.5">
                         <TextField
-                            disabled={false}
+                            disabled={true}
                             id="tarikhBerkuatkuasa"
                             label={'Tarikh Berkuatkuasa'}
                             value={'12/12/2021'}
                         ></TextField>
                         <TextField
-                            disabled={false}
+                            disabled={true}
                             id="tanggaGaji"
                             label={'Tangga Gaji'}
                             value={currencyFormatter(1234.56)}
                         ></TextField>
                         <TextField
-                            disabled={false}
+                            disabled={true}
                             id="gajiPokok"
                             label={'Gaji Pokok'}
                             value={currencyFormatter(1234.56)}
@@ -972,7 +970,7 @@
                         <TextField
                             hasTooltip={true}
                             toolTipID="type-itka"
-                            disabled={false}
+                            disabled={true}
                             id="itka"
                             label={'ITKA'}
                             value={currencyFormatter(123.45)}
@@ -980,7 +978,7 @@
                         <TextField
                             hasTooltip={true}
                             toolTipID="type-itp"
-                            disabled={false}
+                            disabled={true}
                             id="itp"
                             label={'ITP'}
                             value={currencyFormatter(123.45)}
@@ -988,7 +986,7 @@
                         <TextField
                             hasTooltip={true}
                             toolTipID="type-epw"
-                            disabled={false}
+                            disabled={true}
                             id="epw"
                             label={'EPW'}
                             value={currencyFormatter(123.45)}
@@ -996,7 +994,7 @@
                         <TextField
                             hasTooltip={true}
                             toolTipID="type-cola"
-                            disabled={false}
+                            disabled={true}
                             id="cola"
                             label={'COLA'}
                             value={currencyFormatter(123.45)}
@@ -1015,10 +1013,7 @@
     <StepperContent>
         <StepperContentHeader
             title="Keputusan Lantikan Baru (Urus Setia Perjawatan)"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
-                <SvgCheck></SvgCheck>
-            </TextIconButton></StepperContentHeader
-        >
+        ></StepperContentHeader>
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2.5">
                 <div class="mb-5">
@@ -1027,13 +1022,14 @@
                     >
                 </div>
                 <LongTextField
+                    disabled={true}
                     id="supporter-remark"
                     label="Tindakan/Ulasan"
                     value=""
                 ></LongTextField>
 
                 <RadioSingle
-                    disabled={false}
+                    disabled={true}
                     options={certifyOptions}
                     legend={'Keputusan'}
                     bind:userSelected={isCertified}
@@ -1044,13 +1040,11 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Tetapkan Penyokong dan Pelulus (Jika Sah)"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
-                <SvgCheck></SvgCheck>
-            </TextIconButton></StepperContentHeader
-        >
+        ></StepperContentHeader>
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2">
                 <DropdownSelect
+                    disabled={true}
                     id="staffs-supporter"
                     label="Nama Penyokong"
                     dropdownType="label-left-full"
@@ -1058,6 +1052,7 @@
                     bind:index={selectedSupporter}
                 />
                 <DropdownSelect
+                    disabled={true}
                     id="staffs-approver"
                     label="Nama Pelulus"
                     dropdownType="label-left-full"
