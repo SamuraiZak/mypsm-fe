@@ -34,6 +34,8 @@
     import toast, { Toaster } from 'svelte-french-toast';
     import { z, ZodError } from 'zod';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import Form from '$lib/components/form/Form.svelte';
+
     export let employeeNumber: string = '00001';
     export let disabled: boolean = true;
 
@@ -155,8 +157,29 @@
         });
 
     const exampleFormSchema = z.object({
+        radioButtonExample: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tetapkan pilihan anda.'
+                        : defaultError,
+            }),
+        }),
+
         noPerkeja: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+
+        dateSelectorExample: dateScheme,
+
+        longTextExample: z
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
             .min(4, {
                 message: 'Medan ini hendaklah lebih daripada 4 karakter.',
             })
@@ -177,6 +200,9 @@
 
         const exampleFormData = {
             noPerkeja: String(formData.get('noPerkeja')),
+            longTextExample: String(formData.get('longTextExample')),
+            radioButtonExample: String(formData.get('radioButtonExample')),
+            dateSelectorExample: String(formData.get('dateSelectorExample')),
         };
         try {
             const result = exampleFormSchema.parse(exampleFormData);
@@ -407,7 +433,7 @@
                     name="warnaKadPengenalan"
                     label={'Warna Kad Pengenalan'}
                     type="text"
-                    bind:value={currentEmployee.employeeNumber}
+                    value={isBlueOrRedIC(currentEmployee.isMalaysian)}
                 ></TextField>
 
                 {#if errorData?.noPerkeja}
@@ -418,6 +444,20 @@
                 {/if}
 
                 <!-- ---date   ------------ -->
+                <DateSelector
+                    {disabled}
+                    hasError={errorData?.dateSelectorExample}
+                    name="dateSelectorExample"
+                    handleDateChange
+                    label="Tarikh Lahir"
+                    bind:selectedDate={currentEmployee.birthDate}
+                ></DateSelector>
+                {#if errorData?.dateSelectorExample}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.dateSelectorExample[0]}</span
+                    >
+                {/if}
 
                 <TextField
                     {disabled}
@@ -441,7 +481,7 @@
                     name="warganegara"
                     label={'Warganegara'}
                     type="text"
-                    bind:value={currentEmployee.isMalaysian }
+                    bind:value={currentEmployee.isMalaysian}
                 ></TextField>
 
                 {#if errorData?.noPerkeja}
@@ -466,229 +506,421 @@
                         >{errorData?.noPerkeja[0]}</span
                     >
                 {/if}
-
-               
-
-            </form>
-            <div class="flex w-full flex-col gap-2.5">
-
                 <TextField
                     {disabled}
-                    id="warnaKadPengenalan"
-                    label={'Warna Kad Pengenalan'}
-                    value={isBlueOrRedIC(currentEmployee.isMalaysian)}
-                ></TextField>
-                <DateSelector
-                    {handleDateChange}
-                    {disabled}
-                    label={'Tarikh Lahir'}
-                    selectedDate={dateFormatter(
-                        currentEmployee.birthDate,
-                    ).toString()}
-                ></DateSelector>
-                <TextField
-                    {disabled}
-                    id="tempatLahir"
-                    label={'Tempat Lahir'}
-                    value={currentEmployeeBirthState.name}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="warganegara"
-                    label={'Warganegara'}
-                    value={currentEmployee.isMalaysian ? 'Malaysia' : 'Bukan'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="bangsa"
-                    label={'Bangsa'}
-                    value={currentEmployeeRace.name}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="agama"
+                    hasError={errorData?.noPekerja}
+                    name="agama"
                     label={'Agama'}
-                    value={currentEmployeeReligion.name}
+                    type="text"
+                    bind:value={currentEmployeeReligion.name}
                 ></TextField>
+
+                {#if errorData?.noPerkeja}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.noPerkeja[0]}</span
+                    >
+                {/if}
+
                 <TextField
                     {disabled}
-                    id="jantina"
+                    hasError={errorData?.noPekerja}
+                    name="jantina"
                     label={'Jantina'}
-                    value={currentEmployee.gender}
+                    type="text"
+                    bind:value={currentEmployee.gender}
                 ></TextField>
+
+                {#if errorData?.noPerkeja}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.noPerkeja[0]}</span
+                    >
+                {/if}
+
                 <TextField
                     {disabled}
-                    id="status"
+                    hasError={errorData?.noPekerja}
+                    name="status"
                     label={'Status'}
-                    value={currentEmployee.marital}
+                    type="text"
+                    bind:value={currentEmployee.marital}
                 ></TextField>
+
+                {#if errorData?.noPerkeja}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.noPerkeja[0]}</span
+                    >
+                {/if}
+
                 <TextField
                     {disabled}
-                    id="emel"
+                    hasError={errorData?.noPekerja}
+                    name="emel"
                     label={'Emel'}
-                    value={currentEmployee.email}
+                    type="text"
+                    bind:value={currentEmployee.email}
                 ></TextField>
+
+                {#if errorData?.noPerkeja}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.noPerkeja[0]}</span
+                    >
+                {/if}
+
                 <LongTextField
+                    hasError={errorData?.longTextExample}
                     {disabled}
-                    id="alamatRumah"
-                    label={'Alamat Rumah'}
-                    value={currentEmployee.homeAddress}
-                ></LongTextField>
+                    name="longTextExample"
+                    label="Alamat Rumah"
+                    bind:value={currentEmployee.homeAddress}
+                />
+                {#if errorData?.longTextExample}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.longTextExample[0]}</span
+                    >
+                {/if}
+
                 <LongTextField
+                    hasError={errorData?.longTextExample}
                     {disabled}
-                    id="alamatSuratMenyurat"
-                    label={'Alamat Surat Menyurat (jika berlainan dari alamat rumah'}
-                    value={currentEmployee.mailAddress}
-                ></LongTextField>
+                    name="longTextExample"
+                    label="Alamat Surat Menyurat (jika berlainan dari alamat rumah)"
+                    bind:value={currentEmployee.mailAddress}
+                />
+                {#if errorData?.longTextExample}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.longTextExample[0]}</span
+                    >
+                {/if}
+
                 <TextField
                     {disabled}
-                    id="perumahan"
+                    hasError={errorData?.noPekerja}
+                    name="perumahan"
                     label={'Perumahan'}
-                    value={'-'}
+                    type="text"
+                    value="-"
                 ></TextField>
+
+                {#if errorData?.noPerkeja}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.noPerkeja[0]}</span
+                    >
+                {/if}
+
                 <TextField
                     {disabled}
-                    id="pinjPerumahan"
+                    hasError={errorData?.noPekerja}
+                    name="pinjPerumahan"
                     label={'Pinjaman Perumahan'}
-                    value={'-'}
+                    type="text"
+                    value="-"
                 ></TextField>
+
+                {#if errorData?.noPerkeja}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.noPerkeja[0]}</span
+                    >
+                {/if}
+
                 <TextField
                     {disabled}
-                    id="pinjKenderaan"
+                    hasError={errorData?.noPekerja}
+                    name="pinjKenderaan"
                     label={'Pinjaman Kenderaan'}
-                    value={'-'}
+                    type="text"
+                    value="-"
                 ></TextField>
+
+                {#if errorData?.noPerkeja}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.noPerkeja[0]}</span
+                    >
+                {/if}
+
                 <RadioSingle
                     {disabled}
                     {options}
+                    name="radioButtonExample"
                     legend={'Bekas Polis / Tentera'}
                     bind:userSelected={isExPoliceSoldier}
                 ></RadioSingle>
-            </div>
-
-            <div class="flex w-full flex-col gap-2">
-                <p class={stepperFormTitleClass}>
-                    Maklumat Pertalian Dengan Kakitangan LKIM
-                </p>
-
-                <!-- kakitanganLKIM? -->
-                <RadioSingle
-                    {options}
-                    {disabled}
-                    legend={'Perhubungan Dengan Kakitangan LKIM'}
-                    bind:userSelected={isInRelationshipWithLKIMStaff}
-                ></RadioSingle>
-                {#if isInRelationshipWithLKIMStaff === 'true'}
-                    <TextField
-                        {disabled}
-                        id="noPekerjaPasangan"
-                        label={'No. Pekerja LKIM'}
-                        value={currentEmployeeSpouseEmployeeInfo?.employeeNumber}
-                    ></TextField>
-                    <TextField
-                        {disabled}
-                        id="namaPasangan"
-                        label={'Nama Kakitangan LKIM'}
-                        value={currentEmployeeSpouse.name}
-                    ></TextField>
-                    <TextField
-                        {disabled}
-                        id="jawatanPasangan"
-                        label={'Jawatan Kakitangan LKIM'}
-                        value={currentEmployeeSpouse.position}
-                    ></TextField>
-                    <TextField
-                        {disabled}
-                        id="hubungan"
-                        label={'Hubungan'}
-                        value={currentEmployeeSpouse.relationship}
-                    ></TextField>
+                {#if errorData?.radioButtonExample}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.radioButtonExample[0]}</span
+                    >
                 {/if}
-            </div></StepperContentBody
-        >
+
+                <div class="flex w-full flex-col gap-2">
+                    <p class={stepperFormTitleClass}>
+                        Maklumat Pertalian Dengan Kakitangan LKIM
+                    </p>
+
+                    <!-- kakitanganLKIM? -->
+                    <RadioSingle
+                        {options}
+                        {disabled}
+                        legend={'Perhubungan Dengan Kakitangan LKIM'}
+                        bind:userSelected={isInRelationshipWithLKIMStaff}
+                    ></RadioSingle>
+                    {#if isInRelationshipWithLKIMStaff === 'true'}
+                        <TextField
+                            {disabled}
+                            id="noPekerjaPasangan"
+                            label={'No. Pekerja LKIM'}
+                            value={currentEmployeeSpouseEmployeeInfo?.employeeNumber}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            id="namaPasangan"
+                            label={'Nama Kakitangan LKIM'}
+                            value={currentEmployeeSpouse.name}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            id="jawatanPasangan"
+                            label={'Jawatan Kakitangan LKIM'}
+                            value={currentEmployeeSpouse.position}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            id="hubungan"
+                            label={'Hubungan'}
+                            value={currentEmployeeSpouse.relationship}
+                        ></TextField>
+                    {/if}
+                </div>
+            </form>
+        </StepperContentBody>
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Maklumat Perkhidmatan"
-        ></StepperContentHeader>
-        <StepperContentBody
-            ><div class="flex w-full flex-col gap-2.5">
-                <p class={stepperFormTitleClass}>Maklumat Perkhidmatan</p>
-                <TextField
-                    {disabled}
-                    id="gredSemasa"
-                    label={'Gred Semasa'}
-                    value={currentEmployeeGrade.code}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="jawatan"
-                    label={'Jawatan'}
-                    value={currentEmployeePosition.name}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="penempatan"
-                    label={'Penempatan'}
-                    value={currentEmployeeService.placement}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="tarafPerkhidmatan"
-                    label={'Taraf Perkhidmatan'}
-                    value={currentEmployeeServiceType.name}
-                ></TextField>
-                <DateSelector
-                    {handleDateChange}
-                    {disabled}
-                    label={'Tarikh Kuatkuasa Lantikan Semasa'}
-                    selectedDate={dateFormatter(
-                        currentEmployeeService.currentServiceDate,
-                    )}
-                ></DateSelector>
-                <RadioSingle
-                    {disabled}
-                    options={faedahPersaraanOptions}
-                    legend={'Faedah Persaraan'}
-                    bind:userSelected={isKWSP}
-                ></RadioSingle>
-                <TextField
-                    {disabled}
-                    id="noKWSP"
-                    label={'No. KWSP'}
-                    value={'1234-5678-9012'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="noSOCSO"
-                    label={'No. SOCSO'}
-                    value={'1234-5678-9012'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="noCukai"
-                    label={'No. Cukai (LHDN)'}
-                    value={'1234-5678-9012'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="bank"
-                    label={'Bank'}
-                    value={'Maybank Berhad'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="noAkaun"
-                    label={'No. Akaun'}
-                    value={'1234-5678-9012'}
-                ></TextField>
-                <TextField {disabled} id="program" label={'Program'} value={'-'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="kelayakanCuti"
-                    label={'Kelayakan Cuti'}
-                    value={getEmployeeLeave(currentEmployee.employeeNumber)}
-                ></TextField>
+        <StepperContentHeader title="Maklumat Perkhidmatan">
+            {#if !disabled}
+                <TextIconButton primary label="Simpan" form="formValidation" />
+            {/if}
+        </StepperContentHeader>
+        <StepperContentBody>
+            <div class="flex w-full flex-col gap-2.5">
+                <form
+                    id="formValidation"
+                    on:submit|preventDefault={submitForm}
+                    class="flex w-full flex-col gap-2"
+                >
+                    <p class={stepperFormTitleClass}>Maklumat Perkhidmatan</p>
+
+                    <TextField
+                        {disabled}
+                        hasError={errorData?.noPekerja}
+                        name="gredSemasa"
+                        label={'Gred Semasa'}
+                        type="text"
+                        bind:value={currentEmployeeGrade.code}
+                    ></TextField>
+
+                    {#if errorData?.noPerkeja}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.noPerkeja[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        {disabled}
+                        hasError={errorData?.noPekerja}
+                        name="jawatan"
+                        label={'Jawatan'}
+                        type="text"
+                        bind:value={currentEmployeePosition.name}
+                    ></TextField>
+
+                    {#if errorData?.noPerkeja}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.noPerkeja[0]}</span
+                        >
+                    {/if}
+
+                    <TextField
+                        {disabled}
+                        hasError={errorData?.noPekerja}
+                        name="penempatan"
+                        label={'Penempatan'}
+                        type="text"
+                        bind:value={currentEmployeeService.placement}
+                    ></TextField>
+
+                    {#if errorData?.noPerkeja}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.noPerkeja[0]}</span
+                        >
+                    {/if}
+
+                    <TextField
+                        {disabled}
+                        hasError={errorData?.noPekerja}
+                        name="tarafPerkhidmatan"
+                        label={'Taraf Perkhidmatan'}
+                        type="text"
+                        bind:value={currentEmployeeServiceType.name}
+                    ></TextField>
+
+                    {#if errorData?.noPerkeja}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.noPerkeja[0]}</span
+                        >
+                    {/if}
+
+                    <DateSelector
+                        {disabled}
+                        hasError={errorData?.dateSelectorExample}
+                        name="dateSelectorExample"
+                        handleDateChange
+                        label="Tarikh Kuatkuasa Lantikan Semasa"
+                        bind:selectedDate={currentEmployeeService.firstServiceDate}
+                    ></DateSelector>
+                    {#if errorData?.dateSelectorExample}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.dateSelectorExample[0]}</span
+                        >
+                    {/if}
+
+                    <RadioSingle
+                        {disabled}
+                        options={faedahPersaraanOptions}
+                        name="radioButtonExample"
+                        legend={'Faedah Persaraan'}
+                        bind:userSelected={isKWSP}
+                    ></RadioSingle>
+                    {#if errorData?.radioButtonExample}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.radioButtonExample[0]}</span
+                        >
+                    {/if}
+
+                    <TextField
+                        {disabled}
+                        hasError={errorData?.noPekerja}
+                        name="noKWSP"
+                        label={'No. KWSP'}
+                        type="text"
+                        value={'1234-6578-9012'}
+                    ></TextField>
+
+                    {#if errorData?.noPerkeja}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.noPerkeja[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        {disabled}
+                        hasError={errorData?.noPekerja}
+                        name="noSOCSO"
+                        label={'No. SOCSO'}
+                        type="text"
+                        value={'1234-6578-9012'}
+                    ></TextField>
+
+                    {#if errorData?.noPerkeja}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.noPerkeja[0]}</span
+                        >
+                    {/if}
+
+                    <TextField
+                        {disabled}
+                        hasError={errorData?.noPekerja}
+                        name="noCukai"
+                        label={'No. Cukai (LHDN)'}
+                        type="text"
+                        value={'1234-6578-9012'}
+                    ></TextField>
+
+                    {#if errorData?.noPerkeja}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.noPerkeja[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        {disabled}
+                        hasError={errorData?.noPekerja}
+                        name="bank"
+                        label={'Bank'}
+                        type="text"
+                        value={'Maybank'}
+                    ></TextField>
+
+                    {#if errorData?.noPerkeja}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.noPerkeja[0]}</span
+                        >
+                    {/if}
+
+                    <TextField
+                        {disabled}
+                        hasError={errorData?.noPekerja}
+                        name="noAkaun"
+                        label={'No.Akaun'}
+                        type="text"
+                        value={'1234-5678-9012'}
+                    ></TextField>
+
+                    {#if errorData?.noPerkeja}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.noPerkeja[0]}</span
+                        >
+                    {/if}
+
+                    <TextField
+                        {disabled}
+                        hasError={errorData?.noPekerja}
+                        name="program"
+                        label={'Program'}
+                        type="text"
+                        value={'-'}
+                    ></TextField>
+
+                    {#if errorData?.noPerkeja}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.noPerkeja[0]}</span
+                        >
+                    {/if}
+
+                    <TextField
+                        {disabled}
+                        hasError={errorData?.noPekerja}
+                        name="kelayakanCuti"
+                        label={'Kelayakan Cuti'}
+                        type="text"
+                        value={getEmployeeLeave(currentEmployee.employeeNumber)}
+                    ></TextField>
+
+                    {#if errorData?.noPerkeja}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.noPerkeja[0]}</span
+                        >
+                    {/if}
+
+
+                </form>
 
                 <DateSelector
                     {handleDateChange}
