@@ -16,6 +16,8 @@
     import { mockActingBatch } from '$lib/mocks/database/mockActingBatch';
     import { currentActingBatchId } from '$lib/stores/pemangkuan/pemangkuanStores';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
+    import SectionHeader from '$lib/components/header/SectionHeader.svelte';
+    import SvgBlock from '$lib/assets/svg/SvgBlock.svelte';
 
     let tempData: any = {};
 
@@ -112,7 +114,7 @@
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader
         title="Pemangkuan Gred 1-54 - Baru"
-        description="Sila pilih kakitangan yang layak sebagai calon pemangkuan"
+        description="Sila pilih kakitangan yang layak sebagai calon pemangkuan."
     >
         <!-- TODO: put buttons in this area if necessary -->
         <TextIconButton
@@ -121,7 +123,7 @@
                 goto('/urus-setia/perjawatan/pemangkuan');
             }}
         >
-            <SvgXMark></SvgXMark>
+            <SvgBlock></SvgBlock>
         </TextIconButton>
         <TextIconButton
             label="Seterusnya"
@@ -153,6 +155,8 @@
                 </CustomCardHeader>
                 <CustomCardBody>
                     <div class="flex w-full flex-wrap gap-2.5">
+                        <FilterTextInput label="Gred"></FilterTextInput>
+                        <FilterTextInput label="Jawatan"></FilterTextInput>
                         <FilterTextInput label="Nama"></FilterTextInput>
                         <FilterTextInput label="No. K/P"></FilterTextInput>
                     </div>
@@ -162,6 +166,10 @@
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
+            <SectionHeader 
+                title="Hasil Carian" 
+                subTitle="Tekan tombol tambah untuk masukkan nama kakitangan ke dalam senarai kakitangan yang terpilih"
+                ></SectionHeader>
                 <DynamicTable
                     bind:passData={tempData}
                     tableItems={mockEmployees}
@@ -174,22 +182,56 @@
                         'employeeNumber',
                         'name',
                         'identityDocumentNumber',
+                        'program',
+                        'skim',
+                        'gred',
+                        'roles',
+                        'homeAddress'
                     ]}
                 ></DynamicTable>
             </div>
         </CustomTabContent>
 
         <!-- Senarai Kakitangan Yang Dipilih -->
-        <CustomTabContent title="Senarai Kakitangan Yang DIpilih">
+        <CustomTabContent title="Senarai Kakitangan Yang Dipilih">
+            <CustomCard borderClass="border-system-primary">
+                <CustomCardHeader title="Semua Tetapan Pencarian">
+                    <TextIconButton label="Cari" primary onClick={() => {}}>
+                        <SvgManifyingGlass></SvgManifyingGlass>
+                    </TextIconButton>
+                </CustomCardHeader>
+                <CustomCardBody>
+                    <div class="flex w-full flex-wrap gap-2.5">
+                        <FilterTextInput label="Gred"></FilterTextInput>
+                        <FilterTextInput label="Jawatan"></FilterTextInput>
+                        <FilterTextInput label="Nama"></FilterTextInput>
+                        <FilterTextInput label="No. K/P"></FilterTextInput>
+                    </div>
+                </CustomCardBody>
+            </CustomCard>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
-                <DynamicTable>
+            <SectionHeader 
+                title="Hasil Carian" 
+                subTitle="Tekan tombol tolak untuk keluarkan nama kakitangan daripada senarai kakitangan yang terpilih"
+                ></SectionHeader>
+                <DynamicTable
                     tableItems={selectedEmployee}
                     withRowSelection onSelect={() => {
                         popSelected(tempData);
                     }}
-                </DynamicTable>
+                    columnKeys={[
+                        'employeeNumber',
+                        'name',
+                        'identityDocumentNumber',
+                        'program',
+                        'skim',
+                        'gred',
+                        'roles',
+                        'homeAddress'
+                    ]}
+                ></DynamicTable>
             </div>
         </CustomTabContent>
     </CustomTab>

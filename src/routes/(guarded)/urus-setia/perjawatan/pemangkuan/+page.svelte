@@ -13,7 +13,7 @@
         {
             value: 'Gred 1-54',
             name: 'Gred 1-54',
-            href: '/urus-setia/perjawatan/pemangkuan/gred-1_54/butiran',
+            href: '/urus-setia/perjawatan/pemangkuan/gred-1_54/baru',
         },
         {
             value: 'Gred Flexi 41',
