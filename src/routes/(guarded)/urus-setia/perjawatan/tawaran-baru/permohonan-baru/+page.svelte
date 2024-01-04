@@ -15,6 +15,8 @@
     import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
     import FilterSelectInput from '$lib/components/filter/FilterSelectInput.svelte';
     import FilterDateSelector from '$lib/components/filter/FilterDateSelector.svelte';
+    import { z } from 'zod';
+    import toast, { Toaster } from 'svelte-french-toast';
 
     let selectedGred: string = greds[0].value; // Default selected filter
     let selectedEdu: string = eduLevels[0].value; // Default selected filter
@@ -25,6 +27,51 @@
         'text-sm text-system-neutral font-medium flex items-center h-8 gap-2 whitespace-nowrap';
 
     let openModal = false;
+
+    let selectedStaffs: any[] = [];
+    // =====================================================================================
+    // z validation schema for the advancement form fields=========================================
+    // =====================================================================================
+    let errorData: any;
+
+    const applicantsSchema = z.object({
+        selectedStaffs: z.any().array().nonempty({
+            message: 'Sila pilih sekurang - kurangnya satu pekerja',
+        }),
+    });
+
+    // =========================================================================
+    // advancement form fields submit function=========================================
+    // =========================================================================
+    const adavancementApplicantsForm = async () => {
+        const applicantsData = {
+            selectedStaffs: selectedStaffs,
+        };
+        console.log('ARRAY!', applicantsData.selectedStaffs);
+
+        try {
+            const result = applicantsSchema.parse(applicantsData);
+            if (result) {
+                errorData = [];
+                // toast.success('Permohonan berjaya dihantar!', {
+                //     style: 'background: #333; color: #fff;',
+                // });
+
+                openModal = true;
+            }
+        } catch (err: unknown) {
+            if (err instanceof z.ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
 </script>
 
 <!-- content header starts here -->
@@ -76,15 +123,24 @@
         <FormButton
             type="print"
             addLabel="Cetak"
-            onClick={() => {
-                openModal = true;
-            }}
+            onClick={() => adavancementApplicantsForm()}
         />
     </div>
     <!-- Table showing the lists of candidates to be taken in bulk for 'tawaran baru' -->
     <div class="flex w-full flex-col items-center justify-start p-2.5">
-        <DynamicTable tableItems={staffs} hasCheckbox />
+        {#if errorData?.selectedStaffs}
+            <span class="font-sans text-sm italic text-system-danger"
+                >{errorData?.selectedStaffs[0]}</span
+            >
+        {/if}
+        <DynamicTable
+            tableItems={staffs}
+            hasCheckbox
+            bind:checkedItems={selectedStaffs}
+        />
     </div>
 </section>
+
+<Toaster />
 
 <FormModal bind:isOpen={openModal} />
