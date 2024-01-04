@@ -41,16 +41,6 @@
     //Date Selector for Tarikh Lapor Diri - Kemaskini Keputusan Mesyuarat Penempatan Kakitangan
     let selectedDate = new Date();
 
-    // function handleDateChange(event: any) {
-    //     selectedDate = new Date(event.target.value);
-    //     const formattedDate = selectedDate.toLocaleDateString('en-GB', {
-    //         day: '2-digit',
-    //         month: '2-digit',
-    //         year: 'numeric',
-    //     });
-    //     console.log(formattedDate);
-    // }
-
     //upload files for Kemaskini Maklumat Temuduga
     export let selectedFiles: any = [];
     let target: any;
@@ -87,12 +77,13 @@
             errorMap: (issue, { defaultError }) => ({
                 message:
                     issue.code === 'invalid_date'
-                        ? 'Tarikh tidak boleh dibiar kosong.'
+                        ? 'Tarikh tidak boleh dibiarkan kosong.'
                         : defaultError,
             }),
         })
         .min(new Date(), {
-            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+            message:
+                'Tarikh lapor diri yang dipohon hendaklah tidak kurang dari tarikh semasa.',
         });
 
     const exampleFormSchema = z.object({
@@ -359,7 +350,7 @@
                 ><TextIconButton
                     primary
                     label="Seterusnya"
-                    form="formValidation"><SvgArrowRight /></TextIconButton
+                    onClick={() => goNext()}><SvgArrowRight /></TextIconButton
                 ></StepperContentHeader
             >
             <StepperContentBody>
@@ -392,7 +383,7 @@
                     <DateSelector
                         hasError={errorData?.dateSelector}
                         name="dateSelector"
-                        selectedDate={selectedDate}
+                        {selectedDate}
                         labelBlack={false}
                         label={'Tarikh Lapor Diri yang Dipohon'}
                     />
@@ -561,12 +552,9 @@
         <!-- Keputusan Akhir Pemangkuan -->
         <StepperContent>
             <StepperContentHeader title="Keputusan Akhir Pemangkuan"
-                ><TextIconButton label="Kembali" onClick={() => goPrevious()}
+                ><TextIconButton label="Kembali" form="formValidation"
                     ><SvgArrowLeft /></TextIconButton
-                ><TextIconButton
-                    primary
-                    label="Selesai"
-                    form="formValidation"
+                ><TextIconButton primary label="Selesai" form="formValidation"
                     ><SvgCircleF2 /></TextIconButton
                 ></StepperContentHeader
             >
@@ -660,5 +648,4 @@
     </Stepper>
 </section>
 
-
-<Toaster/>
+<Toaster />
