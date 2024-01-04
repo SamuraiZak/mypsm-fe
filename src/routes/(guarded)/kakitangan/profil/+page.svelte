@@ -29,16 +29,6 @@
                 }}
             />
 
-            <FormButton
-                type="save"
-                onClick={() => {
-                    // Save Function
-
-                    isEditing = !isEditing;
-
-                    disabled = !disabled;
-                }}
-            />
         {:else}
             <FormButton
                 type="update"

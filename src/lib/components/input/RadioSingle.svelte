@@ -5,13 +5,13 @@
     export let disabled: boolean = false;
     export let labelBlack: boolean = true;
     export let isVertical: boolean = false;
-    export let onChange = () => {};
-
-    // let selectedNow = userSelected;
-
     const uniqueID = Math.floor(
         Math.random() * 999999 * (Math.random() * 999999),
     );
+    export let name: string = `group-${uniqueID}`;
+    export let onChange = () => {};
+
+    // let selectedNow = userSelected;
 
     const slugify = (str = '') =>
         str.toLowerCase().replace(/ /g, '-').replace(/\./g, '');
@@ -55,7 +55,7 @@
                         ? 'text-txt-tertiary'
                         : 'text-system-primary'}"
                     id={slugify(label)}
-                    name={`label-${uniqueID}`}
+                    {name}
                     bind:group={userSelected}
                     {value}
                     {disabled}

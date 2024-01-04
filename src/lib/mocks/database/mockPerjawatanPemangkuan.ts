@@ -23,6 +23,9 @@ export const mockPerjawatanPemangkuan: pemangkuanEmployees[] = [
         permohonanPenangguhanPindaanPenempatan: "Sedang Diproses",
         keputusanPermohonanPenangguhanPindaanPenempatan: "-",
         pengesahanKeputusanPemangkuan: "Lulus",
+        keputusanMesyuarat: "-",
+        statusPermohonan: "Sedang Diproses",
+
     },
     {
         id: 2,
@@ -48,6 +51,8 @@ export const mockPerjawatanPemangkuan: pemangkuanEmployees[] = [
         permohonanPenangguhanPindaanPenempatan: "Ya",
         keputusanPermohonanPenangguhanPindaanPenempatan: "Tidak Lulus",
         pengesahanKeputusanPemangkuan: "Tidak Lulus",
+        keputusanMesyuarat: "-",
+        statusPermohonan: "-"
     },
     {
         id: 3,
@@ -73,6 +78,8 @@ export const mockPerjawatanPemangkuan: pemangkuanEmployees[] = [
         permohonanPenangguhanPindaanPenempatan: "Ya",
         keputusanPermohonanPenangguhanPindaanPenempatan: "Lulus",
         pengesahanKeputusanPemangkuan: "Lulus",
+        keputusanMesyuarat: "-",
+        statusPermohonan: "-"
     },
     {
         id: 4,
@@ -96,8 +103,10 @@ export const mockPerjawatanPemangkuan: pemangkuanEmployees[] = [
         keputusanMesyuaratKenaikanPangkat: "Berjaya",
         keputusanMesyuaratPenempatan: "-",
         permohonanPenangguhanPindaanPenempatan: "Ya",
-        keputusanPermohonanPenangguhanPindaanPenempatan: "Lulus",        
+        keputusanPermohonanPenangguhanPindaanPenempatan: "Lulus",
         pengesahanKeputusanPemangkuan: "Lulus",
+        keputusanMesyuarat: "-",
+        statusPermohonan: "-"
     }
 
 ]

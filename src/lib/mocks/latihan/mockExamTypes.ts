@@ -1,10 +1,10 @@
 export const examTypes = [
     {
-        value: 'Perkhidmatan',
+        value: 'perkhidmatan',
         name: 'Perkhidmatan',
     },
     {
-        value: 'Peningkatan Secara Lantikan (PSL)',
+        value: 'psl',
         name: 'Peningkatan Secara Lantikan (PSL)',
     },
 ];

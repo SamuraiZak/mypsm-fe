@@ -23,14 +23,7 @@
     <ContentHeader
         title="Gantian Cuti Rehat"
         description="Maklumat berkaitan Gantian Cuti Rehat (GCR)"
-        ><TextIconButton
-            primary
-            label="Permohonan Baru"
-            onClick={() => {
-                goto('');
-            }}><SvgPlus /></TextIconButton
-        >
-    </ContentHeader>
+    ></ContentHeader>
 </section>
 
 <section
@@ -51,7 +44,14 @@
             </FilterContainer>
             <SectionHeader
                 title="Senarai Permohonan Pengumpulan Gantian Cuti Rehat (GCR) Tahun"
-            ></SectionHeader>
+                ><TextIconButton
+                    primary
+                    label="Permohonan Baru"
+                    onClick={() => {
+                        goto('/kakitangan/cuti/gantian-cuti-rehat/gcr');
+                    }}><SvgPlus /></TextIconButton
+                ></SectionHeader
+            >
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
@@ -60,7 +60,7 @@
                     withActions
                     actionOptions={['detail']}
                     detailActions={() => {
-                        goto('/kakitangan/cuti/gantian-cuti-rehat/gcr');
+                        goto('');
                     }}
                 ></DynamicTable>
             </div>
@@ -77,7 +77,14 @@
             </FilterContainer>
             <SectionHeader
                 title="Senarai Permohonan Pengumpulan Gantian Cuti Rehat (GCR) Tahun"
-            ></SectionHeader>
+                ><TextIconButton
+                    primary
+                    label="Permohonan Baru"
+                    onClick={() => {
+                        goto('/kakitangan/cuti/gantian-cuti-rehat/awal-gcr');
+                    }}><SvgPlus /></TextIconButton
+                ></SectionHeader
+            >
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
@@ -86,7 +93,7 @@
                     withActions
                     actionOptions={['detail']}
                     detailActions={() => {
-                        goto('/kakitangan/cuti/gantian-cuti-rehat/awal-gcr');
+                        goto('');
                     }}
                 ></DynamicTable>
             </div>

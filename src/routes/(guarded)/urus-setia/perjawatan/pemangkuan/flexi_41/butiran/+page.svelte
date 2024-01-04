@@ -33,11 +33,12 @@
     import IconButton from '$lib/components/buttons/IconButton.svelte';
     import SvgEllipsisCircle from '$lib/assets/svg/SvgEllipsisCircle.svelte';
     import { permohonanKlinikPanel } from '$lib/mocks/penyokong/perubatan/permohonan-klinik-panel';
-    import{ positions} from '$lib/mocks/positions/positions';
+    import { positions } from '$lib/mocks/positions/positions';
     import FileInputField from '$lib/components/input/FileInputField.svelte';
     import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
     import DownloadAttachment from '$lib/components/input/DownloadAttachment.svelte';
-        import type {
+    import { mockPerjawatanPemangkuan } from '$lib/mocks/database/mockPerjawatanPemangkuan';
+    import type {
         CalonPemangkuan,
         DtoCalonPemangkuan,
         IntActingApplication,
@@ -60,23 +61,22 @@
         selectedRecordId,
     } from '$lib/stores/globalState';
     import { onMount } from 'svelte';
+    import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
 
-    export let data;
     export let disabled: boolean = true;
 
-const salaryMonths = [
-    { value: '1', name: 'Januari' },
-    { value: '2', name: 'April' },
-    { value: '3', name: 'Julai' },
-    { value: '4', name: 'Oktober' },
-];
+    const salaryMonths = [
+        { value: '1', name: 'Januari' },
+        { value: '2', name: 'April' },
+        { value: '3', name: 'Julai' },
+        { value: '4', name: 'Oktober' },
+    ];
 
+    let selectedMeetingType: string = meetings[0].value;
+    let selectedSalaryMonth: string = '1';
+    let selectedGred: string = greds[0].value;
 
-let selectedMeetingType: string = meetings[0].value;
-let selectedSalaryMonth: string = '1';
-let selectedGred: string = greds[0].value;
-
-export let selectedFiles: any = [];
+    export let selectedFiles: any = [];
     let target: any;
     let texthidden = false;
 
@@ -102,9 +102,6 @@ export let selectedFiles: any = [];
         selectedFiles.splice(index, 1);
         fileSelectionList.set(selectedFiles);
     }
-
-
-
 
     //===================== Stepper controls =====================
     let stepperIndex = 0;
@@ -136,17 +133,11 @@ export let selectedFiles: any = [];
             namaKakitangan: 'Jon Bovi',
             nomborKP: '910821-13-5671',
             gredSemasa: 'E30',
+            gredPemangkuan: 'A41',
             jawatanSemasa: 'Penolong Pegawai Perkhidmatan',
-            program:'',
-            skim:'',
-            penempatanSekarang:'',
-            pengesahanKeputusanPemangkuan:'',
-            namaJawatan:'',
-            permohonanPenangguhanPindaan:'',
-            keputusanPermohonanPenangguhan:'',
-            keputusanMesyuaratKenaikanPangkat:'',
-            statusPerlaksanaan:'',
-            keputusanMesyuarat:'',
+            program: '-',
+            skim: '-',
+            penempatanSekarang: '-',
 
             // mesyuarat
             gredUntukDipangku: '',
@@ -192,17 +183,11 @@ export let selectedFiles: any = [];
             namaKakitangan: 'Teressa Teng',
             nomborKP: '930315-13-6188',
             gredSemasa: 'D41',
+            gredPemangkuan: '-',
             jawatanSemasa: 'Penolong Pegawai Tadbir',
-            program:'',
-            skim:'',
-            penempatanSekarang:'',
-            pengesahanKeputusanPemangkuan:'',
-            namaJawatan:'',
-            permohonanPenangguhanPindaan:'',
-            keputusanPermohonanPenangguhan:'',
-            keputusanMesyuaratKenaikanPangkat:'',
-            statusPerlaksanaan:'',
-            keputusanMesyuarat:'',
+            program: '-',
+            skim: '-',
+            penempatanSekarang: '-',
             // mesyuarat
             gredUntukDipangku: '',
             jawatanUntukDipangku: '',
@@ -247,17 +232,11 @@ export let selectedFiles: any = [];
             namaKakitangan: 'Xue Hua Piao',
             nomborKP: '851130-13-7747',
             gredSemasa: 'H12',
+            gredPemangkuan: 'D43',
             jawatanSemasa: 'Penolong Pegawai Teknologi Maklumat',
-            program:'',
-            skim:'',
-            penempatanSekarang:'',
-            pengesahanKeputusanPemangkuan:'',
-            namaJawatan:'',
-            permohonanPenangguhanPindaan:'',
-            keputusanPermohonanPenangguhan:'',
-            keputusanMesyuaratKenaikanPangkat:'',
-            statusPerlaksanaan:'',
-            keputusanMesyuarat:'',
+            program: '-',
+            skim: '-',
+            penempatanSekarang: '-',
             // mesyuarat
             gredUntukDipangku: '',
             jawatanUntukDipangku: '',
@@ -300,12 +279,12 @@ export let selectedFiles: any = [];
     //Date Selector for Tarikh Lapor Diri
     let selectedDate = new Date();
 
-    function handleDateChange(event:any){
+    function handleDateChange(event: any) {
         selectedDate = new Date(event.target.value);
-        const formattedDate =selectedDate.toLocaleDateString('en-GB',{
-            day:'2-digit',
-            month:'2-digit',
-            year:'numeric',
+        const formattedDate = selectedDate.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
         });
         console.log(formattedDate);
     }
@@ -413,69 +392,78 @@ export let selectedFiles: any = [];
         <!-- Senarai Kakitangan Yang Terpilih -->
         <!-- =========================================================== -->
         <StepperContent>
-            <StepperContentHeader title="Swnarai Kakitangan Yang Terpilih">
+            <StepperContentHeader title="Senarai Kakitangan Yang Terpilih">
                 <TextIconButton
-                label="Seterusnya"
-                primary
-                onClick={() => {
-                    goNext();
-                }}
-                      >
-                <SvgArrowRight></SvgArrowRight>
-            </TextIconButton>
+                    label="Seterusnya"
+                    primary
+                    onClick={() => {
+                        goNext();
+                    }}
+                >
+                    <SvgArrowRight></SvgArrowRight>
+                </TextIconButton>
             </StepperContentHeader>
-                <StepperContentBody>
-                    <SectionHeader title=" Senarai Kakitangan Yang Dipilih">
-                        <TextIconButton label="cetak" primary onClick={() => {}}>
-                            <SvgPrinter></SvgPrinter>
 
-                        </TextIconButton>
-                    </SectionHeader>
+            <!-- Search Kakitangan Yang Dipilih -->
+            <StepperContentBody>
+                <SectionHeader title=" Senarai Kakitangan Yang Dipilih">
+                    <TextIconButton label="cetak" primary onClick={() => {}}>
+                        <SvgPrinter></SvgPrinter>
+                    </TextIconButton>
+                </SectionHeader>
 
-                    <CustomTabContent>
-                                    <CustomCard borderClass="border-system-primary">
-                                         <CustomCardBody>
-                                            <div class="flex w-full flex-wrap gap-2.5 items-center">
-                                                <FilterTextInput label="Gred"></FilterTextInput>
-                                                <FilterTextInput label="Jawatan"></FilterTextInput>
-                                                <FilterTextInput label="Nama"></FilterTextInput>
-                                                <FilterTextInput label="No. K/P"></FilterTextInput>
-
-                                                <TextIconButton label="cari" primary onClick={() => {}}>
-                                                    <SvgManifyingGlass></SvgManifyingGlass>
-
-                                                </TextIconButton>
-                                            </div>
-                                        </CustomCardBody>
-                                    </CustomCard>
+                <CustomTabContent>
+                    <CustomCard borderClass="border-system-primary">
+                        <CustomCardBody>
                             <div
-                                class="flex max-h-full w-full flex-col items-start justify-start"
+                                class="flex w-full flex-wrap items-center gap-2.5"
                             >
-                            <SectionHeader title='Hasil Carian' subTitle='Tekan tombol tolak untuk kelarkan nama kakitangan daripada senarai kakitangan yang terpilih'></SectionHeader>
-                                    <DynamicTable
-                                    bind:selectedItems={allEmployeeList}
-                                    bind:passData={currentData}
-                                    tableItems={allEmployeeList}
-                                    withRowSelection
-                                    onSelect={() => {
-                                        // popSelected(currentData);
-                                    }}
-                                    columnKeys={[
-                                        'nomborPekerja',
-                                        'namaKakitangan',
-                                        'nomborKP',
-                                        'program',
-                                        'gred',
-                                        'gredSemasa',
-                                        'penempatanSemasa',
+                                <FilterTextInput label="Gred"></FilterTextInput>
+                                <FilterTextInput label="Jawatan"
+                                ></FilterTextInput>
+                                <FilterTextInput label="Nama"></FilterTextInput>
+                                <FilterTextInput label="No. K/P"
+                                ></FilterTextInput>
 
-                                    ]}
-                                ></DynamicTable>
+                                <TextIconButton
+                                    label="cari"
+                                    primary
+                                    onClick={() => {}}
+                                >
+                                    <SvgManifyingGlass></SvgManifyingGlass>
+                                </TextIconButton>
                             </div>
-                        </CustomTabContent>
+                        </CustomCardBody>
+                    </CustomCard>
+                    <div
+                        class="flex max-h-full w-full flex-col items-start justify-start"
+                    >
+                        <SectionHeader
+                            title="Hasil Carian"
+                            subTitle="Tekan tombol tolak untuk kelarkan nama kakitangan daripada senarai kakitangan yang terpilih"
+                        ></SectionHeader>
 
-                </StepperContentBody>
-
+                        <!-- Table Senarai Kakitangan Yang Dipilih -->
+                        <DynamicTable
+                            tableItems={mockPerjawatanPemangkuan}
+                            withRowSelection
+                            onSelect={() => {
+                                console.log('pop selected here');
+                            }}
+                            editable
+                            columnKeys={[
+                                'nomborPekerja',
+                                'namaPekerja',
+                                'noKadPengenalan',
+                                'program',
+                                'gred',
+                                'gredSemasa',
+                                'penempatanSemasa',
+                            ]}
+                        ></DynamicTable>
+                    </div>
+                </CustomTabContent>
+            </StepperContentBody>
         </StepperContent>
 
         <!-- =========================================================== -->
@@ -483,156 +471,183 @@ export let selectedFiles: any = [];
         <!-- =========================================================== -->
 
         <StepperContent>
-            <StepperContentHeader title="Kemaskini Keputusan Mesyuarat Pemilihan Kakitangan">
-
-
-                        <!-- TODO: put buttons in this area if necessary -->
-                        <TextIconButton
-                            label="Kembali"
-                            onClick={() => {
-                                goPrevious();
-                            }}
-                        >
-                            <SvgXMark></SvgXMark>
-                        </TextIconButton>
-                        <TextIconButton
-                            label="Seterusnya"
-                            primary
-                            onClick={() => {
-                               goNext();
-                            }}
-                        >
-                            <SvgArrowRight></SvgArrowRight>
-                        </TextIconButton>
-
+            <StepperContentHeader
+                title="Kemaskini Keputusan Mesyuarat Pemilihan Kakitangan"
+            >
+                <!-- TODO: put buttons in this area if necessary -->
+                <TextIconButton
+                    label="Kembali"
+                    onClick={() => {
+                        goPrevious();
+                    }}
+                >
+                    <SvgXMark></SvgXMark>
+                </TextIconButton>
+                <TextIconButton
+                    label="Seterusnya"
+                    primary
+                    onClick={() => {
+                        goNext();
+                    }}
+                >
+                    <SvgArrowRight></SvgArrowRight>
+                </TextIconButton>
             </StepperContentHeader>
+
+            <!-- Maklumat Peraku Keputusan Mesyuarat -->
             <StepperContentBody>
+                <div
+                    class="my-2 w-full border-b-8 border-l-2 border-r-2 border-t-8 p-2.5"
+                >
+                    <SectionHeader title=" Maklumat Peraku Keputusan Mesyuarat"
+                    ></SectionHeader>
 
-                    <div class="my-2 border-b-8 border-l-2 border-r-2 border-t-8 p-2.5 w-full">
-                            <SectionHeader title=" Maklumat Peraku Keputusan Mesyuarat">
-                             </SectionHeader>
+                    <div class="flex w-full flex-col gap-2.5">
+                        <DropdownSelect
+                            id="meeting-type"
+                            label="Nama Urus Setia Integriti"
+                            dropdownType="label-left-full"
+                            options={meetings}
+                            bind:index={selectedMeetingType}
+                        />
 
-                                <div class="flex flex-col gap-2.5 w-full">
-                                    <DropdownSelect
-                                        id="meeting-type"
-                                        label="Nama Urus Setia Integriti"
-                                        dropdownType="label-left-full"
-                                        options={meetings}
-                                        bind:index={selectedMeetingType}
-                                    />
+                        <DropdownSelect
+                            id="salary-movement-month-type"
+                            label="Nama Pengarah Bahagian/Negeri"
+                            dropdownType="label-left-full"
+                            options={salaryMonths}
+                            bind:index={selectedSalaryMonth}
+                        />
+                    </div>
 
-                                    <DropdownSelect
-                                        id="salary-movement-month-type"
-                                        label="Nama Pengarah Bahagian/Negeri"
-                                        dropdownType="label-left-full"
-                                        options={salaryMonths}
-                                        bind:index={selectedSalaryMonth}
-                                    />
-                                </div>
-
-                            <CustomTabContent
-                            title="Senarai Kakitangan Yang Dipilih"
-                        >
-
-                            <CustomCard borderClass="border-system-primary">
-                                <CustomCardBody>
-                                    <div class="flex w-full flex-wrap gap-2.5 items-center">
-                                        <FilterTextInput label="Gred"></FilterTextInput>
-                                        <FilterTextInput label="Jawatan"></FilterTextInput>
-                                        <FilterTextInput label="Nama"></FilterTextInput>
-                                        <FilterTextInput label="No. K/P"></FilterTextInput>
-
-                                        <TextIconButton label="cari" primary onClick={() => {}}>
-                                            <SvgManifyingGlass></SvgManifyingGlass>
-
-                                        </TextIconButton>
-                                    </div>
-
-
-                                </CustomCardBody>
-                            </CustomCard>
-
-                            <div
-                                class ="flex max-h-full w-full flex-col items-start justify-start"
+                    <!-- Search Kakitangan Yang Dipilih -->
+                    <CustomTabContent title="Senarai Kakitangan Yang Dipilih">
+                        <CustomCard borderClass="border-system-primary">
+                            <CustomCardBody>
+                                <div
+                                    class="flex w-full flex-wrap items-center gap-2.5"
                                 >
-                                <SectionHeader
-                                subTitle="Tindakan: Tetapkan untuk semua kakitangan berkaitan.">
-                        <TextIconButton primary label="Tidak Lulus">
-                            <SvgBlock></SvgBlock>
-                        </TextIconButton>
-                        <TextIconButton primary label="Lulus">
-                            <SvgDoubleTick></SvgDoubleTick>
-                        </TextIconButton>
-                        <TextIconButton primary label="">
-                            <SvgArrowRight></SvgArrowRight>
-                        </TextIconButton>
+                                    <FilterTextInput label="Gred"
+                                    ></FilterTextInput>
+                                    <FilterTextInput label="Jawatan"
+                                    ></FilterTextInput>
+                                    <FilterTextInput label="Nama"
+                                    ></FilterTextInput>
+                                    <FilterTextInput label="No. K/P"
+                                    ></FilterTextInput>
 
+                                    <TextIconButton
+                                        label="cari"
+                                        primary
+                                        onClick={() => {}}
+                                    >
+                                        <SvgManifyingGlass></SvgManifyingGlass>
+                                    </TextIconButton>
+                                </div>
+                            </CustomCardBody>
+                        </CustomCard>
+
+                        <div
+                            class="flex max-h-full w-full flex-col items-start justify-start"
+                        >
+                            <SectionHeader
+                                subTitle="Tindakan: Tetapkan untuk semua kakitangan berkaitan."
+                            >
+                                <TextIconButton primary label="Tidak Lulus">
+                                    <SvgBlock></SvgBlock>
+                                </TextIconButton>
+                                <TextIconButton primary label="Lulus">
+                                    <SvgDoubleTick></SvgDoubleTick>
+                                </TextIconButton>
+                                <TextIconButton primary label="">
+                                    <SvgArrowRight></SvgArrowRight>
+                                </TextIconButton>
                             </SectionHeader>
-                            </div>
-                            <div
-                                class="flex max-h-full w-full flex-col items-start justify-start"
-                            >
-                                 <DataTable title="Hasil Carian">
-                                   <DtTableHead>
-                                     <DtTableHeadCell title="Bil"></DtTableHeadCell>
-                                     <DtTableHeadCell title="No.Pekerja"></DtTableHeadCell>
-                                     <DtTableHeadCell title="Nama Pekerja"></DtTableHeadCell>
-                                     <DtTableHeadCell title="No. Kad Pengenalan"></DtTableHeadCell>
-                                     <DtTableHeadCell title="Program"></DtTableHeadCell>
-                                     <DtTableHeadCell title="Skim"></DtTableHeadCell>
-                                     <DtTableHeadCell title="Gred"></DtTableHeadCell>
-                                     <DtTableHeadCell title="Nama Jawatan"></DtTableHeadCell>
-                                     <DtTableHeadCell title="Penempatan Sekarang"></DtTableHeadCell>
-                                     <DtTableHeadCell title="Keputusan Pemilihan "></DtTableHeadCell>
-                                     <DtTableHeadCell></DtTableHeadCell>
-                                  </DtTableHead>
-                                   <DtTableBody>
-                {#each permohonanKlinikPanel as item}
-                    <DtTableRow>
-                                   <DtTableDataCell value={item.kodKlinik}
-                                     ></DtTableDataCell>
-                                     <DtTableDataCell value={item.nomborPekerja}
-                                     ></DtTableDataCell>
-                                     <DtTableDataCell value={item.namaKakitangan}></DtTableDataCell>
-                                     <DtTableDataCell value={item.nomborKP}
-                                     ></DtTableDataCell>
-                                     <DtTableDataCell value={item.skim}
-                                     ></DtTableDataCell>
-                                     <DtTableDataCell value={item.jawatanSemasa}
-                                     ></DtTableDataCell>
-                                     <DtTableDataCell value={item.penempatanSekarang}
-                                     ></DtTableDataCell>
-                                     <DtTableDataCell value={item.status}></DtTableDataCell>
-                                     <DtTableDataCell value={item.tindakan}
-                                    ></DtTableDataCell>
-                                     <DtTableDataCell>
-                                        <DropdownSelect
-                                        id="position-dropdown"
-                                        label=""
-                                        dropdownType="label-left"
-                                        options={positions}
-                                        />
-                                     </DtTableDataCell>
+                        </div>
 
-
-                                 <DtTableDataCell>
-                            <IconButton
-                                onClick={() => {
-                                    goto(
-                                        'permohonan-panel-klinik/permohonan-penambahan-klinik-panel',
-                                    );
-                                }}
-                                > <SvgArrowRight></SvgArrowRight></IconButton
-                            >
-                        </DtTableDataCell>
-                    </DtTableRow>
-                {/each}
-            </DtTableBody>
-        </DataTable>
-                            </div>
-                        </CustomTabContent>
-
-            </StepperContentBody>
+                        <!-- Table Kemaskini Keputusan Mesyuarat Pemilihan Kakitangan -->
+                        <div
+                            class="flex max-h-full w-full flex-col items-start justify-start"
+                        >
+                            <DataTable title="Hasil Carian">
+                                <DtTableHead>
+                                    <DtTableHeadCell title="Bil"
+                                    ></DtTableHeadCell>
+                                    <DtTableHeadCell title="No.Pekerja"
+                                    ></DtTableHeadCell>
+                                    <DtTableHeadCell title="Nama Pekerja"
+                                    ></DtTableHeadCell>
+                                    <DtTableHeadCell title="No. Kad Pengenalan"
+                                    ></DtTableHeadCell>
+                                    <DtTableHeadCell title="Program"
+                                    ></DtTableHeadCell>
+                                    <DtTableHeadCell title="Skim"
+                                    ></DtTableHeadCell>
+                                    <DtTableHeadCell title="Gred"
+                                    ></DtTableHeadCell>
+                                    <DtTableHeadCell title="Nama Jawatan"
+                                    ></DtTableHeadCell>
+                                    <DtTableHeadCell title="Penempatan Sekarang"
+                                    ></DtTableHeadCell>
+                                    <DtTableHeadCell
+                                        title="Keputusan Pemilihan "
+                                    ></DtTableHeadCell>
+                                    <DtTableHeadCell></DtTableHeadCell>
+                                </DtTableHead>
+                                <DtTableBody>
+                                    {#each mockPerjawatanPemangkuan as item, i (i)}
+                                        <DtTableRow>
+                                            <DtTableDataCell value={i + 1}
+                                            ></DtTableDataCell>
+                                            <DtTableDataCell
+                                                value={item.nomborPekerja}
+                                            ></DtTableDataCell>
+                                            <DtTableDataCell
+                                                value={item.namaPekerja}
+                                            ></DtTableDataCell>
+                                            <DtTableDataCell
+                                                value={item.noKadPengenalan}
+                                            ></DtTableDataCell>
+                                            <DtTableDataCell
+                                                value={item.program}
+                                            ></DtTableDataCell>
+                                            <DtTableDataCell value={item.skim}
+                                            ></DtTableDataCell>
+                                            <DtTableDataCell value={item.gred}
+                                            ></DtTableDataCell>
+                                            <DtTableDataCell
+                                                value={item.namaJawatan}
+                                            ></DtTableDataCell>
+                                            <DtTableDataCell
+                                                value={item.penempatanSekarang}
+                                            ></DtTableDataCell>
+                                            <DtTableDataCell>
+                                                <DropdownSelect
+                                                    id="keputusanPemilihan"
+                                                    label=""
+                                                    dropdownType="label-left"
+                                                    options={positions}
+                                                />
+                                            </DtTableDataCell>
+                                            <DtTableDataCell>
+                                                <IconButton
+                                                    onClick={() => {
+                                                        console.log(
+                                                            'action function for each cell',
+                                                        );
+                                                    }}
+                                                    ><SvgEdit
+                                                    ></SvgEdit></IconButton
+                                                >
+                                            </DtTableDataCell>
+                                        </DtTableRow>
+                                    {/each}
+                                </DtTableBody>
+                            </DataTable>
+                        </div>
+                    </CustomTabContent>
+                </div></StepperContentBody
+            >
         </StepperContent>
 
         <!-- =========================================================== -->
@@ -641,206 +656,211 @@ export let selectedFiles: any = [];
 
         <StepperContent>
             {#if !editingCandidateList}
-            <StepperContentHeader title="Kemaskini Maklumat Temuduga">
-                <TextIconButton
-                label="Seterusnya"
-                primary
-                onClick={() => {
-                    goNext();
-                }}
-                      >
-                <SvgArrowRight></SvgArrowRight>
-            </TextIconButton>
-            </StepperContentHeader>
-
-            <StepperContentBody>
-
-            <SectionHeader title=" Butiran Maklumat Temuduga">
-            </SectionHeader>
-            <div class="flex w-full flex-col gap-2">
-                <TextField
-
-                    id=""
-                    label={'Nama Nesyuarat'}
-                    value={'Mazlan Shah'}
-                ></TextField>
-                <TextField
-
-                    id=""
-                    label={'Tarikh Mesyuarat'}
-                    value={'Sah'}
-                ></TextField>
-                <TextField
-
-                    id=""
-                    label={'Jawatan'}
-                    value={'Izzati Ismail'}
-                ></TextField>
-                <TextField
-
-                    id=""
-                    label={'Tarikh Temuduga'}
-                    value={'Sah'}
-                ></TextField>
-
-                <TextField
-
-                    id=""
-                    label={'TMasa Temuduga'}
-                    value={'Sah'}
-                ></TextField>
-                <TextField
-
-                    id=""
-                    label={'Negeri'}
-                    value={'Sah'}
-                ></TextField>
-                <TextField
-
-                    id=""
-                    label={'Pusat Temuduga'}
-                    value={'Sah'}
-                ></TextField>
-                </div>
-
-
-                <div
-                class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 pb-5"
-            >
-                <SectionHeader title="Dokumen - Dokumen yang Sokongan"
-                    ><div hidden={$fileSelectionList.length == 0}>
-                        <FileInputField id="fileInput" {handleOnChange}
-                        ></FileInputField>
-                    </div></SectionHeader
-                >
-                <div
-                    class="flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border border-bdr-primary p-2.5"
-                >
-                    <div class="flex flex-wrap gap-3">
-                        {#each $fileSelectionList as item, index}
-                            <FileInputFieldChildren
-                                childrenType="grid"
-                                handleDelete={() => handleDelete(index)}
-                                fileName={item.name}
-                            />
-                        {/each}
-                    </div>
-                    <div
-                        class="flex flex-col items-center justify-center gap-2.5"
-                    >
-                        <p
-                            class=" text-sm text-txt-tertiary"
-                            hidden={$fileSelectionList.length > 0}
-                        >
-                           Seret dan Lepas fail anda ke dalam ruangan ini atau pilih dari fail dari peranti anda
-                        </p>
-                        <!-- svelte-ignore a11y-click-events-have-key-events -->
-                        <div
-                            class="text-txt-tertiary"
-                            hidden={$fileSelectionList.length > 0}
-                        >
-                            <svg
-                                width={40}
-                                height={40}
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                                />
-                            </svg>
-                        </div>
-                        <div hidden={$fileSelectionList.length > 0}>
-                            <FileInputField id="fileInput" {handleOnChange}
-                            ></FileInputField>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-                <SectionHeader title="Kemaskini Senarai Calon Yang Terpilih Mengikut Keputusan Mesyuarat">
-                </SectionHeader>
-
-                <CustomCard borderClass="border-system-primary ">
-                    <CustomCardBody>
-                        <div class="flex w-full flex-wrap gap-2.5 items-center ">
-                            <FilterTextInput label="No. Pekerja"></FilterTextInput>
-                            <FilterTextInput label="Nama"></FilterTextInput>
-                            <FilterTextInput label="No. K/P"></FilterTextInput>
-
-                            <TextIconButton label="cari" primary onClick={() => {}}>
-                                <SvgManifyingGlass></SvgManifyingGlass>
-
-                            </TextIconButton>
-                        </div>
-                    </CustomCardBody>
-                </CustomCard>
-
-                          <div
-                                class ="flex max-h-full w-full flex-col items-start justify-start"
-                                >
-                                <SectionHeader
-                                subTitle="Tindakan: Tetapkan untuk semua kakitangan berkaitan.">
-
-                        <TextIconButton primary label="">
-                            <SvgArrowRight></SvgArrowRight>
-                        </TextIconButton>
-
-                            </SectionHeader>
-                            </div>
-
-                      <div
-                                class="flex max-h-full w-full flex-col items-start justify-start"
-                            >
-
-                            <SectionHeader title='Hasil Carian' subTitle='Tekan tombol untuk semua kakitangan berkaitan'></SectionHeader>
-                                <DynamicTable
-                                bind:selectedItems={allEmployeeList}
-                                bind:passData={currentData}
-                                tableItems={allEmployeeList}
-                                 editable
-                                 onEditClick={() => editingCandidateList =true}
-
-                                    columnKeys={[
-                                        'nomborPekerja',
-                                        'namaKakitangan',
-                                        'nomborKP',
-                                        'program',
-                                        'skim',
-                                        'gredSemasa',
-                                        'namaJawatan',
-                                        'penempatanSekarang',
-                                        'pengesahanKeputusanPemangkuan',
-
-
-                                    ]}
-                                ></DynamicTable>
-                            </div>
-
-
-            </StepperContentBody>
-
-            {:else}
-                <StepperContentHeader>
+                <StepperContentHeader title="Kemaskini Maklumat Temuduga">
                     <TextIconButton
-                label="Seterusnya"
-                primary
-                onClick={() => {
-                    goNext();
-                }}
-                      >
-                <SvgArrowRight></SvgArrowRight>
-            </TextIconButton>
+                        label="Kembali"
+                        onClick={() => {
+                            goPrevious();
+                        }}
+                    >
+                        <SvgXMark></SvgXMark>
+                    </TextIconButton>
+                    <TextIconButton
+                        label="Seterusnya"
+                        primary
+                        onClick={() => {
+                            goNext();
+                        }}
+                    >
+                        <SvgArrowRight></SvgArrowRight>
+                    </TextIconButton>
                 </StepperContentHeader>
+
+                <!-- Butiran Maklumat Temuduga -->
                 <StepperContentBody>
-                    <SectionHeader title=" Maklumat Calon ">
-                    </SectionHeader>
+                    <SectionHeader title=" Butiran Maklumat Temuduga"
+                    ></SectionHeader>
+                    <div class="flex w-full flex-col gap-2">
+                        <TextField
+                            id=""
+                            label={'Nama Nesyuarat'}
+                            value={'Mazlan Shah'}
+                        ></TextField>
+                        <TextField
+                            id=""
+                            label={'Tarikh Mesyuarat'}
+                            value={'Sah'}
+                        ></TextField>
+                        <TextField
+                            id=""
+                            label={'Jawatan'}
+                            value={'Izzati Ismail'}
+                        ></TextField>
+                        <TextField id="" label={'Tarikh Temuduga'} value={'Sah'}
+                        ></TextField>
+
+                        <TextField id="" label={'TMasa Temuduga'} value={'Sah'}
+                        ></TextField>
+                        <TextField id="" label={'Negeri'} value={'Sah'}
+                        ></TextField>
+                        <TextField id="" label={'Pusat Temuduga'} value={'Sah'}
+                        ></TextField>
+                    </div>
+
+                    <!-- Upload Dokumen- Dokumen yang Berkaitan -->
+                    <div
+                        class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 pb-5"
+                    >
+                        <SectionHeader title="Dokumen - Dokumen yang Berkaitan"
+                            ><div hidden={$fileSelectionList.length == 0}>
+                                <FileInputField id="fileInput" {handleOnChange}
+                                ></FileInputField>
+                            </div></SectionHeader
+                        >
+                        <div
+                            class="flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border border-bdr-primary p-2.5"
+                        >
+                            <div class="flex flex-wrap gap-3">
+                                {#each $fileSelectionList as item, index}
+                                    <FileInputFieldChildren
+                                        childrenType="grid"
+                                        handleDelete={() => handleDelete(index)}
+                                        fileName={item.name}
+                                    />
+                                {/each}
+                            </div>
+                            <div
+                                class="flex flex-col items-center justify-center gap-2.5"
+                            >
+                                <p
+                                    class=" text-sm text-txt-tertiary"
+                                    hidden={$fileSelectionList.length > 0}
+                                >
+                                    Seret dan Lepas fail anda ke dalam ruangan
+                                    ini atau pilih dari fail dari peranti anda
+                                </p>
+                                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                                <div
+                                    class="text-txt-tertiary"
+                                    hidden={$fileSelectionList.length > 0}
+                                >
+                                    <svg
+                                        width={40}
+                                        height={40}
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.5"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                                        />
+                                    </svg>
+                                </div>
+                                <div hidden={$fileSelectionList.length > 0}>
+                                    <FileInputField
+                                        id="fileInput"
+                                        {handleOnChange}
+                                    ></FileInputField>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Search Kemaskini Maklumat Temuduga -->
+                    <SectionHeader
+                        title="Kemaskini Senarai Calon Yang Terpilih Mengikut Keputusan Mesyuarat"
+                    ></SectionHeader>
+
+                    <CustomCard borderClass="border-system-primary ">
+                        <CustomCardBody>
+                            <div
+                                class="flex w-full flex-wrap items-center gap-2.5"
+                            >
+                                <FilterTextInput label="Gred"></FilterTextInput>
+                                <FilterTextInput label="Jawatan"
+                                ></FilterTextInput>
+                                <FilterTextInput label="Nama"></FilterTextInput>
+                                <FilterTextInput label="No. K/P"
+                                ></FilterTextInput>
+
+                                <TextIconButton
+                                    label="cari"
+                                    primary
+                                    onClick={() => {}}
+                                >
+                                    <SvgManifyingGlass></SvgManifyingGlass>
+                                </TextIconButton>
+                            </div>
+                        </CustomCardBody>
+                    </CustomCard>
+
+                    <!-- Right Arrow button -->
+
+                    <div
+                        class="flex max-h-full w-full flex-col items-start justify-start"
+                    >
+                        <SectionHeader
+                            subTitle="Tindakan: Tetapkan untuk semua kakitangan berkaitan."
+                        >
+                            <TextIconButton primary label="">
+                                <SvgArrowRight></SvgArrowRight>
+                            </TextIconButton>
+                        </SectionHeader>
+                    </div>
+
+                    <!-- Table Kemaskini Maklumat Temuduga -->
+                    <div
+                        class="flex max-h-full w-full flex-col items-start justify-start"
+                    >
+                        <SectionHeader
+                            title="Hasil Carian"
+                            subTitle="Tekan tombol untuk semua kakitangan berkaitan"
+                        ></SectionHeader>
+                        <DynamicTable
+                            tableItems={mockPerjawatanPemangkuan}
+                            withRowSelection
+                            onSelect={() => {
+                                console.log('pop selected here');
+                            }}
+                            editable
+                            onEditClick={() => (editingCandidateList = true)}
+                            columnKeys={[
+                                'nomborPekerja',
+                                'namaPekerja',
+                                'noKadPengenalan',
+                                'program',
+                                'skim',
+                                'gredSemasa',
+                                'namaJawatan',
+                                'penempatanSekarang',
+                                'pengesahanKeputusanPemangkuan',
+                            ]}
+                        ></DynamicTable>
+                    </div>
+                </StepperContentBody>
+            {:else}
+                <StepperContentHeader
+                    title="Semak Pengesahan Keputusan Mesyuarat Pemilihan Calon"
+                >
+                    <TextIconButton
+                        label="Seterusnya"
+                        primary
+                        onClick={() => {
+                            goNext();
+                        }}
+                    >
+                        <SvgArrowRight></SvgArrowRight>
+                    </TextIconButton>
+                </StepperContentHeader>
+
+                <!-- Maklumat Calon -->
+                <StepperContentBody>
+                    <SectionHeader title=" Maklumat Peraku Keputusan Mesyuarat "
+                    ></SectionHeader>
                     <div class="flex w-full flex-col gap-2">
                         <TextField
                             {disabled}
@@ -866,38 +886,43 @@ export let selectedFiles: any = [];
                             label={'Perakuan'}
                             value={'Sah'}
                         ></TextField>
-                        </div>
+                    </div>
+
+                    <!-- Table Senarai Calon Yang Terpilih Mengikut Keputusan Mesyuarat -->
+
                     <CustomTabContent>
-                                    <CustomCard borderClass="border-system-primary items-center">
-                          </CustomCard>
-                                    <div
-                                    class="flex max-h-full w-full flex-col items-start justify-start"
-                                >
-                                <SectionHeader title='Senarai Calon Yang Terpilih Mengikut Keputusan Mesyuarat'></SectionHeader>
-                                    <DynamicTable
-                                    bind:selectedItems={allEmployeeList}
-                                    bind:passData={currentData}
-                                    tableItems={allEmployeeList}
-                                     editable
-                                    onSelect={() => {
-                                            // popSelected(currentData);
-                                        }}
-                                        columnKeys={[
-                                            'nomborPekerja',
-                                            'namaKakitangan',
-                                            'nomborKP',
-                                            'program',
-                                            'skim',
-                                            'gredSemasa',
-                                            'jawatanSemasa',
-                                            'penempatanSekarang',
-                                            'keputusanMesyuarat',
-                                        ]}
-                                    ></DynamicTable>
-                                </div>
-                        </CustomTabContent>
-            </StepperContentBody>
-        {/if}
+                        <CustomCard
+                            borderClass="border-system-primary items-center"
+                        ></CustomCard>
+                        <div
+                            class="flex max-h-full w-full flex-col items-start justify-start"
+                        >
+                            <SectionHeader
+                                title="Senarai Calon Yang Terpilih Mengikut Keputusan Mesyuarat"
+                            ></SectionHeader>
+                            <DynamicTable
+                                tableItems={mockPerjawatanPemangkuan}
+                                withRowSelection
+                                onSelect={() => {
+                                    console.log('pop selected here');
+                                }}
+                                editable
+                                columnKeys={[
+                                    'nomborPekerja',
+                                    'namaPekerja',
+                                    'noKadPengenalan',
+                                    'program',
+                                    'skim',
+                                    'gredSemasa',
+                                    'namaJawatan',
+                                    'penempatanSekarang',
+                                    'keputusanMesyuarat',
+                                ]}
+                            ></DynamicTable>
+                        </div>
+                    </CustomTabContent>
+                </StepperContentBody>
+            {/if}
         </StepperContent>
 
         <!-- =========================================================== -->
@@ -906,65 +931,78 @@ export let selectedFiles: any = [];
 
         <StepperContent>
             {#if !editingCandidateList}
-            <StepperContentHeader title="Kemaskini Keputusan Temuduga">
-                <TextIconButton
-                label="Seterusnya"
-                primary
-                onClick={() => {
-                    goNext();
-                }}
-                      >
-                <SvgArrowRight></SvgArrowRight>
-            </TextIconButton>
-            </StepperContentHeader>
+                <StepperContentHeader title="Kemaskini Keputusan Temuduga">
+                    <TextIconButton
+                        label="Seterusnya"
+                        primary
+                        onClick={() => {
+                            goNext();
+                        }}
+                    >
+                        <SvgArrowRight></SvgArrowRight>
+                    </TextIconButton>
+                </StepperContentHeader>
+
+                <!-- Search senarai Kakitangan Yang Dipilih -->
                 <StepperContentBody>
-                    <SectionHeader title=" Kemaskini Maklumat Temuduga">
-                    </SectionHeader>
+                    <SectionHeader title=" Kemaskini Maklumat Temuduga"
+                    ></SectionHeader>
                     <CustomTabContent>
-                                    <CustomCard borderClass="border-system-primary items-center">
-                                         <CustomCardBody>
-                                            <div class="flex w-full flex-wrap gap-2.5">
-                                                <FilterTextInput label="Gred"></FilterTextInput>
-                                                <FilterTextInput label="Jawatan"></FilterTextInput>
-                                                <FilterTextInput label="Nama"></FilterTextInput>
-                                                <FilterTextInput label="No. K/P"></FilterTextInput>
+                        <CustomCard
+                            borderClass="border-system-primary items-center"
+                        >
+                            <CustomCardBody>
+                                <div class="flex w-full flex-wrap gap-2.5">
+                                    <FilterTextInput label="Gred"
+                                    ></FilterTextInput>
+                                    <FilterTextInput label="Jawatan"
+                                    ></FilterTextInput>
+                                    <FilterTextInput label="Nama"
+                                    ></FilterTextInput>
+                                    <FilterTextInput label="No. K/P"
+                                    ></FilterTextInput>
 
-                                                <TextIconButton label="cari" primary onClick={() => {}}>
-                                                    <SvgManifyingGlass></SvgManifyingGlass>
-
-                                                </TextIconButton>
-                                            </div>
-                                        </CustomCardBody>
-                                    </CustomCard>
-                                    <div
-                                        class="flex max-h-full w-full flex-col items-start justify-start"
+                                    <TextIconButton
+                                        label="cari"
+                                        primary
+                                        onClick={() => {}}
                                     >
-                                    <SectionHeader title='Hasil Carian'></SectionHeader>
-                                        <DynamicTable
-                                        bind:selectedItems={allEmployeeList}
-                                        bind:passData={currentData}
-                                        tableItems={allEmployeeList}
-                                         editable
-                                         onEditClick={() => editingCandidateList =true}
+                                        <SvgManifyingGlass></SvgManifyingGlass>
+                                    </TextIconButton>
+                                </div>
+                            </CustomCardBody>
+                        </CustomCard>
 
-                                            columnKeys={[
-                                                'nomborPekerja',
-                                                'namaKakitangan',
-                                                'nomborKP',
-                                                'program',
-                                                'skim',
-                                                'gredSemasa',
-                                                'jawatanSemasa',
-                                                'penempatanSekarang',
-                                                'keputusanTemuduga',
-                                            ]}
-                                        ></DynamicTable>
-                                    </div>
-                                </CustomTabContent>
-                    </StepperContentBody>
-
-                    {:else}
-                    <StepperContentHeader title="Maklumat Temuduga">
+                        <!-- Table Kemaskini Maklumat Temuduga -->
+                        <div
+                            class="flex max-h-full w-full flex-col items-start justify-start"
+                        >
+                            <SectionHeader title="Hasil Carian"></SectionHeader>
+                            <DynamicTable
+                                tableItems={mockPerjawatanPemangkuan}
+                                onSelect={() => {
+                                    console.log('pop selected here');
+                                }}
+                                editable
+                                onEditClick={() =>
+                                    (editingCandidateList = true)}
+                                columnKeys={[
+                                    'nomborPekerja',
+                                    'namaPekerja',
+                                    'noKadPengenalan',
+                                    'program',
+                                    'skim',
+                                    'gredSemasa',
+                                    'namaJawatan',
+                                    'penempatanSekarang',
+                                    'maklumatTemuduga',
+                                ]}
+                            ></DynamicTable>
+                        </div>
+                    </CustomTabContent>
+                </StepperContentBody>
+            {:else}
+                <StepperContentHeader title="Maklumat Temuduga">
                     <TextIconButton
                         label="Batal"
                         onClick={() => {
@@ -976,78 +1014,42 @@ export let selectedFiles: any = [];
                     >
                         <SvgXMark></SvgXMark>
                     </TextIconButton>
-                    <TextIconButton
-                        primary
-                        label="Simpan"
-                        onClick={() => {
-                            let tempData = selectedCandidatesList.filter(
-                                (item) => item != currentData,
-                            );
-
-                            tempData.push(placeholderData);
-
-                            selectedCandidatesList = tempData;
-
-                            selectedCandidatesList.sort(
-                                createCompareFn('nomborPekerja', 'asc'),
-                            );
-
-                            editingCandidateList = false;
-                        }}
-                    >
+                    <TextIconButton primary label="Simpan" onClick={() => {}}>
                         <SvgCheck></SvgCheck>
                     </TextIconButton>
-            </StepperContentHeader>
-                    <StepperContentBody>
-                        <SectionHeader title=" Maklumat Calon">
-                        </SectionHeader>
-                        <div class="flex w-full flex-col gap-2">
-                            <TextField
+                </StepperContentHeader>
+
+                <!-- Maklumat Calon -->
+                <StepperContentBody>
+                    <SectionHeader title=" Maklumat Calon"></SectionHeader>
+                    <div class="flex w-full flex-col gap-2">
+                        <TextField
                             {disabled}
                             id=""
                             label={'No. Pekerja'}
                             value={'001'}
                         ></TextField>
-                        <TextField
-                            {disabled}
-                            id=""
-                            label={'Nama'}
-                            value={'Sah'}
+                        <TextField {disabled} id="" label={'Nama'} value={'Sah'}
                         ></TextField>
-                        <TextField
-                            {disabled}
-                            id=""
-                            label={'No. K/P'}
-                            value={''}
+                        <TextField {disabled} id="" label={'No. K/P'} value={''}
                         ></TextField>
-                            </div>
-                    </StepperContentBody>
+                    </div>
 
-                    <StepperContentBody>
-                        <SectionHeader title=" Keputusan Temuduga ">
-                        </SectionHeader>
-                        <DateSelector
+                    <!-- Keputusan Temuduga -->
+                    <SectionHeader title=" Keputusan Temuduga "></SectionHeader>
+                    <DateSelector
                         {handleDateChange}
                         label={'Tarikh Temuduga'}
-                        />
-                        <div class="flex w-full flex-col gap-2">
-                            <TextField
-
-                            id=""
-                            label={'Pusat Temuduga'}
-                            value={'-'}
+                    />
+                    <div class="flex w-full flex-col gap-2">
+                        <TextField id="" label={'Pusat Temuduga'} value={'-'}
                         ></TextField>
-                        <TextField
-                            id=""
-                            label={'Nama Panel'}
-                            value={'-'}
+                        <TextField id="" label={'Nama Panel'} value={'-'}
                         ></TextField>
-                        </div>
-                    </StepperContentBody>
-
-                    {/if}
-                </StepperContent>
-
+                    </div>
+                </StepperContentBody>
+            {/if}
+        </StepperContent>
 
         <!-- =========================================================== -->
         <!-- Kemaskini Keputusan Mesyuarat Kenaikan Pangkat -->
@@ -1055,68 +1057,74 @@ export let selectedFiles: any = [];
 
         <StepperContent>
             {#if !editingCandidateList}
-            <StepperContentHeader
-                title="Kemaskini Keputusan Mesyuarat Kenaikan Pangkat"
-            >
-            <TextIconButton
-                            label="Seterusnya"
-                            primary
-                            onClick={() => {
-                                goNext();
-                            }}
-                        >
-                            <SvgArrowRight></SvgArrowRight>
-                        </TextIconButton>
-            </StepperContentHeader>
-            <StepperContentBody>
-                <SectionHeader title=" Senarai Calon Yang Terpilih">
-                </SectionHeader>
-                                <CustomCard borderClass="border-system-primary ">
-                                <CustomCardBody>
-                                    <div class="flex w-full flex-wrap gap-2.5 items-center ">
-                                        <FilterTextInput label="No. Pekerja"></FilterTextInput>
-                                        <FilterTextInput label="Nama"></FilterTextInput>
-                                        <FilterTextInput label="No. K/P"></FilterTextInput>
+                <StepperContentHeader
+                    title="Kemaskini Keputusan Mesyuarat Kenaikan Pangkat"
+                >
+                    <TextIconButton
+                        label="Seterusnya"
+                        primary
+                        onClick={() => {
+                            goNext();
+                        }}
+                    >
+                        <SvgArrowRight></SvgArrowRight>
+                    </TextIconButton>
+                </StepperContentHeader>
 
-                                        <TextIconButton label="cari" primary onClick={() => {}}>
-                                            <SvgManifyingGlass></SvgManifyingGlass>
-
-                                        </TextIconButton>
-                                    </div>
-                                </CustomCardBody>
-                            </CustomCard>
-
+                <!-- Search senarai Calon Yang Terpilih -->
+                <StepperContentBody>
+                    <SectionHeader title=" Senarai Calon Yang Terpilih"
+                    ></SectionHeader>
+                    <CustomCard borderClass="border-system-primary ">
+                        <CustomCardBody>
                             <div
-                            class="flex max-h-full w-full flex-col items-start justify-start"
-                        >
-                        <SectionHeader title='Hasil Carian'></SectionHeader>
-                            <DynamicTable
-                                bind:selectedItems={allEmployeeList}
-                                bind:passData={currentData}
-                                tableItems={allEmployeeList}
-                                 editable
-                                 onEditClick={() => editingCandidateList =true}
-                                columnKeys={[
-                                    'nomborPekerja',
-                                    'namaKakitangan',
-                                    'nomborKP',
-                                    'program',
-                                    'skim',
-                                    'gredSemasa',
-                                    'namaJawatan',
-                                    'penempatanSekarang',
-                                    'keputusanMesyuaratKenaikanPangkat',
+                                class="flex w-full flex-wrap items-center gap-2.5"
+                            >
+                                <FilterTextInput label="No. Pekerja"
+                                ></FilterTextInput>
+                                <FilterTextInput label="Nama"></FilterTextInput>
+                                <FilterTextInput label="No. K/P"
+                                ></FilterTextInput>
 
+                                <TextIconButton
+                                    label="cari"
+                                    primary
+                                    onClick={() => {}}
+                                >
+                                    <SvgManifyingGlass></SvgManifyingGlass>
+                                </TextIconButton>
+                            </div>
+                        </CustomCardBody>
+                    </CustomCard>
 
-
-                                ]}
-                            ></DynamicTable>
-                        </div>
-
-            </StepperContentBody>
+                    <!-- Table Keputusan Mesyuarat kenaikan Pangkat -->
+                    <div
+                        class="flex max-h-full w-full flex-col items-start justify-start"
+                    >
+                        <SectionHeader title="Hasil Carian"></SectionHeader>
+                        <DynamicTable
+                            tableItems={mockPerjawatanPemangkuan}
+                            editable
+                            onEditClick={() => (editingCandidateList = true)}
+                            columnKeys={[
+                                'nomborPekerja',
+                                'namaPekerja',
+                                'noKadPengenalan',
+                                'program',
+                                'skim',
+                                'gredSemasa',
+                                'namaJawatan',
+                                'penempatanSekarang',
+                                'keputusanMesyuaratKenaikanPangkat',
+                            ]}
+                        ></DynamicTable>
+                    </div>
+                </StepperContentBody>
             {:else}
-            <StepperContentHeader title="Maklumat Keputusan Mesyuarat Kenaikan Pangkat">
-                <TextIconButton
+                <StepperContentHeader
+                    title="Maklumat Keputusan Mesyuarat Kenaikan Pangkat"
+                >
+                    <TextIconButton
                         label="Batal"
                         onClick={() => {
                             console.log(currentData.layakTemuduga);
@@ -1127,70 +1135,45 @@ export let selectedFiles: any = [];
                     >
                         <SvgXMark></SvgXMark>
                     </TextIconButton>
-                    <TextIconButton
-                        primary
-                        label="Simpan"
-                        onClick={() => {
-                            let tempData = selectedCandidatesList.filter(
-                                (item) => item != currentData,
-                            );
-
-                            tempData.push(placeholderData);
-
-                            selectedCandidatesList = tempData;
-
-                            selectedCandidatesList.sort(
-                                createCompareFn('nomborPekerja', 'asc'),
-                            );
-
-                            editingCandidateList = false;
-                        }}
-                    >
+                    <TextIconButton primary label="Simpan" onClick={() => {}}>
                         <SvgCheck></SvgCheck>
                     </TextIconButton>
-            </StepperContentHeader>
-            <StepperContentBody>
-                <SectionHeader title=" Maklumat Calon ">
-                </SectionHeader>
-                <div class="flex w-full flex-col gap-2">
-                    <TextField
-                    {disabled}
-                    id=""
-                    label={'No. Pekerja'}
-                    value={'001'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id=""
-                    label={'Nama'}
-                    value={'Sah'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id=""
-                    label={'No.K/P'}
-                    value={'Sah'}
-                ></TextField>
-                </div>
-                </StepperContentBody>
+                </StepperContentHeader>
 
+                <!-- Maklumat Calon -->
                 <StepperContentBody>
+                    <SectionHeader title=" Maklumat Calon "></SectionHeader>
+                    <div class="flex w-full flex-col gap-2">
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'No. Pekerja'}
+                            value={'001'}
+                        ></TextField>
+                        <TextField {disabled} id="" label={'Nama'} value={'Sah'}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'No.K/P'}
+                            value={'Sah'}
+                        ></TextField>
+                    </div>
 
-                            <SectionHeader title=" Keputusan Mesyuarat">
-                             </SectionHeader>
+                    <!-- Keputusan Mesyuarat -->
+                    <SectionHeader title=" Keputusan Mesyuarat"></SectionHeader>
 
-                                <div class="flex flex-col gap-2.5 w-full">
-                                    <DropdownSelect
-                                        id="meeting-type"
-                                        label=" Keputusan"
-                                        dropdownType="label-left-full"
-                                        options={meetings}
-                                        bind:index={selectedMeetingType}
-                                    />
-                                </div>
-
-                                </StepperContentBody>
-        {/if}
+                    <div class="flex w-full flex-col gap-2.5">
+                        <DropdownSelect
+                            id="meeting-type"
+                            label=" Keputusan"
+                            dropdownType="label-left-full"
+                            options={meetings}
+                            bind:index={selectedMeetingType}
+                        />
+                    </div>
+                </StepperContentBody>
+            {/if}
         </StepperContent>
 
         <!-- =========================================================== -->
@@ -1199,156 +1182,131 @@ export let selectedFiles: any = [];
 
         <StepperContent>
             {#if !editingCandidateList}
-            <StepperContentHeader title="Kemaskini Keputusan Mesyuarat Penempatan Kakitangan">
-                <TextIconButton
-                            label="Seterusnya"
-                            primary
-                            onClick={() => {
-                                goNext();
-                            }}
-                        >
-                            <SvgArrowRight></SvgArrowRight>
-                        </TextIconButton>
+                <StepperContentHeader
+                    title="Kemaskini Keputusan Mesyuarat Penempatan Kakitangan"
+                >
+                    <TextIconButton
+                        label="Seterusnya"
+                        primary
+                        onClick={() => {
+                            goNext();
+                        }}
+                    >
+                        <SvgArrowRight></SvgArrowRight>
+                    </TextIconButton>
+                </StepperContentHeader>
+                <StepperContentBody>
+                    <SectionHeader title=" Senarai Calon Yang Terpilih"
+                    ></SectionHeader>
 
-            </StepperContentHeader>
-            <StepperContentBody>
-                <SectionHeader title=" Senarai Calon Yang Terpilih">
-                </SectionHeader>
-
+                    <!-- Search senarai Calon Yang Terpilih -->
                     <CustomCard borderClass="border-system-primary ">
                         <CustomCardBody>
-                            <div class="flex w-full flex-wrap gap-2.5  items-center">
-                                <FilterTextInput label="No. Pekerja"></FilterTextInput>
+                            <div
+                                class="flex w-full flex-wrap items-center gap-2.5"
+                            >
+                                <FilterTextInput label="No. Pekerja"
+                                ></FilterTextInput>
                                 <FilterTextInput label="Nama"></FilterTextInput>
-                                <FilterTextInput label="No. K/P"></FilterTextInput>
+                                <FilterTextInput label="No. K/P"
+                                ></FilterTextInput>
 
-                                <TextIconButton label="cari" primary onClick={() => {}}>
+                                <TextIconButton
+                                    label="cari"
+                                    primary
+                                    onClick={() => {}}
+                                >
                                     <SvgManifyingGlass></SvgManifyingGlass>
-
                                 </TextIconButton>
                             </div>
                         </CustomCardBody>
                     </CustomCard>
 
+                    <!-- Table Keputusan Mesyuarat Penempatan Kakitangan -->
 
                     <div
-                class="flex max-h-full w-full flex-col items-start justify-start"
-            >
-            <SectionHeader title='Hasil Carian'></SectionHeader>
-                <DynamicTable
-                    bind:selectedItems={allEmployeeList}
-                    bind:passData={currentData}
-                    tableItems={allEmployeeList}
-                     editable
-                     onEditClick={() => editingCandidateList =true}
-                    columnKeys={[
-                        'nomborPekerja',
-                        'namaKakitangan',
-                        'nomborKP',
-                        'program',
-                        'skim',
-                        'gredSemasa',
-                        'namaJawatan',
-                        'penempatanSekarang',
-                        'keputusanMesyuaratKenaikanPangkat',
-
-
-
-                    ]}
-                ></DynamicTable>
-            </div>
-
-
-            </StepperContentBody>
-            {:else}
-           <StepperContentHeader title="Maklumat Keputusan Mesyuarat Kenaikan Pangkat">
-
-            <TextIconButton
-            label="Batal"
-            onClick={() => {
-                console.log(currentData.layakTemuduga);
-                console.log(placeholderData.layakTemuduga);
-                console.log(selectedCandidatesList);
-                editingCandidateList = false;
-            }}
-        >
-            <SvgXMark></SvgXMark>
-        </TextIconButton>
-        <TextIconButton
-            primary
-            label="Simpan"
-            onClick={() => {
-                let tempData = selectedCandidatesList.filter(
-                    (item) => item != currentData,
-                );
-
-                tempData.push(placeholderData);
-
-                selectedCandidatesList = tempData;
-
-                selectedCandidatesList.sort(
-                    createCompareFn('nomborPekerja', 'asc'),
-                );
-
-                editingCandidateList = false;
-            }}
-        >
-            <SvgCheck></SvgCheck>
-        </TextIconButton>
-
-           </StepperContentHeader>
-            <StepperContentBody>
-                <SectionHeader title=" Maklumat Calon ">
-                </SectionHeader>
-                <div class="flex w-full flex-col gap-2">
-                    <TextField
-                    {disabled}
-                    id=""
-                    label={'No. Pekerja'}
-                    value={'001'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id=""
-                    label={'Nama'}
-                    value={'Sah'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id=""
-                    label={'No.K/P'}
-                    value={'Sah'}
-                ></TextField>
-                </div>
+                        class="flex max-h-full w-full flex-col items-start justify-start"
+                    >
+                        <SectionHeader title="Hasil Carian"></SectionHeader>
+                        <DynamicTable
+                            tableItems={mockPerjawatanPemangkuan}
+                            editable
+                            onEditClick={() => (editingCandidateList = true)}
+                            columnKeys={[
+                                'nomborPekerja',
+                                'namaPekerja',
+                                'noKadPengenalan',
+                                'gredSemasa',
+                                'namaJawatan',
+                                'penempatanSekarang',
+                                'keputusanMesyuaratKenaikanPangkat',
+                                'statusPermohonan',
+                            ]}
+                        ></DynamicTable>
+                    </div>
                 </StepperContentBody>
+            {:else}
+                <StepperContentHeader
+                    title="Maklumat Keputusan Mesyuarat Kenaikan Pangkat"
+                >
+                    <TextIconButton
+                        label="Batal"
+                        onClick={() => {
+                            console.log(currentData.layakTemuduga);
+                            console.log(placeholderData.layakTemuduga);
+                            console.log(selectedCandidatesList);
+                            editingCandidateList = false;
+                        }}
+                    >
+                        <SvgXMark></SvgXMark>
+                    </TextIconButton>
+                    <TextIconButton primary label="Simpan" onClick={() => {}}>
+                        <SvgCheck></SvgCheck>
+                    </TextIconButton>
+                </StepperContentHeader>
+
+                <!-- Maklumat Calon -->
                 <StepperContentBody>
+                    <SectionHeader title=" Maklumat Calon "></SectionHeader>
+                    <div class="flex w-full flex-col gap-2">
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'No. Pekerja'}
+                            value={'001'}
+                        ></TextField>
+                        <TextField {disabled} id="" label={'Nama'} value={'Sah'}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'No.K/P'}
+                            value={'Sah'}
+                        ></TextField>
+                    </div>
 
-                            <SectionHeader title=" Keputusan Mesyuarat">
-                             </SectionHeader>
+                    <!-- Keputusan Mesyuarat -->
 
-                                <div class="flex flex-col gap-2.5 w-full">
-                                    <TextField
-                                       id=""
-                                       label={'Penempatan Baru'}
-                                       value={'-'}
-                                ></TextField>
-                                    <DropdownSelect
-                                        id="meeting-type"
-                                        label=" Pengarah Baru"
-                                        dropdownType="label-left-full"
-                                        options={meetings}
-                                        bind:index={selectedMeetingType}
-                                    />
-                                </div>
-                                <DateSelector
-                                {handleDateChange}
-                                label={'Tarikh Lapor Diri'}
-                                />
+                    <SectionHeader title=" Keputusan Mesyuarat"></SectionHeader>
 
-                          </StepperContentBody>
+                    <div class="flex w-full flex-col gap-2.5">
+                        <TextField id="" label={'Penempatan Baru'} value={'-'}
+                        ></TextField>
+                        <DropdownSelect
+                            id="meeting-type"
+                            label=" Pengarah Baru"
+                            dropdownType="label-left-full"
+                            options={meetings}
+                            bind:index={selectedMeetingType}
+                        />
+                    </div>
+                    <DateSelector
+                        {handleDateChange}
+                        label={'Tarikh Lapor Diri'}
+                    />
+                </StepperContentBody>
             {/if}
         </StepperContent>
-
 
         <!-- =========================================================== -->
         <!-- Permohonan Penangguhan / Pindaan Penempatan Dari Kakitangan -->
@@ -1356,69 +1314,74 @@ export let selectedFiles: any = [];
 
         <StepperContent>
             {#if !editingCandidateList}
-            <StepperContentHeader
-                title="Permohonan Penangguhan / Pindaan Penempatan Dari Kakitangan">
-                <TextIconButton
-                            label="Seterusnya"
-                            primary
-                            onClick={() => {
-                               goNext();
-                            }}
-                        >
-                            <SvgArrowRight></SvgArrowRight>
-                        </TextIconButton>
+                <StepperContentHeader
+                    title="Permohonan Penangguhan / Pindaan Penempatan Dari Kakitangan"
+                >
+                    <TextIconButton
+                        label="Seterusnya"
+                        primary
+                        onClick={() => {
+                            goNext();
+                        }}
+                    >
+                        <SvgArrowRight></SvgArrowRight>
+                    </TextIconButton>
+                </StepperContentHeader>
+                <StepperContentBody>
+                    <SectionHeader title=" Senarai Calon Yang Terpilih"
+                    ></SectionHeader>
 
-            </StepperContentHeader>
-            <StepperContentBody>
-                <SectionHeader title=" Senarai Calon Yang Terpilih">
-                </SectionHeader>
+                    <!-- Search Senarai Calon Yang Terpilih  -->
 
-                        <CustomCard borderClass="border-system-primary">
-                            <CustomCardBody>
-                        <div class="flex w-full flex-wrap gap-2.5 items-center ">
-                            <FilterTextInput label="No. Pekerja"></FilterTextInput>
-                            <FilterTextInput label="Nama"></FilterTextInput>
-                            <FilterTextInput label="No. K/P"></FilterTextInput>
+                    <CustomCard borderClass="border-system-primary">
+                        <CustomCardBody>
+                            <div
+                                class="flex w-full flex-wrap items-center gap-2.5"
+                            >
+                                <FilterTextInput label="No. Pekerja"
+                                ></FilterTextInput>
+                                <FilterTextInput label="Nama"></FilterTextInput>
+                                <FilterTextInput label="No. K/P"
+                                ></FilterTextInput>
 
-                            <TextIconButton label="cari" primary onClick={() => {}}>
-                                <SvgManifyingGlass></SvgManifyingGlass>
+                                <TextIconButton
+                                    label="cari"
+                                    primary
+                                    onClick={() => {}}
+                                >
+                                    <SvgManifyingGlass></SvgManifyingGlass>
+                                </TextIconButton>
+                            </div>
+                        </CustomCardBody>
+                    </CustomCard>
 
-                            </TextIconButton>
-                        </div>
-                    </CustomCardBody>
-
-                 </CustomCard>
-                <div
-                class="flex max-h-full w-full flex-col items-start justify-start"
-            >
-            <SectionHeader title='Hasil Carian'></SectionHeader>
-                <DynamicTable
-                    bind:selectedItems={allEmployeeList}
-                    bind:passData={currentData}
-                    tableItems={allEmployeeList}
-                     editable
-                     onEditClick={()=> editingCandidateList =true}
-                    columnKeys={[
-                        'nomborPekerja',
-                        'namaKakitangan',
-                        'nomborKP',
-                        'gredSemasa',
-                        'namaJawatan',
-                        'penempatanSekarang',
-                        'keputusanMesyuaratKenaikanPangkat',
-                        'statusPerlaksanaan',
-
-
-                    ]}
-                ></DynamicTable>
-            </div>
-
-
-            </StepperContentBody>
+                    <!-- Table Keputusan Permohonan Penangguhan/Pindaan Penempatan Dari Kakitangan -->
+                    <div
+                        class="flex max-h-full w-full flex-col items-start justify-start"
+                    >
+                        <SectionHeader title="Hasil Carian"></SectionHeader>
+                        <DynamicTable
+                            tableItems={mockPerjawatanPemangkuan}
+                            editable
+                            onEditClick={() => (editingCandidateList = true)}
+                            columnKeys={[
+                                'nomborPekerja',
+                                'namaPekerja',
+                                'noKadPengenalan',
+                                'gredSemasa',
+                                'namaJawatan',
+                                'penempatanSekarang',
+                                'keputusanMesyuaratKenaikanPangkat',
+                                'permohonanPenangguhanPindaanPenempatan',
+                            ]}
+                        ></DynamicTable>
+                    </div>
+                </StepperContentBody>
             {:else}
-            <StepperContentHeader title="Kemaskini Maklumat Permohonan Penangguhan/Pindaan Penempatan">
-
-                <TextIconButton
+                <StepperContentHeader
+                    title="Kemaskini Maklumat Permohonan Penangguhan/Pindaan Penempatan"
+                >
+                    <TextIconButton
                         label="Batal"
                         onClick={() => {
                             console.log(currentData.layakTemuduga);
@@ -1429,90 +1392,86 @@ export let selectedFiles: any = [];
                     >
                         <SvgXMark></SvgXMark>
                     </TextIconButton>
-                    <TextIconButton
-                        primary
-                        label="Simpan"
-                        onClick={() => {
-                            let tempData = selectedCandidatesList.filter(
-                                (item) => item != currentData,
-                            );
-
-                            tempData.push(placeholderData);
-
-                            selectedCandidatesList = tempData;
-
-                            selectedCandidatesList.sort(
-                                createCompareFn('nomborPekerja', 'asc'),
-                            );
-
-                            editingCandidateList = false;
-                        }}
-                    >
+                    <TextIconButton primary label="Simpan" onClick={() => {}}>
                         <SvgCheck></SvgCheck>
                     </TextIconButton>
+                </StepperContentHeader>
 
-            </StepperContentHeader>
-            <StepperContentBody>
-                <SectionHeader title=" Maklum Balas Kakitangan ">
-                </SectionHeader>
-                <div class="flex flex-col gap-2.5 w-full">
-                   <TextField
-                   {disabled}
-                      id=""
-                      label={'Kakitangan memerlukan Panangguhan'}
-                      value={'-'}
-               ></TextField>
-               <div
-                    class="flex w-full flex-row items-center justidy-between">
+                <!-- Maklum Balas Kakitangan -->
+                <StepperContentBody>
+                    <SectionHeader title=" Maklum Balas Kakitangan "
+                    ></SectionHeader>
+                    <div class="flex w-full flex-col gap-2.5">
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Kakitangan memerlukan Panangguhan'}
+                            value={'-'}
+                        ></TextField>
 
-               <div class="flex w-[220px] min-w-[220px] flex-row gap-2.5">
-                <label
-                    for=""
-                    class= "text-sm font-medium text-txt-tertiary">
-                Surat Permohonan Penangguhan/Pindaan Penempatan</label>
-                </div>
-                <div class="flex w-full flex-row gap-2.5">
-                <DownloadAttachment
-                    fileName={'surat_penangguhan_irfan'}
-                ></DownloadAttachment>
-               </div>
-               </div>
+                        <!-- Download file for surat Permohonan Penangguhan/Pindaan Penempatan-->
+                        <div
+                            class="justidy-between flex w-full flex-row items-center"
+                        >
+                            <div
+                                class="flex w-[220px] min-w-[220px] flex-row gap-2.5"
+                            >
+                                <label
+                                    for=""
+                                    class="text-sm font-medium text-txt-tertiary"
+                                >
+                                    Surat Permohonan Penangguhan/Pindaan
+                                    Penempatan</label
+                                >
+                            </div>
+                            <div class="flex w-full flex-row gap-2.5">
+                                <DownloadAttachment
+                                    fileName={'surat_penangguhan_irfan'}
+                                ></DownloadAttachment>
+                            </div>
+                        </div>
 
-               <div
-                class ="flex h-[40px] max-h-[40px] min-h-[40px] w-full flex-row items-center">
+                        <div
+                            class="flex h-[40px] max-h-[40px] min-h-[40px] w-full flex-row items-center"
+                        >
+                            <p class="text-sm font-medium text-txt-tertiary">
+                                Sekiranya kakitangan memilih untuk tidak membuat
+                                Permohonan Penangguhan/Pindaan sila terus ke
+                                langkah berikut:
+                            </p>
+                            <p
+                                class="bg-bgr-primary text-sm font-medium text-system-primary hover:underline"
+                            >
+                                Kemaskini Keputusan Pemangkuan
+                            </p>
+                        </div>
+                        <SectionHeader
+                            subTitle="Sekiranya kakitangan memilih untuk tidak membuat Permohonan Penangguhan/Pindaan Penempatan sila isi butiran penangguhan berikut mengikut surat penangguhan yang disediakan oleh kakitangan"
+                        ></SectionHeader>
 
-                <p class="text-sm font-medium text-txt-tertiary">
-                    Sekiranya kakitangan memilih untuk tidak membuat Permohonan Penangguhan/Pindaan sila terus ke langkah berikut:
-                </p>
-                <p
-                    class="bg-bgr-primary text-sm font-medium text-system-primary hover:underline">
-                Kemaskini Keputusan Pemangkuan</p>
-            </div>
-            <SectionHeader subTitle='Sekiranya kakitangan memilih untuk tidak membuat Permohonan Penangguhan/Pindaan Penempatan sila isi butiran penangguhan berikut mengikut surat penangguhan yang disediakan oleh kakitangan'></SectionHeader>
+                        <!-- Butiran Penangguhan -->
 
-               <SectionHeader title=" Butiran Penangguhan ">
-            </SectionHeader>
-            <div class="flex flex-col gap-2.5 w-full">
+                        <SectionHeader title=" Butiran Penangguhan "
+                        ></SectionHeader>
+                        <div class="flex w-full flex-col gap-2.5">
+                            <DateSelector
+                                {handleDateChange}
+                                label={'Tarikh Asal Penempatan'}
+                            />
+                            <DateSelector
+                                {handleDateChange}
+                                label={'Tarikh Pertukaran yag Dipohon'}
+                            />
+                            <LongTextField
+                                id=""
+                                label={'Alasan Penanguhan'}
+                                value={'Sila nyatakan alasan permohonan'}
+                            ></LongTextField>
+                        </div>
 
-               <DateSelector
-                   {handleDateChange}
-                      label={'Tarikh Asal Penempatan'}
-                     />
-                     <DateSelector
-                     {handleDateChange}
-                     label={'Tarikh Pertukaran yag Dipohon'}
-                     />
-                      <TextField
-                           id=""
-                           label={'Alasan Penanguhan'}
-                           value={'-'}
-                    ></TextField>
-                </div>
+                        <SectionHeader title=" Butiran Pelulus"></SectionHeader>
 
-                    <SectionHeader title=" Maklumat Peraku Keputusan Mesyuarat">
-                     </SectionHeader>
-
-                        <div class="flex flex-col gap-2.5 w-full">
+                        <div class="flex w-full flex-col gap-2.5">
                             <DropdownSelect
                                 id="meeting-type"
                                 label="Nama Pelulus"
@@ -1520,13 +1479,13 @@ export let selectedFiles: any = [];
                                 options={meetings}
                                 bind:index={selectedMeetingType}
                             />
-                </div>
-            </StepperContentBody>
-
+                        </div>
+                    </div></StepperContentBody
+                >
             {/if}
         </StepperContent>
 
-         <!-- =========================================================== -->
+        <!-- =========================================================== -->
         <!-- Keputusan Permohonan Penangguhan/Pindaan Penempatan -->
         <!-- =========================================================== -->
 
@@ -1534,65 +1493,66 @@ export let selectedFiles: any = [];
             <StepperContentHeader
                 title="Keputusan Permohonan Penangguhan/Pindaan Penempatan"
             >
-            <TextIconButton
-                            label="Seterusnya"
-                            primary
-                            onClick={() => {
-                                goNext();
-                            }}
-                        >
-                            <SvgArrowRight></SvgArrowRight>
-                        </TextIconButton>
-
+                <TextIconButton
+                    label="Seterusnya"
+                    primary
+                    onClick={() => {
+                        goNext();
+                    }}
+                >
+                    <SvgArrowRight></SvgArrowRight>
+                </TextIconButton>
             </StepperContentHeader>
+
+            <!-- Search Senarai Calon yang Terpilih -->
             <StepperContentBody>
-                <SectionHeader title=" Senarai Calon Yang Terpilih">
-                </SectionHeader>
+                <SectionHeader title=" Senarai Calon Yang Terpilih"
+                ></SectionHeader>
 
                 <CustomCard borderClass="border-system-primary ">
                     <CustomCardBody>
-                        <div class="flex w-full flex-wrap gap-2.5 items-center ">
-                            <FilterTextInput label="No. Pekerja"></FilterTextInput>
+                        <div class="flex w-full flex-wrap items-center gap-2.5">
+                            <FilterTextInput label="No. Pekerja"
+                            ></FilterTextInput>
                             <FilterTextInput label="Nama"></FilterTextInput>
                             <FilterTextInput label="No. K/P"></FilterTextInput>
 
-                            <TextIconButton label="cari" primary onClick={() => {}}>
+                            <TextIconButton
+                                label="cari"
+                                primary
+                                onClick={() => {}}
+                            >
                                 <SvgManifyingGlass></SvgManifyingGlass>
-
                             </TextIconButton>
                         </div>
                     </CustomCardBody>
                 </CustomCard>
                 <div
-                class="flex max-h-full w-full flex-col items-start justify-start"
-            >
-            <SectionHeader title='Hasil Carian'></SectionHeader>
-                <DynamicTable
-                    bind:selectedItems={allEmployeeList}
-                    bind:passData={currentData}
-                    tableItems={allEmployeeList}
-                    editable
-                    onSelect={() => {
-                        // popSelected(currentData);
-                    }}
-                    columnKeys={[
-                        'nomborPekerja',
-                        'namaKakitangan',
-                        'nomborKP',
-                        'gredSemasa',
-                        'namaJawatan',
-                        'penempatanSekarang',
-                        'permohonanPenangguhanPindaan',
-                        'keputusanPermohonanPenangguhan',
+                    class="flex max-h-full w-full flex-col items-start justify-start"
+                >
+                    <SectionHeader title="Hasil Carian"></SectionHeader>
 
-
-                    ]}
-                ></DynamicTable>
-            </div>
-
+                    <!-- Table Keputusan Permohonan Penangguhan/Pindaan Penempatan -->
+                    <DynamicTable
+                        tableItems={mockPerjawatanPemangkuan}
+                        editable
+                        onSelect={() => {
+                            // popSelected(currentData);
+                        }}
+                        columnKeys={[
+                            'nomborPekerja',
+                            'namaPekerja',
+                            'noKadPengenalan',
+                            'gredSemasa',
+                            'namaJawatan',
+                            'penempatanSekarang',
+                            'permohonanPenangguhanPindaanPenempatan',
+                            'keputusanPermohonanPenangguhanPindaanPenempatan',
+                        ]}
+                    ></DynamicTable>
+                </div>
             </StepperContentBody>
         </StepperContent>
-
 
         <!-- =========================================================== -->
         <!-- Kemaskini Keputusan Pemangkuan -->
@@ -1600,73 +1560,70 @@ export let selectedFiles: any = [];
 
         <StepperContent>
             {#if !editingCandidateList}
-            <StepperContentHeader
-                title="Kemaskini Keputusan Pemangkuan"
-            >
+                <StepperContentHeader title="Kemaskini Keputusan Pemangkuan">
+                    <TextIconButton
+                        label="Seterusnya"
+                        primary
+                        onClick={() => {
+                            goNext();
+                        }}
+                    >
+                        <SvgArrowRight></SvgArrowRight>
+                    </TextIconButton>
+                </StepperContentHeader>
 
-            <TextIconButton
-                            label="Seterusnya"
-                            primary
-                            onClick={() => {
-                                goNext();
-                            }}
-                        >
-                            <SvgArrowRight></SvgArrowRight>
-                        </TextIconButton>
+                <!-- Search Senarai Calon yang Terpilih -->
+                <StepperContentBody>
+                    <SectionHeader title=" Senarai Calon Yang Terpilih"
+                    ></SectionHeader>
 
+                    <CustomCard borderClass="border-system-primary ">
+                        <CustomCardBody>
+                            <div
+                                class="flex w-full flex-wrap items-center gap-2.5"
+                            >
+                                <FilterTextInput label="No. Pekerja"
+                                ></FilterTextInput>
+                                <FilterTextInput label="Nama"></FilterTextInput>
+                                <FilterTextInput label="No. K/P"
+                                ></FilterTextInput>
 
+                                <TextIconButton
+                                    label="cari"
+                                    primary
+                                    onClick={() => {}}
+                                >
+                                    <SvgManifyingGlass></SvgManifyingGlass>
+                                </TextIconButton>
+                            </div>
+                        </CustomCardBody>
+                    </CustomCard>
 
-            </StepperContentHeader>
-            <StepperContentBody>
-                <SectionHeader title=" Senarai Calon Yang Terpilih">
-                </SectionHeader>
-
-                <CustomCard borderClass="border-system-primary ">
-                    <CustomCardBody>
-                        <div class="flex w-full flex-wrap gap-2.5 items-center ">
-                            <FilterTextInput label="No. Pekerja"></FilterTextInput>
-                            <FilterTextInput label="Nama"></FilterTextInput>
-                            <FilterTextInput label="No. K/P"></FilterTextInput>
-
-                            <TextIconButton label="cari" primary onClick={() => {}}>
-                                <SvgManifyingGlass></SvgManifyingGlass>
-
-                            </TextIconButton>
-                        </div>
-                    </CustomCardBody>
-                </CustomCard>
-                <div
-                class="flex max-h-full w-full flex-col items-start justify-start"
-            >
-            <SectionHeader title='Hasil Carian'></SectionHeader>
-                <DynamicTable
-                    bind:selectedItems={allEmployeeList}
-                    bind:passData={currentData}
-                    tableItems={allEmployeeList}
-                    editable
-                   onEditClick={()=> editingCandidateList =true}
-                    columnKeys={[
-                        'nomborPekerja',
-                        'namaKakitangan',
-                        'nomborKP',
-                        'gredSemasa',
-                        'namaJawatan',
-                        'penempatanSekarang',
-                        'permohonanPenangguhanPindaan',
-                        'keputusanPermohonanPenangguhan',
-
-
-                    ]}
-                ></DynamicTable>
-            </div>
-
-            </StepperContentBody>
-
+                    <!-- Table Kemaskini Keputusan Pemangkuan -->
+                    <div
+                        class="flex max-h-full w-full flex-col items-start justify-start"
+                    >
+                        <SectionHeader title="Hasil Carian"></SectionHeader>
+                        <DynamicTable
+                            tableItems={mockPerjawatanPemangkuan}
+                            editable
+                            onEditClick={() => (editingCandidateList = true)}
+                            columnKeys={[
+                                'nomborPekerja',
+                                'namaPekerja',
+                                'noKadPengenalan',
+                                'gredSemasa',
+                                'namaJawatan',
+                                'penempatanSekarang',
+                                'permohonanPenangguhanPindaanPenempatan',
+                                'keputusanPermohonanPenangguhanPindaanPenempatan',
+                            ]}
+                        ></DynamicTable>
+                    </div>
+                </StepperContentBody>
             {:else}
-
-            <StepperContentHeader title="Kemaskini Keputusan Pemangkuan">
-
-                <TextIconButton
+                <StepperContentHeader title="Kemaskini Keputusan Pemangkuan">
+                    <TextIconButton
                         label="Batal"
                         onClick={() => {
                             console.log(currentData.layakTemuduga);
@@ -1677,111 +1634,82 @@ export let selectedFiles: any = [];
                     >
                         <SvgXMark></SvgXMark>
                     </TextIconButton>
-                    <TextIconButton
-                        primary
-                        label="Simpan"
-                        onClick={() => {
-                            let tempData = selectedCandidatesList.filter(
-                                (item) => item != currentData,
-                            );
-
-                            tempData.push(placeholderData);
-
-                            selectedCandidatesList = tempData;
-
-                            selectedCandidatesList.sort(
-                                createCompareFn('nomborPekerja', 'asc'),
-                            );
-
-                            editingCandidateList = false;
-                        }}
-                    >
+                    <TextIconButton primary label="Simpan" onClick={() => {}}>
                         <SvgCheck></SvgCheck>
                     </TextIconButton>
+                </StepperContentHeader>
 
-            </StepperContentHeader>
-            <StepperContentBody>
-                <SectionHeader title=" Maklumat Calon ">
-                </SectionHeader>
-                <div class="flex flex-col gap-2.5 w-full">
-                   <TextField
-                   {disabled}
-                      id=""
-                      label={'No. Pekerja'}
-                      value={'-'}
-               ></TextField>
-               <TextField
-               {disabled}
-                      id=""
-                      label={'Nama'}
-                      value={'-'}
-               ></TextField>
-               <TextField
-               {disabled}
-                      id=""
-                      label={'No.K/P'}
-                      value={'-'}
-                 ></TextField>
-               </div>
+                <!-- Maklumat Calon -->
+                <StepperContentBody>
+                    <SectionHeader title=" Maklumat Calon "></SectionHeader>
+                    <div class="flex w-full flex-col gap-2.5">
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'No. Pekerja'}
+                            value={'-'}
+                        ></TextField>
+                        <TextField {disabled} id="" label={'Nama'} value={'-'}
+                        ></TextField>
+                        <TextField {disabled} id="" label={'No.K/P'} value={'-'}
+                        ></TextField>
+                    </div>
 
-                    <SectionHeader title=" Butiran Pemangkuan ">
-                    </SectionHeader>
-                    <div class="flex flex-col gap-2.5 w-full">
-                       <TextField
-                       {disabled}
-                          id=""
-                          label={'Nama Jawatan Baru'}
-                          value={'-'}
-                   ></TextField>
-                   <TextField
-                   {disabled}
-                          id=""
-                          label={'Gred Baru'}
-                          value={'-'}
-                   ></TextField>
-                   <TextField
-                   {disabled}
-                          id=""
-                          label={'Penempatan Baru'}
-                          value={'-'}
-                     ></TextField>
-                     <TextField
-                     {disabled}
+                    <!-- Butiran Pemangkuan -->
+
+                    <SectionHeader title=" Butiran Pemangkuan "></SectionHeader>
+                    <div class="flex w-full flex-col gap-2.5">
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Nama Jawatan Baru'}
+                            value={'-'}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Gred Baru'}
+                            value={'-'}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Penempatan Baru'}
+                            value={'-'}
+                        ></TextField>
+                        <TextField
+                            {disabled}
                             id=""
                             label={'Pengarah Baru'}
                             value={'-'}
-                       ></TextField>
-                       <TextField
-                       {disabled}
-                              id=""
-                              label={'Tarikh Lapor Diri'}
-                              value={'-'}
-                         ></TextField>
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Tarikh Lapor Diri'}
+                            value={'-'}
+                        ></TextField>
+                    </div>
 
-                   </div>
+                    <SectionHeader title=" Pengesahan Keputusan"
+                    ></SectionHeader>
 
+                    <DropdownSelect
+                        id="meeting-type"
+                        label=" Nama Penyokong"
+                        dropdownType="label-left-full"
+                        options={meetings}
+                        bind:index={selectedMeetingType}
+                    />
 
-                <SectionHeader title=" Pengesahan Keputusan">
-                </SectionHeader>
-
-
-                   <DropdownSelect
-                       id="meeting-type"
-                       label=" Nama Penyokong"
-                       dropdownType="label-left-full"
-                       options={meetings}
-                       bind:index={selectedMeetingType}
-                   />
-
-                   <DropdownSelect
-                       id="meeting-type"
-                       label=" Nama Pelulus"
-                       dropdownType="label-left-full"
-                       options={meetings}
-                       bind:index={selectedMeetingType}
-                   />
-                   </StepperContentBody>
-
+                    <DropdownSelect
+                        id="meeting-type"
+                        label=" Nama Pelulus"
+                        dropdownType="label-left-full"
+                        options={meetings}
+                        bind:index={selectedMeetingType}
+                    />
+                </StepperContentBody>
             {/if}
         </StepperContent>
 
@@ -1791,163 +1719,159 @@ export let selectedFiles: any = [];
 
         <StepperContent>
             {#if !editingCandidateList}
-            <StepperContentHeader title="Semak Pengesahan Keputusan Pemangkuan">
-                <TextIconButton
-                            label="Selesai"
-                            primary
-                            onClick={() => {
-                                ('/urus-setia/perjawatan/pemangkuan/flexi_41/butiran');
-                            }}
-                        >
-                            <SvgArrowRight></SvgArrowRight>
-                        </TextIconButton>
+                <StepperContentHeader
+                    title="Semak Pengesahan Keputusan Pemangkuan"
+                >
+                    <FormButton
+                        type="done"
+                        onClick={() => {
+                            window.history.back();
+                        }}
+                    />
+                </StepperContentHeader>
 
-            </StepperContentHeader>
-            <StepperContentBody>
-                <SectionHeader title=" Senarai Calon Yang Terpilih">
-                </SectionHeader>
+                <!-- Search Pengesahan Keputusan Pemangkuan -->
+                <StepperContentBody>
+                    <SectionHeader title=" Senarai Calon Yang Terpilih"
+                    ></SectionHeader>
 
-                <CustomCard borderClass="border-system-primary ">
-                    <CustomCardBody>
-                        <div class="flex w-full flex-wrap gap-2.5 items-center ">
-                            <FilterTextInput label="No. Pekerja"></FilterTextInput>
-                            <FilterTextInput label="Nama"></FilterTextInput>
-                            <FilterTextInput label="No. K/P"></FilterTextInput>
-
-                            <TextIconButton label="cari" primary onClick={() => {}}>
-                                <SvgManifyingGlass></SvgManifyingGlass>
-
-                            </TextIconButton>
-                        </div>
-                    </CustomCardBody>
-                </CustomCard>
-          <div
-                                class="flex max-h-full w-full flex-col items-start justify-start"
+                    <CustomCard borderClass="border-system-primary ">
+                        <CustomCardBody>
+                            <div
+                                class="flex w-full flex-wrap items-center gap-2.5"
                             >
-                            <SectionHeader title='Hasil Carian'></SectionHeader>
-                                <DynamicTable
-                                    bind:selectedItems={allEmployeeList}
-                                    bind:passData={currentData}
-                                    tableItems={allEmployeeList}
-                                    editable
-                                    onEditClick={()=> editingCandidateList =true}
-                                    columnKeys={[
-                                        'nomborPekerja',
-                                        'namaKakitangan',
-                                        'nomborKP',
-                                        'gredSemasa',
-                                        'namaJawatan',
-                                        'penempatanSekarang',
-                                        'pengesahanKeputusanPemangkuan',
+                                <FilterTextInput label="No. Pekerja"
+                                ></FilterTextInput>
+                                <FilterTextInput label="Nama"></FilterTextInput>
+                                <FilterTextInput label="No. K/P"
+                                ></FilterTextInput>
 
-
-                                    ]}
-                                ></DynamicTable>
+                                <TextIconButton
+                                    label="cari"
+                                    primary
+                                    onClick={() => {}}
+                                >
+                                    <SvgManifyingGlass></SvgManifyingGlass>
+                                </TextIconButton>
                             </div>
+                        </CustomCardBody>
+                    </CustomCard>
 
-            </StepperContentBody>
+                    <!-- Table Pengesahan Keputusan Pemangkuan-->
+                    <div
+                        class="flex max-h-full w-full flex-col items-start justify-start"
+                    >
+                        <SectionHeader title="Hasil Carian"></SectionHeader>
+                        <DynamicTable
+                            tableItems={mockPerjawatanPemangkuan}
+                            editable
+                            onEditClick={() => (editingCandidateList = true)}
+                            columnKeys={[
+                                'nomborPekerja',
+                                'namaPekerja',
+                                'noKadPengenalan',
+                                'gredSemasa',
+                                'namaJawatan',
+                                'penempatanSekarang',
+                                'pengesahanKeputusanPemangkuan',
+                            ]}
+                        ></DynamicTable>
+                    </div>
+                </StepperContentBody>
             {:else}
-            <StepperContentHeader title="Kemaskini Maklumat Permohonan Penangguhan/Pindaan Penempatan">
+                <StepperContentHeader
+                    title="Kemaskini Maklumat Permohonan Penangguhan/Pindaan Penempatan"
+                >
+                    <TextIconButton
+                        label="Tutup"
+                        onClick={() => {
+                            goto('/urus-setia/perjawatan/pemangkuan');
+                        }}
+                    >
+                        <SvgXMark></SvgXMark>
+                    </TextIconButton>
+                </StepperContentHeader>
+                <StepperContentBody>
+                    <!-- Maklumat Calon -->
+                    <SectionHeader title=" Maklumat Calon "></SectionHeader>
+                    <div class="flex w-full flex-col gap-2.5">
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'No. Pekerja'}
+                            value={'-'}
+                        ></TextField>
+                        <TextField {disabled} id="" label={'Nama'} value={'-'}
+                        ></TextField>
+                        <TextField {disabled} id="" label={'No.K/P'} value={'-'}
+                        ></TextField>
+                    </div>
 
-                <TextIconButton
-            label="Tutup"
-            onClick={() => {
-                goto('/urus-setia/perjawatan/pemangkuan');
-            }}
-        >
-            <SvgXMark></SvgXMark>
-        </TextIconButton>
-
-            </StepperContentHeader>
-            <StepperContentBody>
-                <SectionHeader title=" Maklumat Calon ">
-                </SectionHeader>
-                <div class="flex flex-col gap-2.5 w-full">
-                   <TextField
-                   {disabled}
-                      id=""
-                      label={'No. Pekerja'}
-                      value={'-'}
-               ></TextField>
-               <TextField
-               {disabled}
-                      id=""
-                      label={'Nama'}
-                      value={'-'}
-               ></TextField>
-               <TextField
-               {disabled}
-                      id=""
-                      label={'No.K/P'}
-                      value={'-'}
-                 ></TextField>
-               </div>
-
-                    <SectionHeader title=" Butiran Pemangkuan ">
-                    </SectionHeader>
-                    <div class="flex flex-col gap-2.5 w-full">
-                       <TextField
-                       {disabled}
-                          id=""
-                          label={'Nama Jawatan Baru'}
-                          value={'-'}
-                   ></TextField>
-                   <TextField
-                   {disabled}
-                          id=""
-                          label={'Gred Baru'}
-                          value={'-'}
-                   ></TextField>
-                   <TextField
-                   {disabled}
-                          id=""
-                          label={'Penempatan Baru'}
-                          value={'-'}
-                     ></TextField>
-                     <TextField
-                     {disabled}
+                    <!-- Butiran Pemangkuan -->
+                    <SectionHeader title=" Butiran Pemangkuan "></SectionHeader>
+                    <div class="flex w-full flex-col gap-2.5">
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Nama Jawatan Baru'}
+                            value={'-'}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Gred Baru'}
+                            value={'-'}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Penempatan Baru'}
+                            value={'-'}
+                        ></TextField>
+                        <TextField
+                            {disabled}
                             id=""
                             label={'Pengarah Baru'}
                             value={'-'}
-                       ></TextField>
-                       <TextField
-                       {disabled}
-                              id=""
-                              label={'Tarikh Lapor Diri'}
-                              value={'-'}
-                         ></TextField>
-                   </div>
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Tarikh Lapor Diri'}
+                            value={'-'}
+                        ></TextField>
+                    </div>
 
-                   <SectionHeader title=" Pengesahan Keputusan ">
-                </SectionHeader>
-                <div class="flex flex-col gap-2.5 w-full">
-                   <TextField
-                   {disabled}
-                      id=""
-                      label={'Nama Penyokong'}
-                      value={'-'}
-               ></TextField>
-               <TextField
-               {disabled}
-                      id=""
-                      label={'Keputusan'}
-                      value={'-'}
-               ></TextField>
-               <TextField
-               {disabled}
-                      id=""
-                      label={'Nama Pelulus'}
-                      value={'-'}
-                 ></TextField>
-                 <TextField
-                 {disabled}
-                        id=""
-                        label={'Keputusan'}
-                        value={'-'}
-                   ></TextField>
-               </div>
-                   </StepperContentBody>
-
+                    <!-- Pengesahan Keputusan -->
+                    <SectionHeader title=" Pengesahan Keputusan "
+                    ></SectionHeader>
+                    <div class="flex w-full flex-col gap-2.5">
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Nama Penyokong'}
+                            value={'-'}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Keputusan'}
+                            value={'-'}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Nama Pelulus'}
+                            value={'-'}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Keputusan'}
+                            value={'-'}
+                        ></TextField>
+                    </div>
+                </StepperContentBody>
             {/if}
         </StepperContent>
     </Stepper>

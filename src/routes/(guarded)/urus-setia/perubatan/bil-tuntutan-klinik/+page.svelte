@@ -8,6 +8,8 @@
     import { tuntutanKlinikPanel } from '$lib/mocks/urus-setia/perubatan/tuntutan-klinik-panel';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
+    import IconButton from '$lib/components/buttons/IconButton.svelte';
+    import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
 
     export let disabled: boolean = true;
 </script>
@@ -22,24 +24,44 @@
 <section
     class="flex h-full max-h-[100vh-172px] w-full flex-col items-center justify-start gap-2.5 overflow-y-auto p-2.5 p-2.5"
 >
-    <p class="text-center font-bold">Tindakan: Untuk Tetapan Sistem Admin</p>
-    <TextField
-        {disabled}
-        id="peruntukan-tahun-semasa"
-        label={'Peruntukan Tahun Semasa'}
-        value={'5,000'}
-    ></TextField>
-    <TextField
-        {disabled}
-        id="baki-peruntukan-tahun-semasa"
-        label={'Baki Peruntukan Tahun Semasa'}
-        value={'3,000'}
-    ></TextField>
-    <TextField
-        id="peruntukan-tahun-baru"
-        label={'Peruntukan Tahun Baru'}
-        value={'Tetapkan peruntukan tahun baru...'}
-    ></TextField>
+    <div class="flex w-full flex-col gap-2.5 pb-5">
+        <p
+            class="border-b border-bdr-primary border-system-primary pb-5 text-center font-bold"
+        >
+            Tindakan: Untuk Tetapan Sistem Admin
+        </p>
+        <TextField
+            {disabled}
+            id="peruntukan-tahun-semasa"
+            label={'Peruntukan Tahun Semasa'}
+            value={'5,000'}
+        ></TextField>
+        <TextField
+            {disabled}
+            id="baki-peruntukan-tahun-semasa"
+            label={'Baki Peruntukan Tahun Semasa'}
+            value={'3,000'}
+        ></TextField>
+        <div class="flex w-full flex-row items-center justify-between">
+            <div class="flex w-[220px] min-w-[220px] flex-row gap-2">
+                <label for="" class="text-sm font-medium text-txt-primary">
+                    Peruntukan Tahun Baru</label
+                >
+            </div>
+            <div class="flex w-full flex-row gap-x-2.5">
+                <input
+                    disabled={false}
+                    type="text"
+                    id="peruntukan-tahun-baru"
+                    name="peruntukan-tahun-baru"
+                    placeholder="Tetapkan peruntukan tahun baru..."
+                    value={'3000'}
+                    class="border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
+                />
+                <IconButton type=""><SvgArrowRight /></IconButton>
+            </div>
+        </div>
+    </div>
     <FilterContainer>
         <div class="flex flex-row gap-x-2.5">
             <div class="flex flex-row items-center justify-center gap-x-2.5">

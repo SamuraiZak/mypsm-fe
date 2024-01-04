@@ -22,6 +22,7 @@
     export let onInput: any = null;
     export let labelColor = 'txt-primary';
     export let percentageVal = '';
+    export let hasError = false;
 
     // Function to set the type of the input field
     function typeAction(node: HTMLInputElement) {
@@ -70,7 +71,11 @@
             bind:value
             class:text-center={textCenter}
             class:font-bold={boldLabel}
-            class="border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
+            class="
+                {hasError
+                ? 'border-system-danger focus:border-system-danger'
+                : 'hover:border-system-primary focus:border-system-primary'}
+                border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
         />
     </div>
 {:else if labelType === 'auto-calculate-percentage'}
@@ -99,7 +104,11 @@
                 bind:value
                 class:text-center={textCenter}
                 class:font-bold={boldLabel}
-                class="border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
+                class="
+                {hasError
+                    ? 'border-system-danger focus:border-system-danger'
+                    : 'hover:border-system-primary focus:border-system-primary'}
+                border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
             />
             <input
                 on:change={onChange}
@@ -142,7 +151,11 @@
             bind:value
             class:text-center={textCenter}
             class:font-bold={boldLabel}
-            class="border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
+            class="
+            {hasError
+                ? 'border-system-danger focus:border-system-danger'
+                : 'hover:border-system-primary focus:border-system-primary'}
+            border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
         />
     </div>
 {:else if labelType === 'colored-label'}
@@ -170,7 +183,11 @@
             bind:value
             class:text-center={textCenter}
             class:font-bold={boldLabel}
-            class="border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
+            class="
+            {hasError
+                ? 'border-system-danger focus:border-system-danger'
+                : 'hover:border-system-primary focus:border-system-primary'}
+            border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
         />
     </div>
 {:else if labelType === 'label-fit'}
@@ -203,7 +220,11 @@
             bind:value
             class:text-center={textCenter}
             class:font-bold={boldLabel}
-            class="border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
+            class="
+            {hasError
+                ? 'border-system-danger focus:border-system-danger'
+                : 'hover:border-system-primary focus:border-system-primary'}
+            border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
         />
     </div>
 {:else if labelType === 'no-label'}
@@ -221,7 +242,11 @@
             bind:value
             class:text-center={textCenter}
             class:font-bold={boldLabel}
-            class="border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
+            class="
+            {hasError
+                ? 'border-system-danger focus:border-system-danger'
+                : 'hover:border-system-primary focus:border-system-primary'}
+            border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
         />
     </div>
 {:else if labelType === 'top'}
@@ -241,7 +266,11 @@
             {placeholder}
             bind:value
             class:text-center={textCenter}
-            class="border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
+            class="
+            {hasError
+                ? 'border-system-danger focus:border-system-danger'
+                : 'hover:border-system-primary focus:border-system-primary'}
+            border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
         />
     </div>
 {:else if labelType === 'right-justify-end'}
@@ -265,7 +294,11 @@
             on:blur={onBlur}
             on:change={onChange}
             {id}
-            class="border-1 active:border-1 flex h-8 w-[200px] flex-row items-center rounded-[3px] border-bdr-primary pl-2 pt-1 text-sm text-txt-primary outline outline-1 outline-bdr-primary placeholder:text-txt-tertiary hover:outline-system-primary focus:outline focus:outline-system-primary focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
+            class="
+            {hasError
+                ? 'border-system-danger focus:border-system-danger'
+                : 'hover:border-system-primary focus:border-system-primary'}
+            border-1 active:border-1 flex h-8 w-[200px] flex-row items-center rounded-[3px] border-bdr-primary pl-2 pt-1 text-sm text-txt-primary outline outline-1 outline-bdr-primary placeholder:text-txt-tertiary hover:outline-system-primary focus:outline focus:outline-system-primary focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
         />
     </div>
 {:else if labelType === 'editable-div'}

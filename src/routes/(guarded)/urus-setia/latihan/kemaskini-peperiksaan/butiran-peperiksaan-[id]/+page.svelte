@@ -12,10 +12,113 @@
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import { goto } from '$app/navigation';
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { z } from 'zod';
     export let data;
     let activeStepper = 0;
 
-    export let form;
+    // =========================================================================
+    // z validation schema for the exam form fields=============================
+    // =========================================================================
+    let errorData: any;
+
+    const dateScheme = z.coerce
+        .date({
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_date'
+                        ? 'Tarikh tidak boleh dibiar kosong.'
+                        : defaultError,
+            }),
+        })
+        .min(new Date(), {
+            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+        });
+
+    const examFormSchema = z.object({
+        examType: z.enum(['perkhidmatan', 'psl'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Jenis latihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+        examTitle: z
+            .string({ required_error: 'Tajuk latihan tidak boleh kosong.' })
+            .min(4, { message: 'Tajuk hendaklah lebih daripada 4 karakter.' })
+            .max(124, { message: 'Tajuk tidak boleh melebihi 124 karakter.' })
+            .trim(),
+        examApplicationOpenDate: dateScheme,
+        examApplicationCloseDate: dateScheme.refine(
+            (value) =>
+                value >=
+                new Date(data.record.currentExam.examApplicationOpenDate),
+            {
+                message:
+                    'Tarikh tutup tidak boleh lebih awal daripada tarikh buka permohonan',
+            },
+        ),
+        examDate: dateScheme.refine(
+            (value) =>
+                value >=
+                new Date(data.record.currentExam.examApplicationCloseDate),
+            {
+                message:
+                    'Tarikh peperiksaan tidak boleh lebih awal daripada tarikh tutup permohonan',
+            },
+        ),
+        examLocation: z
+            .string({ required_error: 'Lokasi tidak boleh kosong.' })
+            .min(4, { message: 'Lokasi hendaklah lebih daripada 4 karakter.' })
+            .max(124, { message: 'Lokasi tidak boleh melebihi 124 karakter.' })
+            .trim(),
+    });
+
+    // =========================================================================
+    // exam form fields submit function=========================================
+    // =========================================================================
+    const submitExamForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+        const examTypeSelector = document.getElementById(
+            'examType',
+        ) as HTMLSelectElement;
+
+        const examFormData = {
+            examType: String(examTypeSelector.value),
+            examTitle: String(formData.get('examTitle')),
+            examApplicationOpenDate: String(
+                formData.get('examApplicationOpenDate'),
+            ),
+            examApplicationCloseDate: String(
+                formData.get('examApplicationCloseDate'),
+            ),
+            examDate: String(formData.get('examDate')),
+            examLocation: String(formData.get('examLocation')),
+        };
+
+        try {
+            const result = examFormSchema.parse(examFormData);
+            // const currentExamId = String(formData.get('id'));
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+            }
+        } catch (err: unknown) {
+            if (err instanceof z.ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -35,60 +138,104 @@
 <Stepper activeIndex={activeStepper}>
     <StepperContent>
         <StepperContentHeader title="Maklumat Peperiksaan LKIM"
-            ><TextIconButton primary label="Simpan" />
-            <button type="submit" form="examForm">SUMBIT</button
-            ></StepperContentHeader
-        >
+            ><TextIconButton primary label="Simpan" form="examForm" />
+        </StepperContentHeader>
         <StepperContentBody>
             <form
                 id="examForm"
-                method="POST"
+                on:submit|preventDefault={submitExamForm}
                 class="flex w-full flex-col gap-2"
             >
+                <input
+                    type="text"
+                    name="id"
+                    hidden
+                    bind:value={data.record.currentExam.id}
+                />
+
                 <DropdownSelect
-                    name="examType"
+                    hasError={errorData?.examType}
                     dropdownType="label-left-full"
+                    id="examType"
                     label="Jenis Peperiksaan"
-                    value={data.record.currentExam.examType}
+                    bind:value={data.record.currentExam.examType}
                     options={examTypes}
                 ></DropdownSelect>
-                <span class={form?.errors.examTitle ? 'ring-2' : 'border-none'}>
-                    <TextField
-                        name="examTitle"
-                        label="Tajuk Peperiksaan"
-                        type="text"
-                        value={form?.errors.examTitle ??
-                            data.record.currentExam.examTitle}
-                    />
-                </span>
+                {#if errorData?.examType}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.examType[0]}</span
+                    >
+                {/if}
+                <TextField
+                    hasError={errorData?.examTitle}
+                    name="examTitle"
+                    label="Tajuk Peperiksaan"
+                    type="text"
+                    bind:value={data.record.currentExam.examTitle}
+                />
+                {#if errorData?.examTitle}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.examTitle[0]}</span
+                    >
+                {/if}
                 <DateSelector
-                    name="applOpenDate"
+                    hasError={errorData?.examApplicationOpenDate}
+                    name="examApplicationOpenDate"
                     handleDateChange
                     label="Tarikh Mula Permohonan"
-                    selectedDate={form?.errors.applOpenDate ??
-                        data.record.currentExam.examApplicationOpenDate}
+                    bind:selectedDate={data.record.currentExam
+                        .examApplicationOpenDate}
                 ></DateSelector>
+                {#if errorData?.examApplicationOpenDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.examApplicationOpenDate[0]}</span
+                    >
+                {/if}
                 <DateSelector
-                    name="applCloseDate"
+                    hasError={errorData?.examApplicationCloseDate}
+                    name="examApplicationCloseDate"
                     handleDateChange
-                    label="Tarikh Mesyuarat"
-                    selectedDate={form?.errors.applCloseDate ??
-                        data.record.currentExam.examApplicationCloseDate}
+                    label="Tarikh Tutup Permohonan"
+                    bind:selectedDate={data.record.currentExam
+                        .examApplicationCloseDate}
                 ></DateSelector>
+                {#if errorData?.examApplicationCloseDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.examApplicationCloseDate[0]}</span
+                    >
+                {/if}
                 <TextField
+                    hasError={errorData?.examDate}
                     name="examDate"
                     label="Tarikh Peperiksaan"
                     type="date"
-                    value={form?.errors.examDate ??
-                        data.record.currentExam.examDate}
+                    bind:value={data.record.currentExam.examDate}
                 />
+                {#if errorData?.examDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.examDate[0]}</span
+                    >
+                {/if}
                 <LongTextField
+                    hasError={errorData?.examLocation}
                     name="examLocation"
                     label="Lokasi Peperiksaan"
-                    value={form?.errors.examLocation ??
-                        data.record.currentExam.examLocation}
+                    bind:value={data.record.currentExam.examLocation}
                 />
+                {#if errorData?.examLocation}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.examLocation[0]}</span
+                    >
+                {/if}
             </form>
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+
+<Toaster />

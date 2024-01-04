@@ -10,6 +10,7 @@
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
+    import RadioSingle from '$lib/components/input/RadioSingle.svelte';
 
     export let disabled: boolean = true;
 
@@ -23,6 +24,13 @@
         });
         console.log(formattedDate);
     }
+
+    const options: RadioOption[] = [
+        {
+            value: 'false',
+            label: 'Akan Pencen',
+        },
+    ];
 </script>
 
 <ContentHeader
@@ -43,11 +51,8 @@
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2">
                 <p class="text-sm font-bold">Maklumat Kakitangan</p>
-                <TextField
-                    {disabled}
-                    label={'Jenis Kakitangan'}
-                    value={'• Akan Pencen'}
-                ></TextField>
+                <RadioSingle {disabled} legend="Jenis Kakitangan" {options}
+                ></RadioSingle>
                 <TextField
                     {disabled}
                     id="nama"
@@ -93,13 +98,17 @@
                 primary
                 label="Hantar"
                 onClick={() => {
-                    goto('/urus-setia/cuti/pengeluaran-gantian-cuti-rehat-awal');
+                    goto(
+                        '/urus-setia/cuti/pengeluaran-gantian-cuti-rehat-awal',
+                    );
                 }}><SvgPaperAirplane /></TextIconButton
             ></StepperContentHeader
         >
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2">
-                <p class="text-sm font-bold">Butiran Gantian Cuti Rehat (GCR) Sedia Ada</p>
+                <p class="text-sm font-bold">
+                    Butiran Gantian Cuti Rehat (GCR) Sedia Ada
+                </p>
                 <TextField
                     {disabled}
                     id="jumlahGcrTerkumpul"

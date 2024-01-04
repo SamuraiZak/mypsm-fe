@@ -1,0 +1,38 @@
+export const permohonanKuarters = [
+    {
+        applicantID: 'K234312',
+        applicantName: 'Ali Bin Abu',
+        idNumber: '111111-11-1111',
+        applicantType: 'Kakitangan LKIM',
+        applicationType: ['Permohonan Masuk', '(Kakitangan LKIM)'],
+        applicationDate: '28/1/2023',
+        status: 'LULUS - Urus Setia Peringkat Negeri',
+    },
+    {
+        applicantID: 'K523342',
+        applicantName: 'Ahmad',
+        idNumber: '222222-11-1111',
+        applicantType: 'Kakitangan LKIM',
+        applicationType: ['Permohonan Keluar', '(Kakitangan LKIM)'],
+        applicationDate: '28/1/2023',
+        status: 'LULUS - Urus Setia Peringkat Negeri',
+    },
+    {
+        applicantID: 'K656324',
+        applicantName: 'Kamal',
+        idNumber: '333333-11-1111',
+        applicantType: 'Kakitangan LKIM',
+        applicationType: ['Permohonan Masuk', '(Bukan Kakitangan LKIM)'],
+        applicationDate: '28/1/2023',
+        status: 'LULUS - Urus Setia Peringkat Negeri',
+    },
+    {
+        applicantID: 'K7567',
+        applicantName: 'Senah',
+        idNumber: '444444-11-1111',
+        applicantType: 'Agensi/Jabatan Luar',
+        applicationType: ['Permohonan Masuk', '(Bukan Kakitangan LKIM)'],
+        applicationDate: '28/1/2023',
+        status: 'LULUS - Urus Setia Peringkat Negeri',
+    },
+];

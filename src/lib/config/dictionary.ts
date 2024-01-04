@@ -252,6 +252,7 @@ const dictionary: { [key: string]: string } = {
     // retirement
     earlyRetirementApplicationDate: 'Tarikh Permohonan Bersara Awal',
     retirementType: 'Jenis Persaraan',
+    earlyRetirementDate: 'Tarikh Bersara Awal',
 
     //perjawatan
     staffId: 'No. Pekerja',
@@ -263,7 +264,10 @@ const dictionary: { [key: string]: string } = {
     newGrade: 'Gred Baharu',
     newPlacement: 'Penempatan Baru',
     currentPlacement: 'Penempatan Sekarang',
-    applicantID: 'ID Pemohon',
+    applicantID: 'No. Pemohon',
+    applicantName: 'Nama Pemohon',
+    applicantType: 'Jenis Pemohon',
+    applicationType: 'Jenis Permohonan',
     applicationResult: 'Keputusan Permohonan',
     staffName: 'Nama Kakitangan',
     scheme: 'Skim',
@@ -271,7 +275,8 @@ const dictionary: { [key: string]: string } = {
     workAllowancePosition: 'Jawatan yang Ditanggung Kerja',
     workAllowancePlacement: 'Penempatan yang Ditanggung kerja',
     result: 'Keputusan',
-    peperiksaanPerkhidmatanKursusInduksi: 'Peperiksaan Perkhidmatan/Kursus Induksi',
+    peperiksaanPerkhidmatanKursusInduksi:
+        'Peperiksaan Perkhidmatan/Kursus Induksi',
 
     //cuti
     gcrToBeCollected: 'GCR Untuk Dikumpul',
@@ -371,6 +376,8 @@ const dictionary: { [key: string]: string } = {
     //Pinjaman dan Kuarters
     loanStartDate: 'Tarikh Mula Pinjaman',
     loanEndDate: 'Tarikh Tamat Pinjaman',
+    quartersEntryDate: 'Tarikh Masuk Kuarter',
+    unitAndQuarter: 'Unit Dan Kuarter',
 
     // Add more dictionary here...
     LNPT: 'LNPT',
@@ -389,6 +396,7 @@ const dictionary: { [key: string]: string } = {
     cutiYangTelahDiambil: 'Cuti Yang Telah Diambil (Hari)',
     bakiCuti: 'Baki Cuti (Hari)',
     halHalLain: 'Hal-hal Lain',
+    applicationPurpose: 'Tujuan Permohonan',
 
     // Perubatan
     clinicCode: 'Kod Klinik',
@@ -403,10 +411,20 @@ const dictionary: { [key: string]: string } = {
     totalToBePaid: 'Jumlah Yang Perlu Dibayar (RM)',
     totalPayment: 'Jumlah Bayaran (RM)',
     paymentMethod: 'Cara Pembayaran',
-    totalClaim: 'Jumlah (RM)',
+    claimTotal: 'Jumlah (RM)',
+    patientName: 'Nama Pesakit',
+    treatment: 'Rawatan',
 
     // PDP
     disciplinaryReview: 'Tapisan Tatatertib',
     firstAppointedPositionOnBoard: 'Jawatan Pertama Dilantik Di Lembaga',
     appointDate: 'Tarikh Lantikan',
+
+    // Audit
+    usernameId: 'No. Pengguna',
+    module: 'Modul',
+    subModule: 'Sub-Modul',
+    setemMasa: 'Setem Masa',
+
+    // GCR
 };

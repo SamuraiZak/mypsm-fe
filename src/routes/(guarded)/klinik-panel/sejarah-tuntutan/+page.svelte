@@ -5,8 +5,6 @@
     import { goto } from '$app/navigation';
     import { Select } from 'flowbite-svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
-    import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import IconButton from '$lib/components/buttons/IconButton.svelte';
     import DataTable from '$lib/components/data-table/DataTable.svelte';
     import DtTableBody from '$lib/components/data-table/DtTableBody.svelte';
@@ -25,14 +23,7 @@
     <ContentHeader
         title="Maklumat Rawatan"
         description="Hal-hal berkaitan dengan pengurusan perubatan kakitangan LKIM"
-        ><TextIconButton
-            primary
-            label="Tambah Rekod"
-            onClick={() => {
-                goto('');
-            }}><SvgPlus /></TextIconButton
-        ></ContentHeader
-    >
+    ></ContentHeader>
 </section>
 
 <section
@@ -100,13 +91,16 @@
             </div>
         </div></FilterContainer
     >
-    <SectionHeader title="Simpan semua tuntutan yang dipilih dibawah"><FormButton type="simpan"></FormButton></SectionHeader>
+    <SectionHeader title="Simpan semua tuntutan yang dipilih dibawah"
+        ><FormButton type="simpan"></FormButton></SectionHeader
+    >
     <div class="flex max-h-full w-full flex-col items-start justify-start">
         <section class="h-full w-full">
             <DataTable title="Senarai Rekod">
                 <DtTableHead>
                     <DtTableHeadCell title="Nama Kakitangan"></DtTableHeadCell>
-                    <DtTableHeadCell title="No. Kad Pengenalan"></DtTableHeadCell>
+                    <DtTableHeadCell title="No. Kad Pengenalan"
+                    ></DtTableHeadCell>
                     <DtTableHeadCell title="Nama Pesakit"></DtTableHeadCell>
                     <DtTableHeadCell title="Pejabat LKIM"></DtTableHeadCell>
                     <DtTableHeadCell title="Status"></DtTableHeadCell>
@@ -118,25 +112,32 @@
                         <DtTableRow>
                             <DtTableDataCell value={item.nama}
                             ></DtTableDataCell>
-                            <DtTableDataCell value={item.noKP}></DtTableDataCell>
-                            <DtTableDataCell value={item.namaPesakit}></DtTableDataCell>
-                            <DtTableDataCell value={item.pejabat}></DtTableDataCell>
+                            <DtTableDataCell value={item.noKP}
+                            ></DtTableDataCell>
+                            <DtTableDataCell value={item.namaPesakit}
+                            ></DtTableDataCell>
+                            <DtTableDataCell value={item.pejabat}
+                            ></DtTableDataCell>
                             <DtTableDataCell value="">
                                 {#if item.status == 'Selesai'}
                                     <Badge rounded color="green"
                                         >{item.status}</Badge
                                     >
                                 {:else}
-                                    <Badge rounded color="red">{item.status}</Badge
+                                    <Badge rounded color="red"
+                                        >{item.status}</Badge
                                     >
                                 {/if}
                             </DtTableDataCell>
-                            <DtTableDataCell value={item.tindakan}></DtTableDataCell>
+                            <DtTableDataCell value={item.tindakan}
+                            ></DtTableDataCell>
                             <DtTableDataCell>
                                 <IconButton
                                     onClick={() => {
+                                        const $selectedPatientTreatmentId =
+                                            '111111-11-1111';
                                         goto(
-                                            '',
+                                            '/klinik-panel/sejarah-tuntutan/butiran-sejarah-tuntutan',
                                         );
                                     }}
                                     ><SvgEllipsisCircle

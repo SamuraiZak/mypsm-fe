@@ -14,6 +14,7 @@
     export let labelType = 'default';
     export let labelFor = '';
     export let onChange: any = null;
+    export let hasError = false;
 </script>
 
 {#if labelType === 'default'}
@@ -24,16 +25,21 @@
                 ? fontBlack
                 : fontGray} font-medium"
             >{label}
-        </label><Textarea
+        </label>
+        <Textarea
             {id}
             {name}
             on:blur={onBlur}
             on:change={onChange}
             {placeholder}
-            {value}
+            bind:value
             {disabled}
             {rows}
-            class="border-1 active:border-1  w-full rounded-[3px] border-bdr-primary bg-bgr-primary text-[12px] placeholder:text-txt-tertiary hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary"
+            class="
+            {hasError
+                ? 'border-system-danger focus:border-system-danger'
+                : 'hover:border-system-primary focus:border-system-primary'}
+            border-1 w-full rounded-[3px] bg-bgr-primary text-[12px] placeholder:text-txt-tertiary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary"
         ></Textarea>
     </div>
 {:else if labelType === 'top'}
@@ -49,10 +55,14 @@
             on:blur={onBlur}
             on:change={onChange}
             {placeholder}
-            {value}
+            bind:value
             {disabled}
             {rows}
-            class="border-1 active:border-1  w-full rounded-[3px] border-bdr-primary bg-bgr-primary text-[12px] placeholder:text-txt-tertiary hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary"
+            class="
+            {hasError
+                ? 'border-system-danger focus:border-system-danger'
+                : 'hover:border-system-primary focus:border-system-primary'}
+            border-1 w-full rounded-[3px] bg-bgr-primary text-[12px] placeholder:text-txt-tertiary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary"
         ></Textarea>
     </div>
 {/if}

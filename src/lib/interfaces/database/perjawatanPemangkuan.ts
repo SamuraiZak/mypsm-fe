@@ -23,4 +23,6 @@ interface pemangkuanEmployees {
     permohonanPenangguhanPindaanPenempatan: string;
     keputusanPermohonanPenangguhanPindaanPenempatan: string;
     pengesahanKeputusanPemangkuan: string;
+    keputusanMesyuarat: string,
+    statusPermohonan: string,
 }
