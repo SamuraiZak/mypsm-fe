@@ -59,7 +59,7 @@
 
         const exampleFormSchema = z.object({
             // checkbox schema
-            keputusan: z.enum(['true', 'false'], {
+            keputusan: z.enum(['lulus', 'tidakLulus'], {
                 errorMap: (issue, { defaultError }) => ({
                     message:
                         issue.code === 'invalid_enum_value'

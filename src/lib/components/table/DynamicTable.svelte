@@ -24,7 +24,7 @@
     import { afterUpdate } from 'svelte';
     import SvgEllipsisCircle from '$lib/assets/svg/SvgEllipsisCircle.svelte';
     import SvgTrash from '$lib/assets/svg/SvgTrash.svelte';
-    import { createCompareFn } from '$lib/service/services';
+    // import { createCompareFn } from '$lib/service/services';
     import SvgPrinter from '$lib/assets/svg/SvgPrinter.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
