@@ -13,11 +13,13 @@
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import { goto } from '$app/navigation';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
-    import { mockEmployeeDocumentLists } from '$lib/mocks/database/mockEmployeeDocumentLists';
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { z, ZodError } from 'zod';
 
     export let disabled: boolean = true;
 
     let radioValue: any = 'sah';
+    let errorData: any;
 
     const options: RadioOption[] = [
         {
@@ -41,7 +43,108 @@
         },
     ];
 
-    const currentEmployeeUploadedDocuments = mockEmployeeDocumentLists;
+    const dateScheme = z.coerce
+        .date({
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_date'
+                        ? 'Tarikh tidak boleh dibiar kosong.'
+                        : defaultError,
+            }),
+        })
+        .min(new Date(), {
+            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+        });
+
+    const exampleFormSchema = z.object({
+        // checkbox schema
+        radioButtonExample: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tetapkan pilihan anda.'
+                        : defaultError,
+            }),
+        }),
+        checkboxExample: z.enum(['on'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tandakan kotak semak.'
+                        : defaultError,
+            }),
+        }),
+        selectOptionExample: z.enum(['1', '2', '3', '4'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+        textFieldExample: z
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        dateSelectorExample: dateScheme,
+        longTextExample: z
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+    });
+
+    const submitForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+        const selectOptionExampleSelector = document.getElementById(
+            'selectOptionExample',
+        ) as HTMLSelectElement;
+
+        const exampleFormData = {
+            applicationPurpose: String(formData.get('applicationPurpose')),
+            earlyRetirementDate: String(formData.get('earlyRetirementDate')),
+            earlyRetirementApplicationDate: String(
+                formData.get('earlyRetirementApplicationDate'),
+            ),
+        };
+        try {
+            const result = exampleFormSchema.parse(exampleFormData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData = { ...exampleFormData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedExamFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -69,7 +172,7 @@
                 >
                     <TextField
                         {disabled}
-                        id="nama"
+                        id="name"
                         label={'Nama'}
                         value={'Hafiz Bin Ahmad'}
                     ></TextField>
@@ -96,17 +199,23 @@
                 <div
                     class="flex h-fit w-full flex-col items-center justify-start"
                 >
-                    <LongTextField
-                        id="tindakanUlasan"
-                        label={'Tindakan/ Ulasan'}
-                        value={'Setuju diluluskan'}
-                    ></LongTextField>
+                    <form
+                        id="formValidation"
+                        on:submit|preventDefault={submitForm}
+                        class="flex w-full flex-col gap-2"
+                    >
+                        <LongTextField
+                            id="tindakanUlasan"
+                            label={'Tindakan/ Ulasan'}
+                            value={'Setuju diluluskan'}
+                        ></LongTextField>
 
-                    <RadioSingle
-                        {options}
-                        legend=""
-                        bind:userSelected={radioValue}
-                    />
+                        <RadioSingle
+                            {options}
+                            legend=""
+                            bind:userSelected={radioValue}
+                        />
+                    </form>
                 </div>
             </div></StepperContentBody
         >
@@ -307,13 +416,13 @@
                     class="flex w-full list-decimal flex-col gap-2 pl-4 text-sm"
                 >
                     <li>
-                        <DownloadAttachment
-                            fileName="Surat Iringan"
-                        />
+                        <DownloadAttachment fileName="Surat Iringan" />
                     </li>
                 </ul>
             </div>
-            <div class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5">
+            <div
+                class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+            >
                 <p class="text-sm font-bold">
                     Maklumat Penghantaran Permohonan
                 </p>

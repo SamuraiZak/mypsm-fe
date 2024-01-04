@@ -42,7 +42,7 @@
             }),
         })
         .min(new Date(), {
-            message: 'Tarikh boleh kurang dari tarikh semasa.',
+            message: 'Tarikh tidak boleh kurang dari tarikh semasa.',
         });
 
     const exampleFormSchema = z.object({
