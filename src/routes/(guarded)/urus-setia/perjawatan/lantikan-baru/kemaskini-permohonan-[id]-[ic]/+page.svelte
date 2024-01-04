@@ -9,33 +9,33 @@
     // let status: string = 'Baru';
 
     // import FormButton from '$lib/components/buttons/FormButton.svelte';
-    import RadioSingle from '$lib/components/input/RadioSingle.svelte';
-    import TextField from '$lib/components/input/TextField.svelte';
-    import LongTextField from '$lib/components/input/LongTextField.svelte';
+    import { goto } from '$app/navigation';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+    import FormButton from '$lib/components/buttons/FormButton.svelte';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import AccordianField from '$lib/components/input/AccordianField.svelte';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
-    import { Badge, Tooltip } from 'flowbite-svelte';
+    import DownloadAttachment from '$lib/components/input/DownloadAttachment.svelte';
+    import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
+    import LongTextField from '$lib/components/input/LongTextField.svelte';
+    import RadioSingle from '$lib/components/input/RadioSingle.svelte';
+    import TextField from '$lib/components/input/TextField.svelte';
+    import Stepper from '$lib/components/stepper/Stepper.svelte';
+    import StepperContent from '$lib/components/stepper/StepperContent.svelte';
+    import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
+    import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
+    import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions';
+    import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
+    import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
     import { maklumatKegiatanTable } from '$lib/mocks/profil/maklumat-kegiatan-keahlian';
     import { maklumatKeluargaTable } from '$lib/mocks/profil/maklumat-keluarga';
     import { maklumatTanggunganLain } from '$lib/mocks/profil/maklumat-tanggungan-lain';
-    import DownloadAttachment from '$lib/components/input/DownloadAttachment.svelte';
-    import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
-    import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
-    import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions';
-    import Stepper from '$lib/components/stepper/Stepper.svelte';
-    import StepperContent from '$lib/components/stepper/StepperContent.svelte';
-    import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
-    import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
-    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
-    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
-    import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import type { SelectOptionType } from 'flowbite-svelte';
+    import { Badge, Tooltip } from 'flowbite-svelte';
     import { onMount } from 'svelte';
-    import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
-    import FormButton from '$lib/components/buttons/FormButton.svelte';
-    import { goto } from '$app/navigation';
-    import { any, z } from 'zod';
+    import { ZodError, any, z } from 'zod';
     export let data;
     let employeeLists: SelectOptionType<any>[] = [];
     let selectedSupporter: string;
@@ -192,21 +192,171 @@
     // =========================================================================
     let errorData: any;
 
+    const textFieldSchema = z
+        .string({ required_error: 'Medan ini tidak boleh kosong.' })
+        .min(4, {
+            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+        })
+        .max(124, {
+            message: 'Medan ini tidak boleh melebihi 124 karakter.',
+        })
+        .trim();
+
+    const dateScheme = z.coerce
+        .date({
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_date'
+                        ? 'Tarikh tidak boleh dibiar kosong.'
+                        : defaultError,
+            }),
+        })
+        .optional();
+
     const newEmploymentServiceSchema = z.object({
-        textFieldExample: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
+        currentGrade: z.enum(['FT26', 'E32', 'E38'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tetapkan pilihan anda.'
+                        : defaultError,
+            }),
+        }),
+        position: z.enum(
+            ['Pegawai Sistem Maklumat', 'Pegawai Ekonomi', 'Pegawai Komputer'],
+            {
+                errorMap: (issue, { defaultError }) => ({
+                    message:
+                        issue.code === 'invalid_enum_value'
+                            ? 'Sila tetapkan pilihan anda.'
+                            : defaultError,
+                }),
+            },
+        ),
+        placement: z.enum(['Kuala Lumpur', 'Kuching', 'Puchong'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tetapkan pilihan anda.'
+                        : defaultError,
+            }),
+        }),
+        serviceLevel: textFieldSchema,
+        currentEmploymentDateOfEffect: dateScheme,
+        pensionBenefits: z.enum(['kwsp', 'pension'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tandakan kotak semak.'
+                        : defaultError,
+            }),
+        }),
+        kwspNumber: textFieldSchema,
+        socsoNumber: textFieldSchema,
+        taxNumber: textFieldSchema,
+        bank: textFieldSchema,
+        accountNumber: textFieldSchema,
+        program: textFieldSchema,
+        leaveEntitlement: textFieldSchema,
+        govEmploymentHiredDate: dateScheme,
+        lkimEmploymentHiredDate: dateScheme,
+        currentEmploymentHiredDate: dateScheme,
+        confirmedFirstLkimPositionData: dateScheme,
+        confirmedCurrentLkimPositionData: dateScheme,
+        approvedPreviousServiceMergingDate: dateScheme,
+        currentActing: dateScheme,
+        currentInterim: dateScheme,
+        pensionScheme: textFieldSchema,
+        finalIncreament: dateScheme,
+        finalPromotion: dateScheme,
+        kgtMonth: textFieldSchema,
+        retirementDate: dateScheme,
+        salaryDateOfEffect: dateScheme,
+        salaryBenchmark: textFieldSchema,
+        salary: textFieldSchema,
+        itka: textFieldSchema,
+        itp: textFieldSchema,
+        epw: textFieldSchema,
+        cola: textFieldSchema,
     });
 
     // =========================================================================
     // new employment details form fields submit function
     // =========================================================================
+    const submitNewEmploymentServiceForm = async (event: Event) => {
+        const formElement = event.target as HTMLFormElement;
+        const formData = new FormData(formElement);
+        const gredSelector = document.getElementById(
+            'currentGrade',
+        ) as HTMLSelectElement;
+        const positionSelector = document.getElementById(
+            'position',
+        ) as HTMLSelectElement;
+        const placementSelector = document.getElementById(
+            'placement',
+        ) as HTMLSelectElement;
+
+        const newEmploymentServiceData = {
+            currentGrade: String(gredSelector.value),
+            position: String(positionSelector.value),
+            placement: String(placementSelector.value),
+            serviceLevel: String(formData.get('serviceLevel')),
+            currentEmploymentDateOfEffect: String(
+                formData.get('currentEmploymentDateOfEffect'),
+            ),
+            pensionBenefits: String(formData.get('pensionBenefits')),
+            kwspNumber: String(formData.get('kwspNumber')),
+            socsoNumber: String(formData.get('socsoNumber')),
+            taxNumber: String(formData.get('taxNumber')),
+            bank: String(formData.get('bank')),
+            accountNumber: String(formData.get('accountNumber')),
+            program: String(formData.get('program')),
+            leaveEntitlement: String(formData.get('leaveEntitlement')),
+            govEmploymentHiredDate: String(
+                formData.get('govEmploymentHiredDate'),
+            ),
+            lkimEmploymentHiredDate: String(
+                formData.get('lkimEmploymentHiredDate'),
+            ),
+            currentEmploymentHiredDate: String(
+                formData.get('currentEmploymentHiredDate'),
+            ),
+            confirmedFirstLkimPositionData: String(
+                formData.get('confirmedFirstLkimPositionData'),
+            ),
+            confirmedCurrentLkimPositionData: String(
+                formData.get('confirmedCurrentLkimPositionData'),
+            ),
+            approvedPreviousServiceMergingDate: String(
+                formData.get('approvedPreviousServiceMergingDate'),
+            ),
+            currentActing: String(formData.get('currentActing')),
+            currentInterim: String(formData.get('currentInterim')),
+            pensionScheme: String(formData.get('pensionScheme')),
+            finalIncreament: String(formData.get('finalIncreament')),
+            finalPromotion: String(formData.get('finalPromotion')),
+            kgtMonth: String(formData.get('kgtMonth')),
+            retirementDate: String(formData.get('retirementDate')),
+            salaryDateOfEffect: String(formData.get('salaryDateOfEffect')),
+            salaryBenchmark: String(formData.get('salaryBenchmark')),
+            salary: String(formData.get('salary')),
+            itka: String(formData.get('itka')),
+            itp: String(formData.get('itp')),
+            epw: String(formData.get('epw')),
+            cola: String(formData.get('cola')),
+        };
+
+        try {
+            const result = newEmploymentServiceSchema.parse(
+                newEmploymentServiceData,
+            );
+        } catch (error: unknown) {
+            if (error instanceof ZodError) {
+                const { fieldErrors: errors } = error.flatten();
+                errorData = errors;
+            }
+        }
+    };
 </script>
 
 <ContentHeader
@@ -679,44 +829,100 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Kemaskini Lantikan Baru"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="newEmploymentServiceForm"
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton>
         </StepperContentHeader>
-        <StepperContentBody
-            ><div class="flex w-full flex-col gap-2.5">
-                <p class={stepperFormTitleClass}>Maklumat Perkhidmatan</p>
-                <TextField
-                    disabled={false}
-                    hasError={true}
-                    name="currentGrade"
-                    label={'Gred Semasa'}
-                    value={data.record.currentEmployeeGrade.code}
-                ></TextField>
-                <TextField
-                    disabled={false}
-                    hasError={true}
-                    name="position"
-                    label={'Jawatan'}
-                    value={data.record.currentEmployeePosition.name}
-                ></TextField>
-                <TextField
-                    disabled={false}
-                    hasError={true}
-                    name="placement"
-                    label={'Penempatan'}
-                    value={data.record.currentEmployeeService.placement}
-                ></TextField>
-                <TextField
-                    disabled={false}
-                    hasError={true}
-                    name="serviceLevel"
-                    label={'Taraf Perkhidmatan'}
-                    value={data.record.currentEmployeeServiceType.name}
-                ></TextField>
+        <StepperContentBody>
+            <p class={stepperFormTitleClass}>Maklumat Perkhidmatan</p>
+            <form
+                id="newEmploymentServiceForm"
+                on:submit={submitNewEmploymentServiceForm}
+                class="flex w-full flex-col gap-2.5"
+            >
+                <DropdownSelect
+                    hasError={errorData?.currentGrade}
+                    dropdownType="label-left-full"
+                    id="currentGrade"
+                    label="Gred Semasa"
+                    bind:value={data.record.currentEmployeeGrade.code}
+                    options={[
+                        { value: 'FT26', name: 'FT26' },
+                        { value: 'E32', name: 'E32' },
+                        { value: 'E38', name: 'E38' },
+                    ]}
+                ></DropdownSelect>
+                {#if errorData?.currentGrade}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.currentGrade}</span
+                    >
+                {/if}
+                <DropdownSelect
+                    hasError={errorData?.position}
+                    dropdownType="label-left-full"
+                    id="position"
+                    label="Jawatan"
+                    bind:value={data.record.currentEmployeePosition.name}
+                    options={[
+                        {
+                            value: 'Pegawai Sistem Maklumat',
+                            name: 'Pegawai Sistem Maklumat',
+                        },
+                        { value: 'Pegawai Ekonomi', name: 'Pegawai Ekonomi' },
+                        { value: 'Pegawai Komputer', name: 'Pegawai Komputer' },
+                    ]}
+                ></DropdownSelect>
+                {#if errorData?.position}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.position}</span
+                    >
+                {/if}
+                <DropdownSelect
+                    hasError={errorData?.placement}
+                    dropdownType="label-left-full"
+                    id="placement"
+                    label="Penempatan"
+                    bind:value={data.record.currentEmployeeService.placement}
+                    options={[
+                        { value: 'Kuala Lumpur', name: 'Kuala Lumpur' },
+                        { value: 'Kuching', name: 'Kuching' },
+                        { value: 'Puchong', name: 'Puchong' },
+                    ]}
+                ></DropdownSelect>
+                {#if errorData?.placement}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.placement}</span
+                    >
+                {/if}
+                <DropdownSelect
+                    hasError={errorData?.serviceLevel}
+                    dropdownType="label-left-full"
+                    id="serviceLevel"
+                    label="Taraf Perkhidmatan"
+                    bind:value={data.record.currentEmployeeServiceType.name}
+                    options={[
+                        {
+                            value: 'TETAP',
+                            name: 'TETAP',
+                        },
+                    ]}
+                ></DropdownSelect>
+                {#if errorData?.serviceLevel}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.serviceLevel}</span
+                    >
+                {/if}
                 <DateSelector
                     {handleDateChange}
-                    hasError={true}
+                    hasError={errorData?.currentEmploymentDateOfEffect}
                     name="currentEmploymentDateOfEffect"
                     disabled={false}
                     label={'Tarikh Kuatkuasa Lantikan Semasa'}
@@ -724,6 +930,12 @@
                         data.record.currentEmployeeService.currentServiceDate,
                     )}
                 ></DateSelector>
+                {#if errorData?.currentEmploymentDateOfEffect}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.currentEmploymentDateOfEffect}</span
+                    >
+                {/if}
                 <RadioSingle
                     disabled={false}
                     name="pensionBenefits"
@@ -731,61 +943,109 @@
                     legend={'Faedah Persaraan'}
                     bind:userSelected={isKWSP}
                 ></RadioSingle>
+                {#if errorData?.pensionBenefits}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.pensionBenefits}</span
+                    >
+                {/if}
                 <TextField
                     disabled={false}
-                    hasError={true}
+                    hasError={errorData?.kwspNumber}
                     name="kwspNumber"
                     label={'No. KWSP'}
                     value={'1234-5678-9012'}
                 ></TextField>
+                {#if errorData?.kwspNumber}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.kwspNumber}</span
+                    >
+                {/if}
                 <TextField
                     disabled={false}
-                    hasError={true}
+                    hasError={errorData?.socsoNumber}
                     name="socsoNumber"
                     label={'No. SOCSO'}
                     value={'1234-5678-9012'}
                 ></TextField>
+                {#if errorData?.socsoNumber}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.socsoNumber}</span
+                    >
+                {/if}
                 <TextField
                     disabled={false}
-                    hasError={true}
+                    hasError={errorData?.taxNumber}
                     name="taxNumber"
                     label={'No. Cukai (LHDN)'}
                     value={'1234-5678-9012'}
                 ></TextField>
+                {#if errorData?.taxNumber}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.taxNumber}</span
+                    >
+                {/if}
                 <TextField
                     disabled={false}
-                    hasError={true}
+                    hasError={errorData?.bank}
                     name="bank"
                     label={'Bank'}
                     value={'Maybank Berhad'}
                 ></TextField>
+                {#if errorData?.bank}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.bank}</span
+                    >
+                {/if}
                 <TextField
                     disabled={false}
-                    hasError={true}
+                    hasError={errorData?.accountNumber}
                     name="accountNumber"
                     label={'No. Akaun'}
                     value={'1234-5678-9012'}
                 ></TextField>
+                {#if errorData?.accountNumber}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.accountNumber}</span
+                    >
+                {/if}
                 <TextField
                     disabled={false}
-                    hasError={true}
+                    hasError={errorData?.program}
                     name="program"
                     label={'Program'}
                     value={'-'}
                 ></TextField>
+                {#if errorData?.program}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.program}</span
+                    >
+                {/if}
                 <TextField
                     disabled={false}
-                    hasError={true}
+                    hasError={errorData?.leaveEntitlement}
                     name="leaveEntitlement"
                     label={'Kelayakan Cuti'}
                     value={getEmployeeLeave(
                         data.record.currentEmployee.employeeNumber,
                     )}
                 ></TextField>
+                {#if errorData?.leaveEntitlement}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.leaveEntitlement}</span
+                    >
+                {/if}
 
                 <DateSelector
                     {handleDateChange}
-                    hasError={true}
+                    hasError={errorData?.govEmploymentHiredDate}
                     name="govEmploymentHiredDate"
                     disabled={false}
                     label={'Mula Dilantik Perkhidmatan Kerajaan'}
@@ -793,9 +1053,15 @@
                         data.record.currentEmployeeService.firstServiceDate,
                     )}
                 ></DateSelector>
+                {#if errorData?.govEmploymentHiredDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.govEmploymentHiredDate}</span
+                    >
+                {/if}
                 <DateSelector
                     {handleDateChange}
-                    hasError={true}
+                    hasError={errorData?.lkimEmploymentHiredDate}
                     name="lkimEmploymentHiredDate"
                     disabled={false}
                     label={'Mula Dilantik Perkhidmatan LKIM'}
@@ -803,9 +1069,15 @@
                         data.record.currentEmployeeService.currentServiceDate,
                     )}
                 ></DateSelector>
+                {#if errorData?.lkimEmploymentHiredDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.lkimEmploymentHiredDate}</span
+                    >
+                {/if}
                 <DateSelector
                     {handleDateChange}
-                    hasError={true}
+                    hasError={errorData?.currentEmploymentHiredDate}
                     name="currentEmploymentHiredDate"
                     disabled={false}
                     label={'Mula Dilantik Perkhidmatan Sekarang'}
@@ -813,9 +1085,15 @@
                         data.record.currentEmployeeService.currentServiceDate,
                     )}
                 ></DateSelector>
+                {#if errorData?.currentEmploymentHiredDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.currentEmploymentHiredDate}</span
+                    >
+                {/if}
                 <DateSelector
                     {handleDateChange}
-                    hasError={true}
+                    hasError={errorData?.confirmedFirstLkimPositionData}
                     name="confirmedFirstLkimPositionData"
                     disabled={false}
                     label={'Disahkan Dalam Jawatan Pertama LKIM'}
@@ -823,9 +1101,15 @@
                         data.record.currentEmployeeService.firstServiceDate,
                     )}
                 ></DateSelector>
+                {#if errorData?.confirmedFirstLkimPositionData}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.confirmedFirstLkimPositionData}</span
+                    >
+                {/if}
                 <DateSelector
                     {handleDateChange}
-                    hasError={true}
+                    hasError={errorData?.confirmedCurrentLkimPositionData}
                     name="confirmedCurrentLkimPositionData"
                     disabled={false}
                     label={'Disahkan Dalam Jawatan Semasa LKIM'}
@@ -833,6 +1117,12 @@
                         data.record.currentEmployeeService.currentServiceDate,
                     )}
                 ></DateSelector>
+                {#if errorData?.confirmedCurrentLkimPositionData}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.confirmedCurrentLkimPositionData}</span
+                    >
+                {/if}
 
                 <AccordianField
                     disabled={!disabled}
@@ -856,7 +1146,7 @@
                 </AccordianField>
                 <DateSelector
                     {handleDateChange}
-                    hasError={true}
+                    hasError={errorData?.approvedPreviousServiceMergingDate}
                     name="approvedPreviousServiceMergingDate"
                     disabled={false}
                     label={'Tarikh Kelulusan Percantuman Perkhidmatan Lepas'}
@@ -864,51 +1154,97 @@
                         data.record.currentEmployeeService.firstServiceDate,
                     )}
                 ></DateSelector>
-                <TextField
-                    disabled={false}
-                    hasError={true}
+                {#if errorData?.approvedPreviousServiceMergingDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.approvedPreviousServiceMergingDate}</span
+                    >
+                {/if}
+                <DateSelector
+                    {handleDateChange}
+                    hasError={errorData?.currentActing}
                     name="currentActing"
+                    disabled={false}
                     label={'Pemangkuan Sekarang'}
-                    value={'-'}
-                ></TextField>
-                <TextField
-                    disabled={false}
-                    hasError={true}
+                    selectedDate={''}
+                ></DateSelector>
+                {#if errorData?.currentActing}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.currentActing}</span
+                    >
+                {/if}
+                <DateSelector
+                    {handleDateChange}
+                    hasError={errorData?.currentInterim}
                     name="currentInterim"
+                    disabled={false}
                     label={'Tanggung Kerja Sekarang'}
-                    value={'-'}
-                ></TextField>
+                    selectedDate={''}
+                ></DateSelector>
+                {#if errorData?.currentInterim}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.currentInterim}</span
+                    >
+                {/if}
                 <TextField
                     disabled={false}
-                    hasError={true}
+                    hasError={errorData?.pensionScheme}
                     name="pensionScheme"
                     label={'Skim Pencen'}
                     value={'-'}
                 ></TextField>
-                <TextField
-                    disabled={false}
-                    hasError={true}
+                {#if errorData?.pensionScheme}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.pensionScheme}</span
+                    >
+                {/if}
+                <DateSelector
+                    {handleDateChange}
+                    hasError={errorData?.finalIncreament}
                     name="finalIncreament"
+                    disabled={false}
                     label={'Kenaikan Gaji Akhir'}
-                    value={'-'}
-                ></TextField>
-                <TextField
-                    disabled={false}
-                    hasError={true}
+                    selectedDate={''}
+                ></DateSelector>
+                {#if errorData?.finalIncreament}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.finalIncreament}</span
+                    >
+                {/if}
+                <DateSelector
+                    {handleDateChange}
+                    hasError={errorData?.finalPromotion}
                     name="finalPromotion"
+                    disabled={false}
                     label={'Kenaikan Pangkat Akhir'}
-                    value={'-'}
-                ></TextField>
+                    selectedDate={''}
+                ></DateSelector>
+                {#if errorData?.finalPromotion}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.finalPromotion}</span
+                    >
+                {/if}
                 <TextField
                     disabled={false}
-                    hasError={true}
+                    hasError={errorData?.kgtMonth}
                     name="kgtMonth"
                     label={'Bulan KGT'}
                     value={'-'}
                 ></TextField>
+                {#if errorData?.kgtMonth}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.kgtMonth}</span
+                    >
+                {/if}
                 <DateSelector
                     {handleDateChange}
-                    hasError={true}
+                    hasError={errorData?.retirementDate}
                     name="retirementDate"
                     disabled={false}
                     label={'Tarikh Bersara'}
@@ -916,6 +1252,12 @@
                         data.record.currentEmployeePensions.retiredDate,
                     )}
                 ></DateSelector>
+                {#if errorData?.retirementDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.retirementDate}</span
+                    >
+                {/if}
                 <p class={stepperFormTitleClass}>
                     Maklumat Gaji dan Elaun - Elaun
                 </p>
@@ -923,63 +1265,105 @@
                     <div class="space-y-2.5">
                         <TextField
                             disabled={false}
-                            hasError={true}
+                            hasError={errorData?.salaryDateOfEffect}
                             name="salaryDateOfEffect"
                             label={'Tarikh Berkuatkuasa'}
                             value={'12/12/2021'}
                         ></TextField>
+                        {#if errorData?.salaryDateOfEffect}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.salaryDateOfEffect}</span
+                            >
+                        {/if}
                         <TextField
                             disabled={false}
-                            hasError={true}
+                            hasError={errorData?.salaryBenchmark}
                             name="salaryBenchmark"
                             label={'Tangga Gaji'}
                             value={currencyFormatter(1234.56)}
                         ></TextField>
+                        {#if errorData?.salaryBenchmark}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.salaryBenchmark}</span
+                            >
+                        {/if}
                         <TextField
                             disabled={false}
-                            hasError={true}
+                            hasError={errorData?.salary}
                             name="salary"
                             label={'Gaji Pokok'}
                             value={currencyFormatter(1234.56)}
                         ></TextField>
+                        {#if errorData?.salary}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.salary}</span
+                            >
+                        {/if}
                     </div>
                     <div class="space-y-2.5">
                         <TextField
                             hasTooltip={true}
                             toolTipID="type-itka"
                             disabled={false}
-                            hasError={true}
+                            hasError={errorData?.itka}
                             name="itka"
                             label={'ITKA'}
                             value={currencyFormatter(123.45)}
                         ></TextField>
+                        {#if errorData?.itka}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.itka}</span
+                            >
+                        {/if}
                         <TextField
                             hasTooltip={true}
                             toolTipID="type-itp"
                             disabled={false}
-                            hasError={true}
+                            hasError={errorData?.itp}
                             name="itp"
                             label={'ITP'}
                             value={currencyFormatter(123.45)}
                         ></TextField>
+                        {#if errorData?.itp}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.itp}</span
+                            >
+                        {/if}
                         <TextField
                             hasTooltip={true}
                             toolTipID="type-epw"
                             disabled={false}
-                            hasError={true}
+                            hasError={errorData?.epw}
                             name="epw"
                             label={'EPW'}
                             value={currencyFormatter(123.45)}
                         ></TextField>
+                        {#if errorData?.epw}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.epw}</span
+                            >
+                        {/if}
                         <TextField
                             hasTooltip={true}
                             toolTipID="type-cola"
                             disabled={false}
-                            hasError={true}
+                            hasError={errorData?.cola}
                             name="cola"
                             label={'COLA'}
                             value={currencyFormatter(123.45)}
                         ></TextField>
+                        {#if errorData?.cola}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.cola}</span
+                            >
+                        {/if}
                         <!-- Tooltip body -->
                         <Tooltip
                             type="dark"
@@ -988,8 +1372,8 @@
                         >
                     </div>
                 </div>
-            </div></StepperContentBody
-        >
+            </form>
+        </StepperContentBody>
     </StepperContent>
     <StepperContent>
         <StepperContentHeader

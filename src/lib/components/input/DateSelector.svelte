@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let selectedDate: any = '2022-02-02';
+    export let selectedDate: any = '';
     export let handleDateChange: any = () => {};
     let fontBlack = 'text-txt-primary';
     let fontGray = 'text-txt-tertiary';
