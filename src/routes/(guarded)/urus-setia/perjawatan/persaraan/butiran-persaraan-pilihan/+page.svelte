@@ -5,7 +5,6 @@
     import TextField from '$lib/components/input/TextField.svelte';
     import DownloadAttachment from '$lib/components/input/DownloadAttachment.svelte';
     import { Badge } from 'flowbite-svelte';
-    import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
@@ -18,8 +17,9 @@
 
     export let disabled: boolean = true;
 
-    let radioValue: any = 'sah';
     let errorData: any;
+    let ulasan: string;
+    let keputusan: any;
 
     const options: RadioOption[] = [
         {
@@ -43,79 +43,36 @@
         },
     ];
 
-    const dateScheme = z.coerce
-        .date({
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_date'
-                        ? 'Tarikh tidak boleh dibiar kosong.'
-                        : defaultError,
-            }),
-        })
-        .min(new Date(), {
-            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
-        });
-
-    const exampleFormSchema = z.object({
-        // checkbox schema
-        radioButtonExample: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        checkboxExample: z.enum(['on'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tandakan kotak semak.'
-                        : defaultError,
-            }),
-        }),
-        selectOptionExample: z.enum(['1', '2', '3', '4'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Pilihan perlu dipilih.'
-                        : defaultError,
-            }),
-        }),
-        textFieldExample: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        dateSelectorExample: dateScheme,
-        longTextExample: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-    });
-
     const submitForm = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);
-        const selectOptionExampleSelector = document.getElementById(
-            'selectOptionExample',
-        ) as HTMLSelectElement;
 
         const exampleFormData = {
-            applicationPurpose: String(formData.get('applicationPurpose')),
-            earlyRetirementDate: String(formData.get('earlyRetirementDate')),
-            earlyRetirementApplicationDate: String(
-                formData.get('earlyRetirementApplicationDate'),
-            ),
+            keputusan: String(formData.get('keputusan')),
+            ulasan: String(formData.get('ulasan')),
         };
+
+        const exampleFormSchema = z.object({
+            // checkbox schema
+            keputusan: z.enum(['sah', 'tidakSah'], {
+                errorMap: (issue, { defaultError }) => ({
+                    message:
+                        issue.code === 'invalid_enum_value'
+                            ? 'Sila tetapkan pilihan anda.'
+                            : defaultError,
+                }),
+            }),
+            // dateSelectorExample: dateScheme,
+            ulasan: z
+                .string({ required_error: 'Medan ini tidak boleh kosong.' })
+                .min(4, {
+                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+                })
+                .max(124, {
+                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
+                })
+                .trim(),
+        });
+
         try {
             const result = exampleFormSchema.parse(exampleFormData);
             if (result) {
@@ -193,33 +150,54 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Pengesahan Permohonan Persaraan"
-        ></StepperContentHeader>
+            ><TextIconButton
+                primary
+                label="Hantar"
+                form="applicationConfirmationFormValidation"
+            /></StepperContentHeader
+        >
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
                 <div
                     class="flex h-fit w-full flex-col items-center justify-start"
                 >
                     <form
-                        id="formValidation"
+                        id="applicationConfirmationFormValidation"
                         on:submit|preventDefault={submitForm}
                         class="flex w-full flex-col gap-2"
                     >
                         <LongTextField
-                            id="tindakanUlasan"
-                            label={'Tindakan/ Ulasan'}
-                            value={'Setuju diluluskan'}
-                        ></LongTextField>
+                            hasError={errorData?.ulasan}
+                            name="ulasan"
+                            label="Ulasan/Tindakan"
+                            bind:value={ulasan}
+                        />
+                        {#if errorData?.ulasan}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.ulasan[0]}</span
+                            >
+                        {/if}
 
                         <RadioSingle
+                            disabled={false}
                             {options}
-                            legend=""
-                            bind:userSelected={radioValue}
-                        />
+                            name="keputusan"
+                            legend={''}
+                            bind:userSelected={keputusan}
+                        ></RadioSingle>
+                        {#if errorData?.keputusan}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.keputusan[0]}</span
+                            >
+                        {/if}
                     </form>
                 </div>
             </div></StepperContentBody
         >
     </StepperContent>
+    <!-- change to dropdown -->
     <StepperContent>
         <StepperContentHeader title="Penyokong & Pelulus"
         ></StepperContentHeader>
@@ -329,72 +307,111 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Kelulusan Permohonan Persaraan"
-        ></StepperContentHeader>
+            ><TextIconButton
+                primary
+                label="Hantar"
+                form="applicationApprovalFormValidation"
+            /></StepperContentHeader
+        >
         <StepperContentBody
-            ><div class="flex w-full flex-col gap-2">
-                <div>
-                    <LongTextField
-                        id="tindakanUlasan"
-                        label={'Tindakan/ Ulasan'}
-                        value={'Memenuhi Kriteria'}
-                    ></LongTextField>
+            ><form
+                id="applicationApprovalFormValidation"
+                on:submit|preventDefault={submitForm}
+                class="flex w-full flex-col gap-2"
+            >
+                <div class="flex w-full flex-col gap-2">
+                    <div>
+                        <LongTextField
+                            id="tindakanUlasan"
+                            label={'Tindakan/ Ulasan'}
+                            value={'Memenuhi Kriteria'}
+                        ></LongTextField>
 
-                    <RadioSingle options={supportOptions} />
-                    <p class="text-sm">
-                        Nota: Notifikasi akan dihantar ke kakitangan untuk
-                        mengisi borang persaraan
-                    </p>
+                        <RadioSingle options={supportOptions} />
+                        <p class="text-sm">
+                            Nota: Notifikasi akan dihantar ke kakitangan untuk
+                            mengisi borang persaraan
+                        </p>
+                    </div>
                 </div>
-            </div>
+            </form>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Pengesahan Dokumen Persaraan"
-        ></StepperContentHeader>
+            ><TextIconButton
+                primary
+                label="Hantar"
+                form="validateDocumentFormValidation"
+            /></StepperContentHeader
+        >
         <StepperContentBody
-            ><div
-                class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+            ><form
+                id="validateDocumentFormValidation"
+                on:submit|preventDefault={submitForm}
+                class="flex w-full flex-col gap-2"
             >
-                <p class="text-sm font-bold">Dokumen Persaraan Kakitangan</p>
-                <p class="text-sm">Fail-fail yang dimuat naik:</p>
-                <ul
-                    class="flex w-full list-decimal flex-col gap-2 pl-4 text-sm"
+                <div
+                    class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
                 >
-                    <li>
-                        <DownloadAttachment
-                            fileName="JPA.BP.SPPP.B01a-Maklumat Pesara.pdf"
-                        />
-                    </li>
-                    <li>
-                        <DownloadAttachment
-                            fileName="JPA.BP.SPPP.B01a-Maklumat Pesara.pdf"
-                        />
-                    </li>
-                    <li>
-                        <DownloadAttachment
-                            fileName="JPA.BP.SPPP.B01a-Maklumat Pesara.pdf"
-                        />
-                    </li>
-                </ul>
-            </div>
-            <div
-                class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
-            >
-                <p class="text-sm font-bold">Pengesahan Urus Setia</p>
-                <div>
-                    <LongTextField
-                        id="tindakanUlasan"
-                        label={'Tindakan/ Ulasan'}
-                        value={'Dokumen-dokumen telah disemak'}
-                    ></LongTextField>
-
-                    <RadioSingle
-                        {options}
-                        legend=""
-                        bind:userSelected={radioValue}
-                    />
+                    <p class="text-sm font-bold">
+                        Dokumen Persaraan Kakitangan
+                    </p>
+                    <p class="text-sm">Fail-fail yang dimuat naik:</p>
+                    <ul
+                        class="flex w-full list-decimal flex-col gap-2 pl-4 text-sm"
+                    >
+                        <li>
+                            <DownloadAttachment
+                                fileName="JPA.BP.SPPP.B01a-Maklumat Pesara.pdf"
+                            />
+                        </li>
+                        <li>
+                            <DownloadAttachment
+                                fileName="JPA.BP.SPPP.B01a-Maklumat Pesara.pdf"
+                            />
+                        </li>
+                        <li>
+                            <DownloadAttachment
+                                fileName="JPA.BP.SPPP.B01a-Maklumat Pesara.pdf"
+                            />
+                        </li>
+                    </ul>
                 </div>
-            </div></StepperContentBody
+                <div
+                    class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+                >
+                    <p class="text-sm font-bold">Pengesahan Urus Setia</p>
+                    <div>
+                        <LongTextField
+                            hasError={errorData?.ulasan}
+                            name="ulasan"
+                            label="Ulasan/Tindakan"
+                            bind:value={ulasan}
+                        />
+                        {#if errorData?.ulasan}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.ulasan[0]}</span
+                            >
+                        {/if}
+
+                        <RadioSingle
+                            disabled={false}
+                            {options}
+                            name="keputusan"
+                            legend={''}
+                            bind:userSelected={keputusan}
+                        ></RadioSingle>
+                        {#if errorData?.keputusan}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.keputusan[0]}</span
+                            >
+                        {/if}
+                    </div>
+                </div>
+            </form></StepperContentBody
         >
     </StepperContent>
     <StepperContent>
@@ -402,44 +419,64 @@
             ><TextIconButton
                 primary
                 label="Hantar"
-                onClick={() => {
-                    goto('/urus-setia/perjawatan/persaraan');
-                }}><SvgPaperAirplane /></TextIconButton
-            ></StepperContentHeader
+                form="updateApplicationFormValidation"
+            /></StepperContentHeader
         >
         <StepperContentBody
-            ><div
-                class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+            ><form
+                id="updateApplicationFormValidation"
+                on:submit|preventDefault={submitForm}
+                class="flex w-full flex-col gap-2"
             >
-                <p class="text-sm font-bold">Cetak Surat Iringan</p>
-                <ul
-                    class="flex w-full list-decimal flex-col gap-2 pl-4 text-sm"
+                <div
+                    class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
                 >
-                    <li>
-                        <DownloadAttachment fileName="Surat Iringan" />
-                    </li>
-                </ul>
-            </div>
-            <div
-                class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
-            >
-                <p class="text-sm font-bold">
-                    Maklumat Penghantaran Permohonan
-                </p>
-                <div>
-                    <LongTextField
-                        id="tindakanUlasan"
-                        label={'Tindakan/ Ulasan'}
-                        value={'Dokumen-dokumen telah disemak'}
-                    ></LongTextField>
-
-                    <RadioSingle
-                        {options}
-                        legend=""
-                        bind:userSelected={radioValue}
-                    />
+                    <p class="text-sm font-bold">Cetak Surat Iringan</p>
+                    <ul
+                        class="flex w-full list-decimal flex-col gap-2 pl-4 text-sm"
+                    >
+                        <li>
+                            <DownloadAttachment fileName="Surat Iringan" />
+                        </li>
+                    </ul>
                 </div>
-            </div></StepperContentBody
+                <div
+                    class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+                >
+                    <p class="text-sm font-bold">
+                        Maklumat Penghantaran Permohonan
+                    </p>
+                    <div>
+                        <LongTextField
+                            hasError={errorData?.ulasan}
+                            name="ulasan"
+                            label="Ulasan/Tindakan"
+                            bind:value={ulasan}
+                        />
+                        {#if errorData?.ulasan}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.ulasan[0]}</span
+                            >
+                        {/if}
+
+                        <RadioSingle
+                            disabled={false}
+                            {options}
+                            name="keputusan"
+                            legend={''}
+                            bind:userSelected={keputusan}
+                        ></RadioSingle>
+                        {#if errorData?.keputusan}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.keputusan[0]}</span
+                            >
+                        {/if}
+                    </div>
+                </div>
+            </form></StepperContentBody
         >
     </StepperContent>
 </Stepper>
+<Toaster />
