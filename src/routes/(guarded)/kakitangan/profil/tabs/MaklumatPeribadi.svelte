@@ -919,6 +919,77 @@
                         >
                     {/if}
 
+                    <DateSelector
+                    {disabled}
+                    hasError={errorData?.dateSelectorExample}
+                    name="dateSelectorExample"
+                    handleDateChange
+                    label="Tarikh Lahir"
+                    bind:selectedDate={currentEmployee.birthDate}
+                ></DateSelector>
+                {#if errorData?.dateSelectorExample}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.dateSelectorExample[0]}</span
+                    >
+                {/if}
+                <DateSelector
+                    {disabled}
+                    hasError={errorData?.dateSelectorExample}
+                    name="dateSelectorExample"
+                    handleDateChange
+                    label="Tarikh Lahir"
+                    bind:selectedDate={currentEmployee.birthDate}
+                ></DateSelector>
+                {#if errorData?.dateSelectorExample}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.dateSelectorExample[0]}</span
+                    >
+                {/if}
+                <DateSelector
+                    {disabled}
+                    hasError={errorData?.dateSelectorExample}
+                    name="dateSelectorExample"
+                    handleDateChange
+                    label="Tarikh Lahir"
+                    bind:selectedDate={currentEmployee.birthDate}
+                ></DateSelector>
+                {#if errorData?.dateSelectorExample}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.dateSelectorExample[0]}</span
+                    >
+                {/if}
+                <DateSelector
+                    {disabled}
+                    hasError={errorData?.dateSelectorExample}
+                    name="dateSelectorExample"
+                    handleDateChange
+                    label="Tarikh Lahir"
+                    bind:selectedDate={currentEmployee.birthDate}
+                ></DateSelector>
+                {#if errorData?.dateSelectorExample}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.dateSelectorExample[0]}</span
+                    >
+                {/if}
+                <DateSelector
+                    {disabled}
+                    hasError={errorData?.dateSelectorExample}
+                    name="dateSelectorExample"
+                    handleDateChange
+                    label="Tarikh Lahir"
+                    bind:selectedDate={currentEmployee.birthDate}
+                ></DateSelector>
+                {#if errorData?.dateSelectorExample}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.dateSelectorExample[0]}</span
+                    >
+                {/if}
+
 
                 </form>
 
