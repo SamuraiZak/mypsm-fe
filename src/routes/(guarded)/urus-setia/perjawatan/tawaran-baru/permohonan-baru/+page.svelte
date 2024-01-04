@@ -30,7 +30,7 @@
 
     let selectedStaffs: any[] = [];
     // =====================================================================================
-    // z validation schema for the advancement form fields=========================================
+    // z validation schema for the advancement form fields
     // =====================================================================================
     let errorData: any;
 
@@ -41,7 +41,7 @@
     });
 
     // =========================================================================
-    // advancement form fields submit function=========================================
+    // advancement form fields submit function
     // =========================================================================
     const adavancementApplicantsForm = async () => {
         const applicantsData = {
