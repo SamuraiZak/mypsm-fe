@@ -1,7 +1,9 @@
-import { fetchPtbKwap } from '$lib/service/ptbAndKwap/services';
+// import { fetchPtbKwap } from '$lib/service/ptbAndKwap/services';
+
+import { mockPTBdanKWAP } from '$lib/mocks/perjawatan/PTB-dan-KWAP/ptb-dan-kwap.js';
 
 export async function load({ cookies }) {
-    const fetchedData: PtbAndKwap[] = await fetchPtbKwap();
+    const fetchedData: PtbAndKwap[] = mockPTBdanKWAP;
 
     const userId = cookies.get('userId');
 

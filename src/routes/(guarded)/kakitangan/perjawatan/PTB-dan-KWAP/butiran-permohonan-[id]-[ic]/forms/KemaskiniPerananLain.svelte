@@ -2,7 +2,8 @@
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    import { getEmployees } from '$lib/service/employees/staff-service';
+    import { mockEmployees } from '$lib/mocks/database/mockEmployees';
+    // import { getEmployees } from '$lib/service/employees/staff-service';
     import type { SelectOptionType } from 'flowbite-svelte';
 
     import { onMount } from 'svelte';
@@ -25,7 +26,7 @@
         'w-full h-fit mt-2 bg-bgr-primary text-system-primary text-sm font-medium';
 
     onMount(async () => {
-        const staffs: IntEmployees[] = await getEmployees();
+        const staffs: IntEmployees[] = mockEmployees;
 
         employeeLists = staffs.map((staff) => ({
             value: staff.id.toString(),

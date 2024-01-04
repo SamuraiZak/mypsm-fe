@@ -2,7 +2,7 @@
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    import { getEmployees } from '$lib/service/employees/staff-service';
+    // import { getEmployees } from '$lib/service/employees/staff-service';
     import type { SelectOptionType } from 'flowbite-svelte';
 
     import { onMount } from 'svelte';

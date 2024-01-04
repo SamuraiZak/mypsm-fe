@@ -1,14 +1,4 @@
 <script lang="ts">
-    // Importing external components and libraries
-    // import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
-    // import { goto } from '$app/navigation';
-    // import MaklumatPeribadi from './forms/MaklumatPeribadi.svelte';
-    // import MaklumatAkademik from './forms/MaklumatAkademik.svelte';
-
-    // let id: string = '93699';
-    // let status: string = 'Baru';
-
-    // import FormButton from '$lib/components/buttons/FormButton.svelte';
     import { goto } from '$app/navigation';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
@@ -50,8 +40,6 @@
         selectedApprover = employeeLists[0].value;
     });
 
-    // export let activeStepper = 0;
-    // export let isEditing: boolean = false;
     export let disabled: boolean = true;
 
     let results = [
@@ -243,7 +231,7 @@
         }),
         serviceLevel: textFieldSchema,
         currentEmploymentDateOfEffect: dateScheme,
-        pensionBenefits: z.enum(['kwsp', 'pension'], {
+        pensionBenefits: z.enum(['true', 'false'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
                     issue.code === 'invalid_enum_value'
@@ -256,20 +244,23 @@
         taxNumber: textFieldSchema,
         bank: textFieldSchema,
         accountNumber: textFieldSchema,
-        program: textFieldSchema,
-        leaveEntitlement: textFieldSchema,
+        program: z.optional(z.string()),
+        leaveEntitlement: z.number({
+            required_error: 'Medan ini perlu diisi',
+            invalid_type_error: 'Sila tetapkan jumlah',
+        }),
         govEmploymentHiredDate: dateScheme,
         lkimEmploymentHiredDate: dateScheme,
         currentEmploymentHiredDate: dateScheme,
         confirmedFirstLkimPositionData: dateScheme,
         confirmedCurrentLkimPositionData: dateScheme,
-        approvedPreviousServiceMergingDate: dateScheme,
-        currentActing: dateScheme,
-        currentInterim: dateScheme,
-        pensionScheme: textFieldSchema,
-        finalIncreament: dateScheme,
-        finalPromotion: dateScheme,
-        kgtMonth: textFieldSchema,
+        approvedPreviousServiceMergingDate: z.optional(z.coerce.date()),
+        currentActing: z.optional(z.coerce.date()),
+        currentInterim: z.optional(z.coerce.date()),
+        pensionScheme: z.optional(z.string()),
+        finalIncreament: z.optional(z.coerce.date()),
+        finalPromotion: z.optional(z.coerce.date()),
+        kgtMonth: z.string().optional(),
         retirementDate: dateScheme,
         salaryDateOfEffect: dateScheme,
         salaryBenchmark: textFieldSchema,
@@ -296,6 +287,8 @@
             'placement',
         ) as HTMLSelectElement;
 
+        console.log('formData Value: ', formData);
+
         const newEmploymentServiceData = {
             currentGrade: String(gredSelector.value),
             position: String(positionSelector.value),
@@ -311,7 +304,7 @@
             bank: String(formData.get('bank')),
             accountNumber: String(formData.get('accountNumber')),
             program: String(formData.get('program')),
-            leaveEntitlement: String(formData.get('leaveEntitlement')),
+            leaveEntitlement: Number(formData.get('leaveEntitlement')),
             govEmploymentHiredDate: String(
                 formData.get('govEmploymentHiredDate'),
             ),

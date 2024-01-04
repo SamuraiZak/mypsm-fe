@@ -2,7 +2,7 @@
     import AccordianField from '$lib/components/input/AccordianField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    import { getCurrentService } from '$lib/service/employees/service-service';
+    // import { getCurrentService } from '$lib/service/employees/service-service';
     import { Tooltip } from 'flowbite-svelte';
     import { onMount } from 'svelte';
 
@@ -60,35 +60,20 @@
     }
 
     onMount(async () => {
-        currentService = await getCurrentService();
-        // const staffData: IntEmployees[] = await getEmployees();
-        // const currentServiceData: IntCurrentService[] =
-        //     await getCurrentService();
-
-        // // find the current staff
-        // const currentStaff: IntEmployees | undefined = staffData.find(
-        //     (staff) => {
-        //         return (
-        //             staff.employeeNumber === ptbData.noPekerja &&
-        //             staff.identityDocumentNumber === ptbData.noKadPengenalan
-        //         );
-        //     },
-        // );
-
-        // const tempcurrentService = currentServiceData.find((service) => {
-        //     // match the current staff id with their service
-        //     return service?.employeeId === currentStaff?.id;
-        // });
-        // set the value of the currentService
-        // currentService = {
-        //     currentGrade: mockLookupGrades.find((grade) => {
-        //         return grade.id === tempcurrentService?.gradeId;
-        //     })?.code,
-
-        //     position: mockLookupPositions.find((pos) => {
-        //         return pos.id === tempcurrentService?.positionId;
-        //     })?.name,
-        // };
+        currentService = {
+            currentGrade: 'E32',
+            position: 'Akauntan',
+            placement: 'LKIM Puchong',
+            educationLevel: 'Diploma',
+            pensionBenefit: 'true',
+            kwspNumber: '123456789',
+            socsoNumber: '123456789',
+            taxNumber: '123456789',
+            bankName: 'Maybank Berhad',
+            accountNumber: '182673091012',
+            programme: 'Tiada',
+            entitledLeaves: '32',
+        };
     });
 </script>
 

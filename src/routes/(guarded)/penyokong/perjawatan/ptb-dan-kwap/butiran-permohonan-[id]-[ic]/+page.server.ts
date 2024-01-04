@@ -1,9 +1,10 @@
-import * as ptbService from '$lib/service/ptbAndKwap/services.js';
-import { fetchPtbKwap } from '$lib/service/ptbAndKwap/services.js';
+// import * as ptbService from '$lib/service/ptbAndKwap/services.js';
+// import { fetchPtbKwap } from '$lib/service/ptbAndKwap/services.js';
+import { mockPTBdanKWAP } from '$lib/mocks/perjawatan/PTB-dan-KWAP/ptb-dan-kwap.js';
 import { fail } from '@sveltejs/kit';
 
 export async function load({ params }) {
-    const data: PtbAndKwap[] = await fetchPtbKwap();
+    const data: PtbAndKwap[] = mockPTBdanKWAP;
 
     const record: PtbAndKwap | undefined = data.find(
         (record) =>
@@ -17,13 +18,13 @@ export async function load({ params }) {
 }
 
 export const actions = {
-    create: async ({ cookies, request }) => {
+    create: async ({ request }) => {
         await new Promise((fulfil) => setTimeout(fulfil, 1000));
 
         const data = await request.formData();
 
         try {
-            await ptbService.setPtbKwap(cookies.get('userId'), data);
+            // await ptbService.setPtbKwap(cookies.get('userId'), data);
             // db.createTodo(cookies.get('userId'), data.get('description'));
         } catch (err: unknown) {
             return fail(422, {
@@ -32,7 +33,7 @@ export const actions = {
                 letterRefDate: data.get('letter-ref-date'),
                 pensionNumber: data.get('pension-number'),
                 kwapDate: data.get('kwap-date'),
-                error: err.message,
+                error: (err as Error).message,
             });
         }
     },

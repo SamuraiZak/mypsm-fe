@@ -4,25 +4,25 @@
     import TextField from '$lib/components/input/TextField.svelte';
     import { Alert } from 'flowbite-svelte';
     import type { ActionData } from '../$types';
-    import * as ptbService from '$lib/service/ptbAndKwap/services';
+    // import * as ptbService from '$lib/service/ptbAndKwap/services';
     import { onMount } from 'svelte';
     import type { Cookies } from '@sveltejs/kit';
 
     let form: ActionData;
     export let ptbData: PtbAndKwap;
     let currentPtb: {
-        ptbDate: string;
-        letterRefNumber: string;
-        letterRefDate: string;
-        pensionNumber: string;
-        kwapDate: string;
+        ptbDate: 'string';
+        letterRefNumber: 'string';
+        letterRefDate: 'string';
+        pensionNumber: 'string';
+        kwapDate: 'string';
     };
     export let userId: string | undefined;
     export let editable: boolean = false;
     let creating = false;
 
     onMount(async () => {
-        currentPtb = await ptbService.getPtbKwapdetail(userId);
+        // currentPtb = await ptbService.getPtbKwapdetail(userId);
     });
 </script>
 
