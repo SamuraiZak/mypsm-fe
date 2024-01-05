@@ -60,7 +60,7 @@
         meetingDate: dateSchema,
     });
 
-    const submitMeetingResultResult = async (event: Event) => {
+    export const submitMeetingResultResult = async (event: Event) => {
         const formElement = event.target as HTMLFormElement;
         const formData = new FormData(formElement);
         const meetingTypeSelector = document.getElementById(
