@@ -14,12 +14,22 @@
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import toast, { Toaster } from 'svelte-french-toast';
     import { z, ZodError } from 'zod';
+    import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
 
     export let disabled: boolean = true;
 
     let errorData: any;
-    let ulasan: string;
-    let keputusan: any;
+    let applicationConfirmationReview: string;
+    let applicationConfirmationResult: any;
+    let applicationApprovalReview: string;
+    let applicationApprovalResult: any;
+    let validateDocumentReview: string;
+    let validateDocumentResult: any;
+    let updateApplicationReview: string;
+    let updateApplicationResult: any;
+    let supporter1Option: any;
+    let supporter2Option: any;
+    let approverOption: any;
 
     const options: RadioOption[] = [
         {
@@ -45,15 +55,49 @@
 
     const submitForm = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);
+        const supporter1OptionSelector = document.getElementById(
+            'supporter1Option',
+        ) as HTMLSelectElement;
+        const supporter2OptionSelector = document.getElementById(
+            'supporter2Option',
+        ) as HTMLSelectElement;
+        const approverOptionSelector = document.getElementById(
+            'approverOption',
+        ) as HTMLSelectElement;
 
         const exampleFormData = {
-            keputusan: String(formData.get('keputusan')),
-            ulasan: String(formData.get('ulasan')),
+            applicationConfirmationResult: String(
+                formData.get('applicationConfirmationResult'),
+            ),
+            applicationConfirmationReview: String(
+                formData.get('applicationConfirmationReview'),
+            ),
+            applicationApprovalResult: String(
+                formData.get('applicationApprovalResult'),
+            ),
+            applicationApprovalReview: String(
+                formData.get('applicationApprovalReview'),
+            ),
+            validateDocumentResult: String(
+                formData.get('validateDocumentResult'),
+            ),
+            validateDocumentReview: String(
+                formData.get('validateDocumentReview'),
+            ),
+            updateApplicationResult: String(
+                formData.get('updateApplicationResult'),
+            ),
+            upateApplicationReview: String(
+                formData.get('updateApplicationReview'),
+            ),
+            supporter1Option: String(supporter1OptionSelector.value),
+            supporter2Option: String(supporter2OptionSelector.value),
+            approverOption: String(approverOptionSelector.value),
         };
 
         const exampleFormSchema = z.object({
             // checkbox schema
-            keputusan: z.enum(['sah', 'tidakSah'], {
+            Result: z.enum(['sah', 'tidakSah'], {
                 errorMap: (issue, { defaultError }) => ({
                     message:
                         issue.code === 'invalid_enum_value'
@@ -62,7 +106,7 @@
                 }),
             }),
             // dateSelectorExample: dateScheme,
-            ulasan: z
+            Review: z
                 .string({ required_error: 'Medan ini tidak boleh kosong.' })
                 .min(4, {
                     message: 'Medan ini hendaklah lebih daripada 4 karakter.',
@@ -135,13 +179,13 @@
                     ></TextField>
                     <LongTextField
                         {disabled}
-                        id="tindakanUlasan"
-                        label={'Tindakan/ Ulasan'}
+                        id="tindakanReview"
+                        label={'Tindakan/ Review'}
                         value={'Dokumen-dokumen telah disemak'}
                     ></LongTextField>
                     <div class="flex w-full flex-row text-sm">
                         <label for="staffing-sec-result" class="w-[220px]"
-                            >Keputusan</label
+                            >Result</label
                         ><Badge border color="green">DIPERAKU</Badge>
                     </div>
                 </div>
@@ -167,29 +211,31 @@
                         class="flex w-full flex-col gap-2"
                     >
                         <LongTextField
-                            hasError={errorData?.ulasan}
-                            name="ulasan"
+                            hasError={errorData?.applicationConfirmationReview}
+                            name="applicationConfirmationReview"
                             label="Ulasan/Tindakan"
-                            bind:value={ulasan}
+                            bind:value={applicationConfirmationReview}
                         />
-                        {#if errorData?.ulasan}
+                        {#if errorData?.applicationConfirmationReview}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.ulasan[0]}</span
+                                >{errorData
+                                    ?.applicationConfirmationReview[0]}</span
                             >
                         {/if}
 
                         <RadioSingle
                             disabled={false}
                             {options}
-                            name="keputusan"
+                            name="applicationConfirmationResult"
                             legend={''}
-                            bind:userSelected={keputusan}
+                            bind:userSelected={applicationConfirmationResult}
                         ></RadioSingle>
-                        {#if errorData?.keputusan}
+                        {#if errorData?.applicationConfirmationResult}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.keputusan[0]}</span
+                                >{errorData
+                                    ?.applicationConfirmationResult[0]}</span
                             >
                         {/if}
                     </form>
@@ -197,34 +243,83 @@
             </div></StepperContentBody
         >
     </StepperContent>
-    <!-- change to dropdown -->
     <StepperContent>
         <StepperContentHeader title="Penyokong & Pelulus"
-        ></StepperContentHeader>
+            ><TextIconButton
+                primary
+                label="Hantar"
+                form="supporterApproverFormValidation"
+            /></StepperContentHeader
+        >
         <StepperContentBody
-            ><div class="flex w-full flex-col gap-2">
-                <div>
-                    <TextField
-                        id="namaPenyokong1"
-                        label={'Nama Penyokong #1'}
-                        value={'Ismail Bin Ramdan'}
-                    ></TextField>
+            ><form
+                id="supporterApproverFormValidation"
+                on:submit|preventDefault={submitForm}
+                class="flex w-full flex-col gap-2"
+            >
+                <div class="flex w-full flex-col gap-2">
+                    <div>
+                        <DropdownSelect
+                            hasError={errorData?.supporter1Option}
+                            dropdownType="label-left-full"
+                            id="supporter1Option"
+                            label="Nama Penyokong #1"
+                            bind:value={supporter1Option}
+                            options={[
+                                { value: '1', name: 'Ali Bin Abu' },
+                                { value: '2', name: 'Abu Bin Ahmad' },
+                                { value: '3', name: 'Ahmad Bin Ali' },
+                            ]}
+                        ></DropdownSelect>
+                        {#if errorData?.supporter1Option}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.supporter1Option[0]}</span
+                            >
+                        {/if}
+                    </div>
+                    <div>
+                        <DropdownSelect
+                            hasError={errorData?.supporter2Option}
+                            dropdownType="label-left-full"
+                            id="supporter2Option"
+                            label="Nama Penyokong #2"
+                            bind:value={supporter2Option}
+                            options={[
+                                { value: '1', name: 'Ali Bin Abu' },
+                                { value: '2', name: 'Abu Bin Ahmad' },
+                                { value: '3', name: 'Ahmad Bin Ali' },
+                            ]}
+                        ></DropdownSelect>
+                        {#if errorData?.supporter2Option}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.supporter2Option[0]}</span
+                            >
+                        {/if}
+                    </div>
+                    <div>
+                        <DropdownSelect
+                            hasError={errorData?.approverOption}
+                            dropdownType="label-left-full"
+                            id="approverOption"
+                            label="Nama Pelulus"
+                            bind:value={approverOption}
+                            options={[
+                                { value: '1', name: 'Ali Bin Abu' },
+                                { value: '2', name: 'Abu Bin Ahmad' },
+                                { value: '3', name: 'Ahmad Bin Ali' },
+                            ]}
+                        ></DropdownSelect>
+                        {#if errorData?.approverOption}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.approverOption[0]}</span
+                            >
+                        {/if}
+                    </div>
                 </div>
-                <div>
-                    <TextField
-                        id="namaPenyokong2"
-                        label={'Nama Penyokong #2'}
-                        value={'Nurhamzah Binti Jamaludin'}
-                    ></TextField>
-                </div>
-                <div>
-                    <TextField
-                        id="namaPelulus"
-                        label={'Nama Pelulus'}
-                        value={'Ramdan Bin Ismail'}
-                    ></TextField>
-                </div>
-            </div></StepperContentBody
+            </form></StepperContentBody
         >
     </StepperContent>
     <StepperContent>
@@ -232,7 +327,7 @@
         ></StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
-                <p class="text-sm font-bold">Penyokong #1</p>
+                <p class="text-sm font-bold">Suppoorter #1</p>
                 <div
                     class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
                 >
@@ -244,19 +339,19 @@
                     ></TextField>
                     <LongTextField
                         {disabled}
-                        id="tindakanUlasan"
-                        label={'Tindakan/ Ulasan'}
+                        id="tindakanReview"
+                        label={'Tindakan/ Review'}
                         value={'Layak disokong'}
                     ></LongTextField>
                     <div class="flex w-full flex-row text-sm">
                         <label for="staffing-sec-result" class="w-[220px]"
-                            >Keputusan</label
+                            >Result</label
                         ><Badge border color="green">SOKONG</Badge>
                     </div>
                 </div>
             </div>
             <div class="flex w-full flex-col gap-2">
-                <p class="text-sm font-bold">Penyokong #2</p>
+                <p class="text-sm font-bold">Suppoorter #2</p>
                 <div
                     class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
                 >
@@ -268,19 +363,19 @@
                     ></TextField>
                     <LongTextField
                         {disabled}
-                        id="tindakanUlasan"
-                        label={'Tindakan/ Ulasan'}
+                        id="tindakanReview"
+                        label={'Tindakan/ Review'}
                         value={'Layak disokong'}
                     ></LongTextField>
                     <div class="flex w-full flex-row text-sm">
                         <label for="staffing-sec-result" class="w-[220px]"
-                            >Keputusan</label
+                            >Result</label
                         ><Badge border color="green">SOKONG</Badge>
                     </div>
                 </div>
             </div>
             <div class="flex w-full flex-col gap-2">
-                <p class="text-sm font-bold">Pelulus</p>
+                <p class="text-sm font-bold">Approver</p>
                 <div
                     class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
                 >
@@ -292,13 +387,13 @@
                     ></TextField>
                     <LongTextField
                         {disabled}
-                        id="tindakanUlasan"
-                        label={'Tindakan/ Ulasan'}
+                        id="tindakanReview"
+                        label={'Tindakan/ Review'}
                         value={'Setuju diluluskan'}
                     ></LongTextField>
                     <div class="flex w-full flex-row text-sm">
                         <label for="staffing-sec-result" class="w-[220px]"
-                            >Keputusan</label
+                            >Result</label
                         ><Badge border color="green">LULUS</Badge>
                     </div>
                 </div>
@@ -322,12 +417,32 @@
                 <div class="flex w-full flex-col gap-2">
                     <div>
                         <LongTextField
-                            id="tindakanUlasan"
-                            label={'Tindakan/ Ulasan'}
-                            value={'Memenuhi Kriteria'}
-                        ></LongTextField>
+                            hasError={errorData?.applicationApprovalReview}
+                            name="applicationApprovalReview"
+                            label="Ulasan/Tindakan"
+                            bind:value={applicationApprovalReview}
+                        />
+                        {#if errorData?.applicationApprovalReview}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.applicationApprovalReview[0]}</span
+                            >
+                        {/if}
 
-                        <RadioSingle options={supportOptions} />
+                        <RadioSingle
+                            disabled={false}
+                            options={supportOptions}
+                            name="applicationApprovalResult"
+                            legend={''}
+                            bind:userSelected={applicationApprovalResult}
+                        ></RadioSingle>
+                        {#if errorData?.applicationApprovalResult}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.applicationApprovalResult[0]}</span
+                            >
+                        {/if}
+
                         <p class="text-sm">
                             Nota: Notifikasi akan dihantar ke kakitangan untuk
                             mengisi borang persaraan
@@ -384,29 +499,29 @@
                     <p class="text-sm font-bold">Pengesahan Urus Setia</p>
                     <div>
                         <LongTextField
-                            hasError={errorData?.ulasan}
-                            name="ulasan"
+                            hasError={errorData?.validateDocumentReview}
+                            name="validateDocumentReview"
                             label="Ulasan/Tindakan"
-                            bind:value={ulasan}
+                            bind:value={validateDocumentReview}
                         />
-                        {#if errorData?.ulasan}
+                        {#if errorData?.validateDocumentReview}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.ulasan[0]}</span
+                                >{errorData?.validateDocumentReview[0]}</span
                             >
                         {/if}
 
                         <RadioSingle
                             disabled={false}
                             {options}
-                            name="keputusan"
+                            name="validateDocumentResult"
                             legend={''}
-                            bind:userSelected={keputusan}
+                            bind:userSelected={validateDocumentResult}
                         ></RadioSingle>
-                        {#if errorData?.keputusan}
+                        {#if errorData?.validateDocumentResult}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.keputusan[0]}</span
+                                >{errorData?.validateDocumentResult[0]}</span
                             >
                         {/if}
                     </div>
@@ -448,29 +563,29 @@
                     </p>
                     <div>
                         <LongTextField
-                            hasError={errorData?.ulasan}
-                            name="ulasan"
+                            hasError={errorData?.updateApplicationReview}
+                            name="updateApplicationReview"
                             label="Ulasan/Tindakan"
-                            bind:value={ulasan}
+                            bind:value={updateApplicationReview}
                         />
-                        {#if errorData?.ulasan}
+                        {#if errorData?.updateApplicationReview}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.ulasan[0]}</span
+                                >{errorData?.updateApplicationReview[0]}</span
                             >
                         {/if}
 
                         <RadioSingle
                             disabled={false}
                             {options}
-                            name="keputusan"
+                            name="updateApplicationResult"
                             legend={''}
-                            bind:userSelected={keputusan}
+                            bind:userSelected={updateApplicationResult}
                         ></RadioSingle>
-                        {#if errorData?.keputusan}
+                        {#if errorData?.updateApplicationResult}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.keputusan[0]}</span
+                                >{errorData?.updateApplicationResult[0]}</span
                             >
                         {/if}
                     </div>
