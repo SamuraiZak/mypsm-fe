@@ -22,8 +22,10 @@
 
     let target: any;
     let errorData: any;
-    let ulasan: string;
-    let keputusan: any;
+    let retirementConfirmationReview: any;
+    let retirementConfirmationResult: any;
+    let updateApplicationReview: any;
+    let updateApplicationResult: any;
 
     onMount(() => {
         target = document.getElementById('hello');
@@ -57,13 +59,15 @@
         const formData = new FormData(event.target as HTMLFormElement);
 
         const exampleFormData = {
-            keputusan: String(formData.get('keputusan')),
-            ulasan: String(formData.get('ulasan')),
+            retirementConfirmationResult: String(formData.get('retirementConfirmationResult')),
+            retirementConfirmationReview: String(formData.get('retirementConfirmationReview')),
+            updateApplicationResult: String(formData.get('updateApplicationResult')),
+            updateApplicationReview: String(formData.get('updateApplicationReview')),
         };
 
         const exampleFormSchema = z.object({
             // checkbox schema
-            keputusan: z.enum(['sah', 'tidakSah'], {
+            result: z.enum(['sah', 'tidakSah'], {
                 errorMap: (issue, { defaultError }) => ({
                     message:
                         issue.code === 'invalid_enum_value'
@@ -72,7 +76,7 @@
                 }),
             }),
             // dateSelectorExample: dateScheme,
-            ulasan: z
+            Review: z
                 .string({ required_error: 'Medan ini tidak boleh kosong.' })
                 .min(4, {
                     message: 'Medan ini hendaklah lebih daripada 4 karakter.',
@@ -282,29 +286,29 @@
 
                     <div>
                         <LongTextField
-                            hasError={errorData?.ulasan}
-                            name="ulasan"
+                            hasError={errorData?.Review}
+                            name="retirementConfirmationReview"
                             label="Ulasan/Tindakan"
-                            bind:value={ulasan}
+                            bind:value={retirementConfirmationReview}
                         />
-                        {#if errorData?.ulasan}
+                        {#if errorData?.retirementConfirmationReview}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.ulasan[0]}</span
+                                >{errorData?.retirementConfirmationReview[0]}</span
                             >
                         {/if}
 
                         <RadioSingle
                             disabled={false}
                             {options}
-                            name="keputusan"
+                            name="retirementConfirmationResult"
                             legend={''}
-                            bind:userSelected={keputusan}
+                            bind:userSelected={retirementConfirmationResult}
                         ></RadioSingle>
-                        {#if errorData?.keputusan}
+                        {#if errorData?.retirementConfirmationResult}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.keputusan[0]}</span
+                                >{errorData?.retirementConfirmationResult[0]}</span
                             >
                         {/if}
                     </div>
@@ -344,29 +348,29 @@
                     </p>
                     <div>
                         <LongTextField
-                            hasError={errorData?.ulasan}
-                            name="ulasan"
+                            hasError={errorData?.updateApplicationReview}
+                            name="updateApplicationReview"
                             label="Ulasan/Tindakan"
-                            bind:value={ulasan}
+                            bind:value={updateApplicationReview}
                         />
-                        {#if errorData?.ulasan}
+                        {#if errorData?.updateApplicationReview}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.ulasan[0]}</span
+                                >{errorData?.updateApplicationReview[0]}</span
                             >
                         {/if}
 
                         <RadioSingle
                             disabled={false}
                             {options}
-                            name="keputusan"
+                            name="updateApplicationResult"
                             legend={''}
-                            bind:userSelected={keputusan}
+                            bind:userSelected={updateApplicationResult}
                         ></RadioSingle>
-                        {#if errorData?.keputusan}
+                        {#if errorData?.updateApplicationResult}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.keputusan[0]}</span
+                                >{errorData?.updateApplicationResult[0]}</span
                             >
                         {/if}
                     </div>
