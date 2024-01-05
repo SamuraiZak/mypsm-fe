@@ -27,7 +27,9 @@ export async function load() {
 
 function getNextExamNumber(existingData: IntExams[]) {
     // Assuming 'id' is a field representing the exam number
-    const existingIds: number[] = existingData.map((exam: IntExams) => exam.id);
+    const existingIds: number[] = existingData.map((exam: IntExams) =>
+        Number(exam.id),
+    );
 
     // Find the maximum ID and increment it for the next available ID
     const maxId: number = Math.max(...existingIds);
