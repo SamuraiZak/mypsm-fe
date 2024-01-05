@@ -63,12 +63,9 @@
             if (err instanceof z.ZodError) {
                 const { fieldErrors: errors } = err.flatten();
                 errorData = errors;
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
+                toast.error('Pilih senarai pekerja untuk dicetak.', {
+                    style: 'background: #333; color: #fff;',
+                });
             }
         }
     };
