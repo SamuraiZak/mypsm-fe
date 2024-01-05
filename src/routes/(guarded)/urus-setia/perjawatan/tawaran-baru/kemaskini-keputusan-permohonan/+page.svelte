@@ -16,9 +16,14 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+    import { createEventDispatcher, onMount } from 'svelte';
 
     let id: string = '193699';
     let status: string = 'Baru';
+
+    // const dispatch = createEventDispatcher();
+
+    // const triggerFormSubmit = () => dispatch('triggerFormSubmit');
 </script>
 
 <!-- content header starts here -->
@@ -61,7 +66,11 @@
         </StepperContent>
         <StepperContent>
             <StepperContentHeader title="Kemaskini Keputusan Mesyuarat"
-                ><TextIconButton primary label="Simpan" onClick={() => {}}>
+                ><TextIconButton
+                    primary
+                    label="Simpan"
+                    form="meetingResultForm"
+                >
                     <SvgCheck></SvgCheck>
                 </TextIconButton></StepperContentHeader
             >
@@ -85,7 +94,11 @@
         </StepperContent>
         <StepperContent>
             <StepperContentHeader title="Masukkan nama Penyokong dan Pelulus"
-                ><TextIconButton primary label="Simpan" onClick={() => {}}>
+                ><TextIconButton
+                    primary
+                    label="Simpan"
+                    form="newEmploymentAssignApproverSupporterForm"
+                >
                     <SvgCheck></SvgCheck>
                 </TextIconButton></StepperContentHeader
             >
