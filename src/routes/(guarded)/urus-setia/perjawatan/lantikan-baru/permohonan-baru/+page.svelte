@@ -24,6 +24,7 @@
     import { z } from 'zod';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
+    import api from '$lib/services/core/ky.service';
 
     // =====================================================================================
     // z validation schema for the new employment form fields===============================
@@ -50,14 +51,15 @@
                 message: 'Emel calon tidak boleh melebihi 124 karakter.',
             })
             .trim(),
-        generatedUrl: z
-            .string()
-            .url({ message: 'Sila klik butang "Jana Pautan"' }),
+        // generatedUrl: z
+        //     .string()
+        //     .url({ message: 'Sila klik butang "Jana Pautan"' }),
     });
 
     // =========================================================================
     // new employment form fields submit function===============================
     // =========================================================================
+
     const submitNewEmployementForm = async (event: Event) => {
         const formElement = event.target as HTMLFormElement;
         const formData = new FormData(formElement);
@@ -65,7 +67,7 @@
         const examApplicationData = {
             temporaryStaffId: String(formData.get('temporaryStaffId')),
             staffEmail: String(formData.get('staffEmail')),
-            generatedUrl: String(formData.get('generatedUrl')),
+            // generatedUrl: String(formData.get('generatedUrl')),
         };
 
         try {
@@ -75,6 +77,18 @@
                 toast.success('Berjaya disimpan!', {
                     style: 'background: #333; color: #fff;',
                 });
+
+                // const response = await api.post('', { body: formData });
+
+                // if (response.ok) {
+                //     toast.success('Berjaya disimpan!', {
+                //         style: 'background: #333; color: #fff;',
+                //     });
+
+                //     // functions
+                // } else {
+                //     toast.error('Tidak Berjaya disimpan. Sila semak lagi');
+                // }
             }
         } catch (err: unknown) {
             if (err instanceof z.ZodError) {
@@ -154,14 +168,14 @@
                 >
             {/if}
         </div>
-        <div class="mb-5 w-fit" aria-disabled="true">
+        <!-- <div class="mb-5 w-fit" aria-disabled="true">
             <FormButton
                 type="generate-link"
                 onClick={() => generateRandomString()}
             />
-        </div>
+        </div> -->
 
-        <SectionHeader title="Maklumat kakitangan baru daripada e-Pengambilan"
+        <!-- <SectionHeader title="Maklumat kakitangan baru daripada e-Pengambilan"
         ></SectionHeader>
         <div class="my-5 space-y-2.5">
             <TextField
@@ -178,7 +192,7 @@
                     >{errorData?.generatedUrl[0]}</span
                 >
             {/if}
-        </div>
+        </div> -->
     </form>
 </section>
 
