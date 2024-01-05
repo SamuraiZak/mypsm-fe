@@ -33,20 +33,3 @@ function getNextExamNumber(existingData: IntExams[]) {
     const maxId: number = Math.max(...existingIds);
     return maxId !== -Infinity ? maxId + 1 : 1; // If no records, start with ID 1
 }
-
-export const actions = {
-    create: async ({ request }) => {
-        await new Promise((fulfil) => setTimeout(fulfil, 1000));
-
-        const data = await request.formData();
-
-        try {
-            console.log(data);
-            //code
-        } catch (err: unknown) {
-            return fail(422, {
-                //code
-            });
-        }
-    },
-};

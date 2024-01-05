@@ -14,10 +14,9 @@ import { mockLookupReligions } from '$lib/mocks/database/mockLookupReligions';
 import { mockLookupServiceTypes } from '$lib/mocks/database/mockLookupServiceTypes';
 import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
 import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
-import { getEmployees } from '$lib/service/employees/staff-service.js';
 
 export async function load({ params }) {
-    const data: IntEmployees[] = await getEmployees();
+    const data: IntEmployees[] = mockEmployees;
 
     const currentEmployee: IntEmployees | undefined = data.find(
         (staff) =>
