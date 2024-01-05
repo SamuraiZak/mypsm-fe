@@ -6,8 +6,8 @@
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import { maklumatPeribadiForm } from '$lib/mocks/profil/maklumat-peribadi';
-    import { ZodError, z } from 'zod';
-
+    import { ZodError, string, z } from 'zod';
+    import { json } from '@sveltejs/kit';
     let currMeetingBat: string = mesyuarat[0].mesyuarat;
     let staffAmount: number = mesyuarat[0].jumlahKakitangan;
     let selectedMeetingType: string = meetings[0].value;
@@ -27,6 +27,20 @@
             meetingResult: radioValue[0],
         },
     ];
+
+    let advancementMeetingBatch: {
+        meetingBatch: string;
+        staffCount: number;
+        meetingName: string;
+        meetingDate: string;
+        staffResults: staffMeetingResults[];
+    };
+
+    interface staffMeetingResults {
+        staffId: string;
+        meetingRemark: string;
+        meetingResult: string;
+    }
 
     // =========================================================================
     // z validation schema and submit function for the new employment form fields
@@ -58,6 +72,7 @@
     const meetingResultSchema = z.object({
         meetingType: z.string().min(1, { message: 'Sila pilih pilihan anda.' }),
         meetingDate: dateSchema,
+        meetingRemark: longTextSchema,
     });
 
     export const submitMeetingResultResult = async (event: Event) => {
@@ -67,12 +82,31 @@
             'meetingType',
         ) as HTMLSelectElement;
 
+        formData.append('meetingType', String(meetingTypeSelector.value));
+
+        for (let index = 0; index < staffs.length; index++) {
+            formData.append(
+                'staffId' + staffs[index].noPekerja,
+                String(formData.get('staffId' + staffs[index].noPekerja)),
+            );
+            formData.append(
+                'meetingResult' + staffs[index].noPekerja,
+                String(formData.get('meetingResult' + staffs[index].noPekerja)),
+            );
+            formData.append(
+                'meetingRemark' + staffs[index].noPekerja,
+                String(formData.get('meetingRemark' + staffs[index].noPekerja)),
+            );
+        }
+
         const meetingResultData = {
-            meetingType: String(meetingTypeSelector.value),
+            meetingType: String(formData.get('meetingType')),
             meetingDate: String(formData.get('meetingDate')),
+            meetingRemark: String(formData.getAll('meetingRemark')),
         };
 
         try {
+            errorData = [];
             const result = meetingResultSchema.parse(meetingResultData);
         } catch (error: unknown) {
             if (error instanceof ZodError) {
@@ -106,14 +140,14 @@
         />
         <DropdownSelect
             hasError={errorData?.meetingType}
-            name="meetingType"
+            id="meetingType"
             label="Nama dan Bilangan Mesyuarat"
             dropdownType="label-left-full"
             options={meetings}
             bind:index={selectedMeetingType}
         />
         {#if errorData?.meetingType}
-            <span class="font-sans text-sm italic text-system-danger"
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
                 >{errorData?.meetingType[0]}</span
             >
         {/if}
@@ -126,7 +160,7 @@
             type="date"
         />
         {#if errorData?.meetingDate}
-            <span class="font-sans text-sm italic text-system-danger"
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
                 >{errorData?.meetingDate[0]}</span
             >
         {/if}
@@ -139,13 +173,36 @@
             <b class="w-full text-base text-system-primary"
                 >{index + 1}. {value.namaPenuh} ({value.noPekerja})</b
             >
-            <LongTextField label="Tindakan/Ulasan Mesyuarat" />
+            <input
+                type="text"
+                hidden
+                name="staffId{value.noPekerja}"
+                value={value.id}
+            />
+            <LongTextField
+                hasError={errorData?.meetingRemark}
+                name="meetingRemark"
+                label="Tindakan/Ulasan Mesyuarat"
+            />
+            {#if errorData?.meetingRemark}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{errorData?.meetingRemark[0]}</span
+                >
+            {/if}
             <RadioSingle
+                name="meetingResult{value.noPekerja}"
                 disabled={false}
                 {options}
                 legend="Keputusan Mesyuarat"
-                bind:userSelected={radioValue[index]}
+                userSelected={radioValue[index]}
             />
+            {#if errorData?.meetingResult}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{errorData?.meetingResult[0]}</span
+                >
+            {/if}
         </div>
     {/each}
 </form>
