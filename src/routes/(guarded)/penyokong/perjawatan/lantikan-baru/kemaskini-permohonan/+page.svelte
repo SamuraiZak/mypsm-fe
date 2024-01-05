@@ -43,18 +43,18 @@
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import { getEmployees } from '$lib/service/employees/staff-service';
     import type { SelectOptionType } from 'flowbite-svelte';
     import { onMount } from 'svelte';
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import { goto } from '$app/navigation';
+    import { ZodError, z } from 'zod';
     let employeeLists: SelectOptionType<any>[] = [];
     let selectedSupporter: string;
     let selectedApprover: string;
 
     onMount(async () => {
-        const staffs: IntEmployees[] = await getEmployees();
+        const staffs: IntEmployees[] = mockEmployees;
 
         employeeLists = staffs.map((staff) => ({
             value: staff.id.toString(),
@@ -78,17 +78,17 @@
 
     let passerResult: string = 'passed';
 
-        let isSupported: string = 'true';
-        const supportOptions: RadioOption[] = [
-            {
-                value: 'true',
-                label: 'SOKONG',
-            },
-            {
-                value: 'false',
-                label: 'TIDAK SOKONG',
-            },
-        ];
+    let isSupported: string = 'true';
+    const supportOptions: RadioOption[] = [
+        {
+            value: 'true',
+            label: 'SOKONG',
+        },
+        {
+            value: 'false',
+            label: 'TIDAK SOKONG',
+        },
+    ];
 
     let isCertified: string = 'true';
     const certifyOptions: RadioOption[] = [
@@ -296,6 +296,65 @@
             }
         }
     }
+
+    // =========================================================================
+    // z validation schema and submit function for the new employment form fields
+    // =========================================================================
+    let errorData: any;
+
+    const longTextSchema = z
+        .string({ required_error: 'Medan ini tidak boleh kosong.' })
+        .min(4, {
+            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+        })
+        .max(124, {
+            message: 'Medan ini tidak boleh melebihi 124 karakter.',
+        })
+        .trim();
+
+    const dateSchema = z.coerce
+        .date({
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_date'
+                        ? 'Tarikh tidak boleh dibiar kosong.'
+                        : defaultError,
+            }),
+        })
+        .optional();
+
+    // New Employment - Secretary Result section
+    const meetingResultSchema = z.object({
+        meetingType: z.string().min(1, { message: 'Sila pilih pilihan anda.' }),
+        supporterRemark: dateSchema,
+        supporterResult: longTextSchema,
+    });
+
+    export const submitMeetingResultResult = async (event: Event) => {
+        const formElement = event.target as HTMLFormElement;
+        const formData = new FormData(formElement);
+        const meetingTypeSelector = document.getElementById(
+            'meetingType',
+        ) as HTMLSelectElement;
+
+        formData.append('meetingType', String(meetingTypeSelector.value));
+
+        const meetingResultData = {
+            meetingType: String(formData.get('meetingType')),
+            meetingDate: String(formData.get('meetingDate')),
+            meetingRemark: String(formData.getAll('meetingRemark')),
+        };
+
+        try {
+            errorData = [];
+            const result = meetingResultSchema.parse(meetingResultData);
+        } catch (error: unknown) {
+            if (error instanceof ZodError) {
+                const { fieldErrors: errors } = error.flatten();
+                errorData = errors;
+            }
+        }
+    };
 </script>
 
 <ContentHeader
@@ -1060,17 +1119,31 @@
                     >
                 </div>
                 <LongTextField
-                    id="supporter-remark"
+                    hasError={errorData?.meetingRemark}
+                    name="supporterRemark"
                     label="Tindakan/Ulasan"
                     value=""
                 ></LongTextField>
+                {#if errorData?.meetingRemark}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.meetingRemark[0]}</span
+                    >
+                {/if}
 
                 <RadioSingle
                     disabled={false}
+                    name="supporterResult"
                     options={supportOptions}
                     legend={'Keputusan'}
                     bind:userSelected={isSupported}
                 ></RadioSingle>
+                {#if errorData?.meetingResult}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.meetingResult[0]}</span
+                    >
+                {/if}
                 <hr />
                 <!-- Pelulus Card -->
                 <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
