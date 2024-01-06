@@ -11,7 +11,6 @@
     import { onMount } from 'svelte';
 
     export let editable: boolean = false;
-    export let ptbData: PtbAndKwap;
     let currentService: PtbService;
     let tooltipContent: string = '';
     const itkaTooltip: string = 'ITKA bermaksud ...';
