@@ -8,6 +8,7 @@
     import { maklumatPeribadiForm } from '$lib/mocks/profil/maklumat-peribadi';
     import { ZodError, string, z } from 'zod';
     import { json } from '@sveltejs/kit';
+    import toast, { Toaster } from 'svelte-french-toast';
     let currMeetingBat: string = mesyuarat[0].mesyuarat;
     let staffAmount: number = mesyuarat[0].jumlahKakitangan;
     let selectedMeetingType: string = meetings[0].value;
@@ -108,10 +109,22 @@
         try {
             errorData = [];
             const result = meetingResultSchema.parse(meetingResultData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+            }
         } catch (error: unknown) {
             if (error instanceof ZodError) {
                 const { fieldErrors: errors } = error.flatten();
                 errorData = errors;
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
             }
         }
     };
@@ -206,3 +219,5 @@
         </div>
     {/each}
 </form>
+
+<Toaster />
