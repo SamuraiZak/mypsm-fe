@@ -78,6 +78,8 @@
                     style: 'background: #333; color: #fff;',
                 });
 
+                setTimeout(() => goto('../lantikan-baru'), 1500);
+
                 // const response = await api.post('', { body: formData });
 
                 // if (response.ok) {
