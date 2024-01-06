@@ -9,6 +9,7 @@
     import { goto } from '$app/navigation';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import StaffSelector from '$lib/components/staff-selector/StaffSelector.svelte';
+    import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
 
     export let tableData: PtbAndKwap[];
     let tempData: PtbAndKwap;
@@ -22,7 +23,9 @@
 >
     <!-- Table filter placeholder -->
     <FilterContainer>
-        <StaffSelector selectorName="ptb-pension" />
+        <FilterTextInput label="Nama Pekerja" />
+        <FilterTextInput label="No. Pekerja" />
+        <FilterTextInput label="No. Kad Pengenalan" />
         <ShortTextField label="Tarikh Mohon" type="date" />
         <!-- Select dropdowns -->
         <DropdownSelect
