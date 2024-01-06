@@ -2,10 +2,8 @@
 
 import { mockPTBdanKWAP } from '$lib/mocks/perjawatan/PTB-dan-KWAP/ptb-dan-kwap.js';
 
-export async function load({ cookies }) {
+export async function load() {
     const fetchedData: PtbAndKwap[] = mockPTBdanKWAP;
-
-    const userId = cookies.get('userId');
 
     return {
         props: {
@@ -19,6 +17,5 @@ export async function load({ cookies }) {
                 tindakanUlasan: list.tindakanUlasan,
             })),
         },
-        userId,
     };
 }
