@@ -26,6 +26,7 @@
     import type { SelectOptionType } from 'flowbite-svelte';
     import { Badge, Tooltip } from 'flowbite-svelte';
     import { onMount } from 'svelte';
+    import toast from 'svelte-french-toast';
     import { ZodError, any, z } from 'zod';
     export let data;
     let employeeLists: SelectOptionType<any>[] = [];
@@ -425,10 +426,23 @@
             const result = newEmploymentAssignApproverSupporterSchema.parse(
                 newEmploymentSecretaryResultData,
             );
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                setTimeout(() => goto('../lantikan-baru'), 1500);
+            }
         } catch (error: unknown) {
             if (error instanceof ZodError) {
                 const { fieldErrors: errors } = error.flatten();
                 errorData = errors;
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
             }
         }
     };
