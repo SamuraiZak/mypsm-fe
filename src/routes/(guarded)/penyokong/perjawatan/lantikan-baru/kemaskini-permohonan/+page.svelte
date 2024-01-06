@@ -49,6 +49,7 @@
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import { goto } from '$app/navigation';
     import { ZodError, z } from 'zod';
+    import toast, { Toaster } from 'svelte-french-toast';
     let employeeLists: SelectOptionType<any>[] = [];
     let selectedSupporter: string;
     let selectedApprover: string;
@@ -312,46 +313,47 @@
         })
         .trim();
 
-    const dateSchema = z.coerce
-        .date({
+    // New Employment - Supporter Result section
+    const supporterResultSchema = z.object({
+        supporterRemark: longTextSchema,
+        supporterResult: z.enum(['true', 'false'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
-                    issue.code === 'invalid_date'
-                        ? 'Tarikh tidak boleh dibiar kosong.'
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tetapkan pilihan anda.'
                         : defaultError,
             }),
-        })
-        .optional();
-
-    // New Employment - Secretary Result section
-    const meetingResultSchema = z.object({
-        meetingType: z.string().min(1, { message: 'Sila pilih pilihan anda.' }),
-        supporterRemark: dateSchema,
-        supporterResult: longTextSchema,
+        }),
     });
 
-    export const submitMeetingResultResult = async (event: Event) => {
+    export const submitSupporterResultForm = async (event: Event) => {
         const formElement = event.target as HTMLFormElement;
         const formData = new FormData(formElement);
-        const meetingTypeSelector = document.getElementById(
-            'meetingType',
-        ) as HTMLSelectElement;
 
-        formData.append('meetingType', String(meetingTypeSelector.value));
-
-        const meetingResultData = {
-            meetingType: String(formData.get('meetingType')),
-            meetingDate: String(formData.get('meetingDate')),
-            meetingRemark: String(formData.getAll('meetingRemark')),
+        const supporterResultData = {
+            supporterRemark: String(formData.get('supporterRemark')),
+            supporterResult: String(formData.get('supporterResult')),
         };
 
         try {
             errorData = [];
-            const result = meetingResultSchema.parse(meetingResultData);
+            const result = supporterResultSchema.parse(supporterResultData);
+             if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+            }
         } catch (error: unknown) {
             if (error instanceof ZodError) {
                 const { fieldErrors: errors } = error.flatten();
                 errorData = errors;
+                  toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
             }
         }
     };
@@ -1106,12 +1108,16 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Tetapkan Penyokong dan Pelulus (Jika Sah)"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton primary label="Simpan" form="supporterResultForm">
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
         <StepperContentBody>
-            <div class="flex w-full flex-col gap-2.5">
+            <form
+                id="supporterResultForm"
+                on:submit|preventDefault={submitSupporterResultForm}
+                class="flex w-full flex-col gap-2.5"
+            >
                 <!-- Penyokong Card -->
                 <div class="mb-5">
                     <b class="text-sm text-system-primary"
@@ -1119,15 +1125,14 @@
                     >
                 </div>
                 <LongTextField
-                    hasError={errorData?.meetingRemark}
+                    hasError={errorData?.supporterRemark}
                     name="supporterRemark"
                     label="Tindakan/Ulasan"
-                    value=""
                 ></LongTextField>
-                {#if errorData?.meetingRemark}
+                {#if errorData?.supporterRemark}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.meetingRemark[0]}</span
+                        >{errorData?.supporterRemark[0]}</span
                     >
                 {/if}
 
@@ -1138,10 +1143,10 @@
                     legend={'Keputusan'}
                     bind:userSelected={isSupported}
                 ></RadioSingle>
-                {#if errorData?.meetingResult}
+                {#if errorData?.supporterResult}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.meetingResult[0]}</span
+                        >{errorData?.supporterResult[0]}</span
                     >
                 {/if}
                 <hr />
@@ -1165,7 +1170,9 @@
                         >
                     </div>
                 </div>
-            </div>
+            </form>
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+
+<Toaster />
