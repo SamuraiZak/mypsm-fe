@@ -43,19 +43,20 @@
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import { getEmployees } from '$lib/service/employees/staff-service';
     import type { SelectOptionType } from 'flowbite-svelte';
     import { onMount } from 'svelte';
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import { goto } from '$app/navigation';
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { ZodError, z } from 'zod';
     let employeeLists: SelectOptionType<any>[] = [];
     let selectedSupporter: string;
     let selectedApprover: string;
-    let stepperIndex = 11;
+    let stepperIndex = 1;
 
     onMount(async () => {
-        const staffs: IntEmployees[] = await getEmployees();
+        const staffs: IntEmployees[] = mockEmployees;
 
         employeeLists = staffs.map((staff) => ({
             value: staff.id.toString(),
@@ -297,6 +298,67 @@
             }
         }
     }
+
+    // =========================================================================
+    // z validation schema and submit function for the new employment form fields
+    // =========================================================================
+    let errorData: any;
+
+    const longTextSchema = z
+        .string({ required_error: 'Medan ini tidak boleh kosong.' })
+        .min(4, {
+            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+        })
+        .max(124, {
+            message: 'Medan ini tidak boleh melebihi 124 karakter.',
+        })
+        .trim();
+
+    // New Employment - Approver Result section
+    const approverResultSchema = z.object({
+        approverRemark: longTextSchema,
+        approverResult: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tetapkan pilihan anda.'
+                        : defaultError,
+            }),
+        }),
+    });
+
+    export const submitApproverResultForm = async (event: Event) => {
+        const formElement = event.target as HTMLFormElement;
+        const formData = new FormData(formElement);
+
+        const approverResultData = {
+            approverRemark: String(formData.get('approverRemark')),
+            approverResult: String(formData.get('approverResult')),
+        };
+
+        try {
+            errorData = [];
+            const result = approverResultSchema.parse(approverResultData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                setTimeout(() => goto('../lantikan-baru'), 1500);
+            }
+        } catch (error: unknown) {
+            if (error instanceof ZodError) {
+                const { fieldErrors: errors } = error.flatten();
+                errorData = errors;
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
 </script>
 
 <ContentHeader
@@ -1031,7 +1093,7 @@
                 </div>
                 <LongTextField
                     {disabled}
-                    id="supporter-remark"
+                    id="secretaryRemark"
                     label="Tindakan/Ulasan"
                     value="layak"
                 ></LongTextField>
@@ -1048,28 +1110,46 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Tetapkan Penyokong dan Pelulus (Jika Sah)"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton primary label="Simpan" form="approverResultForm">
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
         <StepperContentBody>
-            <div class="flex w-full flex-col gap-2.5">
+            <form
+                id="approverResultForm"
+                on:submit={submitApproverResultForm}
+                class="flex w-full flex-col gap-2.5"
+            >
                 <!-- Penyokong Card -->
                 <div class="mb-5">
                     <b class="text-sm text-system-primary">Keputusan Pelulus</b>
                 </div>
                 <LongTextField
-                    id="supporter-remark"
+                    hasError={errorData?.approverRemark}
+                    name="approverRemark"
+                    id="approverRemark"
                     label="Tindakan/Ulasan"
-                    value=""
                 ></LongTextField>
+                {#if errorData?.approverRemark}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.approverRemark[0]}</span
+                    >
+                {/if}
 
                 <RadioSingle
+                    name="approverResult"
                     disabled={false}
                     options={approveOptions}
                     legend={'Keputusan'}
                     bind:userSelected={isApproved}
                 ></RadioSingle>
+                {#if errorData?.approverResult}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.approverResult[0]}</span
+                    >
+                {/if}
                 <hr />
                 <!-- Pelulus Card -->
                 <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
@@ -1085,12 +1165,12 @@
                     ></TextField>
                     <LongTextField
                         disabled
-                        id="supporter-remark"
+                        id="approverRemark"
                         label="Tindakan/Ulasan"
                         value="Layak"
                     ></LongTextField>
                     <div class="flex w-full flex-row text-sm">
-                        <label for="supporter-result" class="w-[220px]"
+                        <label for="approverRemark" class="w-[220px]"
                             >Keputusan</label
                         ><Badge
                             border
@@ -1099,7 +1179,8 @@
                         >
                     </div>
                 </div>
-            </div>
+            </form>
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+<Toaster />

@@ -3,12 +3,9 @@
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import { Alert } from 'flowbite-svelte';
-    import type { ActionData } from '../$types';
     // import * as ptbService from '$lib/service/ptbAndKwap/services';
     import { onMount } from 'svelte';
-    import type { Cookies } from '@sveltejs/kit';
 
-    let form: ActionData;
     export let ptbData: PtbAndKwap;
     let currentPtb: {
         ptbDate: 'string';
@@ -17,7 +14,6 @@
         pensionNumber: 'string';
         kwapDate: 'string';
     };
-    export let userId: string | undefined;
     let editable: boolean = false;
     let creating = false;
 

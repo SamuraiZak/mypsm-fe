@@ -17,7 +17,7 @@
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     export let data;
-    let stepperIndex = 3;
+    let stepperIndex = 0;
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -81,10 +81,7 @@
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
-                    <MaklumatPtbAndKwap
-                        ptbData={data.record}
-                        userId={data.userId}
-                    />
+                    <MaklumatPtbAndKwap ptbData={data.record} />
                 </div>
             </StepperContentBody>
         </StepperContent>
@@ -92,7 +89,11 @@
             <StepperContentHeader
                 title="Sila Tetapkan Keputusan Anda - Pelulus"
             >
-                <TextIconButton primary label="Simpan" onClick={() => {}}>
+                <TextIconButton
+                    primary
+                    label="Simpan"
+                    form="approverResultForm"
+                >
                     <SvgCheck></SvgCheck>
                 </TextIconButton>
             </StepperContentHeader>
