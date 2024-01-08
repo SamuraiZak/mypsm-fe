@@ -48,21 +48,21 @@
 
     const currentEmployeeUploadedDocuments = mockEmployeeDocumentLists;
 
-    const submitForm = async (event: Event) => {
+    const validateApplicationForm = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);
 
         const exampleFormData = {
-            validateApplicationResult: String(formData.get('validateApplicationResult')),
-            validateApplicationReview: String(formData.get('validateApplicationReview')),
-            validateDocumentResult: String(formData.get('validateDocumentResult')),
-            validateDocumentReview: String(formData.get('validateDocumentReview')),
-            updateApplicationResult: String(formData.get('updateApplicationResult')),
-            updateApplicationReview: String(formData.get('updateApplicationReview')),
+            validateApplicationResult: String(
+                formData.get('validateApplicationResult'),
+            ),
+            validateApplicationReview: String(
+                formData.get('validateApplicationReview'),
+            ),
         };
 
         const exampleFormSchema = z.object({
             // checkbox schema
-            Result: z.enum(['sah', 'tidakSah'], {
+            validateApplicationResult: z.enum(['sah', 'tidakSah'], {
                 errorMap: (issue, { defaultError }) => ({
                     message:
                         issue.code === 'invalid_enum_value'
@@ -71,7 +71,133 @@
                 }),
             }),
             // dateSelectorExample: dateScheme,
-            Review: z
+            validateApplicationReview: z
+                .string({ required_error: 'Medan ini tidak boleh kosong.' })
+                .min(4, {
+                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+                })
+                .max(124, {
+                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
+                })
+                .trim(),
+        });
+
+        try {
+            const result = exampleFormSchema.parse(exampleFormData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData = { ...exampleFormData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedExamFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
+    const validateDocumentForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+
+        const exampleFormData = {
+            validateDocumentResult: String(
+                formData.get('validateDocumentResult'),
+            ),
+            validateDocumentReview: String(
+                formData.get('validateDocumentReview'),
+            ),
+        };
+
+        const exampleFormSchema = z.object({
+            // checkbox schema
+            validateDocumentResult: z.enum(['sah', 'tidakSah'], {
+                errorMap: (issue, { defaultError }) => ({
+                    message:
+                        issue.code === 'invalid_enum_value'
+                            ? 'Sila tetapkan pilihan anda.'
+                            : defaultError,
+                }),
+            }),
+            // dateSelectorExample: dateScheme,
+            validateDocumentReview: z
+                .string({ required_error: 'Medan ini tidak boleh kosong.' })
+                .min(4, {
+                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+                })
+                .max(124, {
+                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
+                })
+                .trim(),
+        });
+
+        try {
+            const result = exampleFormSchema.parse(exampleFormData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData = { ...exampleFormData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedExamFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
+    const updateApplicationForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+
+        const exampleFormData = {
+            updateApplicationResult: String(
+                formData.get('updateApplicationResult'),
+            ),
+            updateApplicationReview: String(
+                formData.get('updateApplicationReview'),
+            ),
+        };
+
+        const exampleFormSchema = z.object({
+            // checkbox schema
+            updateApplicationResult: z.enum(['sah', 'tidakSah'], {
+                errorMap: (issue, { defaultError }) => ({
+                    message:
+                        issue.code === 'invalid_enum_value'
+                            ? 'Sila tetapkan pilihan anda.'
+                            : defaultError,
+                }),
+            }),
+            // dateSelectorExample: dateScheme,
+            updateApplicationReview: z
                 .string({ required_error: 'Medan ini tidak boleh kosong.' })
                 .min(4, {
                     message: 'Medan ini hendaklah lebih daripada 4 karakter.',
@@ -204,7 +330,7 @@
         <StepperContentBody
             ><form
                 id="validateApplicationFormValidation"
-                on:submit|preventDefault={submitForm}
+                on:submit|preventDefault={validateApplicationForm}
                 class="flex w-full flex-col gap-2"
             >
                 <div
@@ -253,7 +379,7 @@
         <StepperContentBody
             ><form
                 id="validateDocumentFormValidation"
-                on:submit|preventDefault={submitForm}
+                on:submit|preventDefault={validateDocumentForm}
                 class="flex w-full flex-col gap-2"
             >
                 <div
@@ -304,7 +430,7 @@
                         <RadioSingle
                             disabled={false}
                             {options}
-                            name="Result"
+                            name="validateDocumentResult"
                             legend={''}
                             bind:userSelected={validateDocumentResult}
                         ></RadioSingle>
@@ -330,7 +456,7 @@
         <StepperContentBody
             ><form
                 id="updateApplicationFormValidation"
-                on:submit|preventDefault={submitForm}
+                on:submit|preventDefault={updateApplicationForm}
                 class="flex w-full flex-col gap-2"
             >
                 <div
@@ -384,4 +510,4 @@
         >
     </StepperContent>
 </Stepper>
-<Toaster/>
+<Toaster />
