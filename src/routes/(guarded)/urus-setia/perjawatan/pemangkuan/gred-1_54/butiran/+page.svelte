@@ -882,20 +882,20 @@
 
     const meetingPlacementResult = z.object({
         newPlacement: z
-            .string({ required_error: 'Nama mesyuarat tidak boleh kosong.' })
+            .string({ required_error: 'Penempatan baru tidak boleh kosong.' })
             .min(10, {
-                message: 'Nama mesyuarat hendaklah melebihi 10 karakter.',
+                message: 'Nama penempatan baru hendaklah melebihi 10 karakter.',
             })
             .max(100, {
                 message:
-                    'Nama mesyuarat yang dimasukkan telah melebihi had yang dibenarkan.',
+                    'Nama penempatan yang dimasukkan telah melebihi had yang dibenarkan.',
             })
             .trim(),
         newDirector: z.enum(['true', 'false'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
                     issue.code === 'invalid_enum_value'
-                        ? 'Sila pilih keputusan pemilihan yang berkaitan.'
+                        ? 'Sila pilih pengarah baru yang berkaitan.'
                         : defaultError,
             }),
         }),
@@ -1040,14 +1040,18 @@
         actingGred: z
             .string({ required_error: 'Gred pemangkuan tidak boleh kosong.' })
             .min(3, {
-                message: 'Sila isi maklumat gred pemangkuan yang betul. Contoh: DV41',
+                message:
+                    'Sila isi maklumat gred pemangkuan yang betul. Contoh: DV41',
             })
             .max(4, {
-                message: 'Maklumat gred pemangkuan yang diisi adalah tidak dibenarkan. Contoh gred: DV41',
+                message:
+                    'Maklumat gred pemangkuan yang diisi adalah tidak dibenarkan. Contoh gred: DV41',
             })
             .trim(),
         newPlacement: z
-            .string({ required_error: 'Nama penempatan baru tidak boleh kosong.' })
+            .string({
+                required_error: 'Nama penempatan baru tidak boleh kosong.',
+            })
             .min(4, {
                 message: 'Penempatan baru hendaklah melebihi 4 karakter.',
             })
@@ -1143,7 +1147,7 @@
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader
         title="Pemangkuan Gred 1-54"
-        description="Sila pilih kakitangan yang layak sebagai calon pemangkuan"
+        description="Sila pilih kakitangan yang terlibat dalam proses pemangkuan ini."
     >
         <!-- TODO: put buttons in this area if necessary -->
         <TextIconButton
