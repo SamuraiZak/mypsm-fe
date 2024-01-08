@@ -12,7 +12,7 @@
     export let id = '';
     export let disabled = false;
     export let options: SelectOptionType<any>[] | undefined;
-    export let index: string | number = 0;
+    // export let index: string | number = 0;
     export let onSelect = () => {};
     export let dropdownType = 'default';
     export let hasTooltip = false;
