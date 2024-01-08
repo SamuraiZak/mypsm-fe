@@ -58,6 +58,7 @@
         </CustomCardBody>
     </CustomCard>
     <div class="flex max-h-full w-full flex-col items-start justify-start">
+        <SectionHeader title="Senarai Pekerja" />
         <DynamicTable
             tableItems={permohonanTanggungKerja}
             {columnKeys}
