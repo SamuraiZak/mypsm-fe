@@ -55,19 +55,21 @@
         },
     ];
 
-    const submitForm = async (event: Event) => {
+    const retirementConfirmationForm = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);
 
         const exampleFormData = {
-            retirementConfirmationResult: String(formData.get('retirementConfirmationResult')),
-            retirementConfirmationReview: String(formData.get('retirementConfirmationReview')),
-            updateApplicationResult: String(formData.get('updateApplicationResult')),
-            updateApplicationReview: String(formData.get('updateApplicationReview')),
+            retirementConfirmationResult: String(
+                formData.get('retirementConfirmationResult'),
+            ),
+            retirementConfirmationReview: String(
+                formData.get('retirementConfirmationReview'),
+            ),
         };
 
         const exampleFormSchema = z.object({
             // checkbox schema
-            result: z.enum(['sah', 'tidakSah'], {
+            retirementConfirmationResult: z.enum(['sah', 'tidakSah'], {
                 errorMap: (issue, { defaultError }) => ({
                     message:
                         issue.code === 'invalid_enum_value'
@@ -76,7 +78,70 @@
                 }),
             }),
             // dateSelectorExample: dateScheme,
-            Review: z
+            retirementConfirmationReview: z
+                .string({ required_error: 'Medan ini tidak boleh kosong.' })
+                .min(4, {
+                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+                })
+                .max(124, {
+                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
+                })
+                .trim(),
+        });
+
+        try {
+            const result = exampleFormSchema.parse(exampleFormData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData = { ...exampleFormData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedExamFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
+    const updateApplicationForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+
+        const exampleFormData = {
+            updateApplicationResult: String(
+                formData.get('updateApplicationResult'),
+            ),
+            updateApplicationReview: String(
+                formData.get('updateApplicationReview'),
+            ),
+        };
+
+        const exampleFormSchema = z.object({
+            // checkbox schema
+            updateApplicationResult: z.enum(['sah', 'tidakSah'], {
+                errorMap: (issue, { defaultError }) => ({
+                    message:
+                        issue.code === 'invalid_enum_value'
+                            ? 'Sila tetapkan pilihan anda.'
+                            : defaultError,
+                }),
+            }),
+            // dateSelectorExample: dateScheme,
+            updateApplicationReview: z
                 .string({ required_error: 'Medan ini tidak boleh kosong.' })
                 .min(4, {
                     message: 'Medan ini hendaklah lebih daripada 4 karakter.',
@@ -211,7 +276,7 @@
         <StepperContentBody
             ><form
                 id="retirementConfirmationFormValidation"
-                on:submit|preventDefault={submitForm}
+                on:submit|preventDefault={retirementConfirmationForm}
                 class="flex w-full flex-col gap-2"
             >
                 <div
@@ -294,7 +359,8 @@
                         {#if errorData?.retirementConfirmationReview}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.retirementConfirmationReview[0]}</span
+                                >{errorData
+                                    ?.retirementConfirmationReview[0]}</span
                             >
                         {/if}
 
@@ -308,7 +374,8 @@
                         {#if errorData?.retirementConfirmationResult}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.retirementConfirmationResult[0]}</span
+                                >{errorData
+                                    ?.retirementConfirmationResult[0]}</span
                             >
                         {/if}
                     </div>
@@ -327,7 +394,7 @@
         <StepperContentBody
             ><form
                 id="updateApplicationFormValidation"
-                on:submit|preventDefault={submitForm}
+                on:submit|preventDefault={updateApplicationForm}
                 class="flex w-full flex-col gap-2"
             >
                 <div
