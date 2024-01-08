@@ -11,12 +11,12 @@
     import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
-    import ImpactTable from '$lib/components/table/ImpactTable.svelte';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
     import { mockActingIndividual } from '$lib/mocks/database/mockActingIndividual';
     import { mockActingBatch } from '$lib/mocks/database/mockActingBatch';
     import { currentActingBatchId } from '$lib/stores/pemangkuan/pemangkuanStores';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
+    import SvgBlock from '$lib/assets/svg/SvgBlock.svelte';
 
     let excludedKeys = [
         'id',
@@ -144,7 +144,7 @@
                 goto('/urus-setia/perjawatan/pemangkuan');
             }}
         >
-            <SvgXMark></SvgXMark>
+            <SvgBlock />
         </TextIconButton>
         <TextIconButton
             label="Seterusnya"
@@ -176,6 +176,8 @@
                 </CustomCardHeader>
                 <CustomCardBody>
                     <div class="flex w-full flex-wrap gap-2.5">
+                        <FilterTextInput label="Gred"></FilterTextInput>
+                        <FilterTextInput label="Jawatan"></FilterTextInput>
                         <FilterTextInput label="Nama"></FilterTextInput>
                         <FilterTextInput label="No. K/P"></FilterTextInput>
                     </div>
@@ -185,20 +187,6 @@
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
-                <!-- <ImpactTable
-                    bind:passData={tempData}
-                    tableItems={mockEmployees}
-                    excludeCol={excludedKeys}
-                    withRowSelection
-                    selectAdd
-                    onSelect={() => {
-                        // let tempSelected = selectedEmployee;
-                        // tempSelected.push(tempData);
-                        // selectedEmployee = tempSelected;
-                        pushSelected(tempData);
-                    }}
-                ></ImpactTable> -->
-
                 <DynamicTable
                     bind:passData={tempData}
                     tableItems={mockEmployees}
@@ -211,26 +199,53 @@
                         'employeeNumber',
                         'name',
                         'identityDocumentNumber',
+                        'program',
+                        'skim',
+                        'gred',
+                        'roles',
+                        'homeAddress',
                     ]}
                 ></DynamicTable>
             </div>
         </CustomTabContent>
 
         <!-- Senarai Kakitangan Yang Dipilih -->
-        <CustomTabContent title="Senarai Kakitangan Yang DIpilih">
+        <CustomTabContent title="Senarai Kakitangan Yang Dipilih">
+            <CustomCard borderClass="border-system-primary">
+                <CustomCardHeader title="Semua Tetapan Pencarian">
+                    <TextIconButton label="Cari" primary onClick={() => {}}>
+                        <SvgManifyingGlass></SvgManifyingGlass>
+                    </TextIconButton>
+                </CustomCardHeader>
+                <CustomCardBody>
+                    <div class="flex w-full flex-wrap gap-2.5">
+                        <FilterTextInput label="Gred"></FilterTextInput>
+                        <FilterTextInput label="Jawatan"></FilterTextInput>
+                        <FilterTextInput label="Nama"></FilterTextInput>
+                        <FilterTextInput label="No. K/P"></FilterTextInput>
+                    </div>
+                </CustomCardBody>
+            </CustomCard>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
-                <ImpactTable
-                    bind:passData={tempData}
+                <DynamicTable
                     tableItems={selectedEmployee}
-                    excludeCol={excludedKeys}
                     withRowSelection
                     onSelect={() => {
-                        // selectedEmployee.push(tempData);
                         popSelected(tempData);
                     }}
-                ></ImpactTable>
+                    columnKeys={[
+                        'employeeNumber',
+                        'name',
+                        'identityDocumentNumber',
+                        'program',
+                        'skim',
+                        'gred',
+                        'roles',
+                        'homeAddress',
+                    ]}
+                ></DynamicTable>
             </div>
         </CustomTabContent>
     </CustomTab>

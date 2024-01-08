@@ -1,5 +1,4 @@
 <script lang="ts">
-    import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
     import { goto } from '$app/navigation';
@@ -9,21 +8,15 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import SvgPrinter from '$lib/assets/svg/SvgPrinter.svelte';
-    import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
-    import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
-    import CustomCardHeader from '$lib/components/cards/CustomCardHeader.svelte';
     import CustomCard from '$lib/components/cards/CustomCard.svelte';
     import CustomCardBody from '$lib/components/cards/CustomCardBody.svelte';
     import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
     import SvgManifyingGlass from '$lib/assets/svg/SvgManifyingGlass.svelte';
-    import ImpactTable from '$lib/components/table/ImpactTable.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { meetings } from '$lib/mocks/mesyuarat/mesyuarat.js';
-    import { Checkbox, Radio, Tooltip } from 'flowbite-svelte';
-    import FormButton from '$lib/components/buttons/FormButton.svelte';
     import DataTable from '$lib/components/data-table/DataTable.svelte';
     import DtTableHead from '$lib/components/data-table/DtTableHead.svelte';
     import DtTableHeadCell from '$lib/components/data-table/DtTableHeadCell.svelte';
@@ -31,38 +24,26 @@
     import DtTableBody from '$lib/components/data-table/DtTableBody.svelte';
     import DtTableDataCell from '$lib/components/data-table/DtTableDataCell.svelte';
     import IconButton from '$lib/components/buttons/IconButton.svelte';
-    import SvgEllipsisCircle from '$lib/assets/svg/SvgEllipsisCircle.svelte';
-    import { permohonanKlinikPanel } from '$lib/mocks/penyokong/perubatan/permohonan-klinik-panel';
     import { positions } from '$lib/mocks/positions/positions';
     import FileInputField from '$lib/components/input/FileInputField.svelte';
     import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
     import DownloadAttachment from '$lib/components/input/DownloadAttachment.svelte';
     import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
     import { mockPerjawatanPemangkuan } from '$lib/mocks/database/mockPerjawatanPemangkuan';
-    import type {
-        CalonPemangkuan,
-        DtoCalonPemangkuan,
-        IntActingApplication,
-        MesyuaratPemilihanCalonPemangkuan,
-    } from '$lib/interfaces/database/actingApplication';
+    import type { DtoCalonPemangkuan } from '$lib/interfaces/database/actingApplication';
     import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
-    import SvgArrowLeft from '$lib/assets/svg/SvgArrowLeft.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    import { createCompareFn } from '$lib/service/services';
     import { greds } from '$lib/mocks/gred/gred.js';
-    import Form from '$lib/components/form/Form.svelte';
-    import SvgArrowDown from '$lib/assets/svg/SvgArrowDown.svelte';
     import SvgBlock from '$lib/assets/svg/SvgBlock.svelte';
     import SvgDoubleTick from '$lib/assets/svg/SvgDoubleTick.svelte';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
-    import {
-        fileSelectionList,
-        selectedRecordId,
-    } from '$lib/stores/globalState';
+    import { fileSelectionList } from '$lib/stores/globalState';
     import { onMount } from 'svelte';
     import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { ZodError, z } from 'zod';
 
     export let disabled: boolean = true;
 
@@ -81,24 +62,16 @@
     let target: any;
     let texthidden = false;
 
-    let results = [
-        { value: 'passed', name: 'LULUS' },
-        { value: 'notPassed', name: 'TIDAK LULUS' },
-        { value: 'supported', name: 'SOKONG' },
-        { value: 'notSupported', name: 'TIDAK SOKONG' },
-    ];
-
-    let passerResult: string = 'passed';
-
-    let isSupported: string = 'true';
+    let radioChosen: string = '';
+    let textFieldValue: string = 'Butiran Lengkap...';
     const supportOptions: RadioOption[] = [
         {
             value: 'true',
-            label: 'SOKONG',
+            label: 'Sokong',
         },
         {
             value: 'false',
-            label: 'TIDAK SOKONG',
+            label: 'Tidak Sokong',
         },
     ];
 
@@ -126,7 +99,7 @@
     }
 
     //===================== Stepper controls =====================
-    let stepperIndex = 0;
+    let stepperIndex = 9;
 
     function goNext() {
         stepperIndex += 1;
@@ -135,168 +108,6 @@
     function goPrevious() {
         stepperIndex -= 1;
     }
-
-    //===================== Page Init Data =====================
-
-    let actingDetails: IntActingApplication = {
-        idRekod: 1,
-        jenisPemangkuan: 'Gred 1-54',
-        tarikhRekod: Date.now.toString(),
-        jumlahCalon: 0,
-        status: 'Sedang Diproses',
-        calonPemangkuan: [],
-    };
-
-    let allEmployeeList: DtoCalonPemangkuan[] = [
-        {
-            idRekod: 1,
-            idKakitangan: 1,
-            nomborPekerja: '00001',
-            namaKakitangan: 'Jon Bovi',
-            nomborKP: '910821-13-5671',
-            gredSemasa: 'E30',
-            gredPemangkuan: 'A41',
-            jawatanSemasa: 'Penolong Pegawai Perkhidmatan',
-            program: '-',
-            skim: '-',
-            penempatanSekarang: '-',
-
-            // mesyuarat
-            gredUntukDipangku: '',
-            jawatanUntukDipangku: '',
-            layakTemuduga: '',
-            // temuduga
-            tarikhTemuduga: '',
-            masaTemuduga: '',
-            pusatTemuduga: '',
-            markahTemuduga: '',
-            keputusanTemuduga: '',
-            // semakan
-            laporanTatatertib: '',
-            laporanPrestasi: '',
-            laporanSprm: '',
-            perakuanKetuaJabatan: '',
-            // mesyuarat kenaikan pangkat
-            keputusanKenaikanPangkat: '',
-            kodJawatanMemangku: '',
-            gelaranJawatanMemangku: '',
-            tarikhKuatkuasaPemangkuan: '',
-            tarikhCukupTempohPemangkuan: '',
-            // mesyuarat penempatan
-            penempatanBaru: '',
-            tarikhLaporDiri: '',
-            // permohonan penangguhan
-            permohonanPenangguhan: '',
-            penempatanDipohon: '',
-            tarikhLaporDiriDipohon: '',
-            keputusanPenangguhanAtauPindaan: '',
-            // keputusan akhir
-            kodJawatanMemangkuAkhir: '',
-            gelaranJawatanMemangkuAkhir: '',
-            tarikhKuatKuasaPemangkuanAkhir: '',
-            tarikhCukupTempohPemangkuanAkhir: '',
-            penempatanBaruAkhir: '',
-            tarikhLaporDiriAkhir: '',
-        },
-        {
-            idRekod: 2,
-            idKakitangan: 2,
-            nomborPekerja: '00002',
-            namaKakitangan: 'Teressa Teng',
-            nomborKP: '930315-13-6188',
-            gredSemasa: 'D41',
-            gredPemangkuan: '-',
-            jawatanSemasa: 'Penolong Pegawai Tadbir',
-            program: '-',
-            skim: '-',
-            penempatanSekarang: '-',
-            // mesyuarat
-            gredUntukDipangku: '',
-            jawatanUntukDipangku: '',
-            layakTemuduga: '',
-            // temuduga
-            tarikhTemuduga: '',
-            masaTemuduga: '',
-            pusatTemuduga: '',
-            markahTemuduga: '',
-            keputusanTemuduga: '',
-            // semakan
-            laporanTatatertib: '',
-            laporanPrestasi: '',
-            laporanSprm: '',
-            perakuanKetuaJabatan: '',
-            // mesyuarat kenaikan pangkat
-            keputusanKenaikanPangkat: '',
-            kodJawatanMemangku: '',
-            gelaranJawatanMemangku: '',
-            tarikhKuatkuasaPemangkuan: '',
-            tarikhCukupTempohPemangkuan: '',
-            // mesyuarat penempatan
-            penempatanBaru: '',
-            tarikhLaporDiri: '',
-            // permohonan penangguhan
-            permohonanPenangguhan: '',
-            penempatanDipohon: '',
-            tarikhLaporDiriDipohon: '',
-            keputusanPenangguhanAtauPindaan: '',
-            // keputusan akhir
-            kodJawatanMemangkuAkhir: '',
-            gelaranJawatanMemangkuAkhir: '',
-            tarikhKuatKuasaPemangkuanAkhir: '',
-            tarikhCukupTempohPemangkuanAkhir: '',
-            penempatanBaruAkhir: '',
-            tarikhLaporDiriAkhir: '',
-        },
-        {
-            idRekod: 3,
-            idKakitangan: 3,
-            nomborPekerja: '00003',
-            namaKakitangan: 'Xue Hua Piao',
-            nomborKP: '851130-13-7747',
-            gredSemasa: 'H12',
-            gredPemangkuan: 'D43',
-            jawatanSemasa: 'Penolong Pegawai Teknologi Maklumat',
-            program: '-',
-            skim: '-',
-            penempatanSekarang: '-',
-            // mesyuarat
-            gredUntukDipangku: '',
-            jawatanUntukDipangku: '',
-            layakTemuduga: '',
-            // temuduga
-            tarikhTemuduga: '',
-            masaTemuduga: '',
-            pusatTemuduga: '',
-            markahTemuduga: '',
-            keputusanTemuduga: '',
-            // semakan
-            laporanTatatertib: '',
-            laporanPrestasi: '',
-            laporanSprm: '',
-            perakuanKetuaJabatan: '',
-            // mesyuarat kenaikan pangkat
-            keputusanKenaikanPangkat: '',
-            kodJawatanMemangku: '',
-            gelaranJawatanMemangku: '',
-            tarikhKuatkuasaPemangkuan: '',
-            tarikhCukupTempohPemangkuan: '',
-            // mesyuarat penempatan
-            penempatanBaru: '',
-            tarikhLaporDiri: '',
-            // permohonan penangguhan
-            permohonanPenangguhan: '',
-            penempatanDipohon: '',
-            tarikhLaporDiriDipohon: '',
-            keputusanPenangguhanAtauPindaan: '',
-            // keputusan akhir
-            kodJawatanMemangkuAkhir: '',
-            gelaranJawatanMemangkuAkhir: '',
-            tarikhKuatKuasaPemangkuanAkhir: '',
-            tarikhCukupTempohPemangkuanAkhir: '',
-            penempatanBaruAkhir: '',
-            tarikhLaporDiriAkhir: '',
-        },
-    ];
 
     //Date Selector for Tarikh Lapor Diri
     let selectedDate = new Date();
@@ -319,89 +130,73 @@
 
     let placeholderData: any = {};
 
-    let editMode: boolean = false;
-
     //===================== Step 1 =====================
 
     // Step 1 script starts here
     let editingCandidateList = false;
 
-    function saveSelected() {
-        // actingDetails.calonPemangkuan = selectedCandidatesList;
-        selectedCandidatesList = tempSelectedCandidatesList;
-    }
+    //zod validation
+    let errorData: any;
+    const exampleFormSchema = z.object({
+        //TextField
+        remarks: z
+            .string({ required_error: 'Tindakan/Ulasan tidak boleh kosong.' })
+            .min(20, {
+                message: 'Tindakan/Ulasan hendaklah melebihi 20 karakter.',
+            })
+            .max(124, {
+                message: 'Tindakan/Ulasan tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
 
-    function assignValue() {
-        placeholderData = {
-            idRekod: currentData.idRekod,
-            idKakitangan: currentData.idKakitangan,
-            nomborPekerja: currentData.nomborPekerja,
-            namaKakitangan: currentData.namaKakitangan,
-            nomborKP: currentData.nomborKP,
-            gredSemasa: currentData.gredSemasa,
-            jawatanSemasa: currentData.jawatanSemasa,
-            // mesyuarat
-            gredUntukDipangku: currentData.gredUntukDipangku,
-            jawatanUntukDipangku: currentData.jawatanUntukDipangku,
-            layakTemuduga: currentData.layakTemuduga,
-            // temuduga
-            tarikhTemuduga: currentData.tarikhTemuduga,
-            masaTemuduga: currentData.masaTemuduga,
-            pusatTemuduga: currentData.pusatTemuduga,
-            markahTemuduga: currentData.markahTemuduga,
-            keputusanTemuduga: currentData.keputusanTemuduga,
-            // semakan
-            laporanTatatertib: currentData.laporanTatatertib,
-            laporanPrestasi: currentData.laporanPrestasi,
-            laporanSprm: currentData.laporanSprm,
-            perakuanKetuaJabatan: currentData.perakuanKetuaJabatan,
-            // mesyuarat kenaikan pangkat
-            keputusanKenaikanPangkat: currentData.keputusanKenaikanPangkat,
-            kodJawatanMemangku: currentData.kodJawatanMemangku,
-            gelaranJawatanMemangku: currentData.gelaranJawatanMemangku,
-            tarikhKuatkuasaPemangkuan: currentData.tarikhKuatkuasaPemangkuan,
-            tarikhCukupTempohPemangkuan:
-                currentData.tarikhCukupTempohPemangkuan,
-            // mesyuarat penempatan
-            penempatanBaru: currentData.penempatanBaru,
-            tarikhLaporDiri: currentData.tarikhLaporDiri,
-            // permohonan penangguhan
-            permohonanPenangguhan: currentData.permohonanPenangguhan,
-            penempatanDipohon: currentData.penempatanDipohon,
-            tarikhLaporDiriDipohon: currentData.tarikhLaporDiriDipohon,
-            keputusanPenangguhanAtauPindaan:
-                currentData.keputusanPenangguhanAtauPindaan,
-            // keputusan akhir
-            kodJawatanMemangkuAkhir: currentData.kodJawatanMemangkuAkhir,
-            gelaranJawatanMemangkuAkhir:
-                currentData.gelaranJawatanMemangkuAkhir,
-            tarikhKuatKuasaPemangkuanAkhir:
-                currentData.tarikhKuatKuasaPemangkuanAkhir,
-            tarikhCukupTempohPemangkuanAkhir:
-                currentData.tarikhCukupTempohPemangkuanAkhir,
-            penempatanBaruAkhir: currentData.penempatanBaruAkhir,
-            tarikhLaporDiriAkhir: currentData.tarikhLaporDiriAkhir,
+        //Radio Button
+        certify: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tetapkan pilihan anda.'
+                        : defaultError,
+            }),
+        }),
+    });
+
+    const submitForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+
+        const exampleFormData = {
+            certify: String(formData.get('certify')),
+            remarks: String(formData.get('remarks')),
         };
-    }
-</script>
+        try {
+            const result = exampleFormSchema.parse(exampleFormData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
 
-<!-- header section -->
-<section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader
-        title="Pemangkuan Gred 41"
-        description="Sila pilih kakitangan yang terlibat dalam process pemangkuan ini"
-    >
-        <!-- TODO: put buttons in this area if necessary -->
-        <TextIconButton
-            label="Tutup"
-            onClick={() => {
-                goto('/penyokong/halaman-utama');
-            }}
-        >
-            <SvgXMark></SvgXMark>
-        </TextIconButton>
-    </ContentHeader>
-</section>
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData = { ...exampleFormData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedExamFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan semua maklumat adalah lengkap dan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
+</script>
 
 <!-- content section -->
 <!-- do not change the style of this section -->
@@ -409,7 +204,11 @@
     class="flex h-full max-h-[100vh-172px] w-full flex-col items-start justify-start overflow-y-hidden"
 >
     <!-- start your content with this div and style it with your own preference -->
-    <Stepper bind:activeIndex={stepperIndex} dataId="#01" dataStatus="Draf">
+    <Stepper
+        bind:activeIndex={stepperIndex}
+        dataId={'ID Pemangkuan #77699'}
+        dataStatus={'Sedang Diproses'}
+    >
         <!-- =========================================================== -->
         <!-- Senarai Kakitangan Yang Terpilih -->
         <!-- =========================================================== -->
@@ -526,6 +325,7 @@
 
                     <div class="flex w-full flex-col gap-2.5">
                         <DropdownSelect
+                            {disabled}
                             id="meeting-type"
                             label="Nama Urus Setia Integriti"
                             dropdownType="label-left-full"
@@ -534,6 +334,7 @@
                         />
 
                         <DropdownSelect
+                            {disabled}
                             id="salary-movement-month-type"
                             label="Nama Pengarah Bahagian/Negeri"
                             dropdownType="label-left-full"
@@ -704,28 +505,46 @@
                     ></SectionHeader>
                     <div class="flex w-full flex-col gap-2">
                         <TextField
+                            {disabled}
                             id=""
                             label={'Nama Nesyuarat'}
                             value={'Mazlan Shah'}
                         ></TextField>
                         <TextField
+                            {disabled}
                             id=""
                             label={'Tarikh Mesyuarat'}
                             value={'Sah'}
                         ></TextField>
                         <TextField
+                            {disabled}
                             id=""
                             label={'Jawatan'}
                             value={'Izzati Ismail'}
                         ></TextField>
-                        <TextField id="" label={'Tarikh Temuduga'} value={'Sah'}
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Tarikh Temuduga'}
+                            value={'Sah'}
                         ></TextField>
-
-                        <TextField id="" label={'TMasa Temuduga'} value={'Sah'}
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'TMasa Temuduga'}
+                            value={'Sah'}
                         ></TextField>
-                        <TextField id="" label={'Negeri'} value={'Sah'}
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Negeri'}
+                            value={'Sah'}
                         ></TextField>
-                        <TextField id="" label={'Pusat Temuduga'} value={'Sah'}
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Pusat Temuduga'}
+                            value={'Sah'}
                         ></TextField>
                     </div>
 
@@ -1060,13 +879,22 @@
                     <!-- Keputusan Temuduga -->
                     <SectionHeader title=" Keputusan Temuduga "></SectionHeader>
                     <DateSelector
+                        {disabled}
                         {handleDateChange}
                         label={'Tarikh Temuduga'}
                     />
                     <div class="flex w-full flex-col gap-2">
-                        <TextField id="" label={'Pusat Temuduga'} value={'-'}
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Pusat Temuduga'}
+                            value={'-'}
                         ></TextField>
-                        <TextField id="" label={'Nama Panel'} value={'-'}
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Nama Panel'}
+                            value={'-'}
                         ></TextField>
                     </div>
                 </StepperContentBody>
@@ -1187,6 +1015,7 @@
 
                     <div class="flex w-full flex-col gap-2.5">
                         <DropdownSelect
+                            {disabled}
                             id="meeting-type"
                             label=" Keputusan"
                             dropdownType="label-left-full"
@@ -1312,9 +1141,14 @@
                     <SectionHeader title=" Keputusan Mesyuarat"></SectionHeader>
 
                     <div class="flex w-full flex-col gap-2.5">
-                        <TextField id="" label={'Penempatan Baru'} value={'-'}
+                        <TextField
+                            {disabled}
+                            id=""
+                            label={'Penempatan Baru'}
+                            value={'-'}
                         ></TextField>
                         <DropdownSelect
+                            {disabled}
                             id="meeting-type"
                             label=" Pengarah Baru"
                             dropdownType="label-left-full"
@@ -1323,6 +1157,7 @@
                         />
                     </div>
                     <DateSelector
+                        {disabled}
                         {handleDateChange}
                         label={'Tarikh Lapor Diri'}
                     />
@@ -1477,14 +1312,17 @@
                         ></SectionHeader>
                         <div class="flex w-full flex-col gap-2.5">
                             <DateSelector
+                                {disabled}
                                 {handleDateChange}
                                 label={'Tarikh Asal Penempatan'}
                             />
                             <DateSelector
+                                {disabled}
                                 {handleDateChange}
                                 label={'Tarikh Pertukaran yag Dipohon'}
                             />
                             <LongTextField
+                                {disabled}
                                 id=""
                                 label={'Alasan Penanguhan'}
                                 value={'Sila nyatakan alasan permohonan'}
@@ -1495,6 +1333,7 @@
 
                         <div class="flex w-full flex-col gap-2.5">
                             <DropdownSelect
+                                {disabled}
                                 id="meeting-type"
                                 label="Nama Pelulus"
                                 dropdownType="label-left-full"
@@ -1717,6 +1556,7 @@
                     ></SectionHeader>
 
                     <DropdownSelect
+                        {disabled}
                         id="meeting-type"
                         label=" Nama Penyokong"
                         dropdownType="label-left-full"
@@ -1725,6 +1565,7 @@
                     />
 
                     <DropdownSelect
+                        {disabled}
                         id="meeting-type"
                         label=" Nama Pelulus"
                         dropdownType="label-left-full"
@@ -1741,14 +1582,9 @@
 
         <StepperContent>
             <StepperContentHeader title="Penyokongan Pemangkuan">
-                <TextIconButton
-                primary
-                label="Hantar"
-                onClick={() => {
-                    goto(
-                        '/urus-setia/perjawatan/pengesahan-dalam-perkhidmatan',
-                    );
-                }}><SvgPaperAirplane /></TextIconButton>
+                <TextIconButton primary label="Hantar" form="formValidation"
+                    ><SvgPaperAirplane /></TextIconButton
+                >
             </StepperContentHeader>
 
             <StepperContentBody>
@@ -1756,34 +1592,47 @@
                 ></SectionHeader>
 
                 <div class="flex w-full flex-col gap-2">
-                    <p
-                        class="mt-2 h-fit w-full bg-bgr-primary text-sm italic text-system-accent"
+                    <span class="text-sm italic text-system-primary"
+                        >&#x2022; Keputusan akan dihantar ke email klinik dan
+                        Urus Setia berkaitan</span
                     >
-                        ● Sila klik "OK" untuk menghantar pembatalan tututan ke
-                        Klinik Panel dan Kakitangan yang berkaitan.
-                    </p>
 
-                    <div class="flex w-full flex-col gap-2">
-                        <div
-                            class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
-                        >
-                            <LongTextField
-                                id="tindakanUlasan"
-                                label={'Tindakan/ Ulasan'}
-                                value={'Butiran lengkap..'}
-                            ></LongTextField>
-
-                            <!--radio button sokong/tidak sokong-->
-
-                            <RadioSingle
-                                disabled={false}
-                                options={supportOptions}
-                                bind:userSelected={isSupported}
-                            ></RadioSingle>
-                        </div>
-                    </div>
+                    <form
+                        id="formValidation"
+                        on:submit|preventDefault={submitForm}
+                        class="flex w-full flex-col gap-2"
+                    >
+                        <LongTextField
+                            labelBlack={false}
+                            name="remarks"
+                            label={'Tindakan/Ulasan'}
+                            bind:value={textFieldValue}
+                        />
+                        {#if errorData?.remarks}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.remarks[0]}</span
+                            >
+                        {/if}
+                        <RadioSingle
+                            disabled={false}
+                            options={supportOptions}
+                            name="certify"
+                            bind:userSelected={radioChosen}
+                        />
+                        {#if errorData?.certify}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.certify[0]}</span
+                            >
+                        {/if}
+                    </form>
+                    <div
+                    class="flex max-h-full w-full flex-col items-start justify-start border-b border-t"
+                />
                 </div>
             </StepperContentBody>
         </StepperContent>
     </Stepper>
 </section>
+<Toaster />

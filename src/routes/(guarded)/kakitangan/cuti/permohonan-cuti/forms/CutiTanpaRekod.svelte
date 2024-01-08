@@ -11,10 +11,17 @@
     import { ctr } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/ctr';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import { setengahHari } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/setengah-hari';
+    import { Checkbox } from 'flowbite-svelte';
+    import { z, ZodError } from 'zod';
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { cutiTanpaRecord } from '../schema';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
 
     export let selectedFiles: any = [];
     export let disabled: boolean = true;
     let selectedJenisCtr = '';
+    let isChecked1: boolean = false;
+    let isChecked2: boolean = false;
 
     let target: any;
     let texthidden = false;
@@ -42,76 +49,206 @@
         selectedFiles.splice(index, 1);
         fileSelectionList.set(selectedFiles);
     }
+
+    // ================ Form Validation ================
+    let errorData: any;
+    const submitForm = async (event: Event) => {
+        const formDetail = new FormData(event.target as HTMLFormElement);
+        const ctrCategory = document.getElementById(
+            'ctrCategory',
+        ) as HTMLSelectElement;
+        const tarikhMulaSetengah = document.getElementById(
+            'tarikhMulaSetengah',
+        ) as HTMLSelectElement;
+        const tarikhTamatSetengah = document.getElementById(
+            'tarikhTamatSetengah',
+        ) as HTMLSelectElement;
+
+        const formData = {
+            ctrCategory: String(ctrCategory.value),
+            tujuanPermohonan: String(formDetail.get('tujuanPermohonan')),
+            tarikhMula: String(formDetail.get('tarikhMula')),
+            tarikhTamat: String(formDetail.get('tarikhTamat')),
+            tarikhMulaSetengah: String(tarikhMulaSetengah.value),
+            tarikhTamatSetengah: String(tarikhTamatSetengah.value),
+            totalDay: String(formDetail.get('totalDay')),
+        };
+
+        try {
+            const result = cutiTanpaRecord.parse(formData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedFormData = { ...formData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
 </script>
 
 <section>
     <div
         class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
     >
-        <SectionHeader title="Cuti Tanpa Rekod"></SectionHeader>
-        <DropdownSelect
-                    id="jenisCtr-dropdown"
-                    label="Jenis CTR"
-                    dropdownType="label-left-full"
-                    bind:index={selectedJenisCtr}
-                    options={jenisCtr}
-                ></DropdownSelect>
-        <LongTextField
-            label="Tujuan Permohonan"
-            placeholder="Sila taip jawapan anda dalam ruangan ini"
-        ></LongTextField>
-        <div
-                    class="flex flex w-full w-full flex-row items-center justify-start gap-2.5"
+        <SectionHeader title="Cuti Tanpa Rekod"><TextIconButton primary label="test validation" form="formValidation"/></SectionHeader>
+        <form
+            id="formValidation"
+            on:submit|preventDefault={submitForm}
+            class="flex w-full flex-col gap-2"
+        >
+            <DropdownSelect
+                hasError={errorData?.ctrCategory}
+                id="ctrCategory"
+                label="Jenis CTR"
+                dropdownType="label-left-full"
+                bind:index={selectedJenisCtr}
+                options={jenisCtr}
+            ></DropdownSelect>
+            {#if errorData?.ctrCategory}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{errorData?.ctrCategory[0]}</span
                 >
-                    <DateSelector handleDateChange label="Tarikh Mula"
+            {/if}
+            <LongTextField
+                hasError={errorData?.tujuanPermohonan}
+                name="tujuanPermohonan"
+                label="Tujuan Permohonan"
+                placeholder="Sila taip jawapan anda dalam ruangan ini"
+            ></LongTextField>
+            {#if errorData?.tujuanPermohonan}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{errorData?.tujuanPermohonan[0]}</span
+                >
+            {/if}
+            <div
+                class="flex w-full flex-row items-center justify-start gap-2.5"
+            >
+                <div class="flex w-full flex-col">
+                    <DateSelector
+                        hasError={errorData?.tarikhMula}
+                        name="tarikhMula"
+                        handleDateChange
+                        label="Tarikh Mula"
                     ></DateSelector>
-                    <input
-                        id="default-checkbox"
-                        type="checkbox"
-                        value=""
-                        class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-                    />
-                    <label
-                        for="default-checkbox"
-                        class="w-[100px] text-sm font-medium text-gray-900 dark:text-gray-300"
-                        >Setengah Hari</label
-                    >
+                    {#if errorData?.tarikhMula}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.tarikhMula[0]}</span
+                        >
+                    {/if}
+                </div>
+                <Checkbox
+                    name="checkBox1"
+                    bind:checked={isChecked1}
+                    class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                />
+                <label
+                    for="checkBox1"
+                    class="w-[100px] text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >Setengah Hari</label
+                >
+                <div class="flex w-full flex-col">
                     <DropdownSelect
+                        hasError={errorData?.tarikhMulaSetengah}
+                        disabled={!isChecked1}
+                        id="tarikhMulaSetengah"
                         options={setengahHari}
                         bind:index={selectedSetengahHari}
                         dropdownType="noLabel"
                         label=""
                     ></DropdownSelect>
+                    {#if errorData?.tarikhMulaSetengah}
+                        <span
+                            class="font-sans text-sm italic text-system-danger"
+                            >{errorData?.tarikhMulaSetengah[0]}</span
+                        >
+                    {/if}
                 </div>
-                <div
-                    class="flex flex w-full w-full flex-row items-center justify-start gap-2.5"
-                >
-                    <DateSelector handleDateChange label="Tarikh Tamat"
+            </div>
+            <div
+                class="flex w-full flex-row items-center justify-start gap-2.5"
+            >
+                <div class="flex w-full flex-col">
+                    <DateSelector
+                        hasError={errorData?.tarikhTamat}
+                        name="tarikhTamat"
+                        handleDateChange
+                        label="Tarikh Tamat"
                     ></DateSelector>
-                    <input
-                        id="default-checkbox"
-                        type="checkbox"
-                        value=""
-                        class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-                    />
-                    <label
-                        for="default-checkbox"
-                        class="w-[100px] text-sm font-medium text-gray-900 dark:text-gray-300"
-                        >Setengah Hari</label
-                    >
+                    {#if errorData?.tarikhTamat}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.tarikhTamat[0]}</span
+                        >
+                    {/if}
+                </div>
+                <Checkbox
+                    name="checkBox2"
+                    bind:checked={isChecked2}
+                    class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                />
+                <label
+                    for="checkBox2"
+                    class="w-[100px] text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >Setengah Hari</label
+                >
+                <div class="flex w-full flex-col">
                     <DropdownSelect
+                        hasError={errorData?.tarikhTamatSetengah}
+                        disabled={!isChecked2}
+                        id="tarikhTamatSetengah"
                         options={setengahHari}
                         bind:index={selectedSetengahHari}
                         dropdownType="noLabel"
                         label=""
                     ></DropdownSelect>
+                    {#if errorData?.tarikhTamatSetengah}
+                        <span
+                            class="font-sans text-sm italic text-system-danger"
+                            >{errorData?.tarikhTamatSetengah[0]}</span
+                        >
+                    {/if}
                 </div>
-        <TextField label="Bilangan Hari" value="2"></TextField>
+            </div>
+            <TextField
+                hasError={errorData?.totalDay}
+                name="totalDay"
+                label="Bilangan Hari"
+                value="2"
+            ></TextField>
+            {#if errorData?.totalDay}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{errorData?.totalDay[0]}</span
+                >
+            {/if}
+        </form>
     </div>
     <div class="flex max-h-full w-full flex-col items-start justify-start">
-        <SectionHeader title="Cuti Tanpa Rekod yang telah diambil dalam tahun semasa"></SectionHeader>
-        <DynamicTable
-            tableItems={ctr}
-        ></DynamicTable>
+        <SectionHeader
+            title="Cuti Tanpa Rekod yang telah diambil dalam tahun semasa"
+        ></SectionHeader>
+        <DynamicTable tableItems={ctr}></DynamicTable>
     </div>
 </section>
