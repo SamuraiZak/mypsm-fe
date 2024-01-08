@@ -34,6 +34,7 @@
     import toast, { Toaster } from 'svelte-french-toast';
     import { z, ZodError } from 'zod';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import Form from '$lib/components/form/Form.svelte';
 
     export let employeeNumber: string = '00001';
@@ -170,16 +171,91 @@
             }),
         }),
 
+        statusPekerjaan: z.enum(['1', '2', '3', '4'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+
+        warnaKadPengenalan: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+
+        warganegara: z.enum(['1', '2'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+
+        tempatLahir: z.enum(['1', '2'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+        bangsa: z.enum(['1', '2'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+        agama: z.enum(['1', '2'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+        status: z.enum(['1', '2'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+        jantina: z.enum(['1', '2'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+        jawatanPasangan: z.enum(['1', '2'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+        hubungan: z.enum(['1', '2'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+
         noPerkeja: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        statusPekerjaan: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
             .min(4, {
                 message: 'Medan ini hendaklah lebih daripada 4 karakter.',
@@ -215,69 +291,7 @@
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
             })
             .trim(),
-        warnaKadPengenalan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        tempatLahir: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        warganegara: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        bangsa: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        agama: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        jantina: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        status: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
+
         emel: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
             .min(4, {
@@ -306,6 +320,24 @@
             })
             .trim(),
         pinjPerumahan: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        noPekerjaPasangan: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        namaPasangan: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
             .min(4, {
                 message: 'Medan ini hendaklah lebih daripada 4 karakter.',
@@ -365,7 +397,7 @@
             message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
         });
 
-        const dateStepper2max = z.coerce
+    const dateStepper2max = z.coerce
         .date({
             errorMap: (issue, { defaultError }) => ({
                 message:
@@ -379,8 +411,6 @@
         });
 
     const stepper2 = z.object({
-
-
         faedahPersaraanPerkhidmatan: z.enum(['true', 'false'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
@@ -390,44 +420,47 @@
             }),
         }),
 
+        gredSemasa: z.enum(['1', '2'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+        jawatan: z.enum(['1', '2'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+        penempatan: z.enum(['1', '2'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+        tarafPerkhidmatan: z.enum(['1', '2'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+        bulanKGT: z.enum(['1', '2'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
 
-
-        gredSemasa: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        jawatan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        penempatan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        tarafPerkhidmatan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
         noKWSP: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
             .min(4, {
@@ -510,15 +543,6 @@
             })
             .trim(),
         kenaikanPangkatAkhir: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        bulanKGT: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
             .min(4, {
                 message: 'Medan ini hendaklah lebih daripada 4 karakter.',
@@ -740,6 +764,23 @@
         });
 
     const stepper8 = z.object({
+        warnaKP: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tetapkan pilihan anda.'
+                        : defaultError,
+            }),
+        }),
+        hubunganWaris: z.enum(['1', '2'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tetapkan pilihan anda.'
+                        : defaultError,
+            }),
+        }),
+
         namaWaris: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
             .min(4, {
@@ -758,24 +799,24 @@
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
             })
             .trim(),
-        hubungan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        warnaKP: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
+        // hubungan: z
+        //     .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+        //     .min(4, {
+        //         message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+        //     })
+        //     .max(124, {
+        //         message: 'Medan ini tidak boleh melebihi 124 karakter.',
+        //     })
+        //     .trim(),
+        // warnaKP: z
+        //     .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+        //     .min(4, {
+        //         message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+        //     })
+        //     .max(124, {
+        //         message: 'Medan ini tidak boleh melebihi 124 karakter.',
+        //     })
+        //     .trim(),
         telefonRumah: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
             .min(4, {
@@ -824,7 +865,6 @@
 
         tarikhLahirWaris: dateStepper8,
         tarikhKahwin: dateStepper8,
-
     });
 
     // =================================================================================
@@ -836,32 +876,59 @@
     //------------------------------------------------------
     const submitFormSepper1 = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);
-        const selectOptionExampleSelector = document.getElementById(
-            'selectOptionExample',
+
+        const statusPekerjaan = document.getElementById(
+            'statusPekerjaan',
+        ) as HTMLSelectElement;
+
+        const warnaKadPengenalan = document.getElementById(
+            'warnaKadPengenalan',
+        ) as HTMLSelectElement;
+
+        const warganegara = document.getElementById(
+            'warganegara',
+        ) as HTMLSelectElement;
+        const tempatLahir = document.getElementById(
+            'tempatLahir',
+        ) as HTMLSelectElement;
+        const bangsa = document.getElementById('bangsa') as HTMLSelectElement;
+        const agama = document.getElementById('agama') as HTMLSelectElement;
+        const status = document.getElementById('status') as HTMLSelectElement;
+
+        const jantina = document.getElementById('jantina') as HTMLSelectElement;
+        const jawatanPasangan = document.getElementById(
+            'jawatanPasangan',
+        ) as HTMLSelectElement;
+        const hubungan = document.getElementById(
+            'hubungan',
         ) as HTMLSelectElement;
 
         const exampleFormData = {
             noPerkeja: String(formData.get('noPerkeja')),
             longTextExample: String(formData.get('longTextExample')),
             radioButtonExample: String(formData.get('radioButtonExample')),
-            statusPekerjaan: String(formData.get('statusPekerjaan')),
+            statusPekerjaan: String(statusPekerjaan.value),
             noKadPengenalan: String(formData.get('noKadPengenalan')),
             namaPenuh: String(formData.get('namaPenuh')),
             namaLain: String(formData.get('namaLain')),
-            warnaKadPengenalan: String(formData.get('warnaKadPengenalan')),
+            warnaKadPengenalan: String(warnaKadPengenalan.value),
             tarikhLahir: String(formData.get('tarikhLahir')),
-            tempatLahir: String(formData.get('tempatLahir')),
-            warganegara: String(formData.get('warganegara')),
-            bangsa: String(formData.get('bangsa')),
-            agama: String(formData.get('agama')),
-            jantina: String(formData.get('jantina')),
-            status: String(formData.get('status')),
+            tempatLahir: String(tempatLahir.value),
+            warganegara: String(warganegara.value),
+            bangsa: String(bangsa.value),
+            agama: String(agama.value),
+            jantina: String(jantina.value),
+            status: String(status.value),
             emel: String(formData.get('emel')),
             alamatRumah: String(formData.get('alamatRumah')),
             alamatSuratMenyurat: String(formData.get('alamatSuratMenyurat')),
             perumahan: String(formData.get('perumahan')),
             pinjPerumahan: String(formData.get('pinjPerumahan')),
             pinjKenderaan: String(formData.get('pinjKenderaan')),
+            noPekerjaPasangan: String(formData.get('noPekerjaPasangan')),
+            namaPasangan: String(formData.get('namaPasangan')),
+            jawatanPasangan: String(jawatanPasangan.value),
+            hubungan: String(hubungan.value),
         };
 
         try {
@@ -904,11 +971,25 @@
             'selectOptionExample',
         ) as HTMLSelectElement;
 
+        const gredSemasa = document.getElementById(
+            'gredSemasa',
+        ) as HTMLSelectElement;
+        const jawatan = document.getElementById('jawatan') as HTMLSelectElement;
+        const penempatan = document.getElementById(
+            'penempatan',
+        ) as HTMLSelectElement;
+        const tarafPerkhidmatan = document.getElementById(
+            'tarafPerkhidmatan',
+        ) as HTMLSelectElement;
+        const bulanKGT = document.getElementById(
+            'bulanKGT',
+        ) as HTMLSelectElement;
+
         const exampleFormData = {
-            gredSemasa: String(formData.get('gredSemasa')),
-            jawatan: String(formData.get('jawatan')),
-            penempatan: String(formData.get('penempatan')),
-            tarafPerkhidmatan: String(formData.get('tarafPerkhidmatan')),
+            gredSemasa: String(gredSemasa.value),
+            jawatan: String(jawatan.value),
+            penempatan: String(penempatan.value),
+            tarafPerkhidmatan: String(tarafPerkhidmatan.value),
             noKWSP: String(formData.get('noKWSP')),
             noSOCSO: String(formData.get('noSOCSO')),
             noCukai: String(formData.get('noCukai')),
@@ -922,7 +1003,7 @@
             skimPencen: String(formData.get('skimPencen')),
             kenaikanGajiAkhir: String(formData.get('kenaikanGajiAkhir')),
             kenaikanPangkatAkhir: String(formData.get('kenaikanPangkatAkhir')),
-            bulanKGT: String(formData.get('bulanKGT')),
+            bulanKGT: String(bulanKGT.value),
             tarikhberkuatKuasa: String(formData.get('tarikhberkuatKuasa')),
             tanggaGaji: String(formData.get('tanggaGaji')),
             gajiPokok: String(formData.get('gajiPokok')),
@@ -931,13 +1012,25 @@
             itp: String(formData.get('itp')),
             epw: String(formData.get('epw')),
             cola: String(formData.get('cola')),
-            mulaDilantikPerkhidmatanKerajaan: String(formData.get('mulaDilantikPerkhidmatanKerajaan'),),
-            mulaDilantikPerkhidmatanLKIM: String(formData.get('mulaDilantikPerkhidmatanLKIM'),),
-            disahkanDalamJawatanSemasaLKIM: String(formData.get('disahkanDalamJawatanSemasaLKIM'),),
-            tarikhKelulusanPercantumanPerkhidmatanLepas: String(formData.get('tarikhKelulusanPercantumanPerkhidmatanLepas'),),
+            mulaDilantikPerkhidmatanKerajaan: String(
+                formData.get('mulaDilantikPerkhidmatanKerajaan'),
+            ),
+            mulaDilantikPerkhidmatanLKIM: String(
+                formData.get('mulaDilantikPerkhidmatanLKIM'),
+            ),
+            disahkanDalamJawatanSemasaLKIM: String(
+                formData.get('disahkanDalamJawatanSemasaLKIM'),
+            ),
+            tarikhKelulusanPercantumanPerkhidmatanLepas: String(
+                formData.get('tarikhKelulusanPercantumanPerkhidmatanLepas'),
+            ),
             tarikhBersara: String(formData.get('tarikhBersara')),
-            tarikhKuatkuasaLantikanSemasa: String(formData.get('tarikhKuatkuasaLantikanSemasa'),),
-            faedahPersaraanPerkhidmatan: String(formData.get('faedahPersaraanPerkhidmatan')),
+            tarikhKuatkuasaLantikanSemasa: String(
+                formData.get('tarikhKuatkuasaLantikanSemasa'),
+            ),
+            faedahPersaraanPerkhidmatan: String(
+                formData.get('faedahPersaraanPerkhidmatan'),
+            ),
         };
 
         try {
@@ -1074,12 +1167,16 @@
         const selectOptionExampleSelector = document.getElementById(
             'selectOptionExample',
         ) as HTMLSelectElement;
+        const hubunganWaris = document.getElementById(
+            'hubunganWaris',
+        ) as HTMLSelectElement;
+        const warnaKP = document.getElementById('warnaKP') as HTMLSelectElement;
 
         const exampleFormData = {
             namaWaris: String(formData.get('namaWaris')),
             noKP: String(formData.get('noKP')),
-            hubungan: String(formData.get('hubungan')),
-            warnaKP: String(formData.get('warnaKP')),
+            hubunganWaris: String(hubunganWaris.value),
+            warnaKP: String(warnaKP.value),
             telefonRumah: String(formData.get('telefonRumah')),
             telefonPeribadi: String(formData.get('telefonPeribadi')),
             pekerjaanWaris: String(formData.get('pekerjaanWaris')),
@@ -1252,15 +1349,19 @@
                         >{errorData?.noPerkeja[0]}</span
                     >
                 {/if}
-                <TextField
+
+                <DropdownSelect
                     {disabled}
                     hasError={errorData?.statusPekerjaan}
-                    name="statusPekerjaan"
-                    label={'Status Pekerjaan'}
-                    type="text"
-                    bind:value={currentEmployeeStatus.name}
-                ></TextField>
-
+                    dropdownType="label-left-full"
+                    id="statusPekerjaan"
+                    label="Status Pekerjaan"
+                    bind:index={currentEmployeeStatus.name}
+                    options={[
+                        { value: '1', name: 'Aktif' },
+                        { value: '2', name: 'Tidak Aktif' },
+                    ]}
+                ></DropdownSelect>
                 {#if errorData?.statusPekerjaan}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
@@ -1316,23 +1417,25 @@
                     >
                 {/if}
 
-                <TextField
+                <DropdownSelect
                     {disabled}
                     hasError={errorData?.warnaKadPengenalan}
-                    name="warnaKadPengenalan"
-                    label={'Warna Kad Pengenalan'}
-                    type="text"
-                    value={currentEmployee.isMalaysian}
-                ></TextField>
-
-                {#if errorData?.warnaKadPengenalan}
+                    dropdownType="label-left-full"
+                    id="warnaKadPengenalan"
+                    label="Warna Kad Pengenalan"
+                    bind:index={currentEmployee.isMalaysian}
+                    options={[
+                        { value: 'true', name: 'Biru' },
+                        { value: 'false', name: 'Merah' },
+                    ]}
+                ></DropdownSelect>
+                {#if errorData?.statusPewarnaKadPengenalankerjaan}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
                         >{errorData?.warnaKadPengenalan[0]}</span
                     >
                 {/if}
 
-                <!-- ---date   ------------ -->
                 <DateSelector
                     {disabled}
                     hasError={errorData?.tarikhLahir}
@@ -1348,15 +1451,18 @@
                     >
                 {/if}
 
-                <TextField
+                <DropdownSelect
                     {disabled}
                     hasError={errorData?.tempatLahir}
-                    name="tempatLahir"
-                    label={'Tempat Lahir'}
-                    type="text"
-                    bind:value={currentEmployeeBirthState.name}
-                ></TextField>
-
+                    dropdownType="label-left-full"
+                    id="tempatLahir"
+                    label="Tempat Lahir"
+                    bind:index={currentEmployeeBirthState.name}
+                    options={[
+                        { value: '1', name: 'Sarawak' },
+                        { value: '2', name: 'Sabah' },
+                    ]}
+                ></DropdownSelect>
                 {#if errorData?.tempatLahir}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
@@ -1364,82 +1470,98 @@
                     >
                 {/if}
 
-                <TextField
+                <DropdownSelect
                     {disabled}
                     hasError={errorData?.warganegara}
-                    name="warganegara"
-                    label={'Warganegara'}
-                    type="text"
-                    bind:value={currentEmployee.isMalaysian}
-                ></TextField>
-
+                    dropdownType="label-left-full"
+                    id="warganegara"
+                    label="Warganegara"
+                    bind:index={currentEmployee.isMalaysian}
+                    options={[
+                        { value: '1', name: 'Warganegara' },
+                        { value: '2', name: 'Bukan Warganegara' },
+                    ]}
+                ></DropdownSelect>
                 {#if errorData?.warganegara}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.noPerkeja[0]}</span
+                        >{errorData?.warganegara[0]}</span
                     >
                 {/if}
 
-                <TextField
+                <DropdownSelect
                     {disabled}
                     hasError={errorData?.bangsa}
-                    name="bangsa"
-                    label={'Bangsa'}
-                    type="text"
-                    bind:value={currentEmployeeRace.name}
-                ></TextField>
-
+                    dropdownType="label-left-full"
+                    id="bangsa"
+                    label="Tempat Lahir"
+                    bind:index={currentEmployeeRace.name}
+                    options={[
+                        { value: '1', name: 'Melayu' },
+                        { value: '2', name: 'Cina' },
+                    ]}
+                ></DropdownSelect>
                 {#if errorData?.bangsa}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.noPerkeja[0]}</span
+                        >{errorData?.bangsa[0]}</span
                     >
                 {/if}
-                <TextField
+
+                <DropdownSelect
                     {disabled}
                     hasError={errorData?.agama}
-                    name="agama"
-                    label={'Agama'}
-                    type="text"
-                    bind:value={currentEmployeeReligion.name}
-                ></TextField>
-
+                    dropdownType="label-left-full"
+                    id="agama"
+                    label="Agama"
+                    bind:index={currentEmployeeReligion.name}
+                    options={[
+                        { value: '1', name: 'Islam' },
+                        { value: '2', name: 'Kristen' },
+                    ]}
+                ></DropdownSelect>
                 {#if errorData?.agama}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.noPerkeja[0]}</span
+                        >{errorData?.agama[0]}</span
                     >
                 {/if}
 
-                <TextField
+                <DropdownSelect
                     {disabled}
                     hasError={errorData?.jantina}
-                    name="jantina"
-                    label={'Jantina'}
-                    type="text"
-                    bind:value={currentEmployee.gender}
-                ></TextField>
-
+                    dropdownType="label-left-full"
+                    id="jantina"
+                    label="Jantina"
+                    bind:index={currentEmployee.gender}
+                    options={[
+                        { value: '1', name: 'Lelaki' },
+                        { value: '2', name: 'Perempuan' },
+                    ]}
+                ></DropdownSelect>
                 {#if errorData?.jantina}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.noPerkeja[0]}</span
+                        >{errorData?.jantina[0]}</span
                     >
                 {/if}
 
-                <TextField
+                <DropdownSelect
                     {disabled}
                     hasError={errorData?.status}
-                    name="status"
-                    label={'Status'}
-                    type="text"
-                    bind:value={currentEmployee.marital}
-                ></TextField>
-
+                    dropdownType="label-left-full"
+                    id="status"
+                    label="Status"
+                    bind:index={currentEmployee.marital}
+                    options={[
+                        { value: '1', name: 'Bujang' },
+                        { value: '2', name: 'Berkahwin' },
+                    ]}
+                ></DropdownSelect>
                 {#if errorData?.status}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.noPerkeja[0]}</span
+                        >{errorData?.status[0]}</span
                     >
                 {/if}
 
@@ -1554,7 +1676,6 @@
                         Maklumat Pertalian Dengan Kakitangan LKIM
                     </p>
 
-                    <!-- kakitanganLKIM? -->
                     <RadioSingle
                         {options}
                         {disabled}
@@ -1562,30 +1683,77 @@
                         bind:userSelected={isInRelationshipWithLKIMStaff}
                     ></RadioSingle>
                     {#if isInRelationshipWithLKIMStaff === 'true'}
+
                         <TextField
                             {disabled}
-                            id="noPekerjaPasangan"
+                            hasError={errorData?.noPekerjaPasangan}
+                            name="noPekerjaPasangan"
                             label={'No. Pekerja LKIM'}
+                            type="text"
                             value={currentEmployeeSpouseEmployeeInfo?.employeeNumber}
                         ></TextField>
+
+                        {#if errorData?.noPekerjaPasangan}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.noPekerjaPasangan[0]}</span
+                            >
+                        {/if}
+
                         <TextField
                             {disabled}
-                            id="namaPasangan"
+                            hasError={errorData?.namaPasangan}
+                            name="namaPasangan"
                             label={'Nama Kakitangan LKIM'}
+                            type="text"
                             value={currentEmployeeSpouse.name}
                         ></TextField>
-                        <TextField
+
+                        {#if errorData?.namaPasangan}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.namaPasangan[0]}</span
+                            >
+                        {/if}
+
+                        <DropdownSelect
                             {disabled}
+                            hasError={errorData?.jawatanPasangan}
+                            dropdownType="label-left-full"
                             id="jawatanPasangan"
-                            label={'Jawatan Kakitangan LKIM'}
-                            value={currentEmployeeSpouse.position}
-                        ></TextField>
-                        <TextField
+                            label="Jawatan Kakitangan LKIM"
+                            bind:index={currentEmployeeSpouse.position}
+                            options={[
+                                { value: '1', name: 'Pegawai IT' },
+                                { value: '2', name: 'Akauntan' },
+                            ]}
+                        ></DropdownSelect>
+                        {#if errorData?.jawatanPasangan}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.jawatanPasangan[0]}</span
+                            >
+                        {/if}
+
+                        <DropdownSelect
                             {disabled}
+                            hasError={errorData?.hubungan}
+                            dropdownType="label-left-full"
                             id="hubungan"
-                            label={'Hubungan'}
-                            value={currentEmployeeSpouse.relationship}
-                        ></TextField>
+                            label="Hubungan"
+                            bind:index={currentEmployeeSpouse.relationship}
+                            options={[
+                                { value: '1', name: 'Suami' },
+                                { value: '2', name: 'Isteri' },
+                            ]}
+                        ></DropdownSelect>
+                        {#if errorData?.hubungan}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.hubungan[0]}</span
+                            >
+                        {/if}
+
                     {/if}
                 </div>
             </form>
@@ -1610,30 +1778,37 @@
                 >
                     <p class={stepperFormTitleClass}>Maklumat Perkhidmatan</p>
 
-                    <TextField
+                    <DropdownSelect
                         {disabled}
                         hasError={errorData?.gredSemasa}
-                        name="gredSemasa"
-                        label={'Gred Semasa'}
-                        type="text"
-                        bind:value={currentEmployeeGrade.code}
-                    ></TextField>
-
+                        dropdownType="label-left-full"
+                        id="gredSemasa"
+                        label="Gred Semasa"
+                        bind:index={currentEmployeeGrade.code}
+                        options={[
+                            { value: '1', name: '41' },
+                            { value: '2', name: '54' },
+                        ]}
+                    ></DropdownSelect>
                     {#if errorData?.gredSemasa}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{errorData?.gredSemasa[0]}</span
                         >
                     {/if}
-                    <TextField
+
+                    <DropdownSelect
                         {disabled}
                         hasError={errorData?.jawatan}
-                        name="jawatan"
-                        label={'Jawatan'}
-                        type="text"
-                        bind:value={currentEmployeePosition.name}
-                    ></TextField>
-
+                        dropdownType="label-left-full"
+                        id="jawatan"
+                        label="Gred Semasa"
+                        bind:index={currentEmployeePosition.name}
+                        options={[
+                            { value: '1', name: '41' },
+                            { value: '2', name: '54' },
+                        ]}
+                    ></DropdownSelect>
                     {#if errorData?.jawatan}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
@@ -1641,15 +1816,18 @@
                         >
                     {/if}
 
-                    <TextField
+                    <DropdownSelect
                         {disabled}
                         hasError={errorData?.penempatan}
-                        name="penempatan"
-                        label={'Penempatan'}
-                        type="text"
-                        bind:value={currentEmployeeService.placement}
-                    ></TextField>
-
+                        dropdownType="label-left-full"
+                        id="penempatan"
+                        label="Penempatan"
+                        bind:index={currentEmployeeService.placement}
+                        options={[
+                            { value: '1', name: 'Kuala Lumpur' },
+                            { value: '2', name: 'Sarawak' },
+                        ]}
+                    ></DropdownSelect>
                     {#if errorData?.penempatan}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
@@ -1657,15 +1835,18 @@
                         >
                     {/if}
 
-                    <TextField
+                    <DropdownSelect
                         {disabled}
                         hasError={errorData?.tarafPerkhidmatan}
-                        name="tarafPerkhidmatan"
-                        label={'Taraf Perkhidmatan'}
-                        type="text"
-                        bind:value={currentEmployeeServiceType.name}
-                    ></TextField>
-
+                        dropdownType="label-left-full"
+                        id="tarafPerkhidmatan"
+                        label="Taraf Perkhidmatan"
+                        bind:index={currentEmployeeServiceType.name}
+                        options={[
+                            { value: '1', name: 'TETAP' },
+                            { value: '2', name: 'SEMENTARA' },
+                        ]}
+                    ></DropdownSelect>
                     {#if errorData?.tarafPerkhidmatan}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
@@ -1973,15 +2154,18 @@
                         >
                     {/if}
 
-                    <TextField
+                    <DropdownSelect
                         {disabled}
                         hasError={errorData?.bulanKGT}
-                        name="bulanKGT"
-                        label={'Bulan KGT'}
-                        type="text"
-                        value="-"
-                    ></TextField>
-
+                        dropdownType="label-left-full"
+                        id="bulanKGT"
+                        label="Bulan KGT"
+                        value=""
+                        options={[
+                            { value: '1', name: 'Januari' },
+                            { value: '2', name: 'Februari' },
+                        ]}
+                    ></DropdownSelect>
                     {#if errorData?.bulanKGT}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
@@ -2566,20 +2750,26 @@
                             >{errorData?.tarikhLahirWaris[0]}</span
                         >
                     {/if}
-                    <TextField
+
+                    <DropdownSelect
                         {disabled}
-                        hasError={errorData?.hubungan}
-                        name="hubungan"
-                        label={'Hubungan'}
-                        type="text"
-                        bind:value={currentEmployeeNextOfKins.relationship}
-                    ></TextField>
-                    {#if errorData?.hubungan}
+                        hasError={errorData?.hubunganWaris}
+                        dropdownType="label-left-full"
+                        id="hubunganWaris"
+                        label="Hubungan"
+                        bind:index={currentEmployeeNextOfKins.relationship}
+                        options={[
+                            { value: '1', name: 'Suami' },
+                            { value: '2', name: 'Isteri' },
+                        ]}
+                    ></DropdownSelect>
+                    {#if errorData?.hubunganWaris}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.hubungan[0]}</span
+                            >{errorData?.hubunganWaris[0]}</span
                         >
                     {/if}
+
                     <DateSelector
                         {disabled}
                         hasError={errorData?.tarikhKahwin}
@@ -2594,20 +2784,25 @@
                             >{errorData?.tarikhKahwin[0]}</span
                         >
                     {/if}
-                    <TextField
+                    <DropdownSelect
                         {disabled}
                         hasError={errorData?.warnaKP}
-                        name="warnaKP"
-                        label={'Warna Kad Pengenalan'}
-                        type="text"
-                        bind:value={currentEmployeeNextOfKins.isMalaysian}
-                    ></TextField>
+                        dropdownType="label-left-full"
+                        id="warnaKP"
+                        label="Warna Kad Pengenalan"
+                        bind:index={currentEmployeeNextOfKins.isMalaysian}
+                        options={[
+                            { value: 'true', name: 'Biru' },
+                            { value: 'false', name: 'Merah' },
+                        ]}
+                    ></DropdownSelect>
                     {#if errorData?.warnaKP}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{errorData?.warnaKP[0]}</span
                         >
                     {/if}
+
                     <TextField
                         {disabled}
                         hasError={errorData?.telefonRumah}
