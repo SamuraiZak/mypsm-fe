@@ -353,10 +353,22 @@
             const result = newEmploymentServiceSchema.parse(
                 newEmploymentServiceData,
             );
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+            }
         } catch (error: unknown) {
             if (error instanceof ZodError) {
                 const { fieldErrors: errors } = error.flatten();
                 errorData = errors;
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
             }
         }
     };
@@ -391,10 +403,22 @@
             const result = newEmploymentSecretarySchema.parse(
                 newEmploymentSecretaryResultData,
             );
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+            }
         } catch (error: unknown) {
             if (error instanceof ZodError) {
                 const { fieldErrors: errors } = error.flatten();
                 errorData = errors;
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
             }
         }
     };
