@@ -53,8 +53,71 @@
         },
     ];
 
-    const submitForm = async (event: Event) => {
+    const applicationConfirmationForm = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);
+
+        const exampleFormData = {
+            applicationConfirmationResult: String(
+                formData.get('applicationConfirmationResult'),
+            ),
+            applicationConfirmationReview: String(
+                formData.get('applicationConfirmationReview'),
+            ),
+        };
+
+        const exampleFormSchema = z.object({
+            // checkbox schema
+            applicationConfirmationResult: z.enum(['sah', 'tidakSah'], {
+                errorMap: (issue, { defaultError }) => ({
+                    message:
+                        issue.code === 'invalid_enum_value'
+                            ? 'Sila tetapkan pilihan anda.'
+                            : defaultError,
+                }),
+            }),
+            // dateSelectorExample: dateScheme,
+            applicationConfirmationReview: z
+                .string({ required_error: 'Medan ini tidak boleh kosong.' })
+                .min(4, {
+                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+                })
+                .max(124, {
+                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
+                })
+                .trim(),
+        });
+
+        try {
+            const result = exampleFormSchema.parse(exampleFormData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData = { ...exampleFormData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedExamFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
+
+    const supporterApproverForm = async (event: Event) => {
         const supporter1OptionSelector = document.getElementById(
             'supporter1Option',
         ) as HTMLSelectElement;
@@ -66,30 +129,6 @@
         ) as HTMLSelectElement;
 
         const exampleFormData = {
-            applicationConfirmationResult: String(
-                formData.get('applicationConfirmationResult'),
-            ),
-            applicationConfirmationReview: String(
-                formData.get('applicationConfirmationReview'),
-            ),
-            applicationApprovalResult: String(
-                formData.get('applicationApprovalResult'),
-            ),
-            applicationApprovalReview: String(
-                formData.get('applicationApprovalReview'),
-            ),
-            validateDocumentResult: String(
-                formData.get('validateDocumentResult'),
-            ),
-            validateDocumentReview: String(
-                formData.get('validateDocumentReview'),
-            ),
-            updateApplicationResult: String(
-                formData.get('updateApplicationResult'),
-            ),
-            upateApplicationReview: String(
-                formData.get('updateApplicationReview'),
-            ),
             supporter1Option: String(supporter1OptionSelector.value),
             supporter2Option: String(supporter2OptionSelector.value),
             approverOption: String(approverOptionSelector.value),
@@ -97,7 +136,76 @@
 
         const exampleFormSchema = z.object({
             // checkbox schema
-            Result: z.enum(['sah', 'tidakSah'], {
+            supporter1Option: z.enum(['1', '2', '3', '4'], {
+                errorMap: (issue, { defaultError }) => ({
+                    message:
+                        issue.code === 'invalid_enum_value'
+                            ? 'Pilihan perlu dipilih.'
+                            : defaultError,
+                }),
+            }),
+            supporter2Option: z.enum(['1', '2', '3', '4'], {
+                errorMap: (issue, { defaultError }) => ({
+                    message:
+                        issue.code === 'invalid_enum_value'
+                            ? 'Pilihan perlu dipilih.'
+                            : defaultError,
+                }),
+            }),
+            approverOption: z.enum(['1', '2', '3', '4'], {
+                errorMap: (issue, { defaultError }) => ({
+                    message:
+                        issue.code === 'invalid_enum_value'
+                            ? 'Pilihan perlu dipilih.'
+                            : defaultError,
+                }),
+            }),
+        });
+
+        try {
+            const result = exampleFormSchema.parse(exampleFormData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData = { ...exampleFormData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedExamFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
+    const applicationApprovalForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+
+        const exampleFormData = {
+            applicationApprovalResult: String(
+                formData.get('applicationApprovalResult'),
+            ),
+            applicationApprovalReview: String(
+                formData.get('applicationApprovalReview'),
+            ),
+        };
+
+        const exampleFormSchema = z.object({
+            // checkbox schema
+            applicationApprovalResult: z.enum(['lulus', 'tidakLulus'], {
                 errorMap: (issue, { defaultError }) => ({
                     message:
                         issue.code === 'invalid_enum_value'
@@ -106,7 +214,133 @@
                 }),
             }),
             // dateSelectorExample: dateScheme,
-            Review: z
+            applicationApprovalReview: z
+                .string({ required_error: 'Medan ini tidak boleh kosong.' })
+                .min(4, {
+                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+                })
+                .max(124, {
+                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
+                })
+                .trim(),
+        });
+
+        try {
+            const result = exampleFormSchema.parse(exampleFormData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData = { ...exampleFormData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedExamFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
+    const validateDocumentForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+
+        const exampleFormData = {
+            validateDocumentResult: String(
+                formData.get('validateDocumentResult'),
+            ),
+            validateDocumentReview: String(
+                formData.get('validateDocumentReview'),
+            ),
+        };
+
+        const exampleFormSchema = z.object({
+            // checkbox schema
+            validateDocumentResult: z.enum(['sah', 'tidakSah'], {
+                errorMap: (issue, { defaultError }) => ({
+                    message:
+                        issue.code === 'invalid_enum_value'
+                            ? 'Sila tetapkan pilihan anda.'
+                            : defaultError,
+                }),
+            }),
+            // dateSelectorExample: dateScheme,
+            validateDocumentReview: z
+                .string({ required_error: 'Medan ini tidak boleh kosong.' })
+                .min(4, {
+                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+                })
+                .max(124, {
+                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
+                })
+                .trim(),
+        });
+
+        try {
+            const result = exampleFormSchema.parse(exampleFormData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData = { ...exampleFormData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedExamFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
+    const updateApplicationForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+
+        const exampleFormData = {
+            updateApplicationResult: String(
+                formData.get('updateApplicationResult'),
+            ),
+            updateApplicationReview: String(
+                formData.get('updateApplicationReview'),
+            ),
+        };
+
+        const exampleFormSchema = z.object({
+            // checkbox schema
+            updateApplicationResult: z.enum(['sah', 'tidakSah'], {
+                errorMap: (issue, { defaultError }) => ({
+                    message:
+                        issue.code === 'invalid_enum_value'
+                            ? 'Sila tetapkan pilihan anda.'
+                            : defaultError,
+                }),
+            }),
+            // dateSelectorExample: dateScheme,
+            updateApplicationReview: z
                 .string({ required_error: 'Medan ini tidak boleh kosong.' })
                 .min(4, {
                     message: 'Medan ini hendaklah lebih daripada 4 karakter.',
@@ -207,7 +441,7 @@
                 >
                     <form
                         id="applicationConfirmationFormValidation"
-                        on:submit|preventDefault={submitForm}
+                        on:submit|preventDefault={applicationConfirmationForm}
                         class="flex w-full flex-col gap-2"
                     >
                         <LongTextField
@@ -254,7 +488,7 @@
         <StepperContentBody
             ><form
                 id="supporterApproverFormValidation"
-                on:submit|preventDefault={submitForm}
+                on:submit|preventDefault={supporterApproverForm}
                 class="flex w-full flex-col gap-2"
             >
                 <div class="flex w-full flex-col gap-2">
@@ -327,7 +561,7 @@
         ></StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
-                <p class="text-sm font-bold">Suppoorter #1</p>
+                <p class="text-sm font-bold">Penyokong #1</p>
                 <div
                     class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
                 >
@@ -340,18 +574,18 @@
                     <LongTextField
                         {disabled}
                         id="tindakanReview"
-                        label={'Tindakan/ Review'}
+                        label={'Tindakan/ Ulasan'}
                         value={'Layak disokong'}
                     ></LongTextField>
                     <div class="flex w-full flex-row text-sm">
                         <label for="staffing-sec-result" class="w-[220px]"
-                            >Result</label
+                            >Keputusan</label
                         ><Badge border color="green">SOKONG</Badge>
                     </div>
                 </div>
             </div>
             <div class="flex w-full flex-col gap-2">
-                <p class="text-sm font-bold">Suppoorter #2</p>
+                <p class="text-sm font-bold">Penyokong #2</p>
                 <div
                     class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
                 >
@@ -364,18 +598,18 @@
                     <LongTextField
                         {disabled}
                         id="tindakanReview"
-                        label={'Tindakan/ Review'}
+                        label={'Tindakan/ Ulasan'}
                         value={'Layak disokong'}
                     ></LongTextField>
                     <div class="flex w-full flex-row text-sm">
                         <label for="staffing-sec-result" class="w-[220px]"
-                            >Result</label
+                            >Keputusan</label
                         ><Badge border color="green">SOKONG</Badge>
                     </div>
                 </div>
             </div>
             <div class="flex w-full flex-col gap-2">
-                <p class="text-sm font-bold">Approver</p>
+                <p class="text-sm font-bold">Pelulus</p>
                 <div
                     class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
                 >
@@ -388,12 +622,12 @@
                     <LongTextField
                         {disabled}
                         id="tindakanReview"
-                        label={'Tindakan/ Review'}
+                        label={'Tindakan/ Ulasan'}
                         value={'Setuju diluluskan'}
                     ></LongTextField>
                     <div class="flex w-full flex-row text-sm">
                         <label for="staffing-sec-result" class="w-[220px]"
-                            >Result</label
+                            >Keputusan</label
                         ><Badge border color="green">LULUS</Badge>
                     </div>
                 </div>
@@ -411,7 +645,7 @@
         <StepperContentBody
             ><form
                 id="applicationApprovalFormValidation"
-                on:submit|preventDefault={submitForm}
+                on:submit|preventDefault={applicationApprovalForm}
                 class="flex w-full flex-col gap-2"
             >
                 <div class="flex w-full flex-col gap-2">
@@ -463,7 +697,7 @@
         <StepperContentBody
             ><form
                 id="validateDocumentFormValidation"
-                on:submit|preventDefault={submitForm}
+                on:submit|preventDefault={validateDocumentForm}
                 class="flex w-full flex-col gap-2"
             >
                 <div
@@ -540,7 +774,7 @@
         <StepperContentBody
             ><form
                 id="updateApplicationFormValidation"
-                on:submit|preventDefault={submitForm}
+                on:submit|preventDefault={updateApplicationForm}
                 class="flex w-full flex-col gap-2"
             >
                 <div
