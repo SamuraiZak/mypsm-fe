@@ -742,8 +742,7 @@
         >
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader
-            title="Kemaskini Lantikan Baru"
+        <StepperContentHeader title="Kemaskini Lantikan Baru"
         ></StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2.5">
@@ -1049,7 +1048,7 @@
                     label="Nama Penyokong"
                     dropdownType="label-left-full"
                     options={employeeLists}
-                    bind:index={selectedSupporter}
+                    bind:value={selectedSupporter}
                 />
                 <DropdownSelect
                     disabled={true}
@@ -1057,7 +1056,7 @@
                     label="Nama Pelulus"
                     dropdownType="label-left-full"
                     options={employeeLists}
-                    bind:index={selectedApprover}
+                    bind:value={selectedApprover}
                 />
             </div>
         </StepperContentBody>
