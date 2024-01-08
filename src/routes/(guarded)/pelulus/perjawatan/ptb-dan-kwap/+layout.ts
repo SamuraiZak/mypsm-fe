@@ -1,9 +1,9 @@
-import { fetchPtbKwap } from '$lib/service/ptbAndKwap/services';
+// import { fetchPtbKwap } from '$lib/service/ptbAndKwap/services';
 
-export async function load({ cookies }) {
-    const fetchedData: PtbAndKwap[] = await fetchPtbKwap();
+import { mockPTBdanKWAP } from '$lib/mocks/perjawatan/PTB-dan-KWAP/ptb-dan-kwap.js';
 
-    const userId = cookies.get('userId');
+export async function load() {
+    const fetchedData: PtbAndKwap[] = mockPTBdanKWAP;
 
     return {
         props: {
@@ -17,6 +17,5 @@ export async function load({ cookies }) {
                 tindakanUlasan: list.tindakanUlasan,
             })),
         },
-        userId,
     };
 }

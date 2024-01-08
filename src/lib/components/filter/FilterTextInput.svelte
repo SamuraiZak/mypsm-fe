@@ -1,6 +1,7 @@
 <script lang="ts">
     export let label: string = 'Label';
     export let id: string = 'defaultId';
+    export let name: string = 'defaultName';
     export let value: any = '';
 </script>
 
@@ -11,9 +12,9 @@
     <div class="flex flex-row items-center justify-start">
         <input
             type="text"
-            name=""
+            {name}
             {id}
-            bind:value={value}
+            bind:value
             class="h-[28px] w-[200px] rounded-[3px] border-bdr-primary bg-bgr-primary text-sm hover:border-system-primary focus:outline-none focus:ring-0"
         />
     </div>

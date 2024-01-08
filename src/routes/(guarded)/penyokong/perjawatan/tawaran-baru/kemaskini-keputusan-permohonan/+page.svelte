@@ -79,7 +79,11 @@
         </StepperContent>
         <StepperContent>
             <StepperContentHeader title="Tetapkan keputusan Peyokong"
-                ><TextIconButton primary label="Simpan" onClick={() => {}}>
+                ><TextIconButton
+                    primary
+                    label="Simpan"
+                    form="supporterResultForm"
+                >
                     <SvgCheck></SvgCheck>
                 </TextIconButton></StepperContentHeader
             >

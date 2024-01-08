@@ -15,7 +15,6 @@ import { mockLookupServiceTypes } from '$lib/mocks/database/mockLookupServiceTyp
 import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
 import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
 import { mockContStudy } from '$lib/mocks/latihan/mockContStudy.js';
-import { getEmployees } from '$lib/service/employees/staff-service.js';
 
 export async function load({ params }) {
     const data: IntContStudy[] = await mockContStudy;
@@ -26,7 +25,7 @@ export async function load({ params }) {
             exam.candidateIdentityNumber === params.ic,
     );
 
-    const employees: IntEmployees[] = await getEmployees();
+    const employees: IntEmployees[] = mockEmployees;
 
     const currentEmployee: IntEmployees | undefined = employees.find(
         (staff) =>

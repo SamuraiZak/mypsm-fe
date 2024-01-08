@@ -21,7 +21,7 @@
     import { areaTypes } from '$lib/mocks/elaun/areas';
     import { mockAllEmployeeAllowances } from '$lib/mocks/elaun/mockAllEmployeeAllowances';
     import { mockEmployeeAllowanceDocList } from '$lib/mocks/elaun/mockEmployeeAllowanceDocList';
-    import { currencyFormatter } from '$lib/service/services';
+    // import { 450om '$lib/service/services';
     import { selectedRecordId } from '$lib/stores/globalState';
 
     let disabled = true;
@@ -255,13 +255,13 @@
                         label="Sendiri"
                         {disabled}
                         {labelBlack}
-                        value={currencyFormatter(450)}
+                        value={450}
                     ></TextField>
                     <TextField
                         label="Pasangan"
                         {disabled}
                         {labelBlack}
-                        value={currencyFormatter(450)}
+                        value={450}
                     ></TextField>
                 </div>
                 <!-- DOCUMENTS -->
@@ -313,7 +313,7 @@
                         label="Jumlah Tuntutan"
                         {disabled}
                         {labelBlack}
-                        value={currencyFormatter(100)}
+                        value={450}
                     ></TextField>
                 </div>
                 <!-- DOCUMENTS -->
@@ -372,7 +372,8 @@
                     class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
                 >
                     <SectionHeader title="Maklumat Keluarga"></SectionHeader>
-                    <FormTable sampleData={famInfo} bind:data {disabled}></FormTable>
+                    <FormTable sampleData={famInfo} bind:data {disabled}
+                    ></FormTable>
                 </div>
                 <!-- DOCUMENTS -->
                 <div

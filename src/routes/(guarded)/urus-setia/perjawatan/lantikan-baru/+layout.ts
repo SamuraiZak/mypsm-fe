@@ -2,7 +2,7 @@
 
 import { mockEmployees } from '$lib/mocks/database/mockEmployees.js';
 
-export async function load({ cookies }) {
+export async function load() {
     // const fetchedData: PtbAndKwap[] = await fetchPtbKwap();
 
     const candidateData: Candidate[] = [
@@ -65,13 +65,10 @@ export async function load({ cookies }) {
         },
     ];
 
-    const userId = cookies.get('userId');
-
     return {
         props: {
             newHireLists: newHireData,
             candidateLists: candidateData,
         },
-        userId,
     };
 }

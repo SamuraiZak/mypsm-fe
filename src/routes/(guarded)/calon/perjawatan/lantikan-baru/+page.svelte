@@ -76,8 +76,8 @@
         <SectionHeader title="Senarai Permohonan"></SectionHeader>
         <DynamicTable
             withActions
-            actionOptions={['edit']}
-            editActions={() => {
+            actionOptions={['detail']}
+            detailActions={() => {
                 const url = './lantikan-baru/kemaskini-permohonan';
                 goto(url);
             }}

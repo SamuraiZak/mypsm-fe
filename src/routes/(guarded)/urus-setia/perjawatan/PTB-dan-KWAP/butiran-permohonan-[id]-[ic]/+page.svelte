@@ -73,7 +73,7 @@
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
-                    <MaklumatPerkhidmatan ptbData={data.record} />
+                    <MaklumatPerkhidmatan />
                 </div>
             </StepperContentBody>
         </StepperContent>
@@ -81,7 +81,11 @@
         <StepperContent>
             <StepperContentHeader title="Kemaskini Maklumat PTB dan KWAP">
                 {#if data.record.status === 'Baru'}
-                    <TextIconButton primary label="Simpan" onClick={() => {}}>
+                    <TextIconButton
+                        primary
+                        label="Simpan"
+                        form="meetingResultForm"
+                    >
                         <SvgCheck></SvgCheck>
                     </TextIconButton>
                 {/if}
@@ -91,8 +95,6 @@
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
                     <MaklumatPtbAndKwap
-                        ptbData={data.record}
-                        userId={data.userId}
                         editable={data.record.status === 'Baru' ? true : false}
                     />
                 </div>
@@ -103,7 +105,11 @@
                 <StepperContentHeader
                     title="Masukkan Maklumat Peranan - Peranan Berkaitan"
                 >
-                    <TextIconButton primary label="Simpan" onClick={() => {}}>
+                    <TextIconButton
+                        primary
+                        label="Simpan"
+                        form="newEmploymentAssignApproverSupporterForm"
+                    >
                         <SvgCheck></SvgCheck>
                     </TextIconButton>
                 </StepperContentHeader>

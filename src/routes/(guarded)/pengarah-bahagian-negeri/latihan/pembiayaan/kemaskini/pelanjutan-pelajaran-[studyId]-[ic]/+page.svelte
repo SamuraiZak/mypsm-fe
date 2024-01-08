@@ -21,7 +21,6 @@
     import AccordianField from '$lib/components/input/AccordianField.svelte';
     import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades.js';
     import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions.js';
-    import { currencyFormatter } from '$lib/service/services.js';
     export let data;
     let activeStepper = 0;
     let target: any;
@@ -544,13 +543,13 @@
                             disabled={true}
                             id="tanggaGaji"
                             label={'Tangga Gaji'}
-                            value={currencyFormatter(1234.56)}
+                            value={123.23}
                         ></TextField>
                         <TextField
                             disabled={true}
                             id="gajiPokok"
                             label={'Gaji Pokok'}
-                            value={currencyFormatter(1234.56)}
+                            value={123.23}
                         ></TextField>
                     </div>
                     <div class="space-y-2.5">
@@ -560,7 +559,7 @@
                             disabled={true}
                             id="itka"
                             label={'ITKA'}
-                            value={currencyFormatter(123.45)}
+                            value={123.23}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -568,7 +567,7 @@
                             disabled={true}
                             id="itp"
                             label={'ITP'}
-                            value={currencyFormatter(123.45)}
+                            value={123.23}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -576,7 +575,7 @@
                             disabled={true}
                             id="epw"
                             label={'EPW'}
-                            value={currencyFormatter(123.45)}
+                            value={123.23}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -584,7 +583,7 @@
                             disabled={true}
                             id="cola"
                             label={'COLA'}
-                            value={currencyFormatter(123.45)}
+                            value={123.23}
                         ></TextField>
                         <!-- Tooltip body -->
                         <Tooltip
