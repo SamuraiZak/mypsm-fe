@@ -14,6 +14,8 @@
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import { Badge, Checkbox } from 'flowbite-svelte';
     import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { ZodError, z } from 'zod';
 
     let tableCellClass = 'border h-[32px] min-h-[32px] py-1 px-2.5';
 
@@ -28,6 +30,18 @@
         },
     ];
 
+    let isCertified: string = 'true';
+    const certifyOptions: RadioOption[] = [
+        {
+            value: 'true',
+            label: 'SAH',
+        },
+        {
+            value: 'false',
+            label: 'TIDAK SAH',
+        },
+    ];
+
     const supportOptions: RadioOption[] = [
         {
             value: 'support',
@@ -38,6 +52,84 @@
             label: 'TIDAK SOKONG',
         },
     ];
+    let isApproved: string = 'true';
+    const approveOptions: RadioOption[] = [
+        {
+            value: 'true',
+            label: 'LULUS',
+        },
+        {
+            value: 'false',
+            label: 'TIDAK LULUS',
+        },
+    ];
+    // =========================================================================
+    // z validation schema and submit function for the new employment form fields
+    // =========================================================================
+    let errorData: any;
+
+    const longTextSchema = z
+        .string({ required_error: 'Medan ini tidak boleh kosong.' })
+        .min(4, {
+            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+        })
+        .max(124, {
+            message: 'Medan ini tidak boleh melebihi 124 karakter.',
+        })
+        .trim();
+
+    // New Employment - Approver Result section
+    const serviceMngtDirectorResultSchema = z.object({
+        serviceMngtDirectorRemark: longTextSchema,
+        serviceMngtDirectorResult: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tetapkan pilihan anda.'
+                        : defaultError,
+            }),
+        }),
+    });
+
+    export const submitServiceMngtDirectorResultForm = async (event: Event) => {
+        const formElement = event.target as HTMLFormElement;
+        const formData = new FormData(formElement);
+
+        const serviceMngtDirectorResultData = {
+            serviceMngtDirectorRemark: String(
+                formData.get('serviceMngtDirectorRemark'),
+            ),
+            serviceMngtDirectorResult: String(
+                formData.get('serviceMngtDirectorResult'),
+            ),
+        };
+
+        try {
+            errorData = [];
+            const result = serviceMngtDirectorResultSchema.parse(
+                serviceMngtDirectorResultData,
+            );
+
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                setTimeout(() => goto('../../tanggung-kerja'), 1500);
+            }
+        } catch (error: unknown) {
+            if (error instanceof ZodError) {
+                const { fieldErrors: errors } = error.flatten();
+                errorData = errors;
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
 </script>
 
 <!-- header section -->
@@ -324,12 +416,31 @@
             </StepperContentBody>
         </StepperContent>
         <StepperContent>
-            <StepperContentHeader
-                title="Senarai Semak Permohonan Penangguhan/Pindaan Penempatan Kerja"
+            <StepperContentHeader title="Pengesahan Semakan daripada Urus Setia"
             ></StepperContentHeader>
             <StepperContentBody>
-                <SectionHeader title="Senarai Semak"></SectionHeader>
-                <div
+                <div class="flex w-full flex-col gap-2.5">
+                    <div class="mb-5">
+                        <b class="text-sm text-system-primary"
+                            >Keputusan Urus Setia Perjawatan</b
+                        >
+                    </div>
+                    <LongTextField
+                        disabled={true}
+                        id="supporter-remark"
+                        label="Tindakan/Ulasan"
+                        value=""
+                    ></LongTextField>
+
+                    <RadioSingle
+                        disabled={true}
+                        options={certifyOptions}
+                        legend={'Keputusan'}
+                        bind:userSelected={isCertified}
+                    ></RadioSingle>
+                    <hr />
+                </div>
+                <!-- <div
                     class="flex h-fit w-full flex-col items-start justify-start gap-2"
                 >
                     <table
@@ -645,39 +756,56 @@
                         placeholder="-"
                         value="Mohd Abu bin Bakar"
                     />
-                </div>
+                </div> -->
             </StepperContentBody>
         </StepperContent>
         <StepperContent>
             <StepperContentHeader
-                title="Senarai Semak Permohonan Penangguhan/Pindaan Penempatan Kerja"
+                title="Keputusan Kelulusan Pengarah Khidmat Pengurusan"
                 ><TextIconButton
                     primary
                     label="Hantar"
-                    onClick={() => {
-                        goto(
-                            '/pengarah-khidmat-pengurusan/perjawatan/tanggung-kerja',
-                        );
-                    }}
-                >
-                    <SvgPaperAirplane></SvgPaperAirplane>
-                </TextIconButton></StepperContentHeader
+                    form="serviceMngtDirectorResultForm"
+                /></StepperContentHeader
             >
             <StepperContentBody>
                 <SectionHeader
                     title="Ulasan Keputusan daripada Pengarah Perkhidmatan Pengurusan"
                 ></SectionHeader>
-                <div
+                <form
+                    id="serviceMngtDirectorResultForm"
+                    on:submit={submitServiceMngtDirectorResultForm}
                     class="flex h-fit w-full flex-col items-start justify-start gap-2"
                 >
                     <LongTextField
+                        hasError={errorData?.serviceMngtDirectorRemark}
+                        name="serviceMngtDirectorRemark"
                         label="Tindakan/Ulasan"
                         value=""
                         placeholder="-"
                     ></LongTextField>
-                    <RadioSingle options={supportOptions} />
-                </div>
+                    {#if errorData?.serviceMngtDirectorRemark}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.serviceMngtDirectorRemark[0]}</span
+                        >
+                    {/if}
+                    <RadioSingle
+                        legend="Keputusan"
+                        name="serviceMngtDirectorResult"
+                        options={approveOptions}
+                        bind:userSelected={isApproved}
+                    />
+                    {#if errorData?.serviceMngtDirectorResult}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.serviceMngtDirectorResult[0]}</span
+                        >
+                    {/if}
+                </form>
             </StepperContentBody>
         </StepperContent>
     </Stepper>
 </section>
+
+<Toaster />
