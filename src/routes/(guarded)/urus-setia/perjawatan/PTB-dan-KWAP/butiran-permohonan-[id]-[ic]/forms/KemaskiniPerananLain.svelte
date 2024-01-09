@@ -102,7 +102,7 @@
         label="Nama Penyokong"
         dropdownType="label-left-full"
         options={employeeLists}
-        bind:index={selectedSupporter}
+        bind:value={selectedSupporter}
     />
     {#if errorData?.staffSupporter}
         <span class="ml-[220px] font-sans text-sm italic text-system-danger"
@@ -115,7 +115,7 @@
         label="Nama Pelulus"
         dropdownType="label-left-full"
         options={employeeLists}
-        bind:index={selectedApprover}
+        bind:value={selectedApprover}
     />
     {#if errorData?.staffApprover}
         <span class="ml-[220px] font-sans text-sm italic text-system-danger"
