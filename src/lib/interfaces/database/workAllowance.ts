@@ -8,6 +8,8 @@ interface IntWorkAllowance {
     workAllowancePosition: string;
     currentPlacement: string;
     workAllowancePlacement: string;
+    interimStartDate: string;
+    interimEndDate: string;
     status: string;
     remark: string;
 }
