@@ -21,8 +21,8 @@
     export let selectedFiles: any = [];
     export let disabled: boolean = true;
     let selectedJenisGantian = '';
-    let isChecked1: boolean = false;
-    let isChecked2: boolean = false;
+    let hasHalfDayStartDate: boolean = false;
+    let hasHalfDayEndDate: boolean = false;
 
     let target: any;
     let texthidden = false;
@@ -54,15 +54,15 @@
 
     // ================ Form Validation ================
     let errorData: any;
-    const maklumatGantianForm = async (event: Event) => {
+    const submitForm = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);
         const namaPengganti = document.getElementById(
             'namaPengganti',
         ) as HTMLSelectElement;
-        const tarikhMulaSetengah = document.getElementById(
+        const getTarikhMulaSetengah = document.getElementById(
             'tarikhMulaSetengah',
         ) as HTMLSelectElement;
-        const tarikhTamatSetengah = document.getElementById(
+        const getTarikhTamatSetengah = document.getElementById(
             'tarikhTamatSetengah',
         ) as HTMLSelectElement;
 
@@ -70,13 +70,59 @@
             namaPengganti: String(namaPengganti.value),
             tarikhMula: String(formData.get('tarikhMula')),
             tarikhTamat: String(formData.get('tarikhTamat')),
-            tarikhMulaSetengah: String(tarikhMulaSetengah.value),
-            tarikhTamatSetengah: String(tarikhTamatSetengah.value),
             cutiGantianTerakhir: String(formData.get('cutiGantianTerakhir')),
         };
 
         try {
-            const result = maklumatGantian.parse(maklumatGantianFormData);
+            let validatedData;
+            let result;
+            if (
+                hasHalfDayStartDate &&
+                !hasHalfDayEndDate
+            ) {
+                const tarikhMulaSetengah = String(getTarikhMulaSetengah.value);
+
+                const validatedFormData = {
+                    ...maklumatGantianFormData,
+                    tarikhMulaSetengah,
+                };
+                validatedData = validatedFormData;
+                result = maklumatGantian.parse(validatedFormData);
+            } else if (
+                hasHalfDayEndDate &&
+                !hasHalfDayStartDate
+            ) {
+                const tarikhTamatSetengah = String(
+                    getTarikhTamatSetengah.value,
+                );
+
+                const validatedFormData = {
+                    ...maklumatGantianFormData,
+                    tarikhTamatSetengah,
+                };
+                validatedData = validatedFormData;
+                result = maklumatGantian.parse(validatedFormData);
+            } else if (
+                hasHalfDayStartDate &&
+                hasHalfDayEndDate
+            ) {
+                const tarikhMulaSetengah = String(getTarikhMulaSetengah.value);
+                const tarikhTamatSetengah = String(
+                    getTarikhTamatSetengah.value,
+                );
+
+                const validatedFormData = {
+                    ...maklumatGantianFormData,
+                    tarikhMulaSetengah,
+                    tarikhTamatSetengah,
+                };
+                validatedData = validatedFormData;
+                result = maklumatGantian.parse(validatedFormData);
+            } else {
+                validatedData = maklumatGantianFormData;
+                result = maklumatGantian.parse(maklumatGantianFormData);
+            }
+
             if (result) {
                 errorData = [];
                 toast.success('Berjaya disimpan!', {
@@ -84,7 +130,10 @@
                 });
 
                 const id = crypto.randomUUID().toString();
-                const validatedFormData = { ...maklumatGantianFormData, id };
+                const validatedFormData = {
+                    ...validatedData,
+                    id,
+                };
                 console.log(
                     'REQUEST BODY: ',
                     JSON.stringify(validatedFormData),
@@ -112,7 +161,7 @@
     <CustomTab>
         <CustomTabContent title="Maklumat Gantian">
             <SectionHeader title="Cuti Gantian"
-                ><TextIconButton primary label="Submit" form="maklumatGantian"
+                ><TextIconButton primary label="test validation" form="maklumatGantian"
                 ></TextIconButton></SectionHeader
             >
             <div
@@ -120,7 +169,7 @@
             >
                 <form
                     id="maklumatGantian"
-                    on:submit|preventDefault={maklumatGantianForm}
+                    on:submit|preventDefault={submitForm}
                     class="flex w-full flex-col gap-2"
                 >
                     <DropdownSelect
@@ -155,19 +204,19 @@
                             {/if}
                         </div>
                         <Checkbox
-                            name="checkBox1"
-                            bind:checked={isChecked1}
+                            name="hasHalfDayStartDate"
+                            bind:checked={hasHalfDayStartDate}
                             class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
                         />
                         <label
-                            for="checkBox1"
+                            for="hasHalfDayStartDate"
                             class="w-[100px] text-sm font-medium text-gray-900 dark:text-gray-300"
                             >Setengah Hari</label
                         >
                         <div class="flex w-full flex-col">
                             <DropdownSelect
                                 hasError={errorData?.tarikhMulaSetengah}
-                                disabled={!isChecked1}
+                                disabled={!hasHalfDayStartDate}
                                 id="tarikhMulaSetengah"
                                 options={setengahHari}
                                 bind:index={selectedSetengahHari}
@@ -200,19 +249,19 @@
                             {/if}
                         </div>
                         <Checkbox
-                            name="checkBox2"
-                            bind:checked={isChecked2}
+                            name="hasHalfDayEndDate"
+                            bind:checked={hasHalfDayEndDate}
                             class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
                         />
                         <label
-                            for="checkBox2"
+                            for="hasHalfDayEndDate"
                             class="w-[100px] text-sm font-medium text-gray-900 dark:text-gray-300"
                             >Setengah Hari</label
                         >
                         <div class="flex w-full flex-col">
                             <DropdownSelect
                                 hasError={errorData?.tarikhTamatSetengah}
-                                disabled={!isChecked2}
+                                disabled={!hasHalfDayEndDate}
                                 id="tarikhTamatSetengah"
                                 options={setengahHari}
                                 bind:index={selectedSetengahHari}
@@ -247,7 +296,7 @@
                 </form>
             </div>
         </CustomTabContent>
-        
+
         <CustomTabContent title="Jenis Gantian">
             <SectionHeader title="Jenis Gantian"></SectionHeader>
             <div

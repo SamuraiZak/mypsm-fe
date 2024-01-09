@@ -26,8 +26,8 @@
         target = document.getElementById('fileInput');
     });
 
-    let isChecked1: boolean = false;
-    let isChecked2: boolean = false;
+    let hasHalfDayStartDate: boolean = false;
+    let hasHalfDayEndDate: boolean = false;
     // Function to handle the file changes
     function handleOnChange() {
         texthidden = true;
@@ -51,10 +51,10 @@
     let errorData: any;
     const submitForm = async (event: Event) => {
         const formDetail = new FormData(event.target as HTMLFormElement);
-        const tarikhMulaSetengah = document.getElementById(
+        const getTarikhMulaSetengah = document.getElementById(
             'tarikhMulaSetengah',
         ) as HTMLSelectElement;
-        const tarikhTamatSetengah = document.getElementById(
+        const getTarikhTamatSetengah = document.getElementById(
             'tarikhTamatSetengah',
         ) as HTMLSelectElement;
 
@@ -62,13 +62,50 @@
             tujuanPermohonan: String(formDetail.get('tujuanPermohonan')),
             tarikhMula: String(formDetail.get('tarikhMula')),
             tarikhTamat: String(formDetail.get('tarikhTamat')),
-            tarikhMulaSetengah: String(tarikhMulaSetengah.value),
-            tarikhTamatSetengah: String(tarikhTamatSetengah.value),
             totalDay: String(formDetail.get('totalDay')),
         };
 
         try {
-            const result = globalCuti.parse(formData);
+            let validatedData;
+            let result;
+            if (hasHalfDayStartDate && !hasHalfDayEndDate) {
+                const tarikhMulaSetengah = String(getTarikhMulaSetengah.value);
+
+                const validatedFormData = {
+                    ...formData,
+                    tarikhMulaSetengah,
+                };
+                validatedData = validatedFormData;
+                result = globalCuti.parse(validatedFormData);
+            } else if (hasHalfDayEndDate && !hasHalfDayStartDate) {
+                const tarikhTamatSetengah = String(
+                    getTarikhTamatSetengah.value,
+                );
+
+                const validatedFormData = {
+                    ...formData,
+                    tarikhTamatSetengah,
+                };
+                validatedData = validatedFormData;
+                result = globalCuti.parse(validatedFormData);
+            } else if (hasHalfDayStartDate && hasHalfDayEndDate) {
+                const tarikhMulaSetengah = String(getTarikhMulaSetengah.value);
+                const tarikhTamatSetengah = String(
+                    getTarikhTamatSetengah.value,
+                );
+
+                const validatedFormData = {
+                    ...formData,
+                    tarikhMulaSetengah,
+                    tarikhTamatSetengah,
+                };
+                validatedData = validatedFormData;
+                result = globalCuti.parse(validatedFormData);
+            } else {
+                validatedData = formData;
+                result = globalCuti.parse(formData);
+            }
+
             if (result) {
                 errorData = [];
                 toast.success('Berjaya disimpan!', {
@@ -76,7 +113,10 @@
                 });
 
                 const id = crypto.randomUUID().toString();
-                const validatedFormData = { ...formData, id };
+                const validatedFormData = {
+                    ...validatedData,
+                    id,
+                };
                 console.log(
                     'REQUEST BODY: ',
                     JSON.stringify(validatedFormData),
@@ -129,34 +169,34 @@
             <div
                 class="flex flex w-full w-full flex-row items-center justify-start gap-2.5"
             >
-            <div class="flex w-full flex-col">
-                <DateSelector
-                    hasError={errorData?.tarikhMula}
-                    name="tarikhMula"
-                    handleDateChange
-                    label="Tarikh Mula"
-                ></DateSelector>
-                {#if errorData?.tarikhMula}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.tarikhMula[0]}</span
-                    >
-                {/if}
-            </div>
-            <Checkbox
-            name="checkBox1"
-            bind:checked={isChecked1}
-            class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-        />
+                <div class="flex w-full flex-col">
+                    <DateSelector
+                        hasError={errorData?.tarikhMula}
+                        name="tarikhMula"
+                        handleDateChange
+                        label="Tarikh Mula"
+                    ></DateSelector>
+                    {#if errorData?.tarikhMula}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.tarikhMula[0]}</span
+                        >
+                    {/if}
+                </div>
+                <Checkbox
+                    name="hasHalfDayStartDate"
+                    bind:checked={hasHalfDayStartDate}
+                    class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                />
                 <label
-                    for="default-checkbox"
+                    for="hasHalfDayStartDate"
                     class="w-[100px] text-sm font-medium text-gray-900 dark:text-gray-300"
                     >Setengah Hari</label
                 >
                 <div class="flex w-full flex-col">
                     <DropdownSelect
                         hasError={errorData?.tarikhMulaSetengah}
-                        disabled={!isChecked1}
+                        disabled={!hasHalfDayStartDate}
                         id="tarikhMulaSetengah"
                         options={setengahHari}
                         bind:index={selectedSetengahHari}
@@ -174,34 +214,34 @@
             <div
                 class="flex flex w-full w-full flex-row items-center justify-start gap-2.5"
             >
-            <div class="flex w-full flex-col">
-                <DateSelector
-                    hasError={errorData?.tarikhTamat}
-                    name="tarikhTamat"
-                    handleDateChange
-                    label="Tarikh Tamat"
-                ></DateSelector>
-                {#if errorData?.tarikhTamat}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.tarikhTamat[0]}</span
-                    >
-                {/if}
-            </div>
-            <Checkbox
-            name="checkBox2"
-            bind:checked={isChecked2}
-            class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-        />
+                <div class="flex w-full flex-col">
+                    <DateSelector
+                        hasError={errorData?.tarikhTamat}
+                        name="tarikhTamat"
+                        handleDateChange
+                        label="Tarikh Tamat"
+                    ></DateSelector>
+                    {#if errorData?.tarikhTamat}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.tarikhTamat[0]}</span
+                        >
+                    {/if}
+                </div>
+                <Checkbox
+                    name="hasHalfDayEndDate"
+                    bind:checked={hasHalfDayEndDate}
+                    class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                />
                 <label
-                    for="default-checkbox"
+                    for="hasHalfDayEndDate"
                     class="w-[100px] text-sm font-medium text-gray-900 dark:text-gray-300"
                     >Setengah Hari</label
                 >
                 <div class="flex w-full flex-col">
                     <DropdownSelect
                         hasError={errorData?.tarikhTamatSetengah}
-                        disabled={!isChecked2}
+                        disabled={!hasHalfDayEndDate}
                         id="tarikhTamatSetengah"
                         options={setengahHari}
                         bind:index={selectedSetengahHari}
