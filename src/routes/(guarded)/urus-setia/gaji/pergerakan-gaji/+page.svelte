@@ -33,6 +33,8 @@
     let meetingDate: any;
     let salaryMovementMonthTypeOption: any;
     let salaryGredTypeOption: any;
+    let specialFiAidText: any;
+    let specialAid: any;
     let isChecked: boolean = false;
     let tempUrl: IntSalaryMovementRecord;
 
@@ -77,6 +79,15 @@
 
     const exampleFormSchema = z.object({
         // checkbox schema
+
+        specialAid: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tetapkan pilihan anda.'
+                        : defaultError,
+            }),
+        }),
         meetingTypeOption: z.enum(['1', '2', '3', '4'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
@@ -94,6 +105,15 @@
                         : defaultError,
             }),
         }),
+        specialFiAidText: z
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
     });
 
     const tetapanKGTForm = async (event: Event) => {
@@ -112,6 +132,8 @@
                 salaryMovementMonthTypeSelector.value,
             ),
             checkboxExample: String(formData.get('checkboxExample')),
+            specialFiAidText: String(formData.get('specialFiAidText')),
+            specialAid: String(formData.get('specialAid')),
         };
 
         try {
@@ -291,49 +313,74 @@
                             >{errorData?.salaryGredTypeOption[0]}</span
                         >
                     {/if}
-                    
-                    <Checkbox
-                        name="salaryGredTypeOption"
-                        bind:checked={isChecked}
-                        ><DropdownSelect
-                            hasError={errorData?.salaryGredTypeOption}
-                            dropdownType="label-left"
-                            id="salaryGredTypeOption"
-                            label="Gred"
-                            bind:value={salaryGredTypeOption}
-                            options={[
-                                { value: 'All', name: 'Semua' },
-                                { value: 'N19', name: 'N19' },
-                                { value: 'N21', name: 'N21' },
-                                { value: 'N29', name: 'N29' },
-                                { value: 'N32', name: 'N32' },
-                                { value: 'N49', name: 'N49' },
-                                { value: 'N52', name: 'N52' },
-                            ]}
-                        ></DropdownSelect>
-                        {#if errorData?.salaryGredTypeOption}
+
+                    <Checkbox name="specialFiAidText" bind:checked={isChecked}
+                        ><TextField
+                            labelType="label-fit"
+                            hasTooltip={true}
+                            toolTipID="type-special-fi-aid"
+                            hasError={errorData?.specialFiAidText}
+                            name="specialFiAidText"
+                            label="Bantuan Khas Kewangan (RM)"
+                            type="number"
+                            bind:value={specialFiAidText}
+                        />
+                        {#if errorData?.specialFiAidText}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.salaryGredTypeOption[0]}</span
+                                >{errorData?.specialFiAidText[0]}</span
+                            >
+                        {/if}
+                        {#if errorData?.specialFiAidText}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.specialFiAidText[0]}</span
                             >
                         {/if}</Checkbox
                     >
 
-                    {#if errorData?.salaryGredTypeOption}
+                    {#if errorData?.specialFiAidText}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.salaryGredTypeOption[0]}</span
+                            >{errorData?.specialFiAidText[0]}</span
                         >
                     {/if}
-                    <Checkbox>
-                        <TextField
-                            labelType="label-fit"
-                            hasTooltip={true}
-                            toolTipID="type-special-fi-aid"
-                            type="number"
-                            label="Bantuan Khas Kewangan (RM)"
-                        />
-                    </Checkbox>
+                    <Checkbox name="specialAidOption" bind:checked={isChecked}>
+                        <label for="specialAidOption">Kenaikan Khas (RM)</label>
+                        <div class="m1-2.5 gap 2.5 flex flex-col">
+                            <Radio
+                                name="specialAid"
+                                legend={'Radio Button'}
+                                bind:value={specialAid}
+                            ></Radio>
+                            {#if errorData?.specialAid}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{errorData?.specialAid[0]}</span
+                                >
+                            {/if}
+                        </div>
+
+                        {#if errorData?.specialAidOption}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.specialAidOption[0]}</span
+                            >
+                        {/if}
+                        {#if errorData?.specialAidOption}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.specialAidOption[0]}</span
+                            >
+                        {/if}</Checkbox
+                    >
+
+                    {#if errorData?.specialAidOption}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.specialAidOption[0]}</span
+                        >
+                    {/if}
                     <Checkbox>
                         <label for="special-aid">Kenaikan Khas (RM)</label>
                         <div class="ml-2.5 flex flex-col gap-2.5">
