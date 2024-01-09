@@ -6,7 +6,7 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    import { currencyFormatter } from '$lib/service/services';
+    // import { currencyFormatter } from '$lib/service/services';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import { months } from '$lib/mocks/dateSelection/months';
@@ -201,19 +201,13 @@
                     label="Gred"
                     value={currEmployeeGrade.code}
                 ></TextField>
-                <TextField
-                    {labelBlack}
-                    disabled
-                    label="Gaji Pokok"
-                    value={currencyFormatter(4808.92)}
-                ></TextField>
+                <TextField {labelBlack} disabled label="Gaji Pokok"></TextField>
                 <TextField
                     {labelBlack}
                     hasTooltip
                     toolTipID="type-itka"
                     disabled
                     label="ITKA"
-                    value={currencyFormatter(160)}
                 ></TextField>
                 <TextField
                     {labelBlack}
@@ -221,7 +215,6 @@
                     toolTipID="type-itp"
                     disabled
                     label="ITP"
-                    value={currencyFormatter(300)}
                 ></TextField>
                 <TextField
                     {labelBlack}
@@ -229,7 +222,6 @@
                     toolTipID="type-cola"
                     disabled
                     label="COLA"
-                    value={currencyFormatter(350)}
                 ></TextField>
                 <div class="flex w-full flex-row justify-evenly gap-2.5">
                     <label
@@ -249,7 +241,6 @@
                         {labelBlack}
                         disabled
                         label="Jumlah"
-                        value={currencyFormatter(155)}
                     ></TextField>
                 </div>
             </div>
@@ -277,11 +268,7 @@
                 <p class="h-[35px] text-sm text-system-primary">
                     Pinjaman Komputer
                 </p>
-                <TextField
-                    {labelBlack}
-                    disabled
-                    label="Jumlah (RM)"
-                    value={currencyFormatter(325)}
+                <TextField {labelBlack} disabled label="Jumlah (RM)"
                 ></TextField>
                 <DateSelector
                     {labelBlack}
@@ -332,11 +319,7 @@
                 class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
             >
                 <p class="h-[35px] text-sm text-system-primary">Perubatan</p>
-                <TextField
-                    {labelBlack}
-                    disabled
-                    label="Jumlah (RM)"
-                    value={currencyFormatter(675)}
+                <TextField {labelBlack} disabled label="Jumlah (RM)"
                 ></TextField>
                 <DateSelector
                     {labelBlack}
@@ -359,11 +342,7 @@
                 <p class="h-[35px] text-sm text-system-primary">
                     Bantuan Pakaian Panas
                 </p>
-                <TextField
-                    {labelBlack}
-                    disabled
-                    label="Jumlah (RM)"
-                    value={currencyFormatter(500)}
+                <TextField {labelBlack} disabled label="Jumlah (RM)"
                 ></TextField>
                 <DateSelector
                     {labelBlack}
@@ -386,11 +365,7 @@
                 <p class="h-[35px] text-sm text-system-primary">
                     Elaun Memangku
                 </p>
-                <TextField
-                    {labelBlack}
-                    disabled
-                    label="Jumlah (RM)"
-                    value={currencyFormatter(650)}
+                <TextField {labelBlack} disabled label="Jumlah (RM)"
                 ></TextField>
                 <DateSelector
                     {labelBlack}
@@ -466,7 +441,6 @@
                         {labelBlack}
                         disabled={false}
                         label="Jumlah Potongan Cuti"
-                        value={currencyFormatter(1000)}
                     ></TextField>
                     <DropdownSelect
                         disabled={false}
@@ -526,9 +500,6 @@
                                     {labelBlack}
                                     disabled={false}
                                     label="Jumlah Bayaran"
-                                    value={currencyFormatter(
-                                        item.deductionAmount,
-                                    )}
                                 ></TextField>
                             </div>
                         </DynamicAccordionForm>
@@ -557,7 +528,6 @@
                             {labelBlack}
                             disabled={false}
                             label="Gaji Pokok"
-                            value={currencyFormatter(4808.92)}
                         ></TextField>
                         <TextField
                             {labelBlack}
@@ -565,7 +535,6 @@
                             toolTipID="type-itka"
                             disabled={false}
                             label="ITKA"
-                            value={currencyFormatter(160)}
                         ></TextField>
                         <TextField
                             {labelBlack}
@@ -577,7 +546,6 @@
                             {labelBlack}
                             disabled={false}
                             label="Jumlah Skim Perumahan"
-                            value={currencyFormatter(300)}
                         ></TextField>
                         <TextField
                             {labelBlack}
@@ -585,7 +553,6 @@
                             toolTipID="type-cola"
                             disabled={false}
                             label="COLA"
-                            value={currencyFormatter(350)}
                         ></TextField>
                         <div
                             class="flex w-full flex-row justify-evenly gap-2.5"
@@ -607,7 +574,6 @@
                                 {labelBlack}
                                 disabled={false}
                                 label="Jumlah"
-                                value={currencyFormatter(155)}
                             ></TextField>
                         </div>
                     </div>
@@ -665,18 +631,12 @@
                                         {labelBlack}
                                         disabled={false}
                                         label="Sepatutnya Bayar"
-                                        value={currencyFormatter(
-                                            object.toBePaidAmount,
-                                        )}
                                     ></TextField>
                                     <TextField
                                         labelType="label-200"
                                         {labelBlack}
                                         disabled={false}
                                         label="Telah Bayar"
-                                        value={currencyFormatter(
-                                            object.paidAmount,
-                                        )}
                                     ></TextField>
                                 </div>
                                 <TextField
@@ -684,9 +644,6 @@
                                     {labelBlack}
                                     disabled={false}
                                     label="Jumlah Potongan / Tunggakan"
-                                    value={currencyFormatter(
-                                        object.toBeCutOrRemainingAmount,
-                                    )}
                                 ></TextField>
                             </div>
                         </DynamicAccordionForm>
@@ -747,9 +704,6 @@
                                     {labelBlack}
                                     disabled={false}
                                     label="Jumlah Bayaran"
-                                    value={currencyFormatter(
-                                        item.deductionAmount,
-                                    )}
                                 ></TextField>
                             </div>
                         </DynamicAccordionForm>
