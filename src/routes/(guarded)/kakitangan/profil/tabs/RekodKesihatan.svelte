@@ -57,10 +57,10 @@
     //==========================================================
 
     const stepperSejarahPenyakit = z.object({
-        penyakitinggiSejakLahir: z
+        penyakitSejakLahir: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi .',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -68,8 +68,8 @@
             .trim(),
         alahan: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(1, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -77,8 +77,8 @@
             .trim(),
         sakitJiwa: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -86,8 +86,8 @@
             .trim(),
         epilepsi: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -95,8 +95,8 @@
             .trim(),
         darahTinggi: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -104,8 +104,8 @@
             .trim(),
         kencingManis: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -113,8 +113,8 @@
             .trim(),
         jantungAtatuSalurDarah: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -122,8 +122,8 @@
             .trim(),
         asma: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -131,8 +131,8 @@
             .trim(),
         sakitBuahPinggang: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -140,8 +140,8 @@
             .trim(),
         barah: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -149,8 +149,8 @@
             .trim(),
         batukKering: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -158,8 +158,8 @@
             .trim(),
         ketagihanDadah: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -167,8 +167,8 @@
             .trim(),
         AIDS: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -176,8 +176,8 @@
             .trim(),
         hepatitisB: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -185,8 +185,8 @@
             .trim(),
         sejarahPembedahan: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -194,8 +194,8 @@
             .trim(),
         kecacatan: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -203,8 +203,8 @@
             .trim(),
         merokok: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -212,8 +212,8 @@
             .trim(),
         penyakitSeriusLain: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -221,8 +221,8 @@
             .trim(),
         sedangMenerimaRawatan: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -542,8 +542,8 @@
     const stepperPemeriksaanDoktor = z.object({
         tinggi: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(2, {
+                message: 'Medan ini hendaklah lebih daripada 2 karakter.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -551,8 +551,8 @@
             .trim(),
         berat: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(1, {
+                message: 'Medan ini hendaklah lebih daripada 1 karakter.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -560,8 +560,8 @@
             .trim(),
         bmi: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(1, {
+                message: 'Medan ini hendaklah lebih daripada 1 karakter.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -569,8 +569,8 @@
             .trim(),
         denyutanNadi: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(1, {
+                message: 'Medan ini hendaklah lebih daripada 1 karakter.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -578,8 +578,8 @@
             .trim(),
         bp: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(1, {
+                message: 'Medan ini hendaklah lebih daripada 1 karakter.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -587,8 +587,8 @@
             .trim(),
         penglihatanTanpaBantuan: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -596,8 +596,8 @@
             .trim(),
         penglihatanDenganBantuan: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -605,8 +605,8 @@
             .trim(),
         penglihatanWarna: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -614,8 +614,8 @@
             .trim(),
         funduskopi: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -623,8 +623,8 @@
             .trim(),
         telinga: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -632,8 +632,8 @@
             .trim(),
         ronggaGigiMulut: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -641,8 +641,8 @@
             .trim(),
         leher: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -650,8 +650,8 @@
             .trim(),
         kardiovaskular: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -659,8 +659,8 @@
             .trim(),
         pemeriksaan: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -668,8 +668,8 @@
             .trim(),
         xray: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -677,8 +677,8 @@
             .trim(),
         tarikhPengambilanXray: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -686,8 +686,8 @@
             .trim(),
         lokasiPengambilanXray: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -695,8 +695,8 @@
             .trim(),
         nomborRujukanXray: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -704,8 +704,8 @@
             .trim(),
         abdomenHernia: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -713,8 +713,8 @@
             .trim(),
         sistemSaraf: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -722,8 +722,8 @@
             .trim(),
         sistemMuskuloskeletal: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -731,8 +731,8 @@
             .trim(),
         mikroskopi: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -899,9 +899,6 @@
 
     const submitFormstepperSejarahPenyakit = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);
-        const selectOptionExampleSelector = document.getElementById(
-            'selectOptionExample',
-        ) as HTMLSelectElement;
 
         const exampleFormData = {
             penyakitSejakLahir: String(formData.get('penyakitSejakLahir')),
@@ -1028,9 +1025,7 @@
 
     const submitFormstepperPemeriksaanDoktor = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);
-        const selectOptionExampleSelector = document.getElementById(
-            'selectOptionExample',
-        ) as HTMLSelectElement;
+        
 
         const exampleFormData = {
             tinggi: String(formData.get('tinggi')),
