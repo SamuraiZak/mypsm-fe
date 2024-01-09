@@ -158,7 +158,7 @@
             }),
         })
         .max(new Date(), {
-            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+            message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
         });
 
     const stepper1 = z.object({
@@ -172,6 +172,14 @@
         }),
 
         statusPekerjaan: z.enum(['1', '2', '3', '4'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+        isInRelationshipWithLKIMStaff: z.enum(['true', 'false'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
                     issue.code === 'invalid_enum_value'
@@ -238,22 +246,26 @@
                         : defaultError,
             }),
         }),
-        jawatanPasangan: z.enum(['1', '2'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Pilihan perlu dipilih.'
-                        : defaultError,
+        jawatanPasangan: z.optional(
+            z.enum(['1', '2'], {
+                errorMap: (issue, { defaultError }) => ({
+                    message:
+                        issue.code === 'invalid_enum_value'
+                            ? 'Pilihan perlu dipilih.'
+                            : defaultError,
+                }),
             }),
-        }),
-        hubungan: z.enum(['1', '2'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Pilihan perlu dipilih.'
-                        : defaultError,
+        ),
+        hubungan: z.optional(
+            z.enum(['true', 'false'], {
+                errorMap: (issue, { defaultError }) => ({
+                    message:
+                        issue.code === 'invalid_enum_value'
+                            ? 'Pilihan perlu dipilih.'
+                            : defaultError,
+                }),
             }),
-        }),
+        ),
 
         noPerkeja: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
@@ -301,51 +313,32 @@
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
             })
             .trim(),
-        perumahan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        pinjKenderaan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        pinjPerumahan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        noPekerjaPasangan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        namaPasangan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
+        noPekerjaPasangan: z.optional(
+            z
+                .string({
+                    required_error: 'Medan ini latihan tidak boleh kosong.',
+                })
+                .min(1, {
+                    message: 'Medan ini hendaklah lebih daripada  karakter.',
+                })
+                .max(124, {
+                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
+                })
+                .trim(),
+        ),
+        namaPasangan: z.optional(
+            z
+                .string({
+                    required_error: 'Medan ini latihan tidak boleh kosong.',
+                })
+                .min(4, {
+                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+                })
+                .max(124, {
+                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
+                })
+                .trim(),
+        ),
 
         tarikhLahir: dateStepper1,
 
@@ -407,7 +400,7 @@
             }),
         })
         .max(new Date(), {
-            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+            message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
         });
 
     const stepper2 = z.object({
@@ -506,51 +499,7 @@
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
             })
             .trim(),
-        pemangkuanSekarang: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        tanggungkerjaSekarang: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        skimPencen: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        kenaikanGajiAkhir: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        kenaikanPangkatAkhir: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
+
         tarikhberkuatKuasa: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
             .min(4, {
@@ -618,17 +567,8 @@
 
         kelayakanCuti: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        program: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(1, {
+                message: 'Medan ini hendaklah lebih daripada 1 karakter.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -717,18 +657,9 @@
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
             })
             .trim(),
-        kodJawatan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
         tempohPerkhidmatan: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
+            .min(1, {
                 message: 'Medan ini hendaklah lebih daripada 4 karakter.',
             })
             .max(124, {
@@ -760,7 +691,7 @@
             }),
         })
         .max(new Date(), {
-            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+            message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
         });
 
     const stepper8 = z.object({
@@ -799,24 +730,6 @@
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
             })
             .trim(),
-        // hubungan: z
-        //     .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        //     .min(4, {
-        //         message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        //     })
-        //     .max(124, {
-        //         message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        //     })
-        //     .trim(),
-        // warnaKP: z
-        //     .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        //     .min(4, {
-        //         message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        //     })
-        //     .max(124, {
-        //         message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        //     })
-        //     .trim(),
         telefonRumah: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
             .min(4, {
@@ -896,10 +809,10 @@
         const status = document.getElementById('status') as HTMLSelectElement;
 
         const jantina = document.getElementById('jantina') as HTMLSelectElement;
-        const jawatanPasangan = document.getElementById(
+        const getJawatanPasangan = document.getElementById(
             'jawatanPasangan',
         ) as HTMLSelectElement;
-        const hubungan = document.getElementById(
+        const getHubungan = document.getElementById(
             'hubungan',
         ) as HTMLSelectElement;
 
@@ -907,40 +820,60 @@
             noPerkeja: String(formData.get('noPerkeja')),
             longTextExample: String(formData.get('longTextExample')),
             radioButtonExample: String(formData.get('radioButtonExample')),
-            statusPekerjaan: String(statusPekerjaan.value),
+            statusPekerjaan: String(statusPekerjaan?.value),
             noKadPengenalan: String(formData.get('noKadPengenalan')),
             namaPenuh: String(formData.get('namaPenuh')),
             namaLain: String(formData.get('namaLain')),
-            warnaKadPengenalan: String(warnaKadPengenalan.value),
+            warnaKadPengenalan: String(warnaKadPengenalan?.value),
             tarikhLahir: String(formData.get('tarikhLahir')),
-            tempatLahir: String(tempatLahir.value),
-            warganegara: String(warganegara.value),
-            bangsa: String(bangsa.value),
-            agama: String(agama.value),
-            jantina: String(jantina.value),
-            status: String(status.value),
+            tempatLahir: String(tempatLahir?.value),
+            warganegara: String(warganegara?.value),
+            bangsa: String(bangsa?.value),
+            agama: String(agama?.value),
+            jantina: String(jantina?.value),
+            status: String(status?.value),
             emel: String(formData.get('emel')),
             alamatRumah: String(formData.get('alamatRumah')),
             alamatSuratMenyurat: String(formData.get('alamatSuratMenyurat')),
-            perumahan: String(formData.get('perumahan')),
-            pinjPerumahan: String(formData.get('pinjPerumahan')),
-            pinjKenderaan: String(formData.get('pinjKenderaan')),
-            noPekerjaPasangan: String(formData.get('noPekerjaPasangan')),
-            namaPasangan: String(formData.get('namaPasangan')),
-            jawatanPasangan: String(jawatanPasangan.value),
-            hubungan: String(hubungan.value),
+
+            isInRelationshipWithLKIMStaff: String(
+                formData.get('isInRelationshipWithLKIMStaff'),
+            ),
         };
 
         try {
-            const result = stepper1.parse(exampleFormData);
-            if (result) {
+            let tempResult;
+            let tempValidatedData;
+
+            if (isInRelationshipWithLKIMStaff === 'true') {
+                const jawatanPasangan = String(getJawatanPasangan?.value);
+                const hubungan = String(getHubungan?.value);
+                const noPekerjaPasangan = String(
+                    formData.get('noPekerjaPasangan'),
+                );
+                const namaPasangan = String(formData.get('namaPasangan'));
+
+                const validatedDetail = {
+                    ...exampleFormData,
+                    jawatanPasangan,
+                    hubungan,
+                    noPekerjaPasangan,
+                    namaPasangan,
+                };
+                tempValidatedData = validatedDetail;
+                tempResult = stepper1.parse(validatedDetail);
+            } else {
+                tempValidatedData = exampleFormData;
+                tempResult = stepper1.parse(exampleFormData);
+            }
+            if (tempResult) {
                 errorData = [];
                 toast.success('Berjaya disimpan!', {
                     style: 'background: #333; color: #fff;',
                 });
 
                 const id = crypto.randomUUID().toString();
-                const validatedExamFormData = { ...exampleFormData, id };
+                const validatedExamFormData = { ...tempValidatedData, id };
                 console.log(
                     'REQUEST BODY: ',
                     JSON.stringify(validatedExamFormData),
@@ -990,20 +923,12 @@
             jawatan: String(jawatan.value),
             penempatan: String(penempatan.value),
             tarafPerkhidmatan: String(tarafPerkhidmatan.value),
+            bulanKGT: String(bulanKGT.value),
             noKWSP: String(formData.get('noKWSP')),
             noSOCSO: String(formData.get('noSOCSO')),
             noCukai: String(formData.get('noCukai')),
             bank: String(formData.get('bank')),
             noAkaun: String(formData.get('noAkuan')),
-            program: String(formData.get('program')),
-            pemangkuanSekarang: String(formData.get('pemangkuanSekarang')),
-            tanggungkerjaSekarang: String(
-                formData.get('tanggungkerjaSekarang'),
-            ),
-            skimPencen: String(formData.get('skimPencen')),
-            kenaikanGajiAkhir: String(formData.get('kenaikanGajiAkhir')),
-            kenaikanPangkatAkhir: String(formData.get('kenaikanPangkatAkhir')),
-            bulanKGT: String(bulanKGT.value),
             tarikhberkuatKuasa: String(formData.get('tarikhberkuatKuasa')),
             tanggaGaji: String(formData.get('tanggaGaji')),
             gajiPokok: String(formData.get('gajiPokok')),
@@ -1115,15 +1040,11 @@
 
     const submitFormStepper4 = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);
-        const selectOptionExampleSelector = document.getElementById(
-            'selectOptionExample',
-        ) as HTMLSelectElement;
 
         const exampleFormData = {
             namaMajikan: String(formData.get('namaMajikan')),
             alamatMajikan: String(formData.get('alamatMajikan')),
             jawatanPengalaman: String(formData.get('jawatanPengalaman')),
-            kodJawatan: String(formData.get('kodJawatan')),
             tempohPerkhidmatan: String(formData.get('tempohPerkhidmatan')),
             gajiPengalaman: String(formData.get('gajiPengalaman')),
         };
@@ -1243,7 +1164,7 @@
     let isExPoliceSoldier = currentEmployee.isExPoliceOrSoldier
         ? 'true'
         : 'false';
-
+    //true
     let isInRelationshipWithLKIMStaff =
         currentEmployeeSpouse.isLKIMStaff == 'Ya' ? 'true' : 'false';
     let isKWSP = currentEmployeePensions.type == 'KWSP' ? 'true' : 'false';
@@ -1356,7 +1277,7 @@
                     dropdownType="label-left-full"
                     id="statusPekerjaan"
                     label="Status Pekerjaan"
-                    bind:index={currentEmployeeStatus.name}
+                    bind:value={currentEmployeeStatus.name}
                     options={[
                         { value: '1', name: 'Aktif' },
                         { value: '2', name: 'Tidak Aktif' },
@@ -1423,7 +1344,7 @@
                     dropdownType="label-left-full"
                     id="warnaKadPengenalan"
                     label="Warna Kad Pengenalan"
-                    bind:index={currentEmployee.isMalaysian}
+                    bind:value={currentEmployee.isMalaysian}
                     options={[
                         { value: 'true', name: 'Biru' },
                         { value: 'false', name: 'Merah' },
@@ -1457,7 +1378,7 @@
                     dropdownType="label-left-full"
                     id="tempatLahir"
                     label="Tempat Lahir"
-                    bind:index={currentEmployeeBirthState.name}
+                    bind:value={currentEmployeeBirthState.name}
                     options={[
                         { value: '1', name: 'Sarawak' },
                         { value: '2', name: 'Sabah' },
@@ -1476,7 +1397,7 @@
                     dropdownType="label-left-full"
                     id="warganegara"
                     label="Warganegara"
-                    bind:index={currentEmployee.isMalaysian}
+                    value=""
                     options={[
                         { value: '1', name: 'Warganegara' },
                         { value: '2', name: 'Bukan Warganegara' },
@@ -1495,7 +1416,7 @@
                     dropdownType="label-left-full"
                     id="bangsa"
                     label="Tempat Lahir"
-                    bind:index={currentEmployeeRace.name}
+                    bind:value={currentEmployeeRace.name}
                     options={[
                         { value: '1', name: 'Melayu' },
                         { value: '2', name: 'Cina' },
@@ -1514,7 +1435,7 @@
                     dropdownType="label-left-full"
                     id="agama"
                     label="Agama"
-                    bind:index={currentEmployeeReligion.name}
+                    bind:value={currentEmployeeReligion.name}
                     options={[
                         { value: '1', name: 'Islam' },
                         { value: '2', name: 'Kristen' },
@@ -1533,7 +1454,7 @@
                     dropdownType="label-left-full"
                     id="jantina"
                     label="Jantina"
-                    bind:index={currentEmployee.gender}
+                    bind:value={currentEmployee.gender}
                     options={[
                         { value: '1', name: 'Lelaki' },
                         { value: '2', name: 'Perempuan' },
@@ -1552,7 +1473,7 @@
                     dropdownType="label-left-full"
                     id="status"
                     label="Status"
-                    bind:index={currentEmployee.marital}
+                    bind:value={currentEmployee.marital}
                     options={[
                         { value: '1', name: 'Bujang' },
                         { value: '2', name: 'Berkahwin' },
@@ -1611,51 +1532,27 @@
 
                 <TextField
                     {disabled}
-                    hasError={errorData?.perumahan}
                     name="perumahan"
                     label={'Perumahan'}
                     type="text"
                     value="-"
                 ></TextField>
 
-                {#if errorData?.perumahan}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.perumahan[0]}</span
-                    >
-                {/if}
-
                 <TextField
                     {disabled}
-                    hasError={errorData?.pinjPerumahan}
                     name="pinjPerumahan"
                     label={'Pinjaman Perumahan'}
                     type="text"
                     value="-"
                 ></TextField>
 
-                {#if errorData?.pinjPerumahan}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.pinjPerumahan[0]}</span
-                    >
-                {/if}
-
                 <TextField
                     {disabled}
-                    hasError={errorData?.pinjKenderaan}
                     name="pinjKenderaan"
                     label={'Pinjaman Kenderaan'}
                     type="text"
                     value="-"
                 ></TextField>
-
-                {#if errorData?.pinjKenderaan}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.pinjKenderaan[0]}</span
-                    >
-                {/if}
 
                 <RadioSingle
                     {disabled}
@@ -1677,13 +1574,13 @@
                     </p>
 
                     <RadioSingle
+                        name="isInRelationshipWithLKIMStaff"
                         {options}
                         {disabled}
                         legend={'Perhubungan Dengan Kakitangan LKIM'}
                         bind:userSelected={isInRelationshipWithLKIMStaff}
                     ></RadioSingle>
                     {#if isInRelationshipWithLKIMStaff === 'true'}
-
                         <TextField
                             {disabled}
                             hasError={errorData?.noPekerjaPasangan}
@@ -1722,7 +1619,7 @@
                             dropdownType="label-left-full"
                             id="jawatanPasangan"
                             label="Jawatan Kakitangan LKIM"
-                            bind:index={currentEmployeeSpouse.position}
+                            value=""
                             options={[
                                 { value: '1', name: 'Pegawai IT' },
                                 { value: '2', name: 'Akauntan' },
@@ -1741,10 +1638,10 @@
                             dropdownType="label-left-full"
                             id="hubungan"
                             label="Hubungan"
-                            bind:index={currentEmployeeSpouse.relationship}
+                            value=""
                             options={[
-                                { value: '1', name: 'Suami' },
-                                { value: '2', name: 'Isteri' },
+                                { value: 'true', name: 'Suami' },
+                                { value: 'false', name: 'Isteri' },
                             ]}
                         ></DropdownSelect>
                         {#if errorData?.hubungan}
@@ -1753,7 +1650,6 @@
                                 >{errorData?.hubungan[0]}</span
                             >
                         {/if}
-
                     {/if}
                 </div>
             </form>
@@ -1784,7 +1680,7 @@
                         dropdownType="label-left-full"
                         id="gredSemasa"
                         label="Gred Semasa"
-                        bind:index={currentEmployeeGrade.code}
+                        bind:value={currentEmployeeGrade.code}
                         options={[
                             { value: '1', name: '41' },
                             { value: '2', name: '54' },
@@ -1803,7 +1699,7 @@
                         dropdownType="label-left-full"
                         id="jawatan"
                         label="Gred Semasa"
-                        bind:index={currentEmployeePosition.name}
+                        bind:value={currentEmployeePosition.name}
                         options={[
                             { value: '1', name: '41' },
                             { value: '2', name: '54' },
@@ -1822,7 +1718,7 @@
                         dropdownType="label-left-full"
                         id="penempatan"
                         label="Penempatan"
-                        bind:index={currentEmployeeService.placement}
+                        bind:value={currentEmployeeService.placement}
                         options={[
                             { value: '1', name: 'Kuala Lumpur' },
                             { value: '2', name: 'Sarawak' },
@@ -1841,7 +1737,7 @@
                         dropdownType="label-left-full"
                         id="tarafPerkhidmatan"
                         label="Taraf Perkhidmatan"
-                        bind:index={currentEmployeeServiceType.name}
+                        bind:value={currentEmployeeServiceType.name}
                         options={[
                             { value: '1', name: 'TETAP' },
                             { value: '2', name: 'SEMENTARA' },
@@ -1963,19 +1859,11 @@
 
                     <TextField
                         {disabled}
-                        hasError={errorData?.program}
                         name="program"
                         label={'Program'}
                         type="text"
                         value={'-'}
                     ></TextField>
-
-                    {#if errorData?.program}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.program[0]}</span
-                        >
-                    {/if}
 
                     <TextField
                         {disabled}
@@ -2079,80 +1967,43 @@
 
                     <TextField
                         {disabled}
-                        hasError={errorData?.pemangkuanSekarang}
                         name="pemangkuanSekarang"
                         label={'Pemangkuan Sekarang'}
                         type="text"
                         value="-"
                     ></TextField>
 
-                    {#if errorData?.pemangkuanSekarang}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.pemangkuanSekarang[0]}</span
-                        >
-                    {/if}
                     <TextField
                         {disabled}
-                        hasError={errorData?.tanggungkerjaSekarang}
                         name="tanggungkerjaSekarang"
                         label={'Tanggung Kerja Sekarang'}
                         type="text"
                         value="-"
                     ></TextField>
 
-                    {#if errorData?.tanggungkerjaSekarang}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.tanggungkerjaSekarang[0]}</span
-                        >
-                    {/if}
                     <TextField
                         {disabled}
-                        hasError={errorData?.skimPencen}
                         name="skimPencen"
                         label={'Skim Pencen'}
                         type="text"
                         value="-"
                     ></TextField>
 
-                    {#if errorData?.skimPencen}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.skimPencen[0]}</span
-                        >
-                    {/if}
                     <TextField
                         {disabled}
-                        hasError={errorData?.kenaikanGajiAkhir}
                         name="kenaikanGajiAkhir"
                         label={'Kenaikan Gaji Akhir'}
                         type="text"
                         value="-"
                     ></TextField>
 
-                    {#if errorData?.kenaikanGajiAkhir}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.kenaikanGajiAkhir[0]}</span
-                        >
-                    {/if}
-
                     <TextField
                         {disabled}
-                        hasError={errorData?.kenaikanPangkatAkhir}
                         name="kenaikanPangkatAkhir"
                         label={'Kenaikan Pangkat Akhir'}
                         type="text"
                         value="-"
                     ></TextField>
-
-                    {#if errorData?.kenaikanPangkatAkhir}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.kenaikanPangkatAkhir[0]}</span
-                        >
-                    {/if}
 
                     <DropdownSelect
                         {disabled}
@@ -2507,18 +2358,11 @@
 
                             <TextField
                                 {disabled}
-                                hasError={errorData?.kodJawatan}
                                 name="kodJawatan"
                                 label={'Kod Jawatan (jika ada)'}
                                 type="text"
                                 bind:value={item.grade}
                             ></TextField>
-                            {#if errorData?.kodJawatan}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.kodJawatan[0]}</span
-                                >
-                            {/if}
 
                             <TextField
                                 {disabled}
@@ -2757,7 +2601,7 @@
                         dropdownType="label-left-full"
                         id="hubunganWaris"
                         label="Hubungan"
-                        bind:index={currentEmployeeNextOfKins.relationship}
+                        bind:value={currentEmployeeNextOfKins.relationship}
                         options={[
                             { value: '1', name: 'Suami' },
                             { value: '2', name: 'Isteri' },
@@ -2790,7 +2634,7 @@
                         dropdownType="label-left-full"
                         id="warnaKP"
                         label="Warna Kad Pengenalan"
-                        bind:index={currentEmployeeNextOfKins.isMalaysian}
+                        bind:value={currentEmployeeNextOfKins.isMalaysian}
                         options={[
                             { value: 'true', name: 'Biru' },
                             { value: 'false', name: 'Merah' },
