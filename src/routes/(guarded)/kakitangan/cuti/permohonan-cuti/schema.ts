@@ -13,7 +13,7 @@ const dateScheme = z.coerce
         }),
     })
     .min(new Date(), {
-        message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+        message: 'Tarikh tidak boleh kurang dari tarikh semasa.',
     });
 
 const globalDateScheme = z.coerce
@@ -99,7 +99,7 @@ export const maklumatGantian = z.object({
                     ? 'Pilihan perlu dipilih.'
                     : defaultError,
         }),
-    }),
+    }).optional(),
     tarikhTamatSetengah: z.enum(['1', '2'], {
         errorMap: (issue, { defaultError }) => ({
             message:
@@ -107,13 +107,13 @@ export const maklumatGantian = z.object({
                     ? 'Pilihan perlu dipilih.'
                     : defaultError,
         }),
-    }),
+    }).optional(),
     tarikhMula: dateScheme,
     tarikhTamat: dateScheme,
     cutiGantianTerakhir: dateScheme,
 });
 
-export const overtime = z.object({
+export const overtimeSchema = z.object({
     officialTask: z
         .string({ required_error: 'Medan ini tidak boleh kosong.' })
         .min(4, {
@@ -208,7 +208,7 @@ export const publicHolidayTask = z.object({
 })
 
 export const cutiTanpaRecord = z.object({
-    ctrCategory: z.enum(['1', '2', '3','4', '5', '6','7', '8', '9', '10', '11'], {
+    ctrCategory: z.enum(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'], {
         errorMap: (issue, { defaultError }) => ({
             message:
                 issue.code === 'invalid_enum_value'
@@ -232,7 +232,7 @@ export const cutiTanpaRecord = z.object({
                     ? 'Pilihan perlu dipilih.'
                     : defaultError,
         }),
-    }),
+    }).optional(),
     tarikhTamatSetengah: z.enum(['1', '2'], {
         errorMap: (issue, { defaultError }) => ({
             message:
@@ -240,7 +240,7 @@ export const cutiTanpaRecord = z.object({
                     ? 'Pilihan perlu dipilih.'
                     : defaultError,
         }),
-    }),
+    }).optional(),
     totalDay: z
         .string({ required_error: 'Medan ini tidak boleh kosong.' })
         .min(1, {
@@ -271,7 +271,7 @@ export const globalCuti = z.object({
                     ? 'Pilihan perlu dipilih.'
                     : defaultError,
         }),
-    }),
+    }).optional(),
     tarikhTamatSetengah: z.enum(['1', '2'], {
         errorMap: (issue, { defaultError }) => ({
             message:
@@ -279,7 +279,7 @@ export const globalCuti = z.object({
                     ? 'Pilihan perlu dipilih.'
                     : defaultError,
         }),
-    }),
+    }).optional(),
     totalDay: z
         .string({ required_error: 'Medan ini tidak boleh kosong.' })
         .min(1, {
@@ -291,4 +291,96 @@ export const globalCuti = z.object({
         .trim(),
     tarikhMula: globalDateScheme,
     tarikhTamat: globalDateScheme,
+});
+
+export const cutiBersalinAwal = z.object({
+    tujuanPermohonan: z
+        .string({ required_error: 'Medan ini tidak boleh kosong.' })
+        .min(4, {
+            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+        })
+        .max(124, {
+            message: 'Medan ini tidak boleh melebihi 124 karakter.',
+        })
+        .trim(),
+    tarikhMulaSetengah: z.enum(['1', '2',], {
+        errorMap: (issue, { defaultError }) => ({
+            message:
+                issue.code === 'invalid_enum_value'
+                    ? 'Pilihan perlu dipilih.'
+                    : defaultError,
+        }),
+    }).optional(),
+    tarikhTamatSetengah: z.enum(['1', '2'], {
+        errorMap: (issue, { defaultError }) => ({
+            message:
+                issue.code === 'invalid_enum_value'
+                    ? 'Pilihan perlu dipilih.'
+                    : defaultError,
+        }),
+    }).optional(),
+    tarikhMula: globalDateScheme,
+    tarikhTamat: globalDateScheme,
+    tarikhDijangkaBersalin: dateScheme,
+});
+
+export const cutiBersalinPegawai = z.object({
+    tujuanPermohonan: z
+        .string({ required_error: 'Medan ini tidak boleh kosong.' })
+        .min(4, {
+            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+        })
+        .max(124, {
+            message: 'Medan ini tidak boleh melebihi 124 karakter.',
+        })
+        .trim(),
+    address: z
+        .string({ required_error: 'Medan ini tidak boleh kosong.' })
+        .min(4, {
+            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+        })
+        .max(124, {
+            message: 'Medan ini tidak boleh melebihi 124 karakter.',
+        })
+        .trim(),
+    tarikhMulaSetengah: z.enum(['1', '2',], {
+        errorMap: (issue, { defaultError }) => ({
+            message:
+                issue.code === 'invalid_enum_value'
+                    ? 'Pilihan perlu dipilih.'
+                    : defaultError,
+        }),
+    }).optional(),
+    tarikhTamatSetengah: z.enum(['1', '2'], {
+        errorMap: (issue, { defaultError }) => ({
+            message:
+                issue.code === 'invalid_enum_value'
+                    ? 'Pilihan perlu dipilih.'
+                    : defaultError,
+        }),
+    }).optional(),
+    tarikhMula: globalDateScheme,
+    tarikhTamat: globalDateScheme,
+    tarikhDijangkaBersalin: dateScheme,
+});
+
+export const reusableDateSchema = z.object({
+    tarikhMulaSetengah: z.enum(['1', '2',], {
+        errorMap: (issue, { defaultError }) => ({
+            message:
+                issue.code === 'invalid_enum_value'
+                    ? 'Pilihan perlu dipilih.'
+                    : defaultError,
+        }),
+    }).optional(),
+    tarikhTamatSetengah: z.enum(['1', '2'], {
+        errorMap: (issue, { defaultError }) => ({
+            message:
+                issue.code === 'invalid_enum_value'
+                    ? 'Pilihan perlu dipilih.'
+                    : defaultError,
+        }),
+    }).optional(),
+    tarikhMula: dateScheme,
+    tarikhTamat: dateScheme,
 });
