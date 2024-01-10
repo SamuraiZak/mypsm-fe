@@ -6,29 +6,21 @@
 
     import { mockCurrentService } from '$lib/mocks/database/mockCurrentService';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
-    import { mockLookupRaces } from '$lib/mocks/database/mockLookupRaces';
-    import { mockLookupReligions } from '$lib/mocks/database/mockLookupReligions';
-    import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
     import { mockLookupServiceTypes } from '$lib/mocks/database/mockLookupServiceTypes';
     import { mockEmployeePartners } from '$lib/mocks/database/mockEmployeePartners';
     import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
     import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions';
     import { mockLookupEmploymentStatus } from '$lib/mocks/database/mockLookupEmploymentStatus';
     import { mockEmploymentPositionHistories } from '$lib/mocks/database/employmentPositionHistories';
-    import { mockEmploymentPensions } from '$lib/mocks/database/mockEmploymentPensions';
-    import { mockEmployeeEducations } from '$lib/mocks/database/mockEmployeeEducations';
     import { mockEmployeeExperience } from '$lib/mocks/database/mockEmployeeExperience';
     import { mockEmployeeNextOfKins } from '$lib/mocks/database/mockEmployeeNextOfKins';
     import { mockEmployeeDocumentLists } from '$lib/mocks/database/mockEmployeeDocumentLists';
-    import Stepper from '$lib/components/stepper/Stepper.svelte';
-    import StepperContent from '$lib/components/stepper/StepperContent.svelte';
-    import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
-    import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import toast, { Toaster } from 'svelte-french-toast';
     import { z, ZodError } from 'zod';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import Form from '$lib/components/form/Form.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
+    import DateSelector from '$lib/components/input/DateSelector.svelte';
 
     export let employeeNumber: string = '00001';
     let stepperFormTitleClass =
@@ -101,14 +93,40 @@
     let errorData: any;
 
     //==========================================================
-    //================== stepper 4 =============================
+    //================== kontrak scheme ========================
     //==========================================================
+
+    const dateKontrak = z.coerce
+        .date({
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_date'
+                        ? 'Tarikh tidak boleh dibiar kosong.'
+                        : defaultError,
+            }),
+        })
+        .min(new Date(), {
+            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+        });
+
+    const dateKontrakMax = z.coerce
+        .date({
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_date'
+                        ? 'Tarikh tidak boleh dibiar kosong.'
+                        : defaultError,
+            }),
+        })
+        .max(new Date(), {
+            message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
+        });
 
     const stepperkontrak = z.object({
         ID: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(1, {
+                message: 'Medan ini hendaklah lebih daripada 1 karakter.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -123,28 +141,10 @@
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
             })
             .trim(),
-        tarikhMulaKontrak: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        tarikhTamatKontrak: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
         tempohKontrak: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(1, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -152,8 +152,8 @@
             .trim(),
         kadarUpah: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -161,8 +161,8 @@
             .trim(),
         penempatan: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(1, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
@@ -170,26 +170,21 @@
             .trim(),
         gelaranTugas: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            .min(1, {
+                message: 'Medan ini hendaklah diisi.',
             })
             .max(124, {
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
             })
             .trim(),
-        tarikhLaporDiri: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
+
+        tarikhMulaKontrak: dateKontrakMax,
+        tarikhTamatKontrak: dateKontrak,
+        tarikhLaporDiri: dateKontrakMax,
     });
 
     //------------------------------------------------------>
-    //---------------------stepper 4------------------------->
+    //---------------------Kontrak------------------------->
     //------------------------------------------------------>
 
     const submitFormstepperkontrak = async (event: Event) => {
@@ -201,13 +196,14 @@
         const exampleFormData = {
             ID: String(formData.get('ID')),
             emel: String(formData.get('emel')),
-            tarikhMulaKontrak: String(formData.get('tarikhMulaKontrak')),
-            tarikhTamatKontrak: String(formData.get('tarikhTamatKontrak')),
             tempohKontrak: String(formData.get('tempohKontrak')),
             kadarUpah: String(formData.get('kadarUpah')),
             penempatan: String(formData.get('penempatan')),
             gelaranTugas: String(formData.get('gelaranTugas')),
+            tarikhMulaKontrak: String(formData.get('tarikhMulaKontrak')),
+            tarikhTamatKontrak: String(formData.get('tarikhTamatKontrak')),
             tarikhLaporDiri: String(formData.get('tarikhLaporDiri')),
+            
         };
 
         try {
@@ -275,7 +271,7 @@
         <form
             id="Formstepperkontrak"
             on:submit|preventDefault={submitFormstepperkontrak}
-            class="flex w-full flex-col gap-2 pt-3 "
+            class="flex w-full flex-col gap-2 pt-3"
         >
             <TextField
                 {disabled}
@@ -307,7 +303,7 @@
                 >
             {/if}
 
-            <TextField
+            <!-- <TextField
                 {disabled}
                 hasError={errorData?.tarikhMulaKontrak}
                 name="tarikhMulaKontrak"
@@ -320,9 +316,24 @@
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
                     >{errorData?.tarikhMulaKontrak[0]}</span
                 >
+            {/if} -->
+
+            <DateSelector
+                {disabled}
+                hasError={errorData?.tarikhMulaKontrak}
+                name="tarikhMulaKontrak"
+                handleDateChange
+                label="Tarikh Mula Kontrak"
+                value=""
+            ></DateSelector>
+            {#if errorData?.tarikhMulaKontrak}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{errorData?.tarikhMulaKontrak[0]}</span
+                >
             {/if}
 
-            <TextField
+            <!-- <TextField
                 {disabled}
                 hasError={errorData?.tarikhTamatKontrak}
                 name="tarikhTamatKontrak"
@@ -330,6 +341,20 @@
                 type="text"
                 value={''}
             ></TextField>
+            {#if errorData?.tarikhTamatKontrak}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{errorData?.tarikhTamatKontrak[0]}</span
+                >
+            {/if} -->
+            <DateSelector
+                {disabled}
+                hasError={errorData?.tarikhTamatKontrak}
+                name="tarikhTamatKontrak"
+                handleDateChange
+                label="Tarikh Tamat Kontrak"
+                value=""
+            ></DateSelector>
             {#if errorData?.tarikhTamatKontrak}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
@@ -371,7 +396,7 @@
                 {disabled}
                 hasError={errorData?.penempatan}
                 name="penempatan"
-                label={'tarikhMulaKontrak'}
+                label={'Penempatan'}
                 type="text"
                 value="-"
             ></TextField>
@@ -386,7 +411,7 @@
                 {disabled}
                 hasError={errorData?.gelaranTugas}
                 name="gelaranTugas"
-                label={'tarikhTamatKontrak'}
+                label={'Gelaran Tugas'}
                 type="text"
                 value="-"
             ></TextField>
@@ -397,14 +422,28 @@
                 >
             {/if}
 
-            <TextField
+            <!-- <TextField
                 {disabled}
                 hasError={errorData?.tarikhLaporDiri}
                 name="tarikhLaporDiri"
-                label={'tarihkLaporDiri'}
+                label={'Tarikh Lapor Diri'}
                 type="text"
                 value="-"
             ></TextField>
+            {#if errorData?.tarikhLaporDiri}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{errorData?.tarikhLaporDiri[0]}</span
+                >
+            {/if} -->
+            <DateSelector
+                {disabled}
+                hasError={errorData?.tarikhLaporDiri}
+                name="tarikhLaporDiri"
+                handleDateChange
+                label="Tarikh Lapor Diri"
+                value=""
+            ></DateSelector>
             {#if errorData?.tarikhLaporDiri}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"

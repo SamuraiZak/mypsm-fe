@@ -9,6 +9,8 @@
     import { tahun } from '$lib/mocks/ketua-seksyen/cuti/tahun';
     import { cutiRks } from '$lib/mocks/kakitangan/cuti/cuti-rks/cuti-rks';
     import { Select } from 'flowbite-svelte';
+    import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
+    import FilterDateSelector from '$lib/components/filter/FilterDateSelector.svelte';
 
     let selectedTahun = tahun[0].value;
 </script>
@@ -17,16 +19,23 @@
     <ContentHeader
         title="Cuti Rehat, Kecemasan & Sakit"
         description="Senarai cuti berdasarkan Sistem HRMIS"
-    >
-    </ContentHeader>
+    ></ContentHeader>
 </section>
 
 <section
     class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
 >
     <FilterContainer>
-        <StaffSelector />
-        <div class="flex flex-row gap-x-2.5">
+        <div class="flex w-full flex-wrap gap-2.5">
+            <FilterTextInput label="Nama Pekerja"></FilterTextInput>
+            <FilterTextInput label="No. Pekerja"></FilterTextInput>
+            <FilterTextInput label="No. Kad Pengenalan"></FilterTextInput>
+            <FilterTextInput label="Bulan Cuti"></FilterTextInput>
+            <FilterTextInput label="Tahun"></FilterTextInput>
+            <FilterTextInput label="Unit Organisasi"></FilterTextInput>
+            <FilterTextInput label="Message ID"></FilterTextInput>
+
+            <!-- <div class="flex flex-row gap-x-2.5">
             <div class="flex flex-row items-center justify-center gap-x-2.5">
                 <p class="text-sm font-normal">Bulan Cuti*</p>
                 <div class="flex flex-row items-center justify-start gap-x-2.5">
@@ -111,10 +120,10 @@
                         value={''}
                     ></Select>
                 </div>
-            </div>
+            </div> -->
         </div>
-        <ShortTextField label="Unit Organisasi*" type="text" />
-        <ShortTextField label="Message ID" type="text" />
+        <!-- <ShortTextField label="Unit Organisasi*" type="text" />
+        <ShortTextField label="Message ID" type="text" /> -->
     </FilterContainer>
     <SectionHeader title="Senarai Cuti Rehat, Kecemasan & Sakit"
         ><DropdownSelect
