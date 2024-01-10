@@ -20,13 +20,11 @@
     import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
     import toast, { Toaster } from 'svelte-french-toast';
     import { ZodError, z } from 'zod';
-    import {
-        _approverResultSchema,
-        _errorData,
-        _submitApproverResultForm,
-    } from './+page';
+    import { _approverResultSchema, _submitApproverResultForm } from './+page';
+    import { superForm } from 'sveltekit-superforms/client';
+    import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
+    import type { PageData } from './$types';
     let editable: boolean = true;
-    export let form;
 
     let passerResult: string = 'passed';
     let results = [
@@ -49,7 +47,18 @@
     ];
 
     let errorData: any;
-    $: errorData = _errorData;
+    // $: errorData = _errorData;
+
+    export let data: PageData;
+
+    const { form, errors, message, constraints, enhance } = superForm(
+        data.form,
+        {
+            SPA: true,
+            validators: _approverResultSchema,
+            taintedMessage: 'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+        },
+    );
 </script>
 
 <!-- header section -->
@@ -75,7 +84,6 @@
 <section
     class="flex h-full max-h-[100vh-172px] w-full flex-col items-start justify-start overflow-y-hidden"
 >
-    {errorData?.approverRemark}
     <!-- start your content with this div and style it with your own preference -->
     <Stepper>
         <!-- Langkah 1 -->
@@ -425,25 +433,28 @@
             <StepperContentBody>
                 <form
                     id="approverResultForm"
+                    method="POST"
                     on:submit={_submitApproverResultForm}
                     class="flex w-full flex-col gap-2.5"
+                    use:enhance
                 >
+                    <SuperDebug data={$form} />
                     <!-- Penyokong Card -->
                     <SectionHeader
                         color="system-primary"
                         title="Ketua Seksyen (Pelulus)"
                     ></SectionHeader>
                     <LongTextField
-                        hasError={errorData?.approverRemark}
+                        hasError={$errors.approverRemark ? true : false}
                         name="approverRemark"
                         id="supporter-remark"
                         label="Tindakan/Ulasan"
-                        value=""
+                        bind:value={$form.approverRemark}
                     ></LongTextField>
-                    {#if errorData?.approverRemark}
+                    {#if $errors.approverRemark}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.approverRemark[0]}</span
+                            >{$errors.approverRemark[0]}</span
                         >
                     {/if}
 
@@ -452,7 +463,7 @@
                         disabled={!editable}
                         options={approveOptions}
                         legend={'Keputusan'}
-                        bind:userSelected={isApproved}
+                        bind:userSelected={$form.approverResult}
                     ></RadioSingle>
                     {#if errorData?.approverResult}
                         <span
