@@ -581,6 +581,10 @@
         tarikhKelulusanPercantumanPerkhidmatanLepas: dateStepper2max,
         tarikhBersara: dateStepper2,
         tarikhKuatkuasaLantikanSemasa: dateStepper2max,
+        pemangkuanSekarang: dateStepper2,
+        tanggungKerjaSekarang: dateStepper2,
+        kenaikanGajiAkhir: dateStepper2,
+        kenaikanPangkatAkhir: dateStepper2,
     });
 
     //==========================================================
@@ -937,25 +941,17 @@
             itp: String(formData.get('itp')),
             epw: String(formData.get('epw')),
             cola: String(formData.get('cola')),
-            mulaDilantikPerkhidmatanKerajaan: String(
-                formData.get('mulaDilantikPerkhidmatanKerajaan'),
-            ),
-            mulaDilantikPerkhidmatanLKIM: String(
-                formData.get('mulaDilantikPerkhidmatanLKIM'),
-            ),
-            disahkanDalamJawatanSemasaLKIM: String(
-                formData.get('disahkanDalamJawatanSemasaLKIM'),
-            ),
-            tarikhKelulusanPercantumanPerkhidmatanLepas: String(
-                formData.get('tarikhKelulusanPercantumanPerkhidmatanLepas'),
-            ),
+            mulaDilantikPerkhidmatanKerajaan: String(formData.get('mulaDilantikPerkhidmatanKerajaan')),
+            mulaDilantikPerkhidmatanLKIM: String(formData.get('mulaDilantikPerkhidmatanLKIM')),
+            disahkanDalamJawatanSemasaLKIM: String(formData.get('disahkanDalamJawatanSemasaLKIM')),
+            tarikhKelulusanPercantumanPerkhidmatanLepas: String(formData.get('tarikhKelulusanPercantumanPerkhidmatanLepas')),
             tarikhBersara: String(formData.get('tarikhBersara')),
-            tarikhKuatkuasaLantikanSemasa: String(
-                formData.get('tarikhKuatkuasaLantikanSemasa'),
-            ),
-            faedahPersaraanPerkhidmatan: String(
-                formData.get('faedahPersaraanPerkhidmatan'),
-            ),
+            tarikhKuatkuasaLantikanSemasa: String(formData.get('tarikhKuatkuasaLantikanSemasa')),
+            faedahPersaraanPerkhidmatan: String(formData.get('faedahPersaraanPerkhidmatan')),
+            pemangkuanSekarang: String(formData.get('pemangkuanSekarang')),
+            tanggungKerjaSekarang: String(formData.get('tanggungKerjaSekarang')),
+            kenaikanGajiAkhir: String(formData.get('kenaikanGajiAkhir')),
+            kenaikanPangkatAkhir: String(formData.get('kenaikanPangkatAkhir')),
         };
 
         try {
@@ -1965,21 +1961,55 @@
                         >
                     {/if}
 
-                    <TextField
+                    <!-- <TextField
                         {disabled}
                         name="pemangkuanSekarang"
                         label={'Pemangkuan Sekarang'}
                         type="text"
                         value="-"
-                    ></TextField>
+                    ></TextField> -->
 
-                    <TextField
+                    <DateSelector
+                    {disabled}
+                    hasError={errorData?.pemangkuanSekarang}
+                    name="pemangkuanSekarang"
+                    handleDateChange
+                    label="Pemangkuan Sekarang"
+                    value=""
+                ></DateSelector>
+                {#if errorData?.pemangkuanSekarang}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData
+                            ?.pemangkuanSekarang[0]}</span
+                    >
+                {/if}
+
+                    <!-- <TextField
                         {disabled}
                         name="tanggungkerjaSekarang"
                         label={'Tanggung Kerja Sekarang'}
                         type="text"
                         value="-"
-                    ></TextField>
+                    ></TextField> -->
+
+                    <DateSelector
+                    {disabled}
+                    hasError={errorData?.tanggungKerjaSekarang}
+                    name="tanggungKerjaSekarang"
+                    handleDateChange
+                    label="Tanggung Kerja Sekarang"
+                    value=""
+                ></DateSelector>
+                {#if errorData?.tanggungKerjaSekarang}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData
+                            ?.tanggungKerjaSekarang[0]}</span
+                    >
+                {/if}
+
+
 
                     <TextField
                         {disabled}
@@ -1989,21 +2019,54 @@
                         value="-"
                     ></TextField>
 
-                    <TextField
+                    <!-- <TextField
                         {disabled}
                         name="kenaikanGajiAkhir"
                         label={'Kenaikan Gaji Akhir'}
                         type="text"
                         value="-"
-                    ></TextField>
+                    ></TextField> -->
 
-                    <TextField
+                    <DateSelector
+                    {disabled}
+                    hasError={errorData?.kenaikanGajiAkhir}
+                    name="kenaikanGajiAkhir"
+                    handleDateChange
+                    label="Kenaikan Gaji Akhir"
+                    value=""
+                ></DateSelector>
+                {#if errorData?.kenaikanGajiAkhir}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData
+                            ?.kenaikanGajiAkhir[0]}</span
+                    >
+                {/if}
+
+
+                    <!-- <TextField
                         {disabled}
                         name="kenaikanPangkatAkhir"
                         label={'Kenaikan Pangkat Akhir'}
                         type="text"
                         value="-"
-                    ></TextField>
+                    ></TextField> -->
+
+                    <DateSelector
+                    {disabled}
+                    hasError={errorData?.kenaikanPangkatAkhir}
+                    name="kenaikanPangkatAkhir"
+                    handleDateChange
+                    label="Kenaikan Pangkat Akhir"
+                    value=""
+                ></DateSelector>
+                {#if errorData?.kenaikanPangkatAkhir}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData
+                            ?.kenaikanPangkatAkhir[0]}</span
+                    >
+                {/if}
 
                     <DropdownSelect
                         {disabled}
