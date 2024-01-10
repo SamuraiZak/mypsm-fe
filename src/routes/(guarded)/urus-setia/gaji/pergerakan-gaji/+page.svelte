@@ -28,7 +28,6 @@
     let selectedSalaryMonth: string = '1';
     let selectedGred: string = greds[0].value;
     let errorData: any;
-
     let meetingTypeOption: any;
     let meetingDate: any;
     let salaryMovementMonthTypeOption: any;
@@ -37,12 +36,13 @@
     let specialAid: any;
     let isChecked: boolean = false;
     let tempUrl: IntSalaryMovementRecord;
-
     let tooltipContent: string = '';
+
     const specialFiAid: string =
         'Ditetapkan sekali sepanjang tahun pergerakan gaji';
     const percentFromGrossPay: string = 'Peratusan daripada jumlah gaji pokok';
     const kgtIncrease: string = 'Peratusan daripada KGT';
+
     // function to assign the content  of the tooltip
     function assignContent(ev: CustomEvent<HTMLDivElement>) {
         {
@@ -97,7 +97,7 @@
             }),
         }),
         meetingDate: dateScheme,
-        checkboxExample: z.enum(['on'], {
+        salaryGredTypeOption: z.enum(['on'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
                     issue.code === 'invalid_enum_value'
@@ -114,6 +114,7 @@
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
             })
             .trim(),
+        dateSelectorExample: dateScheme,
     });
 
     const tetapanKGTForm = async (event: Event) => {
@@ -131,7 +132,7 @@
             salaryMovementMonthTypeOption: String(
                 salaryMovementMonthTypeSelector.value,
             ),
-            checkboxExample: String(formData.get('checkboxExample')),
+            salaryGredTypeOption: String(formData.get('salaryGredTypeOption')),
             specialFiAidText: String(formData.get('specialFiAidText')),
             specialAid: String(formData.get('specialAid')),
         };
@@ -347,12 +348,95 @@
                     {/if}
                     <Checkbox name="specialAidOption" bind:checked={isChecked}>
                         <label for="specialAidOption">Kenaikan Khas (RM)</label>
-                        <div class="m1-2.5 gap 2.5 flex flex-col">
+                        <div class="ml-2.5 flex flex-col gap-2.5">
                             <Radio
                                 name="specialAid"
                                 legend={'Radio Button'}
                                 bind:value={specialAid}
-                            ></Radio>
+                                ><TextField
+                                    labelType="no-label"
+                                    hasError={errorData?.specialFiAidText}
+                                    name="specialFiAidText"
+                                    type="text"
+                                    bind:value={specialFiAidText}
+                                />
+                                {#if errorData?.specialFiAidText}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{errorData?.specialFiAidText[0]}</span
+                                    >
+                                {/if}
+                                {#if errorData?.specialFiAidText}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{errorData?.specialFiAidText[0]}</span
+                                    >
+                                {/if}</Radio
+                            >
+                            {#if errorData?.specialAid}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{errorData?.specialAid[0]}</span
+                                >
+                            {/if}
+                            <Radio
+                                name="specialAid"
+                                legend={'Radio Button'}
+                                bind:value={specialAid}
+                                ><TextField
+                                    hasTooltip={true}
+                                    toolTipID="type-from-gross-pay"
+                                    labelType="no-label"
+                                    hasError={errorData?.specialFiAidText}
+                                    name="specialFiAidText"
+                                    type="text"
+                                    bind:value={specialFiAidText}
+                                />
+                                {#if errorData?.specialFiAidText}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{errorData?.specialFiAidText[0]}</span
+                                    >
+                                {/if}
+                                {#if errorData?.specialFiAidText}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{errorData?.specialFiAidText[0]}</span
+                                    >
+                                {/if}</Radio
+                            >
+                            {#if errorData?.specialAid}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{errorData?.specialAid[0]}</span
+                                >
+                            {/if}
+                            <Radio
+                                name="specialAid"
+                                legend={'Radio Button'}
+                                bind:value={specialAid}
+                                ><TextField
+                                    hasTooltip={true}
+                                    toolTipID="type-from-kgt"
+                                    labelType="no-label"
+                                    hasError={errorData?.specialFiAidText}
+                                    name="specialFiAidText"
+                                    type="text"
+                                    bind:value={specialFiAidText}
+                                />
+                                {#if errorData?.specialFiAidText}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{errorData?.specialFiAidText[0]}</span
+                                    >
+                                {/if}
+                                {#if errorData?.specialFiAidText}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{errorData?.specialFiAidText[0]}</span
+                                    >
+                                {/if}</Radio
+                            >
                             {#if errorData?.specialAid}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
@@ -381,33 +465,6 @@
                             >{errorData?.specialAidOption[0]}</span
                         >
                     {/if}
-                    <Checkbox>
-                        <label for="special-aid">Kenaikan Khas (RM)</label>
-                        <div class="ml-2.5 flex flex-col gap-2.5">
-                            <Radio name="special-aid"
-                                ><TextField
-                                    labelType="no-label"
-                                    type="text"
-                                /></Radio
-                            >
-                            <Radio name="special-aid" checked={true}
-                                ><TextField
-                                    hasTooltip={true}
-                                    toolTipID="type-from-gross-pay"
-                                    labelType="no-label"
-                                    type="text"
-                                /></Radio
-                            >
-                            <Radio name="special-aid" checked={true}
-                                ><TextField
-                                    hasTooltip={true}
-                                    toolTipID="type-from-kgt"
-                                    labelType="no-label"
-                                    type="text"
-                                /></Radio
-                            >
-                        </div>
-                    </Checkbox>
                 </div>
             </div>
         </form>
