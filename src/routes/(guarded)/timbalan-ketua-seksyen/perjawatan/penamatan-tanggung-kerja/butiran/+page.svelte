@@ -10,30 +10,19 @@
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import SvgPrinter from '$lib/assets/svg/SvgPrinter.svelte';
-    import CustomTable from '$lib/components/table/CustomTable.svelte';
-    import { mockCalonPemangkuanList } from '$lib/mocks/perjawatan/pemangkuan/senaraiCalonPemangkuan';
-    import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import { Badge } from 'flowbite-svelte';
-    import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { ZodError, z } from 'zod';
+    import { Toaster } from 'svelte-french-toast';
+    import {
+        _submitSupporterResultForm,
+        _supporterResultSchema,
+    } from './+page';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
     let editable: boolean = true;
+    export let data: PageData;
 
-    const options: RadioOption[] = [
-        {
-            value: 'lulus',
-            label: 'Lulus',
-        },
-        {
-            value: 'tidak lulus',
-            label: 'Tidak Lulus',
-        },
-    ];
-
-    let isSupported: string = 'true';
     const supportOptions: RadioOption[] = [
         {
             value: 'true',
@@ -45,66 +34,12 @@
         },
     ];
 
-    // =========================================================================
-    // z validation schema and submit function for the deputy section head form fields
-    // =========================================================================
-    let errorData: any;
-
-    const longTextSchema = z
-        .string({ required_error: 'Medan ini tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim();
-
-    // New Employment - Supporter Result section
-    const supporterResultSchema = z.object({
-        supporterRemark: longTextSchema,
-        supporterResult: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
+    const { form, errors, enhance } = superForm(data.form, {
+        SPA: true,
+        validators: _supporterResultSchema,
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
-
-    export const submitSupporterResultForm = async (event: Event) => {
-        const formElement = event.target as HTMLFormElement;
-        const formData = new FormData(formElement);
-
-        const supporterResultData = {
-            supporterRemark: String(formData.get('supporterRemark')),
-            supporterResult: String(formData.get('supporterResult')),
-        };
-
-        try {
-            errorData = [];
-            const result = supporterResultSchema.parse(supporterResultData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                setTimeout(() => goto('../penamatan-tanggung-kerja'), 1500);
-            }
-        } catch (error: unknown) {
-            if (error instanceof ZodError) {
-                const { fieldErrors: errors } = error.flatten();
-                errorData = errors;
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
 </script>
 
 <!-- header section -->
@@ -479,24 +414,26 @@
             <StepperContentBody>
                 <form
                     id="supporterResultForm"
-                    on:submit|preventDefault={submitSupporterResultForm}
+                    method="POST"
+                    on:submit|preventDefault={_submitSupporterResultForm}
                     class="flex w-full flex-col gap-2.5"
+                    use:enhance
                 >
                     <SectionHeader
                         color="system-primary"
                         title="Ketua Seksyen (Pelulus)"
                     ></SectionHeader>
                     <LongTextField
-                        hasError={errorData?.supporterRemark}
+                        hasError={$errors.supporterRemark ? true : false}
                         name="supporterRemark"
                         id="supporter-remark"
                         label="Tindakan/Ulasan"
-                        value=""
+                        bind:value={$form.supporterRemark}
                     ></LongTextField>
-                    {#if errorData?.supporterRemark}
+                    {#if $errors.supporterRemark}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.supporterRemark[0]}</span
+                            >{$errors.supporterRemark}</span
                         >
                     {/if}
 
@@ -505,12 +442,12 @@
                         disabled={!editable}
                         options={supportOptions}
                         legend={'Keputusan'}
-                        bind:userSelected={isSupported}
+                        bind:userSelected={$form.supporterResult}
                     ></RadioSingle>
-                    {#if errorData?.supporterResult}
+                    {#if $errors.supporterResult}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.supporterResult[0]}</span
+                            >{$errors.supporterResult}</span
                         >
                     {/if}
                     <hr />
