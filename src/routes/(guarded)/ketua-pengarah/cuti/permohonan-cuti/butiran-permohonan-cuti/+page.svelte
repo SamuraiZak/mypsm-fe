@@ -32,6 +32,7 @@
     import CutiPenyakitBarahDanKusta from '../../../../ketua-pengarah/cuti/permohonan-cuti/butiran-permohonan-cuti/forms/CutiPenyakitBarahDanKusta.svelte';
     import CutiPenyakitTibi from '../../../../ketua-pengarah/cuti/permohonan-cuti/butiran-permohonan-cuti/forms/CutiPenyakitTibi.svelte';
     import FileInputField from '$lib/components/input/FileInputField.svelte';
+    import toast, { Toaster } from 'svelte-french-toast';
 
     let selectedCuti = '';
 
@@ -286,3 +287,4 @@
         </StepperContent>
     </Stepper>
 </section>
+<Toaster/>
