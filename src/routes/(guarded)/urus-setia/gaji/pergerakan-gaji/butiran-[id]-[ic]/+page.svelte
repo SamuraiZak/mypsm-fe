@@ -24,6 +24,7 @@
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import toast, { Toaster } from 'svelte-french-toast';
     import { z, ZodError } from 'zod';
+    import { Checkbox } from 'flowbite-svelte';
 
     export let data;
     export let noPekerja = data.currentEmployee?.employeeNumber;
@@ -40,12 +41,16 @@
     let isChecked: boolean = false;
     let meetingTypeOption: any;
     let meetingDate: any;
+    let salaryMovementMonthType: any;
+    let radioValue: any = 'sah';
+    let isGredChecked: boolean = false;
+    let isSpecialFiAidChecked: boolean = false;
+    let isSpecialIncrementChecked: boolean = false;
 
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const currYear = currentYear;
     const nextYear = currYear + 1;
-    let radioValue: any = 'sah';
 
     const salaryMonths = [
         { value: '1', name: 'Januari' },
@@ -81,15 +86,23 @@
 
     const exampleFormSchema = z.object({
         // checkbox schema
-        // checkboxExample: z.enum(['on'], {
-        //     errorMap: (issue, { defaultError }) => ({
-        //         message:
-        //             issue.code === 'invalid_enum_value'
-        //                 ? 'Sila tandakan kotak semak.'
-        //                 : defaultError,
-        //     }),
-        // }),
+        specialAidOption: z.enum(['on'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tandakan kotak semak.'
+                        : defaultError,
+            }),
+        }),
         meetingTypeOption: z.enum(['1', '2', '3', '4'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+        salaryMovementMonthType: z.enum(['1', '2', '3', '4'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
                     issue.code === 'invalid_enum_value'
@@ -114,11 +127,17 @@
         const meetingTypeOptionSelector = document.getElementById(
             'meetingTypeOption',
         ) as HTMLSelectElement;
+        const salaryMovementMonthTypeSelector = document.getElementById(
+            'salaryMovementMonthType',
+        ) as HTMLSelectElement;
 
         const exampleFormData = {
             // radioButtonExample: String(formData.get('radioButtonExample')),
-            // checkboxExample: String(formData.get('checkboxExample')),
+            specialAidOption: String(formData.get('specialAidOption')),
             meetingTypeOption: String(meetingTypeOptionSelector.value),
+            salaryMovementMonthType: String(
+                salaryMovementMonthTypeSelector.value,
+            ),
             // textFieldExample: String(formData.get('textFieldExample')),
             meetingDate: String(formData.get('meetingDate')),
         };
@@ -234,15 +253,6 @@
                     class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
                 >
                     <SectionHeader title="Pergerakan Gaji Baru"></SectionHeader>
-                    <!-- <DropdownField
-                        {labelBlack}
-                        dropdownType="label-left-full"
-                        label="Nama dan Bilangan Mesyuarat"
-                        bind:index={selectedMeeting}
-                        id="dropdown"
-                        options={meetings}
-                        disabled={!isEditable}
-                    /> -->
                     <DropdownSelect
                         hasError={errorData?.meetingTypeOption}
                         dropdownType="label-left-full"
@@ -262,13 +272,6 @@
                             >{errorData?.meetingTypeOption[0]}</span
                         >
                     {/if}
-                    <!-- <DateSelector
-                        {labelBlack}
-                        handleDateChange
-                        label="Tarikh Mesyuarat"
-                        selectedDate="2023-08-23"
-                        disabled={!isEditable}
-                    ></DateSelector> -->
                     <DateSelector
                         hasError={errorData?.meetingDate}
                         name="meetingDate"
@@ -283,27 +286,79 @@
                         >
                     {/if}
                     <DropdownSelect
-                        {labelBlack}
-                        disabled={!isEditable}
-                        id="salary-movement-month-type"
-                        label="Bulan Pergerakan Gaji"
+                        hasError={errorData?.salaryMovementMonthType}
                         dropdownType="label-left-full"
-                        options={salaryMonths}
-                        bind:index={selectedSalaryMonth}
-                    />
-                    <DropdownField
-                        {labelBlack}
-                        childLabelBlack={isEditable}
-                        dropdownType="label-left-full-optional-fields"
-                        label="Keputusan Mesyuarat"
-                        bind:index={selectedMonth}
-                        id="dropdown"
-                        options={months}
-                        disabled={!isEditable}
-                        checkboxLabel1="Gred"
-                        checkboxLabel2="Bantuan Khas Kewangan (RM)"
-                        checkboxLabel3="Kenaikan Khas (RM)"
-                    />
+                        id="salaryMovementMonthType"
+                        label="Bulan Pergerakan Gaji"
+                        bind:value={salaryMovementMonthType}
+                        options={[
+                            { value: '1', name: 'Januari' },
+                            { value: '2', name: 'April' },
+                            { value: '3', name: 'Julai' },
+                            { value: '4', name: 'Oktober' },
+                        ]}
+                    ></DropdownSelect>
+                    {#if errorData?.salaryMovementMonthType}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.salaryMovementMonthType[0]}</span
+                        >
+                    {/if}
+                    <div class="flex w-full flex-row items-center">
+                        <label for="meetingResult" class="w-[220px]">
+                            <p class="text-sm text-txt-secondary">
+                                Keputusan Mesyuarat
+                            </p>
+                        </label>
+                        <div class="flex flex-col gap-y-7">
+                            <div class="flex flex-row items-center">
+                                <div class="flex flex-row">
+                                    <Checkbox
+                                        name="specialAidOption"
+                                        bind:checked={isGredChecked}
+                                    ></Checkbox>
+                                </div>
+                                {#if errorData?.specialAidOption}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{errorData?.specialAidOption[0]}</span
+                                    >
+                                {/if}
+                                <!-- <Checkbox
+                                    name="specialAidOption"
+                                    bind:checked={isGredChecked}
+                                ></Checkbox> -->
+                                <DropdownSelect
+                                    disabled={!isGredChecked}
+                                    id="salary-movement-month-type"
+                                    label="Gred"
+                                    dropdownType="label-left-full"
+                                    options={salaryMonths}
+                                    bind:index={selectedSalaryMonth}
+                                />
+                            </div>
+                            <div class="flex flex-row items-center">
+                                <Checkbox
+                                    name="specialAidOption"
+                                    bind:checked={isSpecialFiAidChecked}
+                                ></Checkbox>
+                                <TextField
+                                    disabled={!isSpecialFiAidChecked}
+                                    label="Bantuan Khas Kewangan (RM)"
+                                ></TextField>
+                            </div>
+                            <div class="flex flex-row items-center">
+                                <Checkbox
+                                    name="specialIncrement"
+                                    bind:checked={isSpecialIncrementChecked}
+                                ></Checkbox>
+                                <TextField
+                                    disabled={!isSpecialIncrementChecked}
+                                    label="Kenaikan Khas (RM)"
+                                ></TextField>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </form>
         </StepperContentBody>
