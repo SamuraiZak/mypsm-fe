@@ -17,21 +17,25 @@
     import { greds } from '$lib/mocks/gred/gred.js';
     import SvgArrowUp from '$lib/assets/svg/SvgArrowUp.svelte';
     import SvgArrowDownTail from '$lib/assets/svg/SvgArrowDownTail.svelte';
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { z, ZodError } from 'zod';
+    import DateSelector from '$lib/components/input/DateSelector.svelte';
 
     export let data;
-
-    const salaryMonths = [
-        { value: '1', name: 'Januari' },
-        { value: '2', name: 'April' },
-        { value: '3', name: 'Julai' },
-        { value: '4', name: 'Oktober' },
-    ];
 
     let selectedStatus = status[0].value; // Default selected filter
     let selectedMeetingType: string = meetings[0].value;
     let selectedSalaryMonth: string = '1';
     let selectedGred: string = greds[0].value;
+    let errorData: any;
 
+    let meetingTypeOption: any;
+    let meetingDate: any;
+    let salaryMovementMonthTypeOption: any;
+    let salaryGredTypeOption: any;
+    let specialFiAidText: any;
+    let specialAid: any;
+    let isChecked: boolean = false;
     let tempUrl: IntSalaryMovementRecord;
 
     let tooltipContent: string = '';
@@ -59,6 +63,108 @@
             }
         }
     }
+
+    const dateScheme = z.coerce
+        .date({
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_date'
+                        ? 'Tarikh tidak boleh dibiar kosong.'
+                        : defaultError,
+            }),
+        })
+        .min(new Date(), {
+            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+        });
+
+    const exampleFormSchema = z.object({
+        // checkbox schema
+
+        specialAid: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tetapkan pilihan anda.'
+                        : defaultError,
+            }),
+        }),
+        meetingTypeOption: z.enum(['1', '2', '3', '4'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+        meetingDate: dateScheme,
+        checkboxExample: z.enum(['on'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tandakan kotak semak.'
+                        : defaultError,
+            }),
+        }),
+        specialFiAidText: z
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+    });
+
+    const tetapanKGTForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+        const meetingTypeOptionSelector = document.getElementById(
+            'meetingTypeOption',
+        ) as HTMLSelectElement;
+        const salaryMovementMonthTypeSelector = document.getElementById(
+            'salaryMovementMonthTypeOption',
+        ) as HTMLSelectElement;
+
+        const exampleFormData = {
+            meetingTypeOption: String(meetingTypeOptionSelector.value),
+            meetingDate: String(formData.get('meetingDate')),
+            salaryMovementMonthTypeOption: String(
+                salaryMovementMonthTypeSelector.value,
+            ),
+            checkboxExample: String(formData.get('checkboxExample')),
+            specialFiAidText: String(formData.get('specialFiAidText')),
+            specialAid: String(formData.get('specialAid')),
+        };
+
+        try {
+            const result = exampleFormSchema.parse(exampleFormData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData = { ...exampleFormData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedExamFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
 </script>
 
 <!-- content header starts here -->
@@ -106,7 +212,11 @@
 
     <!-- area for setting for bulk salary movements -->
     <div class="my-2 border-b-8 border-l-2 border-r-2 border-t-8 p-2.5">
-        <form action="">
+        <form
+            id="tetapanKGTFormValidation"
+            on:submit|preventDefault={tetapanKGTForm}
+            class="flex w-full flex-col gap-2"
+        >
             <p class="text-lg text-system-primary">
                 Tetapan Kenaikan Gaji Tahunan (KGT) Semua Kakitangan:
             </p>
@@ -114,48 +224,163 @@
             <div class="flex flex-col gap-2.5 p-2.5">
                 <div class="flex w-1/2 flex-col gap-2.5">
                     <DropdownSelect
-                        id="meeting-type"
+                        hasError={errorData?.meetingTypeOption}
+                        dropdownType="label-left-full"
+                        id="meetingTypeOption"
                         label="Nama dan Bilangan Mesyuarat"
-                        dropdownType="label-left-full"
-                        options={meetings}
-                        bind:index={selectedMeetingType}
-                    />
-                    <TextField
-                        type="date"
-                        id="meeting-date"
+                        bind:value={meetingTypeOption}
+                        options={[
+                            { value: '1', name: 'Semua' },
+                            { value: '2', name: '1/12' },
+                            { value: '3', name: '1/102' },
+                            { value: '4', name: '2/101' },
+                        ]}
+                    ></DropdownSelect>
+                    {#if errorData?.meetingTypeOption}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.meetingTypeOption[0]}</span
+                        >
+                    {/if}
+                    <DateSelector
+                        hasError={errorData?.meetingDate}
+                        name="meetingDate"
+                        handleDateChange
                         label="Tarikh Mesyuarat"
-                    />
+                        bind:selectedDate={meetingDate}
+                    ></DateSelector>
+                    {#if errorData?.meetingDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.meetingDate[0]}</span
+                        >
+                    {/if}
                     <DropdownSelect
-                        id="salary-movement-month-type"
-                        label="Bulan Pergerakan Gaji"
+                        hasError={errorData?.salaryMovementMonthTypeOption}
                         dropdownType="label-left-full"
-                        options={salaryMonths}
-                        bind:index={selectedSalaryMonth}
-                    />
+                        id="salaryMovementMonthTypeOption"
+                        label="Bulan Pergerakan Gaji"
+                        bind:value={salaryMovementMonthTypeOption}
+                        options={[
+                            { value: '1', name: 'Januari' },
+                            { value: '2', name: 'April' },
+                            { value: '3', name: 'Julai' },
+                            { value: '4', name: 'Oktober' },
+                        ]}
+                    ></DropdownSelect>
+                    {#if errorData?.salaryMovementMonthTypeOption}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.salaryMovementMonthTypeOption[0]}</span
+                        >
+                    {/if}
                 </div>
 
                 <b class="mt-5 text-base italic text-system-primary">
                     Keputusan mesyuarat:
                 </b>
                 <div class="flex flex-row justify-between gap-x-5">
-                    <Checkbox>
-                        <DropdownSelect
-                            id="salary-gred-type"
-                            label="Gred"
+                    <Checkbox
+                        name="salaryGredTypeOption"
+                        bind:checked={isChecked}
+                        ><DropdownSelect
+                            hasError={errorData?.salaryGredTypeOption}
                             dropdownType="label-left"
-                            options={greds}
-                            bind:index={selectedGred}
-                        />
-                    </Checkbox>
-                    <Checkbox>
-                        <TextField
+                            id="salaryGredTypeOption"
+                            label="Gred"
+                            bind:value={salaryGredTypeOption}
+                            options={[
+                                { value: 'All', name: 'Semua' },
+                                { value: 'N19', name: 'N19' },
+                                { value: 'N21', name: 'N21' },
+                                { value: 'N29', name: 'N29' },
+                                { value: 'N32', name: 'N32' },
+                                { value: 'N49', name: 'N49' },
+                                { value: 'N52', name: 'N52' },
+                            ]}
+                        ></DropdownSelect>
+                        {#if errorData?.salaryGredTypeOption}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.salaryGredTypeOption[0]}</span
+                            >
+                        {/if}</Checkbox
+                    >
+
+                    {#if errorData?.salaryGredTypeOption}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.salaryGredTypeOption[0]}</span
+                        >
+                    {/if}
+
+                    <Checkbox name="specialFiAidText" bind:checked={isChecked}
+                        ><TextField
                             labelType="label-fit"
                             hasTooltip={true}
                             toolTipID="type-special-fi-aid"
-                            type="number"
+                            hasError={errorData?.specialFiAidText}
+                            name="specialFiAidText"
                             label="Bantuan Khas Kewangan (RM)"
+                            type="number"
+                            bind:value={specialFiAidText}
                         />
-                    </Checkbox>
+                        {#if errorData?.specialFiAidText}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.specialFiAidText[0]}</span
+                            >
+                        {/if}
+                        {#if errorData?.specialFiAidText}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.specialFiAidText[0]}</span
+                            >
+                        {/if}</Checkbox
+                    >
+
+                    {#if errorData?.specialFiAidText}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.specialFiAidText[0]}</span
+                        >
+                    {/if}
+                    <Checkbox name="specialAidOption" bind:checked={isChecked}>
+                        <label for="specialAidOption">Kenaikan Khas (RM)</label>
+                        <div class="m1-2.5 gap 2.5 flex flex-col">
+                            <Radio
+                                name="specialAid"
+                                legend={'Radio Button'}
+                                bind:value={specialAid}
+                            ></Radio>
+                            {#if errorData?.specialAid}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{errorData?.specialAid[0]}</span
+                                >
+                            {/if}
+                        </div>
+
+                        {#if errorData?.specialAidOption}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.specialAidOption[0]}</span
+                            >
+                        {/if}
+                        {#if errorData?.specialAidOption}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.specialAidOption[0]}</span
+                            >
+                        {/if}</Checkbox
+                    >
+
+                    {#if errorData?.specialAidOption}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.specialAidOption[0]}</span
+                        >
+                    {/if}
                     <Checkbox>
                         <label for="special-aid">Kenaikan Khas (RM)</label>
                         <div class="ml-2.5 flex flex-col gap-2.5">
@@ -185,12 +410,16 @@
                     </Checkbox>
                 </div>
             </div>
-            <div class="flex w-full justify-center">
-                <TextIconButton primary label="Simpan" onClick={() => {}}>
-                    <SvgCheck></SvgCheck>
-                </TextIconButton>
-            </div>
         </form>
+        <div class="flex w-full justify-center">
+            <TextIconButton
+                primary
+                label="Simpan"
+                form="tetapanKGTformValidation"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton>
+        </div>
     </div>
 
     <!-- Sample table for testing purposes -->
@@ -256,3 +485,4 @@
     class="w-[350px] text-center"
     on:show={assignContent}>{tooltipContent}</Tooltip
 >
+<Toaster />

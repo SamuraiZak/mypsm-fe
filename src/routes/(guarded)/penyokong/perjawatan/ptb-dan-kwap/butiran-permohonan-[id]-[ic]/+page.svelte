@@ -18,11 +18,10 @@
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     export let data;
     let steppers: string[] = [];
-    let stepperIndex = 3;
+    let stepperIndex = 0;
 
     // Stepper Names
     onMount(() => {
-        console.log(data.record.status);
         if (data.record.status === 'BARU') {
             steppers = [
                 'Maklumat Kakitangan',
@@ -86,7 +85,7 @@
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
-                    <MaklumatPerkhidmatan ptbData={data.record} />
+                    <MaklumatPerkhidmatan />
                 </div>
             </StepperContentBody>
         </StepperContent>
@@ -102,10 +101,7 @@
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
-                    <MaklumatPtbAndKwap
-                        ptbData={data.record}
-                        userId={data.userId}
-                    />
+                    <MaklumatPtbAndKwap />
                 </div>
             </StepperContentBody>
         </StepperContent>
@@ -113,7 +109,11 @@
             <StepperContentHeader
                 title="Sila Tetapkan Keputusan Anda - Penyokong"
             >
-                <TextIconButton primary label="Simpan" onClick={() => {}}>
+                <TextIconButton
+                    primary
+                    label="Simpan"
+                    form="supporterResultForm"
+                >
                     <SvgCheck></SvgCheck>
                 </TextIconButton>
             </StepperContentHeader>

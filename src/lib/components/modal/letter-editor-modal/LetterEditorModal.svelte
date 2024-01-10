@@ -163,7 +163,7 @@
             {#if showPreview === false}
                 <DropdownField
                     label="Jenis Surat"
-                    bind:index={selectedValue}
+                    bind:value={selectedValue}
                     id="dropdown"
                     dropdownType="label-left"
                     options={letterTypes}

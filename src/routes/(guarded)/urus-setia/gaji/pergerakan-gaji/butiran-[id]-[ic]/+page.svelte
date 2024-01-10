@@ -9,7 +9,7 @@
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import { mockSalaryMovementRecord } from '$lib/mocks/gaji/salaryMovementRecord/mockSalaryMovementRecord';
-    import { currencyFormatter } from '$lib/service/services';
+    // import { currencyFormatter } from '$lib/service/services';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
     import { meetings } from '$lib/mocks/mesyuarat/mesyuarat';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
@@ -21,8 +21,13 @@
     import DownloadAttachment from '$lib/components/input/DownloadAttachment.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { mockSalaryMovementSchedule } from '$lib/mocks/gaji/salaryMovementSchedule/mockSalaryMovementSchedule.js';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { z, ZodError } from 'zod';
+
     export let data;
     export let noPekerja = data.currentEmployee?.employeeNumber;
+
     let activeStepper = 0;
     let salaryMovementData = data.currentEmployee;
     let currSecratery = mockEmployees[2];
@@ -31,6 +36,9 @@
     let labelBlack = !disabled;
     let selectedMeeting = '2';
     let selectedMonth = '10';
+    let errorData: any;
+    let isChecked: boolean = false;
+
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const currYear = currentYear;
@@ -55,6 +63,115 @@
             label: 'TIDAK SAH',
         },
     ];
+
+    const dateScheme = z.coerce
+        .date({
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_date'
+                        ? 'Tarikh tidak boleh dibiar kosong.'
+                        : defaultError,
+            }),
+        })
+        .min(new Date(), {
+            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+        });
+
+    const exampleFormSchema = z.object({
+        // checkbox schema
+        checkboxExample: z.enum(['on'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tandakan kotak semak.'
+                        : defaultError,
+            }),
+        }),
+        selectOptionExample: z.enum(['1', '2', '3', '4'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+        textFieldExample: z
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        dateSelectorExample: dateScheme,
+    });
+
+    const retirementConfirmationForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+        const selectOptionExampleSelector = document.getElementById(
+            'selectOptionExample',
+        ) as HTMLSelectElement;
+
+        const exampleFormData = {
+            radioButtonExample: String(formData.get('radioButtonExample')),
+            checkboxExample: String(formData.get('checkboxExample')),
+            selectOptionExample: String(selectOptionExampleSelector.value),
+            textFieldExample: String(formData.get('textFieldExample')),
+            dateSelectorExample: String(formData.get('dateSelectorExample')),
+        };
+
+        const exampleFormSchema = z.object({
+            // checkbox schema
+            retirementConfirmationResult: z.enum(['sah', 'tidakSah'], {
+                errorMap: (issue, { defaultError }) => ({
+                    message:
+                        issue.code === 'invalid_enum_value'
+                            ? 'Sila tetapkan pilihan anda.'
+                            : defaultError,
+                }),
+            }),
+            // dateSelectorExample: dateScheme,
+            retirementConfirmationReview: z
+                .string({ required_error: 'Medan ini tidak boleh kosong.' })
+                .min(4, {
+                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+                })
+                .max(124, {
+                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
+                })
+                .trim(),
+        });
+
+        try {
+            const result = exampleFormSchema.parse(exampleFormData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData = { ...exampleFormData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedExamFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -78,124 +195,105 @@
                 onClick={() => {
                     activeStepper = 1;
                 }}
+            /><TextIconButton
+                primary
+                label="Hantar"
+                form="retirementConfirmationFormValidation"
             />
         </StepperContentHeader>
         <StepperContentBody>
-            <div
-                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+            <form
+                id="retirementConfirmationFormValidation"
+                on:submit|preventDefault={retirementConfirmationForm}
+                class="flex w-full flex-col gap-2"
             >
-                <SectionHeader title="Maklumat Pergerakan Gaji Semasa"
-                ></SectionHeader>
-                <TextField
-                    {labelBlack}
-                    disabled
-                    label="Tarikh Pergerakan Gaji (TPG)"
-                    value={salaryMovementData.tpg}
-                ></TextField>
-                <TextField
-                    {labelBlack}
-                    disabled
-                    label="Gaji Bulan Berkenaan - {salaryMovementData.tpg}"
-                    value={currencyFormatter(
-                        salaryMovementData.currentYearSalary,
-                    )}
-                ></TextField>
-                <TextField
-                    {labelBlack}
-                    disabled
-                    label="Kenaikan Gaji Tahunan (KGT)"
-                    value={currencyFormatter(salaryMovementData.kgt)}
-                ></TextField>
-                <TextField
-                    {labelBlack}
-                    disabled
-                    label="Elaun Wilayah (EW)"
-                    value={currencyFormatter(
-                        salaryMovementData.currentCountyAllowance,
-                    )}
-                ></TextField>
-                <TextField
-                    {labelBlack}
-                    disabled
-                    label="EL. Kritikal (5%) {currYear}"
-                    value={currencyFormatter(
-                        salaryMovementData.criticalAllowance,
-                    )}
-                ></TextField>
-                <TextField
-                    {labelBlack}
-                    disabled
-                    label="KGT Khas {nextYear}"
-                    value={currencyFormatter(salaryMovementData.specialKGT)}
-                ></TextField>
-                <TextField
-                    {labelBlack}
-                    disabled
-                    label="Gaji Khas {nextYear}"
-                    value={currencyFormatter(salaryMovementData.nextYearSalary)}
-                ></TextField>
-                <TextField
-                    {labelBlack}
-                    disabled
-                    label="EW Khas {nextYear}"
-                    value={currencyFormatter(
-                        salaryMovementData.nextYearCountyAllowance,
-                    )}
-                ></TextField>
-                <TextField
-                    {labelBlack}
-                    disabled
-                    label="EL. Kritikal (5%) {nextYear}"
-                    value={currencyFormatter(
-                        salaryMovementData.nextYearCriticalAllowance,
-                    )}
-                ></TextField>
-            </div>
-            <div
-                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
-            >
-                <SectionHeader title="Pergerakan Gaji Baru"></SectionHeader>
-                <DropdownField
-                    {labelBlack}
-                    dropdownType="label-left-full"
-                    label="Nama dan Bilangan Mesyuarat"
-                    bind:index={selectedMeeting}
-                    id="dropdown"
-                    options={meetings}
-                    disabled={!isEditable}
-                />
-                <DateSelector
-                    {labelBlack}
-                    handleDateChange
-                    label="Tarikh Mesyuarat"
-                    selectedDate="2023-08-23"
-                    disabled={!isEditable}
-                ></DateSelector>
-                <DropdownSelect
-                    {labelBlack}
-                    disabled={!isEditable}
-                    id="salary-movement-month-type"
-                    label="Bulan Pergerakan Gaji"
-                    dropdownType="label-left-full"
-                    options={salaryMonths}
-                    bind:index={selectedSalaryMonth}
-                />
-                <DropdownField
-                    {labelBlack}
-                    childLabelBlack={isEditable}
-                    dropdownType="label-left-full-optional-fields"
-                    label="Keputusan Mesyuarat"
-                    bind:index={selectedMonth}
-                    id="dropdown"
-                    options={months}
-                    disabled={!isEditable}
-                    checkboxLabel1="Gred"
-                    checkboxLabel2="Bantuan Khas Kewangan (RM)"
-                    value={currencyFormatter(0)}
-                    checkboxLabel3="Kenaikan Khas (RM)"
-                    value2={currencyFormatter(100)}
-                />
-            </div>
+                <div
+                    class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+                >
+                    <SectionHeader title="Maklumat Pergerakan Gaji Semasa"
+                    ></SectionHeader>
+                    <TextField
+                        {labelBlack}
+                        disabled
+                        label="Tarikh Pergerakan Gaji (TPG)"
+                        value={salaryMovementData.tpg}
+                    ></TextField>
+                    <TextField
+                        {labelBlack}
+                        disabled
+                        label="Gaji Bulan Berkenaan - {salaryMovementData.tpg}"
+                    ></TextField>
+                    <TextField
+                        {labelBlack}
+                        disabled
+                        label="Kenaikan Gaji Tahunan (KGT)"
+                    ></TextField>
+                    <TextField {labelBlack} disabled label="Elaun Wilayah (EW)"
+                    ></TextField>
+                    <TextField
+                        {labelBlack}
+                        disabled
+                        label="EL. Kritikal (5%) {currYear}"
+                    ></TextField>
+                    <TextField {labelBlack} disabled label="KGT Khas {nextYear}"
+                    ></TextField>
+                    <TextField
+                        {labelBlack}
+                        disabled
+                        label="Gaji Khas {nextYear}"
+                    ></TextField>
+                    <TextField {labelBlack} disabled label="EW Khas {nextYear}"
+                    ></TextField>
+                    <TextField
+                        {labelBlack}
+                        disabled
+                        label="EL. Kritikal (5%) {nextYear}"
+                    ></TextField>
+                </div>
+                <div
+                    class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+                >
+                    <SectionHeader title="Pergerakan Gaji Baru"></SectionHeader>
+                    <DropdownField
+                        {labelBlack}
+                        dropdownType="label-left-full"
+                        label="Nama dan Bilangan Mesyuarat"
+                        bind:index={selectedMeeting}
+                        id="dropdown"
+                        options={meetings}
+                        disabled={!isEditable}
+                    />
+                    <DateSelector
+                        {labelBlack}
+                        handleDateChange
+                        label="Tarikh Mesyuarat"
+                        selectedDate="2023-08-23"
+                        disabled={!isEditable}
+                    ></DateSelector>
+                    <DropdownSelect
+                        {labelBlack}
+                        disabled={!isEditable}
+                        id="salary-movement-month-type"
+                        label="Bulan Pergerakan Gaji"
+                        dropdownType="label-left-full"
+                        options={salaryMonths}
+                        bind:index={selectedSalaryMonth}
+                    />
+                    <DropdownField
+                        {labelBlack}
+                        childLabelBlack={isEditable}
+                        dropdownType="label-left-full-optional-fields"
+                        label="Keputusan Mesyuarat"
+                        bind:index={selectedMonth}
+                        id="dropdown"
+                        options={months}
+                        disabled={!isEditable}
+                        checkboxLabel1="Gred"
+                        checkboxLabel2="Bantuan Khas Kewangan (RM)"
+                        checkboxLabel3="Kenaikan Khas (RM)"
+                    />
+                </div>
+            </form>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -255,3 +353,4 @@
         >
     </StepperContent>
 </Stepper>
+<Toaster />

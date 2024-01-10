@@ -43,18 +43,19 @@
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import { getEmployees } from '$lib/service/employees/staff-service';
     import type { SelectOptionType } from 'flowbite-svelte';
     import { onMount } from 'svelte';
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import { goto } from '$app/navigation';
+    import { ZodError, z } from 'zod';
+    import toast, { Toaster } from 'svelte-french-toast';
     let employeeLists: SelectOptionType<any>[] = [];
     let selectedSupporter: string;
     let selectedApprover: string;
 
     onMount(async () => {
-        const staffs: IntEmployees[] = await getEmployees();
+        const staffs: IntEmployees[] = mockEmployees;
 
         employeeLists = staffs.map((staff) => ({
             value: staff.id.toString(),
@@ -78,17 +79,17 @@
 
     let passerResult: string = 'passed';
 
-        let isSupported: string = 'true';
-        const supportOptions: RadioOption[] = [
-            {
-                value: 'true',
-                label: 'SOKONG',
-            },
-            {
-                value: 'false',
-                label: 'TIDAK SOKONG',
-            },
-        ];
+    let isSupported: string = 'true';
+    const supportOptions: RadioOption[] = [
+        {
+            value: 'true',
+            label: 'SOKONG',
+        },
+        {
+            value: 'false',
+            label: 'TIDAK SOKONG',
+        },
+    ];
 
     let isCertified: string = 'true';
     const certifyOptions: RadioOption[] = [
@@ -296,6 +297,66 @@
             }
         }
     }
+
+    // =========================================================================
+    // z validation schema and submit function for the new employment form fields
+    // =========================================================================
+    let errorData: any;
+
+    const longTextSchema = z
+        .string({ required_error: 'Medan ini tidak boleh kosong.' })
+        .min(4, {
+            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+        })
+        .max(124, {
+            message: 'Medan ini tidak boleh melebihi 124 karakter.',
+        })
+        .trim();
+
+    // New Employment - Supporter Result section
+    const supporterResultSchema = z.object({
+        supporterRemark: longTextSchema,
+        supporterResult: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tetapkan pilihan anda.'
+                        : defaultError,
+            }),
+        }),
+    });
+
+    export const submitSupporterResultForm = async (event: Event) => {
+        const formElement = event.target as HTMLFormElement;
+        const formData = new FormData(formElement);
+
+        const supporterResultData = {
+            supporterRemark: String(formData.get('supporterRemark')),
+            supporterResult: String(formData.get('supporterResult')),
+        };
+
+        try {
+            errorData = [];
+            const result = supporterResultSchema.parse(supporterResultData);
+             if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+            }
+        } catch (error: unknown) {
+            if (error instanceof ZodError) {
+                const { fieldErrors: errors } = error.flatten();
+                errorData = errors;
+                  toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
 </script>
 
 <ContentHeader
@@ -1047,12 +1108,16 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Tetapkan Penyokong dan Pelulus (Jika Sah)"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton primary label="Simpan" form="supporterResultForm">
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
         <StepperContentBody>
-            <div class="flex w-full flex-col gap-2.5">
+            <form
+                id="supporterResultForm"
+                on:submit|preventDefault={submitSupporterResultForm}
+                class="flex w-full flex-col gap-2.5"
+            >
                 <!-- Penyokong Card -->
                 <div class="mb-5">
                     <b class="text-sm text-system-primary"
@@ -1060,17 +1125,30 @@
                     >
                 </div>
                 <LongTextField
-                    id="supporter-remark"
+                    hasError={errorData?.supporterRemark}
+                    name="supporterRemark"
                     label="Tindakan/Ulasan"
-                    value=""
                 ></LongTextField>
+                {#if errorData?.supporterRemark}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.supporterRemark[0]}</span
+                    >
+                {/if}
 
                 <RadioSingle
                     disabled={false}
+                    name="supporterResult"
                     options={supportOptions}
                     legend={'Keputusan'}
                     bind:userSelected={isSupported}
                 ></RadioSingle>
+                {#if errorData?.supporterResult}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.supporterResult[0]}</span
+                    >
+                {/if}
                 <hr />
                 <!-- Pelulus Card -->
                 <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
@@ -1092,7 +1170,9 @@
                         >
                     </div>
                 </div>
-            </div>
+            </form>
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+
+<Toaster />

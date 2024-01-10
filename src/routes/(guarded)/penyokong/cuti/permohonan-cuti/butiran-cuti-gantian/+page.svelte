@@ -32,6 +32,7 @@
     import CutiPenyakitTibi from '../../../../penyokong/cuti/permohonan-cuti/butiran-cuti-gantian/forms/CutiPenyakitTibi.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import FileInputField from '$lib/components/input/FileInputField.svelte';
+    import toast, { Toaster } from 'svelte-french-toast';
 
     let selectedCuti = '';
 
@@ -271,3 +272,5 @@
         </StepperContent>
     </Stepper>
 </section>
+
+<Toaster/>

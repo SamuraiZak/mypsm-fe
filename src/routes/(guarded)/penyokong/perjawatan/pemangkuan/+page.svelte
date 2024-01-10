@@ -24,6 +24,10 @@
             program: '-',
             skim: '-',
             gred: '-',
+            penempatanSekarang: '-',
+            pengisytiharanHarta: '-',
+            namaJawatan: '-',
+            akuanPinjamanPendidikan: '-',
             status: 'LULUS - Urus Setia Urus Setia',
         },
         {
@@ -33,16 +37,20 @@
             program: '-',
             skim: '-',
             gred: '-',
+            penempatanSekarang: '-',
+            pengisytiharanHarta: '-',
+            namaJawatan: '-',
+            akuanPinjamanPendidikan: '-',
             status: 'LULUS - Urus Setia Urus Setia',
         },
     ];
 
     let gred = [
-    { value: 'all', name: 'Semua' },
-    { value: '1_54', name: '1 - 54' },
-    { value: 'flexi41', name: 'Flexi 41' },
-    { value: 'utama', name: 'Utama' },
-];
+        { value: 'all', name: 'Semua' },
+        { value: '1_54', name: '1 - 54' },
+        { value: 'flexi41', name: 'Flexi 41' },
+        { value: 'utama', name: 'Utama' },
+    ];
 
     let selectedStatus = gred[0].value; // Default selected filter
 </script>
@@ -75,8 +83,11 @@
                         <FilterTextInput label="Nama*"></FilterTextInput>
                         <FilterTextInput label="No. Kad Pengenalan*"
                         ></FilterTextInput>
-                        <FilterSelectInput label="Gred" options={gred}
-                        selectedVal={selectedStatus}></FilterSelectInput>
+                        <FilterSelectInput
+                            label="Gred"
+                            options={gred}
+                            selectedVal={selectedStatus}
+                        ></FilterSelectInput>
                         <FilterDateSelector
                             handleDateChange
                             label="Tarikh Mohon"
@@ -96,7 +107,7 @@
                     actionOptions={['detail']}
                     bind:passData={currentData}
                     detailActions={() => {
-                        goto('/penyokong/perjawatan/pemangkuan/gred-1_54')
+                        goto('/penyokong/perjawatan/pemangkuan/gred-1_54');
                     }}
                     tableItems={senaraiPermohonan}
                     columnKeys={[
@@ -126,8 +137,11 @@
                         <FilterTextInput label="Nama*"></FilterTextInput>
                         <FilterTextInput label="No. Kad Pengenalan*"
                         ></FilterTextInput>
-                        <FilterSelectInput label="Gred" options={gred}
-                        selectedVal={selectedStatus}></FilterSelectInput>
+                        <FilterSelectInput
+                            label="Gred"
+                            options={gred}
+                            selectedVal={selectedStatus}
+                        ></FilterSelectInput>
                         <FilterDateSelector
                             handleDateChange
                             label="Tarikh Mohon"
@@ -147,7 +161,7 @@
                     actionOptions={['detail']}
                     bind:passData={currentData}
                     detailActions={() => {
-                         goto('/penyokong/perjawatan/pemangkuan/gred-1_41')
+                        goto('/penyokong/perjawatan/pemangkuan/gred-flexi_41');
                     }}
                     tableItems={senaraiPermohonan}
                     columnKeys={[
@@ -177,8 +191,11 @@
                         <FilterTextInput label="Nama*"></FilterTextInput>
                         <FilterTextInput label="No. Kad Pengenalan*"
                         ></FilterTextInput>
-                        <FilterSelectInput label="Gred" options={gred}
-                        selectedVal={selectedStatus}></FilterSelectInput>
+                        <FilterSelectInput
+                            label="Gred"
+                            options={gred}
+                            selectedVal={selectedStatus}
+                        ></FilterSelectInput>
                         <FilterDateSelector
                             handleDateChange
                             label="Tarikh Mohon"
@@ -198,7 +215,7 @@
                     actionOptions={['detail']}
                     bind:passData={currentData}
                     detailActions={() => {
-                        // editMode = true;
+                        goto('/penyokong/perjawatan/pemangkuan/gred-utama');
                     }}
                     tableItems={senaraiPermohonan}
                     columnKeys={[
@@ -208,6 +225,10 @@
                         'program',
                         'skim',
                         'gred',
+                        'penempatanSekarang',
+                        'pengisytiharanHarta',
+                        'namaJawatan',
+                        'akuanPinjamanPendidikan',
                         'status',
                     ]}
                 ></DynamicTable>

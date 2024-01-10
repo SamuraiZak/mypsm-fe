@@ -29,6 +29,10 @@
     import CutiKursusSambilan from './forms/CutiKursusSambilan.svelte';
     import CutiMenjagaAnakTanpaGaji from './forms/CutiMenjagaAnakTanpaGaji.svelte';
     import FileInputField from '$lib/components/input/FileInputField.svelte';
+    import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { z, ZodError } from 'zod';
+    import { permohonanCutiMaklumatKakitangan } from './schema';
 
     export let disabled: boolean = false;
     let selectedCuti = '';
@@ -43,6 +47,61 @@
         });
         console.log(formattedDate);
     }
+
+    // ================ Stepper Control ==================
+    let stepperIndex = 0;
+
+    function goNext() {
+        stepperIndex += 1;
+    }
+
+    function goPrevious() {
+        stepperIndex -= 1;
+    }
+
+    // ============== Form Validation ================
+    let errorData: any;
+    // ==============    Stepper 1    ================
+    const stepper1Form = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+
+        const stepper1FormData = {
+            noPekerja: String(formData.get('noPekerja')),
+            nama: String(formData.get('nama')),
+            noKadPengenalan: String(formData.get('noKadPengenalan')),
+            gred: String(formData.get('gred')),
+            penempatan: String(formData.get('penempatan')),
+            kumpulan: String(formData.get('kumpulan')),
+        };
+        try {
+            const result = permohonanCutiMaklumatKakitangan.parse(stepper1FormData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedStepper1FormData = { ...stepper1FormData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedStepper1FormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
 </script>
 
 <ContentHeader
@@ -50,52 +109,109 @@
     description="Sila isi borang permohonan cuti di bawah dengan butiran yang tepat dan lengkap."
 ></ContentHeader>
 
-<Stepper>
+<Stepper bind:activeIndex={stepperIndex}>
     <StepperContent>
         <StepperContentHeader title="Maklumat Kakitangan"
-        ></StepperContentHeader>
+            ><TextIconButton
+                label="Seterusnya"
+                primary
+                form="stepper1Validation"><SvgArrowRight /></TextIconButton
+            ></StepperContentHeader
+        >
+
+        <!-- ========== STEPPER 1 ========== -->
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2">
                 <p class="text-sm font-bold">Maklumat Kakitangan</p>
-                <TextField
-                    {disabled}
-                    id="noPekerja"
-                    label={'No. Pekerja'}
-                    value={'A23412'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="nama"
-                    label={'Nama'}
-                    value={'Irfan Bin Abu'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="noKadPengenalan"
-                    label={'No. K/P'}
-                    value={'111111-11-1111'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="gred"
-                    label={'Gred'}
-                    value={'F41 - Pegawai Teknologi Maklumat'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="penempatan"
-                    label={'Penempatan'}
-                    value={'5345 - Bhgn. Teknologi Maklumat'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="kumpulan"
-                    label={'Kumpulan'}
-                    value={'PP1 - Pengurusan dan Professional - A'}
-                ></TextField>
+                <form
+                    id="stepper1Validation"
+                    on:submit|preventDefault={stepper1Form}
+                    class="flex w-full flex-col gap-2"
+                >
+                    <TextField
+                        hasError={errorData?.noPekerja}
+                        {disabled}
+                        name="noPekerja"
+                        label={'No. Pekerja'}
+                        value={'A23412'}
+                    ></TextField>
+                    {#if errorData?.noPekerja}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.noPekerja[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={errorData?.nama}
+                        {disabled}
+                        name="nama"
+                        label={'Nama'}
+                        value={'Irfan Bin Abu'}
+                    ></TextField>
+                    {#if errorData?.nama}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.nama[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={errorData?.noKadPengenalan}
+                        {disabled}
+                        name="noKadPengenalan"
+                        label={'No. K/P'}
+                        value={'111111-11-1111'}
+                    ></TextField>
+                    {#if errorData?.noKadPengenalan}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.noKadPengenalan[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={errorData?.gred}
+                        {disabled}
+                        name="gred"
+                        label={'Gred'}
+                        value={'F41 - Pegawai Teknologi Maklumat'}
+                    ></TextField>
+                    {#if errorData?.gred}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.gred[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={errorData?.penempatan}
+                        {disabled}
+                        name="penempatan"
+                        label={'Penempatan'}
+                        value={'5345 - Bhgn. Teknologi Maklumat'}
+                    ></TextField>
+                    {#if errorData?.penempatan}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.penempatan[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={errorData?.kumpulan}
+                        {disabled}
+                        name="kumpulan"
+                        label={'Kumpulan'}
+                        value={'PP1 - Pengurusan dan Professional - A'}
+                    ></TextField>
+                    {#if errorData?.kumpulan}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.kumpulan[0]}</span
+                        >
+                    {/if}
+                </form>
             </div></StepperContentBody
         >
     </StepperContent>
+
+    <!-- ========== STEPPER 2 ========== -->
     <StepperContent>
         <StepperContentHeader title="Maklumat Cuti"></StepperContentHeader>
         <StepperContentBody>
@@ -146,6 +262,8 @@
             </div></StepperContentBody
         >
     </StepperContent>
+
+    <!-- ========== STEPPER 3 ========== -->
     <StepperContent>
         <StepperContentHeader title="Dokumen Sokongan"></StepperContentHeader>
         <StepperContentBody>
@@ -168,6 +286,8 @@
             </p>
         </StepperContentBody>
     </StepperContent>
+
+    <!-- ========== STEPPER 4 ========== -->
     <StepperContent>
         <StepperContentHeader title="Pengesahan"
             ><TextIconButton
@@ -192,3 +312,5 @@
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+
+<Toaster />

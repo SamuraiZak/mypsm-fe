@@ -1,23 +1,16 @@
 <script lang="ts">
     import { disableScrollHandling, goto } from '$app/navigation';
-    import SvgArrowDown from '$lib/assets/svg/SvgArrowDown.svelte';
     import SvgArrowLeft from '$lib/assets/svg/SvgArrowLeft.svelte';
     import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
     import SvgBlock from '$lib/assets/svg/SvgBlock.svelte';
-    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import SvgCircleF2 from '$lib/assets/svg/SvgCircleF2.svelte';
-    import SvgClipBoard from '$lib/assets/svg/SvgClipBoard.svelte';
-    import SvgDocument from '$lib/assets/svg/SvgDocument.svelte';
     import SvgDoubleTick from '$lib/assets/svg/SvgDoubleTick.svelte';
     import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
-    import SvgEllipsisCircle from '$lib/assets/svg/SvgEllipsisCircle.svelte';
     import SvgExcel from '$lib/assets/svg/SvgExcel.svelte';
     import SvgManifyingGlass from '$lib/assets/svg/SvgManifyingGlass.svelte';
     import SvgPDF2 from '$lib/assets/svg/SvgPDF2.svelte';
-    import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import SvgPrinter from '$lib/assets/svg/SvgPrinter.svelte';
     import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
-    import FormButton from '$lib/components/buttons/FormButton.svelte';
     import IconButton from '$lib/components/buttons/IconButton.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import CustomCard from '$lib/components/cards/CustomCard.svelte';
@@ -36,16 +29,11 @@
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import FileInputField from '$lib/components/input/FileInputField.svelte';
     import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
-    import LongTextField from '$lib/components/input/LongTextField.svelte';
-    import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
-    import StepperButton from '$lib/components/stepper/StepperButton.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
-    import CustomTab from '$lib/components/tab/CustomTab.svelte';
-    import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import type {
         CalonPemangkuan,
@@ -56,7 +44,7 @@
     import { mockPerjawatanPemangkuan } from '$lib/mocks/database/mockPerjawatanPemangkuan';
     import { pelulusPersaraan } from '$lib/mocks/pelulus/pelulus-persaraan';
     import { positions } from '$lib/mocks/positions/positions';
-    import { createCompareFn } from '$lib/service/services';
+    // import { createCompareFn } from '$lib/service/services';
     import { fileSelectionList } from '$lib/stores/globalState';
     import { onMount } from 'svelte';
     import toast, { Toaster } from 'svelte-french-toast';
@@ -376,6 +364,7 @@
     //             'Tarikh lapor diri yang dipohon hendaklah tidak kurang dari tarikh semasa.',
     //     });
 
+    // Kemaskini Keputusan Mesyuarat Pemilihan Calon Stepper Form
     const exampleFormSchema = z.object({
         secretaryName: z.enum(['0', '1', '2', '3', '4'], {
             errorMap: (issue, { defaultError }) => ({
@@ -401,20 +390,10 @@
                         : defaultError,
             }),
         }),
-        meetingName: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(4, {
-                message: 'Sila isi nama mesyuarat yang lengkap.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
         // dateSelector: dateScheme,
     });
 
     const submitForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
         const secretaryName = document.getElementById(
             'secretaryName',
         ) as HTMLSelectElement;
@@ -431,7 +410,6 @@
             keputusanPemilihanDropdown: String(
                 keputusanPemilihanDropdown.value,
             ),
-            meetingName: String(formData.get('meetingName')),
             // dateSelector: String(formData.get('dateSelector')),
         };
         try {
@@ -463,13 +441,713 @@
             }
         }
     };
+
+    // Kemaskini Maklumat Temuduga Stepper Form
+    const updateInterviewDetails = z.object({
+        meetingName: z
+            .string({ required_error: 'Nama mesyuarat tidak boleh kosong.' })
+            .min(10, {
+                message: 'Nama mesyuarat hendaklah melebihi 10 karakter.',
+            })
+            .max(100, {
+                message:
+                    'Nama mesyuarat yang dimasukkan telah melebihi had yang dibenarkan.',
+            })
+            .trim(),
+
+        meetingDate: z
+            .string({ required_error: 'Tarikh mesyuarat tidak boleh kosong.' })
+            .min(8, {
+                message:
+                    'Tarikh mesyuarat hendaklah mengikut format hh/bb/tttt.',
+            })
+            .max(10, {
+                message:
+                    'Format tarikh mesyuarat yang dimasukkan adalah tidak betul. Gunakan format hh/bb/tttt',
+            })
+            .trim(),
+
+        gred: z
+            .string({ required_error: 'Gred tidak boleh kosong.' })
+            .min(4, {
+                message: 'Masukkan gred yang betul.',
+            })
+            .max(10, {
+                message: 'Gred yang dimasukkan adalah tidak betul.',
+            })
+            .trim(),
+
+        position: z
+            .string({ required_error: 'Jawatan tidak boleh kosong.' })
+            .min(8, {
+                message: 'Jawatan hendaklah melebihi 8 karakter.',
+            })
+            .max(20, {
+                message: 'Jawatan hendaklah tidak melebihi 20 karakter.',
+            })
+            .trim(),
+
+        interviewDate: z
+            .string({ required_error: 'Tarikh temuduga tidak boleh kosong.' })
+            .min(8, {
+                message:
+                    'Tarikh temuduga hendaklah mengikut format hh/bb/tttt.',
+            })
+            .max(10, {
+                message:
+                    'Format tarikh temuduga yang dimasukkan adalah tidak betul. Gunakan format hh/bb/tttt',
+            })
+            .trim(),
+
+        interviewTime: z
+            .string({ required_error: 'Masa temuduga tidak boleh kosong.' })
+            .min(11, {
+                message:
+                    'Gunakan format masa [10am - 11am atau 10.30am - 11.30am].',
+            })
+            .max(18, {
+                message: 'Format masa yang dimasukkan adalah tidak dibenarkan.',
+            })
+            .trim(),
+
+        state: z
+            .string({ required_error: 'Negeri tidak boleh kosong.' })
+            .min(4, {
+                message: 'Nama negeri hendaklah melebihi 4 karakter.',
+            })
+            .max(30, {
+                message: 'Nama negeri melebihi format yang dibenarkan.',
+            })
+            .trim(),
+
+        interviewVenue: z
+            .string({ required_error: 'Pusat temuduga tidak boleh kosong.' })
+            .min(4, {
+                message: 'Nama pusat temuduga hendaklah melebihi 4 karakter.',
+            })
+            .max(124, {
+                message:
+                    'Nama pusat temuduga hendaklah tidak melebihi 124 karakter.',
+            })
+            .trim(),
+    });
+    const submitUpdateInterviewDetailsForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+
+        const updateInterviewFormData = {
+            meetingName: String(formData.get('meetingName')),
+            meetingDate: String(formData.get('meetingDate')),
+            gred: String(formData.get('gred')),
+            position: String(formData.get('position')),
+            interviewDate: String(formData.get('interviewDate')),
+            interviewTime: String(formData.get('interviewTime')),
+            state: String(formData.get('state')),
+            interviewVenue: String(formData.get('interviewVenue')),
+            // dateSelector: String(formData.get('dateSelector')),
+        };
+        try {
+            const result = updateInterviewDetails.parse(
+                updateInterviewFormData,
+            );
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedMeetingFormData = {
+                    ...updateInterviewFormData,
+                    id,
+                };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedMeetingFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
+
+    // Kemaskini Keputusan Temuduga Stepper Form
+    const updateInterviewResult = z.object({
+        totalInterviewScore: z
+            .string({ required_error: 'Pusat temuduga tidak boleh kosong.' })
+            .min(1, {
+                message:
+                    'Markah keputusan temuduga tidak boleh dibenarkan kosong.',
+            })
+            .max(4, {
+                message:
+                    'Markah yang dimasukkan adalah melebihi markah yang dibenarkan.',
+            })
+            .trim(),
+    });
+    const submitInterviewResultForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+        const interviewResultData = {
+            totalInterviewScore: String(formData.get('totalInterviewScore')),
+        };
+        try {
+            const result = updateInterviewResult.parse(interviewResultData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedInterviewFormData = {
+                    ...interviewResultData,
+                    id,
+                };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedInterviewFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
+
+    const updatePromotionResult = z.object({
+        meetingName: z
+            .string({ required_error: 'Nama mesyuarat tidak boleh kosong.' })
+            .min(10, {
+                message: 'Nama mesyuarat hendaklah melebihi 10 karakter.',
+            })
+            .max(100, {
+                message:
+                    'Nama mesyuarat yang dimasukkan telah melebihi had yang dibenarkan.',
+            })
+            .trim(),
+
+        meetingDate: z
+            .string({ required_error: 'Tarikh mesyuarat tidak boleh kosong.' })
+            .min(8, {
+                message:
+                    'Tarikh mesyuarat hendaklah mengikut format hh/bb/tttt. Contoh: 12/5/2023.',
+            })
+            .max(10, {
+                message:
+                    'Format tarikh mesyuarat yang dimasukkan adalah tidak betul. Contoh: 12/5/2023.',
+            })
+            .trim(),
+
+        meetingResult: z
+            .string({
+                required_error: 'Keputusan mesyuarat tidak boleh kosong.',
+            })
+            .min(7, {
+                message:
+                    'Masukkan keputusan mesyuarat yang betul (Berjaya/Tidak Berjaya).',
+            })
+            .max(13, {
+                message:
+                    'Keputusan yang dimasukkan adalah tidak betul. Masukkan keputusan mesyuarat yang betul (Berjaya/Tidak Berjaya).',
+            })
+            .trim(),
+
+        actingPosition: z
+            .string({
+                required_error: 'Jawatan pemangkuan tidak boleh kosong.',
+            })
+            .min(8, {
+                message: 'Jawatan pemangkuan hendaklah melebihi 8 karakter.',
+            })
+            .max(20, {
+                message:
+                    'Jawatan pemangkuan hendaklah tidak melebihi 20 karakter.',
+            })
+            .trim(),
+
+        actingGred: z
+            .string({ required_error: 'Gred pemangkuan tidak boleh kosong.' })
+            .min(3, {
+                message:
+                    'Gred pemangkuan hendaklah dalam format yang betul. Contoh: N32',
+            })
+            .max(4, {
+                message:
+                    'Format gred pemangkuan yang dimasukkan adalah tidak betul. Contoh: N32',
+            })
+            .trim(),
+    });
+
+    const submitPromotionResultForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+        const promotionResultData = {
+            meetingName: String(formData.get('meetingName')),
+            meetingDate: String(formData.get('meetingDate')),
+            meetingResult: String(formData.get('meetingResult')),
+            actingPosition: String(formData.get('actingPosition')),
+            actingGred: String(formData.get('actingGred')),
+        };
+        try {
+            const result = updatePromotionResult.parse(promotionResultData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedPromotionFormData = {
+                    ...promotionResultData,
+                    id,
+                };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedPromotionFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
+    const promotionResult = z.object({
+        meetingResultDropdown: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila pilih keputusan mesyuarat.'
+                        : defaultError,
+            }),
+        }),
+    });
+
+    const promotionResultForm = async (event: Event) => {
+        const meetingResultDropdown = document.getElementById(
+            'meetingResultDropdown',
+        ) as HTMLSelectElement;
+        const promotionResultData = {
+            meetingResultDropdown: String(meetingResultDropdown.value),
+        };
+        try {
+            const result = promotionResult.parse(promotionResultData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedPromotionFormData = {
+                    ...promotionResultData,
+                    id,
+                };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedPromotionFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
+
+    // Kemaskini Keputusan Mesyuarat Penempatan Kakitangan
+    const staffPlacement = z.object({
+        meetingName: z
+            .string({ required_error: 'Nama mesyuarat tidak boleh kosong.' })
+            .min(10, {
+                message: 'Nama mesyuarat hendaklah melebihi 10 karakter.',
+            })
+            .max(100, {
+                message:
+                    'Nama mesyuarat yang dimasukkan telah melebihi had yang dibenarkan.',
+            })
+            .trim(),
+
+        meetingDate: z
+            .string({ required_error: 'Tarikh mesyuarat tidak boleh kosong.' })
+            .min(8, {
+                message:
+                    'Tarikh mesyuarat hendaklah mengikut format hh/bb/tttt. Contoh: 12/5/2023.',
+            })
+            .max(10, {
+                message:
+                    'Format tarikh mesyuarat yang dimasukkan adalah tidak betul. Contoh: 12/5/2023.',
+            })
+            .trim(),
+        keputusanMesyuaratDropdown: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila pilih keputusan pemilihan yang berkaitan.'
+                        : defaultError,
+            }),
+        }),
+    });
+    const staffPlacementForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+        const keputusanMesyuaratDropdown = document.getElementById(
+            'keputusanMesyuaratDropdown',
+        ) as HTMLSelectElement;
+        const placementFormData = {
+            meetingName: String(formData.get('meetingName')),
+            meetingDate: String(formData.get('meetingDate')),
+            keputusanMesyuaratDropdown: String(
+                keputusanMesyuaratDropdown.value,
+            ),
+        };
+        try {
+            const result = staffPlacement.parse(placementFormData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedPromotionFormData = {
+                    ...placementFormData,
+                    id,
+                };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedPromotionFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
+
+    const dateScheme = z.coerce
+        .date({
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_date'
+                        ? 'Tarikh tidak boleh dibiarkan kosong.'
+                        : defaultError,
+            }),
+        })
+        .min(new Date(), {
+            message:
+                'Tarikh lapor diri yang dipohon hendaklah tidak kurang dari tarikh semasa.',
+        });
+
+    const meetingPlacementResult = z.object({
+        newPlacement: z
+            .string({ required_error: 'Penempatan baru tidak boleh kosong.' })
+            .min(10, {
+                message: 'Nama penempatan baru hendaklah melebihi 10 karakter.',
+            })
+            .max(100, {
+                message:
+                    'Nama penempatan yang dimasukkan telah melebihi had yang dibenarkan.',
+            })
+            .trim(),
+        newDirector: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila pilih pengarah baru yang berkaitan.'
+                        : defaultError,
+            }),
+        }),
+        reportingDate: dateScheme,
+    });
+    const placementMeetingResultForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+        const newDirector = document.getElementById(
+            'newDirector',
+        ) as HTMLSelectElement;
+        const placementResult = {
+            newPlacement: String(formData.get('newPlacement')),
+            newDirector: String(newDirector.value),
+            reportingDate: String(formData.get('reportingDate')),
+        };
+        try {
+            const result = meetingPlacementResult.parse(placementResult);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedPromotionFormData = {
+                    ...placementResult,
+                    id,
+                };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedPromotionFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
+
+    //Permohonan Penangguhan/Pindaan Penempatan Dari Kakitangan
+    const staffPlacementAmendmentForm = z.object({
+        placementAmendmentResult: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila pilih keputusan penangguhan/pindaan yang berkaitan.'
+                        : defaultError,
+            }),
+        }),
+        placementAmendmentApproval: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila pilih kelulusan pindaan penempatan yang berkaitan.'
+                        : defaultError,
+            }),
+        }),
+        approvedNewReportingDate: dateScheme,
+    });
+
+    const staffPlacementAmendment = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+        const placementAmendmentResult = document.getElementById(
+            'placementAmendmentResult',
+        ) as HTMLSelectElement;
+        const placementAmendmentApproval = document.getElementById(
+            'placementAmendmentApproval',
+        ) as HTMLSelectElement;
+
+        const placementResult = {
+            placementAmendmentResult: String(placementAmendmentResult.value),
+            placementAmendmentApproval: String(
+                placementAmendmentApproval.value,
+            ),
+            approvedNewReportingDate: String(
+                formData.get('approvedNewReportingDate'),
+            ),
+        };
+        try {
+            const result = staffPlacementAmendmentForm.parse(placementResult);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedPromotionFormData = {
+                    ...placementResult,
+                    id,
+                };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedPromotionFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
+
+    //Kemaskini Keputusan Pemangkuan
+    const updateActing = z.object({
+        actingResult: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila pilih keputusan pemangkuan yang berkaitan.'
+                        : defaultError,
+            }),
+        }),
+        actingPosition: z
+            .string({
+                required_error: 'Jawatan pemangkuan tidak boleh kosong.',
+            })
+            .min(4, {
+                message: 'Jawatan pemangkuan hendaklah melebihi 4 karakter.',
+            })
+            .max(30, {
+                message: 'Jawatan pemangkuan tidak boleh melebihi 30 karakter.',
+            })
+            .trim(),
+        actingGred: z
+            .string({ required_error: 'Gred pemangkuan tidak boleh kosong.' })
+            .min(3, {
+                message:
+                    'Sila isi maklumat gred pemangkuan yang betul. Contoh: DV41',
+            })
+            .max(4, {
+                message:
+                    'Maklumat gred pemangkuan yang diisi adalah tidak dibenarkan. Contoh gred: DV41',
+            })
+            .trim(),
+        newPlacement: z
+            .string({
+                required_error: 'Nama penempatan baru tidak boleh kosong.',
+            })
+            .min(4, {
+                message: 'Penempatan baru hendaklah melebihi 4 karakter.',
+            })
+            .max(124, {
+                message: 'Nama penempatan baru terlalu panjang.',
+            })
+            .trim(),
+        reportingDate: z
+            .string({ required_error: 'Tarikh lapor diri tidak boleh kosong.' })
+            .min(8, {
+                message:
+                    'Sila isi tarikh lapor diri yang betul dengan menggunakan format hh/bb/tttt. Contoh: 1/8/2023.',
+            })
+            .max(10, {
+                message:
+                    'Sila isi tarikh lapor diri yang betul. Gunakan format hh/bb/tttt. Contoh: 1/8/2023',
+            })
+            .trim(),
+        supporterName: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila pilih nama penyokong yang berkaitan.'
+                        : defaultError,
+            }),
+        }),
+        approverName: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila pilih nama pelulus yang berkaitan.'
+                        : defaultError,
+            }),
+        }),
+    });
+
+    const updateActingResult = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+        const actingResult = document.getElementById(
+            'actingResult',
+        ) as HTMLSelectElement;
+        const supporterName = document.getElementById(
+            'supporterName',
+        ) as HTMLSelectElement;
+        const approverName = document.getElementById(
+            'approverName',
+        ) as HTMLSelectElement;
+
+        const actingResultForm = {
+            actingResult: String(actingResult.value),
+            actingPosition: String(formData.get('actingPosition')),
+            actingGred: String(formData.get('actingGred')),
+            newPlacement: String(formData.get('newPlacement')),
+            reportingDate: String(formData.get('reportingDate')),
+            supporterName: String(supporterName.value),
+            approverName: String(approverName.value),
+        };
+        try {
+            const result = updateActing.parse(actingResultForm);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedActingFormData = {
+                    ...actingResultForm,
+                    id,
+                };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedActingFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
 </script>
 
 <!-- header section -->
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader
         title="Pemangkuan Gred 1-54"
-        description="Sila pilih kakitangan yang layak sebagai calon pemangkuan"
+        description="Sila pilih kakitangan yang terlibat dalam proses pemangkuan ini."
     >
         <!-- TODO: put buttons in this area if necessary -->
         <TextIconButton
@@ -777,7 +1455,9 @@
                 <TextIconButton
                     primary
                     label="Seterusnya"
-                    form="formValidation"
+                    onClick={() => {
+                        goNext();
+                    }}
                 >
                     <SvgArrowRight></SvgArrowRight>
                 </TextIconButton>
@@ -788,15 +1468,16 @@
                     title="Butiran Tawaran dan Temuduga"
                 ></SectionHeader>
                 <form
-                    id="formValidation"
-                    on:submit|preventDefault={submitForm}
+                    id="updateMeetingValidation"
+                    on:submit|preventDefault={submitUpdateInterviewDetailsForm}
                     class="flex w-full flex-col gap-2"
                 >
                     <TextField
                         hasError={errorData?.meetingName}
-                        id="meetingName"
-                        label={'Nama Mesyuarat'}
-                        value={'Masyarakat Tersebut'}
+                        name="meetingName"
+                        type="text"
+                        label="Nama Mesyuarat"
+                        value="Mesyuarat Tersebut"
                     ></TextField>
                     {#if errorData?.meetingName}
                         <span
@@ -804,36 +1485,98 @@
                             >{errorData?.meetingName[0]}</span
                         >
                     {/if}
-                </form>
 
-                <TextField
-                    id="meetingDate"
-                    label={'Tarikh Mesyuarat'}
-                    value={'01/08/2023'}
-                ></TextField>
-                <TextField id="gred" label={'Gred'} value={'DV41'}></TextField>
-                <TextField
-                    id="position"
-                    label={'Jawatan'}
-                    value={'Setiausaha Pejabat'}
-                ></TextField>
-                <TextField
-                    id="interviewDate"
-                    label={'Tarikh Temuduga'}
-                    value={'07/09/2023'}
-                ></TextField>
-                <TextField
-                    id="interviewTime"
-                    label={'Masa Temuduga'}
-                    value={'10am - 11am'}
-                ></TextField>
-                <TextField id="state" label={'Negeri'} value={'Sabah'}
-                ></TextField>
-                <TextField
-                    id="interviewVenue"
-                    label={'Pusat Temuduga'}
-                    value={'LKIM SARAWAK - KUCHING'}
-                ></TextField>
+                    <TextField
+                        hasError={errorData?.meetingDate}
+                        name="meetingDate"
+                        label={'Tarikh Mesyuarat'}
+                        value={'01/08/2023'}
+                    ></TextField>
+                    {#if errorData?.meetingDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.meetingDate[0]}</span
+                        >
+                    {/if}
+
+                    <TextField
+                        hasError={errorData?.gred}
+                        name="gred"
+                        label={'Gred'}
+                        value={'DV41'}
+                    ></TextField>
+                    {#if errorData?.gred}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.gred[0]}</span
+                        >
+                    {/if}
+
+                    <TextField
+                        hasError={errorData?.position}
+                        name="position"
+                        label={'Jawatan'}
+                        value={'Setiausaha Pejabat'}
+                    ></TextField>
+                    {#if errorData?.position}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.position[0]}</span
+                        >
+                    {/if}
+
+                    <TextField
+                        hasError={errorData?.interviewDate}
+                        name="interviewDate"
+                        label={'Tarikh Temuduga'}
+                        value={'07/09/2023'}
+                    ></TextField>
+                    {#if errorData?.interviewDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.interviewDate[0]}</span
+                        >
+                    {/if}
+
+                    <TextField
+                        hasError={errorData?.interviewTime}
+                        name="interviewTime"
+                        label={'Masa Temuduga'}
+                        value={'10am - 11am'}
+                    ></TextField>
+                    {#if errorData?.interviewTime}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.interviewTime[0]}</span
+                        >
+                    {/if}
+
+                    <TextField
+                        hasError={errorData?.state}
+                        name="state"
+                        label={'Negeri'}
+                        value={'Sabah'}
+                    ></TextField>
+                    {#if errorData?.state}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.state[0]}</span
+                        >
+                    {/if}
+
+                    <TextField
+                        hasError={errorData?.interviewVenue}
+                        name="interviewVenue"
+                        label={'Pusat Temuduga'}
+                        value={'LKIM SARAWAK - KUCHING'}
+                    ></TextField>
+                    {#if errorData?.interviewVenue}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.interviewVenue[0]}</span
+                        >
+                    {/if}
+                </form>
 
                 <!-- Document Upload -->
                 <div
@@ -1039,19 +1782,33 @@
                     <TextIconButton
                         primary
                         label="Simpan"
-                        onClick={() =>
-                            alert('save maklumat keputusan temuduga')}
+                        form="updateInterviewResult"
                     ></TextIconButton>
                 </StepperContentHeader>
 
                 <StepperContentBody>
                     <SectionHeader title="Maklumat Markah Keseluruhan"
                     ></SectionHeader>
-                    <TextField
-                        id="markah-keseluruhan"
-                        label={'Markah Keseluruhan'}
-                        value={'79%'}
-                    ></TextField>
+
+                    <form
+                        id="updateInterviewResult"
+                        on:submit|preventDefault={submitInterviewResultForm}
+                        class="flex w-full flex-col gap-2"
+                    >
+                        <TextField
+                            hasError={errorData?.totalInterviewScore}
+                            name="totalInterviewScore"
+                            type="text"
+                            label={'Markah Keseluruhan'}
+                            value={'79%'}
+                        ></TextField>
+                        {#if errorData?.totalInterviewScore}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.totalInterviewScore[0]}</span
+                            >
+                        {/if}
+                    </form>
 
                     <SectionHeader title="Senarai Calon Temuduga"
                     ></SectionHeader>
@@ -1155,31 +1912,81 @@
 
                 <StepperContentBody>
                     <SectionHeader title="Keputusan Mesyuarat"></SectionHeader>
-                    <TextField
-                        id="nama-mesyuarat"
-                        label={'Nama Mesyuarat'}
-                        value={'Mesyuarat Tersebut'}
-                    ></TextField>
-                    <TextField
-                        id="tarikh-mesyuarat"
-                        label={'Tarikh Mesyuarat'}
-                        value={'01/08/2023'}
-                    ></TextField>
-                    <TextField
-                        id="keputusan-mesyuarat"
-                        label={'Keputusan Mesyuarat'}
-                        value={'Berjaya/Tidak Berjaya'}
-                    ></TextField>
-                    <TextField
-                        id="jawatan-pemangkuan"
-                        label={'Jawatan Pemangkuan'}
-                        value={'Setiausaha Pejabat'}
-                    ></TextField>
-                    <TextField
-                        id="gred-pemangkuan"
-                        label={'Gred Pemangkuan'}
-                        value={'N32'}
-                    ></TextField>
+                    <form
+                        id="updatePromotionResult"
+                        on:submit|preventDefault={submitPromotionResultForm}
+                        class="flex w-full flex-col gap-2"
+                    >
+                        <TextField
+                            hasError={errorData?.meetingName}
+                            type="text"
+                            name="meetingName"
+                            label={'Nama Mesyuarat'}
+                            value={'Mesyuarat Tersebut'}
+                        ></TextField>
+                        {#if errorData?.meetingName}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.meetingName[0]}</span
+                            >
+                        {/if}
+
+                        <TextField
+                            hasError={errorData?.meetingDate}
+                            type="text"
+                            name="meetingDate"
+                            label={'Tarikh Mesyuarat'}
+                            value={'01/08/2023'}
+                        ></TextField>
+                        {#if errorData?.meetingDate}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.meetingDate[0]}</span
+                            >
+                        {/if}
+
+                        <TextField
+                            hasError={errorData?.meetingResult}
+                            type="text"
+                            name="meetingResult"
+                            label={'Keputusan Mesyuarat'}
+                            value={'Berjaya/Tidak Berjaya'}
+                        ></TextField>
+                        {#if errorData?.meetingResult}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.meetingResult[0]}</span
+                            >
+                        {/if}
+
+                        <TextField
+                            hasError={errorData?.actingPosition}
+                            type="text"
+                            name="actingPosition"
+                            label={'Jawatan Pemangkuan'}
+                            value={'Setiausaha Pejabat'}
+                        ></TextField>
+                        {#if errorData?.actingPosition}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.actingPosition[0]}</span
+                            >
+                        {/if}
+
+                        <TextField
+                            hasError={errorData?.actingGred}
+                            type="text"
+                            name="actingGred"
+                            label={'Gred Pemangkuan'}
+                            value={'N32'}
+                        ></TextField>
+                        {#if errorData?.actingGred}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.actingGred[0]}</span
+                            >
+                        {/if}
+                    </form>
                     <SectionHeader title="Senarai Calon Yang Terpilih"
                     ></SectionHeader>
                     <CustomCard borderClass="border-system-primary">
@@ -1249,10 +2056,7 @@
                     <TextIconButton
                         primary
                         label="Simpan"
-                        onClick={() =>
-                            alert(
-                                'save the keputusan mesyuarat kenaikan pangkat',
-                            )}
+                        form="updatePromotionResult"
                     ></TextIconButton>
                 </StepperContentHeader>
 
@@ -1280,12 +2084,27 @@
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start"
                     >
-                        <DropdownSelect
-                            id="keputusan-mesyuarat"
-                            label="Keputusan"
-                            dropdownType="label-left-full"
-                            options={positions}
-                        />
+                        <form
+                            id="updatePromotionResult"
+                            on:submit|preventDefault={promotionResultForm}
+                            class="flex w-full flex-col gap-2"
+                        >
+                            <DropdownSelect
+                                id="meetingResultDropdown"
+                                label="Keputusan"
+                                dropdownType="label-left-full"
+                                options={[
+                                    { value: 'true', name: 'Berjaya' },
+                                    { value: 'false', name: 'Tidak Berjaya' },
+                                ]}
+                            />
+                            {#if errorData?.meetingResultDropdown}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{errorData?.meetingResultDropdown[0]}</span
+                                >
+                            {/if}
+                        </form>
                     </div>
 
                     <!-- function for button###-->
@@ -1323,16 +2142,37 @@
 
                 <StepperContentBody>
                     <SectionHeader title="Keputusan Mesyuarat"></SectionHeader>
-                    <TextField
-                        id="Nama Mesyuarat"
-                        label={'Nama Mesyuarat'}
-                        value={'Mesyuarat Tersebut'}
-                    ></TextField>
-                    <TextField
-                        id="tarikh-mesyuarat"
-                        label={'Tarikh Mesyuarat'}
-                        value={'01/08/2023'}
-                    ></TextField>
+                    <form
+                        id="placementResultForm"
+                        on:submit|preventDefault={staffPlacementForm}
+                        class="flex w-full flex-col gap-2"
+                    >
+                        <TextField
+                            hasError={errorData?.meetingName}
+                            name="meetingName"
+                            label={'Nama Mesyuarat'}
+                            value={'Mesyuarat Tersebut'}
+                        ></TextField>
+                        {#if errorData?.meetingName}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.meetingName[0]}</span
+                            >
+                        {/if}
+
+                        <TextField
+                            hasError={errorData?.meetingDate}
+                            name="meetingDate"
+                            label={'Tarikh Mesyuarat'}
+                            value={'01/08/2023'}
+                        ></TextField>
+                        {#if errorData?.meetingDate}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.meetingDate[0]}</span
+                            >
+                        {/if}
+                    </form>
                     <SectionHeader title="Senarai Calon Yang Terpilih"
                     ></SectionHeader>
                     <CustomCard borderClass="border-system-primary">
@@ -1422,11 +2262,19 @@
                                         ></DtTableDataCell>
                                         <DtTableDataCell>
                                             <DropdownSelect
-                                                id="mesyuaratPenempatan"
+                                                hasError={errorData?.keputusanMesyuaratDropdown}
+                                                id="keputusanMesyuaratDropdown"
                                                 label=""
                                                 dropdownType="label-left"
-                                                options={positions}
+                                                options={keputusanPemilihan}
                                             />
+                                            {#if errorData?.keputusanMesyuaratDropdown}
+                                                <span
+                                                    class="font-sans text-sm italic text-system-danger"
+                                                    >{errorData
+                                                        ?.keputusanMesyuaratDropdown[0]}</span
+                                                >
+                                            {/if}
                                         </DtTableDataCell>
                                         <DtTableDataCell>
                                             <IconButton
@@ -1453,7 +2301,7 @@
                     <TextIconButton
                         primary
                         label="Simpan"
-                        onClick={() => alert('save the keputusan mesyuarat')}
+                        form="placementMeetingResult"
                     ></TextIconButton>
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -1478,25 +2326,54 @@
                     ></TextField>
 
                     <SectionHeader title="Keputusan Mesyuarat"></SectionHeader>
-                    <TextField
-                        id="penempatan-baru"
-                        label={'Penempatan Baru'}
-                        value={'-'}
-                    ></TextField>
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start"
+                    <form
+                        id="placementMeetingResult"
+                        on:submit|preventDefault={placementMeetingResultForm}
+                        class="flex w-full flex-col gap-2"
                     >
-                        <DropdownSelect
-                            id="pengarah-baru"
-                            label="Pengarah Baru"
-                            dropdownType="label-left-full"
-                            options={positions}
+                        <TextField
+                            hasError={errorData?.newPlacement}
+                            name="newPlacement"
+                            label={'Penempatan Baru'}
+                            value={'-'}
+                            type="text"
+                        ></TextField>
+                        {#if errorData?.newPlacement}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.newPlacement[0]}</span
+                            >
+                        {/if}
+                        <div
+                            class="flex max-h-full w-full flex-col items-start justify-start"
+                        >
+                            <DropdownSelect
+                                hasError={errorData?.newDirector}
+                                id="newDirector"
+                                label="Pengarah Baru"
+                                dropdownType="label-left-full"
+                                options={keputusanPemilihan}
+                            />
+                            {#if errorData?.newDirector}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{errorData?.newDirector[0]}</span
+                                >
+                            {/if}
+                        </div>
+                        <DateSelector
+                            hasError={errorData?.reportingDate}
+                            name="reportingDate"
+                            {handleDateChange}
+                            label={'Tarikh Lapor Diri'}
                         />
-                    </div>
-                    <DateSelector
-                        {handleDateChange}
-                        label={'Tarikh Lapor Diri'}
-                    />
+                        {#if errorData?.reportingDate}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.reportingDate[0]}</span
+                            >
+                        {/if}
+                    </form>
                 </StepperContentBody>
             {/if}
         </StepperContent>
@@ -1585,7 +2462,7 @@
                     <TextIconButton
                         primary
                         label="Simpan"
-                        onClick={() => alert('save the keputusan mesyuarat')}
+                        form="placementAmendmentForm"
                     ></TextIconButton>
                 </StepperContentHeader>
 
@@ -1667,33 +2544,65 @@
                         label={'Pindaan Penempatan Dipohon'}
                         value={'Bahagian Teknologi'}
                     ></TextField>
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start"
+
+                    <form
+                        id="placementAmendmentForm"
+                        on:submit|preventDefault={staffPlacementAmendment}
+                        class="flex w-full flex-col gap-2"
                     >
-                        <DropdownSelect
-                            id="keputusan"
-                            label="Keputusan"
+                        <div
+                            class="flex max-h-full w-full flex-col items-start justify-start"
+                        >
+                            <DropdownSelect
+                                hasError={errorData?.placementAmendmentResult}
+                                id="placementAmendmentResult"
+                                label="Keputusan"
+                                labelBlack={false}
+                                dropdownType="label-left-full"
+                                options={keputusanPemilihan}
+                            />{#if errorData?.placementAmendmentResult}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{errorData
+                                        ?.placementAmendmentResult[0]}</span
+                                >
+                            {/if}
+                        </div>
+
+                        <DateSelector
+                            hasError={errorData?.approvedNewReportingDate}
+                            name="approvedNewReportingDate"
+                            {handleDateChange}
                             labelBlack={false}
-                            dropdownType="label-left-full"
-                            options={positions}
+                            label={'Kelulusan Tarikh Lapor Diri Baru'}
                         />
-                    </div>
-                    <DateSelector
-                        {handleDateChange}
-                        labelBlack={false}
-                        label={'Kelulusan Tarikh Lapor Diri Baru'}
-                    />
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start"
-                    >
-                        <DropdownSelect
-                            id="kelulusan-pindaan-penempatan-dipohon"
-                            label="Kelulusan Pindaan Penempatan Dipohon"
-                            labelBlack={false}
-                            dropdownType="label-left-full"
-                            options={positions}
-                        />
-                    </div>
+                        {#if errorData?.approvedNewReportingDate}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.approvedNewReportingDate[0]}</span
+                            >
+                        {/if}
+
+                        <div
+                            class="flex max-h-full w-full flex-col items-start justify-start"
+                        >
+                            <DropdownSelect
+                                hasError={errorData?.placementAmendmentApproval}
+                                id="placementAmendmentApproval"
+                                label="Kelulusan Pindaan Penempatan Dipohon"
+                                labelBlack={false}
+                                dropdownType="label-left-full"
+                                options={keputusanPemilihan}
+                            />
+                            {#if errorData?.placementAmendmentApproval}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{errorData
+                                        ?.placementAmendmentApproval[0]}</span
+                                >
+                            {/if}
+                        </div>
+                    </form>
                 </StepperContentBody>
             {/if}
         </StepperContent>
@@ -1848,7 +2757,7 @@
                     <TextIconButton
                         primary
                         label="Simpan"
-                        onClick={() => alert('save the keputusan mesyuarat')}
+                        form="updateActingResultForm"
                     ></TextIconButton></StepperContentHeader
                 >
 
@@ -1857,91 +2766,153 @@
                     <TextField
                         disabled
                         labelBlack={false}
-                        id="no-pekerja"
+                        name="no-pekerja"
                         label={'No. Pekerja'}
                         value={'001023'}
                     ></TextField>
                     <TextField
                         disabled
                         labelBlack={false}
-                        id="nama-pekerja"
+                        name="nama-pekerja"
                         label={'Nama'}
                         value={'Ismail bin Ramdan'}
                     ></TextField>
                     <TextField
                         disabled
                         labelBlack={false}
-                        id="no-kp"
+                        name="no-kp"
                         label={'No. K/P'}
                         value={'890701-13-5667'}
                     ></TextField>
-                    <SectionHeader title="Butiran Pemangkuan"></SectionHeader>
-                    <div class="flex w-full flex-row items-center">
-                        <p
-                            class="text-sm font-medium italic text-system-primary"
+
+                    <form
+                        id="updateActingResultForm"
+                        on:submit|preventDefault={updateActingResult}
+                        class="flex w-full flex-col gap-2"
+                    >
+                        <SectionHeader title="Butiran Pemangkuan"
+                        ></SectionHeader>
+                        <div class="flex w-full flex-row items-center">
+                            <p
+                                class="text-sm font-medium italic text-system-primary"
+                            >
+                                Sekiranya tidak lulus, jawatan dan gred akan
+                                dikembalikan ke butiran asal.
+                            </p>
+                        </div>
+                        <div
+                            class="flex max-h-full w-full flex-col items-start justify-start"
                         >
-                            Sekiranya tidak lulus, jawatan dan gred akan
-                            dikembalikan ke butiran asal.
-                        </p>
-                    </div>
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start"
-                    >
-                        <DropdownSelect
-                            id="keputusan-pemangkuan"
-                            label="Keputusan Pemangkuan"
+                            <DropdownSelect
+                                hasError={errorData?.actingResult}
+                                id="actingResult"
+                                label="Keputusan Pemangkuan"
+                                labelBlack={false}
+                                dropdownType="label-left-full"
+                                options={keputusanPemilihan}
+                            />
+                            {#if errorData?.actingResult}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{errorData?.actingResult[0]}</span
+                                >
+                            {/if}
+                        </div>
+
+                        <TextField
+                            hasError={errorData?.actingPosition}
                             labelBlack={false}
-                            dropdownType="label-left-full"
-                            options={positions}
-                        />
-                    </div>
-                    <TextField
-                        labelBlack={false}
-                        id="jawatan-pemangkuan"
-                        label={'Jawatan Pemangkuan'}
-                        value={'Setiausaha Pejabat'}
-                    ></TextField>
-                    <TextField
-                        labelBlack={false}
-                        id="gred-pemangkuan"
-                        label={'Gred Pemangkuan'}
-                        value={'N32'}
-                    ></TextField>
-                    <TextField
-                        labelBlack={false}
-                        id="penempatan-baru"
-                        label={'Penempatan Baru'}
-                        value={'Bahagian Pengurusan'}
-                    ></TextField>
-                    <TextField
-                        labelBlack={false}
-                        id="tarikh-lapor-diri"
-                        label={'Tarikh Lapor Diri'}
-                        value={'19/10/2023'}
-                    ></TextField>
-                    <SectionHeader title="Pengesah Keputusan"></SectionHeader>
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start"
-                    >
-                        <DropdownSelect
-                            id="nama-penyokong"
-                            label="Nama Penyokong"
+                            name="actingPosition"
+                            label={'Jawatan Pemangkuan'}
+                            value={'Setiausaha Pejabat'}
+                        ></TextField>
+                        {#if errorData?.actingPosition}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.actingPosition[0]}</span
+                            >
+                        {/if}
+
+                        <TextField
+                            hasError={errorData?.actingGred}
                             labelBlack={false}
-                            dropdownType="label-left-full"
-                            options={positions}
-                        />
-                    </div>
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start"
-                    >
-                        <DropdownSelect
-                            id="nama-pelulus"
-                            label="Nama Pelulus"
+                            name="actingGred"
+                            label={'Gred Pemangkuan'}
+                            value={'N32'}
+                        ></TextField>
+                        {#if errorData?.actingGred}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.actingGred[0]}</span
+                            >
+                        {/if}
+
+                        <TextField
+                            hasError={errorData?.newPlacement}
                             labelBlack={false}
-                            dropdownType="label-left-full"
-                            options={positions}
-                        />
-                    </div>
+                            name="newPlacement"
+                            label={'Penempatan Baru'}
+                            value={'Bahagian Pengurusan'}
+                        ></TextField>
+                        {#if errorData?.newPlacement}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.newPlacement[0]}</span
+                            >
+                        {/if}
+
+                        <TextField
+                            hasError={errorData?.reportingDate}
+                            labelBlack={false}
+                            name="reportingDate"
+                            label={'Tarikh Lapor Diri'}
+                            value={'19/10/2023'}
+                        ></TextField>
+                        {#if errorData?.reportingDate}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.reportingDate[0]}</span
+                            >
+                        {/if}
+                        <SectionHeader title="Pengesah Keputusan"
+                        ></SectionHeader>
+                        <div
+                            class="flex max-h-full w-full flex-col items-start justify-start"
+                        >
+                            <DropdownSelect
+                                hasError={errorData?.supporterName}
+                                id="supporterName"
+                                label="Nama Penyokong"
+                                labelBlack={false}
+                                dropdownType="label-left-full"
+                                options={keputusanPemilihan}
+                            />
+                            {#if errorData?.supporterName}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{errorData?.supporterName[0]}</span
+                                >
+                            {/if}
+                        </div>
+                        <div
+                            class="flex max-h-full w-full flex-col items-start justify-start"
+                        >
+                            <DropdownSelect
+                                hasError={errorData?.approverName}
+                                id="approverName"
+                                label="Nama Pelulus"
+                                labelBlack={false}
+                                dropdownType="label-left-full"
+                                options={keputusanPemilihan}
+                            />
+                            {#if errorData?.approverName}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{errorData?.approverName[0]}</span
+                                >
+                            {/if}
+                        </div>
+                    </form>
                 </StepperContentBody>
             {/if}
         </StepperContent>

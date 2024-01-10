@@ -3,9 +3,61 @@
     import GeneralButton from '$lib/components/buttons/GeneralButton.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import { goto } from '$app/navigation';
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { z } from 'zod';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
 
-    let meetingBatch: string = '';
+    let meetingBatch: string;
     export let isOpen: boolean = false;
+
+    // =====================================================================================
+    // z validation schema for the meeting batch form fields
+    // =====================================================================================
+    let errorData: any;
+
+    const meetingBatchSchema = z.object({
+        batchNumber: z
+            .string({
+                required_error: 'Medan ini tidak boleh dibiar kosong.',
+            })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter',
+            }),
+    });
+
+    // =========================================================================
+    // meeting batch form fields submit function
+    // =========================================================================
+    const submitAdvancementMeetingBatchForm = async (event: Event) => {
+        const formElement = event.target as HTMLFormElement;
+        const formData = new FormData(formElement);
+
+        const meetingBatchData = {
+            batchNumber: formData.get('batchNumber'),
+        };
+
+        try {
+            const result = meetingBatchSchema.parse(meetingBatchData);
+            if (result) {
+                errorData = [];
+                toast.success('Permohonan berjaya dihantar!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                setTimeout(() => goto('../../perjawatan/tawaran-baru'), 1500);
+            }
+        } catch (err: unknown) {
+            if (err instanceof z.ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
 </script>
 
 <Modal bind:open={isOpen} size="xs" autoclose={false} class="w-full">
@@ -52,25 +104,37 @@
                 keputusan di jadual hadapan
             </p>
             <span>
-                <TextField
-                    type="text"
-                    onChange={() => {
-                        console.log('Changed!');
-                    }}
-                    labelType="top"
-                    label="Sila Tetapkan Nama Kumpulan Mesyuarat"
-                    placeholder="Kumpulan #12"
-                    textCenter={true}
-                    bind:value={meetingBatch}
-                ></TextField>
+                <form
+                    id="advancementMeetingBatchForm"
+                    on:submit|preventDefault={submitAdvancementMeetingBatchForm}
+                    class="flex w-full flex-col gap-2.5"
+                >
+                    <TextField
+                        hasError={errorData?.batchNumber}
+                        type="text"
+                        name="batchNumber"
+                        onChange={() => {
+                            console.log('Changed!');
+                        }}
+                        labelType="top"
+                        label="Sila Tetapkan Nama Kumpulan Mesyuarat"
+                        placeholder="Kumpulan #12"
+                        textCenter={true}
+                        bind:value={meetingBatch}
+                    ></TextField>
+                    {#if errorData?.batchNumber}
+                        <span
+                            class="font-sans text-sm italic text-system-danger"
+                            >{errorData?.batchNumber[0]}</span
+                        >
+                    {/if}
+                </form>
             </span>
             <div class="flex flex-row gap-x-4">
-                <GeneralButton
-                    buttonType={'labelOnly'}
-                    label={'Cetak'}
-                    onClick={() => {
-                        goto('./kemaskini-keputusan-permohonan');
-                    }}
+                <TextIconButton
+                    primary
+                    label="Cetak"
+                    form="advancementMeetingBatchForm"
                 />
                 <GeneralButton
                     buttonType={'labelOnlyAlt'}
@@ -84,3 +148,5 @@
         </form>
     </div>
 </Modal>
+
+<Toaster />

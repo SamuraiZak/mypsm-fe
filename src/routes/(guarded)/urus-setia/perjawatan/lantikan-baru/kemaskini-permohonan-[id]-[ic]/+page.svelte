@@ -1,14 +1,4 @@
 <script lang="ts">
-    // Importing external components and libraries
-    // import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
-    // import { goto } from '$app/navigation';
-    // import MaklumatPeribadi from './forms/MaklumatPeribadi.svelte';
-    // import MaklumatAkademik from './forms/MaklumatAkademik.svelte';
-
-    // let id: string = '93699';
-    // let status: string = 'Baru';
-
-    // import FormButton from '$lib/components/buttons/FormButton.svelte';
     import { goto } from '$app/navigation';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
@@ -32,9 +22,11 @@
     import { maklumatKegiatanTable } from '$lib/mocks/profil/maklumat-kegiatan-keahlian';
     import { maklumatKeluargaTable } from '$lib/mocks/profil/maklumat-keluarga';
     import { maklumatTanggunganLain } from '$lib/mocks/profil/maklumat-tanggungan-lain';
+    import { error } from '@sveltejs/kit';
     import type { SelectOptionType } from 'flowbite-svelte';
     import { Badge, Tooltip } from 'flowbite-svelte';
     import { onMount } from 'svelte';
+    import toast from 'svelte-french-toast';
     import { ZodError, any, z } from 'zod';
     export let data;
     let employeeLists: SelectOptionType<any>[] = [];
@@ -50,8 +42,6 @@
         selectedApprover = employeeLists[0].value;
     });
 
-    // export let activeStepper = 0;
-    // export let isEditing: boolean = false;
     export let disabled: boolean = true;
 
     let results = [
@@ -188,11 +178,21 @@
     }
 
     // =========================================================================
-    // z validation schema for the new employment details form fields
+    // z validation schema and submit function for the new employment form fields
     // =========================================================================
     let errorData: any;
 
     const textFieldSchema = z
+        .string({ required_error: 'Medan ini tidak boleh kosong.' })
+        .min(4, {
+            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+        })
+        .max(124, {
+            message: 'Medan ini tidak boleh melebihi 124 karakter.',
+        })
+        .trim();
+
+    const longTextSchema = z
         .string({ required_error: 'Medan ini tidak boleh kosong.' })
         .min(4, {
             message: 'Medan ini hendaklah lebih daripada 4 karakter.',
@@ -213,6 +213,7 @@
         })
         .optional();
 
+    // New Employment - Service section
     const newEmploymentServiceSchema = z.object({
         currentGrade: z.enum(['FT26', 'E32', 'E38'], {
             errorMap: (issue, { defaultError }) => ({
@@ -243,7 +244,7 @@
         }),
         serviceLevel: textFieldSchema,
         currentEmploymentDateOfEffect: dateScheme,
-        pensionBenefits: z.enum(['kwsp', 'pension'], {
+        pensionBenefits: z.enum(['true', 'false'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
                     issue.code === 'invalid_enum_value'
@@ -256,20 +257,23 @@
         taxNumber: textFieldSchema,
         bank: textFieldSchema,
         accountNumber: textFieldSchema,
-        program: textFieldSchema,
-        leaveEntitlement: textFieldSchema,
+        program: z.optional(z.string()),
+        leaveEntitlement: z.number({
+            required_error: 'Medan ini perlu diisi',
+            invalid_type_error: 'Sila tetapkan jumlah',
+        }),
         govEmploymentHiredDate: dateScheme,
         lkimEmploymentHiredDate: dateScheme,
         currentEmploymentHiredDate: dateScheme,
         confirmedFirstLkimPositionData: dateScheme,
         confirmedCurrentLkimPositionData: dateScheme,
-        approvedPreviousServiceMergingDate: dateScheme,
-        currentActing: dateScheme,
-        currentInterim: dateScheme,
-        pensionScheme: textFieldSchema,
-        finalIncreament: dateScheme,
-        finalPromotion: dateScheme,
-        kgtMonth: textFieldSchema,
+        approvedPreviousServiceMergingDate: z.optional(z.coerce.date()),
+        currentActing: z.optional(z.coerce.date()),
+        currentInterim: z.optional(z.coerce.date()),
+        pensionScheme: z.optional(z.string()),
+        finalIncreament: z.optional(z.coerce.date()),
+        finalPromotion: z.optional(z.coerce.date()),
+        kgtMonth: z.string().optional(),
         retirementDate: dateScheme,
         salaryDateOfEffect: dateScheme,
         salaryBenchmark: textFieldSchema,
@@ -280,9 +284,6 @@
         cola: textFieldSchema,
     });
 
-    // =========================================================================
-    // new employment details form fields submit function
-    // =========================================================================
     const submitNewEmploymentServiceForm = async (event: Event) => {
         const formElement = event.target as HTMLFormElement;
         const formData = new FormData(formElement);
@@ -295,6 +296,8 @@
         const placementSelector = document.getElementById(
             'placement',
         ) as HTMLSelectElement;
+
+        console.log('formData Value: ', formData);
 
         const newEmploymentServiceData = {
             currentGrade: String(gredSelector.value),
@@ -311,7 +314,7 @@
             bank: String(formData.get('bank')),
             accountNumber: String(formData.get('accountNumber')),
             program: String(formData.get('program')),
-            leaveEntitlement: String(formData.get('leaveEntitlement')),
+            leaveEntitlement: Number(formData.get('leaveEntitlement')),
             govEmploymentHiredDate: String(
                 formData.get('govEmploymentHiredDate'),
             ),
@@ -350,10 +353,120 @@
             const result = newEmploymentServiceSchema.parse(
                 newEmploymentServiceData,
             );
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+            }
         } catch (error: unknown) {
             if (error instanceof ZodError) {
                 const { fieldErrors: errors } = error.flatten();
                 errorData = errors;
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
+
+    // New Employment - Secretary Result section
+    const newEmploymentSecretarySchema = z.object({
+        employmentSecretaryRemark: longTextSchema,
+        employmentSecretaryResult: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tetapkan pilihan anda.'
+                        : defaultError,
+            }),
+        }),
+    });
+
+    const submitNewEmploymentSecretaryResult = async (event: Event) => {
+        const formElement = event.target as HTMLFormElement;
+        const formData = new FormData(formElement);
+
+        const newEmploymentSecretaryResultData = {
+            employmentSecretaryRemark: String(
+                formData.get('employmentSecretaryRemark'),
+            ),
+            employmentSecretaryResult: String(
+                formData.get('employmentSecretaryResult'),
+            ),
+        };
+
+        try {
+            const result = newEmploymentSecretarySchema.parse(
+                newEmploymentSecretaryResultData,
+            );
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+            }
+        } catch (error: unknown) {
+            if (error instanceof ZodError) {
+                const { fieldErrors: errors } = error.flatten();
+                errorData = errors;
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
+
+    // New Employment - Assign Approver & Supporter section
+    const newEmploymentAssignApproverSupporterSchema = z.object({
+        staffSupporter: z
+            .string()
+            .min(1, { message: 'Sila tetapkan pilihan anda.' }),
+        staffApprover: z
+            .string()
+            .min(1, { message: 'Sila tetapkan pilihan anda.' }),
+    });
+
+    const submitNewEmploymentAssignApproverSupporter = async () => {
+        const staffSupporterSelector = document.getElementById(
+            'staffSupporter',
+        ) as HTMLSelectElement;
+        const staffApproverSelector = document.getElementById(
+            'staffApprover',
+        ) as HTMLSelectElement;
+
+        const newEmploymentSecretaryResultData = {
+            staffSupporter: String(staffSupporterSelector.value),
+            staffApprover: String(staffApproverSelector.value),
+        };
+
+        try {
+            const result = newEmploymentAssignApproverSupporterSchema.parse(
+                newEmploymentSecretaryResultData,
+            );
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                setTimeout(() => goto('../lantikan-baru'), 1500);
+            }
+        } catch (error: unknown) {
+            if (error instanceof ZodError) {
+                const { fieldErrors: errors } = error.flatten();
+                errorData = errors;
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
             }
         }
     };
@@ -859,7 +972,7 @@
                 {#if errorData?.currentGrade}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.currentGrade}</span
+                        >{errorData?.currentGrade[0]}</span
                     >
                 {/if}
                 <DropdownSelect
@@ -880,7 +993,7 @@
                 {#if errorData?.position}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.position}</span
+                        >{errorData?.position[0]}</span
                     >
                 {/if}
                 <DropdownSelect
@@ -898,7 +1011,7 @@
                 {#if errorData?.placement}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.placement}</span
+                        >{errorData?.placement[0]}</span
                     >
                 {/if}
                 <DropdownSelect
@@ -917,7 +1030,7 @@
                 {#if errorData?.serviceLevel}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.serviceLevel}</span
+                        >{errorData?.serviceLevel[0]}</span
                     >
                 {/if}
                 <DateSelector
@@ -933,7 +1046,7 @@
                 {#if errorData?.currentEmploymentDateOfEffect}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.currentEmploymentDateOfEffect}</span
+                        >{errorData?.currentEmploymentDateOfEffect[0]}</span
                     >
                 {/if}
                 <RadioSingle
@@ -946,7 +1059,7 @@
                 {#if errorData?.pensionBenefits}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.pensionBenefits}</span
+                        >{errorData?.pensionBenefits[0]}</span
                     >
                 {/if}
                 <TextField
@@ -959,7 +1072,7 @@
                 {#if errorData?.kwspNumber}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.kwspNumber}</span
+                        >{errorData?.kwspNumber[0]}</span
                     >
                 {/if}
                 <TextField
@@ -972,7 +1085,7 @@
                 {#if errorData?.socsoNumber}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.socsoNumber}</span
+                        >{errorData?.socsoNumber[0]}</span
                     >
                 {/if}
                 <TextField
@@ -985,7 +1098,7 @@
                 {#if errorData?.taxNumber}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.taxNumber}</span
+                        >{errorData?.taxNumber[0]}</span
                     >
                 {/if}
                 <TextField
@@ -998,7 +1111,7 @@
                 {#if errorData?.bank}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.bank}</span
+                        >{errorData?.bank[0]}</span
                     >
                 {/if}
                 <TextField
@@ -1011,7 +1124,7 @@
                 {#if errorData?.accountNumber}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.accountNumber}</span
+                        >{errorData?.accountNumber[0]}</span
                     >
                 {/if}
                 <TextField
@@ -1024,7 +1137,7 @@
                 {#if errorData?.program}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.program}</span
+                        >{errorData?.program[0]}</span
                     >
                 {/if}
                 <TextField
@@ -1039,7 +1152,7 @@
                 {#if errorData?.leaveEntitlement}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.leaveEntitlement}</span
+                        >{errorData?.leaveEntitlement[0]}</span
                     >
                 {/if}
 
@@ -1056,7 +1169,7 @@
                 {#if errorData?.govEmploymentHiredDate}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.govEmploymentHiredDate}</span
+                        >{errorData?.govEmploymentHiredDate[0]}</span
                     >
                 {/if}
                 <DateSelector
@@ -1072,7 +1185,7 @@
                 {#if errorData?.lkimEmploymentHiredDate}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.lkimEmploymentHiredDate}</span
+                        >{errorData?.lkimEmploymentHiredDate[0]}</span
                     >
                 {/if}
                 <DateSelector
@@ -1088,7 +1201,7 @@
                 {#if errorData?.currentEmploymentHiredDate}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.currentEmploymentHiredDate}</span
+                        >{errorData?.currentEmploymentHiredDate[0]}</span
                     >
                 {/if}
                 <DateSelector
@@ -1104,7 +1217,7 @@
                 {#if errorData?.confirmedFirstLkimPositionData}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.confirmedFirstLkimPositionData}</span
+                        >{errorData?.confirmedFirstLkimPositionData[0]}</span
                     >
                 {/if}
                 <DateSelector
@@ -1120,7 +1233,7 @@
                 {#if errorData?.confirmedCurrentLkimPositionData}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.confirmedCurrentLkimPositionData}</span
+                        >{errorData?.confirmedCurrentLkimPositionData[0]}</span
                     >
                 {/if}
 
@@ -1157,7 +1270,8 @@
                 {#if errorData?.approvedPreviousServiceMergingDate}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.approvedPreviousServiceMergingDate}</span
+                        >{errorData
+                            ?.approvedPreviousServiceMergingDate[0]}</span
                     >
                 {/if}
                 <DateSelector
@@ -1171,7 +1285,7 @@
                 {#if errorData?.currentActing}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.currentActing}</span
+                        >{errorData?.currentActing[0]}</span
                     >
                 {/if}
                 <DateSelector
@@ -1185,7 +1299,7 @@
                 {#if errorData?.currentInterim}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.currentInterim}</span
+                        >{errorData?.currentInterim[0]}</span
                     >
                 {/if}
                 <TextField
@@ -1198,7 +1312,7 @@
                 {#if errorData?.pensionScheme}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.pensionScheme}</span
+                        >{errorData?.pensionScheme[0]}</span
                     >
                 {/if}
                 <DateSelector
@@ -1212,7 +1326,7 @@
                 {#if errorData?.finalIncreament}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.finalIncreament}</span
+                        >{errorData?.finalIncreament[0]}</span
                     >
                 {/if}
                 <DateSelector
@@ -1226,7 +1340,7 @@
                 {#if errorData?.finalPromotion}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.finalPromotion}</span
+                        >{errorData?.finalPromotion[0]}</span
                     >
                 {/if}
                 <TextField
@@ -1239,7 +1353,7 @@
                 {#if errorData?.kgtMonth}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.kgtMonth}</span
+                        >{errorData?.kgtMonth[0]}</span
                     >
                 {/if}
                 <DateSelector
@@ -1255,7 +1369,7 @@
                 {#if errorData?.retirementDate}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.retirementDate}</span
+                        >{errorData?.retirementDate[0]}</span
                     >
                 {/if}
                 <p class={stepperFormTitleClass}>
@@ -1378,56 +1492,100 @@
     <StepperContent>
         <StepperContentHeader
             title="Keputusan Lantikan Baru (Urus Setia Perjawatan)"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="newEmploymentSecretaryResultForm"
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
         <StepperContentBody>
-            <div class="flex w-full flex-col gap-2.5">
+            <form
+                id="newEmploymentSecretaryResultForm"
+                on:submit|preventDefault={submitNewEmploymentSecretaryResult}
+                class="flex w-full flex-col gap-2.5"
+            >
                 <div class="mb-5">
                     <b class="text-sm text-system-primary"
                         >Keputusan Urus Setia Perjawatan</b
                     >
                 </div>
                 <LongTextField
-                    name="employmentSecretary"
+                    hasError={errorData?.employmentSecretaryRemark}
+                    name="employmentSecretaryRemark"
                     label="Tindakan/Ulasan"
                     value=""
                 ></LongTextField>
+                {#if errorData?.employmentSecretaryRemark}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.employmentSecretaryRemark[0]}</span
+                    >
+                {/if}
 
                 <RadioSingle
+                    name="employmentSecretaryResult"
                     disabled={false}
                     options={certifyOptions}
                     legend={'Keputusan'}
                     bind:userSelected={isCertified}
                 ></RadioSingle>
-                <hr />
-            </div>
+                {#if errorData?.employmentSecretaryResult}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.employmentSecretaryResult[0]}</span
+                    >
+                {/if}
+            </form>
+            <hr />
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Tetapkan Penyokong dan Pelulus (Jika Sah)"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="newEmploymentAssignApproverSupporterForm"
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
         <StepperContentBody>
-            <div class="flex w-full flex-col gap-2">
+            <form
+                id="newEmploymentAssignApproverSupporterForm"
+                on:submit|preventDefault={submitNewEmploymentAssignApproverSupporter}
+                class="flex w-full flex-col gap-2"
+            >
                 <DropdownSelect
-                    name="staffs-supporter"
+                    hasError={errorData?.staffSupporter}
+                    id="staffSupporter"
                     label="Nama Penyokong"
                     dropdownType="label-left-full"
                     options={employeeLists}
-                    bind:index={selectedSupporter}
+                    bind:value={selectedSupporter}
                 />
+                {#if errorData?.staffSupporter}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.staffSupporter[0]}</span
+                    >
+                {/if}
                 <DropdownSelect
-                    name="staffs-approver"
+                    hasError={errorData?.staffApprover}
+                    id="staffApprover"
                     label="Nama Pelulus"
                     dropdownType="label-left-full"
                     options={employeeLists}
-                    bind:index={selectedApprover}
+                    bind:value={selectedApprover}
                 />
-            </div>
+                {#if errorData?.staffApprover}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{errorData?.staffApprover[0]}</span
+                    >
+                {/if}
+            </form>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -1536,19 +1694,3 @@
         </StepperContentBody>
     </StepperContent>
 </Stepper>
-
-<!-- content header starts here -->
-<!-- <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader
-        title="Semak Maklumat Lantikan Baru"
-        description="Hal-hal berkaitan Lantikan Baru. Sila semak dan simpan pautan setelah selesai."
-    >
-        <FormButton
-            type="back"
-            addLabel="Cetak"
-            onClick={() => {
-                goto('../lantikan-baru');
-            }}
-        />
-    </ContentHeader>
-</section> -->

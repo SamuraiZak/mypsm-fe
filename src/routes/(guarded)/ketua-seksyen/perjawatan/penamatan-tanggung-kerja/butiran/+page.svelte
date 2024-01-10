@@ -18,17 +18,38 @@
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import { Badge } from 'flowbite-svelte';
     import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { ZodError, z } from 'zod';
+    import {
+        _approverResultSchema,
+        _errorData,
+        _submitApproverResultForm,
+    } from './+page';
+    let editable: boolean = true;
+    export let form;
 
-    const options: RadioOption[] = [
+    let passerResult: string = 'passed';
+    let results = [
+        { value: 'passed', name: 'LULUS' },
+        { value: 'notPassed', name: 'TIDAK LULUS' },
+        { value: 'supported', name: 'SOKONG' },
+        { value: 'notSupported', name: 'TIDAK SOKONG' },
+    ];
+
+    let isApproved: string = 'true';
+    const approveOptions: RadioOption[] = [
         {
-            value: 'lulus',
-            label: 'Lulus',
+            value: 'true',
+            label: 'LULUS',
         },
         {
-            value: 'tidak lulus',
-            label: 'Tidak Lulus',
+            value: 'false',
+            label: 'TIDAK LULUS',
         },
     ];
+
+    let errorData: any;
+    $: errorData = _errorData;
 </script>
 
 <!-- header section -->
@@ -54,6 +75,7 @@
 <section
     class="flex h-full max-h-[100vh-172px] w-full flex-col items-start justify-start overflow-y-hidden"
 >
+    {errorData?.approverRemark}
     <!-- start your content with this div and style it with your own preference -->
     <Stepper>
         <!-- Langkah 1 -->
@@ -242,16 +264,18 @@
                             25% Daripada Gaji Minima
                         </div>
                         <div class="text-sm font-semibold text-system-primary">
-                            (RM 3556.00 * 25% = RM 889.00 sebulan)
+                            (25% of RM 3556.00 = RM 889.00 sebulan)
                         </div>
                     </div>
                     <div class="flex w-full gap-2">
                         <TextField
+                            disabled
                             label="Tarikh Kuatkuasa Penanggung Kerja"
                             placeholder="-"
                             value="19/06/2023"
                         />
                         <TextField
+                            disabled
                             labelType="label-fit"
                             label="Hingga"
                             placeholder="-"
@@ -371,12 +395,14 @@
                         </div>
                         <div class="flex w-full gap-2">
                             <TextField
+                                disabled
                                 labelType="label-fit"
                                 label="Bulan"
                                 placeholder="-"
                                 value=""
                             />
                             <TextField
+                                disabled
                                 labelType="label-fit"
                                 label="Tahun"
                                 placeholder="-"
@@ -390,53 +416,85 @@
         <StepperContent>
             <StepperContentHeader
                 title="Penyokong dan Pelulus (Timbalan dan Ketua Seksyen)"
-            ><TextIconButton
-            label="Hantar"
-            primary
-            onClick={() => {
-                goto('/ketua-seksyen/perjawatan/penamatan-tanggung-kerja');
-            }}
-        >
-            <SvgPaperAirplane></SvgPaperAirplane>
-        </TextIconButton></StepperContentHeader>
+                ><TextIconButton
+                    label="Hantar"
+                    primary
+                    form="approverResultForm"
+                ></TextIconButton></StepperContentHeader
+            >
             <StepperContentBody>
-                <SectionHeader
-                    color="system-primary"
-                    title="Ketua Seksyen (Pelulus)"
-                ></SectionHeader>
-                <LongTextField
-                    label="Tindakan/Ulasan"
-                    placeholder="-"
-                    value=""
-                />
-                <RadioSingle {options} />
-                <SectionHeader
-                    color="system-primary"
-                    title="Timbalan Ketua Seksyen (Penyokong)"
-                ></SectionHeader>
-                <div
-                    class="flex h-fit w-full flex-col items-start justify-start gap-2"
+                <form
+                    id="approverResultForm"
+                    on:submit={_submitApproverResultForm}
+                    class="flex w-full flex-col gap-2.5"
                 >
-                    <TextField
-                        disabled
-                        label="Nama"
-                        placeholder="-"
-                        value="Ismail Bin Ramdan"
-                    />
+                    <!-- Penyokong Card -->
+                    <SectionHeader
+                        color="system-primary"
+                        title="Ketua Seksyen (Pelulus)"
+                    ></SectionHeader>
                     <LongTextField
-                        disabled
+                        hasError={errorData?.approverRemark}
+                        name="approverRemark"
+                        id="supporter-remark"
                         label="Tindakan/Ulasan"
-                        placeholder="-"
-                        value="Layak Disokong"
-                    />
-                    <div class="flex w-full flex-row text-sm">
-                        <label for="" class="w-[220px]">Keputusan</label><Badge
-                            border
-                            color="green">SOKONG</Badge
+                        value=""
+                    ></LongTextField>
+                    {#if errorData?.approverRemark}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.approverRemark[0]}</span
                         >
+                    {/if}
+
+                    <RadioSingle
+                        name="approverResult"
+                        disabled={!editable}
+                        options={approveOptions}
+                        legend={'Keputusan'}
+                        bind:userSelected={isApproved}
+                    ></RadioSingle>
+                    {#if errorData?.approverResult}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.approverResult[0]}</span
+                        >
+                    {/if}
+                    <hr />
+                    <!-- Pelulus Card -->
+                    <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                        <SectionHeader
+                            color="system-primary"
+                            title="Timbalan Ketua Seksyen (Penyokong)"
+                        ></SectionHeader>
+                        <TextField
+                            disabled
+                            type="text"
+                            id="passer-name"
+                            label="Nama"
+                            value="Mohd Safwan Adam"
+                        ></TextField>
+                        <LongTextField
+                            disabled
+                            id="supporter-remark"
+                            label="Tindakan/Ulasan"
+                            value="Layak"
+                        ></LongTextField>
+                        <div class="flex w-full flex-row text-sm">
+                            <label for="supporter-result" class="w-[220px]"
+                                >Keputusan</label
+                            ><Badge
+                                border
+                                color={passerResult == 'passed'
+                                    ? 'green'
+                                    : 'red'}>{results[2].name}</Badge
+                            >
+                        </div>
                     </div>
-                </div>
+                </form>
             </StepperContentBody>
         </StepperContent>
     </Stepper>
 </section>
+
+<Toaster />

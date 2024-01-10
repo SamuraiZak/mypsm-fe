@@ -82,9 +82,6 @@
 
     const submitForm = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);
-        const selectOptionExampleSelector = document.getElementById(
-            'selectOptionExample',
-        ) as HTMLSelectElement;
 
         const exampleFormData = {
             applicationPurpose: String(formData.get('applicationPurpose')),

@@ -3,42 +3,27 @@
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import { Alert } from 'flowbite-svelte';
-    import type { ActionData } from '../$types';
-    import * as ptbService from '$lib/service/ptbAndKwap/services';
+    // import type { ActionData } from '../$types';
+    // import * as ptbService from '$lib/service/ptbAndKwap/services';
     import { onMount } from 'svelte';
-    import type { Cookies } from '@sveltejs/kit';
 
-    let form: ActionData;
-    export let ptbData: PtbAndKwap;
+    // let form: ActionData;
     let currentPtb: {
-        ptbDate: string;
-        letterRefNumber: string;
-        letterRefDate: string;
-        pensionNumber: string;
-        kwapDate: string;
+        ptbDate: 'string';
+        letterRefNumber: 'string';
+        letterRefDate: 'string';
+        pensionNumber: 'string';
+        kwapDate: 'string';
     };
-    export let userId: string | undefined;
     let editable: boolean = false;
     let creating = false;
 
     onMount(async () => {
-        currentPtb = await ptbService.getPtbKwapdetail(userId);
+        // currentPtb = await ptbService.getPtbKwapdetail(userId);
     });
 </script>
 
-<form
-    class="flex w-full flex-col gap-2.5"
-    method="POST"
-    action="./butiran-permohonan-{ptbData.noPekerja}-{ptbData.noKadPengenalan}?/create"
-    use:enhance={() => {
-        creating = true;
-
-        return async ({ update }) => {
-            await update();
-            creating = false;
-        };
-    }}
->
+<form class="flex w-full flex-col gap-2.5">
     <TextField
         type="date"
         disabled={!editable}

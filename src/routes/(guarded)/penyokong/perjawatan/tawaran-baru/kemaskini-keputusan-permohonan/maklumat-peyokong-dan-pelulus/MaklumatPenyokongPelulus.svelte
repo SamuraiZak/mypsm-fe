@@ -1,6 +1,6 @@
 <script lang="ts">
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import { getEmployees } from '$lib/service/employees/staff-service';
+    import { mockEmployees } from '$lib/mocks/database/mockEmployees';
     import type { SelectOptionType } from 'flowbite-svelte';
     import { onMount } from 'svelte';
     let employeeLists: SelectOptionType<any>[] = [];
@@ -8,7 +8,7 @@
     let selectedApprover: string;
 
     onMount(async () => {
-        const staffs: IntEmployees[] = await getEmployees();
+        const staffs: IntEmployees[] = mockEmployees;
 
         employeeLists = staffs.map((staff) => ({
             value: staff.id.toString(),

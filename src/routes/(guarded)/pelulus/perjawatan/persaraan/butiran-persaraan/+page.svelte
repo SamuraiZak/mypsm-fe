@@ -17,7 +17,6 @@
     export let disabled: boolean = true;
     export let data;
 
-    let radioValue: any = 'lulus';
     let errorData: any;
     let ulasan: string;
     let keputusan: any;
@@ -48,9 +47,6 @@
 
     const submitForm = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);
-        const selectOptionExampleSelector = document.getElementById(
-            'selectOptionExample',
-        ) as HTMLSelectElement;
 
         const exampleFormData = {
             keputusan: String(formData.get('keputusan')),
@@ -59,7 +55,7 @@
 
         const exampleFormSchema = z.object({
             // checkbox schema
-            keputusan: z.enum(['true', 'false'], {
+            keputusan: z.enum(['lulus', 'tidakLulus'], {
                 errorMap: (issue, { defaultError }) => ({
                     message:
                         issue.code === 'invalid_enum_value'
@@ -256,7 +252,7 @@
                 >
                     <p class="text-sm font-bold">Pelulus</p>
                     <div
-                        class="flex h-fit w-full flex-col items-center justify-start"
+                        class="flex h-fit w-full flex-col justify-start"
                     >
                         <LongTextField
                             hasError={errorData?.ulasan}

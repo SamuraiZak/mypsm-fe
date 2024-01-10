@@ -10,12 +10,14 @@
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
-    import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { z, ZodError } from 'zod';
 
     export let disabled: boolean = true;
-
-    let radioValue: any = 'sokong';
+    let errorData: any;
+    let ulasan: string;
+    let keputusan: any;
 
     const options: RadioOption[] = [
         {
@@ -27,6 +29,66 @@
             label: 'Tidak Sokong',
         },
     ];
+
+    const submitForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+
+        const exampleFormData = {
+            keputusan: String(formData.get('keputusan')),
+            ulasan: String(formData.get('ulasan')),
+        };
+
+        const exampleFormSchema = z.object({
+            // checkbox schema
+            keputusan: z.enum(['sokong', 'tidakSokong'], {
+                errorMap: (issue, { defaultError }) => ({
+                    message:
+                        issue.code === 'invalid_enum_value'
+                            ? 'Sila tetapkan pilihan anda.'
+                            : defaultError,
+                }),
+            }),
+            // dateSelectorExample: dateScheme,
+            ulasan: z
+                .string({ required_error: 'Medan ini tidak boleh kosong.' })
+                .min(4, {
+                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+                })
+                .max(124, {
+                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
+                })
+                .trim(),
+        });
+
+        try {
+            const result = exampleFormSchema.parse(exampleFormData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData = { ...exampleFormData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedExamFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -108,48 +170,69 @@
             ><TextIconButton
                 primary
                 label="Hantar"
-                onClick={() => {
-                    goto('/penyokong/perjawatan/persaraan');
-                }}><SvgPaperAirplane /></TextIconButton
-            ></StepperContentHeader
+                form="formValidation"
+            /></StepperContentHeader
         >
         <StepperContentBody
-            ><div class="flex w-full flex-col gap-2">
-                <p class="text-sm font-bold">Penyokong #2</p>
-                <div
-                    class="flex h-fit w-full flex-col items-center justify-start border-b border-bdr-primary"
-                >
+            ><form
+                id="formValidation"
+                on:submit|preventDefault={submitForm}
+                class="flex w-full flex-col gap-2"
+            >
+                <div class="flex w-full flex-col gap-2">
+                    <p class="text-sm font-bold">Penyokong #2</p>
+                    <div
+                        class="flex h-fit w-full flex-col justify-start border-b border-bdr-primary"
+                    >
+                        <LongTextField
+                            hasError={errorData?.ulasan}
+                            name="ulasan"
+                            label="Ulasan/Tindakan"
+                            bind:value={ulasan}
+                        />
+                        {#if errorData?.ulasan}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.ulasan[0]}</span
+                            >
+                        {/if}
+
+                        <RadioSingle
+                            disabled={false}
+                            {options}
+                            name="keputusan"
+                            legend={'Keputusan'}
+                            bind:userSelected={keputusan}
+                        ></RadioSingle>
+                        {#if errorData?.keputusan}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{errorData?.keputusan[0]}</span
+                            >
+                        {/if}
+                    </div>
+                    <div class="flex w-full items-center justify-center"></div>
+                    <p class="text-sm font-bold">Penyokong #1</p>
+                    <TextField
+                        {disabled}
+                        id="nama"
+                        label={'Nama'}
+                        value={'Ikhwan Bin Ahmad'}
+                    ></TextField>
                     <LongTextField
+                        {disabled}
                         id="ulasanTindakan"
                         label={'Ulasan/Tindakan'}
-                        value={'-'}
+                        value={'Maklumat Lengkap'}
                     ></LongTextField>
-                    <RadioSingle
-                        {options}
-                        legend="Keputusan"
-                        bind:userSelected={radioValue}
-                    />
+                    <div class="flex w-full flex-row text-sm">
+                        <label for="staffing-sec-result" class="w-[220px]"
+                            >Keputusan</label
+                        ><Badge border color="green">SOKONG</Badge>
+                    </div>
                 </div>
-                <div class="flex w-full items-center justify-center"></div>
-                <p class="text-sm font-bold">Penyokong #1</p>
-                <TextField
-                    {disabled}
-                    id="nama"
-                    label={'Nama'}
-                    value={'Ikhwan Bin Ahmad'}
-                ></TextField>
-                <LongTextField
-                    {disabled}
-                    id="ulasanTindakan"
-                    label={'Ulasan/Tindakan'}
-                    value={'Maklumat Lengkap'}
-                ></LongTextField>
-                <div class="flex w-full flex-row text-sm">
-                    <label for="staffing-sec-result" class="w-[220px]"
-                        >Keputusan</label
-                    ><Badge border color="green">SOKONG</Badge>
-                </div>
-            </div></StepperContentBody
+            </form></StepperContentBody
         >
     </StepperContent>
 </Stepper>
+<Toaster />

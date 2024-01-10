@@ -79,7 +79,11 @@
         </StepperContent>
         <StepperContent>
             <StepperContentHeader title="Tetapkan keputusan Pelulus"
-                ><TextIconButton primary label="Simpan" onClick={() => {}}>
+                ><TextIconButton
+                    primary
+                    label="Simpan"
+                    form="approverResultForm"
+                >
                     <SvgCheck></SvgCheck>
                 </TextIconButton></StepperContentHeader
             >

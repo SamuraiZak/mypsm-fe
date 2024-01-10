@@ -6,6 +6,7 @@
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import { maklumatPeribadiForm } from '$lib/mocks/profil/maklumat-peribadi';
+    import DateSelector from '$lib/components/input/DateSelector.svelte';
 
     let currMeetingBat: string = mesyuarat[0].mesyuarat;
     let staffAmount: number = mesyuarat[0].jumlahKakitangan;
@@ -13,11 +14,14 @@
     let meetingDate: Date;
     let staffs: MaklumatPeribadi[] = maklumatPeribadiForm;
     let selectedResult: { staff: string; meetingResult: string }[];
+    let errorData: any;
     let options: RadioOption[] = [
         { value: 'pass', label: 'LULUS' },
         { value: 'failed', label: 'TIDAK LULUS' },
     ];
     let radioValue: string[] = [options[0].value];
+    let meetingTypeOption: any;
+
     // export let data: MaklumatPeribadi[] = [];
 
     selectedResult = [
@@ -43,6 +47,54 @@
 >
 <form>
     <div class="space-y-2.5">
+        <DropdownSelect
+            hasError={errorData?.meetingTypeOption}
+            dropdownType="label-left-full"
+            id="meetingTypeOption"
+            label="Nama dan Bilangan Mesyuarat"
+            bind:value={meetingTypeOption}
+            options={[
+                { value: '1', name: 'Semua' },
+                { value: '2', name: '1/12' },
+                { value: '3', name: '1/102' },
+                { value: '4', name: '2/101' },
+            ]}
+        ></DropdownSelect>
+        {#if errorData?.meetingTypeOption}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{errorData?.meetingTypeOption[0]}</span
+            >
+        {/if}
+        <DateSelector
+            hasError={errorData?.meetingDate}
+            name="meetingDate"
+            handleDateChange
+            label="Tarikh Mesyuarat"
+            bind:selectedDate={meetingDate}
+        ></DateSelector>
+        {#if errorData?.meetingDate}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{errorData?.meetingDate[0]}</span
+            >
+        {/if}
+        <DropdownSelect
+            hasError={errorData?.salaryMovementMonthTypeOption}
+            dropdownType="label-left-full"
+            id="salaryMovementMonthTypeOption"
+            label="Bulan Pergerakan Gaji"
+            bind:value={salaryMovementMonthTypeOption}
+            options={[
+                { value: '1', name: 'Januari' },
+                { value: '2', name: 'April' },
+                { value: '3', name: 'Julai' },
+                { value: '4', name: 'Oktober' },
+            ]}
+        ></DropdownSelect>
+        {#if errorData?.salaryMovementMonthTypeOption}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{errorData?.salaryMovementMonthTypeOption[0]}</span
+            >
+        {/if}
         <TextField
             label="Kumpulan Mesyuarat"
             disabled={true}

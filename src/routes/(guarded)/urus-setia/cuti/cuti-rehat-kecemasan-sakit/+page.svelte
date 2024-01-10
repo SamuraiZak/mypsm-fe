@@ -10,6 +10,8 @@
     import { jenisCuti } from '$lib/mocks/urus-setia/cuti/cuti-rks/jenis-cuti';
     import { cutiRks } from '$lib/mocks/urus-setia/cuti/cuti-rks/cuti-rks';
     import { Select } from 'flowbite-svelte';
+    import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
+    import FilterDateSelector from '$lib/components/filter/FilterDateSelector.svelte';
 
     let selectedTahun = tahun[0].value;
     let selectedJenisCuti = jenisCuti[0].value;
@@ -33,8 +35,27 @@
     <!-- start your content with this div and style it with your own preference -->
 
     <FilterContainer>
-        <StaffSelector />
-        <div class="flex flex-row gap-x-2.5">
+        <div class="flex w-full flex-wrap gap-2.5">
+            <FilterTextInput label="Nama Pekerja"></FilterTextInput>
+            <FilterTextInput label="No. Pekerja"></FilterTextInput>
+            <FilterTextInput label="No. Kad Pengenalan"></FilterTextInput>
+            <FilterTextInput label="Bulan Cuti"></FilterTextInput>
+            <FilterTextInput label="Tahun"></FilterTextInput>
+            <FilterTextInput label="Unit Organisasi"></FilterTextInput>
+            <FilterTextInput label="Jenis Cuti"></FilterTextInput>
+            <FilterTextInput label="Kod Jenis Cuti"></FilterTextInput>
+            <FilterTextInput label="Status Cuti"></FilterTextInput>
+            <FilterDateSelector
+            id="course-start-date"
+            label="Tarikh Mohon"
+            selectedDate=""
+            handleDateChange={() => {}}
+        />
+
+
+
+        </div>
+        <!-- <div class="flex flex-row gap-x-2.5">
             <div class="flex flex-row items-center justify-center gap-x-2.5">
                 <p class="text-sm font-normal">Bulan Cuti</p>
                 <div class="flex flex-row items-center justify-start gap-x-2.5">
@@ -143,7 +164,7 @@
             bind:index={selectedJenisCuti}
             options={jenisCuti}
         ></DropdownSelect>
-        <ShortTextField label="Tarikh Mohon" type="date" />
+        <ShortTextField label="Tarikh Mohon" type="date" /> -->
     </FilterContainer>
     <SectionHeader title="Senarai Permohonan Gantian Cuti Rehat (GCR) Tahun 2023"></SectionHeader>
     <div class="flex max-h-full w-full flex-col items-start justify-start">

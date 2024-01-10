@@ -8,11 +8,10 @@
     export let data;
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import { goto } from '$app/navigation';
-    const url =
-        './PTB-dan-KWAP/butiran-permohonan-' +
-        data.props.lists[0].noPekerja +
-        '-' +
-        data.props.lists[0].noKadPengenalan;
+    const url = './PTB-dan-KWAP/tambah-rekod';
+    // data.props.lists[0].noPekerja +
+    // '-' +
+    // data.props.lists[0].noKadPengenalan;
 </script>
 
 <!-- content header starts here -->

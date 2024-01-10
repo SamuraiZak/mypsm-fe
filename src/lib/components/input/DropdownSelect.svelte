@@ -12,7 +12,7 @@
     export let id = '';
     export let disabled = false;
     export let options: SelectOptionType<any>[] | undefined;
-    export let index: string | number = 0;
+    export let index: string | number | boolean = 0;
     export let onSelect = () => {};
     export let dropdownType = 'default';
     export let hasTooltip = false;
@@ -138,6 +138,34 @@
     </div>
 {:else if dropdownType === 'label-left'}
     <div class="flex w-fit flex-row items-center justify-between gap-2.5">
+        <label
+            for={id}
+            class="block w-fit text-[11px] font-medium text-txt-primary"
+        >
+            {label}
+        </label>
+
+        <Select
+            {disabled}
+            {id}
+            items={options}
+            placeholder="Sila Pilih"
+            class="
+            {hasError
+                ? 'border-system-danger focus:border-system-danger'
+                : 'hover:border-system-primary focus:border-system-primary'}
+            border-1 block h-[32px] w-full rounded-[3px] bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
+            bind:value
+            on:change={() => {
+                onSelect();
+            }}
+        ></Select>
+        <div id={toolTipID} class="w-[fit h-fit">
+            {@html hasTooltip ? questionMarkIcon : ''}
+        </div>
+    </div>
+{:else if dropdownType === 'label-fit'}
+    <div class="flex w-full flex-row items-center justify-between gap-2.5">
         <label
             for={id}
             class="block w-fit text-[11px] font-medium text-txt-primary"
