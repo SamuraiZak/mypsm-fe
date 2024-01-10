@@ -22,6 +22,7 @@ export const roles = [
         name: 'Calon',
     },
     { value: 'ketua-seksyen', name: 'Ketua Seksyen' },
+    { value: 'timbalan-ketua-seksyen', name: 'Timbalan Ketua Seksyen' },
     { value: 'audit', name: 'Audit' },
     { value: 'klinik-panel', name: 'Klinik Panel' },
 ];

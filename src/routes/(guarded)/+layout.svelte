@@ -30,6 +30,7 @@
     import SvgBookmark from '$lib/assets/svg/SvgBookmark.svelte';
     import currentRole from '$lib/stores/activeRole';
     import { sidebarPengarahIntegriti } from '$lib/config/sidebar/sidebar-pengarah-integriti';
+    import { sidebarTimbalanKetuaSeksyen } from '$lib/config/sidebar/sidebar-timbalan-ketua-seksyen';
 
     $: activeUrl = $page.url.pathname;
 
@@ -72,6 +73,8 @@
                     <Sidebar sidebarItems={sidebarPengarahBahagianNegeri} />
                 {:else if currentActiveRole == 'ketua-seksyen'}
                     <Sidebar sidebarItems={sidebarKetuaSeksyen} />
+                {:else if currentActiveRole == 'timbalan-ketua-seksyen'}
+                    <Sidebar sidebarItems={sidebarTimbalanKetuaSeksyen} />
                 {:else if currentActiveRole == 'klinik-panel'}
                     <Sidebar sidebarItems={sidebarKlinikPanel} />
                 {:else if currentActiveRole == 'pengarah-khidmat-pengurusan'}

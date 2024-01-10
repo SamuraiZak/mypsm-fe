@@ -193,7 +193,7 @@
 {:else if labelType === 'label-fit'}
     <div class="flex w-full flex-row items-center justify-between gap-2">
         <div
-            class="w-full flex-row items-center gap-2 {label == ''
+            class="w-fit flex-row items-center gap-2 {label == ''
                 ? 'hidden'
                 : 'flex'}"
         >
@@ -228,7 +228,7 @@
         />
     </div>
 {:else if labelType === 'no-label'}
-    <div class="flex w-full flex-row items-center justify-between">
+    <div class="flex w-full flex-row items-center justify-between gap-2">
         <input
             on:blur={onBlur}
             on:change={onChange}
@@ -248,6 +248,9 @@
                 : 'hover:border-system-primary focus:border-system-primary'}
             border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
         />
+        <div id={toolTipID} class="h-fit w-fit">
+            {@html hasTooltip ? questionMarkIcon : ''}
+        </div>
     </div>
 {:else if labelType === 'top'}
     <div class="flex w-full flex-col items-start justify-start gap-1">

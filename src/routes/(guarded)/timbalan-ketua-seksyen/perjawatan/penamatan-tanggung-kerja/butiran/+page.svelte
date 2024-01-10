@@ -20,36 +20,91 @@
     import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
     import toast, { Toaster } from 'svelte-french-toast';
     import { ZodError, z } from 'zod';
-    import {
-        _approverResultSchema,
-        _errorData,
-        _submitApproverResultForm,
-    } from './+page';
     let editable: boolean = true;
-    export let form;
 
-    let passerResult: string = 'passed';
-    let results = [
-        { value: 'passed', name: 'LULUS' },
-        { value: 'notPassed', name: 'TIDAK LULUS' },
-        { value: 'supported', name: 'SOKONG' },
-        { value: 'notSupported', name: 'TIDAK SOKONG' },
+    const options: RadioOption[] = [
+        {
+            value: 'lulus',
+            label: 'Lulus',
+        },
+        {
+            value: 'tidak lulus',
+            label: 'Tidak Lulus',
+        },
     ];
 
-    let isApproved: string = 'true';
-    const approveOptions: RadioOption[] = [
+    let isSupported: string = 'true';
+    const supportOptions: RadioOption[] = [
         {
             value: 'true',
-            label: 'LULUS',
+            label: 'SOKONG',
         },
         {
             value: 'false',
-            label: 'TIDAK LULUS',
+            label: 'TIDAK SOKONG',
         },
     ];
 
+    // =========================================================================
+    // z validation schema and submit function for the deputy section head form fields
+    // =========================================================================
     let errorData: any;
-    $: errorData = _errorData;
+
+    const longTextSchema = z
+        .string({ required_error: 'Medan ini tidak boleh kosong.' })
+        .min(4, {
+            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+        })
+        .max(124, {
+            message: 'Medan ini tidak boleh melebihi 124 karakter.',
+        })
+        .trim();
+
+    // New Employment - Supporter Result section
+    const supporterResultSchema = z.object({
+        supporterRemark: longTextSchema,
+        supporterResult: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tetapkan pilihan anda.'
+                        : defaultError,
+            }),
+        }),
+    });
+
+    export const submitSupporterResultForm = async (event: Event) => {
+        const formElement = event.target as HTMLFormElement;
+        const formData = new FormData(formElement);
+
+        const supporterResultData = {
+            supporterRemark: String(formData.get('supporterRemark')),
+            supporterResult: String(formData.get('supporterResult')),
+        };
+
+        try {
+            errorData = [];
+            const result = supporterResultSchema.parse(supporterResultData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                setTimeout(() => goto('../penamatan-tanggung-kerja'), 1500);
+            }
+        } catch (error: unknown) {
+            if (error instanceof ZodError) {
+                const { fieldErrors: errors } = error.flatten();
+                errorData = errors;
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
 </script>
 
 <!-- header section -->
@@ -62,7 +117,7 @@
         <TextIconButton
             label="Tutup"
             onClick={() => {
-                goto('/ketua-seksyen/perjawatan/penamatan-tanggung-kerja');
+                goto('../penamatan-tanggung-kerja');
             }}
         >
             <SvgXMark></SvgXMark>
@@ -75,7 +130,6 @@
 <section
     class="flex h-full max-h-[100vh-172px] w-full flex-col items-start justify-start overflow-y-hidden"
 >
-    {errorData?.approverRemark}
     <!-- start your content with this div and style it with your own preference -->
     <Stepper>
         <!-- Langkah 1 -->
@@ -419,45 +473,44 @@
                 ><TextIconButton
                     label="Hantar"
                     primary
-                    form="approverResultForm"
-                ></TextIconButton></StepperContentHeader
+                    form="supporterResultForm"
+                /></StepperContentHeader
             >
             <StepperContentBody>
                 <form
-                    id="approverResultForm"
-                    on:submit={_submitApproverResultForm}
+                    id="supporterResultForm"
+                    on:submit|preventDefault={submitSupporterResultForm}
                     class="flex w-full flex-col gap-2.5"
                 >
-                    <!-- Penyokong Card -->
                     <SectionHeader
                         color="system-primary"
                         title="Ketua Seksyen (Pelulus)"
                     ></SectionHeader>
                     <LongTextField
-                        hasError={errorData?.approverRemark}
-                        name="approverRemark"
+                        hasError={errorData?.supporterRemark}
+                        name="supporterRemark"
                         id="supporter-remark"
                         label="Tindakan/Ulasan"
                         value=""
                     ></LongTextField>
-                    {#if errorData?.approverRemark}
+                    {#if errorData?.supporterRemark}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.approverRemark[0]}</span
+                            >{errorData?.supporterRemark[0]}</span
                         >
                     {/if}
 
                     <RadioSingle
-                        name="approverResult"
+                        name="supporterResult"
                         disabled={!editable}
-                        options={approveOptions}
+                        options={supportOptions}
                         legend={'Keputusan'}
-                        bind:userSelected={isApproved}
+                        bind:userSelected={isSupported}
                     ></RadioSingle>
-                    {#if errorData?.approverResult}
+                    {#if errorData?.supporterResult}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.approverResult[0]}</span
+                            >{errorData?.supporterResult[0]}</span
                         >
                     {/if}
                     <hr />
@@ -472,22 +525,13 @@
                             type="text"
                             id="passer-name"
                             label="Nama"
-                            value="Mohd Safwan Adam"
+                            value=""
                         ></TextField>
-                        <LongTextField
-                            disabled
-                            id="supporter-remark"
-                            label="Tindakan/Ulasan"
-                            value="Layak"
-                        ></LongTextField>
-                        <div class="flex w-full flex-row text-sm">
-                            <label for="supporter-result" class="w-[220px]"
-                                >Keputusan</label
-                            ><Badge
-                                border
-                                color={passerResult == 'passed'
-                                    ? 'green'
-                                    : 'red'}>{results[2].name}</Badge
+                        <div class="text-sm text-system-primary">
+                            <i class=""
+                                ><li>
+                                    ● Menunggu keputusan daripada PENYOKONG.
+                                </li></i
                             >
                         </div>
                     </div>
@@ -496,5 +540,4 @@
         </StepperContent>
     </Stepper>
 </section>
-
 <Toaster />

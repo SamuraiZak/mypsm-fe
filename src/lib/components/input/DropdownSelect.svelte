@@ -164,6 +164,34 @@
             {@html hasTooltip ? questionMarkIcon : ''}
         </div>
     </div>
+{:else if dropdownType === 'label-fit'}
+    <div class="flex w-full flex-row items-center justify-between gap-2.5">
+        <label
+            for={id}
+            class="block w-fit text-[11px] font-medium text-txt-primary"
+        >
+            {label}
+        </label>
+
+        <Select
+            {disabled}
+            {id}
+            items={options}
+            placeholder="Sila Pilih"
+            class="
+            {hasError
+                ? 'border-system-danger focus:border-system-danger'
+                : 'hover:border-system-primary focus:border-system-primary'}
+            border-1 block h-[32px] w-full rounded-[3px] bg-bgr-primary px-2.5 py-0 text-[12px] text-txt-primary hover:cursor-pointer focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-secondary"
+            bind:value
+            on:change={() => {
+                onSelect();
+            }}
+        ></Select>
+        <div id={toolTipID} class="w-[fit h-fit">
+            {@html hasTooltip ? questionMarkIcon : ''}
+        </div>
+    </div>
 {:else if dropdownType === 'label-top'}
     <div class="flex w-fit flex-col items-start justify-between">
         <div class="flex flex-row gap-1">

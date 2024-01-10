@@ -66,8 +66,7 @@
                         ? 'Tarikh tidak boleh dibiar kosong.'
                         : defaultError,
             }),
-        })
-        .optional();
+        });
 
     // New Employment - Secretary Result section
     const meetingResultSchema = z.object({
