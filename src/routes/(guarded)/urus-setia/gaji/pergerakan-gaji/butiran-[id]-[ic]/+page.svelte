@@ -38,6 +38,8 @@
     let selectedMonth = '10';
     let errorData: any;
     let isChecked: boolean = false;
+    let meetingTypeOption: any;
+    let meetingDate: any;
 
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
@@ -79,15 +81,15 @@
 
     const exampleFormSchema = z.object({
         // checkbox schema
-        checkboxExample: z.enum(['on'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tandakan kotak semak.'
-                        : defaultError,
-            }),
-        }),
-        selectOptionExample: z.enum(['1', '2', '3', '4'], {
+        // checkboxExample: z.enum(['on'], {
+        //     errorMap: (issue, { defaultError }) => ({
+        //         message:
+        //             issue.code === 'invalid_enum_value'
+        //                 ? 'Sila tandakan kotak semak.'
+        //                 : defaultError,
+        //     }),
+        // }),
+        meetingTypeOption: z.enum(['1', '2', '3', '4'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
                     issue.code === 'invalid_enum_value'
@@ -95,53 +97,31 @@
                         : defaultError,
             }),
         }),
-        textFieldExample: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        dateSelectorExample: dateScheme,
+        // textFieldExample: z
+        //     .string({ required_error: 'Medan ini tidak boleh kosong.' })
+        //     .min(4, {
+        //         message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+        //     })
+        //     .max(124, {
+        //         message: 'Medan ini tidak boleh melebihi 124 karakter.',
+        //     })
+        //     .trim(),
+        meetingDate: dateScheme,
     });
 
     const retirementConfirmationForm = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);
-        const selectOptionExampleSelector = document.getElementById(
-            'selectOptionExample',
+        const meetingTypeOptionSelector = document.getElementById(
+            'meetingTypeOption',
         ) as HTMLSelectElement;
 
         const exampleFormData = {
-            radioButtonExample: String(formData.get('radioButtonExample')),
-            checkboxExample: String(formData.get('checkboxExample')),
-            selectOptionExample: String(selectOptionExampleSelector.value),
-            textFieldExample: String(formData.get('textFieldExample')),
-            dateSelectorExample: String(formData.get('dateSelectorExample')),
+            // radioButtonExample: String(formData.get('radioButtonExample')),
+            // checkboxExample: String(formData.get('checkboxExample')),
+            meetingTypeOption: String(meetingTypeOptionSelector.value),
+            // textFieldExample: String(formData.get('textFieldExample')),
+            meetingDate: String(formData.get('meetingDate')),
         };
-
-        const exampleFormSchema = z.object({
-            // checkbox schema
-            retirementConfirmationResult: z.enum(['sah', 'tidakSah'], {
-                errorMap: (issue, { defaultError }) => ({
-                    message:
-                        issue.code === 'invalid_enum_value'
-                            ? 'Sila tetapkan pilihan anda.'
-                            : defaultError,
-                }),
-            }),
-            // dateSelectorExample: dateScheme,
-            retirementConfirmationReview: z
-                .string({ required_error: 'Medan ini tidak boleh kosong.' })
-                .min(4, {
-                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-                })
-                .max(124, {
-                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
-                })
-                .trim(),
-        });
 
         try {
             const result = exampleFormSchema.parse(exampleFormData);
@@ -254,7 +234,7 @@
                     class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
                 >
                     <SectionHeader title="Pergerakan Gaji Baru"></SectionHeader>
-                    <DropdownField
+                    <!-- <DropdownField
                         {labelBlack}
                         dropdownType="label-left-full"
                         label="Nama dan Bilangan Mesyuarat"
@@ -262,14 +242,46 @@
                         id="dropdown"
                         options={meetings}
                         disabled={!isEditable}
-                    />
-                    <DateSelector
+                    /> -->
+                    <DropdownSelect
+                        hasError={errorData?.meetingTypeOption}
+                        dropdownType="label-left-full"
+                        id="meetingTypeOption"
+                        label="Nama dan Bilangan Mesyuarat"
+                        bind:value={meetingTypeOption}
+                        options={[
+                            { value: '1', name: 'Semua' },
+                            { value: '2', name: '1/12' },
+                            { value: '3', name: '1/102' },
+                            { value: '4', name: '2/101' },
+                        ]}
+                    ></DropdownSelect>
+                    {#if errorData?.meetingTypeOption}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.meetingTypeOption[0]}</span
+                        >
+                    {/if}
+                    <!-- <DateSelector
                         {labelBlack}
                         handleDateChange
                         label="Tarikh Mesyuarat"
                         selectedDate="2023-08-23"
                         disabled={!isEditable}
+                    ></DateSelector> -->
+                    <DateSelector
+                        hasError={errorData?.meetingDate}
+                        name="meetingDate"
+                        handleDateChange
+                        label="Tarikh Mesyuarat"
+                        bind:selectedDate={meetingDate}
                     ></DateSelector>
+                    {#if errorData?.meetingDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.meetingDate[0]}</span
+                        >
+                    {/if}
                     <DropdownSelect
                         {labelBlack}
                         disabled={!isEditable}
