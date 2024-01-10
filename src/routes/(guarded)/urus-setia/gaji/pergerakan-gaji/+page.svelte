@@ -78,7 +78,7 @@
         });
 
     const exampleFormSchema = z.object({
-        // checkbox schema
+        //checkbox schema
 
         specialAid: z.enum(['true', 'false'], {
             errorMap: (issue, { defaultError }) => ({
@@ -472,7 +472,7 @@
             <TextIconButton
                 primary
                 label="Simpan"
-                form="tetapanKGTformValidation"
+                form="tetapanKGTFormValidation"
             >
                 <SvgCheck></SvgCheck>
             </TextIconButton>
@@ -493,6 +493,7 @@
         ></SectionHeader>
 
         <DynamicTable
+            hasCheckbox
             tableItems={data.records.salaryMovementRecord}
             bind:passData={tempUrl}
             withActions
