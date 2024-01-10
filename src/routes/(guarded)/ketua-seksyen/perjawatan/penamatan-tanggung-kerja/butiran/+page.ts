@@ -1,11 +1,9 @@
-// import { goto } from '$app/navigation';
+import { goto } from '$app/navigation';
 import api from '$lib/services/core/ky.service.js';
 import { error, fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
-// import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
-// import { ZodError, z } from 'zod';
 
 // =========================================================================
 // z validation schema and submit function for the interim end form fields
@@ -69,6 +67,7 @@ export const _submitApproverResultForm = async (event: Event) => {
         toast.success('Berjaya disimpan!', {
             style: 'background: #333; color: #fff;',
         });
+        setTimeout(() => goto('../penamatan-tanggung-kerja'), 1500);
     }
 
     return { form };

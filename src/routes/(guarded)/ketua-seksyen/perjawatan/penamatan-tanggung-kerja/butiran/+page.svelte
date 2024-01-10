@@ -10,21 +10,15 @@
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import SvgPrinter from '$lib/assets/svg/SvgPrinter.svelte';
-    import CustomTable from '$lib/components/table/CustomTable.svelte';
-    import { mockCalonPemangkuanList } from '$lib/mocks/perjawatan/pemangkuan/senaraiCalonPemangkuan';
-    import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import { Badge } from 'flowbite-svelte';
-    import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { ZodError, z } from 'zod';
+    import { Toaster } from 'svelte-french-toast';
     import { _approverResultSchema, _submitApproverResultForm } from './+page';
     import { superForm } from 'sveltekit-superforms/client';
-    import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
     import type { PageData } from './$types';
     let editable: boolean = true;
+    export let data: PageData;
 
     let passerResult: string = 'passed';
     let results = [
@@ -34,7 +28,6 @@
         { value: 'notSupported', name: 'TIDAK SOKONG' },
     ];
 
-    let isApproved: string = 'true';
     const approveOptions: RadioOption[] = [
         {
             value: 'true',
@@ -46,19 +39,12 @@
         },
     ];
 
-    let errorData: any;
-    // $: errorData = _errorData;
-
-    export let data: PageData;
-
-    const { form, errors, message, constraints, enhance } = superForm(
-        data.form,
-        {
-            SPA: true,
-            validators: _approverResultSchema,
-            taintedMessage: 'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
-        },
-    );
+    const { form, errors, enhance } = superForm(data.form, {
+        SPA: true,
+        validators: _approverResultSchema,
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <!-- header section -->
@@ -438,7 +424,6 @@
                     class="flex w-full flex-col gap-2.5"
                     use:enhance
                 >
-                    <SuperDebug data={$form} />
                     <!-- Penyokong Card -->
                     <SectionHeader
                         color="system-primary"
@@ -454,7 +439,7 @@
                     {#if $errors.approverRemark}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$errors.approverRemark[0]}</span
+                            >{$errors.approverRemark}</span
                         >
                     {/if}
 
@@ -465,10 +450,10 @@
                         legend={'Keputusan'}
                         bind:userSelected={$form.approverResult}
                     ></RadioSingle>
-                    {#if errorData?.approverResult}
+                    {#if $errors.approverResult}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.approverResult[0]}</span
+                            >{$errors.approverResult}</span
                         >
                     {/if}
                     <hr />
