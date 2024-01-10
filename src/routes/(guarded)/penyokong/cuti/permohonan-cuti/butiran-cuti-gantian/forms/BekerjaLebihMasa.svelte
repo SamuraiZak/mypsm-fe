@@ -8,7 +8,7 @@
     import toast, { Toaster } from 'svelte-french-toast';
     import { z, ZodError } from 'zod';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
-    import { overtimeSchema } from '../../../../../kakitangan/cuti/permohonan-cuti/schema';
+    import { overtimeSchema } from '../form-schema';
 
     export let selectedFiles: any = [];
 

@@ -384,3 +384,10 @@ export const reusableDateSchema = z.object({
     tarikhMula: dateScheme,
     tarikhTamat: dateScheme,
 });
+
+// Files section
+export const uploadedFileSchema = z.object({
+    uploadedFiles: z.any().array().nonempty({
+        message: 'Sila muat naik dokumen - dokumen berkaitan.',
+    }),
+});
