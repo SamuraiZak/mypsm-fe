@@ -1,6 +1,41 @@
 <script lang="ts">
     import mypsmLogo from '$lib/assets/MyPSM.png';
-    import lkimLogo from '$lib/assets/logo.png';
+    import type { PageData } from './$types';
+    import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
+    import {
+        superForm,
+        setMessage,
+        setError,
+    } from 'sveltekit-superforms/client';
+
+    import { _calonLoginSchema } from './+page';
+
+    export let data: PageData;
+
+    // idType options
+    let idTypeOptions = ['No. Kad Pengenalan', 'Nama Pengguna'];
+
+    // preset form data
+    data.form.data.idType = idTypeOptions[0];
+    data.form.data.userGroup = 'candidate';
+    data.form.data.currentRole = 'calon';
+
+    const { form, errors, message, constraints, enhance } = superForm(
+        data.form,
+        {
+            SPA: true,
+            validators: _calonLoginSchema,
+            onUpdate({ form }) {
+                if (
+                    form.data.idType.includes('Kad') &&
+                    form.data.username.length < 12
+                ) {
+                    setMessage(form, 'invalid');
+                } else {
+                }
+            },
+        },
+    );
 </script>
 
 <div
@@ -27,22 +62,70 @@
 
         <!-- login form starts -->
 
-        <form class="space-y-4 md:space-y-6" action="#">
+        <form method="POST" use:enhance class="space-y-2">
+            <!-- id type field starts -->
+
+            <div>
+                <label
+                    for="idType"
+                    class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                    >Jenis Identiti</label
+                >
+                <select
+                    name="idType"
+                    bind:value={$form.idType}
+                    class=" block h-9 w-full rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
+                >
+                    {#each idTypeOptions as option}
+                        <option value={option}>
+                            {option}
+                        </option>
+                    {/each}
+                </select>
+
+                <div class="h-5 w-full items-end justify-end">
+                    {#if $errors.idType}
+                        <p
+                            class="text-end text-sm italic text-ios-basic-destructiveRed"
+                        >
+                            {$errors.idType}
+                        </p>
+                    {/if}
+                </div>
+            </div>
+
+            <!-- id type field ends -->
+
             <!-- user name field starts -->
 
             <div>
                 <label
                     for="username"
                     class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                    >No. Kad Pengenalan</label
-                >
+                    >{#if $form.idType == 'No. Kad Pengenalan'}
+                        No. Kad Pengenalan
+                    {:else}
+                        ID Pengguna
+                    {/if}
+                </label>
                 <input
+                    bind:value={$form.username}
                     type="text"
                     name="username"
                     id="username"
                     placeholder="(Contoh: 850201115670)"
-                    class=" block h-9 w-full rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light p-2.5 text-base autofill:hide-default-inner-shadow focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
+                    class=" autofill:hide-default-inner-shadow block h-9 w-full rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light p-2.5 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
                 />
+
+                <div class="h-5 w-full items-end justify-end">
+                    {#if $errors.username}
+                        <p
+                            class="text-end text-sm italic text-ios-basic-destructiveRed"
+                        >
+                            {$errors.username}
+                        </p>
+                    {/if}
+                </div>
             </div>
 
             <!-- username field ends -->
@@ -56,12 +139,23 @@
                     >Kata Laluan</label
                 >
                 <input
+                    bind:value={$form.password}
                     type="password"
                     name="password"
                     id="password"
                     placeholder="••••••••"
-                    class=" block h-9 w-full rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light p-2.5 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
+                    class=" autofill:hide-default-inner-shadow block h-9 w-full rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light p-2.5 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
                 />
+
+                <div class="h-5 w-full items-end justify-end">
+                    {#if $errors.password}
+                        <p
+                            class="text-end text-sm italic text-ios-basic-destructiveRed"
+                        >
+                            {$errors.password}
+                        </p>
+                    {/if}
+                </div>
             </div>
 
             <!-- password field ends -->
@@ -89,13 +183,13 @@
                     </div>
                 </div>
                 <a
-                    href="#"
+                    href="/login"
                     class=" text-sm font-medium text-ios-labelColors-link-light hover:underline"
                     >Terlupa Kata Laluan</a
                 >
             </div>
 
-            <!-- remeber me & forgot password ends -->
+            <!-- remember me & forgot password ends -->
 
             <!-- submit button starts -->
 
@@ -111,3 +205,13 @@
         <!-- login form ends -->
     </div>
 </div>
+
+<div class="w-full justify-center p-6 text-center">
+    <a
+        href="/staging/login"
+        class=" text-base font-medium text-ios-labelColors-link-light hover:underline"
+        >Kembali</a
+    >
+</div>
+
+<SuperDebug data={$form} />

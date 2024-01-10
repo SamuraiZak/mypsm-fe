@@ -130,7 +130,7 @@
                     </div>
                 </div>
                 <a
-                    href="#"
+                    href="/login"
                     class=" text-sm font-medium text-ios-labelColors-link-light hover:underline"
                     >Terlupa Kata Laluan</a
                 >
