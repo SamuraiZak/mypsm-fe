@@ -8,11 +8,8 @@
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    import { mockSalaryMovementRecord } from '$lib/mocks/gaji/salaryMovementRecord/mockSalaryMovementRecord';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
-    import { meetings } from '$lib/mocks/mesyuarat/mesyuarat';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
-    import { months } from '$lib/mocks/dateSelection/months';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
@@ -43,21 +40,16 @@
     let radioValue: any = 'sah';
     let isGredChecked: boolean = false;
     let isSpecialFiAidChecked: boolean = false;
-    let isSpecialIncrementChecked: boolean = false;
+    let isSpecialIncrementTextChecked: boolean = false;
     let gred: any;
+    let isSpecialFiAidTextChecked: boolean = false;
+    let specialFiAidText: any;
+    let specialIncrementText: any;
 
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const currYear = currentYear;
     const nextYear = currYear + 1;
-
-    const salaryMonths = [
-        { value: '1', name: 'Januari' },
-        { value: '2', name: 'April' },
-        { value: '3', name: 'Julai' },
-        { value: '4', name: 'Oktober' },
-    ];
-    let selectedSalaryMonth: string = '1';
 
     const options: RadioOption[] = [
         {
@@ -84,15 +76,6 @@
         });
 
     const exampleFormSchema = z.object({
-        // checkbox schema
-        // specialAidOption: z.enum(['on'], {
-        //     errorMap: (issue, { defaultError }) => ({
-        //         message:
-        //             issue.code === 'invalid_enum_value'
-        //                 ? 'Sila tandakan kotak semak.'
-        //                 : defaultError,
-        //     }),
-        // }),
         meetingTypeOption: z.enum(['1', '2', '3', '4'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
@@ -120,6 +103,28 @@
                 }),
             }),
         ),
+        specialFiAidTexts: z.optional(
+            z
+                .string({ required_error: 'Medan ini tidak boleh kosong.' })
+                .min(1, {
+                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+                })
+                .max(124, {
+                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
+                })
+                .trim(),
+        ),
+        specialIncrementTexts: z.optional(
+            z
+                .string({ required_error: 'Medan ini tidak boleh kosong.' })
+                .min(1, {
+                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+                })
+                .max(124, {
+                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
+                })
+                .trim(),
+        ),
         // textFieldExample: z
         //     .string({ required_error: 'Medan ini tidak boleh kosong.' })
         //     .min(4, {
@@ -133,6 +138,7 @@
 
     const retirementConfirmationForm = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);
+
         const meetingTypeOptionSelector = document.getElementById(
             'meetingTypeOption',
         ) as HTMLSelectElement;
@@ -150,12 +156,33 @@
         try {
             let validatedData;
             let result;
+
             if (isGredChecked) {
                 const gred = String(getGred.value);
 
                 const validatedFormData = {
                     ...exampleFormData,
                     gred,
+                };
+                validatedData = validatedFormData;
+                result = exampleFormSchema.parse(validatedFormData);
+            } else if (isSpecialFiAidTextChecked) {
+                const specialFiAidTexts = String(
+                    formData.get('specialFiAidTexts'),
+                );
+                const validatedFormData = {
+                    ...exampleFormData,
+                    specialFiAidTexts,
+                };
+                validatedData = validatedFormData;
+                result = exampleFormSchema.parse(validatedFormData);
+            } else if (isSpecialIncrementTextChecked) {
+                const specialIncrementTexts = String(
+                    formData.get('specialIncrementTexts'),
+                );
+                const validatedFormData = {
+                    ...exampleFormData,
+                    specialIncrementTexts,
                 };
                 validatedData = validatedFormData;
                 result = exampleFormSchema.parse(validatedFormData);
@@ -367,18 +394,68 @@
                             </div>
 
                             <div class="flex flex-row items-center">
-                                <Checkbox
-                                    name="specialAid"
-                                    bind:checked={isSpecialFiAidChecked}
-                                ></Checkbox>
-                                <TextField
-                                    disabled={!isSpecialFiAidChecked}
-                                    label="Bantuan Khas Kewangan (RM)"
-                                ></TextField>
+                                <div>
+                                    <Checkbox
+                                        name="specialFiAidText"
+                                        bind:checked={isSpecialFiAidTextChecked}
+                                    ></Checkbox>
+                                </div>
+                                <div>
+                                    <TextField
+                                        disabled={!isSpecialFiAidTextChecked}
+                                        label="Bantuan Khas Kewangan (RM)"
+                                        hasError={errorData?.specialFiAidTexts}
+                                        name="specialFiAidTexts"
+                                        type="number"
+                                        bind:value={specialFiAidText}
+                                    />
+                                    {#if errorData?.specialFiAidTexts}
+                                        <span
+                                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                            >{errorData
+                                                ?.specialFiAidTexts[0]}</span
+                                        >
+                                    {/if}
+                                </div>
+                                {#if errorData?.specialFiAidText}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{errorData?.specialFiAidText[0]}</span
+                                    >
+                                {/if}
                             </div>
 
                             <div class="flex flex-row items-center">
-                                <Checkbox
+                                <div>
+                                    <Checkbox
+                                        name="specialIncrementText"
+                                        bind:checked={isSpecialIncrementTextChecked}
+                                    ></Checkbox>
+                                </div>
+                                <div>
+                                    <TextField
+                                        disabled={!isSpecialIncrementTextChecked}
+                                        label="Kenaikan Khas (RM)"
+                                        hasError={errorData?.specialIncrementTexts}
+                                        name="specialIncrementTexts"
+                                        type="number"
+                                        bind:value={specialIncrementText}
+                                    />
+                                    {#if errorData?.specialIncrementTexts}
+                                        <span
+                                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                            >{errorData
+                                                ?.specialIncrementTexts[0]}</span
+                                        >
+                                    {/if}
+                                </div>
+                                {#if errorData?.specialIncrementText}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{errorData?.specialIncrementText[0]}</span
+                                    >
+                                {/if}
+                                <!-- <Checkbox
                                     name="specialIncrement"
                                     bind:checked={isSpecialIncrementChecked}
                                 ></Checkbox>
@@ -386,7 +463,7 @@
                                 <TextField
                                     disabled={!isSpecialIncrementChecked}
                                     label="Kenaikan Khas (RM)"
-                                ></TextField>
+                                ></TextField> -->
                             </div>
                         </div>
                     </div>
