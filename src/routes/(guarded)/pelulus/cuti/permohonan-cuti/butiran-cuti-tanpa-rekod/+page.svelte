@@ -131,7 +131,11 @@
             </StepperContentBody>
         </StepperContent>
         <StepperContent>
-            <StepperContentHeader title="Maklumat Cuti"></StepperContentHeader>
+            <StepperContentHeader title="Maklumat Cuti">
+                <TextIconButton primary label="Hantar" form="formValidation">
+                    <SvgPaperAirplane/>
+                </TextIconButton>
+            </StepperContentHeader>
             <StepperContentBody>
                 <div class="flex max-h-full w-full flex-col gap-2.5 pb-5">
                     <DropdownSelect
