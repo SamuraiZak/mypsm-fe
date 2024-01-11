@@ -39,8 +39,13 @@
     import { positions } from '$lib/mocks/positions/positions';
     import { fileSelectionList } from '$lib/stores/globalState';
     import { onMount } from 'svelte';
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { ZodError, z } from 'zod';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import {
+        _actingSupporterResultSchema,
+        _submitActingSupporterResultForm,
+    } from './+page';
+    import { superForm } from 'sveltekit-superforms/client';
 
     let editMode: boolean = false;
 
@@ -94,7 +99,6 @@
         selectedFiles.splice(index, 1);
     }
 
-    let radioChosen: string = '';
     const supportOptions: RadioOption[] = [
         {
             value: 'true',
@@ -106,69 +110,17 @@
         },
     ];
 
-    let textFieldValue: string = 'Butiran Lengkap...';
+    // ==================================
+    // Form Validation ==================
+    // ==================================
+    export let data: PageData;
 
-    //zod validation
-    let errorData: any;
-    const exampleFormSchema = z.object({
-        //TextField
-        remarks: z
-            .string({ required_error: 'Tindakan/Ulasan tidak boleh kosong.' })
-            .min(20, {
-                message: 'Tindakan/Ulasan hendaklah melebihi 20 karakter.',
-            })
-            .max(124, {
-                message: 'Tindakan/Ulasan tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-
-        //Radio Button
-        certify: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
+    const { form, errors, enhance } = superForm(data.form, {
+        SPA: true,
+        validators: _actingSupporterResultSchema,
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
     });
-
-    const submitForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-
-        const exampleFormData = {
-            certify: String(formData.get('certify')),
-            remarks: String(formData.get('remarks')),
-        };
-        try {
-            const result = exampleFormSchema.parse(exampleFormData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedExamFormData = { ...exampleFormData, id };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedExamFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan semua maklumat adalah lengkap dan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
 </script>
 
 <!-- content section -->
@@ -1593,7 +1545,7 @@
 
         <!-- Penyokong Pemangkuan -->
         <StepperContent>
-            <StepperContentHeader title="Penyokong Pemangkuan">
+            <StepperContentHeader title="Penyokongan Pemangkuan">
                 <TextIconButton primary label="Hantar" form="formValidation"
                     ><SvgPaperAirplane /></TextIconButton
                 ></StepperContentHeader
@@ -1602,44 +1554,43 @@
                 <SectionHeader title="Keputusan daripada Penyokong"
                 ></SectionHeader>
                 <div
-                    class="flex h-[40px] max-h-[40px] min-h-[40px] w-full flex-row items-center justify-between"
+                    class="flex w-full flex-col gap-2"
                 >
-                    <div
-                        class="flex h-full max-h-full flex-col items-start justify-center"
+                    <span class="text-sm italic text-system-primary"
+                        >&#x2022; Keputusan akan dihantar ke email klinik dan
+                        Urus Setia berkaitan</span
                     >
-                        <span class="text-sm italic text-system-primary"
-                            >&#x2022; Keputusan akan dihantar ke email klinik
-                            dan Urus Setia berkaitan</span
-                        >
-                    </div>
                 </div>
                 <form
                     id="formValidation"
-                    on:submit|preventDefault={submitForm}
+                    method="POST"
+                    use:enhance
+                    on:submit|preventDefault={_submitActingSupporterResultForm}
                     class="flex w-full flex-col gap-2"
                 >
                     <LongTextField
+                        hasError={$errors.supporterRemark ? true : false}
                         labelBlack={false}
-                        name="remarks"
+                        name="supporterRemark"
                         label={'Tindakan/Ulasan'}
-                        bind:value={textFieldValue}
+                        bind:value={$form.supporterRemark}
                     />
-                    {#if errorData?.remarks}
+                    {#if $errors.supporterRemark}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.remarks[0]}</span
+                            >{$errors.supporterRemark[0]}</span
                         >
                     {/if}
                     <RadioSingle
                         disabled={false}
                         options={supportOptions}
-                        name="certify"
-                        bind:userSelected={radioChosen}
+                        name="supporterResult"
+                        bind:userSelected={$form.supporterResult}
                     />
-                    {#if errorData?.certify}
+                    {#if $errors.supporterResult}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.certify[0]}</span
+                            >{$errors.supporterResult[0]}</span
                         >
                     {/if}
                 </form>

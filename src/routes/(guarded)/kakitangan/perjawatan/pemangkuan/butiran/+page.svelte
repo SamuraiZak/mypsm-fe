@@ -22,8 +22,14 @@
     import { fileSelectionList } from '$lib/stores/globalState';
     import { error } from '@sveltejs/kit';
     import { onMount } from 'svelte';
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { z, ZodError } from 'zod';
+    import { Toaster } from 'svelte-french-toast';
+    import {
+        _amendmentOfPlacementApplicationSchema,
+        _submitActingDirectorResultForm,
+    } from './+page';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
 
     let checkedItems: Object[] = [];
 
@@ -67,88 +73,17 @@
         selectedFiles.splice(index, 1);
     }
 
-    // =================================================================================
-    // z validation schema for the example form fields==================================
-    // =================================================================================
-    let errorData: any;
-    // date common schema
-    const dateScheme = z.coerce
-        .date({
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_date'
-                        ? 'Tarikh tidak boleh dibiarkan kosong.'
-                        : defaultError,
-            }),
-        })
-        .min(new Date(), {
-            message:
-                'Tarikh lapor diri yang dipohon hendaklah tidak kurang dari tarikh semasa.',
-        });
+    // ==================================
+    // Form Validation ==================
+    // ==================================
+    export let data: PageData;
 
-    const exampleFormSchema = z.object({
-        amendmentDropdown: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Pilihan perlu dipilih.'
-                        : defaultError,
-            }),
-        }),
-        placementAmendment: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Pilihan perlu dipilih.'
-                        : defaultError,
-            }),
-        }),
-        dateSelector: dateScheme,
+    const { form, errors, enhance } = superForm(data.form, {
+        SPA: true,
+        validators: _amendmentOfPlacementApplicationSchema,
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
     });
-
-    const submitForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-        const amendmentDropdown = document.getElementById(
-            'amendmentDropdown',
-        ) as HTMLSelectElement;
-        const placementAmendment = document.getElementById(
-            'placementAmendment',
-        ) as HTMLSelectElement;
-
-        const exampleFormData = {
-            amendmentDropdown: String(amendmentDropdown.value),
-            placementAmendment: String(placementAmendment.value),
-            dateSelector: String(formData.get('dateSelector')),
-        };
-        try {
-            const result = exampleFormSchema.parse(exampleFormData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedExamFormData = { ...exampleFormData, id };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedExamFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
 </script>
 
 <!-- header section -->
@@ -359,55 +294,62 @@
 
                 <form
                     id="formValidation"
-                    on:submit|preventDefault={submitForm}
+                    method="POST"
+                    use:enhance
+                    on:submit|preventDefault={_submitActingDirectorResultForm}
                     class="flex w-full flex-col gap-2"
                 >
                     <DropdownSelect
-                        hasError={errorData?.amendmentDropdown}
+                        hasError={$errors.amendmentDropdown ? true : false}
                         id="amendmentDropdown"
                         label="Adakah anda memerlukan penangguhan/Pindaan Penempatan?"
                         labelBlack={false}
                         dropdownType="label-left-full"
+                        bind:value={$form.amendmentDropdown}
                         options={[
                             { value: 'true', name: 'Ya' },
                             { value: 'false', name: 'Tidak' },
                         ]}
                     />
-                    {#if errorData?.amendmentDropdown}
+                    {#if $errors.amendmentDropdown}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.amendmentDropdown[0]}</span
+                            >{$errors.amendmentDropdown[0]}</span
                         >
                     {/if}
 
                     <DateSelector
-                        hasError={errorData?.dateSelector}
-                        name="dateSelector"
-                        {selectedDate}
+                        hasError={$errors.requestedReportingDate ? true : false}
+                        name="requestedReportingDate"
                         labelBlack={false}
                         label={'Tarikh Lapor Diri yang Dipohon'}
+                        bind:selectedDate={$form.requestedReportingDate}
                     />
-                    {#if errorData?.dateSelector}
+                    {#if $errors.requestedReportingDate}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.dateSelector[0]}</span
+                            >$errors.requestedReportingDate[0]}</span
                         >
                     {/if}
 
                     <DropdownSelect
-                        id="placementAmendment"
+                        hasError={$errors.requestedPlacementAmendment
+                            ? true
+                            : false}
+                        id="requestedPlacementAmendment"
                         label="Pindaan Penempatan Dipohon"
                         labelBlack={false}
                         dropdownType="label-left-full"
+                        bind:value={$form.requestedPlacementAmendment}
                         options={[
                             { value: 'true', name: 'Ya' },
                             { value: 'false', name: 'Tidak' },
                         ]}
                     />
-                    {#if errorData?.placementAmendment}
+                    {#if $errors.requestedPlacementAmendment}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.placementAmendment[0]}</span
+                            >{$errors.requestedPlacementAmendment[0]}</span
                         >
                     {/if}
                 </form>
@@ -451,6 +393,7 @@
                         </div>
                     </div>
                 </div>
+                <SuperDebug data={$form} />
             </StepperContentBody>
         </StepperContent>
 
