@@ -24,10 +24,12 @@
     import { afterUpdate } from 'svelte';
     import SvgEllipsisCircle from '$lib/assets/svg/SvgEllipsisCircle.svelte';
     import SvgTrash from '$lib/assets/svg/SvgTrash.svelte';
-    // import { createCompareFn } from '$lib/service/services';
     import SvgPrinter from '$lib/assets/svg/SvgPrinter.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
+    import { TableHelper } from '$lib/helper/core/table-helper.ts/table-helper';
+
+    let tableHelper = TableHelper;
 
     let tableItem = {};
     export let tableItems: Record<string, any>[] = [tableItem];
@@ -163,9 +165,9 @@
         console.log(order);
 
         if (order == -1) {
-            tableItems = tableItems.sort(createCompareFn(key, 'desc'));
+            tableItems = tableItems.sort(tableHelper.sort(key, 'desc'));
         } else if (order == 1) {
-            tableItems = tableItems.sort(createCompareFn(key, 'asc'));
+            tableItems = tableItems.sort(tableHelper.sort(key, 'asc'));
         }
     }
 

@@ -2,7 +2,6 @@
     import ExportButton from '$lib/components/buttons/ExportButton.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import { sayhello } from '$lib/service/services';
-    import { AuthenticationService } from '$lib/services/core/authentication.service';
     import type { LoginRequestViewModel } from '$lib/view-models/core/login-request.view-model';
 
     let req: LoginRequestViewModel = {
@@ -93,9 +92,6 @@
         type="new"
         addLabel="Tambah Permohonan Baru"
         onClick={() => {
-            const authService = new AuthenticationService();
-            authService.login(req);
-            console.log('Tambah Permohonan Baru');
         }}
     />
 

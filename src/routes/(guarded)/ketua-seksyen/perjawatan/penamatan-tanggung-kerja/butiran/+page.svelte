@@ -10,10 +10,6 @@
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import SvgPrinter from '$lib/assets/svg/SvgPrinter.svelte';
-    import CustomTable from '$lib/components/table/CustomTable.svelte';
-    import { mockCalonPemangkuanList } from '$lib/mocks/perjawatan/pemangkuan/senaraiCalonPemangkuan';
-    import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import { Badge } from 'flowbite-svelte';
