@@ -5,9 +5,8 @@
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { z, ZodError } from 'zod';
-    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import toast from 'svelte-french-toast';
+    import { ZodError } from 'zod';
     import { overtimeSchema } from '../../form-schema';
 
     export let selectedFiles: any = [];

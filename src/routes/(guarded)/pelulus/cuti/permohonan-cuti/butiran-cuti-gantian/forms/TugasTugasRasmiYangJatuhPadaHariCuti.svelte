@@ -1,45 +1,15 @@
 <script lang="ts">
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import { fileSelectionList } from '$lib/stores/globalState';
-    import { onMount } from 'svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { kategoriCuti } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/kategori-cuti';
-    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
-    import { z, ZodError } from 'zod';
-    import toast, { Toaster } from 'svelte-french-toast';
+    import { ZodError } from 'zod';
+    import toast from 'svelte-french-toast';
     import { publicHolidayTask } from '../../form-schema';
 
-    export let selectedFiles: any = [];
-
-    let target: any;
-    let texthidden = false;
     let selectedKategoriCuti = kategoriCuti[0].value;
-
-    onMount(() => {
-        target = document.getElementById('fileInput');
-    });
-
-    // Function to handle the file changes
-    function handleOnChange() {
-        texthidden = true;
-        const files = target.files;
-        if (files) {
-            for (let i = 0; i < files.length; i++) {
-                selectedFiles.push(files[i]);
-            }
-        }
-
-        fileSelectionList.set(selectedFiles);
-    }
-
-    // Function to handle the file deletion
-    function handleDelete(index: number) {
-        selectedFiles.splice(index, 1);
-        fileSelectionList.set(selectedFiles);
-    }
 
     // ======================= Form Validation
     let errorData: any;

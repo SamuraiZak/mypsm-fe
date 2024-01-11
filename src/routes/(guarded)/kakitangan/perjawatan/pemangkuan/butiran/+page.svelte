@@ -284,7 +284,7 @@
                 ><TextIconButton
                     primary
                     label="Seterusnya"
-                    onClick={() => goNext()}><SvgArrowRight /></TextIconButton
+                    form="formValidation"><SvgArrowRight /></TextIconButton
                 ></StepperContentHeader
             >
             <StepperContentBody>
@@ -494,7 +494,7 @@
         <!-- Keputusan Akhir Pemangkuan -->
         <StepperContent>
             <StepperContentHeader title="Keputusan Akhir Pemangkuan"
-                ><TextIconButton label="Kembali" form="formValidation"
+                ><TextIconButton label="Kembali" onClick={() => goPrevious()}
                     ><SvgArrowLeft /></TextIconButton
                 ><TextIconButton primary label="Selesai" form="formValidation"
                     ><SvgCircleF2 /></TextIconButton

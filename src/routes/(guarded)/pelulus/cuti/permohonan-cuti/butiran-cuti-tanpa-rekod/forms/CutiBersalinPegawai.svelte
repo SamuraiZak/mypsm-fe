@@ -1,50 +1,19 @@
 <script lang="ts">
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import { fileSelectionList } from '$lib/stores/globalState';
-    import { onMount } from 'svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import { tarikh } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/tarikh';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { setengahHari } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/setengah-hari';
-    import toast, { Toaster } from 'svelte-french-toast';
+    import toast from 'svelte-french-toast';
     import { ZodError } from 'zod';
-    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import { Checkbox } from 'flowbite-svelte';
     import { cutiBersalinPegawai } from '../../form-schema';
 
-    export let selectedFiles: any = [];
-    export let disabled: boolean = true;
-
-    let target: any;
-    let texthidden = false;
     let selectedSetengahHari = setengahHari[0].value;
     let hasHalfDayStartDate: boolean = false;
     let hasHalfDayEndDate: boolean = false;
-
-    onMount(() => {
-        target = document.getElementById('fileInput');
-    });
-
-    // Function to handle the file changes
-    function handleOnChange() {
-        texthidden = true;
-        const files = target.files;
-        if (files) {
-            for (let i = 0; i < files.length; i++) {
-                selectedFiles.push(files[i]);
-            }
-        }
-
-        fileSelectionList.set(selectedFiles);
-    }
-
-    // Function to handle the file deletion
-    function handleDelete(index: number) {
-        selectedFiles.splice(index, 1);
-        fileSelectionList.set(selectedFiles);
-    }
 
     // ============== Form Validation
     let errorData: any;
