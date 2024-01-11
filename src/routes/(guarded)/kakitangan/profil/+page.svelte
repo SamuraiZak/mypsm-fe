@@ -8,10 +8,12 @@
     import GajiElaun from './tabs/GajiElaun.svelte';
     import RekodKesihatan from './tabs/RekodKesihatan.svelte';
     import MaklumatKontrak from './tabs/MaklumatKontrak.svelte';
+    import type { PageData } from './$types';
 
     let currentEmployeeNumber: string = '00003';
     let isEditing: boolean = false;
     let disabled: boolean = true;
+    export let data: PageData;
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -28,7 +30,6 @@
                     disabled = !disabled;
                 }}
             />
-
         {:else}
             <FormButton
                 type="update"
@@ -47,8 +48,9 @@
 >
     <Tabs>
         <TabContent paddingClass="p-0" title="Maklumat Peribadi"
-            ><MaklumatPeribadi {disabled} employeeNumber={currentEmployeeNumber}
-            ></MaklumatPeribadi></TabContent
+            ><MaklumatPeribadi {data} {disabled} employeeNumber={currentEmployeeNumber}
+            ></MaklumatPeribadi>
+            </TabContent
         >
 
         <!-- Agenda Semasa Tab -->
@@ -68,7 +70,7 @@
 
         <!-- Maklumat Kontrak Tab -->
         <TabContent paddingClass="p-0" title="Maklumat Kontrak">
-            <MaklumatKontrak {disabled}></MaklumatKontrak>
+            <MaklumatKontrak {data} {disabled}></MaklumatKontrak>
         </TabContent>
     </Tabs>
 </section>
