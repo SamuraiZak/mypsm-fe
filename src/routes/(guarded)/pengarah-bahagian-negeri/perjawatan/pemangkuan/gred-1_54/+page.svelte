@@ -20,8 +20,14 @@
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import { mockPerjawatanPemangkuan } from '$lib/mocks/database/mockPerjawatanPemangkuan';
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { z, ZodError } from 'zod';
+    import { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _actingDirectorResultSchema,
+        _submitActingDirectorResultForm,
+    } from './+page';
+    import type { PageData } from './$types';
+
     //===================== Stepper controls =====================
     let stepperIndex = 1;
 
@@ -33,7 +39,7 @@
         stepperIndex -= 1;
     }
 
-    const options: RadioOption[] = [
+    const directorOptions: RadioOption[] = [
         {
             value: 'true',
             label: 'Peraku',
@@ -44,76 +50,22 @@
         },
     ];
 
-    let textFieldValue: string = 'Butiran Lengkap...';
-
     //reset what have been typed by user in the long text field for Tindakan/Ulasan
     function resetText() {
-        textFieldValue = 'Butiran lengkap...';
+        
     }
 
-    //zod validation
-    let errorData: any;
-    const exampleFormSchema = z.object({
-        //LongTextField
-        remarks: z
-            .string({ required_error: 'Tindakan/Ulasan tidak boleh kosong.' })
-            .min(20, {
-                message: 'Tindakan/Ulasan hendaklah melebihi 20 karakter.',
-            })
-            .max(124, {
-                message: 'Tindakan/Ulasan tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
+    // ==================================
+    // Form Validation ==================
+    // ==================================
+    export let data: PageData;
 
-        //Radio Button
-        certify: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
+    const { form, errors, enhance } = superForm(data.form, {
+        SPA: true,
+        validators: _actingDirectorResultSchema,
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
     });
-
-    const submitForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-
-        const exampleFormData = {
-            certify: String(formData.get('certify')),
-            remarks: String(formData.get('remarks')),
-        };
-        try {
-            const result = exampleFormSchema.parse(exampleFormData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedExamFormData = { ...exampleFormData, id };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedExamFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
-
-    let radioChosen: string = '';
 </script>
 
 <!-- header section -->
@@ -227,46 +179,44 @@
                 <SectionHeader
                     title="Keputusan daripada Pengarah Bahagian atau Negeri"
                 ></SectionHeader>
-                <div
-                    class="flex h-[40px] max-h-[40px] min-h-[40px] w-full flex-row items-center justify-between"
-                >
-                    <div
-                        class="flex h-full max-h-full flex-col items-start justify-center"
+
+                <div class="flex w-full flex-col gap-2">
+                    <span class="text-sm italic text-system-primary"
+                        >&#x2022; Keputusan akan dihantar ke email klinik dan
+                        Urus Setia berkaitan</span
                     >
-                        <span class="text-sm italic text-system-primary"
-                            >&#x2022; Keputusan akan dihantar ke email klinik
-                            dan Urus Setia berkaitan</span
-                        >
-                    </div>
                 </div>
+
                 <form
                     id="formValidation"
-                    on:submit|preventDefault={submitForm}
+                    method="POST"
+                    use:enhance
+                    on:submit|preventDefault={_submitActingDirectorResultForm}
                     class="flex w-full flex-col gap-2"
                 >
                     <LongTextField
-                        hasError={errorData?.remarks}
+                        hasError={$errors.directorRemark ? true : false}
                         labelBlack={false}
-                        name="remarks"
+                        name="directorRemark"
                         label={'Tindakan/Ulasan'}
-                        bind:value={textFieldValue}
+                        bind:value={$form.directorRemark}
                     />
-                    {#if errorData?.remarks}
+                    {#if $errors.directorRemark}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.remarks[0]}</span
+                            >{$errors.directorRemark[0]}</span
                         >
                     {/if}
-                        <RadioSingle
+                    <RadioSingle
                         disabled={false}
-                        {options}
-                        name="certify"
-                        bind:userSelected={radioChosen}
-                    ></RadioSingle>
-                        {#if errorData?.certify}
+                        options={directorOptions}
+                        name="directorResult"
+                        bind:userSelected={$form.directorResult}
+                    />
+                    {#if $errors.directorResult}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.certify[0]}</span
+                            >{$errors.directorResult[0]}</span
                         >
                     {/if}
                 </form>

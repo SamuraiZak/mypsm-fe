@@ -42,8 +42,13 @@
     import { fileSelectionList } from '$lib/stores/globalState';
     import { onMount } from 'svelte';
     import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { ZodError, z } from 'zod';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import {
+        _actingSupporterResultSchema,
+        _submitActingSupporterResultForm,
+    } from './+page';
+    import { superForm } from 'sveltekit-superforms/client';
 
     export let disabled: boolean = true;
 
@@ -136,66 +141,18 @@
     let editingCandidateList = false;
 
     //zod validation
+    // ==================================
+    // Form Validation ==================
+    // ==================================
     let errorData: any;
-    const exampleFormSchema = z.object({
-        //TextField
-        remarks: z
-            .string({ required_error: 'Tindakan/Ulasan tidak boleh kosong.' })
-            .min(20, {
-                message: 'Tindakan/Ulasan hendaklah melebihi 20 karakter.',
-            })
-            .max(124, {
-                message: 'Tindakan/Ulasan tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
+    export let data: PageData;
 
-        //Radio Button
-        certify: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
+    const { form, errors, enhance } = superForm(data.form, {
+        SPA: true,
+        validators: _actingSupporterResultSchema,
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
     });
-
-    const submitForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-
-        const exampleFormData = {
-            certify: String(formData.get('certify')),
-            remarks: String(formData.get('remarks')),
-        };
-        try {
-            const result = exampleFormSchema.parse(exampleFormData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedExamFormData = { ...exampleFormData, id };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedExamFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan semua maklumat adalah lengkap dan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
 </script>
 
 <!-- content section -->
@@ -1598,38 +1555,41 @@
                     >
 
                     <form
+                        method="POST"
                         id="formValidation"
-                        on:submit|preventDefault={submitForm}
+                        use:enhance
+                        on:submit|preventDefault={_submitActingSupporterResultForm}
                         class="flex w-full flex-col gap-2"
                     >
                         <LongTextField
+                            hasError={$errors.supporterRemark ? true : false}
                             labelBlack={false}
-                            name="remarks"
+                            name="supporterRemark"
                             label={'Tindakan/Ulasan'}
-                            bind:value={textFieldValue}
+                            bind:value={$form.supporterRemark}
                         />
-                        {#if errorData?.remarks}
+                        {#if $errors.supporterRemark}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.remarks[0]}</span
+                                >{$errors.supporterRemark[0]}</span
                             >
                         {/if}
                         <RadioSingle
                             disabled={false}
                             options={supportOptions}
-                            name="certify"
-                            bind:userSelected={radioChosen}
+                            name="supporterResult"
+                            bind:userSelected={$form.supporterResult}
                         />
-                        {#if errorData?.certify}
+                        {#if $errors.supporterResult}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.certify[0]}</span
+                                >{$errors.supporterResult[0]}</span
                             >
                         {/if}
                     </form>
                     <div
-                    class="flex max-h-full w-full flex-col items-start justify-start border-b border-t"
-                />
+                        class="flex max-h-full w-full flex-col items-start justify-start border-b border-t"
+                    />
                 </div>
             </StepperContentBody>
         </StepperContent>
