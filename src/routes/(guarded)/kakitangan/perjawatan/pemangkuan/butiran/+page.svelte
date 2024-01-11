@@ -82,6 +82,7 @@
         taintedMessage:
             'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
     });
+
 </script>
 
 <!-- header section -->
@@ -326,7 +327,7 @@
                     {#if $errors.requestedReportingDate}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >$errors.requestedReportingDate[0]}</span
+                            >{$errors.requestedReportingDate[0]}</span
                         >
                     {/if}
 
