@@ -30,6 +30,7 @@
         _submitInterimCheck,
         _submitpayCalculationCheck,
     } from './+page';
+    import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
     let employeeLists: SelectOptionType<any>[] = [];
     export let data: PageData;
 
@@ -317,6 +318,7 @@
                     use:payCalculationEnhance
                     class="h-full w-full"
                 >
+                    <SuperDebug data={$payCalculationForm} />
                     <div
                         class="flex h-fit w-full flex-col items-start justify-start gap-2"
                     >
