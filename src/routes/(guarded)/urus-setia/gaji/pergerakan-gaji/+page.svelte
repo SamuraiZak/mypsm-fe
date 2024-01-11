@@ -80,14 +80,6 @@
     const exampleFormSchema = z.object({
         //checkbox schema
 
-        specialAid: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
         meetingTypeOption: z.enum(['1', '2', '3', '4'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
@@ -105,6 +97,25 @@
                         : defaultError,
             }),
         }),
+        specialAid: z.enum(['true', 'false'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Sila tetapkan pilihan anda.'
+                        : defaultError,
+            }),
+        }),
+        salaryMovementMonthTypeOption: z.enum(
+            ['1', '2', '3', '4'],
+            {
+                errorMap: (issue, { defaultError }) => ({
+                    message:
+                        issue.code === 'invalid_enum_value'
+                            ? 'Pilihan perlu dipilih.'
+                            : defaultError,
+                }),
+            },
+        ),
         specialFiAidText: z
             .string({ required_error: 'Medan ini tidak boleh kosong.' })
             .min(4, {
@@ -122,7 +133,7 @@
         const meetingTypeOptionSelector = document.getElementById(
             'meetingTypeOption',
         ) as HTMLSelectElement;
-        const salaryMovementMonthTypeSelector = document.getElementById(
+        const salaryMovementMonthTypeOptionSelector = document.getElementById(
             'salaryMovementMonthTypeOption',
         ) as HTMLSelectElement;
 
@@ -130,7 +141,7 @@
             meetingTypeOption: String(meetingTypeOptionSelector.value),
             meetingDate: String(formData.get('meetingDate')),
             salaryMovementMonthTypeOption: String(
-                salaryMovementMonthTypeSelector.value,
+                salaryMovementMonthTypeOptionSelector.value,
             ),
             salaryGredTypeOption: String(formData.get('salaryGredTypeOption')),
             specialFiAidText: String(formData.get('specialFiAidText')),
