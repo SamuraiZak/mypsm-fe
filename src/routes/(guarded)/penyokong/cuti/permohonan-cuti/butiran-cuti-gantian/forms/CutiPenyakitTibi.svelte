@@ -47,7 +47,7 @@
     }
     // ============== Form Validation
     let errorData: any;
-    const submitForm = async (event: Event) => {
+    export const submitForm = async (event: Event) => {
         const formDetail = new FormData(event.target as HTMLFormElement);
         const getTarikhMulaSetengah = document.getElementById(
             'tarikhMulaSetengah',
@@ -138,13 +138,7 @@
     <div
         class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
     >
-        <SectionHeader title="Cuti Penyakit Tibi"
-            ><TextIconButton
-                primary
-                label="test validation"
-                form="formValidation"
-            /></SectionHeader
-        >
+        <SectionHeader title="Cuti Penyakit Tibi"></SectionHeader>
         <form
             id="formValidation"
             on:submit|preventDefault={submitForm}

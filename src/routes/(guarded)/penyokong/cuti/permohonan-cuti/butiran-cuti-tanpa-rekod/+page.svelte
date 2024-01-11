@@ -189,7 +189,11 @@
             </StepperContentBody>
         </StepperContent>
         <StepperContent>
-            <StepperContentHeader title="Maklumat Cuti"></StepperContentHeader>
+            <StepperContentHeader title="Maklumat Cuti">
+                <TextIconButton primary label="Hantar" form="formValidation">
+                    <SvgPaperAirplane/>
+                </TextIconButton>
+            </StepperContentHeader>
             <StepperContentBody>
                 <div
                     class="flex max-h-full w-full flex-col gap-2.5 border-b border-bdr-primary pb-5"
@@ -246,9 +250,9 @@
             <StepperContentHeader title="Dokumen Sokongan">
                 <TextIconButton
                     primary
-                    label="test validation"
+                    label="Hantar"
                     onClick={() => submitFilesForm()}
-                />
+                ><SvgPaperAirplane/></TextIconButton>
             </StepperContentHeader>
             <StepperContentBody>
                 <div class="flex w-full flex-col"></div>

@@ -175,7 +175,7 @@
             ><TextIconButton
                 label="Seterusnya"
                 primary
-                form="stepper1Validation"><SvgArrowRight /></TextIconButton
+                onClick={() => goNext()}><SvgArrowRight /></TextIconButton
             ></StepperContentHeader
         >
 
@@ -273,7 +273,9 @@
 
     <!-- ========== STEPPER 2 ========== -->
     <StepperContent>
-        <StepperContentHeader title="Maklumat Cuti"></StepperContentHeader>
+        <StepperContentHeader title="Maklumat Cuti">
+            <TextIconButton primary label="Hantar" form="formValidation"/>
+        </StepperContentHeader>
         <StepperContentBody>
             <div class="flex max-h-full w-full flex-col gap-2.5">
                 <DropdownSelect
@@ -328,9 +330,9 @@
         <StepperContentHeader title="Dokumen Sokongan"
             ><TextIconButton
                 primary
-                label="test validation"
+                label="Hantar"
                 onClick={() => submitFilesForm()}
-            /></StepperContentHeader
+            ><SvgPaperAirplane/></TextIconButton></StepperContentHeader
         >
         <StepperContentBody>
             <div class="flex w-full flex-col"></div>
@@ -399,13 +401,15 @@
     <!-- ========== STEPPER 4 ========== -->
     <StepperContent>
         <StepperContentHeader title="Pengesahan"
-            ><TextIconButton
+            >
+            <TextIconButton
                 primary
                 label="Hantar"
                 onClick={() => {
                     goto('/kakitangan/cuti/permohonan-cuti');
                 }}><SvgPaperAirplane /></TextIconButton
-            ></StepperContentHeader
+            >
+            </StepperContentHeader
         >
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2">
