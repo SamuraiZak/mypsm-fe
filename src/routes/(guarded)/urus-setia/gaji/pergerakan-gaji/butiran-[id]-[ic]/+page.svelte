@@ -46,6 +46,7 @@
     let isGredChecked: boolean = false;
     let isSpecialFiAidChecked: boolean = false;
     let isSpecialIncrementChecked: boolean = false;
+    let gred: any;
 
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
@@ -102,6 +103,7 @@
                         : defaultError,
             }),
         }),
+        meetingDate: dateScheme,
         salaryMovementMonthType: z.enum(['1', '2', '3', '4'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
@@ -111,7 +113,7 @@
             }),
         }),
         gred: z.optional(
-            z.enum(['1', '2', '3', '4'], {
+            z.enum(['All', 'N19', 'N21', 'N29', 'N32', 'N49', 'N52'], {
                 errorMap: (issue, { defaultError }) => ({
                     message:
                         issue.code === 'invalid_enum_value'
@@ -129,7 +131,6 @@
         //         message: 'Medan ini tidak boleh melebihi 124 karakter.',
         //     })
         //     .trim(),
-        meetingDate: dateScheme,
     });
 
     const retirementConfirmationForm = async (event: Event) => {
@@ -143,10 +144,7 @@
         const getGred = document.getElementById('gred') as HTMLSelectElement;
 
         const exampleFormData = {
-            // radioButtonExample: String(formData.get('radioButtonExample')),
-            // specialAidOption: String(formData.get('specialAidOption')),
             meetingTypeOption: String(meetingTypeOptionSelector.value),
-            // textFieldExample: String(formData.get('textFieldExample')),
             meetingDate: String(formData.get('meetingDate')),
             salaryMovementMonthType: String(salaryMovementMonthType.value),
         };
@@ -350,8 +348,16 @@
                                         id="gred"
                                         label="Gred"
                                         dropdownType="label-left-full"
-                                        options={salaryMonths}
-                                        bind:index={selectedSalaryMonth}
+                                        bind:value={gred}
+                                        options={[
+                                            { value: 'All', name: 'Semua' },
+                                            { value: 'N19', name: 'N19' },
+                                            { value: 'N21', name: 'N21' },
+                                            { value: 'N29', name: 'N29' },
+                                            { value: 'N32', name: 'N32' },
+                                            { value: 'N49', name: 'N49' },
+                                            { value: 'N52', name: 'N52' },
+                                        ]}
                                     />
                                     {#if errorData?.gred}
                                         <span
