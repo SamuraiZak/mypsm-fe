@@ -1,8 +1,7 @@
-import api from "$lib/services/core/ky.service";
 import { error, fail } from '@sveltejs/kit';
-import { superValidate } from "sveltekit-superforms/client";
+import toast from 'svelte-french-toast';
+import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
-import toast from "svelte-french-toast";
 
 export const _actingSupporterResultSchema = z.object({
     //TextField
@@ -35,7 +34,7 @@ export const load = async ({ fetch }) => {
     const form = await superValidate(userData, _actingSupporterResultSchema);
 
     return { form };
-}
+};
 
 export const _submitActingSupporterResultForm = async (event: Event) => {
     const formElement = event.target as HTMLFormElement;
@@ -55,15 +54,14 @@ export const _submitActingSupporterResultForm = async (event: Event) => {
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
-
         })
             .then((response) => response.json())
             .then((json) => {
                 toast.success('Berjaya disimpan!', {
                     style: 'background: #333; color: #fff;',
                 });
-                console.log('Response Returned: flexi 41', json)
+                console.log('Response Returned: flexi 41', json);
             });
     }
     return { form };
-}
+};
