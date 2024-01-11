@@ -1,6 +1,6 @@
 import { goto } from '$app/navigation';
 import api from '$lib/services/core/ky.service.js';
-import { error, fail } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
@@ -31,14 +31,10 @@ export const _approverResultSchema = z.object({
     }),
 });
 
-export const load = async ({ fetch }) => {
+export const load = async () => {
     // const id = parseInt(params.id);
 
-    const request = await fetch(`https://jsonplaceholder.typicode.com/users/1`);
-    if (request.status >= 400) error;
-
-    const userData = await request.json();
-    const form = await superValidate(userData, _approverResultSchema);
+    const form = await superValidate(_approverResultSchema);
 
     return { form };
 };
@@ -48,27 +44,29 @@ export const _submitApproverResultForm = async (event: Event) => {
     const formData = new FormData(formElement);
     const form = await superValidate(formData, _approverResultSchema);
 
+    console.log('Request: ', form.data);
+
     if (!form.valid) {
         toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
             style: 'background: #333; color: #fff;',
         });
         return fail(400, form);
-    } else {
-        console.log('Request: ', form.data);
-
-        await api
-            .post('https://jsonplaceholder.typicode.com/posts', {
-                body: JSON.stringify(form),
-                prefixUrl: '',
-            })
-            .json()
-            .then((json) => console.log('Response: ', json));
-
-        toast.success('Berjaya disimpan!', {
-            style: 'background: #333; color: #fff;',
-        });
-        setTimeout(() => goto('../penamatan-tanggung-kerja'), 1500);
     }
+
+    await api
+        .post('https://jsonplaceholder.typicode.com/posts', {
+            body: JSON.stringify(form),
+            prefixUrl: '',
+        })
+        .json()
+        .then((json) => console.log('Response: ', json));
+
+    toast.success('Berjaya disimpan!', {
+        style: 'background: #333; color: #fff;',
+    });
+
+
+    setTimeout(() => goto('../penamatan-tanggung-kerja'), 1500);
 
     return { form };
 };
