@@ -52,12 +52,16 @@ export const _payCalculationSchema = z
             message: 'Tarikh mula mesti lebih atau sama dengan tarikh semasa.',
         }),
         interimUntilDate: dateScheme,
-        etkPaymentMonth: generalSelectSchema,
-        etkPaymentYear: generalSelectSchema,
+        etkPaymentMonth: generalSelectSchema.nullable(),
+        etkPaymentYear: generalSelectSchema.nullable(),
     })
     .refine((data) => data.interimUntilDate >= data.interimDateOfEffect, {
         message: 'Tarikh tamat tidak boleh kurang daripada tarikh mula.',
         path: ['interimUntilDate'],
+    })
+    .refine((data) => {
+        data.interimDateOfEffect.toISOString();
+        data.interimUntilDate.toISOString();
     });
 
 // assign rights form
@@ -94,7 +98,7 @@ export const _submitInterimCheck = async (event: Event) => {
         });
         return fail(400, form);
     }
-    
+
     console.log('Request: ', form.data);
 
     await api
@@ -135,6 +139,8 @@ export const _submitpayCalculationCheck = async (event: Event) => {
         return fail(400, form);
     }
     console.log('Request: ', form.data);
+
+    formData.get('');
 
     await api
         .post('https://jsonplaceholder.typicode.com/posts', {
