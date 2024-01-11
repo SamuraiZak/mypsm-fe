@@ -1,14 +1,8 @@
 <script lang="ts">
     import ExportButton from '$lib/components/buttons/ExportButton.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
-    import { sayhello } from '$lib/service/services';
-    import type { LoginRequestViewModel } from '$lib/view-models/core/login-request.view-model';
 
-    let req: LoginRequestViewModel = {
-        accessLevel: '',
-        username: 'admin',
-        password: 'P@ssw0rd',
-    };
+
 </script>
 
 <div class="m-5 flex flex-row gap-2">
@@ -17,7 +11,7 @@
         type="back"
         onClick={() => {
             console.log('Kembali');
-            sayhello();
+
         }}
     />
     <FormButton
