@@ -15,7 +15,6 @@
     import { z, ZodError } from 'zod';
 
     export let disabled: boolean = true;
-    export let data;
 
     let errorData: any;
     let ulasan: string;

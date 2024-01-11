@@ -1,9 +1,9 @@
-// import { fetchPtbKwap } from '$lib/service/ptbAndKwap/services';
+
 
 import { mockEmployees } from '$lib/mocks/database/mockEmployees.js';
 
-export async function load({ cookies }) {
-    // const fetchedData: PtbAndKwap[] = await fetchPtbKwap();
+export async function load() {
+
 
     const candidateData: Candidate[] = [
         {
@@ -65,13 +65,13 @@ export async function load({ cookies }) {
         },
     ];
 
-    const userId = cookies.get('userId');
+
 
     return {
         props: {
             newHireLists: newHireData,
             candidateLists: candidateData,
         },
-        userId,
+
     };
 }
