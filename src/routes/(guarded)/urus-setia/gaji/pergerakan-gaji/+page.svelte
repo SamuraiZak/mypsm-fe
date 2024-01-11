@@ -23,6 +23,9 @@
 
     export let data;
 
+    let isGredChecked: boolean = false;
+    let isSpecialFiAidChecked: boolean = false;
+    let isSpecialIncrementChecked: boolean = false;
     let selectedStatus = status[0].value; // Default selected filter
     let selectedMeetingType: string = meetings[0].value;
     let selectedSalaryMonth: string = '1';
@@ -31,12 +34,12 @@
     let meetingTypeOption: any;
     let meetingDate: any;
     let salaryMovementMonthTypeOption: any;
-    let salaryGredTypeOption: any;
+    let gred: any;
     let specialFiAidText: any;
     let specialAid: any;
-    let isChecked: boolean = false;
     let tempUrl: IntSalaryMovementRecord;
     let tooltipContent: string = '';
+    let salaryMovementMonthType: any;
 
     const specialFiAid: string =
         'Ditetapkan sekali sepanjang tahun pergerakan gaji';
@@ -89,34 +92,25 @@
             }),
         }),
         meetingDate: dateScheme,
-        salaryGredTypeOption: z.enum(['on'], {
+        salaryMovementMonthType: z.enum(['1', '2', '3', '4'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
                     issue.code === 'invalid_enum_value'
-                        ? 'Sila tandakan kotak semak.'
+                        ? 'Pilihan perlu dipilih.'
                         : defaultError,
             }),
         }),
-        specialAid: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        salaryMovementMonthTypeOption: z.enum(
-            ['1', '2', '3', '4'],
-            {
+        gred: z.optional(
+            z.enum(['All', 'N19', 'N21', 'N29', 'N32', 'N49', 'N52'], {
                 errorMap: (issue, { defaultError }) => ({
                     message:
                         issue.code === 'invalid_enum_value'
                             ? 'Pilihan perlu dipilih.'
                             : defaultError,
                 }),
-            },
+            }),
         ),
-        specialFiAidText: z
+        textFieldExample: z
             .string({ required_error: 'Medan ini tidak boleh kosong.' })
             .min(4, {
                 message: 'Medan ini hendaklah lebih daripada 4 karakter.',
@@ -125,7 +119,32 @@
                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
             })
             .trim(),
-        dateSelectorExample: dateScheme,
+        // gred: z.enum(['on'], {
+        //     errorMap: (issue, { defaultError }) => ({
+        //         message:
+        //             issue.code === 'invalid_enum_value'
+        //                 ? 'Sila tandakan kotak semak.'
+        //                 : defaultError,
+        //     }),
+        // }),
+        // specialAid: z.enum(['true', 'false'], {
+        //     errorMap: (issue, { defaultError }) => ({
+        //         message:
+        //             issue.code === 'invalid_enum_value'
+        //                 ? 'Sila tetapkan pilihan anda.'
+        //                 : defaultError,
+        //     }),
+        // }),
+        // specialFiAidText: z
+        //     .string({ required_error: 'Medan ini tidak boleh kosong.' })
+        //     .min(4, {
+        //         message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+        //     })
+        //     .max(124, {
+        //         message: 'Medan ini tidak boleh melebihi 124 karakter.',
+        //     })
+        //     .trim(),
+        // dateSelectorExample: dateScheme,
     });
 
     const tetapanKGTForm = async (event: Event) => {
@@ -133,23 +152,34 @@
         const meetingTypeOptionSelector = document.getElementById(
             'meetingTypeOption',
         ) as HTMLSelectElement;
-        const salaryMovementMonthTypeOptionSelector = document.getElementById(
-            'salaryMovementMonthTypeOption',
+        const salaryMovementMonthType = document.getElementById(
+            'salaryMovementMonthType',
         ) as HTMLSelectElement;
+        const getGred = document.getElementById('gred') as HTMLSelectElement;
 
         const exampleFormData = {
             meetingTypeOption: String(meetingTypeOptionSelector.value),
             meetingDate: String(formData.get('meetingDate')),
-            salaryMovementMonthTypeOption: String(
-                salaryMovementMonthTypeOptionSelector.value,
-            ),
-            salaryGredTypeOption: String(formData.get('salaryGredTypeOption')),
-            specialFiAidText: String(formData.get('specialFiAidText')),
-            specialAid: String(formData.get('specialAid')),
+            salaryMovementMonthType: String(salaryMovementMonthType.value),
         };
 
         try {
-            const result = exampleFormSchema.parse(exampleFormData);
+            let validatedData;
+            let result;
+            if (isGredChecked) {
+                const gred = String(getGred.value);
+
+                const validatedFormData = {
+                    ...exampleFormData,
+                    gred,
+                };
+                validatedData = validatedFormData;
+                result = exampleFormSchema.parse(validatedFormData);
+            } else {
+                validatedData = exampleFormData;
+                result = exampleFormSchema.parse(exampleFormData);
+            }
+
             if (result) {
                 errorData = [];
                 toast.success('Berjaya disimpan!', {
@@ -157,10 +187,13 @@
                 });
 
                 const id = crypto.randomUUID().toString();
-                const validatedExamFormData = { ...exampleFormData, id };
+                const validatedFormData = {
+                    ...validatedData,
+                    id,
+                };
                 console.log(
                     'REQUEST BODY: ',
-                    JSON.stringify(validatedExamFormData),
+                    JSON.stringify(validatedFormData),
                 );
             }
         } catch (err: unknown) {
@@ -268,11 +301,11 @@
                         >
                     {/if}
                     <DropdownSelect
-                        hasError={errorData?.salaryMovementMonthTypeOption}
+                        hasError={errorData?.salaryMovementMonthType}
                         dropdownType="label-left-full"
-                        id="salaryMovementMonthTypeOption"
+                        id="salaryMovementMonthType"
                         label="Bulan Pergerakan Gaji"
-                        bind:value={salaryMovementMonthTypeOption}
+                        bind:value={salaryMovementMonthType}
                         options={[
                             { value: '1', name: 'Januari' },
                             { value: '2', name: 'April' },
@@ -280,10 +313,10 @@
                             { value: '4', name: 'Oktober' },
                         ]}
                     ></DropdownSelect>
-                    {#if errorData?.salaryMovementMonthTypeOption}
+                    {#if errorData?.salaryMovementMonthType}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.salaryMovementMonthTypeOption[0]}</span
+                            >{errorData?.salaryMovementMonthType[0]}</span
                         >
                     {/if}
                 </div>
@@ -292,15 +325,14 @@
                     Keputusan mesyuarat:
                 </b>
                 <div class="flex flex-row justify-between gap-x-5">
-                    <Checkbox
-                        name="salaryGredTypeOption"
-                        bind:checked={isChecked}
+                    <Checkbox name="gred" bind:checked={isGredChecked}
                         ><DropdownSelect
-                            hasError={errorData?.salaryGredTypeOption}
+                            hasError={errorData?.gred}
+                            disabled={!isGredChecked}
                             dropdownType="label-left"
-                            id="salaryGredTypeOption"
+                            id="gred"
                             label="Gred"
-                            bind:value={salaryGredTypeOption}
+                            bind:value={gred}
                             options={[
                                 { value: 'All', name: 'Semua' },
                                 { value: 'N19', name: 'N19' },
@@ -311,22 +343,24 @@
                                 { value: 'N52', name: 'N52' },
                             ]}
                         ></DropdownSelect>
-                        {#if errorData?.salaryGredTypeOption}
+                        {#if errorData?.gred}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.salaryGredTypeOption[0]}</span
+                                >{errorData?.gred[0]}</span
                             >
                         {/if}</Checkbox
                     >
 
-                    {#if errorData?.salaryGredTypeOption}
+                    {#if errorData?.gred}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.salaryGredTypeOption[0]}</span
+                            >{errorData?.gred[0]}</span
                         >
                     {/if}
 
-                    <Checkbox name="specialFiAidText" bind:checked={isChecked}
+                    <Checkbox
+                        name="specialFiAidText"
+                        bind:checked={!isSpecialFiAidTextChecked}
                         ><TextField
                             labelType="label-fit"
                             hasTooltip={true}
@@ -357,8 +391,11 @@
                             >{errorData?.specialFiAidText[0]}</span
                         >
                     {/if}
-                    <Checkbox name="specialAidOption" bind:checked={isChecked}>
-                        <label for="specialAidOption">Kenaikan Khas (RM)</label>
+                    <Checkbox
+                        name="specialIncrement"
+                        bind:checked={!isSpecialIncrement}
+                    >
+                        <label for="specialIncrement">Kenaikan Khas (RM)</label>
                         <div class="ml-2.5 flex flex-col gap-2.5">
                             <Radio
                                 name="specialAid"
@@ -456,24 +493,24 @@
                             {/if}
                         </div>
 
-                        {#if errorData?.specialAidOption}
+                        {#if errorData?.specialIncrement}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.specialAidOption[0]}</span
+                                >{errorData?.specialIncrement[0]}</span
                             >
                         {/if}
-                        {#if errorData?.specialAidOption}
+                        {#if errorData?.specialIncrement}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.specialAidOption[0]}</span
+                                >{errorData?.specialIncrement[0]}</span
                             >
                         {/if}</Checkbox
                     >
 
-                    {#if errorData?.specialAidOption}
+                    {#if errorData?.specialIncrement}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.specialAidOption[0]}</span
+                            >{errorData?.specialIncrement[0]}</span
                         >
                     {/if}
                 </div>
