@@ -6,7 +6,6 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    import { currencyFormatter } from '$lib/service/services';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
@@ -18,11 +17,12 @@
     import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades.js';
     import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions.js';
     import { years } from '$lib/mocks/dateSelection/years.js';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper.js';
     export let data;
     export let noPekerja = data.record.currentEmployee?.employeeNumber;
     let activeStepper = 0;
     let disabled = true;
-    // let isEditable = data.record.currentEmployee.status === 'baru' ? true : false;
+
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const currYear = currentYear;
@@ -528,13 +528,13 @@
                             disabled={true}
                             id="tanggaGaji"
                             label={'Tangga Gaji'}
-                            value={currencyFormatter(1234.56)}
+                            value={CurrencyHelper.formatCurrency(1234.56)}
                         ></TextField>
                         <TextField
                             disabled={true}
                             id="gajiPokok"
                             label={'Gaji Pokok'}
-                            value={currencyFormatter(1234.56)}
+                            value={CurrencyHelper.formatCurrency(1234.56)}
                         ></TextField>
                     </div>
                     <div class="space-y-2.5">
@@ -544,7 +544,7 @@
                             disabled={true}
                             id="itka"
                             label={'ITKA'}
-                            value={currencyFormatter(123.45)}
+                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -552,7 +552,7 @@
                             disabled={true}
                             id="itp"
                             label={'ITP'}
-                            value={currencyFormatter(123.45)}
+                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -560,7 +560,7 @@
                             disabled={true}
                             id="epw"
                             label={'EPW'}
-                            value={currencyFormatter(123.45)}
+                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -568,7 +568,7 @@
                             disabled={true}
                             id="cola"
                             label={'COLA'}
-                            value={currencyFormatter(123.45)}
+                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         <!-- Tooltip body -->
                         <Tooltip

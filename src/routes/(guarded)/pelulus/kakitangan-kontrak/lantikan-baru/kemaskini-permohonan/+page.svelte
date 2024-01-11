@@ -43,6 +43,7 @@
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import { goto } from '$app/navigation';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
     let employeeLists: SelectOptionType<any>[] = [];
     let selectedSupporter: string;
     let selectedApprover: string;
@@ -185,13 +186,6 @@
     function dateFormatter(date: string) {
         const [year, month, day] = date.split('/');
         return day + '-' + month + '-' + year;
-    }
-    function currencyFormatter(amount: number) {
-        const formatter = new Intl.NumberFormat('ms-MY', {
-            style: 'currency',
-            currency: 'MYR',
-        });
-        return formatter.format(Number(amount)).toString();
     }
 </script>
 
@@ -483,7 +477,7 @@
                             {disabled}
                             id="gaji"
                             label={'Gaji'}
-                            value={currencyFormatter(parseInt(item.salary))}
+                            value={CurrencyHelper.formatCurrency(parseInt(item.salary))}
                         ></TextField>
                     {:else}
                         <TextField

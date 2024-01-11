@@ -17,10 +17,10 @@
     import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
     import { mockEmployeeLeaveRecord } from '$lib/mocks/cuti/mockEmployeeLeaveRecord';
     import { mockRekodPinjaman } from '$lib/mocks/pinjaman-kuarters/mockRekodPinjaman';
     import { status } from '$lib/mocks/status/status';
-    import { currencyFormatter } from '$lib/service/services';
     import { selectedRecordId } from '$lib/stores/globalState';
     import { Badge } from 'flowbite-svelte';
     let selectedCategory = 'all';
@@ -83,7 +83,7 @@
                         ></DtTableDataCell>
                         <DtTableDataCell value={item.applicationDate}
                         ></DtTableDataCell>
-                        <DtTableDataCell value={currencyFormatter(item.total)}
+                        <DtTableDataCell value={CurrencyHelper.formatCurrency(item.total)}
                         ></DtTableDataCell>
                         <DtTableDataCell value={item.status}></DtTableDataCell>
                         <DtTableDataCell value={item.remarks}></DtTableDataCell>

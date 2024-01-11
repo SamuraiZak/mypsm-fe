@@ -52,14 +52,6 @@
         }
     }
 
-    function currencyFormatter(amount: number) {
-        const formatter = new Intl.NumberFormat('ms-MY', {
-            style: 'currency',
-            currency: 'MYR',
-        });
-        return formatter.format(Number(amount)).toString();
-    }
-
     onMount(async () => {
         currentService = {
             currentGrade: 'E32',
@@ -251,13 +243,13 @@
                 disabled={!editable}
                 id="tanggaGaji"
                 label={'Tangga Gaji'}
-                value={currencyFormatter(3452)}
+                value={3452}
             ></TextField>
             <TextField
                 disabled={!editable}
                 id="gajiPokok"
                 label={'Gaji Pokok'}
-                value={currencyFormatter(3452)}
+                value={3452}
             ></TextField>
         </div>
         <div class="space-y-2.5">

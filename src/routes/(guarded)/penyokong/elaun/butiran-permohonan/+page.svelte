@@ -13,6 +13,7 @@
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
     import { mockLookupRaces } from '$lib/mocks/database/mockLookupRaces';
     import { mockLookupReligions } from '$lib/mocks/database/mockLookupReligions';
@@ -20,7 +21,6 @@
     import { areaTypes } from '$lib/mocks/elaun/areas';
     import { mockAllEmployeeAllowances } from '$lib/mocks/elaun/mockAllEmployeeAllowances';
     import { mockEmployeeAllowanceDocList } from '$lib/mocks/elaun/mockEmployeeAllowanceDocList';
-    import { currencyFormatter } from '$lib/service/services';
     import { selectedRecordId } from '$lib/stores/globalState';
 
     let disabled = true;
@@ -266,13 +266,13 @@
                         label="Sendiri"
                         {disabled}
                         {labelBlack}
-                        value={currencyFormatter(450)}
+                        value={CurrencyHelper.formatCurrency(450)}
                     ></TextField>
                     <TextField
                         label="Pasangan"
                         {disabled}
                         {labelBlack}
-                        value={currencyFormatter(450)}
+                        value={CurrencyHelper.formatCurrency(450)}
                     ></TextField>
                 </div>
                 <!-- SUPPORTING DOCUMENTS -->
@@ -324,7 +324,7 @@
                         label="Jumlah Tuntutan"
                         {disabled}
                         {labelBlack}
-                        value={currencyFormatter(100)}
+                        value={CurrencyHelper.formatCurrency(100)}
                     ></TextField>
                 </div>
                 <!-- SUPPORTING DOCUMENTS -->

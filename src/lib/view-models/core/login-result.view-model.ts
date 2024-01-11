@@ -1,6 +1,9 @@
-import type { IUser } from '$lib/interfaces/core/user.interface';
+// ===============================================================
+// Login Result View Model
+// ===============================================================
 
 export interface LoginResultViewModel {
-    accessToken: string;
-    userInfo: IUser;
+    status: number;
+    message: string;
+    data: unknown;
 }

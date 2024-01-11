@@ -26,6 +26,7 @@
     import SvgPdf from '$lib/assets/svg/SvgPDF.svelte';
     import { meetings } from '$lib/mocks/mesyuarat/mesyuarat.js';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper.js';
     export let data;
     let employeeLists: SelectOptionType<any>[] = [];
     let selectedSupporter: string;
@@ -151,13 +152,6 @@
     function dateFormatter(date: string) {
         const [year, month, day] = date.split('/');
         return day + '-' + month + '-' + year;
-    }
-    function currencyFormatter(amount: number) {
-        const formatter = new Intl.NumberFormat('ms-MY', {
-            style: 'currency',
-            currency: 'MYR',
-        });
-        return formatter.format(Number(amount)).toString();
     }
     let tooltipContent: string = '';
     const itkaTooltip: string = 'ITKA bermaksud ...';
@@ -481,7 +475,7 @@
                             {disabled}
                             id="gaji"
                             label={'Gaji'}
-                            value={currencyFormatter(parseInt(item.salary))}
+                            value={CurrencyHelper.formatCurrency(parseInt(item.salary))}
                         ></TextField>
                     {:else}
                         <TextField

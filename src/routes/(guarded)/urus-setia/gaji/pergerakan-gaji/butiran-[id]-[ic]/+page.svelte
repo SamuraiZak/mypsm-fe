@@ -9,13 +9,11 @@
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import { mockSalaryMovementRecord } from '$lib/mocks/gaji/salaryMovementRecord/mockSalaryMovementRecord';
-    // import { currencyFormatter } from '$lib/service/services';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
     import { meetings } from '$lib/mocks/mesyuarat/mesyuarat';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import { months } from '$lib/mocks/dateSelection/months';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
-    // import { mockSalaryMovementSchedule } from '$lib/mocks/gaji/salaryMovementSchedule/mockSalaryMovementSchedule';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import DownloadAttachment from '$lib/components/input/DownloadAttachment.svelte';

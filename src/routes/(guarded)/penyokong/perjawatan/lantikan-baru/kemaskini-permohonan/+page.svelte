@@ -1,14 +1,4 @@
 <script lang="ts">
-    // Importing external components and libraries
-    // import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
-    // import { goto } from '$app/navigation';
-    // import MaklumatPeribadi from './forms/MaklumatPeribadi.svelte';
-    // import MaklumatAkademik from './forms/MaklumatAkademik.svelte';
-
-    // let id: string = '93699';
-    // let status: string = 'Baru';
-
-    // import FormButton from '$lib/components/buttons/FormButton.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
@@ -50,6 +40,7 @@
     import { goto } from '$app/navigation';
     import { ZodError, z } from 'zod';
     import toast, { Toaster } from 'svelte-french-toast';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
     let employeeLists: SelectOptionType<any>[] = [];
     let selectedSupporter: string;
     let selectedApprover: string;
@@ -262,13 +253,7 @@
         const [year, month, day] = date.split('/');
         return day + '-' + month + '-' + year;
     }
-    function currencyFormatter(amount: number) {
-        const formatter = new Intl.NumberFormat('ms-MY', {
-            style: 'currency',
-            currency: 'MYR',
-        });
-        return formatter.format(Number(amount)).toString();
-    }
+
     let tooltipContent: string = '';
     const itkaTooltip: string = 'ITKA bermaksud ...';
     const itpTooltip: string = 'ITP bermaksud ...';
@@ -647,7 +632,7 @@
                             {disabled}
                             id="gaji"
                             label={'Gaji'}
-                            value={currencyFormatter(parseInt(item.salary))}
+                            value={CurrencyHelper.formatCurrency(parseInt(item.salary))}
                         ></TextField>
                     {:else}
                         <TextField
@@ -1025,13 +1010,13 @@
                             {disabled}
                             id="tanggaGaji"
                             label={'Tangga Gaji'}
-                            value={currencyFormatter(1234.56)}
+                            value={CurrencyHelper.formatCurrency(1234.56)}
                         ></TextField>
                         <TextField
                             {disabled}
                             id="gajiPokok"
                             label={'Gaji Pokok'}
-                            value={currencyFormatter(1234.56)}
+                            value={CurrencyHelper.formatCurrency(1234.56)}
                         ></TextField>
                     </div>
                     <div class="space-y-2.5">
@@ -1041,7 +1026,7 @@
                             {disabled}
                             id="itka"
                             label={'ITKA'}
-                            value={currencyFormatter(123.45)}
+                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -1049,7 +1034,7 @@
                             {disabled}
                             id="itp"
                             label={'ITP'}
-                            value={currencyFormatter(123.45)}
+                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -1057,7 +1042,7 @@
                             {disabled}
                             id="epw"
                             label={'EPW'}
-                            value={currencyFormatter(123.45)}
+                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -1065,7 +1050,7 @@
                             {disabled}
                             id="cola"
                             label={'COLA'}
-                            value={currencyFormatter(123.45)}
+                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         <!-- Tooltip body -->
                         <Tooltip

@@ -16,6 +16,7 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper.js';
     import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions';
     import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
     import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
@@ -136,13 +137,6 @@
     function dateFormatter(date: string) {
         const [year, month, day] = date.split('/');
         return day + '-' + month + '-' + year;
-    }
-    function currencyFormatter(amount: number) {
-        const formatter = new Intl.NumberFormat('ms-MY', {
-            style: 'currency',
-            currency: 'MYR',
-        });
-        return formatter.format(Number(amount)).toString();
     }
 
     // =========================================================================
@@ -765,7 +759,7 @@
                             {disabled}
                             name="gaji"
                             label={'Gaji'}
-                            value={currencyFormatter(parseInt(item.salary))}
+                            value={CurrencyHelper.formatCurrency(parseInt(item.salary))}
                         ></TextField>
                     {:else}
                         <TextField
@@ -1395,7 +1389,7 @@
                             hasError={errorData?.salaryBenchmark}
                             name="salaryBenchmark"
                             label={'Tangga Gaji'}
-                            value={currencyFormatter(1234.56)}
+                            value={CurrencyHelper.formatCurrency(1234.56)}
                         ></TextField>
                         {#if errorData?.salaryBenchmark}
                             <span
@@ -1408,7 +1402,7 @@
                             hasError={errorData?.salary}
                             name="salary"
                             label={'Gaji Pokok'}
-                            value={currencyFormatter(1234.56)}
+                            value={CurrencyHelper.formatCurrency(1234.56)}
                         ></TextField>
                         {#if errorData?.salary}
                             <span
@@ -1425,7 +1419,7 @@
                             hasError={errorData?.itka}
                             name="itka"
                             label={'ITKA'}
-                            value={currencyFormatter(123.45)}
+                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         {#if errorData?.itka}
                             <span
@@ -1440,7 +1434,7 @@
                             hasError={errorData?.itp}
                             name="itp"
                             label={'ITP'}
-                            value={currencyFormatter(123.45)}
+                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         {#if errorData?.itp}
                             <span
@@ -1455,7 +1449,7 @@
                             hasError={errorData?.epw}
                             name="epw"
                             label={'EPW'}
-                            value={currencyFormatter(123.45)}
+                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         {#if errorData?.epw}
                             <span
@@ -1470,7 +1464,7 @@
                             hasError={errorData?.cola}
                             name="cola"
                             label={'COLA'}
-                            value={currencyFormatter(123.45)}
+                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         {#if errorData?.cola}
                             <span

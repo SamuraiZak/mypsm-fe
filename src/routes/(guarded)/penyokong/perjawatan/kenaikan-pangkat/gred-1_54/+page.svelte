@@ -26,6 +26,7 @@
     import { onMount } from 'svelte';
     import { months } from '$lib/mocks/dateSelection/months';
     import { mockSalaryIncrementRecord } from '$lib/mocks/gaji/rekodKenaikanGaji/mockSalaryIncrementRecord';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
 
     let editMeetingResult = false;
     let editPlacementMeetingResult = false;
@@ -35,13 +36,6 @@
     let selectedValue: any;
     let selectedMonth: any;
 
-    function currencyFormatter(amount: number) {
-        const formatter = new Intl.NumberFormat('ms-MY', {
-            style: 'currency',
-            currency: 'MYR',
-        });
-        return formatter.format(Number(amount)).toString();
-    }
     onMount(() => {
         selectedValue = placements[3].value;
         selectedMonth = months[6].value;
@@ -60,135 +54,6 @@
 
     // Step 1 script starts here
     let editingCandidateList = false;
-
-    let allEmployeeList: DtoCalonPemangkuan[] = [
-        {
-            idRekod: 1,
-            idKakitangan: 1,
-            nomborPekerja: '00001',
-            namaKakitangan: 'Jon Bovi',
-            nomborKP: '910821-13-5671',
-            gredSemasa: 'E30',
-            jawatanSemasa: 'Penolong Pegawai Perkhidmatan',
-            // mesyuarat
-            gredUntukDipangku: '',
-            jawatanUntukDipangku: '',
-            layakTemuduga: '',
-            // temuduga
-            tarikhTemuduga: '',
-            masaTemuduga: '',
-            pusatTemuduga: '',
-            markahTemuduga: '',
-            keputusanTemuduga: '',
-            // semakan
-            laporanTatatertib: '',
-            laporanPrestasi: '',
-            laporanSprm: '',
-            perakuanKetuaJabatan: '',
-            // mesyuarat kenaikan pangkat
-            keputusanKenaikanPangkat: '',
-
-            tarikhKuatkuasaPemangkuan: '',
-            tarikhCukupTempohPemangkuan: '',
-            // mesyuarat penempatan
-            penempatanBaru: '',
-            tarikhLaporDiri: '',
-            // permohonan penangguhan
-            penempatanDipohon: '',
-            tarikhLaporDiriDipohon: '',
-            keputusanPenangguhanAtauPindaan: '',
-            // keputusan akhir
-
-            tarikhKuatKuasaPemangkuanAkhir: '',
-            tarikhCukupTempohPemangkuanAkhir: '',
-            penempatanBaruAkhir: '',
-            tarikhLaporDiriAkhir: '',
-        },
-        {
-            idRekod: 2,
-            idKakitangan: 2,
-            nomborPekerja: '00002',
-            namaKakitangan: 'Teressa Teng',
-            nomborKP: '930315-13-6188',
-            gredSemasa: 'D41',
-            jawatanSemasa: 'Penolong Pegawai Tadbir',
-            // mesyuarat
-            gredUntukDipangku: '',
-            jawatanUntukDipangku: '',
-            layakTemuduga: '',
-            // temuduga
-            tarikhTemuduga: '',
-            masaTemuduga: '',
-            pusatTemuduga: '',
-            markahTemuduga: '',
-            keputusanTemuduga: '',
-            // semakan
-            laporanTatatertib: '',
-            laporanPrestasi: '',
-            laporanSprm: '',
-            perakuanKetuaJabatan: '',
-            // mesyuarat kenaikan pangkat
-            keputusanKenaikanPangkat: '',
-
-            tarikhKuatkuasaPemangkuan: '',
-            tarikhCukupTempohPemangkuan: '',
-            // mesyuarat penempatan
-            penempatanBaru: '',
-            tarikhLaporDiri: '',
-            // permohonan penangguhan
-            penempatanDipohon: '',
-            tarikhLaporDiriDipohon: '',
-            keputusanPenangguhanAtauPindaan: '',
-            // keputusan akhir
-
-            tarikhKuatKuasaPemangkuanAkhir: '',
-            tarikhCukupTempohPemangkuanAkhir: '',
-            penempatanBaruAkhir: '',
-            tarikhLaporDiriAkhir: '',
-        },
-        {
-            idRekod: 3,
-            idKakitangan: 3,
-            nomborPekerja: '00003',
-            namaKakitangan: 'Xue Hua Piao',
-            nomborKP: '851130-13-7747',
-            gredSemasa: 'H12',
-            jawatanSemasa: 'Penolong Pegawai Teknologi Maklumat',
-            // mesyuarat
-            gredUntukDipangku: '',
-            jawatanUntukDipangku: '',
-            layakTemuduga: '',
-            // temuduga
-            tarikhTemuduga: '',
-            masaTemuduga: '',
-            pusatTemuduga: '',
-            markahTemuduga: '',
-            keputusanTemuduga: '',
-            // semakan
-            laporanTatatertib: '',
-            laporanPrestasi: '',
-            laporanSprm: '',
-            perakuanKetuaJabatan: '',
-            // mesyuarat kenaikan pangkat
-            keputusanKenaikanPangkat: '',
-
-            tarikhKuatkuasaPemangkuan: '',
-            tarikhCukupTempohPemangkuan: '',
-            // mesyuarat penempatan
-            penempatanBaru: '',
-            tarikhLaporDiri: '',
-            // permohonan penangguhan
-            penempatanDipohon: '',
-            tarikhLaporDiriDipohon: '',
-            keputusanPenangguhanAtauPindaan: '',
-            // keputusan akhir
-
-            tarikhKuatKuasaPemangkuanAkhir: '',
-            tarikhCukupTempohPemangkuanAkhir: '',
-            penempatanBaruAkhir: '',
-            tarikhLaporDiriAkhir: '',
-        },
-    ];
 
     let selectedCandidatesList: DtoCalonPemangkuan[] = [];
 
@@ -434,26 +299,26 @@
                         />
                         <TextField
                             label="Gaji Minimum - Gaji Maksimum E19"
-                            value={currencyFormatter(1335) +
+                            value={CurrencyHelper.formatCurrency(1335) +
                                 ' - ' +
-                                currencyFormatter(4005)}
+                                CurrencyHelper.formatCurrency(4005)}
                             disabled
                         ></TextField>
                         <TextField
                             label="Kenaikan Gaji Tahunan E19"
-                            value={currencyFormatter(100)}
+                            value={CurrencyHelper.formatCurrency(100)}
                             disabled
                         ></TextField>
                         <TextField
                             label="Gaji Minimum - Gaji Maksimum E19"
-                            value={currencyFormatter(2254) +
+                            value={CurrencyHelper.formatCurrency(2254) +
                                 ' - ' +
-                                currencyFormatter(4694)}
+                                CurrencyHelper.formatCurrency(4694)}
                             disabled
                         ></TextField>
                         <TextField
                             label="Kenaikan Gaji Tahunan E19"
-                            value={currencyFormatter(115)}
+                            value={CurrencyHelper.formatCurrency(115)}
                             disabled
                         ></TextField>
                         <TextField

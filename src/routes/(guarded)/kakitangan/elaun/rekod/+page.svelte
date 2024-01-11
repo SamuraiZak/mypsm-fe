@@ -7,12 +7,9 @@
     import FilterSelectInput from '$lib/components/filter/FilterSelectInput.svelte';
     import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import ShortTextField from '$lib/components/input/ShortTextField.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
-    import { categories } from '$lib/mocks/elaun/categories';
     import { mockEmployeeAllowanceList } from '$lib/mocks/elaun/mockEmployeeAllowanceList';
     import { status } from '$lib/mocks/status/status';
-    import { currencyFormatter } from '$lib/service/services';
 
     let selectedCategory: string = 'all';
     let currEmpAllowanceRec = mockEmployeeAllowanceList.filter(

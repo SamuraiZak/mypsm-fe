@@ -14,6 +14,7 @@
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
     import { mockCurrentService } from '$lib/mocks/database/mockCurrentService';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
     import { mockEmploymentPensions } from '$lib/mocks/database/mockEmploymentPensions';
@@ -26,7 +27,7 @@
     import { mockFinalSalary } from '$lib/mocks/gaji/gaji-elaun/mockFinalSalary';
     import { loanPaybackMonthsOptions } from '$lib/mocks/pinjaman-kuarters/loanPaybackDurationOptions';
     import { mockRekodPinjaman } from '$lib/mocks/pinjaman-kuarters/mockRekodPinjaman';
-    import { currencyFormatter } from '$lib/service/services';
+
     import {
         fileSelectionList,
         selectedRecordId,
@@ -241,19 +242,19 @@
                 {disabled}
                 {labelBlack}
                 label={'Gaji Pokok'}
-                value={currencyFormatter(currEmpSalary.grossSalary)}
+                value={CurrencyHelper.formatCurrency(currEmpSalary.grossSalary)}
             ></TextField>
             <TextField
                 {disabled}
                 {labelBlack}
                 label={'Jumlah Elaun-elaun'}
-                value={currencyFormatter(currEmpSalary.allowances)}
+                value={CurrencyHelper.formatCurrency(currEmpSalary.allowances)}
             ></TextField>
             <TextField
                 {disabled}
                 {labelBlack}
                 label={'Jumlah Potongan'}
-                value={currencyFormatter(currEmpSalary.salaryDeduction)}
+                value={CurrencyHelper.formatCurrency(currEmpSalary.salaryDeduction)}
             ></TextField>
         </StepperContentBody>
     </StepperContent>
@@ -277,7 +278,7 @@
                 {labelBlack}
                 {disabled}
                 label={'Jumlah yang Dipohon (RM)'}
-                value={currencyFormatter(1699)}
+                value={CurrencyHelper.formatCurrency(1699)}
             ></TextField>
             <DropdownSelect
                 {labelBlack}

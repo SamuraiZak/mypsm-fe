@@ -6,7 +6,6 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    // import { currencyFormatter } from '$lib/service/services';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import { months } from '$lib/mocks/dateSelection/months';

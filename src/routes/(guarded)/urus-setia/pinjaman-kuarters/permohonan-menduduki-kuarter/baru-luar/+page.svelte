@@ -16,12 +16,12 @@
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
     import { mockCurrentService } from '$lib/mocks/database/mockCurrentService';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
     import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions';
     import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
     import { mockRekodKuarters } from '$lib/mocks/pinjaman-kuarters/mockRekodKuarters';
-    import { currencyFormatter } from '$lib/service/services';
     import {
         fileSelectionList,
         selectedRecordId,
@@ -215,7 +215,7 @@
             <TextField label="Jabatan / Jawatan" value={'Pengurus'}></TextField>
             <TextField
                 label="Gaji Sekarang yang Diterima (Gaji Pokok / Hakiki) (RM)"
-                value={currencyFormatter(4123.22)}
+                value={CurrencyHelper.formatCurrency(4123.22)}
             ></TextField>
             <TextField
                 label="Bilangan anak yang tinggal bersama pemohon yang berumur kurang 21 tahun"
@@ -256,11 +256,11 @@
             <TextField label="Bank Pembayar Gaji" value={'Maybank'}></TextField>
             <TextField
                 label="Gaji Sekarang (Gaji Pokok / Hakiki) (RM)"
-                value={currencyFormatter(3532.54)}
+                value={CurrencyHelper.formatCurrency(3532.54)}
             ></TextField>
-            <TextField label="ITP (RM)" value={currencyFormatter(100.0)}
+            <TextField label="ITP (RM)" value={CurrencyHelper.formatCurrency(100.0)}
             ></TextField>
-            <TextField label="COLA (RM)" value={currencyFormatter(150.0)}
+            <TextField label="COLA (RM)" value={CurrencyHelper.formatCurrency(150.0)}
             ></TextField>
         </StepperContentBody>
     </StepperContent>
@@ -459,16 +459,16 @@
                 ></SectionHeader>
                 <TextField
                     label="Nilai Sewaan Bulanan"
-                    value={currencyFormatter(900)}
+                    value={CurrencyHelper.formatCurrency(900)}
                 ></TextField>
                 <TextField
                     label="Deposit (2 Bulan nilai sewaan)"
-                    value={currencyFormatter(1800)}
+                    value={CurrencyHelper.formatCurrency(1800)}
                 ></TextField>
 
                 <TextField
                     label="Deposit (Air dan Elektrik)"
-                    value={currencyFormatter(300)}
+                    value={CurrencyHelper.formatCurrency(300)}
                 ></TextField>
             </div>
             <!-- Document Upload -->

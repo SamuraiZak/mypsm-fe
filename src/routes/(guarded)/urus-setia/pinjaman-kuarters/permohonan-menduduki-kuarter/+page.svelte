@@ -16,7 +16,6 @@
     import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
     import { mockRekodKuarters } from '$lib/mocks/pinjaman-kuarters/mockRekodKuarters';
     import { status } from '$lib/mocks/status/status';
-    import { currencyFormatter } from '$lib/service/services';
     import { selectedRecordId } from '$lib/stores/globalState';
     let selectedCategory = 'all';
     let allQuartersRecord = mockRekodKuarters.filter(

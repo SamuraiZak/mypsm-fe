@@ -15,12 +15,13 @@
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
     import { mockCurrentService } from '$lib/mocks/database/mockCurrentService';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
     import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions';
     import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
     import { mockRekodKuarters } from '$lib/mocks/pinjaman-kuarters/mockRekodKuarters.js';
-    import { currencyFormatter } from '$lib/service/services';
+
     import {
         fileSelectionList,
         selectedRecordId,
@@ -275,7 +276,7 @@
                 {disabled}
                 {labelBlack}
                 label="Gaji Sekarang yang Diterima (Gaji Pokok / Hakiki) (RM)"
-                value={currencyFormatter(4123.22)}
+                value={CurrencyHelper.formatCurrency(4123.22)}
             ></TextField>
             <TextField
                 {disabled}
@@ -340,19 +341,19 @@
                 {disabled}
                 {labelBlack}
                 label="Gaji Sekarang (Gaji Pokok / Hakiki) (RM)"
-                value={currencyFormatter(3532.54)}
+                value={CurrencyHelper.formatCurrency(3532.54)}
             ></TextField>
             <TextField
                 {disabled}
                 {labelBlack}
                 label="ITP (RM)"
-                value={currencyFormatter(100.0)}
+                value={CurrencyHelper.formatCurrency(100.0)}
             ></TextField>
             <TextField
                 {disabled}
                 {labelBlack}
                 label="COLA (RM)"
-                value={currencyFormatter(150.0)}
+                value={CurrencyHelper.formatCurrency(150.0)}
             ></TextField>
         </StepperContentBody>
     </StepperContent>
@@ -599,7 +600,7 @@
                                                     disabled={rentRate !=
                                                         'gredExceed'}
                                                     label=""
-                                                    value={currencyFormatter(0)}
+                                                    value={CurrencyHelper.formatCurrency(0)}
                                                 ></TextField>
                                             </ul>
                                         </div></Radio
