@@ -86,14 +86,14 @@
 
     const exampleFormSchema = z.object({
         // checkbox schema
-        specialAidOption: z.enum(['on'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tandakan kotak semak.'
-                        : defaultError,
-            }),
-        }),
+        // specialAidOption: z.enum(['on'], {
+        //     errorMap: (issue, { defaultError }) => ({
+        //         message:
+        //             issue.code === 'invalid_enum_value'
+        //                 ? 'Sila tandakan kotak semak.'
+        //                 : defaultError,
+        //     }),
+        // }),
         meetingTypeOption: z.enum(['1', '2', '3', '4'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
@@ -110,6 +110,16 @@
                         : defaultError,
             }),
         }),
+        gred: z.optional(
+            z.enum(['1', '2', '3', '4'], {
+                errorMap: (issue, { defaultError }) => ({
+                    message:
+                        issue.code === 'invalid_enum_value'
+                            ? 'Pilihan perlu dipilih.'
+                            : defaultError,
+                }),
+            }),
+        ),
         // textFieldExample: z
         //     .string({ required_error: 'Medan ini tidak boleh kosong.' })
         //     .min(4, {
@@ -127,23 +137,37 @@
         const meetingTypeOptionSelector = document.getElementById(
             'meetingTypeOption',
         ) as HTMLSelectElement;
-        const salaryMovementMonthTypeSelector = document.getElementById(
+        const salaryMovementMonthType = document.getElementById(
             'salaryMovementMonthType',
         ) as HTMLSelectElement;
+        const getGred = document.getElementById('gred') as HTMLSelectElement;
 
         const exampleFormData = {
             // radioButtonExample: String(formData.get('radioButtonExample')),
-            specialAidOption: String(formData.get('specialAidOption')),
+            // specialAidOption: String(formData.get('specialAidOption')),
             meetingTypeOption: String(meetingTypeOptionSelector.value),
-            salaryMovementMonthType: String(
-                salaryMovementMonthTypeSelector.value,
-            ),
             // textFieldExample: String(formData.get('textFieldExample')),
             meetingDate: String(formData.get('meetingDate')),
+            salaryMovementMonthType: String(salaryMovementMonthType.value),
         };
 
         try {
-            const result = exampleFormSchema.parse(exampleFormData);
+            let validatedData;
+            let result;
+            if (isGredChecked) {
+                const gred = String(getGred.value);
+
+                const validatedFormData = {
+                    ...exampleFormData,
+                    gred,
+                };
+                validatedData = validatedFormData;
+                result = exampleFormSchema.parse(validatedFormData);
+            } else {
+                validatedData = exampleFormData;
+                result = exampleFormSchema.parse(exampleFormData);
+            }
+
             if (result) {
                 errorData = [];
                 toast.success('Berjaya disimpan!', {
@@ -151,10 +175,13 @@
                 });
 
                 const id = crypto.randomUUID().toString();
-                const validatedExamFormData = { ...exampleFormData, id };
+                const validatedFormData = {
+                    ...validatedData,
+                    id,
+                };
                 console.log(
                     'REQUEST BODY: ',
-                    JSON.stringify(validatedExamFormData),
+                    JSON.stringify(validatedFormData),
                 );
             }
         } catch (err: unknown) {
@@ -305,41 +332,39 @@
                         >
                     {/if}
                     <div class="flex w-full flex-row items-center">
-                        <label for="meetingResult" class="w-[220px]">
-                            <p class="text-sm text-txt-secondary">
-                                Keputusan Mesyuarat
-                            </p>
+                        <label for="meetingResult" class="w-[280px]">
+                            <p class="text-sm">Keputusan Mesyuarat</p>
                         </label>
-                        <div class="flex flex-col gap-y-7">
+                        <div class="flex w-full flex-col gap-y-7">
                             <div class="flex flex-row items-center">
-                                <div class="flex flex-row">
+                                <div>
                                     <Checkbox
-                                        name="specialAidOption"
+                                        name="gred"
                                         bind:checked={isGredChecked}
                                     ></Checkbox>
                                 </div>
-                                {#if errorData?.specialAidOption}
-                                    <span
-                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.specialAidOption[0]}</span
-                                    >
-                                {/if}
-                                <!-- <Checkbox
-                                    name="specialAidOption"
-                                    bind:checked={isGredChecked}
-                                ></Checkbox> -->
-                                <DropdownSelect
-                                    disabled={!isGredChecked}
-                                    id="salary-movement-month-type"
-                                    label="Gred"
-                                    dropdownType="label-left-full"
-                                    options={salaryMonths}
-                                    bind:index={selectedSalaryMonth}
-                                />
+                                <div>
+                                    <DropdownSelect
+                                        hasError={errorData?.gred}
+                                        disabled={!isGredChecked}
+                                        id="gred"
+                                        label="Gred"
+                                        dropdownType="label-left-full"
+                                        options={salaryMonths}
+                                        bind:index={selectedSalaryMonth}
+                                    />
+                                    {#if errorData?.gred}
+                                        <span
+                                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                            >{errorData?.gred[0]}</span
+                                        >
+                                    {/if}
+                                </div>
                             </div>
+
                             <div class="flex flex-row items-center">
                                 <Checkbox
-                                    name="specialAidOption"
+                                    name="specialAid"
                                     bind:checked={isSpecialFiAidChecked}
                                 ></Checkbox>
                                 <TextField
@@ -347,11 +372,13 @@
                                     label="Bantuan Khas Kewangan (RM)"
                                 ></TextField>
                             </div>
+
                             <div class="flex flex-row items-center">
                                 <Checkbox
                                     name="specialIncrement"
                                     bind:checked={isSpecialIncrementChecked}
                                 ></Checkbox>
+
                                 <TextField
                                     disabled={!isSpecialIncrementChecked}
                                     label="Kenaikan Khas (RM)"
