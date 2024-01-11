@@ -12,7 +12,7 @@
     let staffAmount: number = mesyuarat[0].jumlahKakitangan;
     let selectedMeetingType: string = meetings[2].value;
     let meetingDate: Date;
-    let staffs: MaklumatPeribadi[] = maklumatPeribadiForm;
+    let staffs: any[] = maklumatPeribadiForm;
     let selectedResult: { staff: string; meetingResult: string }[];
     let errorData: any;
     let options: RadioOption[] = [
@@ -21,6 +21,7 @@
     ];
     let radioValue: string[] = [options[0].value];
     let meetingTypeOption: any;
+    let salaryMovementMonthTypeOption: string = '1';
 
     // export let data: MaklumatPeribadi[] = [];
 
@@ -48,6 +49,7 @@
 <form>
     <div class="space-y-2.5">
         <DropdownSelect
+            disabled
             hasError={errorData?.meetingTypeOption}
             dropdownType="label-left-full"
             id="meetingTypeOption"
@@ -66,6 +68,7 @@
             >
         {/if}
         <DateSelector
+            disabled
             hasError={errorData?.meetingDate}
             name="meetingDate"
             handleDateChange
@@ -78,6 +81,7 @@
             >
         {/if}
         <DropdownSelect
+            disabled
             hasError={errorData?.salaryMovementMonthTypeOption}
             dropdownType="label-left-full"
             id="salaryMovementMonthTypeOption"

@@ -20,8 +20,19 @@
     import type { SelectOptionType } from 'flowbite-svelte';
     import { onMount } from 'svelte';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import {
+        _assignApproverSupporterSchema,
+        _interimCheckSchema,
+        _payCalculationSchema,
+        _submitAssignApproverSupporterForm,
+        _submitInterimCheck,
+        _submitpayCalculationCheck,
+    } from './+page';
+    let employeeLists: SelectOptionType<any>[] = [];
+    export let data: PageData;
 
-    let interimDateOfEffect: string = '';
     const options: RadioOption[] = [
         {
             value: 'true',
@@ -33,12 +44,24 @@
         },
     ];
 
-    let listOfYears: { value: string; name: string }[] = [];
+    let listOfYears: { value: string; name: string }[] = [
+        { value: '2019', name: '2019' },
+        { value: '2020', name: '2020' },
+        { value: '2021', name: '2021' },
+        { value: '2022', name: '2022' },
+        { value: '2023', name: '2023' },
+        { value: '2024', name: '2024' },
+    ];
     // for (var i = new Date().getFullYear(); i >= 1980; i--) {
     //     listOfYears.push({ value: i.toString(), name: i.toString() });
     // }
 
-    let listOfMonths: { value: string; name: string }[] = [];
+    let listOfMonths: { value: string; name: string }[] = [
+        { value: '1', name: 'Jan' },
+        { value: '2', name: 'Feb' },
+        { value: '3', name: 'Mac' },
+        { value: '4', name: 'Apr' },
+    ];
     // for (let i = 1; i <= 12; i++) {
     //     listOfMonths.push({
     //         value: i.toString(),
@@ -46,11 +69,32 @@
     //     });
     // }
 
-    let isCertified: string = 'true';
-
-    let employeeLists: SelectOptionType<any>[] = [];
-    let selectedSupporter: string;
-    let selectedApprover: string;
+    const { form, errors, enhance } = superForm(data.interimCheckForm, {
+        SPA: true,
+        validators: _interimCheckSchema,
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+    const {
+        form: payCalculationForm,
+        errors: payCalculationErrors,
+        enhance: payCalculationEnhance,
+    } = superForm(data.payCalculationForm, {
+        SPA: true,
+        validators: _payCalculationSchema,
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+    const {
+        form: assignApproverSupporterForm,
+        errors: assignApproverSupporterErrors,
+        enhance: assignApproverSupporterEnhance,
+    } = superForm(data.assignApproverSupporterForm, {
+        SPA: true,
+        validators: _assignApproverSupporterSchema,
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 
     onMount(async () => {
         const staffs: IntEmployees[] = mockEmployees;
@@ -59,198 +103,9 @@
             value: staff.id.toString(),
             name: staff.name,
         }));
-        // selectedSupporter = employeeLists[0].value;
-        // selectedApprover = employeeLists[0].value;
+        // selectedSupporter = employeeLists.value;
+        // selectedApprover = employeeLists.value;
     });
-
-    // =========================================================================
-    // z validation schema and submit function for the interim form fields
-    // =========================================================================
-    let errorData: any;
-
-    const textFieldSchema = z
-        .string({ required_error: 'Medan ini tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim();
-
-    const longTextSchema = z
-        .string({ required_error: 'Medan ini tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim();
-
-    const dateScheme = z.coerce.date({
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_date'
-                    ? 'Tarikh tidak boleh dibiar kosong.'
-                    : defaultError,
-        }),
-    });
-
-    // Interim - check info form
-    const interimCheckSchema = z.object({
-        interimCheckRemark: longTextSchema,
-        interimCheckResult: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-    });
-
-    const submitInterimCheck = async (event: Event) => {
-        const formElement = event.target as HTMLFormElement;
-        const formData = new FormData(formElement);
-
-        const interimCheckData = {
-            interimCheckRemark: String(formData.get('interimCheckRemark')),
-            interimCheckResult: String(formData.get('interimCheckResult')),
-        };
-
-        try {
-            const result = interimCheckSchema.parse(interimCheckData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-            }
-        } catch (error: unknown) {
-            if (error instanceof ZodError) {
-                const { fieldErrors: errors } = error.flatten();
-                errorData = errors;
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
-
-    // Interim - payment calculation form
-    const payCalculationSchema = z.object({
-        interimDateOfEffect: dateScheme,
-        interimUntilDate: dateScheme.refine(
-            (date) => date >= new Date(interimDateOfEffect),
-            {
-                message: 'Tarikh tamat tidak boleh kurang daripada tarikh mula',
-            },
-        ),
-        etkPaymentMonth: z
-            .string()
-            .min(1, { message: 'Sila pilih pilihan anda.' }),
-        etkPaymentYear: z
-            .string()
-            .min(1, { message: 'Sila pilih pilihan anda.' }),
-    });
-
-    const submitpayCalculationCheck = async (event: Event) => {
-        const formElement = event.target as HTMLFormElement;
-        const formData = new FormData(formElement);
-
-        const getEtkPaymentMonth = document.getElementById(
-            'etkPaymentMonth',
-        ) as HTMLSelectElement;
-        const getEtkPaymentYear = document.getElementById(
-            'etkPaymentYear',
-        ) as HTMLSelectElement;
-
-        formData.append('etkPaymentMonth', String(getEtkPaymentMonth.value));
-        formData.append('etkPaymentYear', String(getEtkPaymentYear.value));
-
-        const payCalculationData = {
-            interimDateOfEffect: String(formData.get('interimDateOfEffect')),
-            interimUntilDate: String(formData.get('interimUntilDate')),
-            etkPaymentMonth: String(formData.get('etkPaymentMonth')),
-            etkPaymentYear: String(formData.get('etkPaymentYear')),
-        };
-
-        try {
-            const result = payCalculationSchema.parse(payCalculationData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-            }
-        } catch (error: unknown) {
-            if (error instanceof ZodError) {
-                const { fieldErrors: errors } = error.flatten();
-                errorData = errors;
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
-
-    // assign rights form
-    const assignApproverSupporterSchema = z.object({
-        staffSupporter: z
-            .string()
-            .min(1, { message: 'Sila tetapkan pilihan anda.' }),
-        staffApprover: z
-            .string()
-            .min(1, { message: 'Sila tetapkan pilihan anda.' }),
-    });
-
-    const submitAssignApproverSupporterForm = async () => {
-        const staffSupporterSelector = document.getElementById(
-            'staffSupporter',
-        ) as HTMLSelectElement;
-        const staffApproverSelector = document.getElementById(
-            'staffApprover',
-        ) as HTMLSelectElement;
-
-        const newEmploymentSecretaryResultData = {
-            staffSupporter: String(staffSupporterSelector.value),
-            staffApprover: String(staffApproverSelector.value),
-        };
-
-        try {
-            const result = assignApproverSupporterSchema.parse(
-                newEmploymentSecretaryResultData,
-            );
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                setTimeout(() => {
-                    goto('../../tanggung-kerja');
-                }, 1500);
-            }
-        } catch (error: unknown) {
-            if (error instanceof ZodError) {
-                const { fieldErrors: errors } = error.flatten();
-                errorData = errors;
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
 </script>
 
 <!-- header section -->
@@ -404,7 +259,9 @@
             <StepperContentBody>
                 <form
                     id="interimSecretaryResultForm"
-                    on:submit|preventDefault={submitInterimCheck}
+                    method="POST"
+                    on:submit|preventDefault={_submitInterimCheck}
+                    use:enhance
                     class="flex h-fit w-full flex-col items-start justify-start gap-2"
                 >
                     <div class="mb-5 flex flex-row items-center text-sm italic">
@@ -415,28 +272,28 @@
                         <p>1. Surat Penamatan Tanggung Kerja</p>
                     </div>
                     <LongTextField
-                        hasError={errorData?.interimCheckRemark}
+                        hasError={$errors.interimCheckRemark ? true : false}
                         name="interimCheckRemark"
                         label="Tindakan/Ulasan"
                         placeholder="-"
-                        value=""
+                        bind:value={$form.interimCheckRemark}
                     />
-                    {#if errorData?.interimCheckRemark}
+                    {#if $errors.interimCheckRemark}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.interimCheckRemark[0]}</span
+                            >{$errors.interimCheckRemark}</span
                         >
                     {/if}
                     <RadioSingle
                         name="interimCheckResult"
                         legend="Keputusan"
                         {options}
-                        bind:userSelected={isCertified}
+                        bind:userSelected={$form.interimCheckResult}
                     />
-                    {#if errorData?.interimCheckResult}
+                    {#if $errors.interimCheckResult}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.interimCheckResult[0]}</span
+                            >{$errors.interimCheckResult}</span
                         >
                     {/if}
                 </form>
@@ -455,7 +312,9 @@
                 ></SectionHeader>
                 <form
                     id="payCalculationForm"
-                    on:submit|preventDefault={submitpayCalculationCheck}
+                    method="POST"
+                    on:submit|preventDefault={_submitpayCalculationCheck}
+                    use:payCalculationEnhance
                     class="h-full w-full"
                 >
                     <div
@@ -498,33 +357,36 @@
                         <div class="flex w-full gap-2">
                             <div class="flex w-full flex-col">
                                 <DateSelector
-                                    hasError={errorData?.interimDateOfEffect}
+                                    hasError={$payCalculationErrors.interimDateOfEffect
+                                        ? true
+                                        : false}
                                     name="interimDateOfEffect"
                                     disabled={false}
                                     label={'Tarikh Kuatkuasa Penanggung Kerja'}
-                                    bind:selectedDate={interimDateOfEffect}
+                                    bind:selectedDate={$payCalculationForm.interimDateOfEffect}
                                 ></DateSelector>
-                                {#if errorData?.interimDateOfEffect}
+                                {#if $payCalculationErrors.interimDateOfEffect}
                                     <span
                                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                        >{errorData
-                                            ?.interimDateOfEffect[0]}</span
+                                        >{$payCalculationErrors.interimDateOfEffect}</span
                                     >
                                 {/if}
                             </div>
                             <div class="flex w-full flex-col">
                                 <DateSelector
-                                    hasError={errorData?.interimUntilDate}
+                                    hasError={$payCalculationErrors.interimUntilDate
+                                        ? true
+                                        : false}
                                     name="interimUntilDate"
                                     disabled={false}
                                     label={'Hingga'}
                                     labelType="label-fit"
-                                    selectedDate={''}
+                                    bind:selectedDate={$payCalculationForm.interimUntilDate}
                                 ></DateSelector>
-                                {#if errorData?.interimUntilDate}
+                                {#if $payCalculationErrors.interimUntilDate}
                                     <span
                                         class="ml-10 font-sans text-sm italic text-system-danger"
-                                        >{errorData?.interimUntilDate[0]}</span
+                                        >{$payCalculationErrors.interimUntilDate}</span
                                     >
                                 {/if}
                             </div>
@@ -644,35 +506,37 @@
                             <div class="flex w-full gap-2">
                                 <div class="flex w-full flex-col">
                                     <DropdownSelect
-                                        hasError={errorData?.etkPaymentMonth}
+                                        hasError={$payCalculationErrors.etkPaymentMonth
+                                            ? true
+                                            : false}
                                         id="etkPaymentMonth"
                                         label="Bulan"
                                         dropdownType="label-fit"
                                         options={listOfMonths}
-                                        value={''}
+                                        bind:value={$payCalculationForm.etkPaymentMonth}
                                     />
-                                    {#if errorData?.etkPaymentMonth}
+                                    {#if $payCalculationErrors.etkPaymentMonth}
                                         <span
                                             class="ml-9 font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.etkPaymentMonth[0]}</span
+                                            >{$payCalculationErrors.etkPaymentMonth}</span
                                         >
                                     {/if}
                                 </div>
                                 <div class="flex w-full flex-col">
                                     <DropdownSelect
-                                        hasError={errorData?.etkPaymentYear}
+                                        hasError={$payCalculationErrors.etkPaymentYear
+                                            ? true
+                                            : false}
                                         id="etkPaymentYear"
                                         label="Tahun"
                                         dropdownType="label-fit"
                                         options={listOfYears}
-                                        value={''}
+                                        bind:value={$payCalculationForm.etkPaymentYear}
                                     />
-                                    {#if errorData?.etkPaymentYear}
+                                    {#if $payCalculationErrors.etkPaymentYear}
                                         <span
                                             class="ml-10 font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.etkPaymentYear[0]}</span
+                                            >{$payCalculationErrors.etkPaymentYear}</span
                                         >
                                     {/if}
                                 </div>
@@ -694,35 +558,41 @@
             <StepperContentBody>
                 <form
                     id="newEmploymentAssignApproverSupporterForm"
-                    on:submit|preventDefault={submitAssignApproverSupporterForm}
+                    method="POST"
+                    on:submit|preventDefault={_submitAssignApproverSupporterForm}
+                    use:assignApproverSupporterEnhance
                     class="flex w-full flex-col gap-2"
                 >
                     <DropdownSelect
-                        hasError={errorData?.staffSupporter}
+                        hasError={$assignApproverSupporterErrors.staffSupporter
+                            ? true
+                            : false}
                         id="staffSupporter"
                         label="Nama Penyokong"
                         dropdownType="label-left-full"
                         options={employeeLists}
-                        bind:value={selectedSupporter}
+                        bind:value={$assignApproverSupporterForm.staffSupporter}
                     />
-                    {#if errorData?.staffSupporter}
+                    {#if $assignApproverSupporterErrors.staffSupporter}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.staffSupporter[0]}</span
+                            >{$assignApproverSupporterErrors.staffSupporter}</span
                         >
                     {/if}
                     <DropdownSelect
-                        hasError={errorData?.staffApprover}
+                        hasError={$assignApproverSupporterErrors.staffApprover
+                            ? true
+                            : false}
                         id="staffApprover"
                         label="Nama Pelulus"
                         dropdownType="label-left-full"
                         options={employeeLists}
-                        bind:value={selectedApprover}
+                        bind:value={$assignApproverSupporterForm.staffApprover}
                     />
-                    {#if errorData?.staffApprover}
+                    {#if $assignApproverSupporterErrors.staffApprover}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.staffApprover[0]}</span
+                            >{$assignApproverSupporterErrors.staffApprover}</span
                         >
                     {/if}
                 </form>

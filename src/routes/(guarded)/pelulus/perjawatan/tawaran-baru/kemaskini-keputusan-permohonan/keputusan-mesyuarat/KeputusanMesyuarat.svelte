@@ -11,7 +11,7 @@
     let staffAmount: number = mesyuarat[0].jumlahKakitangan;
     let selectedMeetingType: string = meetings[2].value;
     let meetingDate: Date;
-    let staffs: MaklumatPeribadi[] = maklumatPeribadiForm;
+    let staffs: any[] = maklumatPeribadiForm;
     let selectedResult: { staff: string; meetingResult: string }[];
     let options: RadioOption[] = [
         { value: 'pass', label: 'LULUS' },

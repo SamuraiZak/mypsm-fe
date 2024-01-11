@@ -8,7 +8,7 @@
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
 
-    let staffs: MaklumatPeribadi[] = maklumatPeribadiForm;
+    let staffs: any[] = maklumatPeribadiForm;
 
     export let editable: boolean = false;
 

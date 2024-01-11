@@ -1,12 +1,13 @@
+// import { goto } from '$app/navigation';
 import { goto } from '$app/navigation';
 import api from '$lib/services/core/ky.service.js';
-import { fail } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
 // =========================================================================
-// z validation schema and submit function for the interim end form fields
+// z validation schema and submit function for the deputy section head form fields
 // =========================================================================
 const longTextSchema = z
     .string({ required_error: 'Medan ini tidak boleh kosong.' })
@@ -18,10 +19,10 @@ const longTextSchema = z
     })
     .trim();
 
-// Interim - Approver Result section
-export const _approverResultSchema = z.object({
-    approverRemark: longTextSchema,
-    approverResult: z.enum(['true', 'false'], {
+// Interim - Supporter Result section
+export const _supporterResultSchema = z.object({
+    supporterRemark: longTextSchema,
+    supporterResult: z.enum(['true', 'false'], {
         errorMap: (issue, { defaultError }) => ({
             message:
                 issue.code === 'invalid_enum_value'
@@ -31,42 +32,45 @@ export const _approverResultSchema = z.object({
     }),
 });
 
-export const load = async () => {
+export const load = async ({ fetch }) => {
     // const id = parseInt(params.id);
 
-    const form = await superValidate(_approverResultSchema);
+    const request = await fetch(`https://jsonplaceholder.typicode.com/users/1`);
+    if (request.status >= 400) error;
+
+    const userData = await request.json();
+    const form = await superValidate(userData, _supporterResultSchema);
 
     return { form };
 };
 
-export const _submitApproverResultForm = async (event: Event) => {
+export const _submitSupporterResultForm = async (event: Event) => {
     const formElement = event.target as HTMLFormElement;
     const formData = new FormData(formElement);
-    const form = await superValidate(formData, _approverResultSchema);
-
-    console.log('Request: ', form.data);
+    const form = await superValidate(formData, _supporterResultSchema);
 
     if (!form.valid) {
         toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
             style: 'background: #333; color: #fff;',
         });
         return fail(400, form);
+    } else {
+        console.log('Request: ', form.data);
+
+        await api
+            .post('https://jsonplaceholder.typicode.com/posts', {
+                body: JSON.stringify(form),
+                prefixUrl: '',
+            })
+            .json()
+            .then((json) => console.log('Response: ', json));
+
+        toast.success('Berjaya disimpan!', {
+            style: 'background: #333; color: #fff;',
+        });
+
+        setTimeout(() => goto('../penamatan-tanggung-kerja'), 1500);
     }
-
-    await api
-        .post('https://jsonplaceholder.typicode.com/posts', {
-            body: JSON.stringify(form),
-            prefixUrl: '',
-        })
-        .json()
-        .then((json) => console.log('Response: ', json));
-
-    toast.success('Berjaya disimpan!', {
-        style: 'background: #333; color: #fff;',
-    });
-
-
-    setTimeout(() => goto('../penamatan-tanggung-kerja'), 1500);
 
     return { form };
 };
