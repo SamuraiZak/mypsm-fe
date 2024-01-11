@@ -14,7 +14,7 @@
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import AccordianField from '$lib/components/input/AccordianField.svelte';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
-    import { Badge, Tooltip } from 'flowbite-svelte';
+    import { Badge, Modal, Tooltip } from 'flowbite-svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import { maklumatKegiatanTable } from '$lib/mocks/profil/maklumat-kegiatan-keahlian';
     import { maklumatKeluargaTable } from '$lib/mocks/profil/maklumat-keluarga';
@@ -288,6 +288,8 @@
             }
         }
     }
+
+    let openAcademicInfoModal: boolean = false;
 </script>
 
 <ContentHeader
@@ -496,13 +498,19 @@
                         label={edu.type == 'Ijazah' ? 'CGPA' : 'Gred'}
                         value={edu.finalGrade}
                     ></TextField>
+                    <TextField
+                        {disabled}
+                        id="bidang"
+                        label={'Bidang'}
+                        value={''}
+                    ></TextField>
+                    <LongTextField
+                        {disabled}
+                        id="sekolah"
+                        label={'Catatan'}
+                        value={''}
+                    ></LongTextField>
                     {#if edu.type == 'Ijazah'}
-                        <TextField
-                            {disabled}
-                            id="bidang"
-                            label={'Bidang'}
-                            value={edu.course}
-                        ></TextField>
                         <AccordianField
                             disabled={!disabled}
                             label="Catatan"
@@ -525,35 +533,11 @@
                     <TextIconButton
                         primary
                         label="Tambah Akademik/Kelayakan/Latihan yang Lalu"
-                        onClick={() => {}}
+                        onClick={() => (openAcademicInfoModal = true)}
                     >
                         <SvgPlus></SvgPlus>
                     </TextIconButton>
                 </div>
-                <!-- <div
-                    class="w-full rounded-[3px] border border-system-primary p-2.5"
-                >
-                    {#each educationList as education, index (education.institution)}
-                        <div class="education-form">
-                            <input
-                                type="text"
-                                bind:value={education.institution}
-                                placeholder="Institution"
-                            />
-                            <input
-                                type="text"
-                                bind:value={education.degree}
-                                placeholder="Degree"
-                            />
-                            {#if index === educationList.length - 1}
-                                <button on:click={addEducation}
-                                    >Add More Education Information</button
-                                >
-                            {/if}
-                            {console.log(educationList.length)}
-                        </div>
-                    {/each}
-                </div> -->
             </div></StepperContentBody
         >
     </StepperContent>
@@ -860,18 +844,25 @@
     </StepperContent>
 </Stepper>
 
-<!-- content header starts here -->
-<!-- <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader
-        title="Semak Maklumat Lantikan Baru"
-        description="Hal-hal berkaitan Lantikan Baru. Sila semak dan simpan pautan setelah selesai."
-    >
-        <FormButton
-            type="back"
-            addLabel="Cetak"
-            onClick={() => {
-                goto('../lantikan-baru');
-            }}
-        />
-    </ContentHeader>
-</section> -->
+<Modal
+    title={'Tambah Maklumat Akademik / Kelayakan / Latihan yang Lalu'}
+    bind:open={openAcademicInfoModal}
+>
+    <form class="flex h-full w-full flex-col gap-y-2">
+        <TextField {disabled} id="sekolah" label={'Tajuk'} value={''}
+        ></TextField>
+        <TextField {disabled} id="sekolah" label={'Institusi'} value={''}
+        ></TextField>
+        <TextField {disabled} id="sekolah" label={'Tahun'} value={''}
+        ></TextField>
+        <TextField {disabled} id="sekolah" label={'Pencapaian'} value={''}
+        ></TextField>
+        <LongTextField {disabled} id="sekolah" label={'Catatan'} value={''}
+        ></LongTextField>
+    </form>
+    <TextIconButton
+        primary
+        onClick={() => (openAcademicInfoModal = false)}
+        label={'Simpan'}
+    />
+</Modal>

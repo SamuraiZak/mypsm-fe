@@ -12,9 +12,6 @@
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
-    import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
-    import { ZodError, z } from 'zod';
-    import toast, { Toaster } from 'svelte-french-toast';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import type { SelectOptionType } from 'flowbite-svelte';
@@ -30,7 +27,7 @@
         _submitInterimCheck,
         _submitpayCalculationCheck,
     } from './+page';
-    import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
+    import { Toaster } from 'svelte-french-toast';
     let employeeLists: SelectOptionType<any>[] = [];
     export let data: PageData;
 
@@ -83,8 +80,6 @@
     } = superForm(data.payCalculationForm, {
         SPA: true,
         validators: _payCalculationSchema,
-        taintedMessage:
-            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
     const {
         form: assignApproverSupporterForm,
@@ -93,8 +88,6 @@
     } = superForm(data.assignApproverSupporterForm, {
         SPA: true,
         validators: _assignApproverSupporterSchema,
-        taintedMessage:
-            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
 
     onMount(async () => {
@@ -149,13 +142,13 @@
                             label="Nama Gred"
                             disabled={true}
                             placeholder="-"
-                            value="N32"
+                            value={''}
                         />
                         <TextField
                             label="Kementerian/Jabatan"
                             disabled={true}
                             placeholder="-"
-                            value="Jabatan 1"
+                            value={''}
                         />
                         <TextField
                             label="Nombor Butiran Anggaran Belanjawan Mengurus/Waran Penjawatan"
@@ -318,7 +311,6 @@
                     use:payCalculationEnhance
                     class="h-full w-full"
                 >
-                    <SuperDebug data={$payCalculationForm} />
                     <div
                         class="flex h-fit w-full flex-col items-start justify-start gap-2"
                     >
