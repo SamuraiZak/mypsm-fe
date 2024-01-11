@@ -24,7 +24,7 @@
     export let data;
 
     let isGredChecked: boolean = false;
-    let isSpecialFiAidChecked: boolean = false;
+    let isSpecialFiAidTextChecked: boolean = false;
     let isSpecialIncrementChecked: boolean = false;
     let selectedStatus = status[0].value; // Default selected filter
     let selectedMeetingType: string = meetings[0].value;
@@ -81,8 +81,6 @@
         });
 
     const exampleFormSchema = z.object({
-        //checkbox schema
-
         meetingTypeOption: z.enum(['1', '2', '3', '4'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
@@ -110,45 +108,22 @@
                 }),
             }),
         ),
-        textFieldExample: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        // gred: z.enum(['on'], {
-        //     errorMap: (issue, { defaultError }) => ({
-        //         message:
-        //             issue.code === 'invalid_enum_value'
-        //                 ? 'Sila tandakan kotak semak.'
-        //                 : defaultError,
-        //     }),
-        // }),
-        // specialAid: z.enum(['true', 'false'], {
-        //     errorMap: (issue, { defaultError }) => ({
-        //         message:
-        //             issue.code === 'invalid_enum_value'
-        //                 ? 'Sila tetapkan pilihan anda.'
-        //                 : defaultError,
-        //     }),
-        // }),
-        // specialFiAidText: z
-        //     .string({ required_error: 'Medan ini tidak boleh kosong.' })
-        //     .min(4, {
-        //         message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        //     })
-        //     .max(124, {
-        //         message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        //     })
-        //     .trim(),
-        // dateSelectorExample: dateScheme,
+        specialFiAidTexts: z.optional(
+            z
+                .string({ required_error: 'Medan ini tidak boleh kosong.' })
+                .min(1, {
+                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+                })
+                .max(124, {
+                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
+                })
+                .trim(),
+        ),
     });
 
     const tetapanKGTForm = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);
+
         const meetingTypeOptionSelector = document.getElementById(
             'meetingTypeOption',
         ) as HTMLSelectElement;
@@ -166,12 +141,23 @@
         try {
             let validatedData;
             let result;
+
             if (isGredChecked) {
                 const gred = String(getGred.value);
 
                 const validatedFormData = {
                     ...exampleFormData,
                     gred,
+                };
+                validatedData = validatedFormData;
+                result = exampleFormSchema.parse(validatedFormData);
+            } else if (isSpecialFiAidTextChecked) {
+                const specialFiAidTexts = String(
+                    formData.get('specialFiAidTexts'),
+                );
+                const validatedFormData = {
+                    ...exampleFormData,
+                    specialFiAidTexts,
                 };
                 validatedData = validatedFormData;
                 result = exampleFormSchema.parse(validatedFormData);
@@ -325,65 +311,57 @@
                     Keputusan mesyuarat:
                 </b>
                 <div class="flex flex-row justify-between gap-x-5">
-                    <Checkbox name="gred" bind:checked={isGredChecked}
-                        ><DropdownSelect
-                            hasError={errorData?.gred}
-                            disabled={!isGredChecked}
-                            dropdownType="label-left"
-                            id="gred"
-                            label="Gred"
-                            bind:value={gred}
-                            options={[
-                                { value: 'All', name: 'Semua' },
-                                { value: 'N19', name: 'N19' },
-                                { value: 'N21', name: 'N21' },
-                                { value: 'N29', name: 'N29' },
-                                { value: 'N32', name: 'N32' },
-                                { value: 'N49', name: 'N49' },
-                                { value: 'N52', name: 'N52' },
-                            ]}
-                        ></DropdownSelect>
-                        {#if errorData?.gred}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.gred[0]}</span
-                            >
-                        {/if}</Checkbox
-                    >
-
-                    {#if errorData?.gred}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.gred[0]}</span
-                        >
-                    {/if}
+                    <Checkbox name="gred" bind:checked={isGredChecked}>
+                        <div class="flex flex-col">
+                            <DropdownSelect
+                                hasError={errorData?.gred}
+                                disabled={!isGredChecked}
+                                dropdownType="label-left"
+                                id="gred"
+                                label="Gred"
+                                bind:value={gred}
+                                options={[
+                                    { value: 'All', name: 'Semua' },
+                                    { value: 'N19', name: 'N19' },
+                                    { value: 'N21', name: 'N21' },
+                                    { value: 'N29', name: 'N29' },
+                                    { value: 'N32', name: 'N32' },
+                                    { value: 'N49', name: 'N49' },
+                                    { value: 'N52', name: 'N52' },
+                                ]}
+                            ></DropdownSelect>
+                            {#if errorData?.gred}
+                                <span
+                                    class="ml-8 font-sans text-sm italic text-system-danger"
+                                    >{errorData?.gred[0]}</span
+                                >
+                            {/if}
+                        </div>
+                    </Checkbox>
 
                     <Checkbox
                         name="specialFiAidText"
-                        bind:checked={!isSpecialFiAidTextChecked}
-                        ><TextField
-                            labelType="label-fit"
-                            hasTooltip={true}
-                            toolTipID="type-special-fi-aid"
-                            hasError={errorData?.specialFiAidText}
-                            name="specialFiAidText"
-                            label="Bantuan Khas Kewangan (RM)"
-                            type="number"
-                            bind:value={specialFiAidText}
-                        />
-                        {#if errorData?.specialFiAidText}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.specialFiAidText[0]}</span
-                            >
-                        {/if}
-                        {#if errorData?.specialFiAidText}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.specialFiAidText[0]}</span
-                            >
-                        {/if}</Checkbox
-                    >
+                        bind:checked={isSpecialFiAidTextChecked}
+                        ><div class="flex flex-col">
+                            <TextField
+                                labelType="label-fit"
+                                hasTooltip={true}
+                                toolTipID="type-special-fi-aid"
+                                hasError={errorData?.specialFiAidTexts}
+                                disabled={!isSpecialFiAidTextChecked}
+                                name="specialFiAidTexts"
+                                label="Bantuan Khas Kewangan (RM)"
+                                type="number"
+                                bind:value={specialFiAidText}
+                            />
+                            {#if errorData?.specialFiAidTexts}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{errorData?.specialFiAidTexts[0]}</span
+                                >
+                            {/if}
+                        </div>
+                    </Checkbox>
 
                     {#if errorData?.specialFiAidText}
                         <span
@@ -393,7 +371,7 @@
                     {/if}
                     <Checkbox
                         name="specialIncrement"
-                        bind:checked={!isSpecialIncrement}
+                        bind:checked={isSpecialIncrementChecked}
                     >
                         <label for="specialIncrement">Kenaikan Khas (RM)</label>
                         <div class="ml-2.5 flex flex-col gap-2.5">
