@@ -16,7 +16,7 @@ const dateScheme = z.coerce
     .min(new Date(), {
         message:
             'Tarikh lapor diri yang dipohon hendaklah tidak kurang dari tarikh semasa.',
-    });
+    }) 
 
 export const _amendmentOfPlacementApplicationSchema = z.object({
     amendmentDropdown: z.enum(['true', 'false'], {
@@ -57,6 +57,7 @@ export const _submitActingDirectorResultForm = async (event: Event) => {
         toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
             style: 'background: #333; color: #fff;',
         });
+        console.log(400, form)
         return fail(400, form);
     } else {
         console.log('Request Body: ', formData);
@@ -73,7 +74,7 @@ export const _submitActingDirectorResultForm = async (event: Event) => {
                 toast.success('Berjaya disimpan!', {
                     style: 'background: #333; color: #fff;',
                 });
-                console.log('Response Returned: 1-54', json)
+                console.log('Response Returned: ', json)
             });
     }
     return { form };
