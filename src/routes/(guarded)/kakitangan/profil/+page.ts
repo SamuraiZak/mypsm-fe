@@ -24,8 +24,8 @@ const longTextSchema = z
 // =========================================================================
 
 //==========================================================
-    //================== stepper 1 =============================
-    //==========================================================
+//===============Maklumat Peribadi =========================
+//==========================================================
 
     // date common schema stepper 1
     const dateStepper1 = z.coerce
@@ -147,7 +147,7 @@ const longTextSchema = z
             }),
         ),
 
-        noPerkeja: z
+        noPekerja: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
             .min(4, {
                 message: 'Medan ini hendaklah lebih daripada 4 karakter.',
@@ -254,7 +254,7 @@ const longTextSchema = z
     });
 
     //==========================================================
-    //================== stepper 2 =============================
+    //=============Maklumat Perkhdmatan ========================
     //==========================================================
 
     const dateStepper2 = z.coerce
@@ -283,7 +283,7 @@ const longTextSchema = z
             message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
         });
 
-    const stepper2 = z.object({
+   export const _stepperMaklumatPerkhidmatan = z.object({
         faedahPersaraanPerkhidmatan: z.enum(['true', 'false'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
@@ -380,7 +380,7 @@ const longTextSchema = z
             })
             .trim(),
 
-        tarikhberkuatKuasa: z
+        tarikhBerkuatKuasa: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
             .min(4, {
                 message: 'Medan ini hendaklah lebih daripada 4 karakter.',
@@ -468,10 +468,10 @@ const longTextSchema = z
     });
 
     //==========================================================
-    //================== stepper 3 =============================
+    //================== Maklumat Akademik =====================
     //==========================================================
 
-    const stepper3 = z.object({
+   export const _stepperMaklumatAkademik = z.object({
         sekolah: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
             .min(4, {
@@ -785,15 +785,10 @@ export const load = async ({}) => {
     // const id = parseInt(params.id);
 
     const stepperMaklumatPeribadi = await superValidate(_stepperMaklumatPeribadi);
-
-
+    const stepperMaklumatPerkhidmatan = await superValidate(_stepperMaklumatPerkhidmatan);
     const form = await superValidate(_stepperkontrak);
 
-
-
-
-
-    return { form,stepperMaklumatPeribadi };
+    return { form,stepperMaklumatPeribadi,stepperMaklumatPerkhidmatan,_stepperMaklumatAkademik };
 };
 
 export const _submitFormstepperkontrak = async (event: Event) => {
@@ -810,10 +805,32 @@ export const _submitFormstepperkontrak = async (event: Event) => {
 export const _submitFormStepperMaklumatPeribadi = async (event: Event) => {
     const formElement = event.target as HTMLFormElement;
     const formData = new FormData(formElement);
-    const stepperMaklumatPeribadi = await superValidate(formData, _stepperkontrak);
+    const stepperMaklumatPeribadi = await superValidate(formData, _stepperMaklumatPeribadi);
 
     console.log(formData.get('tarikhMulaKontrak'));
 
 
     return { stepperMaklumatPeribadi };
+};
+
+export const _submitFormStepperMaklumatPerkhidmatan = async (event: Event) => {
+    const formElement = event.target as HTMLFormElement;
+    const formData = new FormData(formElement);
+    const stepperMaklumatPerkhidmatan = await superValidate(formData, _stepperMaklumatPerkhidmatan);
+
+    console.log(formData.get('tarikhMulaKontrak'));
+
+
+    return { stepperMaklumatPerkhidmatan };
+};
+
+export const _submitFormStepperMaklumatAkademik = async (event: Event) => {
+    const formElement = event.target as HTMLFormElement;
+    const formData = new FormData(formElement);
+    const stepperMaklumatPerkhidmatan = await superValidate(formData, _stepperMaklumatAkademik);
+
+    console.log(formData.get('tarikhMulaKontrak'));
+
+
+    return { stepperMaklumatPerkhidmatan };
 };
