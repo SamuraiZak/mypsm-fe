@@ -13,7 +13,7 @@
     import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
     import { mockLookupDepartments } from '$lib/mocks/database/mockLookupDepartments';
     import { mockLookupEmploymentStatus } from '$lib/mocks/database/mockLookupEmploymentStatus';
-    import { Tooltip } from 'flowbite-svelte';
+    import { Modal, Tooltip } from 'flowbite-svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
@@ -30,6 +30,9 @@
     import { period } from '$lib/mocks/cuti/tempoh';
     import { deductionType } from '$lib/mocks/gaji/gaji-elaun/deductionType';
     import { mockSalaryAdjustmentWithKey } from '$lib/mocks/gaji/gaji-elaun/mockSalaryAdjustmentWithKey';
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { z, ZodError } from 'zod';
+
     export let noPekerja = '00001';
     let activeStepper = 3;
     let currEmployee = mockEmployees[0];
@@ -39,6 +42,10 @@
     )[0];
     let disabled = true;
     let labelBlack = !disabled;
+    let errorData: any;
+    let jenisPenambahan: any;
+    let tempohBayaran: any;
+
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
 
@@ -90,6 +97,69 @@
     let senaraiPemotongan: IntSalaryAndAllowanceDeduction[] =
         mockSalaryAndAllowanceDeduction;
     let selectedValue: any = '8';
+    let openModal: boolean = false;
+
+    const exampleFormSchema = z.object({
+        jenisPenambahan: z
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+
+        tempohBayaran: z.enum(['1', '2', '3', '4'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+    });
+
+    const submitForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+        const tempohBayaranSelector = document.getElementById(
+            'tempohBayaran',
+        ) as HTMLSelectElement;
+
+        const exampleFormData = {
+            jenisPenambahan: String(formData.get('jenisPenambahan')),
+            tempohBayaran: String(tempohBayaranSelector.value),
+        };
+
+        try {
+            const result = exampleFormSchema.parse(exampleFormData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData = { ...exampleFormData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedExamFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -401,7 +471,12 @@
         <StepperContentBody>
             <CustomTab>
                 <!-- Umum -->
-                <CustomTabContent title="Umum">
+                <CustomTabContent title="Umum"
+                    ><TextIconButton
+                        primary
+                        label="Simpan"
+                        form="umumValidation"
+                    />
                     <div class="w-full">
                         <FilterCard>
                             <FilterDateSelector
@@ -435,22 +510,49 @@
                             ]}
                         ></DynamicTable>
                     </div>
-
-                    <TextField
-                        {labelBlack}
-                        disabled={false}
-                        label="Jumlah Potongan Cuti"
-                    ></TextField>
-                    <DropdownSelect
-                        disabled={false}
-                        dropdownType="label-left-full"
-                        options={period}
-                        label="Tempoh Bayaran (Bulan)"
-                        labelBlack={false}
-                        bind:value={selectedValue}
-                    ></DropdownSelect>
+                    <div class="flex w-full flex-col gap-2">
+                        <form
+                            id="umumValidation"
+                            on:submit|preventDefault={submitForm}
+                            class="flex w-full flex-col gap-2"
+                        >
+                            <TextField
+                                {labelBlack}
+                                disabled={true}
+                                label="Jumlah Potongan Cuti"
+                            ></TextField>
+                            <DropdownSelect
+                                hasError={errorData?.tempohBayaran}
+                                dropdownType="label-left-full"
+                                id="tempohBayaran"
+                                label="Tempoh Bayaran (Bulan)"
+                                bind:value={tempohBayaran}
+                                options={[
+                                    { value: '1', name: '1' },
+                                    { value: '2', name: '2' },
+                                    { value: '3', name: '3' },
+                                    { value: '4', name: '4' },
+                                ]}
+                            ></DropdownSelect>
+                            {#if errorData?.tempohBayaran}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{errorData?.tempohBayaran[0]}</span
+                                >
+                            {/if}
+                            {#if errorData?.gred}
+                                <span
+                                    class="ml-8 font-sans text-sm italic text-system-danger"
+                                    >{errorData?.gred[0]}</span
+                                >
+                            {/if}
+                        </form>
+                    </div>
                     <SectionHeader title="Senarai Pemotongan"
-                        ><TextIconButton primary label="Tambah"
+                        ><TextIconButton
+                            primary
+                            label="Tambah"
+                            onClick={() => (openModal = true)}
                             ><SvgPlus /></TextIconButton
                         ></SectionHeader
                     >
@@ -468,7 +570,7 @@
                                     <DateSelector
                                         {labelBlack}
                                         handleDateChange
-                                        disabled={false}
+                                        disabled={true}
                                         labelType="label-200"
                                         label="Tarikh Mula"
                                         selectedDate={item.deductionStartDate}
@@ -476,7 +578,7 @@
                                     <DateSelector
                                         {labelBlack}
                                         handleDateChange
-                                        disabled={false}
+                                        disabled={true}
                                         labelType="label-200"
                                         label="Tarikh Tamat"
                                         selectedDate={item.deductionEndDate}
@@ -487,17 +589,17 @@
                                     bulan
                                 </p>
                                 <DropdownSelect
-                                    disabled={false}
+                                    disabled={true}
                                     dropdownType="label-left-200"
                                     options={deductionType}
                                     label="Jenis Bayaran"
-                                    labelBlack={false}
+                                    labelBlack={true}
                                     bind:value={item.deductionType}
                                 ></DropdownSelect>
                                 <TextField
                                     labelType="label-200"
                                     {labelBlack}
-                                    disabled={false}
+                                    disabled={true}
                                     label="Jumlah Bayaran"
                                 ></TextField>
                             </div>
@@ -578,9 +680,10 @@
                     </div>
                     <SectionHeader title="Senarai Tuntutan"
                         ><TextIconButton
-                            onClick={addFormGroup}
                             primary
-                            label="Tambah"><SvgPlus /></TextIconButton
+                            label="Tambah"
+                            onClick={() => (openModal = true)}
+                            ><SvgPlus /></TextIconButton
                         ></SectionHeader
                     >
                     {#each Object.entries(pelarasanGajiTuntutan) as [groupId, object]}
@@ -598,7 +701,7 @@
                                 <TextField
                                     labelType="label-200"
                                     {labelBlack}
-                                    disabled={false}
+                                    disabled={true}
                                     label="Nama Tuntutan"
                                     value="Bil Tuntutan Kakitangan"
                                 ></TextField>
@@ -608,7 +711,7 @@
                                     <DateSelector
                                         {labelBlack}
                                         handleDateChange
-                                        disabled={false}
+                                        disabled={true}
                                         labelType="label-200"
                                         label="Tarikh Mula"
                                         selectedDate={object.startDate}
@@ -616,7 +719,7 @@
                                     <DateSelector
                                         {labelBlack}
                                         handleDateChange
-                                        disabled={false}
+                                        disabled={true}
                                         labelType="label-200"
                                         label="Tarikh Tamat"
                                         selectedDate={object.endDate}
@@ -628,20 +731,20 @@
                                     <TextField
                                         labelType="label-200"
                                         {labelBlack}
-                                        disabled={false}
+                                        disabled={true}
                                         label="Sepatutnya Bayar"
                                     ></TextField>
                                     <TextField
                                         labelType="label-200"
                                         {labelBlack}
-                                        disabled={false}
+                                        disabled={true}
                                         label="Telah Bayar"
                                     ></TextField>
                                 </div>
                                 <TextField
                                     labelType="label-200"
                                     {labelBlack}
-                                    disabled={false}
+                                    disabled={true}
                                     label="Jumlah Potongan / Tunggakan"
                                 ></TextField>
                             </div>
@@ -651,7 +754,10 @@
                 <!-- Gred Utama -->
                 <CustomTabContent title="Pelarasan Gaji">
                     <SectionHeader title="Senarai Penambahan"
-                        ><TextIconButton primary label="Tambah"
+                        ><TextIconButton
+                            primary
+                            label="Tambah"
+                            onClick={() => (openModal = true)}
                             ><SvgPlus /></TextIconButton
                         ></SectionHeader
                     >
@@ -666,7 +772,7 @@
                                 <TextField
                                     labelType="label-200"
                                     {labelBlack}
-                                    disabled={false}
+                                    disabled={true}
                                     label="Jenis Penambahan"
                                     value="Penambahan 1"
                                 ></TextField>
@@ -676,7 +782,7 @@
                                     <DateSelector
                                         {labelBlack}
                                         handleDateChange
-                                        disabled={false}
+                                        disabled={true}
                                         labelType="label-200"
                                         label="Tarikh Mula"
                                         selectedDate={item.deductionStartDate}
@@ -684,14 +790,14 @@
                                     <DateSelector
                                         {labelBlack}
                                         handleDateChange
-                                        disabled={false}
+                                        disabled={true}
                                         labelType="label-200"
                                         label="Tarikh Tamat"
                                         selectedDate={item.deductionEndDate}
                                     ></DateSelector>
                                 </div>
                                 <DropdownSelect
-                                    disabled={false}
+                                    disabled={true}
                                     dropdownType="label-left-200"
                                     options={deductionType}
                                     label="Jenis Bayaran"
@@ -701,7 +807,7 @@
                                 <TextField
                                     labelType="label-200"
                                     {labelBlack}
-                                    disabled={false}
+                                    disabled={true}
                                     label="Jumlah Bayaran"
                                 ></TextField>
                             </div>
@@ -716,3 +822,55 @@
 <Tooltip type="dark" triggeredBy="[id^='type-']" on:show={assignContent}
     >{tooltipContent}</Tooltip
 >
+
+<Modal title="Tambah Pemotongan" bind:open={openModal}>
+    <form
+        id="modalValidation"
+        on:submit|preventDefault={submitForm}
+        class="flex w-full flex-col gap-2"
+    >
+        <div
+            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 text-black"
+        >
+            <TextField
+                hasError={errorData?.jenisPenambahan}
+                name="jenisPenambahan"
+                label="Jenis Penambahan"
+                labelType="label-200"
+                type="text"
+                bind:value={jenisPenambahan}
+            />
+            {#if errorData?.jenisPenambahan}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{errorData?.jenisPenambahan[0]}</span
+                >
+            {/if}
+            <DateSelector
+                handleDateChange
+                labelType="label-200"
+                label="Tarikh Mula"
+                selectedDate={''}
+            ></DateSelector>
+            <DateSelector
+                handleDateChange
+                labelType="label-200"
+                label="Tarikh Tamat"
+                selectedDate={''}
+            ></DateSelector>
+            <DropdownSelect
+                dropdownType="label-left-200"
+                options={deductionType}
+                label="Jenis Bayaran"
+                value={''}
+            ></DropdownSelect>
+            <TextField labelType="label-200" label="Jumlah Bayaran"></TextField>
+        </div>
+        <TextIconButton
+            primary
+            label="Simpan"
+            form="modalValidation"
+        ></TextIconButton>
+    </form>
+</Modal>
+<Toaster />
