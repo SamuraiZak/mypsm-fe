@@ -8,61 +8,26 @@
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import SvgPrinter from '$lib/assets/svg/SvgPrinter.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
-    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
-    import DynamicTable from '$lib/components/table/DynamicTable.svelte';
-    import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
-    import CustomCardHeader from '$lib/components/cards/CustomCardHeader.svelte';
-    import CustomCard from '$lib/components/cards/CustomCard.svelte';
-    import CustomCardBody from '$lib/components/cards/CustomCardBody.svelte';
-    import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
-    import SvgManifyingGlass from '$lib/assets/svg/SvgManifyingGlass.svelte';
-    import ImpactTable from '$lib/components/table/ImpactTable.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { meetings } from '$lib/mocks/mesyuarat/mesyuarat.js';
-    import { Checkbox, Radio, Tooltip } from 'flowbite-svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
-    import DataTable from '$lib/components/data-table/DataTable.svelte';
-    import DtTableHead from '$lib/components/data-table/DtTableHead.svelte';
-    import DtTableHeadCell from '$lib/components/data-table/DtTableHeadCell.svelte';
-    import DtTableRow from '$lib/components/data-table/DtTableRow.svelte';
-    import DtTableBody from '$lib/components/data-table/DtTableBody.svelte';
-    import DtTableDataCell from '$lib/components/data-table/DtTableDataCell.svelte';
-    import IconButton from '$lib/components/buttons/IconButton.svelte';
-    import SvgEllipsisCircle from '$lib/assets/svg/SvgEllipsisCircle.svelte';
-    import { permohonanKlinikPanel } from '$lib/mocks/penyokong/perubatan/permohonan-klinik-panel';
-    import { positions } from '$lib/mocks/positions/positions';
-    import FileInputField from '$lib/components/input/FileInputField.svelte';
-    import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
     import DownloadAttachment from '$lib/components/input/DownloadAttachment.svelte';
-    import { mockPerjawatanPemangkuan } from '$lib/mocks/database/mockPerjawatanPemangkuan';
     import { loanOptions } from '$lib/mocks/pinjaman-kuarters/loanOptions';
     import type {
-        CalonPemangkuan,
         DtoCalonPemangkuan,
-        IntActingApplication,
-        MesyuaratPemilihanCalonPemangkuan,
     } from '$lib/interfaces/database/actingApplication';
     import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
-    import SvgArrowLeft from '$lib/assets/svg/SvgArrowLeft.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    import { createCompareFn } from '$lib/service/services';
     import { greds } from '$lib/mocks/gred/gred.js';
-    import Form from '$lib/components/form/Form.svelte';
-    import SvgArrowDown from '$lib/assets/svg/SvgArrowDown.svelte';
-    import SvgBlock from '$lib/assets/svg/SvgBlock.svelte';
-    import SvgDoubleTick from '$lib/assets/svg/SvgDoubleTick.svelte';
-    import DateSelector from '$lib/components/input/DateSelector.svelte';
     import {
         fileSelectionList,
         selectedRecordId,
     } from '$lib/stores/globalState';
     import { onMount } from 'svelte';
-    import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
 
     export let disabled: boolean = true;
 

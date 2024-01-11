@@ -1,11 +1,9 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
-    import OptionButton from '$lib/components/buttons/OptionButton.svelte';
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
-    import CustomTable from '$lib/components/table/CustomTable.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import { mockPromotion } from '$lib/mocks/kenaikan-pangkat/mockPromotion';
 </script>

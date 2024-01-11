@@ -17,8 +17,6 @@
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
-    import CustomTable from '$lib/components/table/CustomTable.svelte';
-    import { mockCalonPemangkuanList } from '$lib/mocks/perjawatan/pemangkuan/senaraiCalonPemangkuan';
     import { fileSelectionList } from '$lib/stores/globalState';
     import { error } from '@sveltejs/kit';
     import { onMount } from 'svelte';
