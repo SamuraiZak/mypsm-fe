@@ -27,6 +27,7 @@
     import { Tooltip } from 'flowbite-svelte';
     import DownloadAttachment from '$lib/components/input/DownloadAttachment.svelte';
     import { mockEmployeeDocumentLists } from '$lib/mocks/database/mockEmployeeDocumentLists';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
 
     export let disabled: boolean = true;
     export let selectedFiles: any = [];
@@ -106,13 +107,7 @@
         },
     ];
 
-    function currencyFormatter(amount: number) {
-        const formatter = new Intl.NumberFormat('ms-MY', {
-            style: 'currency',
-            currency: 'MYR',
-        });
-        return formatter.format(Number(amount)).toString();
-    }
+
     let tooltipContent: string = '';
     const itkaTooltip: string = 'ITKA bermaksud ...';
     const itpTooltip: string = 'ITP bermaksud ...';
@@ -445,7 +440,7 @@
                             {disabled}
                             id="itka"
                             label={'ITKA'}
-                            value={currencyFormatter(123.45)}
+                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -453,7 +448,7 @@
                             {disabled}
                             id="itp"
                             label={'ITP'}
-                            value={currencyFormatter(123.45)}
+                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -461,7 +456,7 @@
                             {disabled}
                             id="epw"
                             label={'EPW'}
-                            value={currencyFormatter(123.45)}
+                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -469,7 +464,7 @@
                             {disabled}
                             id="cola"
                             label={'COLA'}
-                            value={currencyFormatter(123.45)}
+                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         <!-- Tooltip body -->
                         <Tooltip

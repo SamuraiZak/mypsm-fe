@@ -2,6 +2,7 @@
     import AccordianField from '$lib/components/input/AccordianField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
     // import { getCurrentService } from '$lib/service/employees/service-service';
     import { Tooltip } from 'flowbite-svelte';
     import { onMount } from 'svelte';
@@ -48,14 +49,6 @@
                     tooltipContent = 'no tooltip available';
             }
         }
-    }
-
-    function currencyFormatter(amount: number) {
-        const formatter = new Intl.NumberFormat('ms-MY', {
-            style: 'currency',
-            currency: 'MYR',
-        });
-        return formatter.format(Number(amount)).toString();
     }
 
     onMount(async () => {
@@ -249,13 +242,13 @@
                 disabled={!editable}
                 id="tanggaGaji"
                 label={'Tangga Gaji'}
-                value={currencyFormatter(3452)}
+                value={CurrencyHelper.formatCurrency(3452)}
             ></TextField>
             <TextField
                 disabled={!editable}
                 id="gajiPokok"
                 label={'Gaji Pokok'}
-                value={currencyFormatter(3452)}
+                value={CurrencyHelper.formatCurrency(3452)}
             ></TextField>
         </div>
         <div class="space-y-2.5">

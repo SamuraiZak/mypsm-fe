@@ -28,6 +28,7 @@
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import ContractAssessmentForm from './contract-assessment-form/contractAssessmentForm.svelte';
     import { years } from '$lib/mocks/dateSelection/years';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
     export let data;
     let employeeLists: SelectOptionType<any>[] = [];
     let selectedSupporter: string;
@@ -141,13 +142,6 @@
     function dateFormatter(date: string) {
         const [year, month, day] = date.split('/');
         return day + '-' + month + '-' + year;
-    }
-    function currencyFormatter(amount: number) {
-        const formatter = new Intl.NumberFormat('ms-MY', {
-            style: 'currency',
-            currency: 'MYR',
-        });
-        return formatter.format(Number(amount)).toString();
     }
     let tooltipContent: string = '';
     const itkaTooltip: string = 'ITKA bermaksud ...';
@@ -471,7 +465,7 @@
                             {disabled}
                             id="gaji"
                             label={'Gaji'}
-                            value={currencyFormatter(parseInt(item.salary))}
+                            value={CurrencyHelper.formatCurrency(parseInt(item.salary))}
                         ></TextField>
                     {:else}
                         <TextField

@@ -26,6 +26,7 @@
     import { onMount } from 'svelte';
     import { months } from '$lib/mocks/dateSelection/months';
     import { mockSalaryIncrementRecord } from '$lib/mocks/gaji/rekodKenaikanGaji/mockSalaryIncrementRecord';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
 
     let editPromotionInfo = false;
     let detailsPromotionInfo = false;
@@ -33,13 +34,6 @@
     let selectedValue: any;
     let selectedMonth: any;
 
-    function currencyFormatter(amount: number) {
-        const formatter = new Intl.NumberFormat('ms-MY', {
-            style: 'currency',
-            currency: 'MYR',
-        });
-        return formatter.format(Number(amount)).toString();
-    }
     onMount(() => {
         selectedValue = placements[3].value;
         selectedMonth = months[6].value;
@@ -262,26 +256,26 @@
                         />
                         <TextField
                             label="Gaji Minimum - Gaji Maksimum E19"
-                            value={currencyFormatter(1335) +
+                            value={CurrencyHelper.formatCurrency(1335) +
                                 ' - ' +
-                                currencyFormatter(4005)}
+                                CurrencyHelper.formatCurrency(4005)}
                             disabled
                         ></TextField>
                         <TextField
                             label="Kenaikan Gaji Tahunan E19"
-                            value={currencyFormatter(100)}
+                            value={CurrencyHelper.formatCurrency(100)}
                             disabled
                         ></TextField>
                         <TextField
                             label="Gaji Minimum - Gaji Maksimum E19"
-                            value={currencyFormatter(2254) +
+                            value={CurrencyHelper.formatCurrency(2254) +
                                 ' - ' +
-                                currencyFormatter(4694)}
+                                CurrencyHelper.formatCurrency(4694)}
                             disabled
                         ></TextField>
                         <TextField
                             label="Kenaikan Gaji Tahunan E19"
-                            value={currencyFormatter(115)}
+                            value={CurrencyHelper.formatCurrency(115)}
                             disabled
                         ></TextField>
                         <TextField

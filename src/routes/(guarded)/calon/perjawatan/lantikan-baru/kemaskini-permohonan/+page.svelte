@@ -249,13 +249,6 @@
         const [year, month, day] = date.split('/');
         return day + '-' + month + '-' + year;
     }
-    function currencyFormatter(amount: number) {
-        const formatter = new Intl.NumberFormat('ms-MY', {
-            style: 'currency',
-            currency: 'MYR',
-        });
-        return formatter.format(Number(amount)).toString();
-    }
     let tooltipContent: string = '';
     const itkaTooltip: string = 'ITKA bermaksud ...';
     const itpTooltip: string = 'ITP bermaksud ...';
@@ -574,7 +567,7 @@
                             {disabled}
                             id="gaji"
                             label={'Gaji'}
-                            value={currencyFormatter(parseInt(item.salary))}
+                            value={item.salary}
                         ></TextField>
                     {:else}
                         <TextField
@@ -956,13 +949,13 @@
                             disabled={true}
                             id="tanggaGaji"
                             label={'Tangga Gaji'}
-                            value={currencyFormatter(1234.56)}
+                            value={1234.56}
                         ></TextField>
                         <TextField
                             disabled={true}
                             id="gajiPokok"
                             label={'Gaji Pokok'}
-                            value={currencyFormatter(1234.56)}
+                            value={1234.56}
                         ></TextField>
                     </div>
                     <div class="space-y-2.5">
@@ -972,7 +965,7 @@
                             disabled={true}
                             id="itka"
                             label={'ITKA'}
-                            value={currencyFormatter(123.45)}
+                            value={123.45}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -980,7 +973,7 @@
                             disabled={true}
                             id="itp"
                             label={'ITP'}
-                            value={currencyFormatter(123.45)}
+                            value={123.45}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -988,7 +981,7 @@
                             disabled={true}
                             id="epw"
                             label={'EPW'}
-                            value={currencyFormatter(123.45)}
+                            value={123.45}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -996,7 +989,7 @@
                             disabled={true}
                             id="cola"
                             label={'COLA'}
-                            value={currencyFormatter(123.45)}
+                            value={123.45}
                         ></TextField>
                         <!-- Tooltip body -->
                         <Tooltip

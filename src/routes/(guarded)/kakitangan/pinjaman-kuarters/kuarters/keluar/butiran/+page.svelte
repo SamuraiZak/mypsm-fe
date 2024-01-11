@@ -14,13 +14,13 @@
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
     import { mockCurrentService } from '$lib/mocks/database/mockCurrentService';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
     import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions';
     import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
     import { mockRekodKuarters } from '$lib/mocks/pinjaman-kuarters/mockRekodKuarters';
     import { mockRekodPinjaman } from '$lib/mocks/pinjaman-kuarters/mockRekodPinjaman';
-    import { currencyFormatter } from '$lib/service/services';
     import {
         fileSelectionList,
         selectedRecordId,
@@ -308,7 +308,7 @@
                                             labelBlack
                                             disabled={rentRate != 'gredExceed'}
                                             label=""
-                                            value={currencyFormatter(0)}
+                                            value={CurrencyHelper.formatCurrency(0)}
                                         ></TextField>
                                     </ul>
                                 </div></Radio

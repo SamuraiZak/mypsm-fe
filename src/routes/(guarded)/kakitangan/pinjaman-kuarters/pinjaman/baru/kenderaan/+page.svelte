@@ -13,6 +13,7 @@
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
     import { mockCurrentService } from '$lib/mocks/database/mockCurrentService';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
     import { mockEmploymentPensions } from '$lib/mocks/database/mockEmploymentPensions';
@@ -32,7 +33,6 @@
         vehicleCondition,
         vehicleType,
     } from '$lib/mocks/pinjaman-kuarters/pinjamanKenderaanButiran';
-    import { currencyFormatter } from '$lib/service/services';
     import {
         fileSelectionList,
         selectedRecordId,
@@ -258,19 +258,19 @@
                 {disabled}
                 {labelBlack}
                 label={'Gaji Pokok'}
-                value={currencyFormatter(currEmpSalary.grossSalary)}
+                value={CurrencyHelper.formatCurrency(currEmpSalary.grossSalary)}
             ></TextField>
             <TextField
                 {disabled}
                 {labelBlack}
                 label={'Jumlah Elaun-elaun'}
-                value={currencyFormatter(currEmpSalary.allowances)}
+                value={CurrencyHelper.formatCurrency(currEmpSalary.allowances)}
             ></TextField>
             <TextField
                 {disabled}
                 {labelBlack}
                 label={'Jumlah Potongan'}
-                value={currencyFormatter(currEmpSalary.salaryDeduction)}
+                value={CurrencyHelper.formatCurrency(currEmpSalary.salaryDeduction)}
             ></TextField>
         </StepperContentBody>
     </StepperContent>
@@ -294,11 +294,11 @@
                 {labelBlack}
                 {disabled}
                 label={'Kelayakan Pembiayaan Maksimum'}
-                value={currencyFormatter(30000)}
+                value={CurrencyHelper.formatCurrency(30000)}
             ></TextField>
             <TextField
                 label={'Jumlah yang Dipohon'}
-                value={currencyFormatter(0)}
+                value={CurrencyHelper.formatCurrency(0)}
             ></TextField>
             <DropdownSelect
                 dropdownType="label-left-full"
@@ -351,7 +351,7 @@
             ></DateSelector>
             <TextField
                 label={'Harga Bersih (seperti ditetapkan dalam WP 9.3'}
-                value={currencyFormatter(0)}
+                value={CurrencyHelper.formatCurrency(0)}
             ></TextField>
         </StepperContentBody>
     </StepperContent>
@@ -384,7 +384,7 @@
                 ></DateSelector>
                 <TextField
                     label={'Jumlah Pinjaman/Pembiayaan'}
-                    value={currencyFormatter(0)}
+                    value={CurrencyHelper.formatCurrency(0)}
                 ></TextField>
                 <DateSelector
                     handleDateChange
@@ -392,7 +392,7 @@
                 ></DateSelector>
                 <TextField
                     label={'Jumlah Ansuran Terakhir Dibayar'}
-                    value={currencyFormatter(0)}
+                    value={CurrencyHelper.formatCurrency(0)}
                 ></TextField>
 
                 <TextField

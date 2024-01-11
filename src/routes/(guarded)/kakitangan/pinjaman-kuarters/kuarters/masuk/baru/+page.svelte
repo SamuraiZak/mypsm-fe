@@ -11,13 +11,13 @@
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
     import { mockCurrentService } from '$lib/mocks/database/mockCurrentService';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
     import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions';
     import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
     import { mockRekodKuarters } from '$lib/mocks/pinjaman-kuarters/mockRekodKuarters';
     import { selectedRecordId } from '$lib/stores/globalState';
-    import { currencyFormatter } from '$lib/service/services';
     import { fileSelectionList } from '$lib/stores/globalState';
     import { Checkbox } from 'flowbite-svelte';
     import { onMount } from 'svelte';
@@ -256,7 +256,7 @@
                 {disabled}
                 {labelBlack}
                 label="Gaji Sekarang (Gaji Pokok / Hakiki) (RM)"
-                value={currencyFormatter(3532.54)}
+                value={CurrencyHelper.formatCurrency(3532.54)}
             ></TextField>
         </StepperContentBody>
     </StepperContent>

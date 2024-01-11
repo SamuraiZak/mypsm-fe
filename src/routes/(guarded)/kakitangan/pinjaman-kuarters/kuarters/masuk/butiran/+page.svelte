@@ -16,13 +16,12 @@
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
     import { mockCurrentService } from '$lib/mocks/database/mockCurrentService';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
     import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions';
     import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
     import { mockRekodKuarters } from '$lib/mocks/pinjaman-kuarters/mockRekodKuarters.js';
-    import { mockRekodPinjaman } from '$lib/mocks/pinjaman-kuarters/mockRekodPinjaman';
-    import { currencyFormatter } from '$lib/service/services';
     import {
         fileSelectionList,
         selectedRecordId,
@@ -239,7 +238,7 @@
                 {disabled}
                 {labelBlack}
                 label="Gaji Sekarang yang Diterima (Gaji Pokok / Hakiki) (RM)"
-                value={currencyFormatter(4123.22)}
+                value={CurrencyHelper.formatCurrency(4123.22)}
             ></TextField>
             <TextField
                 {disabled}
@@ -297,7 +296,7 @@
                 {disabled}
                 {labelBlack}
                 label="Gaji Sekarang (Gaji Pokok / Hakiki) (RM)"
-                value={currencyFormatter(3532.54)}
+                value={CurrencyHelper.formatCurrency(3532.54)}
             ></TextField>
         </StepperContentBody>
     </StepperContent>
@@ -412,13 +411,13 @@
                             {disabled}
                             {labelBlack}
                             label="Gaji Pokok (RM)"
-                            value={currencyFormatter(4672.56)}
+                            value={CurrencyHelper.formatCurrency(4672.56)}
                         ></TextField>
                         <TextField
                             {disabled}
                             {labelBlack}
                             label="Elaun - Elaun (RM)"
-                            value={currencyFormatter(2000)}
+                            value={CurrencyHelper.formatCurrency(2000)}
                         ></TextField>
                     </div>
                 </CustomTabContent>
@@ -469,20 +468,20 @@
                             {disabled}
                             {labelBlack}
                             label="Nilai Sewaan Bulanan"
-                            value={currencyFormatter(900)}
+                            value={CurrencyHelper.formatCurrency(900)}
                         ></TextField>
                         <TextField
                             {disabled}
                             {labelBlack}
                             label="Deposit (2 Bulan nilai sewaan)"
-                            value={currencyFormatter(1800)}
+                            value={CurrencyHelper.formatCurrency(1800)}
                         ></TextField>
 
                         <TextField
                             {disabled}
                             {labelBlack}
                             label="Deposit (Air dan Elektrik)"
-                            value={currencyFormatter(300)}
+                            value={CurrencyHelper.formatCurrency(300)}
                         ></TextField>
                     </div>
                 </CustomTabContent>

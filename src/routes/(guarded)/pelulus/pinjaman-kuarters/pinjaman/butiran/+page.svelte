@@ -25,7 +25,6 @@
     import { loanOptions } from '$lib/mocks/pinjaman-kuarters/loanOptions';
     import { loanPaybackMonthsOptions } from '$lib/mocks/pinjaman-kuarters/loanPaybackDurationOptions';
     import { mockRekodPinjaman } from '$lib/mocks/pinjaman-kuarters/mockRekodPinjaman';
-    import { currencyFormatter } from '$lib/service/services';
     import {
         fileSelectionList,
         selectedRecordId,
@@ -33,6 +32,7 @@
     import { onMount } from 'svelte';
     import FormButton from './../../../../../../lib/components/buttons/FormButton.svelte';
     import BadgeField from '$lib/components/input/BadgeField.svelte';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
 
     let currEmpLoanRec = mockRekodPinjaman.filter(
         (rec) => rec.id == $selectedRecordId,
@@ -298,19 +298,19 @@
                 {disabled}
                 {labelBlack}
                 label={'Gaji Pokok'}
-                value={currencyFormatter(currEmpSalary.grossSalary)}
+                value={CurrencyHelper.formatCurrency(currEmpSalary.grossSalary)}
             ></TextField>
             <TextField
                 {disabled}
                 {labelBlack}
                 label={'Jumlah Elaun-elaun'}
-                value={currencyFormatter(currEmpSalary.allowances)}
+                value={CurrencyHelper.formatCurrency(currEmpSalary.allowances)}
             ></TextField>
             <TextField
                 {disabled}
                 {labelBlack}
                 label={'Jumlah Potongan'}
-                value={currencyFormatter(currEmpSalary.salaryDeduction)}
+                value={CurrencyHelper.formatCurrency(currEmpSalary.salaryDeduction)}
             ></TextField>
         </StepperContentBody>
     </StepperContent>
@@ -340,7 +340,7 @@
                 {labelBlack}
                 {disabled}
                 label={'Jumlah yang Dipohon (RM)'}
-                value={currencyFormatter(currEmpLoanRec[0].total)}
+                value={CurrencyHelper.formatCurrency(currEmpLoanRec[0].total)}
             ></TextField>
             <DropdownSelect
                 {labelBlack}

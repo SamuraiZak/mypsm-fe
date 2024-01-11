@@ -27,7 +27,6 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
-    import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { getEmployees } from '$lib/service/employees/staff-service';
     import type { SelectOptionType } from 'flowbite-svelte';
     import { onMount } from 'svelte';
@@ -198,13 +197,6 @@
     function dateFormatter(date: string) {
         const [year, month, day] = date.split('/');
         return day + '-' + month + '-' + year;
-    }
-    function currencyFormatter(amount: number) {
-        const formatter = new Intl.NumberFormat('ms-MY', {
-            style: 'currency',
-            currency: 'MYR',
-        });
-        return formatter.format(Number(amount)).toString();
     }
 </script>
 
@@ -496,7 +488,7 @@
                             {disabled}
                             id="gaji"
                             label={'Gaji'}
-                            value={currencyFormatter(parseInt(item.salary))}
+                            value={item.salary}
                         ></TextField>
                     {:else}
                         <TextField
@@ -899,19 +891,3 @@
         </StepperContentBody>
     </StepperContent>
 </Stepper>
-
-<!-- content header starts here -->
-<!-- <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader
-        title="Semak Maklumat Lantikan Baru"
-        description="Hal-hal berkaitan Lantikan Baru. Sila semak dan simpan pautan setelah selesai."
-    >
-        <FormButton
-            type="back"
-            addLabel="Cetak"
-            onClick={() => {
-                goto('../lantikan-baru');
-            }}
-        />
-    </ContentHeader>
-</section> -->

@@ -8,7 +8,6 @@
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    import { currencyFormatter } from '$lib/service/services';
     import { meetings } from '$lib/mocks/mesyuarat/mesyuarat';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import { months } from '$lib/mocks/dateSelection/months';
@@ -28,6 +27,7 @@
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import IntAllowancesFormGroup from '$lib/components/final-salary-form-group/AllowancesFormGroup.svelte';
     import SpecialDeductionFormGroup from '$lib/components/final-salary-form-group/SpecialDeductionFormGroup.svelte';
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper.js';
     export let data;
     export let noPekerja = data.record.currentEmployee?.employeeNumber;
     let activeStepper = 0;
@@ -649,13 +649,13 @@
                             disabled={false}
                             id="tanggaGaji"
                             label={'Tangga Gaji'}
-                            value={currencyFormatter(1234.56)}
+                            value={CurrencyHelper.formatCurrency(1234.56)}
                         ></TextField>
                         <TextField
                             disabled={false}
                             id="gajiPokok"
                             label={'Gaji Pokok'}
-                            value={currencyFormatter(1234.56)}
+                            value={CurrencyHelper.formatCurrency(1234.56)}
                         ></TextField>
                     </div>
                     <div class="space-y-2.5">
@@ -665,7 +665,7 @@
                             disabled={false}
                             id="itka"
                             label={'ITKA'}
-                            value={currencyFormatter(123.45)}
+                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -673,7 +673,7 @@
                             disabled={false}
                             id="itp"
                             label={'ITP'}
-                            value={currencyFormatter(123.45)}
+                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -681,7 +681,7 @@
                             disabled={false}
                             id="epw"
                             label={'EPW'}
-                            value={currencyFormatter(123.45)}
+                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -689,7 +689,7 @@
                             disabled={false}
                             id="cola"
                             label={'COLA'}
-                            value={currencyFormatter(123.45)}
+                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         <!-- Tooltip body -->
                         <Tooltip
@@ -728,7 +728,7 @@
                         >JUMLAH KESELURUHAN GAJI AKHIR:
                     </b>
                     <p class="min-w-[200px]">
-                        {currencyFormatter(overallFinalSalary)}
+                        {CurrencyHelper.formatCurrency(overallFinalSalary)}
                     </p>
                 </div>
                 <div
@@ -786,7 +786,7 @@
                                 labelBlack={true}
                                 labelType="label-fit"
                                 label="JUMLAH BAYARAN ELAUN"
-                                value={currencyFormatter(totalAllowance)}
+                                value={CurrencyHelper.formatCurrency(totalAllowance)}
                             />
                         </div>
                     </div>
@@ -825,7 +825,7 @@
                                 labelBlack={true}
                                 labelType="label-fit"
                                 label="JUMLAH TOLAKAN"
-                                value={currencyFormatter(totalSpecialDeduction)}
+                                value={CurrencyHelper.formatCurrency(totalSpecialDeduction)}
                             ></TextField>
                         </div>
                     </div>
