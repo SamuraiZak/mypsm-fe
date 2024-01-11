@@ -48,7 +48,7 @@
     }
     // ============== Form Validation
     let errorData: any;
-    const submitForm = async (event: Event) => {
+    export const submitForm = async (event: Event) => {
         const formDetail = new FormData(event.target as HTMLFormElement);
         const getTarikhMulaSetengah = document.getElementById(
             'tarikhMulaSetengah',
@@ -139,11 +139,7 @@
     <div
         class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
     >
-        <SectionHeader title="Cuti Menjaga Anak Tanpa Gaji"><TextIconButton
-            primary
-            label="test validation"
-            form="formValidation"
-        /></SectionHeader>
+        <SectionHeader title="Cuti Menjaga Anak Tanpa Gaji"></SectionHeader>
         <form
             id="formValidation"
             on:submit|preventDefault={submitForm}
@@ -240,22 +236,16 @@
                 </div>
             </div>
         </form>
-        <TextField
-                    disabled
-                    label="Bilangan Hari"
-                    value="7"
-                ></TextField>
+        <TextField disabled label="Bilangan Hari" value="7"></TextField>
     </div>
     <div class="flex max-h-full w-full flex-col items-start justify-start">
-        <SectionHeader title="Cuti Menjaga Anak Tanpa Gaji yang telah diambil sepanjang perkhidmatan"></SectionHeader>
-        <DynamicTable
-            tableItems={tarikh}
-        ></DynamicTable>
+        <SectionHeader
+            title="Cuti Menjaga Anak Tanpa Gaji yang telah diambil sepanjang perkhidmatan"
+        ></SectionHeader>
+        <DynamicTable tableItems={tarikh}></DynamicTable>
     </div>
     <div class="flex max-h-full w-full flex-col items-start justify-start">
         <SectionHeader title="Maklumat Anak"></SectionHeader>
-        <DynamicTable
-            tableItems={maklumatAnak}
-        ></DynamicTable>
+        <DynamicTable tableItems={maklumatAnak}></DynamicTable>
     </div>
 </section>
