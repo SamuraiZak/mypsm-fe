@@ -53,8 +53,6 @@ export const load = async ({ fetch }) => {
 export const _submitActingDirectorResultForm = async (event: Event) => {
     const formElement = event.target as HTMLFormElement;
     const formData = new FormData(formElement);
-    const dropdownSelection = document.getElementById('amendmentDropdown');
-    const requestedPlacementSelection = document.getElementById('requestedPlacementAmendment');
 
     const form = await superValidate(formData, _amendmentOfPlacementApplicationSchema);
 

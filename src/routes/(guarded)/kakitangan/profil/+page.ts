@@ -1,7 +1,5 @@
-// import { goto } from '$app/navigation';
-import api from '$lib/services/core/ky.service.js';
-import { error, fail } from '@sveltejs/kit';
-// import toast from 'svelte-french-toast';
+import { fail } from '@sveltejs/kit';
+
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
@@ -281,8 +279,6 @@ const dateStepper2max = z.coerce
     .max(new Date(), {
         message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
     });
-
-
 
 export const _stepperMaklumatPerkhidmatan = z.object({
     faedahPersaraanPerkhidmatan: z.enum(['true', 'false'], {
@@ -778,7 +774,7 @@ export const _approverResultSchema = z.object({
 //=====================================================
 //=====================================================
 
-export const load = async ({}) => {
+export const load = async () => {
     // const id = parseInt(params.id);
 
     const stepperMaklumatPeribadi = await superValidate(
