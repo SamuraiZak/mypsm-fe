@@ -44,7 +44,20 @@
     let labelBlack = !disabled;
     let errorData: any;
     let jenisPenambahan: any;
+    let totalPayment: any;
     let tempohBayaran: any;
+    let paymentType: any;
+    let endDate: string;
+    let startDate: string;
+    let effectiveDate: string;
+    let gred: any;
+    let salary: any;
+    let itka: any;
+    let housingSchemeType: any;
+    let totalHousingScheme: any;
+    let cola: any;
+    let month: any;
+    let total: any;
 
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
@@ -99,7 +112,29 @@
     let selectedValue: any = '8';
     let openModal: boolean = false;
 
+    const dateScheme = z.coerce
+        .date({
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_date'
+                        ? 'Tarikh tidak boleh dibiar kosong.'
+                        : defaultError,
+            }),
+        })
+        .min(new Date(), {
+            message: 'Tarikh tidak boleh kurang dari tarikh semasa.',
+        });
+
     const exampleFormSchema = z.object({
+        startDate: dateScheme.refine((value) => value >= new Date(endDate), {
+            message:
+                'Tidak boleh kurang daripada tarikh permohonan bersara awal',
+        }),
+
+        endDate: dateScheme.refine((value) => value <= new Date(startDate), {
+            message: 'Tidak boleh lebih daripada tarikh bersara awal',
+        }),
+
         jenisPenambahan: z
             .string({ required_error: 'Medan ini tidak boleh kosong.' })
             .min(4, {
@@ -110,6 +145,95 @@
             })
             .trim(),
 
+        salary: z
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+
+        itka: z
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+
+        housingSchemeType: z
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+
+        totalHousingScheme: z
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+
+        cola: z
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+
+        month: z
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+
+        total: z
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+
+        totalPayment: z
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
+            .min(1, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+
+        paymentType: z.enum(['1', '2'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+
         tempohBayaran: z.enum(['1', '2', '3', '4'], {
             errorMap: (issue, { defaultError }) => ({
                 message:
@@ -118,6 +242,18 @@
                         : defaultError,
             }),
         }),
+
+        gred: z
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+
+        effectiveDate: dateScheme,
     });
 
     const submitForm = async (event: Event) => {
@@ -125,10 +261,26 @@
         const tempohBayaranSelector = document.getElementById(
             'tempohBayaran',
         ) as HTMLSelectElement;
+        const paymentTypeSelector = document.getElementById(
+            'paymentType',
+        ) as HTMLSelectElement;
 
         const exampleFormData = {
             jenisPenambahan: String(formData.get('jenisPenambahan')),
+            totalPayment: String(formData.get('totalPayment')),
             tempohBayaran: String(tempohBayaranSelector.value),
+            paymentType: String(paymentTypeSelector.value),
+            startDate: String(formData.get('startDate')),
+            endDate: String(formData.get('endDate')),
+            effectiveDate: String(formData.get('effectiveDate')),
+            gred: String(formData.get('gred')),
+            salary: String(formData.get('salary')),
+            itka: String(formData.get('itka')),
+            housingSchemeType: String(formData.get('housingSchemeType')),
+            totalHousingScheme: String(formData.get('totalHousingScheme')),
+            cola: String(formData.get('cola')),
+            month: String(formData.get('month')),
+            total: String(formData.get('total')),
         };
 
         try {
@@ -471,12 +623,7 @@
         <StepperContentBody>
             <CustomTab>
                 <!-- Umum -->
-                <CustomTabContent title="Umum"
-                    ><TextIconButton
-                        primary
-                        label="Simpan"
-                        form="umumValidation"
-                    />
+                <CustomTabContent title="Umum">
                     <div class="w-full">
                         <FilterCard>
                             <FilterDateSelector
@@ -494,7 +641,12 @@
                         </FilterCard>
                     </div>
                     <SectionHeader title="Rekod Cuti Kakitangan"
-                    ></SectionHeader>
+                        ><TextIconButton
+                            primary
+                            label="Simpan"
+                            form="umumValidation"
+                        /></SectionHeader
+                    >
                     <div class="w-full">
                         <DynamicTable
                             tableItems={mockEmployeeLeaveRecord}
@@ -538,12 +690,6 @@
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
                                     >{errorData?.tempohBayaran[0]}</span
-                                >
-                            {/if}
-                            {#if errorData?.gred}
-                                <span
-                                    class="ml-8 font-sans text-sm italic text-system-danger"
-                                    >{errorData?.gred[0]}</span
                                 >
                             {/if}
                         </form>
@@ -609,75 +755,206 @@
 
                 <!-- Pemangkuan -->
                 <CustomTabContent title="Pemangkuan">
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+                    <SectionHeader
+                        ><TextIconButton
+                            primary
+                            label="Simpan"
+                            form="pemangkuanValidation"
+                        /></SectionHeader
                     >
-                        <DateSelector
-                            {labelBlack}
-                            handleDateChange
-                            disabled={false}
-                            label="Tarikh Berkuatkuasa"
-                            selectedDate="2023-10-01"
-                        ></DateSelector>
-                        <TextField
-                            {labelBlack}
-                            disabled={false}
-                            label="Gred"
-                            value={currEmployeeGrade.code}
-                        ></TextField>
-                        <TextField
-                            {labelBlack}
-                            disabled={false}
-                            label="Gaji Pokok"
-                        ></TextField>
-                        <TextField
-                            {labelBlack}
-                            hasTooltip
-                            toolTipID="type-itka"
-                            disabled={false}
-                            label="ITKA"
-                        ></TextField>
-                        <TextField
-                            {labelBlack}
-                            disabled={false}
-                            label="Jenis Skim Perumahan"
-                            value="Insentif Tetap Perumahan (ITP)"
-                        ></TextField>
-                        <TextField
-                            {labelBlack}
-                            disabled={false}
-                            label="Jumlah Skim Perumahan"
-                        ></TextField>
-                        <TextField
-                            {labelBlack}
-                            hasTooltip
-                            toolTipID="type-cola"
-                            disabled={false}
-                            label="COLA"
-                        ></TextField>
-                        <div
-                            class="flex w-full flex-row justify-evenly gap-2.5"
+
+                    <div
+                        class="flex w-full flex-col gap-2 gap-2.5 border-b border-bdr-primary pb-5"
+                    >
+                        <form
+                            id="pemangkuanValidation"
+                            on:submit|preventDefault={submitForm}
+                            class="flex w-full flex-col gap-2"
                         >
-                            <label
-                                for=""
-                                class="w-[220px] min-w-[220px] text-sm font-medium text-txt-tertiary"
-                                >Tarikh Pergerakan Gaji dan Jumlah (RM)</label
+                            <DateSelector
+                                hasError={errorData?.effectiveDate}
+                                name="effectiveDate"
+                                handleDateChange
+                                label="Tarikh Berkuatkuasa"
+                                bind:selectedDate={effectiveDate}
+                            ></DateSelector>
+                            {#if errorData?.effectiveDate}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{errorData?.effectiveDate[0]}</span
+                                >
+                            {/if}
+                            <!-- <TextField
+                                {labelBlack}
+                                disabled={false}
+                                label="Gred"
+                                value={currEmployeeGrade.code}
+                            ></TextField> -->
+                            <TextField
+                                hasError={errorData?.gred}
+                                name="gred"
+                                label="Gred"
+                                type="text"
+                                bind:value={gred}
+                            />
+                            {#if errorData?.gred}
+                                <span
+                                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                                    >{errorData?.gred[0]}</span
+                                >
+                            {/if}
+                            <!-- <TextField
+                                {labelBlack}
+                                disabled={false}
+                                label="Gaji Pokok"
+                            ></TextField> -->
+                            <TextField
+                                hasError={errorData?.salary}
+                                name="salary"
+                                label="Gaji Pokok"
+                                type="text"
+                                bind:value={salary}
+                            />
+                            {#if errorData?.salary}
+                                <span
+                                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                                    >{errorData?.salary[0]}</span
+                                >
+                            {/if}
+                            <!-- <TextField
+                                {labelBlack}
+                                hasTooltip
+                                toolTipID="type-itka"
+                                disabled={false}
+                                label="ITKA"
+                            ></TextField> -->
+                            <TextField
+                                hasTooltip
+                                toolTipID="type-itka"
+                                hasError={errorData?.itka}
+                                name="itka"
+                                label="ITKA"
+                                type="text"
+                                bind:value={itka}
+                            />
+                            {#if errorData?.itka}
+                                <span
+                                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                                    >{errorData?.itka[0]}</span
+                                >
+                            {/if}
+                            <!-- <TextField
+                                {labelBlack}
+                                disabled={false}
+                                label="Jenis Skim Perumahan"
+                                value="Insentif Tetap Perumahan (ITP)"
+                            ></TextField> -->
+                            <TextField
+                                hasError={errorData?.housingSchemeType}
+                                name="housingSchemeType"
+                                label="Jenis Skim Perumahan"
+                                type="text"
+                                bind:value={housingSchemeType}
+                            />
+                            {#if errorData?.housingSchemeType}
+                                <span
+                                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                                    >{errorData?.housingSchemeType[0]}</span
+                                >
+                            {/if}
+                            <!-- <TextField
+                                {labelBlack}
+                                disabled={false}
+                                label="Jumlah Skim Perumahan"
+                            ></TextField> -->
+                            <TextField
+                                hasError={errorData?.totalHousingScheme}
+                                name="totalHousingScheme"
+                                label="Jumlah Skim Perumahan"
+                                type="text"
+                                bind:value={totalHousingScheme}
+                            />
+                            {#if errorData?.totalHousingScheme}
+                                <span
+                                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                                    >{errorData?.totalHousingScheme[0]}</span
+                                >
+                            {/if}
+                            <!-- <TextField
+                                {labelBlack}
+                                hasTooltip
+                                toolTipID="type-cola"
+                                disabled={false}
+                                label="COLA"
+                            ></TextField> -->
+                            <TextField
+                                hasTooltip
+                                toolTipID="type-cola"
+                                hasError={errorData?.cola}
+                                name="cola"
+                                label="COLA"
+                                type="text"
+                                bind:value={cola}
+                            />
+                            {#if errorData?.cola}
+                                <span
+                                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                                    >{errorData?.cola[0]}</span
+                                >
+                            {/if}
+                            <div
+                                class="flex w-full flex-row justify-evenly gap-2.5"
                             >
-                            <TextField
-                                labelType="label-fit"
-                                {labelBlack}
-                                disabled={false}
-                                label="Bulan"
-                                value={months[6].name}
-                            ></TextField>
-                            <TextField
-                                labelType="label-fit"
-                                {labelBlack}
-                                disabled={false}
-                                label="Jumlah"
-                            ></TextField>
-                        </div>
+                                <label
+                                    for=""
+                                    class="w-[220px] min-w-[220px] text-sm font-medium"
+                                    >Tarikh Pergerakan Gaji dan Jumlah (RM)</label
+                                >
+                                <!-- <TextField
+                                    labelType="label-fit"
+                                    {labelBlack}
+                                    disabled={false}
+                                    label="Bulan"
+                                    value={months[6].name}
+                                ></TextField> -->
+                                <TextField
+                                    labelType="label-fit"
+                                    hasError={errorData?.month}
+                                    name="month"
+                                    label="Bulan"
+                                    type="text"
+                                    bind:value={month}
+                                />
+                                {#if errorData?.month}
+                                    <span
+                                        class="ml-[200px] font-sans text-sm italic text-system-danger"
+                                        >{errorData?.month[0]}</span
+                                    >
+                                {/if}
+                                <!-- <TextField
+                                    labelType="label-fit"
+                                    {labelBlack}
+                                    disabled={false}
+                                    label="Jumlah"
+                                ></TextField> -->
+                                <TextField
+                                    labelType="label-fit"
+                                    hasError={errorData?.total}
+                                    name="total"
+                                    label="Jumlah"
+                                    type="text"
+                                    bind:value={total}
+                                />
+                                {#if errorData?.total}
+                                    <span
+                                        class="ml-[200px] font-sans text-sm italic text-system-danger"
+                                        >{errorData?.total[0]}</span
+                                    >
+                                {/if}
+                            </div>
+                        </form>
                     </div>
+
                     <SectionHeader title="Senarai Tuntutan"
                         ><TextIconButton
                             primary
@@ -751,7 +1028,7 @@
                         </DynamicAccordionForm>
                     {/each}
                 </CustomTabContent>
-                <!-- Gred Utama -->
+                <!-- Pelarasan Gaji -->
                 <CustomTabContent title="Pelarasan Gaji">
                     <SectionHeader title="Senarai Penambahan"
                         ><TextIconButton
@@ -842,34 +1119,72 @@
             />
             {#if errorData?.jenisPenambahan}
                 <span
-                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    class="ml-[200px] font-sans text-sm italic text-system-danger"
                     >{errorData?.jenisPenambahan[0]}</span
                 >
             {/if}
             <DateSelector
+                hasError={errorData?.startDate}
+                name="startDate"
                 handleDateChange
-                labelType="label-200"
                 label="Tarikh Mula"
-                selectedDate={''}
-            ></DateSelector>
-            <DateSelector
-                handleDateChange
                 labelType="label-200"
-                label="Tarikh Tamat"
-                selectedDate={''}
+                bind:selectedDate={startDate}
             ></DateSelector>
+            {#if errorData?.startDate}
+                <span
+                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                    >{errorData?.startDate[0]}</span
+                >
+            {/if}
+
+            <DateSelector
+                hasError={errorData?.endDate}
+                name="endDate"
+                handleDateChange
+                label="Tarikh Tamat"
+                labelType="label-200"
+                bind:selectedDate={endDate}
+            ></DateSelector>
+            {#if errorData?.endDate}
+                <span
+                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                    >{errorData?.endDate[0]}</span
+                >
+            {/if}
             <DropdownSelect
-                dropdownType="label-left-200"
-                options={deductionType}
+                hasError={errorData?.paymentType}
+                dropdownType="label-left-full"
+                id="paymentType"
                 label="Jenis Bayaran"
-                value={''}
+                bind:value={paymentType}
+                options={[
+                    { value: '1', name: 'Bulanan' },
+                    { value: '2', name: 'Penuh' },
+                ]}
             ></DropdownSelect>
-            <TextField labelType="label-200" label="Jumlah Bayaran"></TextField>
+            {#if errorData?.paymentType}
+                <span
+                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                    >{errorData?.paymentType[0]}</span
+                >
+            {/if}
+            <TextField
+                hasError={errorData?.totalPayment}
+                name="totalPayment"
+                label="Jumlah Bayaran"
+                labelType="label-200"
+                type="text"
+                bind:value={totalPayment}
+            />
+            {#if errorData?.totalPayment}
+                <span
+                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                    >{errorData?.totalPayment[0]}</span
+                >
+            {/if}
         </div>
-        <TextIconButton
-            primary
-            label="Simpan"
-            form="modalValidation"
+        <TextIconButton primary label="Simpan" form="modalValidation"
         ></TextIconButton>
     </form>
 </Modal>
