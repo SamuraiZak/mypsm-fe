@@ -31,6 +31,7 @@
     import CutiPenyakitBarahDanKusta from '../../../../pelulus/cuti/permohonan-cuti/butiran-cuti-tanpa-rekod/forms/CutiPenyakitBarahDanKusta.svelte';
     import CutiPenyakitTibi from '../../../../pelulus/cuti/permohonan-cuti/butiran-cuti-tanpa-rekod/forms/CutiPenyakitTibi.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
+    import toast, { Toaster } from 'svelte-french-toast';
 
     let selectedCuti = '';
 
@@ -276,3 +277,5 @@
         </StepperContent>
     </Stepper>
 </section>
+
+<Toaster/>
