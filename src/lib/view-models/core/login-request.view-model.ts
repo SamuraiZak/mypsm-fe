@@ -1,5 +1,11 @@
+// ===============================================================
+// Login Request View Model
+// ===============================================================
+
 export interface LoginRequestViewModel {
-    accessLevel: string;
+    idType: string;
+    userGroup: string;
     username: string;
     password: string;
+    currentRole: string;
 }
