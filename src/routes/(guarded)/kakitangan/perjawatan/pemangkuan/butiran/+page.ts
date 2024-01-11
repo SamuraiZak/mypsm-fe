@@ -1,8 +1,7 @@
-import api from "$lib/services/core/ky.service";
 import { error, fail } from '@sveltejs/kit';
-import { superValidate } from "sveltekit-superforms/client";
+import toast from 'svelte-french-toast';
+import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
-import toast from "svelte-french-toast";
 
 const dateScheme = z.coerce
     .date({
@@ -16,7 +15,7 @@ const dateScheme = z.coerce
     .min(new Date(), {
         message:
             'Tarikh lapor diri yang dipohon hendaklah tidak kurang dari tarikh semasa.',
-    }) 
+    });
 
 export const _amendmentOfPlacementApplicationSchema = z.object({
     amendmentDropdown: z.enum(['true', 'false'], {
@@ -43,10 +42,13 @@ export const load = async ({ fetch }) => {
     if (request.status >= 400) error;
 
     const userData = await request.json();
-    const form = await superValidate(userData, _amendmentOfPlacementApplicationSchema);
+    const form = await superValidate(
+        userData,
+        _amendmentOfPlacementApplicationSchema,
+    );
 
     return { form };
-}
+};
 
 export const _submitActingDirectorResultForm = async (event: Event) => {
     const formElement = event.target as HTMLFormElement;
@@ -60,7 +62,7 @@ export const _submitActingDirectorResultForm = async (event: Event) => {
         toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
             style: 'background: #333; color: #fff;',
         });
-        console.log(400, form)
+        console.log(400, form);
         return fail(400, form);
     } else {
         console.log('Request Body: ', formData);
@@ -70,15 +72,14 @@ export const _submitActingDirectorResultForm = async (event: Event) => {
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
-
         })
             .then((response) => response.json())
             .then((json) => {
                 toast.success('Berjaya disimpan!', {
                     style: 'background: #333; color: #fff;',
                 });
-                console.log('Response Returned: ', json)
+                console.log('Response Returned: ', json);
             });
     }
     return { form };
-}
+};

@@ -12,8 +12,6 @@
     import toast, { Toaster } from 'svelte-french-toast';
     import { z, ZodError } from 'zod';
 
-    export let data;
-    export let disabled: boolean = false;
     let earlyRetirementApplicationDate: string;
     let earlyRetirementDate: string;
     let applicationPurpose: string;

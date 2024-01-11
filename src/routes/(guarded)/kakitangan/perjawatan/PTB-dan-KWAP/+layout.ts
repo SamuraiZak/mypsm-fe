@@ -1,4 +1,4 @@
-// import { fetchPtbKwap } from '$lib/service/ptbAndKwap/services';
+
 
 import { mockPTBdanKWAP } from '$lib/mocks/perjawatan/PTB-dan-KWAP/ptb-dan-kwap.js';
 

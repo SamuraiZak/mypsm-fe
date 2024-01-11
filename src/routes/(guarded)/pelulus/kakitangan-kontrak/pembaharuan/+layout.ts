@@ -1,10 +1,9 @@
-// import { fetchPtbKwap } from '$lib/service/ptbAndKwap/services';
+
 
 import type { IContractRenewal } from '$lib/interfaces/contract-staffs/IContractRenewal';
 import { mockEmployees } from '$lib/mocks/database/mockEmployees.js';
 
-export async function load({ cookies }) {
-    // const fetchedData: PtbAndKwap[] = await fetchPtbKwap();
+export async function load() {
 
     const contractRenewalData: IContractRenewal[] = [
         {
@@ -90,13 +89,13 @@ export async function load({ cookies }) {
         },
     ];
 
-    const userId = cookies.get('userId');
+
 
     return {
         props: {
             newHireLists: newHireData,
             candidateLists: contractRenewalData,
         },
-        userId,
+
     };
 }

@@ -5,8 +5,6 @@ import { error, fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
-// import type { RequestEvent } from '../../../../$types.js';
-// import { ZodError, z } from 'zod';
 
 // =========================================================================
 // z validation schema and submit function for the new employment form fields

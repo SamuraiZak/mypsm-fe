@@ -1,5 +1,4 @@
-// import * as ptbService from '$lib/service/ptbAndKwap/services.js';
-// import { fetchPtbKwap } from '$lib/service/ptbAndKwap/services.js';
+
 import { mockPTBdanKWAP } from '$lib/mocks/perjawatan/PTB-dan-KWAP/ptb-dan-kwap.js';
 
 export async function load({ params }) {

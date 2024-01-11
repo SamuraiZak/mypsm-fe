@@ -1,9 +1,9 @@
-// import { fetchPtbKwap } from '$lib/service/ptbAndKwap/services';
+
 
 import { mockEmployees } from '$lib/mocks/database/mockEmployees.js';
 
 export async function load() {
-    // const fetchedData: PtbAndKwap[] = await fetchPtbKwap();
+
 
     const candidateData: Candidate[] = [
         {
