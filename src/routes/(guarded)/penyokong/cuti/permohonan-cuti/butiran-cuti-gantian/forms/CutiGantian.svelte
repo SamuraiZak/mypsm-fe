@@ -1,7 +1,5 @@
 <script lang="ts">
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import { fileSelectionList } from '$lib/stores/globalState';
-    import { onMount } from 'svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
@@ -12,45 +10,17 @@
     import TugasTugasRasmiYangJatuhPadaHariCuti from './TugasTugasRasmiYangJatuhPadaHariCuti.svelte';
     import { jenisGantian } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/jenis-gantian';
     import { setengahHari } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/setengah-hari';
-    import toast, { Toaster } from 'svelte-french-toast';
+    import toast from 'svelte-french-toast';
     import { ZodError } from 'zod';
-    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import { Checkbox } from 'flowbite-svelte';
     import { maklumatGantian } from '../form-schema';
 
-    export let selectedFiles: any = [];
-    export let disabled: boolean = true;
     let selectedJenisGantian = '';
     let hasHalfDayStartDate: boolean = false;
     let hasHalfDayEndDate: boolean = false;
-
-    let target: any;
-    let texthidden = false;
     let selectedNamaPengganti = namaPengganti[0].value;
     let selectedSetengahHari = setengahHari[0].value;
 
-    onMount(() => {
-        target = document.getElementById('fileInput');
-    });
-
-    // Function to handle the file changes
-    function handleOnChange() {
-        texthidden = true;
-        const files = target.files;
-        if (files) {
-            for (let i = 0; i < files.length; i++) {
-                selectedFiles.push(files[i]);
-            }
-        }
-
-        fileSelectionList.set(selectedFiles);
-    }
-
-    // Function to handle the file deletion
-    function handleDelete(index: number) {
-        selectedFiles.splice(index, 1);
-        fileSelectionList.set(selectedFiles);
-    }
     // ================ Form Validation ================
     let errorData: any;
     export const submitForm = async (event: Event) => {
