@@ -1267,9 +1267,6 @@
         use:academicInfoEnhance
         class="flex h-fit w-full flex-col gap-y-2"
     >
-        <pre>
-        {JSON.stringify(tempAcademicRecord)}
-    </pre>
         <TextField
             hasError={$academicInfoErrors.title ? true : false}
             {disabled}
