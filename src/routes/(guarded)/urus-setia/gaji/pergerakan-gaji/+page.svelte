@@ -12,9 +12,7 @@
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    import { meetings } from '$lib/mocks/mesyuarat/mesyuarat.js';
     import { Checkbox, Radio, Tooltip } from 'flowbite-svelte';
-    import { greds } from '$lib/mocks/gred/gred.js';
     import SvgArrowUp from '$lib/assets/svg/SvgArrowUp.svelte';
     import SvgArrowDownTail from '$lib/assets/svg/SvgArrowDownTail.svelte';
     import toast, { Toaster } from 'svelte-french-toast';
@@ -27,13 +25,9 @@
     let isSpecialFiAidTextChecked: boolean = false;
     let isSpecialIncrementChecked: boolean = false;
     let selectedStatus = status[0].value; // Default selected filter
-    let selectedMeetingType: string = meetings[0].value;
-    let selectedSalaryMonth: string = '1';
-    let selectedGred: string = greds[0].value;
     let errorData: any;
     let meetingTypeOption: any;
     let meetingDate: any;
-    let salaryMovementMonthTypeOption: any;
     let gred: any;
     let specialFiAidText: any;
     let specialAid: any;
