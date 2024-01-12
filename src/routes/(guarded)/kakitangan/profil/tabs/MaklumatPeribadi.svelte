@@ -1,5 +1,4 @@
 <script lang="ts">
-    import FormButton from '$lib/components/buttons/FormButton.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
@@ -13,31 +12,22 @@
     import DownloadAttachment from '$lib/components/input/DownloadAttachment.svelte';
     import { mockCurrentService } from '$lib/mocks/database/mockCurrentService';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
-    import { mockLookupRaces } from '$lib/mocks/database/mockLookupRaces';
-    import { mockLookupReligions } from '$lib/mocks/database/mockLookupReligions';
-    import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
-    import { mockLookupServiceTypes } from '$lib/mocks/database/mockLookupServiceTypes';
     import { mockEmployeePartners } from '$lib/mocks/database/mockEmployeePartners';
     import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
     import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions';
-    import { mockLookupEmploymentStatus } from '$lib/mocks/database/mockLookupEmploymentStatus';
     import { mockEmploymentPositionHistories } from '$lib/mocks/database/employmentPositionHistories';
     import { mockEmploymentPensions } from '$lib/mocks/database/mockEmploymentPensions';
     import { mockEmployeeEducations } from '$lib/mocks/database/mockEmployeeEducations';
     import { mockEmployeeExperience } from '$lib/mocks/database/mockEmployeeExperience';
-    import { mockEmployeeNextOfKins } from '$lib/mocks/database/mockEmployeeNextOfKins';
     import { mockEmployeeDocumentLists } from '$lib/mocks/database/mockEmployeeDocumentLists';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import toast, { Toaster } from 'svelte-french-toast';
-    import { z, ZodError } from 'zod';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import Form from '$lib/components/form/Form.svelte';
     import { superForm } from 'sveltekit-superforms/client';
-    import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
     import type { PageData } from './$types';
     import {
         _stepperMaklumatPeribadi,
@@ -67,6 +57,9 @@
         {
             SPA: true,
             validators: _stepperMaklumatPeribadi,
+            onSubmit() {
+                _submitFormStepperMaklumatPeribadi($form);
+            },
             taintedMessage:
                 'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
         },
@@ -76,9 +69,13 @@
         form: maklumatPerkhidmatanForm,
         errors: maklumatPerkhidmatanErrors,
         enhance: maklumatPerkhidmatanEnhance,
-    } = superForm(data.stepperMaklumatPerkhidmatan, {
+    } = superForm(data.stepperMaklumatPerkhidmatan,
+    {
         SPA: true,
         validators: _stepperMaklumatPerkhidmatan,
+        onSubmit() {
+                _submitFormStepperMaklumatPerkhidmatan($maklumatPerkhidmatanForm);
+            },
         taintedMessage:
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
@@ -89,6 +86,9 @@
     } = superForm(data.stepperMaklumatAkademik, {
         SPA: true,
         validators: _stepperMaklumatAkademik,
+        onSubmit() {
+                _submitFormStepperMaklumatAkademik($maklumatAkademikForm);
+            },
         taintedMessage:
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
@@ -99,6 +99,10 @@
     } = superForm(data.stepperMaklumatPengalaman, {
         SPA: true,
         validators: _stepperMaklumatPengalaman,
+        onSubmit() {
+            _submitFormStepperMaklumatPengalaman($maklumatPengalamanForm);
+            },
+
         taintedMessage:
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
@@ -109,6 +113,9 @@
     } = superForm(data.stepperMaklumatWaris, {
         SPA: true,
         validators: _stepperMaklumatWaris,
+        onSubmit() {
+                _submitFormStepperMaklumatWaris($maklumatWarisForm);
+            },
         taintedMessage:
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
@@ -128,29 +135,11 @@
         },
     ];
 
-    let isEditing: boolean = false;
+
     let currentEmployee = mockEmployees.find((employee) => {
         return employee.employeeNumber === employeeNumber;
     })!;
-    let currentEmployeeRace = mockLookupRaces.find((race) => {
-        return race.id === currentEmployee.raceId;
-    })!;
-    let currentEmployeeReligion = mockLookupReligions.find((religion) => {
-        return religion.id === currentEmployee.religionId;
-    })!;
-    let currentEmployeeBirthState = mockLookupStates.find((state) => {
-        return state.id === currentEmployee.birthStateId;
-    })!;
-    let currentEmployeeServiceType = mockLookupServiceTypes.find(
-        (serviceType) => {
-            return (
-                serviceType.id ===
-                mockCurrentService.find((service) => {
-                    return service.employeeId === currentEmployee.id;
-                })!.serviceTypeId
-            );
-        },
-    )!;
+
     let currentEmployeeSpouse = mockEmployeePartners.find((spouse) => {
         return spouse.employeeId === currentEmployee.id;
     })!;
@@ -160,15 +149,7 @@
     let currentEmployeeService = mockCurrentService.find((service) => {
         return service.employeeId === currentEmployee.id;
     })!;
-    let currentEmployeeGrade = mockLookupGrades.find((grade) => {
-        return grade.id === currentEmployeeService.gradeId;
-    })!;
-    let currentEmployeePosition = mockLookupPositions.find((position) => {
-        return position.id === currentEmployeeService.positionId;
-    })!;
-    let currentEmployeeStatus = mockLookupEmploymentStatus.find((status) => {
-        return status.id === currentEmployeeService.employmentStatusId;
-    })!;
+
     let currentEmployeePositionHistory = mockEmploymentPositionHistories.filter(
         (positionHistory) => {
             return (
@@ -190,9 +171,6 @@
             return experience.employeeId === currentEmployee.id;
         },
     )!;
-    let currentEmployeeNextOfKins = mockEmployeeNextOfKins.find((nextOfKin) => {
-        return nextOfKin.employeeId === currentEmployee.id;
-    })!;
 
     let currentEmployeeUploadedDocuments = mockEmployeeDocumentLists.filter(
         (document) => {
@@ -200,31 +178,6 @@
         },
     )!;
 
-    function getEmployeeLeave(currentEmployeeNumber: string) {
-        if (currentEmployeeNumber === '00001') {
-            return '30';
-        }
-        if (currentEmployeeNumber === '00002') {
-            return '27';
-        }
-        if (currentEmployeeNumber === '00003') {
-            return '25';
-        }
-    }
-    function dateConvertor(date: string) {
-        const [year, month, day] = date.split('/');
-        return day + '-' + month + '-' + year;
-    }
-    function getDurationYear(startDate: string, endDate: string) {
-        let start = new Date(dateConvertor(startDate));
-        let end = new Date(dateConvertor(endDate));
-        let duration = end.getTime() - start.getTime();
-        let year = duration / (1000 * 3600 * 24 * 365);
-        return Math.ceil(year);
-    }
-    function isBlueOrRedIC(isMalaysian: boolean) {
-        return isMalaysian ? 'Biru' : 'Merah';
-    }
 
     // =================================================================================
     // z validation schema for the example form fields==================================
@@ -349,7 +302,6 @@
             ><!-- Maklumat Peribadi -->
             <form
                 id="FormStepperMaklumatPeribadi"
-                on:submit|preventDefault={_submitFormStepperMaklumatPeribadi}
                 class="flex w-full flex-col gap-2"
                 use:enhance
                 method="POST"
@@ -373,20 +325,20 @@
 
                 <DropdownSelect
                     {disabled}
-                    hasError={errorData?.statusPekerjaan}
+                    hasError={$errors.statusPekerjaan ? true : false}
                     dropdownType="label-left-full"
                     id="statusPekerjaan"
                     label="Status Pekerjaan"
-                    bind:value={currentEmployeeStatus.name}
+                    bind:value={$form.statusPekerjaan}
                     options={[
                         { value: '1', name: 'Aktif' },
                         { value: '2', name: 'Tidak Aktif' },
                     ]}
                 ></DropdownSelect>
-                {#if errorData?.statusPekerjaan}
+                {#if $errors.statusPekerjaan}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.statusPekerjaan[0]}</span
+                        >{$errors.statusPekerjaan[0]}</span
                     >
                 {/if}
 
@@ -440,20 +392,20 @@
 
                 <DropdownSelect
                     {disabled}
-                    hasError={errorData?.warnaKadPengenalan}
+                    hasError={$errors.warnaKadPengenalan ? true : false}
                     dropdownType="label-left-full"
                     id="warnaKadPengenalan"
                     label="Warna Kad Pengenalan"
-                    bind:value={currentEmployee.isMalaysian}
+                    bind:value={$form.warnaKadPengenalan}
                     options={[
                         { value: 'true', name: 'Biru' },
                         { value: 'false', name: 'Merah' },
                     ]}
                 ></DropdownSelect>
-                {#if errorData?.statusPewarnaKadPengenalankerjaan}
+                {#if $errors.warnaKadPengenalan}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.warnaKadPengenalan[0]}</span
+                        >{$errors.warnaKadPengenalan[0]}</span
                     >
                 {/if}
 
@@ -473,115 +425,115 @@
                 {/if}
                 <DropdownSelect
                     {disabled}
-                    hasError={errorData?.tempatLahir}
+                    hasError={$errors.tempatLahir ? true : false}
                     dropdownType="label-left-full"
                     id="tempatLahir"
                     label="Tempat Lahir"
-                    bind:value={currentEmployeeBirthState.name}
+                    bind:value={$form.tempatLahir}
                     options={[
                         { value: '1', name: 'Sarawak' },
                         { value: '2', name: 'Sabah' },
                     ]}
                 ></DropdownSelect>
-                {#if errorData?.tempatLahir}
+                {#if $errors.tempatLahir}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.tempatLahir[0]}</span
+                        >{$errors.tempatLahir[0]}</span
                     >
                 {/if}
 
                 <DropdownSelect
                     {disabled}
-                    hasError={errorData?.warganegara}
+                    hasError={$errors.warganegara ? true : false}
                     dropdownType="label-left-full"
                     id="warganegara"
                     label="Warganegara"
-                    value=""
+                    bind:value={$form.warganegara}
                     options={[
                         { value: '1', name: 'Warganegara' },
                         { value: '2', name: 'Bukan Warganegara' },
                     ]}
                 ></DropdownSelect>
-                {#if errorData?.warganegara}
+                {#if $errors.warganegara}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.warganegara[0]}</span
+                        >{$errors.warganegara[0]}</span
                     >
                 {/if}
 
                 <DropdownSelect
                     {disabled}
-                    hasError={errorData?.bangsa}
+                    hasError={$errors.bangsa ? true : false}
                     dropdownType="label-left-full"
                     id="bangsa"
                     label="Bangsa"
-                    bind:value={currentEmployeeRace.name}
+                    bind:value={$form.bangsa}
                     options={[
                         { value: '1', name: 'Melayu' },
                         { value: '2', name: 'Cina' },
                     ]}
                 ></DropdownSelect>
-                {#if errorData?.bangsa}
+                {#if $errors.bangsa}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.bangsa[0]}</span
+                        >{$errors.bangsa[0]}</span
                     >
                 {/if}
 
                 <DropdownSelect
                     {disabled}
-                    hasError={errorData?.agama}
+                    hasError={$errors.agama ? true : false}
                     dropdownType="label-left-full"
                     id="agama"
                     label="Agama"
-                    bind:value={currentEmployeeReligion.name}
+                    bind:value={$form.agama}
                     options={[
                         { value: '1', name: 'Islam' },
                         { value: '2', name: 'Kristen' },
                     ]}
                 ></DropdownSelect>
-                {#if errorData?.agama}
+                {#if $errors.agama}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.agama[0]}</span
+                        >{$errors.agama[0]}</span
                     >
                 {/if}
 
                 <DropdownSelect
                     {disabled}
-                    hasError={errorData?.jantina}
+                    hasError={$errors.jantina ? true : false}
                     dropdownType="label-left-full"
                     id="jantina"
                     label="Jantina"
-                    bind:value={currentEmployee.gender}
+                    bind:value={$form.jantina}
                     options={[
                         { value: '1', name: 'Lelaki' },
                         { value: '2', name: 'Perempuan' },
                     ]}
                 ></DropdownSelect>
-                {#if errorData?.jantina}
+                {#if $errors.jantina}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.jantina[0]}</span
+                        >{$errors.jantina[0]}</span
                     >
                 {/if}
 
                 <DropdownSelect
                     {disabled}
-                    hasError={errorData?.status}
+                    hasError={$errors.status ? true : false}
                     dropdownType="label-left-full"
                     id="status"
                     label="Status"
-                    bind:value={currentEmployee.marital}
+                    bind:value={$form.status}
                     options={[
                         { value: '1', name: 'Bujang' },
                         { value: '2', name: 'Berkahwin' },
                     ]}
                 ></DropdownSelect>
-                {#if errorData?.status}
+                {#if $errors.status}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.status[0]}</span
+                        >{$errors.status[0]}</span
                     >
                 {/if}
 
@@ -623,11 +575,11 @@
                     bind:value={$form.alamatSuratMenyurat}
                 />
                 {#if $errors.alamatSuratMenyurat}
-                <span
-                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$errors.alamatSuratMenyurat[0]}</span
-                >
-            {/if}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.alamatSuratMenyurat[0]}</span
+                    >
+                {/if}
 
                 <TextField
                     {disabled}
@@ -653,33 +605,19 @@
                     value="-"
                 ></TextField>
 
-                <!-- <RadioSingle
-                    {disabled}
-                    {options}
-                    name="radioButtonExample"
+                <RadioSingle
+                    name="bekasPolisTentera"
+                    disabled={!editable}
+                    options={approveOptions}
                     legend={'Bekas Polis / Tentera'}
-                    bind:userSelected={isExPoliceSoldier}
+                    bind:userSelected={$form.bekasPolisTentera}
                 ></RadioSingle>
-                {#if errorData?.radioButtonExample}
+                {#if $errors.bekasPolisTentera}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.radioButtonExample[0]}</span
+                        >{$errors.bekasPolisTentera}</span
                     >
-                {/if} -->
-
-                <RadioSingle
-                        name="bekasPolisTentera"
-                        disabled={!editable}
-                        options={approveOptions}
-                        legend={'Bekas Polis / Tentera'}
-                        bind:userSelected={$form.bekasPolisTentera}
-                    ></RadioSingle>
-                    {#if $errors.bekasPolisTentera}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$errors.bekasPolisTentera}</span
-                        >
-                    {/if}
+                {/if}
 
                 <div class="flex w-full flex-col gap-2">
                     <p class={stepperFormTitleClass}>
@@ -710,7 +648,6 @@
                             >
                         {/if}
 
-                        <!-- blokcerssssss -->
                         <TextField
                             {disabled}
                             hasError={$errors.namaPasangan ? true : false}
@@ -787,7 +724,6 @@
             <div class="flex w-full flex-col gap-2.5">
                 <form
                     id="FormStepperMaklumatPerkhidmatan"
-                    on:submit|preventDefault={_submitFormStepperMaklumatPerkhidmatan}
                     class="flex w-full flex-col gap-2"
                     use:maklumatPerkhidmatanEnhance
                     method="POST"
@@ -796,77 +732,85 @@
 
                     <DropdownSelect
                         {disabled}
-                        hasError={errorData?.gredSemasa}
+                        hasError={$maklumatPerkhidmatanErrors.gredSemasa
+                            ? true
+                            : false}
                         dropdownType="label-left-full"
                         id="gredSemasa"
                         label="Gred Semasa"
-                        bind:value={currentEmployeeGrade.code}
+                        bind:value={$maklumatPerkhidmatanForm.gredSemasa}
                         options={[
                             { value: '1', name: '41' },
                             { value: '2', name: '54' },
                         ]}
                     ></DropdownSelect>
-                    {#if errorData?.gredSemasa}
+                    {#if $maklumatPerkhidmatanErrors.gredSemasa}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.gredSemasa[0]}</span
+                            >{$maklumatPerkhidmatanErrors.gredSemasa[0]}</span
                         >
                     {/if}
 
                     <DropdownSelect
                         {disabled}
-                        hasError={errorData?.jawatan}
+                        hasError={$maklumatPerkhidmatanErrors.jawatan
+                            ? true
+                            : false}
                         dropdownType="label-left-full"
                         id="jawatan"
-                        label="Gred Semasa"
-                        bind:value={currentEmployeePosition.name}
+                        label="Jawatan"
+                        bind:value={$maklumatPerkhidmatanForm.jawatan}
                         options={[
                             { value: '1', name: '41' },
                             { value: '2', name: '54' },
                         ]}
                     ></DropdownSelect>
-                    {#if errorData?.jawatan}
+                    {#if $maklumatPerkhidmatanErrors.jawatan}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.jawatan[0]}</span
+                            >{$maklumatPerkhidmatanErrors.jawatan[0]}</span
                         >
                     {/if}
 
                     <DropdownSelect
                         {disabled}
-                        hasError={errorData?.penempatan}
+                        hasError={$maklumatPerkhidmatanErrors.penempatan
+                            ? true
+                            : false}
                         dropdownType="label-left-full"
                         id="penempatan"
                         label="Penempatan"
-                        bind:value={currentEmployeeService.placement}
+                        bind:value={$maklumatPerkhidmatanForm.penempatan}
                         options={[
                             { value: '1', name: 'Kuala Lumpur' },
                             { value: '2', name: 'Sarawak' },
                         ]}
                     ></DropdownSelect>
-                    {#if errorData?.penempatan}
+                    {#if $maklumatPerkhidmatanErrors.penempatan}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.penempatan[0]}</span
+                            >{$maklumatPerkhidmatanErrors.penempatan[0]}</span
                         >
                     {/if}
-
                     <DropdownSelect
                         {disabled}
-                        hasError={errorData?.tarafPerkhidmatan}
+                        hasError={$maklumatPerkhidmatanErrors.tarafPerkhidmatan
+                            ? true
+                            : false}
                         dropdownType="label-left-full"
                         id="tarafPerkhidmatan"
                         label="Taraf Perkhidmatan"
-                        bind:value={currentEmployeeServiceType.name}
+                        bind:value={$maklumatPerkhidmatanForm.tarafPerkhidmatan}
                         options={[
                             { value: '1', name: 'TETAP' },
                             { value: '2', name: 'SEMENTARA' },
                         ]}
                     ></DropdownSelect>
-                    {#if errorData?.tarafPerkhidmatan}
+                    {#if $maklumatPerkhidmatanErrors.tarafPerkhidmatan}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.tarafPerkhidmatan[0]}</span
+                            >{$maklumatPerkhidmatanErrors
+                                .tarafPerkhidmatan[0]}</span
                         >
                     {/if}
 
@@ -1129,7 +1073,9 @@
 
                     <DateSelector
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.tanggungKerjaSekarang ? true : false}
+                        hasError={$maklumatPerkhidmatanErrors.tanggungKerjaSekarang
+                            ? true
+                            : false}
                         name="tanggungKerjaSekarang"
                         handleDateChange
                         label="Tanggung Kerja Sekarang"
@@ -1153,7 +1099,9 @@
 
                     <DateSelector
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.kenaikanGajiAkhir ? true : false}
+                        hasError={$maklumatPerkhidmatanErrors.kenaikanGajiAkhir
+                            ? true
+                            : false}
                         name="kenaikanGajiAkhir"
                         handleDateChange
                         label="Kenaikan Gaji Akhir"
@@ -1169,56 +1117,60 @@
 
                     <DateSelector
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.kenaikanPangkatAkhir ? true : false}
+                        hasError={$maklumatPerkhidmatanErrors.kenaikanPangkatAkhir
+                            ? true
+                            : false}
                         name="kenaikanPangkatAkhir"
                         handleDateChange
                         label="Kenaikan Pangkat Akhir"
                         bind:selectedDate={$maklumatPerkhidmatanForm.kenaikanPangkatAkhir}
                     ></DateSelector>
                     {#if $maklumatPerkhidmatanErrors.kenaikanPangkatAkhir}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$maklumatPerkhidmatanErrors
-                            .kenaikanPangkatAkhir[0]}</span
-                    >
-                {/if}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$maklumatPerkhidmatanErrors
+                                .kenaikanPangkatAkhir[0]}</span
+                        >
+                    {/if}
 
                     <DropdownSelect
                         {disabled}
-                        hasError={errorData?.bulanKGT}
+                        hasError={$maklumatPerkhidmatanErrors.bulanKGT
+                            ? true
+                            : false}
                         dropdownType="label-left-full"
                         id="bulanKGT"
                         label="Bulan KGT"
-                        value=""
+                        bind:value={$maklumatPerkhidmatanForm.bulanKGT}
                         options={[
                             { value: '1', name: 'Januari' },
                             { value: '2', name: 'Februari' },
                         ]}
                     ></DropdownSelect>
-                    {#if errorData?.bulanKGT}
+                    {#if $maklumatPerkhidmatanErrors.bulanKGT}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.bulanKGT[0]}</span
+                            >{$maklumatPerkhidmatanErrors.bulanKGT[0]}</span
                         >
                     {/if}
 
                     <DateSelector
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.tarikhBersara ? true : false}
+                        hasError={$maklumatPerkhidmatanErrors.tarikhBersara
+                            ? true
+                            : false}
                         name="tarikhBersara"
                         handleDateChange
                         label="Tarikh Bersara"
                         bind:selectedDate={$maklumatPerkhidmatanForm.tarikhBersara}
                     ></DateSelector>
                     {#if $maklumatPerkhidmatanErrors.tarikhBersara}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$maklumatPerkhidmatanErrors
-                            .tarikhBersara[0]}</span
-                    >
-                {/if}
-
-
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$maklumatPerkhidmatanErrors
+                                .tarikhBersara[0]}</span
+                        >
+                    {/if}
 
                     <p class={stepperFormTitleClass}>
                         Maklumat Gaji dan Elaun - Elaun
@@ -1393,7 +1345,6 @@
             <div class="flex w-full flex-col gap-2.5">
                 <form
                     id="FormStepperAkademik"
-                    on:submit|preventDefault={_submitFormStepperMaklumatAkademik}
                     class="flex w-full flex-col gap-2"
                     use:maklumatAkademikEnhance
                     method="POST"
@@ -1516,7 +1467,6 @@
             ><div class="flex w-full flex-col gap-2.5">
                 <form
                     id="FormStepperPengalaman"
-                    on:submit|preventDefault={_submitFormStepperMaklumatPengalaman}
                     class="flex w-full flex-col gap-2"
                     use:maklumatPengalamanEnhance
                     method="POST"
@@ -1784,7 +1734,6 @@
             ><div class="flex w-full flex-col gap-2.5">
                 <form
                     id="FormStepperWaris"
-                    on:submit|preventDefault={_submitFormStepperMaklumatWaris}
                     class="flex w-full flex-col gap-2"
                     use:maklumatWarisEnhance
                     method="POST"
@@ -1819,70 +1768,79 @@
                     {/if}
                     <DateSelector
                         {disabled}
-                        hasError={$maklumatWarisErrors.tarikhLahirWaris ? true : false}
+                        hasError={$maklumatWarisErrors.tarikhLahirWaris
+                            ? true
+                            : false}
                         name="tarikhLahirWaris"
                         handleDateChange
                         label="Tarikh Lahir"
                         bind:selectedDate={$maklumatWarisForm.tarikhLahirWaris}
                     ></DateSelector>
                     {#if $maklumatWarisErrors?.tarikhLahirWaris}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$maklumatWarisErrors?.tarikhLahirWaris[0]}</span
-                    >
-                {/if}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$maklumatWarisErrors?.tarikhLahirWaris[0]}</span
+                        >
+                    {/if}
 
                     <DropdownSelect
                         {disabled}
-                        hasError={errorData?.hubunganWaris}
+                        hasError={$maklumatWarisErrors.hubunganWaris
+                            ? true
+                            : false}
                         dropdownType="label-left-full"
                         id="hubunganWaris"
                         label="Hubungan"
-                        bind:value={currentEmployeeNextOfKins.relationship}
+                        bind:value={$maklumatWarisForm.hubunganWaris}
                         options={[
                             { value: '1', name: 'Suami' },
                             { value: '2', name: 'Isteri' },
                         ]}
                     ></DropdownSelect>
-                    {#if errorData?.hubunganWaris}
+                    {#if $maklumatWarisErrors.hubunganWaris}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.hubunganWaris[0]}</span
+                            >{$maklumatWarisErrors.hubunganWaris[0]}</span
                         >
                     {/if}
 
                     <DateSelector
                         {disabled}
-                        hasError={$maklumatWarisErrors.tarikhKahwin ? true : false}
+                        hasError={$maklumatWarisErrors.tarikhKahwin
+                            ? true
+                            : false}
                         name="tarikhKahwin"
                         handleDateChange
                         label="Tarikh Kahwin (Jika Berkenaan) "
                         bind:selectedDate={$maklumatWarisForm.tarikhKahwin}
                     ></DateSelector>
                     {#if $maklumatWarisErrors?.tarikhKahwin}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$maklumatWarisErrors?.tarikhKahwin[0]}</span
-                    >
-                {/if}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$maklumatWarisErrors?.tarikhKahwin[0]}</span
+                        >
+                    {/if}
                     <DropdownSelect
                         {disabled}
-                        hasError={errorData?.warnaKP}
+                        hasError={$maklumatWarisErrors.warnaKP
+                            ? true
+                            : false}
                         dropdownType="label-left-full"
                         id="warnaKP"
                         label="Warna Kad Pengenalan"
-                        bind:value={currentEmployeeNextOfKins.isMalaysian}
+                        bind:value={$maklumatWarisForm.warnaKP}
                         options={[
                             { value: 'true', name: 'Biru' },
                             { value: 'false', name: 'Merah' },
                         ]}
                     ></DropdownSelect>
-                    {#if errorData?.warnaKP}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.warnaKP[0]}</span
-                        >
-                    {/if}
+                    {#if $maklumatWarisErrors.warnaKP}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$maklumatWarisErrors.warnaKP[0]}</span
+                    >
+                {/if}
+
 
                     <TextField
                         {disabled}
