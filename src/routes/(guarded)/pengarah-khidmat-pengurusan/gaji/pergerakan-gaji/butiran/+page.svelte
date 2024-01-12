@@ -9,7 +9,6 @@
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import { mockSalaryMovementRecord } from '$lib/mocks/gaji/salaryMovementRecord/mockSalaryMovementRecord';
-    // import { currencyFormatter } from '$lib/service/services';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
     import { meetings } from '$lib/mocks/mesyuarat/mesyuarat';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
@@ -20,7 +19,6 @@
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import toast, { Toaster } from 'svelte-french-toast';
     import { z, ZodError } from 'zod';
-    import TabButton from '$lib/components/tabs/TabButton.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
 
     export let noPekerja = '00001';
@@ -40,7 +38,6 @@
     const currentYear = currentDate.getFullYear();
     const currYear = currentYear;
     const nextYear = currYear + 1;
-    let radioValue: any = 'sah';
 
     const options: RadioOption[] = [
         {
