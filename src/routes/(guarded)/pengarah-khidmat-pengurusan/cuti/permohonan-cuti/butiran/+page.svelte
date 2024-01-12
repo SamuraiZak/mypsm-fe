@@ -33,6 +33,11 @@
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import FileInputField from '$lib/components/input/FileInputField.svelte';
     import toast, { Toaster } from 'svelte-french-toast';
+    import { onMount } from 'svelte';
+    import { fileSelectionList } from '$lib/stores/globalState';
+    import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
+    import { uploadedFileSchema } from './form-schema';
+    import { ZodError } from 'zod';
 
     let selectedCuti = '';
 
@@ -57,6 +62,59 @@
             label: 'Tidak Sokong',
         },
     ];
+    // Function to handle the file changes
+    let selectedFiles: File[] = [];
+    let target: any;
+    let texthidden = false;
+
+    onMount(() => {
+        target = document.getElementById('fileInput');
+    });
+    function handleOnChange() {
+        texthidden = true;
+        const files = target.files;
+        if (files) {
+            for (let i = 0; i < files.length; i++) {
+                selectedFiles.push(files[i]);
+            }
+        }
+
+        fileSelectionList.set(selectedFiles);
+    }
+
+    // Function to handle the file deletion
+    function handleDelete(index: number) {
+        selectedFiles.splice(index, 1);
+        fileSelectionList.set(selectedFiles);
+    }
+
+    // ============== Form Validation ================
+    let errorData: any;
+    //File uploaded validation
+    const submitFilesForm = async () => {
+        let uploadedFiles = selectedFiles;
+        const uploadedFileData = {
+            uploadedFiles: uploadedFiles,
+        };
+
+        try {
+            const result = uploadedFileSchema.parse(uploadedFileData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+            }
+        } catch (error: unknown) {
+            if (error instanceof ZodError) {
+                const { fieldErrors: errors } = error.flatten();
+                errorData = errors;
+                toast.error('Sila pastikan dokumen telah dimuat naik.', {
+                    style: 'background: #333; color: #fff;',
+                });
+            }
+        }
+    };
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -130,7 +188,11 @@
             </StepperContentBody>
         </StepperContent>
         <StepperContent>
-            <StepperContentHeader title="Maklumat Cuti"></StepperContentHeader>
+            <StepperContentHeader title="Maklumat Cuti">
+                <TextIconButton primary label="Hantar" form="formValidation">
+                    <SvgPaperAirplane/>
+                </TextIconButton>
+            </StepperContentHeader>
             <StepperContentBody>
                 <div
                     class="flex max-h-full w-full flex-col gap-2.5  pb-5"
@@ -185,31 +247,76 @@
         </StepperContent>
         <StepperContent>
             <StepperContentHeader title="Dokumen Sokongan"
-            ></StepperContentHeader>
-            <StepperContentBody>
-                <div class="justify-left flex w-full items-center">
-                    <p class="text-sm font-bold">Dokumen Sokongan*</p>
+            ><TextIconButton
+            primary
+            label="Hantar"
+            onClick={() => submitFilesForm()}
+        ><SvgPaperAirplane/></TextIconButton></StepperContentHeader>
+        <StepperContentBody>
+            <div class="flex w-full flex-col"></div>
+            <SectionHeader subTitle="Dokumen Sokongan"
+                ><div hidden={$fileSelectionList.length == 0}>
+                    <FileInputField id="fileInput" {handleOnChange}
+                    ></FileInputField>
+                </div></SectionHeader
+            >
+            <div class="w-full">
+                {#if errorData?.uploadedFiles}
+                    <span
+                        class="font-sans text-sm italic text-system-danger"
+                        >{errorData?.uploadedFiles[0]}</span
+                    >
+                {/if}
+            </div>
+            <div
+                class="border-bdr-primaryp-5 flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border p-2.5"
+            >
+                <div class="flex flex-wrap gap-3">
+                    {#each $fileSelectionList as item, index}
+                        <FileInputFieldChildren
+                            childrenType="grid"
+                            handleDelete={() => handleDelete(index)}
+                            fileName={item.name}
+                        />
+                    {/each}
                 </div>
                 <div
-                    class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+                    class="flex flex-col items-center justify-center gap-2.5"
                 >
-                    <div
-                        class="flex flex-col items-center justify-center rounded-[3px] border border-system-primaryTint p-2.5"
+                    <p
+                        class=" text-sm text-txt-tertiary"
+                        hidden={$fileSelectionList.length > 0}
                     >
-                        <p class="text-base text-txt-secondary">
-                            Seret dan lepas fail anda ke dalam ruangan ini atau
-                            pilih fail dari peranti anda
-                        </p>
-                        <span>
-                            <FileInputField />
-                        </span>
-                    </div>
-                    <p class="justify-left flex w-full text-sm text-rose-500">
-                        Sila muat naik dokumen sokongan pada ruangan yang
-                        disediakan
+                        Pilih fail dari peranti anda.
                     </p>
+                    <!-- svelte-ignore a11y-click-events-have-key-events -->
+                    <div
+                        class="text-txt-tertiary"
+                        hidden={$fileSelectionList.length > 0}
+                    >
+                        <svg
+                            width={40}
+                            height={40}
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                            />
+                        </svg>
+                    </div>
+                    <div hidden={$fileSelectionList.length > 0}>
+                        <FileInputField id="fileInput" {handleOnChange}
+                        ></FileInputField>
+                    </div>
                 </div>
-            </StepperContentBody>
+            </div>
+        </StepperContentBody>
         </StepperContent>
         <StepperContent>
             <StepperContentHeader title="Pengesahan"></StepperContentHeader>

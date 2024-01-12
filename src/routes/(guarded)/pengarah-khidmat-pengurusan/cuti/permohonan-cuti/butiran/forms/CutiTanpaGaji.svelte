@@ -50,7 +50,7 @@
 
     // ============== Form Validation
     let errorData: any;
-    const submitForm = async (event: Event) => {
+    export const submitForm = async (event: Event) => {
         const formDetail = new FormData(event.target as HTMLFormElement);
         const getTarikhMulaSetengah = document.getElementById(
             'tarikhMulaSetengah',
@@ -143,13 +143,7 @@
     <div
         class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
     >
-        <SectionHeader title="Cuti Tanpa Gaji"
-            ><TextIconButton
-                primary
-                label="test validation"
-                form="formValidation"
-            /></SectionHeader
-        >
+        <SectionHeader title="Cuti Tanpa Gaji"></SectionHeader>
         <form
             id="formValidation"
             on:submit|preventDefault={submitForm}
@@ -170,25 +164,25 @@
             <div
                 class="flex flex w-full w-full flex-row items-center justify-start gap-2.5"
             >
-            <div class="flex w-full flex-col">
-                <DateSelector
-                    hasError={errorData?.tarikhMula}
-                    name="tarikhMula"
-                    handleDateChange
-                    label="Tarikh Mula"
-                ></DateSelector>
-                {#if errorData?.tarikhMula}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.tarikhMula[0]}</span
-                    >
-                {/if}
-            </div>
-            <Checkbox
-            name="hasHalfDayStartDate"
-            bind:checked={hasHalfDayStartDate}
-            class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-        />
+                <div class="flex w-full flex-col">
+                    <DateSelector
+                        hasError={errorData?.tarikhMula}
+                        name="tarikhMula"
+                        handleDateChange
+                        label="Tarikh Mula"
+                    ></DateSelector>
+                    {#if errorData?.tarikhMula}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.tarikhMula[0]}</span
+                        >
+                    {/if}
+                </div>
+                <Checkbox
+                    name="hasHalfDayStartDate"
+                    bind:checked={hasHalfDayStartDate}
+                    class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                />
                 <label
                     for="hasHalfDayStartDate"
                     class="w-[100px] text-sm font-medium text-gray-900 dark:text-gray-300"
@@ -215,25 +209,25 @@
             <div
                 class="flex flex w-full w-full flex-row items-center justify-start gap-2.5"
             >
-            <div class="flex w-full flex-col">
-                <DateSelector
-                    hasError={errorData?.tarikhTamat}
-                    name="tarikhTamat"
-                    handleDateChange
-                    label="Tarikh Tamat"
-                ></DateSelector>
-                {#if errorData?.tarikhTamat}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.tarikhTamat[0]}</span
-                    >
-                {/if}
-            </div>
-            <Checkbox
-            name="hasHalfDayEndDate"
-            bind:checked={hasHalfDayEndDate}
-            class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-        />
+                <div class="flex w-full flex-col">
+                    <DateSelector
+                        hasError={errorData?.tarikhTamat}
+                        name="tarikhTamat"
+                        handleDateChange
+                        label="Tarikh Tamat"
+                    ></DateSelector>
+                    {#if errorData?.tarikhTamat}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{errorData?.tarikhTamat[0]}</span
+                        >
+                    {/if}
+                </div>
+                <Checkbox
+                    name="hasHalfDayEndDate"
+                    bind:checked={hasHalfDayEndDate}
+                    class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                />
                 <label
                     for="hasHalfDayEndDate"
                     class="w-[100px] text-sm font-medium text-gray-900 dark:text-gray-300"

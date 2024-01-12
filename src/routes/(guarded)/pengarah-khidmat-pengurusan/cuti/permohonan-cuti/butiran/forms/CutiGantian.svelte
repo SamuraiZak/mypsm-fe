@@ -53,7 +53,7 @@
     }
     // ================ Form Validation ================
     let errorData: any;
-    const submitForm = async (event: Event) => {
+    export const submitForm = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);
         const namaPengganti = document.getElementById(
             'namaPengganti',
@@ -75,10 +75,7 @@
         try {
             let validatedData;
             let result;
-            if (
-                hasHalfDayStartDate &&
-                !hasHalfDayEndDate
-            ) {
+            if (hasHalfDayStartDate && !hasHalfDayEndDate) {
                 const tarikhMulaSetengah = String(getTarikhMulaSetengah.value);
 
                 const validatedFormData = {
@@ -87,10 +84,7 @@
                 };
                 validatedData = validatedFormData;
                 result = maklumatGantian.parse(validatedFormData);
-            } else if (
-                hasHalfDayEndDate &&
-                !hasHalfDayStartDate
-            ) {
+            } else if (hasHalfDayEndDate && !hasHalfDayStartDate) {
                 const tarikhTamatSetengah = String(
                     getTarikhTamatSetengah.value,
                 );
@@ -101,10 +95,7 @@
                 };
                 validatedData = validatedFormData;
                 result = maklumatGantian.parse(validatedFormData);
-            } else if (
-                hasHalfDayStartDate &&
-                hasHalfDayEndDate
-            ) {
+            } else if (hasHalfDayStartDate && hasHalfDayEndDate) {
                 const tarikhMulaSetengah = String(getTarikhMulaSetengah.value);
                 const tarikhTamatSetengah = String(
                     getTarikhTamatSetengah.value,
@@ -160,138 +151,137 @@
     <!-- start your content with this div and style it with your own preference -->
     <CustomTab>
         <CustomTabContent title="Maklumat Gantian">
-            <SectionHeader title="Cuti Gantian"><TextIconButton primary label="test validation" form="maklumatGantian"
-                /></SectionHeader>
+            <SectionHeader title="Cuti Gantian"></SectionHeader>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
             >
-            <form
-            id="maklumatGantian"
-            on:submit|preventDefault={submitForm}
-            class="flex w-full flex-col gap-2"
-        >
-            <DropdownSelect
-                hasError={errorData?.namaPengganti}
-                id="namaPengganti"
-                options={namaPengganti}
-                bind:index={selectedNamaPengganti}
-                dropdownType="label-left-full"
-                label="Nama Pengganti / Gred"
-            ></DropdownSelect>
-            {#if errorData?.namaPengganti}
-                <span
-                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{errorData?.namaPengganti[0]}</span
+                <form
+                    id="formValidation"
+                    on:submit|preventDefault={submitForm}
+                    class="flex w-full flex-col gap-2"
                 >
-            {/if}
-            <div
-                class="flex w-full flex-row items-center justify-start gap-2.5"
-            >
-                <div class="flex w-full flex-col">
-                    <DateSelector
-                        hasError={errorData?.tarikhMula}
-                        name="tarikhMula"
-                        handleDateChange
-                        label="Tarikh Mula"
-                    ></DateSelector>
-                    {#if errorData?.tarikhMula}
+                    <DropdownSelect
+                        hasError={errorData?.namaPengganti}
+                        id="namaPengganti"
+                        options={namaPengganti}
+                        bind:index={selectedNamaPengganti}
+                        dropdownType="label-left-full"
+                        label="Nama Pengganti / Gred"
+                    ></DropdownSelect>
+                    {#if errorData?.namaPengganti}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.tarikhMula[0]}</span
+                            >{errorData?.namaPengganti[0]}</span
                         >
                     {/if}
-                </div>
-                <Checkbox
-                    name="hasHalfDayStartDate"
-                    bind:checked={hasHalfDayStartDate}
-                    class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-                />
-                <label
-                    for="hasHalfDayStartDate"
-                    class="w-[100px] text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >Setengah Hari</label
-                >
-                <div class="flex w-full flex-col">
-                    <DropdownSelect
-                        hasError={errorData?.tarikhMulaSetengah}
-                        disabled={!hasHalfDayStartDate}
-                        id="tarikhMulaSetengah"
-                        options={setengahHari}
-                        bind:index={selectedSetengahHari}
-                        dropdownType="noLabel"
-                        label=""
-                    ></DropdownSelect>
-                    {#if errorData?.tarikhMulaSetengah}
-                        <span
-                            class="font-sans text-sm italic text-system-danger"
-                            >{errorData?.tarikhMulaSetengah[0]}</span
+                    <div
+                        class="flex w-full flex-row items-center justify-start gap-2.5"
+                    >
+                        <div class="flex w-full flex-col">
+                            <DateSelector
+                                hasError={errorData?.tarikhMula}
+                                name="tarikhMula"
+                                handleDateChange
+                                label="Tarikh Mula"
+                            ></DateSelector>
+                            {#if errorData?.tarikhMula}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{errorData?.tarikhMula[0]}</span
+                                >
+                            {/if}
+                        </div>
+                        <Checkbox
+                            name="hasHalfDayStartDate"
+                            bind:checked={hasHalfDayStartDate}
+                            class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                        />
+                        <label
+                            for="hasHalfDayStartDate"
+                            class="w-[100px] text-sm font-medium text-gray-900 dark:text-gray-300"
+                            >Setengah Hari</label
                         >
-                    {/if}
-                </div>
-            </div>
-            <div
-                class="flex w-full flex-row items-center justify-start gap-2.5"
-            >
-                <div class="flex w-full flex-col">
+                        <div class="flex w-full flex-col">
+                            <DropdownSelect
+                                hasError={errorData?.tarikhMulaSetengah}
+                                disabled={!hasHalfDayStartDate}
+                                id="tarikhMulaSetengah"
+                                options={setengahHari}
+                                bind:index={selectedSetengahHari}
+                                dropdownType="noLabel"
+                                label=""
+                            ></DropdownSelect>
+                            {#if errorData?.tarikhMulaSetengah}
+                                <span
+                                    class="font-sans text-sm italic text-system-danger"
+                                    >{errorData?.tarikhMulaSetengah[0]}</span
+                                >
+                            {/if}
+                        </div>
+                    </div>
+                    <div
+                        class="flex w-full flex-row items-center justify-start gap-2.5"
+                    >
+                        <div class="flex w-full flex-col">
+                            <DateSelector
+                                hasError={errorData?.tarikhTamat}
+                                name="tarikhTamat"
+                                handleDateChange
+                                label="Tarikh Tamat"
+                            ></DateSelector>
+                            {#if errorData?.tarikhTamat}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{errorData?.tarikhTamat[0]}</span
+                                >
+                            {/if}
+                        </div>
+                        <Checkbox
+                            name="hasHalfDayEndDate"
+                            bind:checked={hasHalfDayEndDate}
+                            class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                        />
+                        <label
+                            for="hasHalfDayEndDate"
+                            class="w-[100px] text-sm font-medium text-gray-900 dark:text-gray-300"
+                            >Setengah Hari</label
+                        >
+                        <div class="flex w-full flex-col">
+                            <DropdownSelect
+                                hasError={errorData?.tarikhTamatSetengah}
+                                disabled={!hasHalfDayEndDate}
+                                id="tarikhTamatSetengah"
+                                options={setengahHari}
+                                bind:index={selectedSetengahHari}
+                                dropdownType="noLabel"
+                                label=""
+                            ></DropdownSelect>
+                            {#if errorData?.tarikhTamatSetengah}
+                                <span
+                                    class="font-sans text-sm italic text-system-danger"
+                                    >{errorData?.tarikhTamatSetengah[0]}</span
+                                >
+                            {/if}
+                        </div>
+                    </div>
+                    <TextField
+                        disabled
+                        label="Jumlah Cuti Gantian Yang Telah Diambil Pada Tahun Semasa"
+                        value="2"
+                    ></TextField>
                     <DateSelector
-                        hasError={errorData?.tarikhTamat}
-                        name="tarikhTamat"
+                        hasError={errorData?.cutiGantianTerakhir}
+                        name="cutiGantianTerakhir"
                         handleDateChange
-                        label="Tarikh Tamat"
+                        label="Cuti Gantian Terakhir Diambil Pada"
                     ></DateSelector>
-                    {#if errorData?.tarikhTamat}
+                    {#if errorData?.cutiGantianTerakhir}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.tarikhTamat[0]}</span
+                            >{errorData?.cutiGantianTerakhir[0]}</span
                         >
                     {/if}
-                </div>
-                <Checkbox
-                    name="hasHalfDayEndDate"
-                    bind:checked={hasHalfDayEndDate}
-                    class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-                />
-                <label
-                    for="hasHalfDayEndDate"
-                    class="w-[100px] text-sm font-medium text-gray-900 dark:text-gray-300"
-                    >Setengah Hari</label
-                >
-                <div class="flex w-full flex-col">
-                    <DropdownSelect
-                        hasError={errorData?.tarikhTamatSetengah}
-                        disabled={!hasHalfDayEndDate}
-                        id="tarikhTamatSetengah"
-                        options={setengahHari}
-                        bind:index={selectedSetengahHari}
-                        dropdownType="noLabel"
-                        label=""
-                    ></DropdownSelect>
-                    {#if errorData?.tarikhTamatSetengah}
-                        <span
-                            class="font-sans text-sm italic text-system-danger"
-                            >{errorData?.tarikhTamatSetengah[0]}</span
-                        >
-                    {/if}
-                </div>
-            </div>
-            <TextField
-                disabled
-                label="Jumlah Cuti Gantian Yang Telah Diambil Pada Tahun Semasa"
-                value="2"
-            ></TextField>
-            <DateSelector
-                hasError={errorData?.cutiGantianTerakhir}
-                name="cutiGantianTerakhir"
-                handleDateChange
-                label="Cuti Gantian Terakhir Diambil Pada"
-            ></DateSelector>
-            {#if errorData?.cutiGantianTerakhir}
-                <span
-                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{errorData?.cutiGantianTerakhir[0]}</span
-                >
-            {/if}
-        </form>
+                </form>
             </div>
         </CustomTabContent>
         <CustomTabContent title="Jenis Gantian">
