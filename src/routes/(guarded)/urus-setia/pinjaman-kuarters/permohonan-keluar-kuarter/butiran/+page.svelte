@@ -21,7 +21,7 @@
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
     import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions';
     import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
-    import { mockRekodKuarters } from '$lib/mocks/pinjaman-kuarters/mockRekodKuarters.js';
+    import { mockRekodKuarters } from '$lib/mocks/pinjaman-kuarters/mockRekodKuarters';
     import {
         fileSelectionList,
         selectedRecordId,

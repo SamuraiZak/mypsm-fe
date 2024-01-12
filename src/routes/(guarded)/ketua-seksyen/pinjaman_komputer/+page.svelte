@@ -10,40 +10,23 @@
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
-    import CustomCardHeader from '$lib/components/cards/CustomCardHeader.svelte';
-    import CustomCard from '$lib/components/cards/CustomCard.svelte';
-    import CustomCardBody from '$lib/components/cards/CustomCardBody.svelte';
-    import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { meetings } from '$lib/mocks/mesyuarat/mesyuarat.js';
-    import { Checkbox, Radio, Tooltip } from 'flowbite-svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
-    import IconButton from '$lib/components/buttons/IconButton.svelte';
-
     import DownloadAttachment from '$lib/components/input/DownloadAttachment.svelte';
-    import { mockPerjawatanPemangkuan } from '$lib/mocks/database/mockPerjawatanPemangkuan';
     import { loanOptions } from '$lib/mocks/pinjaman-kuarters/loanOptions';
-    import type {
-        CalonPemangkuan,
-        DtoCalonPemangkuan,
-        IntActingApplication,
-        MesyuaratPemilihanCalonPemangkuan,
-    } from '$lib/interfaces/database/actingApplication';
+    import type { DtoCalonPemangkuan } from '$lib/interfaces/database/actingApplication';
     import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
-    import SvgArrowLeft from '$lib/assets/svg/SvgArrowLeft.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    import { createCompareFn } from '$lib/service/services';
     import { greds } from '$lib/mocks/gred/gred.js';
-    import DateSelector from '$lib/components/input/DateSelector.svelte';
     import SvgTrash from '$lib/assets/svg/SvgTrash.svelte';
     import {
         fileSelectionList,
         selectedRecordId,
     } from '$lib/stores/globalState';
     import { onMount } from 'svelte';
-    import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
 
     export let disabled: boolean = true;
 

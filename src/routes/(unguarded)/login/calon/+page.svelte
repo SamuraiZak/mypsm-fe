@@ -1,22 +1,39 @@
 <script lang="ts">
     import mypsmLogo from '$lib/assets/MyPSM.png';
     import type { PageData } from './$types';
-    import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
-    import {
-        superForm,
-        setMessage,
-        setError,
-    } from 'sveltekit-superforms/client';
 
-    import { _calonLoginSchema } from './+page';
+    import { superForm, setMessage } from 'sveltekit-superforms/client';
+
+    import { _calonLoginSchema, _submit } from './+page';
 
     export let data: PageData;
 
     // idType options
-    let idTypeOptions = ['No. Kad Pengenalan', 'Nama Pengguna'];
+    let idTypeOptions = [
+        {
+            value: 'username',
+            text: 'Nama Pengguna',
+            placeholder: '(Contoh: aliBinAbu)',
+        },
+        {
+            value: 'employeeNumber',
+            text: 'No. Pekerja',
+            placeholder: '(Contoh: 00005)',
+        },
+        {
+            value: 'identityCard',
+            text: 'No. Kad Pengenalan',
+            placeholder: '(Contoh: 890305115716)',
+        },
+        {
+            value: 'candidateNumber',
+            text: 'No. Calon',
+            placeholder: '(Contoh: 00005)',
+        },
+    ];
 
     // preset form data
-    data.form.data.idType = idTypeOptions[0];
+    data.form.data.idType = idTypeOptions[0].value;
     data.form.data.userGroup = 'candidate';
     data.form.data.currentRole = 'calon';
 
@@ -34,35 +51,32 @@
                 } else {
                 }
             },
+            onSubmit(input) {
+                _submit($form);
+            },
         },
     );
 </script>
 
 <div
-    class="w-full rounded-lg bg-ios-backgroundColors-systemBackground-light shadow sm:max-w-md md:mt-0 xl:p-0"
+    class="h-fit w-full max-w-md rounded-lg bg-ios-backgroundColors-systemBackground-light shadow"
 >
-    <div class="space-y-4 p-6 sm:p-8 md:space-y-6">
-        <div class="flex w-full items-center justify-center">
-            <img class="h-10" src={mypsmLogo} alt="logo" />
-        </div>
-        <div class="inline-flex w-full items-center justify-center">
-            <hr
-                class="h-px w-full border-0 bg-ios-labelColors-separator-light"
-            />
-            <span
-                class="text-md absolute left-1/2 -translate-x-1/2 bg-bgr-primary px-3 font-semibold text-ios-labelColors-label-light"
-                >Log Masuk</span
+    <div class="flex flex-col justify-center gap-6 px-6 pb-2 pt-6">
+        <div class="flex flex-col items-center justify-center gap-2">
+            <img class="h-6 object-scale-down" src={mypsmLogo} alt="logo" />
+            <p
+                class="text-center text-base text-ios-labelColors-secondaryLabel-light"
             >
+                Log masuk sebagai
+                <span
+                    class="font font-semibold text-ios-labelColors-label-light"
+                >
+                    Calon Kakitangan LKIM
+                </span>
+            </p>
         </div>
-        <p
-            class="text-center text-base text-ios-labelColors-secondaryLabel-light"
-        >
-            Calon Kakitangan LKIM
-        </p>
 
-        <!-- login form starts -->
-
-        <form method="POST" use:enhance class="space-y-2">
+        <form id="loginForm" method="POST" use:enhance class="space-y-2">
             <!-- id type field starts -->
 
             <div>
@@ -77,8 +91,8 @@
                     class=" block h-9 w-full rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
                 >
                     {#each idTypeOptions as option}
-                        <option value={option}>
-                            {option}
+                        <option value={option.value}>
+                            {option.text}
                         </option>
                     {/each}
                 </select>
@@ -102,18 +116,21 @@
                 <label
                     for="username"
                     class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                    >{#if $form.idType == 'No. Kad Pengenalan'}
+                >
+                    <!-- {#if $form.idType == 'No. Kad Pengenalan'}
                         No. Kad Pengenalan
                     {:else}
                         ID Pengguna
-                    {/if}
+                    {/if} -->
+
+                    {idTypeOptions.find(item => item.value == $form.idType)?.text}
                 </label>
                 <input
                     bind:value={$form.username}
                     type="text"
                     name="username"
                     id="username"
-                    placeholder="(Contoh: 850201115670)"
+                    placeholder={idTypeOptions.find(item => item.value == $form.idType)?.placeholder}
                     class=" autofill:hide-default-inner-shadow block h-9 w-full rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light p-2.5 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
                 />
 
@@ -200,18 +217,13 @@
             >
 
             <!-- submit button ends -->
+            <div class="h-fit w-full justify-center text-center">
+                <a
+                    href="/login"
+                    class=" text-sm font-medium text-ios-labelColors-link-light hover:underline"
+                    >Kembali</a
+                >
+            </div>
         </form>
-
-        <!-- login form ends -->
     </div>
 </div>
-
-<div class="w-full justify-center p-6 text-center">
-    <a
-        href="/staging/login"
-        class=" text-base font-medium text-ios-labelColors-link-light hover:underline"
-        >Kembali</a
-    >
-</div>
-
-<SuperDebug data={$form} />
