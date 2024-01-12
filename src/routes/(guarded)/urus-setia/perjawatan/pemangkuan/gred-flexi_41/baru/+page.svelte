@@ -1,7 +1,6 @@
 <script lang="ts">
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
-    import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
     import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
     import { goto } from '$app/navigation';
     import SvgManifyingGlass from '$lib/assets/svg/SvgManifyingGlass.svelte';
@@ -17,28 +16,6 @@
     import { currentActingBatchId } from '$lib/stores/pemangkuan/pemangkuanStores';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import SvgBlock from '$lib/assets/svg/SvgBlock.svelte';
-
-    let excludedKeys = [
-        'id',
-        'birthStateId',
-        'raceId',
-        'religionId',
-        'mailStateId',
-        'homeStateId',
-        'alternativeName',
-        'isMalaysian',
-        'identityDocumentType',
-        'email',
-        'homeNumber',
-        'mobileNumber',
-        'birthDate',
-        'birthPlace',
-        'isExPoliceOrSoldier',
-        'homeAddress',
-        'mailAddress',
-        'mailPostcode',
-        'mailCity',
-    ];
 
     let tempData: any = {};
 

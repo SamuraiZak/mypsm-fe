@@ -4,7 +4,6 @@
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
-    import FormButton from '$lib/components/buttons/FormButton.svelte';
     import { goto } from '$app/navigation';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
@@ -31,7 +30,7 @@
     import FileInputField from '$lib/components/input/FileInputField.svelte';
     import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
     import toast, { Toaster } from 'svelte-french-toast';
-    import { z, ZodError } from 'zod';
+    import { ZodError } from 'zod';
     import {
         permohonanCutiMaklumatKakitangan,
         uploadedFileSchema,
@@ -172,10 +171,8 @@
 <Stepper bind:activeIndex={stepperIndex}>
     <StepperContent>
         <StepperContentHeader title="Maklumat Kakitangan"
-            ><TextIconButton
-                label="Seterusnya"
-                primary
-                onClick={() => goNext()}><SvgArrowRight /></TextIconButton
+            ><TextIconButton label="Seterusnya" primary onClick={() => goNext()}
+                ><SvgArrowRight /></TextIconButton
             ></StepperContentHeader
         >
 
@@ -274,7 +271,9 @@
     <!-- ========== STEPPER 2 ========== -->
     <StepperContent>
         <StepperContentHeader title="Maklumat Cuti">
-            <TextIconButton primary label="Hantar" form="formValidation"/>
+            <TextIconButton primary label="Hantar" form="formValidation"
+                ><SvgPaperAirplane /></TextIconButton
+            >
         </StepperContentHeader>
         <StepperContentBody>
             <div class="flex max-h-full w-full flex-col gap-2.5">
@@ -332,7 +331,8 @@
                 primary
                 label="Hantar"
                 onClick={() => submitFilesForm()}
-            ><SvgPaperAirplane/></TextIconButton></StepperContentHeader
+                ><SvgPaperAirplane /></TextIconButton
+            ></StepperContentHeader
         >
         <StepperContentBody>
             <div class="flex w-full flex-col"></div>
@@ -400,8 +400,7 @@
 
     <!-- ========== STEPPER 4 ========== -->
     <StepperContent>
-        <StepperContentHeader title="Pengesahan"
-            >
+        <StepperContentHeader title="Pengesahan">
             <TextIconButton
                 primary
                 label="Hantar"
@@ -409,8 +408,7 @@
                     goto('/kakitangan/cuti/permohonan-cuti');
                 }}><SvgPaperAirplane /></TextIconButton
             >
-            </StepperContentHeader
-        >
+        </StepperContentHeader>
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2">
                 <div class="w-full py-5">

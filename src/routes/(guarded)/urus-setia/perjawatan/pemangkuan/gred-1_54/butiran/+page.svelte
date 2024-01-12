@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { disableScrollHandling, goto } from '$app/navigation';
+    import { goto } from '$app/navigation';
     import SvgArrowLeft from '$lib/assets/svg/SvgArrowLeft.svelte';
     import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
     import SvgBlock from '$lib/assets/svg/SvgBlock.svelte';
@@ -35,16 +35,8 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
-    import type {
-        CalonPemangkuan,
-        DtoCalonPemangkuan,
-        IntActingApplication,
-        MesyuaratPemilihanCalonPemangkuan,
-    } from '$lib/interfaces/database/actingApplication';
     import { mockPerjawatanPemangkuan } from '$lib/mocks/database/mockPerjawatanPemangkuan';
-    import { pelulusPersaraan } from '$lib/mocks/pelulus/pelulus-persaraan';
     import { positions } from '$lib/mocks/positions/positions';
-    // import { createCompareFn } from '$lib/service/services';
     import { fileSelectionList } from '$lib/stores/globalState';
     import { onMount } from 'svelte';
     import toast, { Toaster } from 'svelte-french-toast';
@@ -63,237 +55,10 @@
 
     //===================== Page Init Data =====================
 
-    let actingDetails: IntActingApplication = {
-        idRekod: 1,
-        jenisPemangkuan: 'Gred 1-54',
-        tarikhRekod: Date.now.toString(),
-        jumlahCalon: 0,
-        status: 'Sedang Diproses',
-        calonPemangkuan: [],
-    };
-
-    let allEmployeeList: DtoCalonPemangkuan[] = [
-        {
-            idRekod: 1,
-            idKakitangan: 1,
-            nomborPekerja: '00001',
-            namaKakitangan: 'Jon Bovi',
-            nomborKP: '910821-13-5671',
-            gredSemasa: 'E30',
-            gredPemangkuan: 'A41',
-            jawatanSemasa: 'Penolong Pegawai Perkhidmatan',
-            program: '-',
-            skim: '-',
-            penempatanSekarang: '-',
-            // mesyuarat
-            gredUntukDipangku: '',
-            jawatanUntukDipangku: '',
-            layakTemuduga: '',
-            // temuduga
-            tarikhTemuduga: '',
-            masaTemuduga: '',
-            pusatTemuduga: '',
-            markahTemuduga: '',
-            keputusanTemuduga: '',
-            // semakan
-            laporanTatatertib: '',
-            laporanPrestasi: '',
-            laporanSprm: '',
-            perakuanKetuaJabatan: '',
-            // mesyuarat kenaikan pangkat
-            keputusanKenaikanPangkat: '',
-            kodJawatanMemangku: '',
-            gelaranJawatanMemangku: '',
-            tarikhKuatkuasaPemangkuan: '',
-            tarikhCukupTempohPemangkuan: '',
-            // mesyuarat penempatan
-            penempatanBaru: '-',
-            tarikhLaporDiri: '',
-            // permohonan penangguhan
-            permohonanPenangguhan: '',
-            penempatanDipohon: '',
-            tarikhLaporDiriDipohon: '',
-            keputusanPenangguhanAtauPindaan: '',
-            // keputusan akhir
-            kodJawatanMemangkuAkhir: '',
-            gelaranJawatanMemangkuAkhir: '',
-            tarikhKuatKuasaPemangkuanAkhir: '',
-            tarikhCukupTempohPemangkuanAkhir: '',
-            penempatanBaruAkhir: '',
-            tarikhLaporDiriAkhir: '',
-        },
-        {
-            idRekod: 2,
-            idKakitangan: 2,
-            nomborPekerja: '00002',
-            namaKakitangan: 'Teressa Teng',
-            nomborKP: '930315-13-6188',
-            gredSemasa: 'D41',
-            gredPemangkuan: '-',
-            jawatanSemasa: 'Penolong Pegawai Tadbir',
-            program: '-',
-            skim: '-',
-            penempatanSekarang: '-',
-            // mesyuarat
-            gredUntukDipangku: '',
-            jawatanUntukDipangku: '',
-            layakTemuduga: '',
-            // temuduga
-            tarikhTemuduga: '',
-            masaTemuduga: '',
-            pusatTemuduga: '',
-            markahTemuduga: '',
-            keputusanTemuduga: '',
-            // semakan
-            laporanTatatertib: '',
-            laporanPrestasi: '',
-            laporanSprm: '',
-            perakuanKetuaJabatan: '',
-            // mesyuarat kenaikan pangkat
-            keputusanKenaikanPangkat: '',
-            kodJawatanMemangku: '',
-            gelaranJawatanMemangku: '',
-            tarikhKuatkuasaPemangkuan: '',
-            tarikhCukupTempohPemangkuan: '',
-            // mesyuarat penempatan
-            penempatanBaru: '-',
-            tarikhLaporDiri: '',
-            // permohonan penangguhan
-            permohonanPenangguhan: '',
-            penempatanDipohon: '',
-            tarikhLaporDiriDipohon: '',
-            keputusanPenangguhanAtauPindaan: '',
-            // keputusan akhir
-            kodJawatanMemangkuAkhir: '',
-            gelaranJawatanMemangkuAkhir: '',
-            tarikhKuatKuasaPemangkuanAkhir: '',
-            tarikhCukupTempohPemangkuanAkhir: '',
-            penempatanBaruAkhir: '',
-            tarikhLaporDiriAkhir: '',
-        },
-        {
-            idRekod: 3,
-            idKakitangan: 3,
-            nomborPekerja: '00003',
-            namaKakitangan: 'Xue Hua Piao',
-            nomborKP: '851130-13-7747',
-            gredSemasa: 'H12',
-            gredPemangkuan: 'D43',
-            jawatanSemasa: 'Penolong Pegawai Teknologi Maklumat',
-            program: '-',
-            skim: '-',
-            penempatanSekarang: '-',
-            // mesyuarat
-            gredUntukDipangku: '',
-            jawatanUntukDipangku: '',
-            layakTemuduga: '',
-            // temuduga
-            tarikhTemuduga: '',
-            masaTemuduga: '',
-            pusatTemuduga: '',
-            markahTemuduga: '',
-            keputusanTemuduga: '',
-            // semakan
-            laporanTatatertib: '',
-            laporanPrestasi: '',
-            laporanSprm: '',
-            perakuanKetuaJabatan: '',
-            // mesyuarat kenaikan pangkat
-            keputusanKenaikanPangkat: '',
-            kodJawatanMemangku: '',
-            gelaranJawatanMemangku: '',
-            tarikhKuatkuasaPemangkuan: '',
-            tarikhCukupTempohPemangkuan: '',
-            // mesyuarat penempatan
-            penempatanBaru: '-',
-            tarikhLaporDiri: '',
-            // permohonan penangguhan
-            permohonanPenangguhan: '',
-            penempatanDipohon: '',
-            tarikhLaporDiriDipohon: '',
-            keputusanPenangguhanAtauPindaan: '',
-            // keputusan akhir
-            kodJawatanMemangkuAkhir: '',
-            gelaranJawatanMemangkuAkhir: '',
-            tarikhKuatKuasaPemangkuanAkhir: '',
-            tarikhCukupTempohPemangkuanAkhir: '',
-            penempatanBaruAkhir: '',
-            tarikhLaporDiriAkhir: '',
-        },
-    ];
-
-    let selectedCandidatesList: DtoCalonPemangkuan[] = [];
-
-    let tempSelectedCandidatesList: DtoCalonPemangkuan[] = [];
-
-    let currentData: any = {};
-
-    let placeholderData: any = {};
-
+    
     let editMode: boolean = false;
 
     //===================== Step 1 =====================
-
-    // Step 1 script starts here
-    let editingCandidateList = false;
-
-    function saveSelected() {
-        // actingDetails.calonPemangkuan = selectedCandidatesList;
-        selectedCandidatesList = tempSelectedCandidatesList;
-    }
-
-    function assignValue() {
-        placeholderData = {
-            idRekod: currentData.idRekod,
-            idKakitangan: currentData.idKakitangan,
-            nomborPekerja: currentData.nomborPekerja,
-            namaKakitangan: currentData.namaKakitangan,
-            nomborKP: currentData.nomborKP,
-            gredSemasa: currentData.gredSemasa,
-            jawatanSemasa: currentData.jawatanSemasa,
-            // mesyuarat
-            gredUntukDipangku: currentData.gredUntukDipangku,
-            jawatanUntukDipangku: currentData.jawatanUntukDipangku,
-            layakTemuduga: currentData.layakTemuduga,
-            // temuduga
-            tarikhTemuduga: currentData.tarikhTemuduga,
-            masaTemuduga: currentData.masaTemuduga,
-            pusatTemuduga: currentData.pusatTemuduga,
-            markahTemuduga: currentData.markahTemuduga,
-            keputusanTemuduga: currentData.keputusanTemuduga,
-            // semakan
-            laporanTatatertib: currentData.laporanTatatertib,
-            laporanPrestasi: currentData.laporanPrestasi,
-            laporanSprm: currentData.laporanSprm,
-            perakuanKetuaJabatan: currentData.perakuanKetuaJabatan,
-            // mesyuarat kenaikan pangkat
-            keputusanKenaikanPangkat: currentData.keputusanKenaikanPangkat,
-            kodJawatanMemangku: currentData.kodJawatanMemangku,
-            gelaranJawatanMemangku: currentData.gelaranJawatanMemangku,
-            tarikhKuatkuasaPemangkuan: currentData.tarikhKuatkuasaPemangkuan,
-            tarikhCukupTempohPemangkuan:
-                currentData.tarikhCukupTempohPemangkuan,
-            // mesyuarat penempatan
-            penempatanBaru: currentData.penempatanBaru,
-            tarikhLaporDiri: currentData.tarikhLaporDiri,
-            // permohonan penangguhan
-            permohonanPenangguhan: currentData.permohonanPenangguhan,
-            penempatanDipohon: currentData.penempatanDipohon,
-            tarikhLaporDiriDipohon: currentData.tarikhLaporDiriDipohon,
-            keputusanPenangguhanAtauPindaan:
-                currentData.keputusanPenangguhanAtauPindaan,
-            // keputusan akhir
-            kodJawatanMemangkuAkhir: currentData.kodJawatanMemangkuAkhir,
-            gelaranJawatanMemangkuAkhir:
-                currentData.gelaranJawatanMemangkuAkhir,
-            tarikhKuatKuasaPemangkuanAkhir:
-                currentData.tarikhKuatKuasaPemangkuanAkhir,
-            tarikhCukupTempohPemangkuanAkhir:
-                currentData.tarikhCukupTempohPemangkuanAkhir,
-            penempatanBaruAkhir: currentData.penempatanBaruAkhir,
-            tarikhLaporDiriAkhir: currentData.tarikhLaporDiriAkhir,
-        };
-    }
 
     let keputusanPemilihan = [
         {
@@ -349,20 +114,6 @@
     // z validation schema for the example form fields==================================
     // =================================================================================
     let errorData: any;
-    // date common schema
-    // const dateScheme = z.coerce
-    //     .date({
-    //         errorMap: (issue, { defaultError }) => ({
-    //             message:
-    //                 issue.code === 'invalid_date'
-    //                     ? 'Tarikh tidak boleh dibiarkan kosong.'
-    //                     : defaultError,
-    //         }),
-    //     })
-    //     .min(new Date(), {
-    //         message:
-    //             'Tarikh lapor diri yang dipohon hendaklah tidak kurang dari tarikh semasa.',
-    //     });
 
     // Kemaskini Keputusan Mesyuarat Pemilihan Calon Stepper Form
     const exampleFormSchema = z.object({
@@ -390,7 +141,6 @@
                         : defaultError,
             }),
         }),
-        // dateSelector: dateScheme,
     });
 
     const submitForm = async (event: Event) => {
@@ -410,7 +160,6 @@
             keputusanPemilihanDropdown: String(
                 keputusanPemilihanDropdown.value,
             ),
-            // dateSelector: String(formData.get('dateSelector')),
         };
         try {
             const result = exampleFormSchema.parse(exampleFormData);
@@ -2049,7 +1798,6 @@
                     ><TextIconButton
                         label="Batal"
                         onClick={() => {
-                            editingCandidateList = true;
                             editMode = false;
                         }}
                     ></TextIconButton>
