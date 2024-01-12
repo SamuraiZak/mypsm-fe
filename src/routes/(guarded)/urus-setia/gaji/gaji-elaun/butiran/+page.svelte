@@ -27,7 +27,6 @@
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import { mockEmployeeLeaveRecord } from '$lib/mocks/cuti/mockEmployeeLeaveRecord';
     import { mockSalaryAndAllowanceDeduction } from '$lib/mocks/gaji/gaji-elaun/mockSalaryAndAllowanceDeduction';
-    import { period } from '$lib/mocks/cuti/tempoh';
     import { deductionType } from '$lib/mocks/gaji/gaji-elaun/deductionType';
     import { mockSalaryAdjustmentWithKey } from '$lib/mocks/gaji/gaji-elaun/mockSalaryAdjustmentWithKey';
     import toast, { Toaster } from 'svelte-french-toast';
@@ -58,15 +57,16 @@
     let cola: any;
     let month: any;
     let total: any;
-
-    const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
+    let senaraiPemotongan: IntSalaryAndAllowanceDeduction[] =
+        mockSalaryAndAllowanceDeduction;
+    let openModal: boolean = false;
 
     let tooltipContent: string = '';
     const itkaTooltip: string = 'Imbuhan Tetap Khidmat Awam (ITKA)';
     const itpTooltip: string = 'Insentif Tetap Perumahan (ITP)';
     const colaTooltip: string =
         'Bantuan Sara Hidup (Cost of Living Assistance)';
+
     // function to assign the content  of the tooltip
     function assignContent(ev: CustomEvent<HTMLDivElement>) {
         {
@@ -107,11 +107,6 @@
     }
     // -----------------------------------------------
 
-    let senaraiPemotongan: IntSalaryAndAllowanceDeduction[] =
-        mockSalaryAndAllowanceDeduction;
-    let selectedValue: any = '8';
-    let openModal: boolean = false;
-
     const dateScheme = z.coerce
         .date({
             errorMap: (issue, { defaultError }) => ({
@@ -125,14 +120,14 @@
             message: 'Tarikh tidak boleh kurang dari tarikh semasa.',
         });
 
-    const exampleFormSchema = z.object({
+    const modalFormSchema = z.object({
         startDate: dateScheme.refine((value) => value >= new Date(endDate), {
             message:
-                'Tidak boleh kurang daripada tarikh permohonan bersara awal',
+                'Tidak boleh kurang daripada tarikh semasa',
         }),
 
         endDate: dateScheme.refine((value) => value <= new Date(startDate), {
-            message: 'Tidak boleh lebih daripada tarikh bersara awal',
+            message: 'Tidak boleh kurang daripada tarikh mula',
         }),
 
         jenisPenambahan: z
@@ -145,6 +140,122 @@
             })
             .trim(),
 
+        totalPayment: z
+            .string({ required_error: 'Medan ini tidak boleh kosong.' })
+            .min(1, {
+                message: 'Medan ini hendaklah mempunyai karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+
+        paymentType: z.enum(['1', '2'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+    });
+
+    const submitModalForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+        const paymentTypeSelector = document.getElementById(
+            'paymentType',
+        ) as HTMLSelectElement;
+
+        const exampleFormData = {
+            jenisPenambahan: String(formData.get('jenisPenambahan')),
+            totalPayment: String(formData.get('totalPayment')),
+            paymentType: String(paymentTypeSelector.value),
+            startDate: String(formData.get('startDate')),
+            endDate: String(formData.get('endDate')),
+        };
+
+        try {
+            const result = modalFormSchema.parse(exampleFormData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData = { ...exampleFormData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedExamFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
+
+    const umumFormSchema = z.object({
+        tempohBayaran: z.enum(['1', '2', '3', '4'], {
+            errorMap: (issue, { defaultError }) => ({
+                message:
+                    issue.code === 'invalid_enum_value'
+                        ? 'Pilihan perlu dipilih.'
+                        : defaultError,
+            }),
+        }),
+    });
+
+    const submitUmumForm = async (event: Event) => {
+        const formData = new FormData(event.target as HTMLFormElement);
+        const tempohBayaranSelector = document.getElementById(
+            'tempohBayaran',
+        ) as HTMLSelectElement;
+
+        const exampleFormData = {
+            tempohBayaran: String(tempohBayaranSelector.value),
+        };
+
+        try {
+            const result = umumFormSchema.parse(exampleFormData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData = { ...exampleFormData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedExamFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
+
+    const pemangkuanFormSchema = z.object({
         salary: z
             .string({ required_error: 'Medan ini tidak boleh kosong.' })
             .min(4, {
@@ -215,34 +326,6 @@
             })
             .trim(),
 
-        totalPayment: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(1, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-
-        paymentType: z.enum(['1', '2'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Pilihan perlu dipilih.'
-                        : defaultError,
-            }),
-        }),
-
-        tempohBayaran: z.enum(['1', '2', '3', '4'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Pilihan perlu dipilih.'
-                        : defaultError,
-            }),
-        }),
-
         gred: z
             .string({ required_error: 'Medan ini tidak boleh kosong.' })
             .min(4, {
@@ -256,22 +339,10 @@
         effectiveDate: dateScheme,
     });
 
-    const submitForm = async (event: Event) => {
+    const submitPemangkuanForm = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);
-        const tempohBayaranSelector = document.getElementById(
-            'tempohBayaran',
-        ) as HTMLSelectElement;
-        const paymentTypeSelector = document.getElementById(
-            'paymentType',
-        ) as HTMLSelectElement;
 
         const exampleFormData = {
-            jenisPenambahan: String(formData.get('jenisPenambahan')),
-            totalPayment: String(formData.get('totalPayment')),
-            tempohBayaran: String(tempohBayaranSelector.value),
-            paymentType: String(paymentTypeSelector.value),
-            startDate: String(formData.get('startDate')),
-            endDate: String(formData.get('endDate')),
             effectiveDate: String(formData.get('effectiveDate')),
             gred: String(formData.get('gred')),
             salary: String(formData.get('salary')),
@@ -284,7 +355,7 @@
         };
 
         try {
-            const result = exampleFormSchema.parse(exampleFormData);
+            const result = pemangkuanFormSchema.parse(exampleFormData);
             if (result) {
                 errorData = [];
                 toast.success('Berjaya disimpan!', {
@@ -665,7 +736,7 @@
                     <div class="flex w-full flex-col gap-2">
                         <form
                             id="umumValidation"
-                            on:submit|preventDefault={submitForm}
+                            on:submit|preventDefault={submitUmumForm}
                             class="flex w-full flex-col gap-2"
                         >
                             <TextField
@@ -768,7 +839,7 @@
                     >
                         <form
                             id="pemangkuanValidation"
-                            on:submit|preventDefault={submitForm}
+                            on:submit|preventDefault={submitPemangkuanForm}
                             class="flex w-full flex-col gap-2"
                         >
                             <DateSelector
@@ -784,12 +855,6 @@
                                     >{errorData?.effectiveDate[0]}</span
                                 >
                             {/if}
-                            <!-- <TextField
-                                {labelBlack}
-                                disabled={false}
-                                label="Gred"
-                                value={currEmployeeGrade.code}
-                            ></TextField> -->
                             <TextField
                                 hasError={errorData?.gred}
                                 name="gred"
@@ -799,15 +864,10 @@
                             />
                             {#if errorData?.gred}
                                 <span
-                                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
                                     >{errorData?.gred[0]}</span
                                 >
                             {/if}
-                            <!-- <TextField
-                                {labelBlack}
-                                disabled={false}
-                                label="Gaji Pokok"
-                            ></TextField> -->
                             <TextField
                                 hasError={errorData?.salary}
                                 name="salary"
@@ -817,17 +877,10 @@
                             />
                             {#if errorData?.salary}
                                 <span
-                                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
                                     >{errorData?.salary[0]}</span
                                 >
                             {/if}
-                            <!-- <TextField
-                                {labelBlack}
-                                hasTooltip
-                                toolTipID="type-itka"
-                                disabled={false}
-                                label="ITKA"
-                            ></TextField> -->
                             <TextField
                                 hasTooltip
                                 toolTipID="type-itka"
@@ -839,16 +892,10 @@
                             />
                             {#if errorData?.itka}
                                 <span
-                                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
                                     >{errorData?.itka[0]}</span
                                 >
                             {/if}
-                            <!-- <TextField
-                                {labelBlack}
-                                disabled={false}
-                                label="Jenis Skim Perumahan"
-                                value="Insentif Tetap Perumahan (ITP)"
-                            ></TextField> -->
                             <TextField
                                 hasError={errorData?.housingSchemeType}
                                 name="housingSchemeType"
@@ -858,15 +905,10 @@
                             />
                             {#if errorData?.housingSchemeType}
                                 <span
-                                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
                                     >{errorData?.housingSchemeType[0]}</span
                                 >
                             {/if}
-                            <!-- <TextField
-                                {labelBlack}
-                                disabled={false}
-                                label="Jumlah Skim Perumahan"
-                            ></TextField> -->
                             <TextField
                                 hasError={errorData?.totalHousingScheme}
                                 name="totalHousingScheme"
@@ -876,17 +918,10 @@
                             />
                             {#if errorData?.totalHousingScheme}
                                 <span
-                                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
                                     >{errorData?.totalHousingScheme[0]}</span
                                 >
                             {/if}
-                            <!-- <TextField
-                                {labelBlack}
-                                hasTooltip
-                                toolTipID="type-cola"
-                                disabled={false}
-                                label="COLA"
-                            ></TextField> -->
                             <TextField
                                 hasTooltip
                                 toolTipID="type-cola"
@@ -898,7 +933,7 @@
                             />
                             {#if errorData?.cola}
                                 <span
-                                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
                                     >{errorData?.cola[0]}</span
                                 >
                             {/if}
@@ -910,13 +945,6 @@
                                     class="w-[220px] min-w-[220px] text-sm font-medium"
                                     >Tarikh Pergerakan Gaji dan Jumlah (RM)</label
                                 >
-                                <!-- <TextField
-                                    labelType="label-fit"
-                                    {labelBlack}
-                                    disabled={false}
-                                    label="Bulan"
-                                    value={months[6].name}
-                                ></TextField> -->
                                 <TextField
                                     labelType="label-fit"
                                     hasError={errorData?.month}
@@ -927,16 +955,10 @@
                                 />
                                 {#if errorData?.month}
                                     <span
-                                        class="ml-[200px] font-sans text-sm italic text-system-danger"
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
                                         >{errorData?.month[0]}</span
                                     >
                                 {/if}
-                                <!-- <TextField
-                                    labelType="label-fit"
-                                    {labelBlack}
-                                    disabled={false}
-                                    label="Jumlah"
-                                ></TextField> -->
                                 <TextField
                                     labelType="label-fit"
                                     hasError={errorData?.total}
@@ -947,7 +969,7 @@
                                 />
                                 {#if errorData?.total}
                                     <span
-                                        class="ml-[200px] font-sans text-sm italic text-system-danger"
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
                                         >{errorData?.total[0]}</span
                                     >
                                 {/if}
@@ -1103,7 +1125,7 @@
 <Modal title="Tambah Pemotongan" bind:open={openModal}>
     <form
         id="modalValidation"
-        on:submit|preventDefault={submitForm}
+        on:submit|preventDefault={submitModalForm}
         class="flex w-full flex-col gap-2"
     >
         <div
