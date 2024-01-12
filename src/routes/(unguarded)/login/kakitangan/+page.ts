@@ -4,7 +4,7 @@ import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
 // creating schema
-export const _calonLoginSchema = z.object({
+export const _kakitanganLoginSchema = z.object({
     idType: z.string(),
     userGroup: z.string(),
     username: z.string().min(5),
@@ -13,7 +13,7 @@ export const _calonLoginSchema = z.object({
 });
 
 export const load = async () => {
-    const form = await superValidate(_calonLoginSchema);
+    const form = await superValidate(_kakitanganLoginSchema);
     return { form };
 };
 
@@ -30,6 +30,6 @@ export const _submit = async (formData: object) => {
         .json();
 
     if (response.status == 200) {
-        goto('/calon/halaman-utama');
+        goto('/kakitangan/halaman-utama');
     }
 };

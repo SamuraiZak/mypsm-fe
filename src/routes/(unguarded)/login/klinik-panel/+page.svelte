@@ -5,6 +5,7 @@
     import { superForm, setMessage } from 'sveltekit-superforms/client';
 
     import { _calonLoginSchema, _submit } from './+page';
+    import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
 
     export let data: PageData;
 
@@ -32,10 +33,12 @@
         },
     ];
 
+    let selectIdTypeOption = idTypeOptions[0];
+
     // preset form data
     data.form.data.idType = idTypeOptions[0].value;
-    data.form.data.userGroup = 'candidate';
-    data.form.data.currentRole = 'calon';
+    data.form.data.userGroup = 'clinic';
+    data.form.data.currentRole = 'klinik panel';
 
     const { form, errors, message, constraints, enhance } = superForm(
         data.form,
@@ -123,14 +126,17 @@
                         ID Pengguna
                     {/if} -->
 
-                    {idTypeOptions.find(item => item.value == $form.idType)?.text}
+                    {idTypeOptions.find((item) => item.value == $form.idType)
+                        ?.text}
                 </label>
                 <input
                     bind:value={$form.username}
                     type="text"
                     name="username"
                     id="username"
-                    placeholder={idTypeOptions.find(item => item.value == $form.idType)?.placeholder}
+                    placeholder={idTypeOptions.find(
+                        (item) => item.value == $form.idType,
+                    )?.placeholder}
                     class=" autofill:hide-default-inner-shadow block h-9 w-full rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light p-2.5 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
                 />
 

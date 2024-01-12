@@ -4,9 +4,113 @@
 
     import { superForm, setMessage } from 'sveltekit-superforms/client';
 
-    import { _calonLoginSchema, _submit } from './+page';
+    import { _kakitanganLoginSchema, _submit } from './+page';
 
     export let data: PageData;
+
+    // currentRole options
+    let currentRoleOptions = [
+        {
+            value: 'admin',
+            text: 'Admin',
+        },
+        {
+            value: 'super admin',
+            text: 'Super Admin',
+        },
+        {
+            value: 'kakitangan',
+            text: 'Kakitangan',
+        },
+        {
+            value: 'urus setia perjawatan',
+            text: 'Urus setia Perjawatan',
+        },
+        {
+            value: 'urus setia cuti',
+            text: 'Urus Setia Cuti',
+        },
+        {
+            value: 'urus setia gaji',
+            text: 'Urus Setia Gaji',
+        },
+        {
+            value: 'urus setia integriti',
+            text: 'Urus Setia Integriti',
+        },
+        {
+            value: 'urus setia lnpt',
+            text: 'Urus Setia LNPT',
+        },
+        {
+            value: 'urus setia latihan',
+            text: 'Urus Setia Latihan',
+        },
+        {
+            value: 'urus setia kakitangan kontrak',
+            text: 'Urus Setia Kakitangan Kontrak',
+        },
+        {
+            value: 'urus setia pinjaman & kuarters',
+            text: 'Urus Setia Pinjaman & Kuarters',
+        },
+        {
+            value: 'urus setia perubatan',
+            text: 'Urus Setia Perubatan',
+        },
+        {
+            value: 'urus setia elaun-elaun perkhidmatan',
+            text: 'Urus Setia Elaun-elaun Perkhidmatan',
+        },
+        {
+            value: 'urus setia persaraan',
+            text: 'Urus Setia Persaraan',
+        },
+        {
+            value: 'penyokong',
+            text: 'Penyokong',
+        },
+        {
+            value: 'pelulus',
+            text: 'Pelulus',
+        },
+        {
+            value: 'pengarah bahagian/negeri',
+            text: 'Pengarah Bahagian/Negeri',
+        },
+        {
+            value: 'pengarah khidmat pengurusan',
+            text: 'Pengarah Khidmat Pengurusan',
+        },
+        {
+            value: 'ketua seksyen',
+            text: 'Ketua Seksyen',
+        },
+        {
+            value: 'ketua pengarah',
+            text: 'Ketua Pengarah',
+        },
+        {
+            value: 'audit',
+            text: 'Audit',
+        },
+        {
+            value: 'unit bahagian/negeri',
+            text: 'Unit Bahagian/Negeri',
+        },
+        {
+            value: 'unit pengurusan fasiliti',
+            text: 'Unit Pengurusan Fasiliti',
+        },
+        {
+            value: 'pengarah integriti/audit',
+            text: 'Pengarah Integriti/Audit',
+        },
+        {
+            value: 'timbalan ketua seksyen',
+            text: 'Timbalan Ketua Seksyen',
+        },
+    ];
 
     // idType options
     let idTypeOptions = [
@@ -34,14 +138,14 @@
 
     // preset form data
     data.form.data.idType = idTypeOptions[0].value;
-    data.form.data.userGroup = 'candidate';
-    data.form.data.currentRole = 'calon';
+    data.form.data.userGroup = 'employee';
+    data.form.data.currentRole = currentRoleOptions[0].value;
 
     const { form, errors, message, constraints, enhance } = superForm(
         data.form,
         {
             SPA: true,
-            validators: _calonLoginSchema,
+            validators: _kakitanganLoginSchema,
             onUpdate({ form }) {
                 if (
                     form.data.idType.includes('Kad') &&
@@ -71,12 +175,45 @@
                 <span
                     class="font font-semibold text-ios-labelColors-label-light"
                 >
-                    Calon Kakitangan LKIM
+                    Kakitangan LKIM
                 </span>
             </p>
         </div>
 
         <form id="loginForm" method="POST" use:enhance class="space-y-2">
+            <!-- current role field starts -->
+
+            <div>
+                <label
+                    for="idType"
+                    class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                    >Peranan</label
+                >
+                <select
+                    name="idType"
+                    bind:value={$form.currentRole}
+                    class=" block h-9 w-full rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
+                >
+                    {#each currentRoleOptions as option}
+                        <option value={option.value}>
+                            {option.text}
+                        </option>
+                    {/each}
+                </select>
+
+                <div class="h-5 w-full items-end justify-end">
+                    {#if $errors.idType}
+                        <p
+                            class="text-end text-sm italic text-ios-basic-destructiveRed"
+                        >
+                            {$errors.idType}
+                        </p>
+                    {/if}
+                </div>
+            </div>
+
+            <!-- current role field ends -->
+
             <!-- id type field starts -->
 
             <div>
@@ -123,14 +260,17 @@
                         ID Pengguna
                     {/if} -->
 
-                    {idTypeOptions.find(item => item.value == $form.idType)?.text}
+                    {idTypeOptions.find((item) => item.value == $form.idType)
+                        ?.text}
                 </label>
                 <input
                     bind:value={$form.username}
                     type="text"
                     name="username"
                     id="username"
-                    placeholder={idTypeOptions.find(item => item.value == $form.idType)?.placeholder}
+                    placeholder={idTypeOptions.find(
+                        (item) => item.value == $form.idType,
+                    )?.placeholder}
                     class=" autofill:hide-default-inner-shadow block h-9 w-full rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light p-2.5 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
                 />
 

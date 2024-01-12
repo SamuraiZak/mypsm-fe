@@ -5,10 +5,10 @@
 
 <section class="bg-ios-backgroundColors-secondarySystemBackground-light">
     <div
-        class="mx-auto flex flex-col items-center justify-center px-6 py-8 md:h-screen lg:py-0"
+        class="mx-auto flex h-screen flex-col items-center justify-center"
     >
-        <div class="mb-6 flex items-center">
-            <img class="h-20" src={lkimLogo} alt="logo" />
+        <div class="mb-2.5 flex items-center">
+            <img class="w-16 object-scale-down" src={lkimLogo} alt="logo" />
         </div>
         <slot />
     </div>
