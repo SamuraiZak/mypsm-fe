@@ -219,22 +219,12 @@
         SPA: true,
         validators: _addAcademicInfoSchema,
         onSubmit() {
-            toast.promise(
-                _submitAddMoreAcademicForm($addAcademicInfoModal).then(
-                    (response) => {
-                        tempAcademicRecord.push(response);
-                        console.log('RESPONSE MODAL: ', tempAcademicRecord);
-                    },
-                ),
-                {
-                    loading: 'Sedang Diproses...',
-                    success: 'Berjaya disimpan!',
-                    error: 'Data tidak dapat disimpan.',
-                },
-                {
-                    style: 'background: #333; color: #fff;',
-                },
-            );
+            _submitAddMoreAcademicForm($addAcademicInfoModal)
+                .then((response) => {
+                    tempAcademicRecord.push(response);
+                    console.log('RESPONSE MODAL: ', tempAcademicRecord);
+                })
+                // .then(() => (openAcademicInfoModal = false));
         },
     });
 

@@ -1,7 +1,6 @@
-import { goto } from '$app/navigation';
 import api from '$lib/services/core/ky.service.js';
+import { getErrorToast, getPromiseToast } from '$lib/toast/toast-service';
 import { fail } from '@sveltejs/kit';
-import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
@@ -95,29 +94,30 @@ export const _personalInfoForm = z
         (
             {
                 isInRelationshipWithLKIMStaff,
-                jawatanPasangan,
-                hubungan,
-                noPekerjaPasangan,
-                namaPasangan,
+                // jawatanPasangan,
+                // hubungan,
+                // noPekerjaPasangan,
+                // namaPasangan,
             },
             ctx,
         ) => {
-            const fieldsToCheck = [
-                noPekerjaPasangan,
-                namaPasangan,
-                jawatanPasangan,
-                hubungan,
-            ];
+            // const fieldsToCheck = [
+            //     noPekerjaPasangan,
+            //     namaPasangan,
+            //     jawatanPasangan,
+            //     hubungan,
+            // ];
             if (isInRelationshipWithLKIMStaff === 'true') {
-                for (const field of fieldsToCheck) {
-                    if (field === '') {
-                        ctx.addIssue({
-                            code: z.ZodIssueCode.custom,
-                            message: `Sila isi medan ini.`,
-                            path: ['noPekerjaPasangan'],
-                        });
-                    }
-                }
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: `Sila isi medan ini.`,
+                    path: [
+                        'noPekerjaPasangan',
+                        'namaPasangan',
+                        'jawatanPasangan',
+                        'hubungan',
+                    ],
+                });
             }
 
             return true;
@@ -215,32 +215,23 @@ export const load = async () => {
 export const _submitPersonalInfoForm = async (formData: object) => {
     console.log('HERE: ', formData);
 
-    const personalInfoForm = await superValidate(formData, _personalInfoForm);
+    const form = await superValidate(formData, _personalInfoForm);
 
-    if (!personalInfoForm.valid) {
-        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
-            style: 'background: #333; color: #fff;',
-        });
-        console.log(personalInfoForm);
-        return fail(400, personalInfoForm);
-    } else {
-        console.log('Request Body: ', personalInfoForm);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(personalInfoForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log('Response Returned: 1-54', json);
-            });
+    if (!form.valid) {
+        getErrorToast();
+        return fail(400, form);
     }
-    return { personalInfoForm };
+
+    const responsePromise = api
+        .post('https://jsonplaceholder.typicode.com/posts', {
+            body: JSON.stringify(form),
+            prefixUrl: '',
+        })
+        .json()
+        .then((json) => console.log('Response: ', json));
+
+    getPromiseToast(responsePromise);
+    return { form };
 };
 
 export const _submitAcademicInfoForm = async (formData: object) => {
@@ -249,13 +240,11 @@ export const _submitAcademicInfoForm = async (formData: object) => {
     console.log('Request: ', form.data);
 
     if (!form.valid) {
-        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
-            style: 'background: #333; color: #fff;',
-        });
+        getErrorToast();
         return fail(400, form);
     }
 
-    await api
+    const responsePromise = api
         .post('https://jsonplaceholder.typicode.com/posts', {
             body: JSON.stringify(form),
             prefixUrl: '',
@@ -263,11 +252,7 @@ export const _submitAcademicInfoForm = async (formData: object) => {
         .json()
         .then((json) => console.log('Response: ', json));
 
-    toast.success('Berjaya disimpan!', {
-        style: 'background: #333; color: #fff;',
-    });
-
-    setTimeout(() => goto('../penamatan-tanggung-kerja'), 1500);
+    getPromiseToast(responsePromise);
 
     return { form };
 };
@@ -278,56 +263,41 @@ export const _submitAddMoreAcademicForm = async (formData: object) => {
     const form = await superValidate(formData, _addAcademicInfoSchema);
 
     console.log('Request: ', form.data);
-
     if (!form.valid) {
-        // toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
-        //     style: 'background: #333; color: #fff;',
-        // });
+        getErrorToast();
         return fail(400, form);
     }
 
-    const response = await api
+    const responsePromise = api
         .post('https://jsonplaceholder.typicode.com/posts', {
             body: JSON.stringify(form),
             prefixUrl: '',
         })
         .json();
 
-    // console.table(_moreAcedemicInfo);
-    // toast.success('Berjaya disimpan!', {
-    //     style: 'background: #333; color: #fff;',
-    // });
+    getPromiseToast(responsePromise);
+
+    const response = await responsePromise;
 
     return { response };
 };
 
 export const _submitExperienceInfoForm = async (formData: object) => {
-    const serviceInfoForm = await superValidate(formData, _serviceInfoSchema);
+    const form = await superValidate(formData, _serviceInfoSchema);
 
-    // console.log(formData.get('tarikhMulaKontrak'));
-
-    if (!serviceInfoForm.valid) {
-        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
-            style: 'background: #333; color: #fff;',
-        });
-        console.log(serviceInfoForm);
-        return fail(400, serviceInfoForm);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(serviceInfoForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log('Response Returned: 1-54', json);
-            });
+    if (!form.valid) {
+        getErrorToast();
+        return fail(400, form);
     }
-    return { serviceInfoForm };
+
+    const responsePromise = api
+        .post('https://jsonplaceholder.typicode.com/posts', {
+            body: JSON.stringify(form),
+            prefixUrl: '',
+        })
+        .json()
+        .then((json) => console.log('Response: ', json));
+
+    getPromiseToast(responsePromise);
+    return { form };
 };
