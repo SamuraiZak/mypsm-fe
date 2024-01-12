@@ -31,7 +31,20 @@ const generalSelectSchema = z
     .string()
     .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
-const dateStepper1 = z.coerce
+const minDateSchema = z.coerce
+    .date({
+        errorMap: (issue, { defaultError }) => ({
+            message:
+                issue.code === 'invalid_date'
+                    ? 'Tarikh tidak boleh dibiar kosong.'
+                    : defaultError,
+        }),
+    })
+    .min(new Date(), {
+        message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+    });
+
+const maxDateSchema = z.coerce
     .date({
         errorMap: (issue, { defaultError }) => ({
             message:
@@ -53,11 +66,10 @@ export const _addAcademicInfoSchema = z.object({
     remarks: longTextSchema,
 });
 
-export const _stepperMaklumatPeribadi = z
+export const _personalInfoForm = z
     .object({
         bekasPolisTentera: generalSelectSchema,
         statusPekerjaan: generalSelectSchema,
-        isInRelationshipWithLKIMStaff: generalSelectSchema,
         warnaKadPengenalan: generalSelectSchema,
         warganegara: generalSelectSchema,
         tempatLahir: generalSelectSchema,
@@ -65,82 +77,157 @@ export const _stepperMaklumatPeribadi = z
         agama: generalSelectSchema,
         status: generalSelectSchema,
         jantina: generalSelectSchema,
-        jawatanPasangan: z.string().optional(),
-        hubungan: z.string().optional(),
         noPekerja: shortTextSchema,
         noKadPengenalan: shortTextSchema,
         namaPenuh: shortTextSchema,
         namaLain: shortTextSchema,
+        tarikhLahir: maxDateSchema,
         emel: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
-        noPekerjaPasangan: z.string().optional(),
-        namaPasangan: z.string().optional(),
-        tarikhLahir: dateStepper1,
         alamatRumah: shortTextSchema,
         alamatSuratMenyurat: shortTextSchema,
+        isInRelationshipWithLKIMStaff: generalSelectSchema,
+        noPekerjaPasangan: z.string(),
+        namaPasangan: z.string(),
+        jawatanPasangan: z.string(),
+        hubungan: z.string(),
     })
-    // .superRefine(
-    //     (
-    //         {
-    //             isInRelationshipWithLKIMStaff,
-    //             jawatanPasangan,
-    //             hubungan,
-    //             noPekerjaPasangan,
-    //             namaPasangan,
-    //         },
-    //         refinementContext,
-    //     ) => {
-    //         if (isInRelationshipWithLKIMStaff.includes('false')) {
-    //             // const fieldsToCheck = [
-    //             //     jawatanPasangan,
-    //             //     hubungan,
-    //             //     noPekerjaPasangan,
-    //             //     namaPasangan,
-    //             // ];
-    //             for (const field of fieldsToCheck) {
-    //                 refinementContext.addIssue({
-    //                     code: z.ZodIssueCode.custom,
-    //                     message: `${field} is required when 'id' is not set`,
-    //                     path: [
-    //                         hubungan,
-    //                         noPekerjaPasangan,
-    //                         namaPasangan,
-    //                         jawatanPasangan,
-    //                     ],
-    //                 });
-    //             }
-    //         }
-    //     },
-    // );
+    .superRefine(
+        (
+            {
+                isInRelationshipWithLKIMStaff,
+                jawatanPasangan,
+                hubungan,
+                noPekerjaPasangan,
+                namaPasangan,
+            },
+            ctx,
+        ) => {
+            const fieldsToCheck = [
+                noPekerjaPasangan,
+                namaPasangan,
+                jawatanPasangan,
+                hubungan,
+            ];
+            if (isInRelationshipWithLKIMStaff === 'true') {
+                for (const field of fieldsToCheck) {
+                    if (field === '') {
+                        ctx.addIssue({
+                            code: z.ZodIssueCode.custom,
+                            message: `Sila isi medan ini.`,
+                            path: ['noPekerjaPasangan'],
+                        });
+                    }
+                }
+            }
+
+            return true;
+        },
+    );
+
+//==========================================================
+//================== Maklumat Akademik =====================
+//==========================================================
+
+export const _academicInfoSchema = z.object({
+    sekolah: shortTextSchema,
+    tahunHabis: shortTextSchema,
+    gredSekolah: shortTextSchema,
+    bidang: shortTextSchema,
+});
+
+//==========================================================
+//================== Maklumat Pengalaman ===================
+//==========================================================
+
+export const _experienceInfoSchema = z.object({
+    namaMajikan: shortTextSchema,
+    alamatMajikan: shortTextSchema,
+    kodJawatan: shortTextSchema.nullable(),
+    jawatanPengalaman: shortTextSchema,
+    tempohPerkhidmatan: z
+        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+        .min(1, {
+            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+        })
+        .max(124, {
+            message: 'Medan ini tidak boleh melebihi 124 karakter.',
+        })
+        .trim(),
+    gajiPengalaman: shortTextSchema,
+});
+
+//==========================================================
+//=============Maklumat Perkhidmatan ========================
+//==========================================================
+
+export const _serviceInfoSchema = z.object({
+    faedahPersaraanPerkhidmatan: generalSelectSchema,
+    gredSemasa: generalSelectSchema,
+    jawatan: generalSelectSchema,
+    penempatan: generalSelectSchema,
+    tarafPerkhidmatan: generalSelectSchema,
+    bulanKGT: generalSelectSchema,
+    noKWSP: shortTextSchema,
+    noSOCSO: shortTextSchema,
+    noCukai: shortTextSchema,
+    bank: shortTextSchema,
+    noAkaun: shortTextSchema,
+    tarikhBerkuatKuasa: shortTextSchema,
+    tanggaGaji: shortTextSchema,
+    gajiPokok: shortTextSchema,
+    itka: shortTextSchema,
+    itp: shortTextSchema,
+    epw: shortTextSchema,
+    cola: shortTextSchema,
+    kelayakanCuti: shortTextSchema,
+    mulaDilantikPerkhidmatanKerajaan: maxDateSchema,
+    mulaDilantikPerkhidmatanLKIM: maxDateSchema,
+    disahkanDalamJawatanSemasaLKIM: maxDateSchema,
+    tarikhKelulusanPercantumanPerkhidmatanLepas: maxDateSchema,
+    tarikhBersara: minDateSchema,
+    tarikhKuatkuasaLantikanSemasa: maxDateSchema,
+    pemangkuanSekarang: minDateSchema,
+    tanggungKerjaSekarang: minDateSchema,
+    kenaikanGajiAkhir: minDateSchema,
+    kenaikanPangkatAkhir: minDateSchema,
+});
 
 export const load = async () => {
-    const stepperMaklumatPeribadi = await superValidate(
-        _stepperMaklumatPeribadi,
-    );
-    const academicInfoForm = await superValidate(_addAcademicInfoSchema);
+    const personalInfoForm = await superValidate(_personalInfoForm);
 
-    return { stepperMaklumatPeribadi, academicInfoForm };
+    const academicInfoForm = await superValidate(_academicInfoSchema);
+
+    const addAcademicInfoModal = await superValidate(_addAcademicInfoSchema);
+
+    const serviceInfoForm = await superValidate(_serviceInfoSchema);
+    const experienceInfoForm = await superValidate(_experienceInfoSchema);
+
+    return {
+        personalInfoForm,
+        academicInfoForm,
+        addAcademicInfoModal,
+        serviceInfoForm,
+        experienceInfoForm,
+    };
 };
 
 // personal detail submit function
-export const _submitFormStepperMaklumatPeribadi = async (event: Event) => {
-    const formElement = event.target as HTMLFormElement;
-    const formData = new FormData(formElement);
-    const stepperMaklumatPeribadi = await superValidate(
-        formData,
-        _stepperMaklumatPeribadi,
-    );
+export const _submitPersonalInfoForm = async (formData: object) => {
+    console.log('HERE: ', formData);
 
-    if (!stepperMaklumatPeribadi.valid) {
+    const personalInfoForm = await superValidate(formData, _personalInfoForm);
+
+    if (!personalInfoForm.valid) {
         toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
             style: 'background: #333; color: #fff;',
         });
-        console.log(stepperMaklumatPeribadi);
-        return fail(400, stepperMaklumatPeribadi);
+        console.log(personalInfoForm);
+        return fail(400, personalInfoForm);
     } else {
-        console.log('Request Body: ', formData);
+        console.log('Request Body: ', personalInfoForm);
         fetch('https://jsonplaceholder.typicode.com/posts', {
             method: 'POST',
-            body: JSON.stringify(stepperMaklumatPeribadi),
+            body: JSON.stringify(personalInfoForm),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
@@ -153,12 +240,10 @@ export const _submitFormStepperMaklumatPeribadi = async (event: Event) => {
                 console.log('Response Returned: 1-54', json);
             });
     }
-    return { stepperMaklumatPeribadi };
+    return { personalInfoForm };
 };
 
-export const _submitAcademicInfoForm = async (event: Event) => {
-    const formElement = event.target as HTMLFormElement;
-    const formData = new FormData(formElement);
+export const _submitAcademicInfoForm = async (formData: object) => {
     const form = await superValidate(formData, _addAcademicInfoSchema);
 
     console.log('Request: ', form.data);
@@ -187,10 +272,9 @@ export const _submitAcademicInfoForm = async (event: Event) => {
     return { form };
 };
 
-export const _moreAcedemicInfo: any[] = [];
+export const _moreAcedemicInfo: unknown[] = [];
 
-export const _submitAddMoreAcademicForm = async (event: Event) => {
-    const formData = new FormData(event.target as HTMLFormElement);
+export const _submitAddMoreAcademicForm = async (formData: object) => {
     const form = await superValidate(formData, _addAcademicInfoSchema);
 
     console.log('Request: ', form.data);
@@ -202,20 +286,48 @@ export const _submitAddMoreAcademicForm = async (event: Event) => {
         return fail(400, form);
     }
 
-    await api
+    const response = await api
         .post('https://jsonplaceholder.typicode.com/posts', {
             body: JSON.stringify(form),
             prefixUrl: '',
         })
-        .json()
-        .then((json) => _moreAcedemicInfo.push(json));
+        .json();
 
-    console.table('moreAcedemicInfo: ', _moreAcedemicInfo);
+    // console.table(_moreAcedemicInfo);
     toast.success('Berjaya disimpan!', {
         style: 'background: #333; color: #fff;',
     });
 
-    // setTimeout(() => goto('../penamatan-tanggung-kerja'), 1500);
+    return { response };
+};
 
-    return { form };
+export const _submitExperienceInfoForm = async (formData: object) => {
+    const serviceInfoForm = await superValidate(formData, _serviceInfoSchema);
+
+    // console.log(formData.get('tarikhMulaKontrak'));
+
+    if (!serviceInfoForm.valid) {
+        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+            style: 'background: #333; color: #fff;',
+        });
+        console.log(serviceInfoForm);
+        return fail(400, serviceInfoForm);
+    } else {
+        console.log('Request Body: ', formData);
+        fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify(serviceInfoForm),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                console.log('Response Returned: 1-54', json);
+            });
+    }
+    return { serviceInfoForm };
 };
