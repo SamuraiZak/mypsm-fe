@@ -18,7 +18,6 @@
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { tahun } from '$lib/mocks/ketua-seksyen/cuti/tahun';
     import { status } from '$lib/mocks/urus-setia/persaraan/status';
-    import { mockEmployeeDocumentLists } from '$lib/mocks/database/mockEmployeeDocumentLists';
     import toast, { Toaster } from 'svelte-french-toast';
     import { z, ZodError } from 'zod';
 
@@ -26,7 +25,6 @@
 
     let selectedTahun = tahun[0].value;
     let selectedStatus = status[0].value;
-    let target: any;
     let errorData: any;
     let validateApplicationReview: string;
     let validateApplicationResult: any;
@@ -45,8 +43,6 @@
             label: 'Tidak Sah',
         },
     ];
-
-    const currentEmployeeUploadedDocuments = mockEmployeeDocumentLists;
 
     const validateApplicationForm = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);
