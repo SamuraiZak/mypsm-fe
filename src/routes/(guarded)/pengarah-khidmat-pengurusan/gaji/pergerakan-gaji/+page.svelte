@@ -6,11 +6,8 @@
     import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import ShortTextField from '$lib/components/input/ShortTextField.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
-    import { mockEmployees } from '$lib/mocks/database/mockEmployees';
     import { months } from '$lib/mocks/dateSelection/months';
-    import { mockSalaryIncrementRecord } from '$lib/mocks/gaji/rekodKenaikanGaji/mockSalaryIncrementRecord';
     import { mockSalaryMovementRecord } from '$lib/mocks/gaji/salaryMovementRecord/mockSalaryMovementRecord';
     import { greds } from '$lib/mocks/gred/gred';
     import { Tooltip } from 'flowbite-svelte';
