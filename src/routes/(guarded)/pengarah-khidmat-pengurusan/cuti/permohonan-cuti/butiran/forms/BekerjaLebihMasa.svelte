@@ -8,7 +8,7 @@
     import toast, { Toaster } from 'svelte-french-toast';
     import { z, ZodError } from 'zod';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
-    import { overtimeSchema } from '../../../../../kakitangan/cuti/permohonan-cuti/schema';
+    import { overtimeSchema } from '../form-schema';
 
     export let selectedFiles: any = [];
 
@@ -41,7 +41,7 @@
     //  ===================== Form Validation ===========================
     let errorData: any;
 
-    const submitForm = async (event: Event) => {
+    export const submitForm = async (event: Event) => {
         const formDetail = new FormData(event.target as HTMLFormElement);
 
         const formData = {
@@ -87,7 +87,7 @@
 <section
     class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
 >
-    <SectionHeader title="Bekerja Lebih Masa"><TextIconButton primary label="test validation" form="formValidation" /></SectionHeader>
+    <SectionHeader title="Bekerja Lebih Masa"></SectionHeader>
     <form
         id="formValidation"
         on:submit|preventDefault={submitForm}

@@ -25,6 +25,7 @@ const longTextSchema = z
 //==========================================================
 
 // date common schema stepper 1
+
 const dateStepper1 = z.coerce
     .date({
         errorMap: (issue, { defaultError }) => ({
@@ -37,6 +38,10 @@ const dateStepper1 = z.coerce
     .max(new Date(), {
         message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
     });
+// Dropdown schema maklumat Peribadi
+const maklumatPeribadiSelectSchema = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
 export const _stepperMaklumatPeribadi = z.object({
     bekasPolisTentera: z.enum(['true', 'false'], {
@@ -48,14 +53,15 @@ export const _stepperMaklumatPeribadi = z.object({
         }),
     }),
 
-    statusPekerjaan: z.enum(['1', '2', '3', '4'], {
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_enum_value'
-                    ? 'Pilihan perlu dipilih.'
-                    : defaultError,
-        }),
-    }),
+    statusPekerjaan: maklumatPeribadiSelectSchema,
+    warnaKadPengenalan: maklumatPeribadiSelectSchema,
+    tempatLahir: maklumatPeribadiSelectSchema,
+    warganegara: maklumatPeribadiSelectSchema,
+    bangsa: maklumatPeribadiSelectSchema,
+    agama: maklumatPeribadiSelectSchema,
+    status: maklumatPeribadiSelectSchema,
+    jantina: maklumatPeribadiSelectSchema,
+
     isInRelationshipWithLKIMStaff: z.enum(['true', 'false'], {
         errorMap: (issue, { defaultError }) => ({
             message:
@@ -65,64 +71,6 @@ export const _stepperMaklumatPeribadi = z.object({
         }),
     }),
 
-    warnaKadPengenalan: z.enum(['true', 'false'], {
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_enum_value'
-                    ? 'Pilihan perlu dipilih.'
-                    : defaultError,
-        }),
-    }),
-
-    warganegara: z.enum(['1', '2'], {
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_enum_value'
-                    ? 'Pilihan perlu dipilih.'
-                    : defaultError,
-        }),
-    }),
-
-    tempatLahir: z.enum(['1', '2'], {
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_enum_value'
-                    ? 'Pilihan perlu dipilih.'
-                    : defaultError,
-        }),
-    }),
-    bangsa: z.enum(['1', '2'], {
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_enum_value'
-                    ? 'Pilihan perlu dipilih.'
-                    : defaultError,
-        }),
-    }),
-    agama: z.enum(['1', '2'], {
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_enum_value'
-                    ? 'Pilihan perlu dipilih.'
-                    : defaultError,
-        }),
-    }),
-    status: z.enum(['1', '2'], {
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_enum_value'
-                    ? 'Pilihan perlu dipilih.'
-                    : defaultError,
-        }),
-    }),
-    jantina: z.enum(['1', '2'], {
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_enum_value'
-                    ? 'Pilihan perlu dipilih.'
-                    : defaultError,
-        }),
-    }),
     jawatanPasangan: z.optional(
         z.enum(['1', '2'], {
             errorMap: (issue, { defaultError }) => ({
@@ -280,6 +228,10 @@ const dateStepper2max = z.coerce
         message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
     });
 
+const maklumatPerkhidmatanSelectSchema = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda.' });
+
 export const _stepperMaklumatPerkhidmatan = z.object({
     faedahPersaraanPerkhidmatan: z.enum(['true', 'false'], {
         errorMap: (issue, { defaultError }) => ({
@@ -290,46 +242,11 @@ export const _stepperMaklumatPerkhidmatan = z.object({
         }),
     }),
 
-    gredSemasa: z.enum(['1', '2'], {
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_enum_value'
-                    ? 'Pilihan perlu dipilih.'
-                    : defaultError,
-        }),
-    }),
-    jawatan: z.enum(['1', '2'], {
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_enum_value'
-                    ? 'Pilihan perlu dipilih.'
-                    : defaultError,
-        }),
-    }),
-    penempatan: z.enum(['1', '2'], {
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_enum_value'
-                    ? 'Pilihan perlu dipilih.'
-                    : defaultError,
-        }),
-    }),
-    tarafPerkhidmatan: z.enum(['1', '2'], {
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_enum_value'
-                    ? 'Pilihan perlu dipilih.'
-                    : defaultError,
-        }),
-    }),
-    bulanKGT: z.enum(['1', '2'], {
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_enum_value'
-                    ? 'Pilihan perlu dipilih.'
-                    : defaultError,
-        }),
-    }),
+    gredSemasa: maklumatPerkhidmatanSelectSchema,
+    jawatan: maklumatPerkhidmatanSelectSchema,
+    penempatan: maklumatPerkhidmatanSelectSchema,
+    tarafPerkhidmatan: maklumatPerkhidmatanSelectSchema,
+    bulanKGT: maklumatPerkhidmatanSelectSchema,
 
     noKWSP: z
         .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
@@ -468,25 +385,19 @@ export const _stepperMaklumatPerkhidmatan = z.object({
 //================== Maklumat Akademik =====================
 //==========================================================
 
+const generalTextSchema = z
+    .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+    .min(4, {
+        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+    })
+    .max(124, {
+        message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    })
+    .trim();
 export const _stepperMaklumatAkademik = z.object({
-    sekolah: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    tahunHabis: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
+    sekolah: generalTextSchema,
+    tahunHabis: generalTextSchema,
+
     gredSekolah: z
         .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
         .min(4, {
@@ -575,23 +486,14 @@ const dateStepper8 = z.coerce
         message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
     });
 
+    const maklumatWarisSelectSchema = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda.' });
+
 export const _stepperMaklumatWaris = z.object({
-    warnaKP: z.enum(['true', 'false'], {
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_enum_value'
-                    ? 'Sila tetapkan pilihan anda.'
-                    : defaultError,
-        }),
-    }),
-    hubunganWaris: z.enum(['1', '2'], {
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_enum_value'
-                    ? 'Sila tetapkan pilihan anda.'
-                    : defaultError,
-        }),
-    }),
+
+    warnaKP: maklumatWarisSelectSchema,
+    hubunganWaris: maklumatWarisSelectSchema,
 
     namaWaris: z
         .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
@@ -760,18 +662,11 @@ export const _stepperkontrak = z.object({
 // New Employment - Approver Result section
 export const _approverResultSchema = z.object({
     halo: longTextSchema,
-    // approverResult: z.enum(['true', 'false'], {
-    //     errorMap: (issue, { defaultError }) => ({
-    //         message:
-    //             issue.code === 'invalid_enum_value'
-    //                 ? 'Sila tetapkan pilihan anda.'
-    //                 : defaultError,
-    //     }),
-    // }),
+    
 });
 
 //=====================================================
-//=====================================================
+//==================== Stepper ========================
 //=====================================================
 
 export const load = async () => {
@@ -802,12 +697,13 @@ export const load = async () => {
     };
 };
 
+//==================================================
+//=============== Maklumat Kontrak =================
+//==================================================
 export const _submitFormstepperkontrak = async (event: Event) => {
     const formElement = event.target as HTMLFormElement;
     const formData = new FormData(formElement);
     const form = await superValidate(formData, _stepperkontrak);
-
-    // console.log(formData.get('tarikhMulaKontrak'));
 
     if (!form.valid) {
         toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
@@ -834,9 +730,12 @@ export const _submitFormstepperkontrak = async (event: Event) => {
     return { form };
 };
 
-export const _submitFormStepperMaklumatPeribadi = async (event: Event) => {
-    const formElement = event.target as HTMLFormElement;
-    const formData = new FormData(formElement);
+//==================================================
+//=============== Maklumat Peribadi ================
+//==================================================
+export const _submitFormStepperMaklumatPeribadi = async (formData: object) => {
+    console.log('HEREEE', formData);
+
     const stepperMaklumatPeribadi = await superValidate(
         formData,
         _stepperMaklumatPeribadi,
@@ -868,15 +767,16 @@ export const _submitFormStepperMaklumatPeribadi = async (event: Event) => {
     return { stepperMaklumatPeribadi };
 };
 
-export const _submitFormStepperMaklumatPerkhidmatan = async (event: Event) => {
-    const formElement = event.target as HTMLFormElement;
-    const formData = new FormData(formElement);
+//==================================================
+//=============== Maklumat Perkhidmatan ============
+//==================================================
+
+export const _submitFormStepperMaklumatPerkhidmatan = async (formData: object) => {
+
     const stepperMaklumatPerkhidmatan = await superValidate(
         formData,
         _stepperMaklumatPerkhidmatan,
     );
-
-    // console.log(formData.get('tarikhMulaKontrak'));
 
     if (!stepperMaklumatPerkhidmatan.valid) {
         toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
@@ -904,15 +804,16 @@ export const _submitFormStepperMaklumatPerkhidmatan = async (event: Event) => {
     return { stepperMaklumatPerkhidmatan };
 };
 
-export const _submitFormStepperMaklumatAkademik = async (event: Event) => {
-    const formElement = event.target as HTMLFormElement;
-    const formData = new FormData(formElement);
+//==================================================
+//=============== Maklumat Akademik ================
+//==================================================
+
+export const _submitFormStepperMaklumatAkademik = async (formData: object) => {
+
     const stepperMaklumatAkademik = await superValidate(
         formData,
         _stepperMaklumatAkademik,
     );
-
-    // console.log(formData.get('tarikhMulaKontrak'));
 
     if (!stepperMaklumatAkademik.valid) {
         toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
@@ -939,15 +840,17 @@ export const _submitFormStepperMaklumatAkademik = async (event: Event) => {
     return { stepperMaklumatAkademik };
 };
 
-export const _submitFormStepperMaklumatPengalaman = async (event: Event) => {
-    const formElement = event.target as HTMLFormElement;
-    const formData = new FormData(formElement);
+//==================================================
+//============= Maklumat Pengalaman ================
+//==================================================
+
+export const _submitFormStepperMaklumatPengalaman = async (formData: object) => {
+
     const stepperMaklumatPengalaman = await superValidate(
         formData,
         _stepperMaklumatPengalaman,
     );
 
-    // console.log(formData.get('tarikhMulaKontrak'));
     if (!stepperMaklumatPengalaman.valid) {
         toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
             style: 'background: #333; color: #fff;',
@@ -973,15 +876,17 @@ export const _submitFormStepperMaklumatPengalaman = async (event: Event) => {
     return { stepperMaklumatPengalaman };
 };
 
-export const _submitFormStepperMaklumatWaris = async (event: Event) => {
-    const formElement = event.target as HTMLFormElement;
-    const formData = new FormData(formElement);
+//==================================================
+//=============== Maklumat Waris ===================
+//==================================================
+
+export const _submitFormStepperMaklumatWaris = async (formData: object) => {
+
     const stepperMaklumatWaris = await superValidate(
         formData,
         _stepperMaklumatWaris,
     );
 
-    // console.log(formData.get('tarikhMulaKontrak'));
     if (!stepperMaklumatWaris.valid) {
         toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
             style: 'background: #333; color: #fff;',
