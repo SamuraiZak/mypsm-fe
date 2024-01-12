@@ -426,5 +426,10 @@ const dictionary: { [key: string]: string } = {
     subModule: 'Sub-Modul',
     setemMasa: 'Setem Masa',
 
-    // GCR
+    // Confirmation In Service
+    identityDocumentNumber: 'No. Kad Pengenalan',
+    firstPositionAppointedInInstitution: 'Jawatan Pertama Dilantik Di Lembaga',
+    dateOfEmployement: 'Tarikh Lantikan Semasa',
+    inductionCourseServiceExamination:
+        'Perperiksaan Perkhidmatan Kursus Induksi',
 };
