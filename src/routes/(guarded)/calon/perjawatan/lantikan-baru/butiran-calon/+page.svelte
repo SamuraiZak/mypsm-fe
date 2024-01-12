@@ -45,7 +45,7 @@
     } from './+page';
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
-    import { Toaster } from 'svelte-french-toast';
+    import toast, { Toaster } from 'svelte-french-toast';
     import AccordianField from '$lib/components/input/AccordianField.svelte';
     let employeeLists: SelectOptionType<any>[] = [];
 
@@ -181,9 +181,9 @@
     export let data: PageData;
     export let openAcademicInfoModal: boolean = false;
     export let openExperienceInfoModal: boolean = false;
-    export let openNonFamilyInfoModal: boolean = true;
-    export let openFamilyInfoModal: boolean = true;
-    export let openMembershipInfoModal: boolean = true;
+    export let openNonFamilyInfoModal: boolean = false;
+    export let openFamilyInfoModal: boolean = false;
+    export let openMembershipInfoModal: boolean = false;
     let tempAcademicRecord: any[] = [];
     $: tempAcademicRecord;
 
@@ -214,14 +214,25 @@
         form: addAcademicInfoModal,
         errors: academicInfoErrors,
         enhance: academicInfoEnhance,
+        delayed,
     } = superForm(data.addAcademicInfoModal, {
         SPA: true,
         validators: _addAcademicInfoSchema,
         onSubmit() {
-            _submitAddMoreAcademicForm($addAcademicInfoModal).then(
-                (response) => {
-                    tempAcademicRecord.push(response);
-                    console.log('RESPONSE MODAL: ', tempAcademicRecord);
+            toast.promise(
+                _submitAddMoreAcademicForm($addAcademicInfoModal).then(
+                    (response) => {
+                        tempAcademicRecord.push(response);
+                        console.log('RESPONSE MODAL: ', tempAcademicRecord);
+                    },
+                ),
+                {
+                    loading: 'Sedang Diproses...',
+                    success: 'Berjaya disimpan!',
+                    error: 'Data tidak dapat disimpan.',
+                },
+                {
+                    style: 'background: #333; color: #fff;',
                 },
             );
         },

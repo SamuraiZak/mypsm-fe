@@ -280,9 +280,9 @@ export const _submitAddMoreAcademicForm = async (formData: object) => {
     console.log('Request: ', form.data);
 
     if (!form.valid) {
-        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
-            style: 'background: #333; color: #fff;',
-        });
+        // toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+        //     style: 'background: #333; color: #fff;',
+        // });
         return fail(400, form);
     }
 
@@ -294,9 +294,9 @@ export const _submitAddMoreAcademicForm = async (formData: object) => {
         .json();
 
     // console.table(_moreAcedemicInfo);
-    toast.success('Berjaya disimpan!', {
-        style: 'background: #333; color: #fff;',
-    });
+    // toast.success('Berjaya disimpan!', {
+    //     style: 'background: #333; color: #fff;',
+    // });
 
     return { response };
 };
