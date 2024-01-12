@@ -47,7 +47,7 @@
     }
     // ============== Form Validation
     let errorData: any;
-    const submitForm = async (event: Event) => {
+    export const submitForm = async (event: Event) => {
         const formDetail = new FormData(event.target as HTMLFormElement);
         const getTarikhMulaSetengah = document.getElementById(
             'tarikhMulaSetengah',
@@ -60,7 +60,9 @@
             tujuanPermohonan: String(formDetail.get('tujuanPermohonan')),
             tarikhMula: String(formDetail.get('tarikhMula')),
             tarikhTamat: String(formDetail.get('tarikhTamat')),
-            tarikhDijangkaBersalin: String(formDetail.get('tarikhDijangkaBersalin')),
+            tarikhDijangkaBersalin: String(
+                formDetail.get('tarikhDijangkaBersalin'),
+            ),
         };
 
         try {
@@ -140,13 +142,7 @@
     <div
         class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
     >
-        <SectionHeader title="Cuti Bersalin Awal"
-            ><TextIconButton
-                primary
-                label="test validation"
-                form="formValidation"
-            /></SectionHeader
-        >
+        <SectionHeader title="Cuti Bersalin Awal"></SectionHeader>
 
         <form
             id="formValidation"

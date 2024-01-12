@@ -54,7 +54,7 @@
 
     // ================ Form Validation ================
     let errorData: any;
-    const submitForm = async (event: Event) => {
+    export const submitForm = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);
         const namaPengganti = document.getElementById(
             'namaPengganti',
@@ -153,17 +153,12 @@
     <CustomTab>
         <CustomTabContent title="Maklumat Gantian">
             <SectionHeader title="Cuti Gantian">
-                <TextIconButton
-                    primary
-                    label="test validation"
-                    form="maklumatGantian"
-                />
             </SectionHeader>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
             >
                 <form
-                    id="maklumatGantian"
+                    id="formValidation"
                     on:submit|preventDefault={submitForm}
                     class="flex w-full flex-col gap-2"
                 >

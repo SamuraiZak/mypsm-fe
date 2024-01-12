@@ -1,10 +1,10 @@
-// import { fetchPtbKwap } from '$lib/service/ptbAndKwap/services';
+
 
 import type { IContractRenewal } from '$lib/interfaces/contract-staffs/IContractRenewal';
 import { mockEmployees } from '$lib/mocks/database/mockEmployees.js';
 
 export async function load({ cookies }) {
-    // const fetchedData: PtbAndKwap[] = await fetchPtbKwap();
+
 
     const contractRenewalData: IContractRenewal[] = [
         {

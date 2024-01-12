@@ -8,7 +8,6 @@
     import ShortTextField from '$lib/components/input/ShortTextField.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
 
-    export let tableData: PtbAndKwap[];
     let tempData: PtbAndKwap;
     let selectedStatus = status[0].value; // Default selected filter
     let selectedGred: string = greds[0].value; // Default selected filter

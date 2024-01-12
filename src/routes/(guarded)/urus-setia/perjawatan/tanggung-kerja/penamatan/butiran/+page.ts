@@ -32,6 +32,7 @@ const generalSelectSchema = z
     .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
 // ===========================================================//
+
 // Interim - check info form
 export const _interimCheckSchema = z.object({
     interimCheckRemark: longTextSchema,
@@ -52,16 +53,12 @@ export const _payCalculationSchema = z
             message: 'Tarikh mula mesti lebih atau sama dengan tarikh semasa.',
         }),
         interimUntilDate: dateScheme,
-        etkPaymentMonth: generalSelectSchema.nullable(),
-        etkPaymentYear: generalSelectSchema.nullable(),
+        etkPaymentMonth: generalSelectSchema,
+        etkPaymentYear: generalSelectSchema,
     })
     .refine((data) => data.interimUntilDate >= data.interimDateOfEffect, {
         message: 'Tarikh tamat tidak boleh kurang daripada tarikh mula.',
         path: ['interimUntilDate'],
-    })
-    .refine((data) => {
-        data.interimDateOfEffect.toISOString();
-        data.interimUntilDate.toISOString();
     });
 
 // assign rights form
@@ -73,8 +70,6 @@ export const _assignApproverSupporterSchema = z.object({
 // ===========================================================//
 
 export const load = async () => {
-    // const id = parseInt(params.id);
-
     const interimCheckForm = await superValidate(_interimCheckSchema);
     const payCalculationForm = await superValidate(_payCalculationSchema);
     const assignApproverSupporterForm = await superValidate(
@@ -91,6 +86,7 @@ export const load = async () => {
 export const _submitInterimCheck = async (event: Event) => {
     const formData = new FormData(event.target as HTMLFormElement);
     const form = await superValidate(formData, _interimCheckSchema);
+    console.log('Request: ', form.data);
 
     if (!form.valid) {
         toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
@@ -98,8 +94,6 @@ export const _submitInterimCheck = async (event: Event) => {
         });
         return fail(400, form);
     }
-
-    console.log('Request: ', form.data);
 
     await api
         .post('https://jsonplaceholder.typicode.com/posts', {
@@ -112,7 +106,6 @@ export const _submitInterimCheck = async (event: Event) => {
     toast.success('Berjaya disimpan!', {
         style: 'background: #333; color: #fff;',
     });
-    setTimeout(() => goto('../penamatan'), 1500);
 
     return { form };
 };
@@ -130,7 +123,10 @@ export const _submitpayCalculationCheck = async (event: Event) => {
     formData.append('etkPaymentMonth', String(getEtkPaymentMonth.value));
     formData.append('etkPaymentYear', String(getEtkPaymentYear.value));
 
+    formData.forEach((data) => data.toString());
+
     const form = await superValidate(formData, _payCalculationSchema);
+    console.log('Request: ', form.data);
 
     if (!form.valid) {
         toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
@@ -138,9 +134,6 @@ export const _submitpayCalculationCheck = async (event: Event) => {
         });
         return fail(400, form);
     }
-    console.log('Request: ', form.data);
-
-    formData.get('');
 
     await api
         .post('https://jsonplaceholder.typicode.com/posts', {
@@ -153,7 +146,6 @@ export const _submitpayCalculationCheck = async (event: Event) => {
     toast.success('Berjaya disimpan!', {
         style: 'background: #333; color: #fff;',
     });
-    setTimeout(() => goto('../penamatan'), 1500);
 
     return { form };
 };
@@ -172,5 +164,33 @@ export const _submitAssignApproverSupporterForm = async () => {
         String(staffApproverSelector.value),
     );
 
-    // const formData: FormData
+    const formData: FormData = new FormData();
+
+    formData.append('staffSupporter', String(staffSupporterSelector.value));
+    formData.append('staffApprover', String(staffApproverSelector.value));
+
+    const form = await superValidate(formData, _assignApproverSupporterSchema);
+    console.log('Request: ', form.data);
+
+    if (!form.valid) {
+        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+            style: 'background: #333; color: #fff;',
+        });
+        return fail(400, form);
+    }
+
+    await api
+        .post('https://jsonplaceholder.typicode.com/posts', {
+            body: JSON.stringify(form),
+            prefixUrl: '',
+        })
+        .json()
+        .then((json) => console.log('Response: ', json));
+
+    toast.success('Berjaya disimpan!', {
+        style: 'background: #333; color: #fff;',
+    });
+    setTimeout(() => goto('../../tanggung-kerja'), 1500);
+
+    return { form };
 };

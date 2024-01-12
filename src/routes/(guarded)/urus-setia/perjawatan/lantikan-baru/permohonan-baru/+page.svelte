@@ -24,7 +24,6 @@
     import { z } from 'zod';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import api from '$lib/services/core/ky.service';
 
     // =====================================================================================
     // z validation schema for the new employment form fields===============================

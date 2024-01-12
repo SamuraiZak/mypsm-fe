@@ -43,7 +43,7 @@
 
     // ======================= Form Validation
     let errorData: any;
-    const submitForm = async (event: Event) => {
+    export const submitForm = async (event: Event) => {
         const formDetail = new FormData(event.target as HTMLFormElement);
         const holidayCategory = document.getElementById(
             'holidayCategory',
@@ -94,12 +94,7 @@
     class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
 >
     <SectionHeader title="Tugas-tugas Rasmi Yang Jatuh Pada Hari Cuti"
-        ><TextIconButton
-            primary
-            label="test validation"
-            form="formValidation"
-        /></SectionHeader
-    >
+    ></SectionHeader>
     <form
         id="formValidation"
         on:submit|preventDefault={submitForm}

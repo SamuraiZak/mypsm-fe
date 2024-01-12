@@ -2,13 +2,12 @@
     import AccordianField from '$lib/components/input/AccordianField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    // import type { PtbService } from '$lib/interfaces/ptbAndKwap/ptbService';
-    // import { getCurrentService } from '$lib/service/employees/service-service';
+
     import { Tooltip } from 'flowbite-svelte';
     import { onMount } from 'svelte';
 
     export let editable: boolean = false;
-    export let ptbData: PtbAndKwap;
+
     let currentService: PtbService;
     let tooltipContent: string = '';
     const itkaTooltip: string = 'ITKA bermaksud ...';

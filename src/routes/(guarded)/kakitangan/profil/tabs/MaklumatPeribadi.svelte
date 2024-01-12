@@ -51,6 +51,14 @@
         _stepperMaklumatAkademik,
         _submitFormStepperMaklumatAkademik,
     } from '../+page';
+    import {
+        _stepperMaklumatPengalaman,
+        _submitFormStepperMaklumatPengalaman,
+    } from '../+page';
+    import {
+        _stepperMaklumatWaris,
+        _submitFormStepperMaklumatWaris,
+    } from '../+page';
 
     export let data: PageData;
 
@@ -63,6 +71,7 @@
                 'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
         },
     );
+
     const {
         form: maklumatPerkhidmatanForm,
         errors: maklumatPerkhidmatanErrors,
@@ -77,16 +86,47 @@
         form: maklumatAkademikForm,
         errors: maklumatAkademikErrors,
         enhance: maklumatAkademikEnhance,
-    } = superForm(data.stepperMaklumatPerkhidmatan, {
+    } = superForm(data.stepperMaklumatAkademik, {
         SPA: true,
-        validators: _stepperMaklumatPerkhidmatan,
+        validators: _stepperMaklumatAkademik,
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+    const {
+        form: maklumatPengalamanForm,
+        errors: maklumatPengalamanErrors,
+        enhance: maklumatPengalamanEnhance,
+    } = superForm(data.stepperMaklumatPengalaman, {
+        SPA: true,
+        validators: _stepperMaklumatPengalaman,
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+    const {
+        form: maklumatWarisForm,
+        errors: maklumatWarisErrors,
+        enhance: maklumatWarisEnhance,
+    } = superForm(data.stepperMaklumatWaris, {
+        SPA: true,
+        validators: _stepperMaklumatWaris,
         taintedMessage:
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
 
-
     export let employeeNumber: string = '00001';
     export let disabled: boolean = true;
+    let editable: boolean = true;
+
+    const approveOptions: RadioOption[] = [
+        {
+            value: 'true',
+            label: 'LULUS',
+        },
+        {
+            value: 'false',
+            label: 'TIDAK LULUS',
+        },
+    ];
 
     let isEditing: boolean = false;
     let currentEmployee = mockEmployees.find((employee) => {
@@ -312,7 +352,7 @@
                 on:submit|preventDefault={_submitFormStepperMaklumatPeribadi}
                 class="flex w-full flex-col gap-2"
                 use:enhance
-            method="POST"
+                method="POST"
             >
                 <p class={stepperFormTitleClass}>Maklumat Peribadi</p>
                 <TextField
@@ -419,19 +459,18 @@
 
                 <DateSelector
                     {disabled}
-                    hasError={errorData?.tarikhLahir}
+                    hasError={$errors.tarikhLahir ? true : false}
                     name="tarikhLahir"
                     handleDateChange
                     label="Tarikh Lahir"
-                    bind:selectedDate={currentEmployee.birthDate}
+                    bind:selectedDate={$form.tarikhLahir}
                 ></DateSelector>
-                {#if errorData?.tarikhLahir}
+                {#if $errors?.tarikhLahir}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.tarikhLahir[0]}</span
+                        >{$errors?.tarikhLahir[0]}</span
                     >
                 {/if}
-
                 <DropdownSelect
                     {disabled}
                     hasError={errorData?.tempatLahir}
@@ -475,7 +514,7 @@
                     hasError={errorData?.bangsa}
                     dropdownType="label-left-full"
                     id="bangsa"
-                    label="Tempat Lahir"
+                    label="Bangsa"
                     bind:value={currentEmployeeRace.name}
                     options={[
                         { value: '1', name: 'Melayu' },
@@ -583,12 +622,12 @@
                     label="Alamat Surat Menyurat (jika berlainan dari alamat rumah)"
                     bind:value={$form.alamatSuratMenyurat}
                 />
-                {#if errorData?.alamatSuratMenyurat}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.alamatSuratMenyurat[0]}</span
-                    >
-                {/if}
+                {#if $errors.alamatSuratMenyurat}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.alamatSuratMenyurat[0]}</span
+                >
+            {/if}
 
                 <TextField
                     {disabled}
@@ -614,7 +653,7 @@
                     value="-"
                 ></TextField>
 
-                <RadioSingle
+                <!-- <RadioSingle
                     {disabled}
                     {options}
                     name="radioButtonExample"
@@ -626,7 +665,21 @@
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
                         >{errorData?.radioButtonExample[0]}</span
                     >
-                {/if}
+                {/if} -->
+
+                <RadioSingle
+                        name="bekasPolisTentera"
+                        disabled={!editable}
+                        options={approveOptions}
+                        legend={'Bekas Polis / Tentera'}
+                        bind:userSelected={$form.bekasPolisTentera}
+                    ></RadioSingle>
+                    {#if $errors.bekasPolisTentera}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.bekasPolisTentera}</span
+                        >
+                    {/if}
 
                 <div class="flex w-full flex-col gap-2">
                     <p class={stepperFormTitleClass}>
@@ -736,8 +789,8 @@
                     id="FormStepperMaklumatPerkhidmatan"
                     on:submit|preventDefault={_submitFormStepperMaklumatPerkhidmatan}
                     class="flex w-full flex-col gap-2"
-                    use:enhance
-                     method="POST"
+                    use:maklumatPerkhidmatanEnhance
+                    method="POST"
                 >
                     <p class={stepperFormTitleClass}>Maklumat Perkhidmatan</p>
 
@@ -819,16 +872,19 @@
 
                     <DateSelector
                         {disabled}
-                        hasError={errorData?.tarikhKuatkuasaLantikanSemasa}
+                        hasError={$maklumatPerkhidmatanErrors.tarikhKuatkuasaLantikanSemasa
+                            ? true
+                            : false}
                         name="tarikhKuatkuasaLantikanSemasa"
                         handleDateChange
                         label="Tarikh Kuatkuasa Lantikan Semasa"
-                        bind:selectedDate={currentEmployeeService.firstServiceDate}
+                        bind:selectedDate={$maklumatPerkhidmatanForm.tarikhKuatkuasaLantikanSemasa}
                     ></DateSelector>
-                    {#if errorData?.tarikhKuatkuasaLantikanSemasa}
+                    {#if $maklumatPerkhidmatanErrors.tarikhKuatkuasaLantikanSemasa}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.tarikhKuatkuasaLantikanSemasa[0]}</span
+                            >{$maklumatPerkhidmatanErrors
+                                .tarikhKuatkuasaLantikanSemasa[0]}</span
                         >
                     {/if}
 
@@ -837,12 +893,12 @@
                         options={faedahPersaraanOptions}
                         name="faedahPersaraanPerkhidmatan"
                         legend={'Faedah Persaraan'}
-                        bind:userSelected={radioChosen}
+                        bind:userSelected={$maklumatPerkhidmatanForm.faedahPersaraanPerkhidmatan}
                     ></RadioSingle>
-                    {#if errorData?.faedahPersaraanPerkhidmatan}
+                    {#if $maklumatPerkhidmatanErrors.faedahPersaraanPerkhidmatan}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.faedahPersaraanPerkhidmatan[0]}</span
+                            >{$maklumatPerkhidmatanErrors.faedahPersaraanPerkhidmatan}</span
                         >
                     {/if}
 
@@ -857,7 +913,7 @@
                         bind:value={$maklumatPerkhidmatanForm.noKWSP}
                     ></TextField>
 
-                    {#if $maklumatPerkhidmatanErrors.noKWSP}$errors
+                    {#if $maklumatPerkhidmatanErrors.noKWSP}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$maklumatPerkhidmatanErrors.noKWSP[0]}</span
@@ -865,7 +921,9 @@
                     {/if}
                     <TextField
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.noSOCSO ? true : false}
+                        hasError={$maklumatPerkhidmatanErrors.noSOCSO
+                            ? true
+                            : false}
                         name="noSOCSO"
                         label={'No. SOCSO'}
                         type="text"
@@ -881,7 +939,9 @@
 
                     <TextField
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.noCukai ? true : false}
+                        hasError={$maklumatPerkhidmatanErrors.noCukai
+                            ? true
+                            : false}
                         name="noCukai"
                         label={'No. Cukai (LHDN)'}
                         type="text"
@@ -896,7 +956,9 @@
                     {/if}
                     <TextField
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.bank ? true : false}
+                        hasError={$maklumatPerkhidmatanErrors.bank
+                            ? true
+                            : false}
                         name="bank"
                         label={'Bank'}
                         type="text"
@@ -912,7 +974,9 @@
 
                     <TextField
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.noAkaun ? true : false}
+                        hasError={$maklumatPerkhidmatanErrors.noAkaun
+                            ? true
+                            : false}
                         name="noAkaun"
                         label={'No.Akaun'}
                         type="text"
@@ -936,7 +1000,9 @@
 
                     <TextField
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.kelayakanCuti ? true : false}
+                        hasError={$maklumatPerkhidmatanErrors.kelayakanCuti
+                            ? true
+                            : false}
                         name="kelayakanCuti"
                         label={'Kelayakan Cuti'}
                         type="text"
@@ -946,32 +1012,37 @@
                     {#if $maklumatPerkhidmatanErrors.kelayakanCuti}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$maklumatPerkhidmatanErrors.kelayakanCuti[0]}</span
+                            >{$maklumatPerkhidmatanErrors
+                                .kelayakanCuti[0]}</span
                         >
                     {/if}
 
                     <DateSelector
                         {disabled}
-                        hasError={errorData?.mulaDilantikPerkhidmatanKerajaan}
+                        hasError={$maklumatPerkhidmatanErrors.mulaDilantikPerkhidmatanKerajaan
+                            ? true
+                            : false}
                         name="mulaDilantikPerkhidmatanKerajaan"
                         handleDateChange
                         label="Mula Dilantik Perkhidmatan Kerajaan"
-                        bind:selectedDate={currentEmployeeService.firstServiceDate}
+                        bind:selectedDate={$maklumatPerkhidmatanForm.mulaDilantikPerkhidmatanKerajaan}
                     ></DateSelector>
-                    {#if errorData?.mulaDilantikPerkhidmatanKerajaan}
+                    {#if $maklumatPerkhidmatanErrors.mulaDilantikPerkhidmatanKerajaan}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData
-                                ?.mulaDilantikPerkhidmatanKerajaan[0]}</span
+                            >{$maklumatPerkhidmatanErrors
+                                .mulaDilantikPerkhidmatanKerajaan[0]}</span
                         >
                     {/if}
                     <DateSelector
                         {disabled}
-                        hasError={errorData?.mulaDilantikPerkhidmatanLKIM}
+                        hasError={$maklumatPerkhidmatanErrors.mulaDilantikPerkhidmatanLKIM
+                            ? true
+                            : false}
                         name="mulaDilantikPerkhidmatanLKIM"
                         handleDateChange
                         label="Mula Dilantik Perkhidmatan LKIM"
-                        bind:selectedDate={currentEmployeeService.currentServiceDate}
+                        bind:selectedDate={$maklumatPerkhidmatanForm.mulaDilantikPerkhidmatanLKIM}
                     ></DateSelector>
                     {#if errorData?.mulaDilantikPerkhidmatanLKIM}
                         <span
@@ -982,17 +1053,19 @@
 
                     <DateSelector
                         {disabled}
-                        hasError={errorData?.disahkanDalamJawatanSemasaLKIM}
+                        hasError={$maklumatPerkhidmatanErrors.disahkanDalamJawatanSemasaLKIM
+                            ? true
+                            : false}
                         name="disahkanDalamJawatanSemasaLKIM"
                         handleDateChange
                         label="Disahkan Dalam Jawatan Semasa LKIM"
-                        bind:selectedDate={currentEmployeeService.currentServiceDate}
+                        bind:selectedDate={$maklumatPerkhidmatanForm.disahkanDalamJawatanSemasaLKIM}
                     ></DateSelector>
-                    {#if errorData?.disahkanDalamJawatanSemasaLKIM}
+                    {#if $maklumatPerkhidmatanErrors.disahkanDalamJawatanSemasaLKIM}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData
-                                ?.disahkanDalamJawatanSemasaLKIM[0]}</span
+                            >{$maklumatPerkhidmatanErrors
+                                .disahkanDalamJawatanSemasaLKIM[0]}</span
                         >
                     {/if}
 
@@ -1020,47 +1093,53 @@
 
                     <DateSelector
                         {disabled}
-                        hasError={errorData?.tarikhKelulusanPercantumanPerkhidmatanLepas}
+                        hasError={$maklumatPerkhidmatanErrors.tarikhKelulusanPercantumanPerkhidmatanLepas
+                            ? true
+                            : false}
                         name="tarikhKelulusanPercantumanPerkhidmatanLepas"
                         handleDateChange
                         label="Tarikh Kelulusan Percantuman Perkhidmatan Lepas"
-                        bind:selectedDate={currentEmployeeService.firstServiceDate}
+                        bind:selectedDate={$maklumatPerkhidmatanForm.tarikhKelulusanPercantumanPerkhidmatanLepas}
                     ></DateSelector>
-                    {#if errorData?.tarikhKelulusanPercantumanPerkhidmatanLepas}
+                    {#if $maklumatPerkhidmatanErrors.tarikhKelulusanPercantumanPerkhidmatanLepas}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData
-                                ?.tarikhKelulusanPercantumanPerkhidmatanLepas[0]}</span
+                            >{$maklumatPerkhidmatanErrors
+                                .tarikhKelulusanPercantumanPerkhidmatanLepas[0]}</span
                         >
                     {/if}
 
                     <DateSelector
                         {disabled}
-                        hasError={errorData?.pemangkuanSekarang}
+                        hasError={$maklumatPerkhidmatanErrors.pemangkuanSekarang
+                            ? true
+                            : false}
                         name="pemangkuanSekarang"
                         handleDateChange
                         label="Pemangkuan Sekarang"
-                        value=""
+                        bind:selectedDate={$maklumatPerkhidmatanForm.pemangkuanSekarang}
                     ></DateSelector>
-                    {#if errorData?.pemangkuanSekarang}
+                    {#if $maklumatPerkhidmatanErrors.pemangkuanSekarang}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.pemangkuanSekarang[0]}</span
+                            >{$maklumatPerkhidmatanErrors
+                                .pemangkuanSekarang[0]}</span
                         >
                     {/if}
 
                     <DateSelector
                         {disabled}
-                        hasError={errorData?.tanggungKerjaSekarang}
+                        hasError={$maklumatPerkhidmatanErrors.tanggungKerjaSekarang ? true : false}
                         name="tanggungKerjaSekarang"
                         handleDateChange
                         label="Tanggung Kerja Sekarang"
-                        value=""
+                        bind:selectedDate={$maklumatPerkhidmatanForm.tanggungKerjaSekarang}
                     ></DateSelector>
-                    {#if errorData?.tanggungKerjaSekarang}
+                    {#if $maklumatPerkhidmatanErrors.tanggungKerjaSekarang}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.tanggungKerjaSekarang[0]}</span
+                            >{$maklumatPerkhidmatanErrors
+                                .tanggungKerjaSekarang[0]}</span
                         >
                     {/if}
 
@@ -1074,33 +1153,35 @@
 
                     <DateSelector
                         {disabled}
-                        hasError={errorData?.kenaikanGajiAkhir}
+                        hasError={$maklumatPerkhidmatanErrors.kenaikanGajiAkhir ? true : false}
                         name="kenaikanGajiAkhir"
                         handleDateChange
                         label="Kenaikan Gaji Akhir"
-                        value=""
+                        bind:selectedDate={$maklumatPerkhidmatanForm.kenaikanGajiAkhir}
                     ></DateSelector>
-                    {#if errorData?.kenaikanGajiAkhir}
+                    {#if $maklumatPerkhidmatanErrors.kenaikanGajiAkhir}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.kenaikanGajiAkhir[0]}</span
+                            >{$maklumatPerkhidmatanErrors
+                                .kenaikanGajiAkhir[0]}</span
                         >
                     {/if}
 
                     <DateSelector
                         {disabled}
-                        hasError={errorData?.kenaikanPangkatAkhir}
+                        hasError={$maklumatPerkhidmatanErrors.kenaikanPangkatAkhir ? true : false}
                         name="kenaikanPangkatAkhir"
                         handleDateChange
                         label="Kenaikan Pangkat Akhir"
-                        value=""
+                        bind:selectedDate={$maklumatPerkhidmatanForm.kenaikanPangkatAkhir}
                     ></DateSelector>
-                    {#if errorData?.kenaikanPangkatAkhir}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.kenaikanPangkatAkhir[0]}</span
-                        >
-                    {/if}
+                    {#if $maklumatPerkhidmatanErrors.kenaikanPangkatAkhir}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$maklumatPerkhidmatanErrors
+                            .kenaikanPangkatAkhir[0]}</span
+                    >
+                {/if}
 
                     <DropdownSelect
                         {disabled}
@@ -1123,18 +1204,21 @@
 
                     <DateSelector
                         {disabled}
-                        hasError={errorData?.tarikhBersara}
+                        hasError={$maklumatPerkhidmatanErrors.tarikhBersara ? true : false}
                         name="tarikhBersara"
                         handleDateChange
                         label="Tarikh Bersara"
-                        bind:selectedDate={currentEmployeePensions.retiredDate}
+                        bind:selectedDate={$maklumatPerkhidmatanForm.tarikhBersara}
                     ></DateSelector>
-                    {#if errorData?.tarikhBersara}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.tarikhBersara[0]}</span
-                        >
-                    {/if}
+                    {#if $maklumatPerkhidmatanErrors.tarikhBersara}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$maklumatPerkhidmatanErrors
+                            .tarikhBersara[0]}</span
+                    >
+                {/if}
+
+
 
                     <p class={stepperFormTitleClass}>
                         Maklumat Gaji dan Elaun - Elaun
@@ -1143,7 +1227,9 @@
                         <div class="space-y-2.5">
                             <TextField
                                 {disabled}
-                                hasError={$maklumatPerkhidmatanErrors.tarikhBerkuatKuasa ? true : false}
+                                hasError={$maklumatPerkhidmatanErrors.tarikhBerkuatKuasa
+                                    ? true
+                                    : false}
                                 name="tarikhBerkuatKuasa"
                                 label={'Tarikh Berkuatkuasa'}
                                 type="text"
@@ -1153,12 +1239,15 @@
                             {#if $maklumatPerkhidmatanErrors.tarikhBerkuatKuasa}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$maklumatPerkhidmatanErrors.tarikhBerkuatKuasa[0]}</span
+                                    >{$maklumatPerkhidmatanErrors
+                                        .tarikhBerkuatKuasa[0]}</span
                                 >
                             {/if}
                             <TextField
                                 {disabled}
-                                hasError={$maklumatPerkhidmatanErrors.tanggaGaji ? true : false}
+                                hasError={$maklumatPerkhidmatanErrors.tanggaGaji
+                                    ? true
+                                    : false}
                                 name="tanggaGaji"
                                 label={'Tangga Gaji'}
                                 type="text"
@@ -1168,13 +1257,16 @@
                             {#if $maklumatPerkhidmatanErrors.tanggaGaji}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$maklumatPerkhidmatanErrors.tanggaGaji[0]}</span
+                                    >{$maklumatPerkhidmatanErrors
+                                        .tanggaGaji[0]}</span
                                 >
                             {/if}
 
                             <TextField
                                 {disabled}
-                                hasError={$maklumatPerkhidmatanErrors.gajiPokok ? true : false}
+                                hasError={$maklumatPerkhidmatanErrors.gajiPokok
+                                    ? true
+                                    : false}
                                 name="gajiPokok"
                                 label={'Gaji Pokok'}
                                 type="text"
@@ -1182,11 +1274,12 @@
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.gajiPokok}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatPerkhidmatanErrors.gajiPokok[0]}</span
-                            >
-                        {/if}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatPerkhidmatanErrors
+                                        .gajiPokok[0]}</span
+                                >
+                            {/if}
                         </div>
 
                         <div class="space-y-2.5">
@@ -1194,7 +1287,9 @@
                                 {disabled}
                                 hasTooltip={true}
                                 toolTipID="type-itka"
-                                hasError={$maklumatPerkhidmatanErrors.itka ? true : false}
+                                hasError={$maklumatPerkhidmatanErrors.itka
+                                    ? true
+                                    : false}
                                 name="itka"
                                 label={'ITKA'}
                                 type="text"
@@ -1202,16 +1297,18 @@
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.itka}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatPerkhidmatanErrors.itka[0]}</span
-                            >
-                        {/if}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatPerkhidmatanErrors.itka[0]}</span
+                                >
+                            {/if}
                             <TextField
                                 {disabled}
                                 hasTooltip={true}
                                 toolTipID="type-itp"
-                                hasError={$maklumatPerkhidmatanErrors.itp ? true : false}
+                                hasError={$maklumatPerkhidmatanErrors.itp
+                                    ? true
+                                    : false}
                                 name="itp"
                                 label={'ITP'}
                                 type="text"
@@ -1219,17 +1316,19 @@
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.itp}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatPerkhidmatanErrors.itp[0]}</span
-                            >
-                        {/if}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatPerkhidmatanErrors.itp[0]}</span
+                                >
+                            {/if}
 
                             <TextField
                                 {disabled}
                                 hasTooltip={true}
                                 toolTipID="type-epw"
-                                hasError={$maklumatPerkhidmatanErrors.epw ? true : false}
+                                hasError={$maklumatPerkhidmatanErrors.epw
+                                    ? true
+                                    : false}
                                 name="epw"
                                 label={'EPW'}
                                 type="text"
@@ -1237,28 +1336,30 @@
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.itp}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatPerkhidmatanErrors.itp[0]}</span
-                            >
-                        {/if}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatPerkhidmatanErrors.itp[0]}</span
+                                >
+                            {/if}
 
                             <TextField
                                 {disabled}
                                 hasTooltip={true}
                                 toolTipID="type-cola"
-                                hasError={$maklumatPerkhidmatanErrors.cola ? true : false}
+                                hasError={$maklumatPerkhidmatanErrors.cola
+                                    ? true
+                                    : false}
                                 name="cola"
                                 label={'COLA'}
                                 type="text"
                                 bind:value={$maklumatPerkhidmatanForm.cola}
                             ></TextField>
                             {#if $maklumatPerkhidmatanErrors.cola}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatPerkhidmatanErrors.cola[0]}</span
-                            >
-                        {/if}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatPerkhidmatanErrors.cola[0]}</span
+                                >
+                            {/if}
                             <!-- Tooltip body -->
                             <Tooltip
                                 type="dark"
@@ -1281,7 +1382,11 @@
         <StepperContentHeader
             title="Maklumat Akademik / Kelayakan / Latihan yang Lalu"
             >{#if !disabled}
-                <TextIconButton primary label="Simpan" form="FormStepperAkademik" />
+                <TextIconButton
+                    primary
+                    label="Simpan"
+                    form="FormStepperAkademik"
+                />
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
@@ -1290,8 +1395,8 @@
                     id="FormStepperAkademik"
                     on:submit|preventDefault={_submitFormStepperMaklumatAkademik}
                     class="flex w-full flex-col gap-2"
-                    use:enhance
-                      method="POST"
+                    use:maklumatAkademikEnhance
+                    method="POST"
                 >
                     {#each currentEmployeeEducations as edu, i}
                         <p class={stepperFormTitleClass}>
@@ -1300,66 +1405,74 @@
 
                         <TextField
                             {disabled}
-                            hasError={$maklumatAkademikErrors.ID ? true : false}
+                            hasError={$maklumatAkademikErrors.sekolah
+                                ? true
+                                : false}
                             name="sekolah"
                             label={'Sekolah'}
                             type="text"
-                            bind:value={edu.instituteName}
+                            bind:value={$maklumatAkademikForm.sekolah}
                         ></TextField>
 
-                        {#if errorData?.sekolah}
+                        {#if $maklumatAkademikErrors.sekolah}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.sekolah[0]}</span
+                                >{$maklumatAkademikErrors.sekolah[0]}</span
                             >
                         {/if}
 
                         <TextField
                             {disabled}
-                            hasError={errorData?.tahunHabis}
+                            hasError={$maklumatAkademikErrors.tahunHabis
+                                ? true
+                                : false}
                             name="tahunHabis"
                             label={'Tahun'}
                             type="text"
-                            bind:value={edu.completionYear}
+                            bind:value={$maklumatAkademikForm.tahunHabis}
                         ></TextField>
 
-                        {#if errorData?.tahunHabis}
+                        {#if $maklumatAkademikErrors.tahunHabis}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.tahunHabis[0]}</span
+                                >{$maklumatAkademikErrors.tahunHabis[0]}</span
                             >
                         {/if}
 
                         <TextField
                             {disabled}
-                            hasError={errorData?.gredSekolah}
+                            hasError={$maklumatAkademikErrors.gredSekolah
+                                ? true
+                                : false}
                             name="gredSekolah"
                             label={edu.type == 'Ijazah' ? 'CGPA' : 'Gred'}
                             type="text"
-                            bind:value={edu.finalGrade}
+                            bind:value={$maklumatAkademikForm.gredSekolah}
                         ></TextField>
 
-                        {#if errorData?.gredSekolah}
+                        {#if $maklumatAkademikErrors.gredSekolah}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.noPerkeja[0]}</span
+                                >{$maklumatAkademikErrors.gredSekolah[0]}</span
                             >
                         {/if}
 
                         {#if edu.type == 'Ijazah'}
                             <TextField
                                 {disabled}
-                                hasError={errorData?.bidang}
+                                hasError={$maklumatAkademikErrors.bidang
+                                    ? true
+                                    : false}
                                 name="bidang"
                                 label={'Bidang'}
                                 type="text"
-                                bind:value={edu.course}
+                                bind:value={$maklumatAkademikForm.bidang}
                             ></TextField>
 
-                            {#if errorData?.bidang}
+                            {#if $maklumatAkademikErrors.bidang}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.bidang[0]}</span
+                                    >{$maklumatAkademikErrors.bidang[0]}</span
                                 >
                             {/if}
 
@@ -1392,15 +1505,21 @@
     <StepperContent>
         <StepperContentHeader title="Maklumat Pengalaman">
             {#if !disabled}
-                <TextIconButton primary label="Simpan" form="FormStepper4" />
+                <TextIconButton
+                    primary
+                    label="Simpan"
+                    form="FormStepperPengalaman"
+                />
             {/if}
         </StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2.5">
                 <form
-                    id="FormStepper4"
-                    on:submit|preventDefault={_submitFormStepperMaklumatPeribadi}
+                    id="FormStepperPengalaman"
+                    on:submit|preventDefault={_submitFormStepperMaklumatPengalaman}
                     class="flex w-full flex-col gap-2"
+                    use:maklumatPengalamanEnhance
+                    method="POST"
                 >
                     {#each currentEmployeeExperience as item, i}
                         <p class={stepperFormTitleClass}>
@@ -1410,48 +1529,55 @@
                         {#if item.company !== '-'}
                             <TextField
                                 {disabled}
-                                hasError={errorData?.namaMajikan}
+                                hasError={$maklumatPengalamanErrors.namaMajikan
+                                    ? true
+                                    : false}
                                 name="namaMajikan"
                                 label={'Nama Majikan'}
                                 type="text"
-                                bind:value={item.company}
+                                bind:value={$maklumatPengalamanForm.namaMajikan}
                             ></TextField>
-                            {#if errorData?.namaMajikan}
+                            {#if $maklumatPengalamanErrors.namaMajikan}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.namaMajikan[0]}</span
+                                    >{$maklumatPengalamanErrors
+                                        .namaMajikan[0]}</span
                                 >
                             {/if}
 
                             <TextField
                                 {disabled}
-                                hasError={errorData?.alamatMajikan}
+                                hasError={$maklumatPengalamanErrors.alamatMajikan
+                                    ? true
+                                    : false}
                                 name="alamatMajikan"
                                 label={'Alamat Majikan'}
                                 type="text"
-                                value="{item.address}, {item.postcode}, {item.city}, {mockLookupStates.find(
-                                    (state) => state.id === item.stateId,
-                                )?.name}, {item.country}"
+                                bind:value={$maklumatPengalamanForm.alamatMajikan}
                             ></TextField>
-                            {#if errorData?.alamatMajikan}
+                            {#if $maklumatPengalamanErrors.alamatMajikan}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.alamatMajikan[0]}</span
+                                    >{$maklumatPengalamanErrors
+                                        .alamatMajikan[0]}</span
                                 >
                             {/if}
 
                             <TextField
                                 {disabled}
-                                hasError={errorData?.jawatanPengalaman}
+                                hasError={$maklumatPengalamanErrors.jawatanPengalaman
+                                    ? true
+                                    : false}
                                 name="jawatanPengalaman"
                                 label={'Jawatan'}
                                 type="text"
-                                bind:value={item.position}
+                                bind:value={$maklumatPengalamanForm.jawatanPengalaman}
                             ></TextField>
-                            {#if errorData?.jawatanPengalaman}
+                            {#if $maklumatPengalamanErrors.jawatanPengalaman}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.jawatanPengalaman[0]}</span
+                                    >{$maklumatPengalamanErrors
+                                        .jawatanPengalaman[0]}</span
                                 >
                             {/if}
 
@@ -1465,129 +1591,135 @@
 
                             <TextField
                                 {disabled}
-                                hasError={errorData?.tempohPerkhidmatan}
+                                hasError={$maklumatPengalamanErrors.tempohPerkhidmatan
+                                    ? true
+                                    : false}
                                 name="tempohPerkhidmatan"
                                 label={'Tempoh Perkhidmatan (tahun)'}
                                 type="text"
-                                value={getDurationYear(
-                                    item.startDate,
-                                    item.endDate,
-                                ).toString()}
+                                bind:value={$maklumatPengalamanForm.tempohPerkhidmatan}
                             ></TextField>
-                            {#if errorData?.tempohPerkhidmatan}
+                            {#if $maklumatPengalamanErrors.tempohPerkhidmatan}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.tempohPerkhidmatan[0]}</span
+                                    >{$maklumatPengalamanErrors
+                                        .tempohPerkhidmatan[0]}</span
                                 >
                             {/if}
 
                             <TextField
                                 {disabled}
-                                hasError={errorData?.gajiPengalaman}
+                                hasError={$maklumatPengalamanErrors.gajiPengalaman
+                                    ? true
+                                    : false}
                                 name="gajiPengalaman"
                                 label={'Gaji'}
                                 type="text"
-                                bind:value={item.salary}
+                                bind:value={$maklumatPengalamanForm.gajiPengalaman}
                             ></TextField>
-                            {#if errorData?.gajiPengalaman}
+                            {#if $maklumatPengalamanErrors.gajiPengalaman}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.gajiPengalaman[0]}</span
+                                    >{$maklumatPengalamanErrors
+                                        .gajiPengalaman[0]}</span
                                 >
                             {/if}
                         {:else}
                             <TextField
                                 {disabled}
-                                hasError={errorData?.namaMajikan}
+                                hasError={$maklumatPengalamanErrors.namaMajikan
+                                    ? true
+                                    : false}
                                 name="namaMajikan"
                                 label={'Nama Majikan'}
                                 type="text"
-                                bind:value={item.company}
+                                bind:value={$maklumatPengalamanForm.namaMajikan}
                             ></TextField>
-                            {#if errorData?.namaMajikan}
+                            {#if $maklumatPengalamanErrors.namaMajikan}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.namaMajikan[0]}</span
+                                    >{$maklumatPengalamanErrors
+                                        .namaMajikan[0]}</span
                                 >
                             {/if}
 
                             <TextField
                                 {disabled}
-                                hasError={errorData?.alamatMajikan}
+                                hasError={$maklumatPengalamanErrors.alamatMajikan
+                                    ? true
+                                    : false}
                                 name="alamatMajikan"
                                 label={'Alamat Majikan'}
                                 type="text"
-                                value="{item.address}, {item.postcode}, {item.city}, {mockLookupStates.find(
-                                    (state) => state.id === item.stateId,
-                                )?.name}, {item.country}"
+                                bind:value={$maklumatPengalamanForm.alamatMajikan}
                             ></TextField>
-                            {#if errorData?.alamatMajikan}
+                            {#if $maklumatPengalamanErrors.alamatMajikan}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.alamatMajikan[0]}</span
+                                    >{$maklumatPengalamanErrors
+                                        .alamatMajikan[0]}</span
                                 >
                             {/if}
 
                             <TextField
                                 {disabled}
-                                hasError={errorData?.jawatanPengalaman}
+                                hasError={$maklumatPengalamanErrors.jawatanPengalaman
+                                    ? true
+                                    : false}
                                 name="jawatanPengalaman"
                                 label={'Jawatan'}
                                 type="text"
-                                bind:value={item.position}
+                                bind:value={$maklumatPengalamanForm.jawatanPengalaman}
                             ></TextField>
-                            {#if errorData?.jawatanPengalaman}
+                            {#if $maklumatPengalamanErrors.jawatanPengalaman}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.jawatanPengalaman[0]}</span
+                                    >{$maklumatPengalamanErrors
+                                        .jawatanPengalaman[0]}</span
                                 >
                             {/if}
 
                             <TextField
                                 {disabled}
-                                hasError={errorData?.kodJawatan}
                                 name="kodJawatan"
                                 label={'Kod Jawatan (jika ada)'}
                                 type="text"
                                 bind:value={item.grade}
                             ></TextField>
-                            {#if errorData?.kodJawatan}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.kodJawatan[0]}</span
-                                >
-                            {/if}
 
                             <TextField
                                 {disabled}
-                                hasError={errorData?.tempohPerkhidmatan}
+                                hasError={$maklumatPengalamanErrors.tempohPerkhidmatan
+                                    ? true
+                                    : false}
                                 name="tempohPerkhidmatan"
                                 label={'Tempoh Perkhidmatan (tahun)'}
                                 type="text"
-                                value={getDurationYear(
-                                    item.startDate,
-                                    item.endDate,
-                                ).toString()}
+                                bind:value={$maklumatPengalamanForm.tempohPerkhidmatan}
                             ></TextField>
-                            {#if errorData?.tempohPerkhidmatan}
+                            {#if $maklumatPengalamanErrors.tempohPerkhidmatan}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.tempohPerkhidmatan[0]}</span
+                                    >{$maklumatPengalamanErrors
+                                        .tempohPerkhidmatan[0]}</span
                                 >
                             {/if}
 
                             <TextField
                                 {disabled}
-                                hasError={errorData?.gajiPengalaman}
+                                hasError={$maklumatPengalamanErrors.gajiPengalaman
+                                    ? true
+                                    : false}
                                 name="gajiPengalaman"
                                 label={'Gaji'}
                                 type="text"
-                                bind:value={item.salary}
+                                bind:value={$maklumatPengalamanForm.gajiPengalaman}
                             ></TextField>
-                            {#if errorData?.gajiPengalaman}
+                            {#if $maklumatPengalamanErrors.gajiPengalaman}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.gajiPengalaman[0]}</span
+                                    >{$maklumatPengalamanErrors
+                                        .gajiPengalaman[0]}</span
                                 >
                             {/if}
                         {/if}
@@ -1640,59 +1772,65 @@
     <StepperContent>
         <StepperContentHeader title="Maklumat Waris">
             {#if !disabled}
-                <TextIconButton primary label="Simpan" form="FormStepper8" />
+                <TextIconButton
+                    primary
+                    label="Simpan"
+                    form="FormStepperWaris"
+                />
             {/if}
         </StepperContentHeader>
 
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2.5">
                 <form
-                    id="FormStepper8"
-                    on:submit|preventDefault={_submitFormStepperMaklumatPeribadi}
+                    id="FormStepperWaris"
+                    on:submit|preventDefault={_submitFormStepperMaklumatWaris}
                     class="flex w-full flex-col gap-2"
+                    use:maklumatWarisEnhance
+                    method="POST"
                 >
                     <TextField
                         {disabled}
-                        hasError={errorData?.namaWaris}
+                        hasError={$maklumatWarisErrors.namaWaris ? true : false}
                         name="namaWaris"
                         label={'Nama Waris'}
                         type="text"
-                        bind:value={currentEmployeeNextOfKins.name}
+                        bind:value={$maklumatWarisForm.namaWaris}
                     ></TextField>
-                    {#if errorData?.namaWaris}
+                    {#if $maklumatWarisErrors.namaWaris}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.namaWaris[0]}</span
+                            >{$maklumatWarisErrors.namaWaris[0]}</span
                         >
                     {/if}
                     <TextField
                         {disabled}
-                        hasError={errorData?.noKP}
+                        hasError={$maklumatWarisErrors.noKP ? true : false}
                         name="noKP"
                         label={'No. Kad Pengenalan'}
                         type="text"
-                        bind:value={currentEmployeeNextOfKins.identityDocumentNumber}
+                        bind:value={$maklumatWarisForm.noKP}
                     ></TextField>
-                    {#if errorData?.noKP}
+                    {#if $maklumatWarisErrors.noKP}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.noKP[0]}</span
+                            >{$maklumatWarisErrors.noKP[0]}</span
                         >
                     {/if}
                     <DateSelector
                         {disabled}
-                        hasError={errorData?.tarikhLahirWaris}
+                        hasError={$maklumatWarisErrors.tarikhLahirWaris ? true : false}
                         name="tarikhLahirWaris"
                         handleDateChange
                         label="Tarikh Lahir"
-                        bind:selectedDate={currentEmployeeNextOfKins.birthDate}
+                        bind:selectedDate={$maklumatWarisForm.tarikhLahirWaris}
                     ></DateSelector>
-                    {#if errorData?.tarikhLahirWaris}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.tarikhLahirWaris[0]}</span
-                        >
-                    {/if}
+                    {#if $maklumatWarisErrors?.tarikhLahirWaris}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$maklumatWarisErrors?.tarikhLahirWaris[0]}</span
+                    >
+                {/if}
 
                     <DropdownSelect
                         {disabled}
@@ -1715,18 +1853,18 @@
 
                     <DateSelector
                         {disabled}
-                        hasError={errorData?.tarikhKahwin}
+                        hasError={$maklumatWarisErrors.tarikhKahwin ? true : false}
                         name="tarikhKahwin"
                         handleDateChange
                         label="Tarikh Kahwin (Jika Berkenaan) "
-                        bind:selectedDate={currentEmployeeNextOfKins.marriageDate}
+                        bind:selectedDate={$maklumatWarisForm.tarikhKahwin}
                     ></DateSelector>
-                    {#if errorData?.tarikhKahwin}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.tarikhKahwin[0]}</span
-                        >
-                    {/if}
+                    {#if $maklumatWarisErrors?.tarikhKahwin}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$maklumatWarisErrors?.tarikhKahwin[0]}</span
+                    >
+                {/if}
                     <DropdownSelect
                         {disabled}
                         hasError={errorData?.warnaKP}
@@ -1748,72 +1886,82 @@
 
                     <TextField
                         {disabled}
-                        hasError={errorData?.telefonRumah}
+                        hasError={$maklumatWarisErrors.telefonRumah
+                            ? true
+                            : false}
                         name="telefonRumah"
                         label={'Telefon (R)'}
                         type="text"
-                        bind:value={currentEmployeeNextOfKins.homeNumber}
+                        bind:value={$maklumatWarisForm.telefonRumah}
                     ></TextField>
-                    {#if errorData?.telefonRumah}
+                    {#if $maklumatWarisErrors.telefonRumah}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.telefonRumah[0]}</span
+                            >{$maklumatWarisErrors.telefonRumah[0]}</span
                         >
                     {/if}
                     <TextField
                         {disabled}
-                        hasError={errorData?.telefonPeribadi}
+                        hasError={$maklumatWarisErrors.telefonPeribadi
+                            ? true
+                            : false}
                         name="telefonPeribadi"
                         label={'Telefon (P)'}
                         type="text"
-                        bind:value={currentEmployeeNextOfKins.mobileNumber}
+                        bind:value={$maklumatWarisForm.telefonPeribadi}
                     ></TextField>
-                    {#if errorData?.telefonPeribadi}
+                    {#if $maklumatWarisErrors.telefonPeribadi}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.telefonPeribadi[0]}</span
+                            >{$maklumatWarisErrors.telefonPeribadi[0]}</span
                         >
                     {/if}
                     <TextField
                         {disabled}
-                        hasError={errorData?.pekerjaanWaris}
+                        hasError={$maklumatWarisErrors.pekerjaanWaris
+                            ? true
+                            : false}
                         name="pekerjaanWaris"
                         label={'Pekerjaan'}
                         type="text"
-                        bind:value={currentEmployeeNextOfKins.position}
+                        bind:value={$maklumatWarisForm.pekerjaanWaris}
                     ></TextField>
-                    {#if errorData?.pekerjaanWaris}
+                    {#if $maklumatWarisErrors.pekerjaanWaris}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.pekerjaanWaris[0]}</span
+                            >{$maklumatWarisErrors.pekerjaanWaris[0]}</span
                         >
                     {/if}
                     <TextField
                         {disabled}
-                        hasError={errorData?.namaMajikanWaris}
+                        hasError={$maklumatWarisErrors.namaMajikanWaris
+                            ? true
+                            : false}
                         name="namaMajikanWaris"
                         label={'Nama Majikan'}
                         type="text"
-                        bind:value={currentEmployeeNextOfKins.company}
+                        bind:value={$maklumatWarisForm.namaMajikanWaris}
                     ></TextField>
-                    {#if errorData?.namaMajikanWaris}
+                    {#if $maklumatWarisErrors.namaMajikanWaris}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.namaMajikanWaris[0]}</span
+                            >{$maklumatWarisErrors.namaMajikanWaris[0]}</span
                         >
                     {/if}
 
                     <LongTextField
-                        hasError={errorData?.alamatMajikanWaris}
+                        hasError={$maklumatWarisErrors.alamatMajikanWaris
+                            ? true
+                            : false}
                         {disabled}
                         name="alamatMajikanWaris"
                         label="Alamat Majikan"
-                        bind:value={currentEmployeeNextOfKins.companyAddress}
+                        bind:value={$maklumatWarisForm.alamatMajikanWaris}
                     />
-                    {#if errorData?.alamatMajikanWaris}
+                    {#if $maklumatWarisErrors.alamatMajikanWaris}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.alamatMajikanWaris[0]}</span
+                            >{$maklumatWarisErrors.alamatMajikanWaris[0]}</span
                         >
                     {/if}
                 </form>
