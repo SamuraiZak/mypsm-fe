@@ -11,7 +11,7 @@
     import TextField from '$lib/components/input/TextField.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
-    import { Badge, Checkbox } from 'flowbite-svelte';
+    import { Checkbox } from 'flowbite-svelte';
     import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
     import { categories } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/categories';
     import CutiGantian from '../../../../pelulus/cuti/permohonan-cuti/butiran-cuti-gantian/forms/CutiGantian.svelte';

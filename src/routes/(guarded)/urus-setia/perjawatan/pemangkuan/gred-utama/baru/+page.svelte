@@ -28,7 +28,6 @@
     import toast, { Toaster } from 'svelte-french-toast';
     import { z, ZodError } from 'zod';
 
-    let checkedItems: Object[] = [];
     let editMode: boolean = false;
 
     let candidateList: Object[] = [

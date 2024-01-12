@@ -3,26 +3,14 @@ import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
-const dateScheme = z.coerce
-    .date({
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_date'
-                    ? 'Tarikh tidak boleh dibiar kosong.'
-                    : defaultError,
-        }),
-    })
-    .min(new Date(), {
-        message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
-    });
-
 
 const generalSelectSchema = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
 
-export const _amendmentOfPlacementApplicationSchema = z.object({
-    amendmentDropdown: generalSelectSchema,
-    requestedPlacementAmendment: generalSelectSchema,
-    requestedReportingDate: dateScheme,
+export const _staffDetailSchema = z.object({
+    gred: generalSelectSchema,
+    placement: generalSelectSchema,
+    group: generalSelectSchema,
+    totalLeaveCollection: generalSelectSchema,
 });
 
 export const load = async ({ fetch }) => {
@@ -32,21 +20,20 @@ export const load = async ({ fetch }) => {
     const userData = await request.json();
     const form = await superValidate(
         userData,
-        _amendmentOfPlacementApplicationSchema,
+        _staffDetailSchema,
     );
 
     return { form };
 };
 
-export const _submitActingDirectorResultForm = async (formData: Object) => {
+export const _submitLeaveReplacementForm = async (formData: Object) => {
 
-    const form = await superValidate(formData, _amendmentOfPlacementApplicationSchema);
+    const form = await superValidate(formData, _staffDetailSchema);
 
     if (!form.valid) {
         toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
             style: 'background: #333; color: #fff;',
         });
-        console.log(400, form);
         return fail(400, form);
     } else {
         console.log('Request Body: ', formData);

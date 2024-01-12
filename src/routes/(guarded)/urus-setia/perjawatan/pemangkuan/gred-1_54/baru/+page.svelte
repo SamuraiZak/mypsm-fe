@@ -1,7 +1,6 @@
 <script lang="ts">
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
-    import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
     import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
     import { goto } from '$app/navigation';
     import SvgManifyingGlass from '$lib/assets/svg/SvgManifyingGlass.svelte';

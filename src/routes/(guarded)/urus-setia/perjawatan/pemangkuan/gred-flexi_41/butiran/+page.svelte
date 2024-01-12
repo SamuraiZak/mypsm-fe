@@ -29,23 +29,15 @@
     import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
     import DownloadAttachment from '$lib/components/input/DownloadAttachment.svelte';
     import { mockPerjawatanPemangkuan } from '$lib/mocks/database/mockPerjawatanPemangkuan';
-    import type {
-        CalonPemangkuan,
-        DtoCalonPemangkuan,
-        IntActingApplication,
-        MesyuaratPemilihanCalonPemangkuan,
-    } from '$lib/interfaces/database/actingApplication';
     import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
     import SvgArrowLeft from '$lib/assets/svg/SvgArrowLeft.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    import { greds } from '$lib/mocks/gred/gred.js';
     import SvgBlock from '$lib/assets/svg/SvgBlock.svelte';
     import SvgDoubleTick from '$lib/assets/svg/SvgDoubleTick.svelte';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import {
         fileSelectionList,
-        selectedRecordId,
     } from '$lib/stores/globalState';
     import { onMount } from 'svelte';
     import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
@@ -55,16 +47,9 @@
 
     export let disabled: boolean = true;
 
-    const salaryMonths = [
-        { value: '1', name: 'Januari' },
-        { value: '2', name: 'April' },
-        { value: '3', name: 'Julai' },
-        { value: '4', name: 'Oktober' },
-    ];
 
     let selectedMeetingType: string = meetings[0].value;
     let selectedSalaryMonth: string = '1';
-    let selectedGred: string = greds[0].value;
 
     export let selectedFiles: any = [];
     let target: any;
@@ -106,166 +91,6 @@
 
     //===================== Page Init Data =====================
 
-    let actingDetails: IntActingApplication = {
-        idRekod: 1,
-        jenisPemangkuan: 'Gred 1-54',
-        tarikhRekod: Date.now.toString(),
-        jumlahCalon: 0,
-        status: 'Sedang Diproses',
-        calonPemangkuan: [],
-    };
-
-    let allEmployeeList: DtoCalonPemangkuan[] = [
-        {
-            idRekod: 1,
-            idKakitangan: 1,
-            nomborPekerja: '00001',
-            namaKakitangan: 'Jon Bovi',
-            nomborKP: '910821-13-5671',
-            gredSemasa: 'E30',
-            gredPemangkuan: 'A41',
-            jawatanSemasa: 'Penolong Pegawai Perkhidmatan',
-            program: '-',
-            skim: '-',
-            penempatanSekarang: '-',
-
-            // mesyuarat
-            gredUntukDipangku: '',
-            jawatanUntukDipangku: '',
-            layakTemuduga: '',
-            // temuduga
-            tarikhTemuduga: '',
-            masaTemuduga: '',
-            pusatTemuduga: '',
-            markahTemuduga: '',
-            keputusanTemuduga: '',
-            // semakan
-            laporanTatatertib: '',
-            laporanPrestasi: '',
-            laporanSprm: '',
-            perakuanKetuaJabatan: '',
-            // mesyuarat kenaikan pangkat
-            keputusanKenaikanPangkat: '',
-            kodJawatanMemangku: '',
-            gelaranJawatanMemangku: '',
-            tarikhKuatkuasaPemangkuan: '',
-            tarikhCukupTempohPemangkuan: '',
-            // mesyuarat penempatan
-            penempatanBaru: '',
-            tarikhLaporDiri: '',
-            // permohonan penangguhan
-            permohonanPenangguhan: '',
-            penempatanDipohon: '',
-            tarikhLaporDiriDipohon: '',
-            keputusanPenangguhanAtauPindaan: '',
-            // keputusan akhir
-            kodJawatanMemangkuAkhir: '',
-            gelaranJawatanMemangkuAkhir: '',
-            tarikhKuatKuasaPemangkuanAkhir: '',
-            tarikhCukupTempohPemangkuanAkhir: '',
-            penempatanBaruAkhir: '',
-            tarikhLaporDiriAkhir: '',
-        },
-        {
-            idRekod: 2,
-            idKakitangan: 2,
-            nomborPekerja: '00002',
-            namaKakitangan: 'Teressa Teng',
-            nomborKP: '930315-13-6188',
-            gredSemasa: 'D41',
-            gredPemangkuan: '-',
-            jawatanSemasa: 'Penolong Pegawai Tadbir',
-            program: '-',
-            skim: '-',
-            penempatanSekarang: '-',
-            // mesyuarat
-            gredUntukDipangku: '',
-            jawatanUntukDipangku: '',
-            layakTemuduga: '',
-            // temuduga
-            tarikhTemuduga: '',
-            masaTemuduga: '',
-            pusatTemuduga: '',
-            markahTemuduga: '',
-            keputusanTemuduga: '',
-            // semakan
-            laporanTatatertib: '',
-            laporanPrestasi: '',
-            laporanSprm: '',
-            perakuanKetuaJabatan: '',
-            // mesyuarat kenaikan pangkat
-            keputusanKenaikanPangkat: '',
-            kodJawatanMemangku: '',
-            gelaranJawatanMemangku: '',
-            tarikhKuatkuasaPemangkuan: '',
-            tarikhCukupTempohPemangkuan: '',
-            // mesyuarat penempatan
-            penempatanBaru: '',
-            tarikhLaporDiri: '',
-            // permohonan penangguhan
-            permohonanPenangguhan: '',
-            penempatanDipohon: '',
-            tarikhLaporDiriDipohon: '',
-            keputusanPenangguhanAtauPindaan: '',
-            // keputusan akhir
-            kodJawatanMemangkuAkhir: '',
-            gelaranJawatanMemangkuAkhir: '',
-            tarikhKuatKuasaPemangkuanAkhir: '',
-            tarikhCukupTempohPemangkuanAkhir: '',
-            penempatanBaruAkhir: '',
-            tarikhLaporDiriAkhir: '',
-        },
-        {
-            idRekod: 3,
-            idKakitangan: 3,
-            nomborPekerja: '00003',
-            namaKakitangan: 'Xue Hua Piao',
-            nomborKP: '851130-13-7747',
-            gredSemasa: 'H12',
-            gredPemangkuan: 'D43',
-            jawatanSemasa: 'Penolong Pegawai Teknologi Maklumat',
-            program: '-',
-            skim: '-',
-            penempatanSekarang: '-',
-            // mesyuarat
-            gredUntukDipangku: '',
-            jawatanUntukDipangku: '',
-            layakTemuduga: '',
-            // temuduga
-            tarikhTemuduga: '',
-            masaTemuduga: '',
-            pusatTemuduga: '',
-            markahTemuduga: '',
-            keputusanTemuduga: '',
-            // semakan
-            laporanTatatertib: '',
-            laporanPrestasi: '',
-            laporanSprm: '',
-            perakuanKetuaJabatan: '',
-            // mesyuarat kenaikan pangkat
-            keputusanKenaikanPangkat: '',
-            kodJawatanMemangku: '',
-            gelaranJawatanMemangku: '',
-            tarikhKuatkuasaPemangkuan: '',
-            tarikhCukupTempohPemangkuan: '',
-            // mesyuarat penempatan
-            penempatanBaru: '',
-            tarikhLaporDiri: '',
-            // permohonan penangguhan
-            permohonanPenangguhan: '',
-            penempatanDipohon: '',
-            tarikhLaporDiriDipohon: '',
-            keputusanPenangguhanAtauPindaan: '',
-            // keputusan akhir
-            kodJawatanMemangkuAkhir: '',
-            gelaranJawatanMemangkuAkhir: '',
-            tarikhKuatKuasaPemangkuanAkhir: '',
-            tarikhCukupTempohPemangkuanAkhir: '',
-            penempatanBaruAkhir: '',
-            tarikhLaporDiriAkhir: '',
-        },
-    ];
-
     //Date Selector for Tarikh Lapor Diri
     let selectedDate = new Date();
 
@@ -279,10 +104,6 @@
         console.log(formattedDate);
     }
 
-    let selectedCandidatesList: DtoCalonPemangkuan[] = [];
-
-    let tempSelectedCandidatesList: DtoCalonPemangkuan[] = [];
-
     let keputusanPemilihan = [
         {
             value: 'true',
@@ -294,72 +115,10 @@
         },
     ];
 
-    let currentData: any = {};
-
-    let placeholderData: any = {};
-
     //===================== Step 1 =====================
 
     // Step 1 script starts here
     let editingCandidateList = false;
-
-    function saveSelected() {
-        // actingDetails.calonPemangkuan = selectedCandidatesList;
-        selectedCandidatesList = tempSelectedCandidatesList;
-    }
-
-    function assignValue() {
-        placeholderData = {
-            idRekod: currentData.idRekod,
-            idKakitangan: currentData.idKakitangan,
-            nomborPekerja: currentData.nomborPekerja,
-            namaKakitangan: currentData.namaKakitangan,
-            nomborKP: currentData.nomborKP,
-            gredSemasa: currentData.gredSemasa,
-            jawatanSemasa: currentData.jawatanSemasa,
-            // mesyuarat
-            gredUntukDipangku: currentData.gredUntukDipangku,
-            jawatanUntukDipangku: currentData.jawatanUntukDipangku,
-            layakTemuduga: currentData.layakTemuduga,
-            // temuduga
-            tarikhTemuduga: currentData.tarikhTemuduga,
-            masaTemuduga: currentData.masaTemuduga,
-            pusatTemuduga: currentData.pusatTemuduga,
-            markahTemuduga: currentData.markahTemuduga,
-            keputusanTemuduga: currentData.keputusanTemuduga,
-            // semakan
-            laporanTatatertib: currentData.laporanTatatertib,
-            laporanPrestasi: currentData.laporanPrestasi,
-            laporanSprm: currentData.laporanSprm,
-            perakuanKetuaJabatan: currentData.perakuanKetuaJabatan,
-            // mesyuarat kenaikan pangkat
-            keputusanKenaikanPangkat: currentData.keputusanKenaikanPangkat,
-            kodJawatanMemangku: currentData.kodJawatanMemangku,
-            gelaranJawatanMemangku: currentData.gelaranJawatanMemangku,
-            tarikhKuatkuasaPemangkuan: currentData.tarikhKuatkuasaPemangkuan,
-            tarikhCukupTempohPemangkuan:
-                currentData.tarikhCukupTempohPemangkuan,
-            // mesyuarat penempatan
-            penempatanBaru: currentData.penempatanBaru,
-            tarikhLaporDiri: currentData.tarikhLaporDiri,
-            // permohonan penangguhan
-            permohonanPenangguhan: currentData.permohonanPenangguhan,
-            penempatanDipohon: currentData.penempatanDipohon,
-            tarikhLaporDiriDipohon: currentData.tarikhLaporDiriDipohon,
-            keputusanPenangguhanAtauPindaan:
-                currentData.keputusanPenangguhanAtauPindaan,
-            // keputusan akhir
-            kodJawatanMemangkuAkhir: currentData.kodJawatanMemangkuAkhir,
-            gelaranJawatanMemangkuAkhir:
-                currentData.gelaranJawatanMemangkuAkhir,
-            tarikhKuatKuasaPemangkuanAkhir:
-                currentData.tarikhKuatKuasaPemangkuanAkhir,
-            tarikhCukupTempohPemangkuanAkhir:
-                currentData.tarikhCukupTempohPemangkuanAkhir,
-            penempatanBaruAkhir: currentData.penempatanBaruAkhir,
-            tarikhLaporDiriAkhir: currentData.tarikhLaporDiriAkhir,
-        };
-    }
 
     //Zod Schema for Form Validation
     let errorData: any;
@@ -1618,9 +1377,6 @@
                     <TextIconButton
                         label="Batal"
                         onClick={() => {
-                            console.log(currentData.layakTemuduga);
-                            console.log(placeholderData.layakTemuduga);
-                            console.log(selectedCandidatesList);
                             editingCandidateList = false;
                         }}
                     ></TextIconButton>
@@ -1774,9 +1530,6 @@
                     <TextIconButton
                         label="Batal"
                         onClick={() => {
-                            console.log(currentData.layakTemuduga);
-                            console.log(placeholderData.layakTemuduga);
-                            console.log(selectedCandidatesList);
                             editingCandidateList = false;
                         }}
                     ></TextIconButton>
@@ -1914,9 +1667,6 @@
                     <TextIconButton
                         label="Batal"
                         onClick={() => {
-                            console.log(currentData.layakTemuduga);
-                            console.log(placeholderData.layakTemuduga);
-                            console.log(selectedCandidatesList);
                             editingCandidateList = false;
                         }}
                     ></TextIconButton>
@@ -2077,9 +1827,6 @@
                     <TextIconButton
                         label="Batal"
                         onClick={() => {
-                            console.log(currentData.layakTemuduga);
-                            console.log(placeholderData.layakTemuduga);
-                            console.log(selectedCandidatesList);
                             editingCandidateList = false;
                         }}
                     ></TextIconButton>
@@ -2360,9 +2107,6 @@
                     <TextIconButton
                         label="Batal"
                         onClick={() => {
-                            console.log(currentData.layakTemuduga);
-                            console.log(placeholderData.layakTemuduga);
-                            console.log(selectedCandidatesList);
                             editingCandidateList = false;
                         }}
                     ></TextIconButton>

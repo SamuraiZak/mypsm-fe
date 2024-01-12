@@ -14,12 +14,12 @@
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { penempatan } from '$lib/mocks/kakitangan/cuti/gcr/penempatan';
     import { kumpulan } from '$lib/mocks/kakitangan/cuti/gcr/kumpulan';
+    import { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import { _submitLeaveReplacementForm, _staffDetailSchema } from './+page';
 
     export let disabled: boolean = true;
-
-    let selectedGred = gred[0].value;
-    let selectedPenempatan = penempatan[0].value;
-    let selectedKumpulan = kumpulan[0].value;
     let selectedDate = new Date();
 
     function handleDateChange(event: any) {
@@ -31,6 +31,21 @@
         });
         console.log(formattedDate);
     }
+
+    // ==================================
+    // Form Validation ==================
+    // ==================================
+    export let data: PageData;
+
+    const { form, errors, enhance } = superForm(data.form, {
+        SPA: true,
+        validators: _staffDetailSchema,
+        onSubmit() {
+            _submitLeaveReplacementForm($form);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
 </script>
 
 <ContentHeader
@@ -48,64 +63,91 @@
     <StepperContent>
         <StepperContentHeader title="Maklumat Kakitangan"
         ></StepperContentHeader>
+
         <StepperContentBody>
-            <div class="flex w-full flex-col gap-2">
-                <p class="text-sm font-bold">Maklumat Kakitangan</p>
-                <TextField
-                    {disabled}
-                    id="nama"
-                    label={'Nama'}
-                    value={'Irfan Bin Abu'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="noKadPengenalan"
-                    label={'No. K/P'}
-                    value={'111111-11-1111'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="noPekerja"
-                    label={'No. Pekerja'}
-                    value={'A23412'}
-                ></TextField>
-                <DropdownSelect
-                    id="gred-dropdown"
-                    label="Gred"
-                    dropdownType="label-left-full"
-                    bind:index={selectedGred}
-                    options={gred}
-                ></DropdownSelect>
-                <DropdownSelect
-                    id="penempatan-dropdown"
-                    label="Penempatan"
-                    dropdownType="label-left-full"
-                    bind:index={selectedPenempatan}
-                    options={penempatan}
-                ></DropdownSelect>
-                <DropdownSelect
-                    id="kumpulan-dropdown"
-                    label="Kumpulan"
-                    dropdownType="label-left-full"
-                    bind:index={selectedKumpulan}
-                    options={kumpulan}
-                ></DropdownSelect>
-                <DateSelector
-                    {disabled}
-                    {handleDateChange}
-                    label={'Tarikh Mula Lantikan'}
-                />
-            </div></StepperContentBody
-        >
+            <form
+                id="formValidation"
+                method="POST"
+                use:enhance
+                class="flex w-full flex-col gap-2"
+            >
+                <div class="flex w-full flex-col gap-2">
+                    <p class="text-sm font-bold">Maklumat Kakitangan</p>
+                    <TextField
+                        {disabled}
+                        id="nama"
+                        label={'Nama'}
+                        value={'Irfan Bin Abu'}
+                    ></TextField>
+                    <TextField
+                        {disabled}
+                        id="noKadPengenalan"
+                        label={'No. K/P'}
+                        value={'111111-11-1111'}
+                    ></TextField>
+                    <TextField
+                        {disabled}
+                        id="noPekerja"
+                        label={'No. Pekerja'}
+                        value={'A23412'}
+                    ></TextField>
+
+                    <DropdownSelect
+                        hasError={$errors.gred ? true : false}
+                        id="gred"
+                        label="Gred"
+                        dropdownType="label-left-full"
+                        bind:value={$form.gred}
+                        options={gred}
+                    ></DropdownSelect>
+                    {#if $errors.gred}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.gred[0]}</span
+                        >
+                    {/if}
+                    <DropdownSelect
+                        hasError={$errors.placement ? true : false}
+                        id="placement"
+                        label="Penempatan"
+                        dropdownType="label-left-full"
+                        bind:value={$form.placement}
+                        options={penempatan}
+                    ></DropdownSelect>
+                    {#if $errors.placement}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.placement[0]}</span
+                        >
+                    {/if}
+                    <DropdownSelect
+                        hasError={$errors.group ? true : false}
+                        id="group"
+                        label="Kumpulan"
+                        dropdownType="label-left-full"
+                        bind:value={$form.group}
+                        options={kumpulan}
+                    ></DropdownSelect>
+                    {#if $errors.group}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.group[0]}</span
+                        >
+                    {/if}
+
+                    <DateSelector
+                        {disabled}
+                        {handleDateChange}
+                        label={'Tarikh Mula Lantikan'}
+                    />
+                </div>
+            </form>
+        </StepperContentBody>
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Butiran Pengumpulan GCR"
-            ><TextIconButton
-                primary
-                label="Hantar"
-                onClick={() => {
-                    goto('/kakitangan/cuti/gantian-cuti-rehat');
-                }}><SvgPaperAirplane /></TextIconButton
+            ><TextIconButton primary label="Hantar" form="formValidation"
+                ><SvgPaperAirplane /></TextIconButton
             ></StepperContentHeader
         >
         <StepperContentBody>
@@ -139,11 +181,28 @@
                 ></TextField>
                 <div class="grid grid-cols-2 gap-10">
                     <div class="space-y-2.5">
-                        <TextField
-                            id="jumlahpengumpulanGcr2023"
-                            label={'Jumlah Pengumpulan GCR 2023'}
-                            value={'3  ● tidak melebihi 15 hari'}
-                        ></TextField>
+                        <form
+                            id="formValidation"
+                            method="POST"
+                            use:enhance
+                            class="flex w-full flex-col gap-2"
+                        >
+                            
+                            <TextField
+                                hasError={$errors.totalLeaveCollection
+                                    ? true
+                                    : false}
+                                name="totalLeaveCollection"
+                                label={'Jumlah Pengumpulan GCR 2023'}
+                                bind:value={$form.totalLeaveCollection}
+                            ></TextField>
+                            {#if $errors.totalLeaveCollection}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$errors.totalLeaveCollection[0]}</span
+                                >
+                            {/if}
+                        </form>
                     </div>
                     <div class="space-y-2.5">
                         <TextField
@@ -154,7 +213,9 @@
                         ></TextField>
                     </div>
                 </div>
-            </div></StepperContentBody
-        >
+            </div>
+        </StepperContentBody>
     </StepperContent>
 </Stepper>
+
+<Toaster />
