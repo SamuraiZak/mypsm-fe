@@ -157,6 +157,27 @@ export const _experienceInfoSchema = z.object({
 });
 
 //==========================================================
+//================== Maklumat Pengalaman Modal ===================
+//==========================================================
+
+export const _addExperienceModalSchema = z.object({
+    companyName: shortTextSchema,
+    companyAddress: shortTextSchema,
+    positionCode: shortTextSchema.nullable(),
+    position: shortTextSchema,
+    servicePeriod: z
+        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+        .min(1, {
+            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+        })
+        .max(124, {
+            message: 'Medan ini tidak boleh melebihi 124 karakter.',
+        })
+        .trim(),
+    serviceSalary: shortTextSchema,
+});
+
+//==========================================================
 //=============Maklumat Perkhidmatan ========================
 //==========================================================
 
@@ -194,20 +215,19 @@ export const _serviceInfoSchema = z.object({
 
 export const load = async () => {
     const personalInfoForm = await superValidate(_personalInfoForm);
-
     const academicInfoForm = await superValidate(_academicInfoSchema);
-
-    const addAcademicInfoModal = await superValidate(_addAcademicInfoSchema);
-
     const serviceInfoForm = await superValidate(_serviceInfoSchema);
     const experienceInfoForm = await superValidate(_experienceInfoSchema);
+    const addAcademicModal = await superValidate(_addAcademicInfoSchema);
+    const addExperienceModal = await superValidate(_addExperienceModalSchema);
 
     return {
         personalInfoForm,
         academicInfoForm,
-        addAcademicInfoModal,
         serviceInfoForm,
         experienceInfoForm,
+        addAcademicModal,
+        addExperienceModal,
     };
 };
 
@@ -257,7 +277,27 @@ export const _submitAcademicInfoForm = async (formData: object) => {
     return { form };
 };
 
-export const _moreAcedemicInfo: unknown[] = [];
+export const _submitExperienceInfoForm = async (formData: object) => {
+    const form = await superValidate(formData, _experienceInfoSchema);
+
+    if (!form.valid) {
+        getErrorToast();
+        return fail(400, form);
+    }
+
+    const responsePromise = api
+        .post('https://jsonplaceholder.typicode.com/posts', {
+            body: JSON.stringify(form),
+            prefixUrl: '',
+        })
+        .json()
+        .then((json) => console.log('Response: ', json));
+
+    getPromiseToast(responsePromise);
+    return { form };
+};
+
+// export const _moreAcedemicInfo: unknown[] = [];
 
 export const _submitAddMoreAcademicForm = async (formData: object) => {
     const form = await superValidate(formData, _addAcademicInfoSchema);
@@ -282,9 +322,10 @@ export const _submitAddMoreAcademicForm = async (formData: object) => {
     return { response };
 };
 
-export const _submitExperienceInfoForm = async (formData: object) => {
-    const form = await superValidate(formData, _serviceInfoSchema);
+export const _submitAddExperienceModal = async (formData: object) => {
+    const form = await superValidate(formData, _addAcademicInfoSchema);
 
+    console.log('Request: ', form.data);
     if (!form.valid) {
         getErrorToast();
         return fail(400, form);
@@ -295,9 +336,11 @@ export const _submitExperienceInfoForm = async (formData: object) => {
             body: JSON.stringify(form),
             prefixUrl: '',
         })
-        .json()
-        .then((json) => console.log('Response: ', json));
+        .json();
 
     getPromiseToast(responsePromise);
-    return { form };
+
+    const response = await responsePromise;
+
+    return { response };
 };

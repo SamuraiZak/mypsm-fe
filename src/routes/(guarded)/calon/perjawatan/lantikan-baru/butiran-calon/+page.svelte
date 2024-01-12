@@ -36,9 +36,11 @@
     import {
         _academicInfoSchema,
         _addAcademicInfoSchema,
+        _addExperienceModalSchema,
         _experienceInfoSchema,
-        _moreAcedemicInfo,
         _personalInfoForm,
+        _submitAcademicInfoForm,
+        _submitAddExperienceModal,
         _submitAddMoreAcademicForm,
         _submitExperienceInfoForm,
         _submitPersonalInfoForm,
@@ -185,7 +187,6 @@
     export let openFamilyInfoModal: boolean = false;
     export let openMembershipInfoModal: boolean = false;
     let tempAcademicRecord: any[] = [];
-    $: tempAcademicRecord;
 
     export const { form, errors, enhance } = superForm(data.personalInfoForm, {
         SPA: true,
@@ -203,28 +204,13 @@
 
     const {
         form: academicInfoForm,
-        errors: addAcademicInfoErrors,
-        enhance: addAcademicInfoEnhance,
+        errors: academicInfoErrors,
+        enhance: academicInfoEnhance,
     } = superForm(data.academicInfoForm, {
         SPA: true,
         validators: _academicInfoSchema,
-    });
-
-    const {
-        form: addAcademicInfoModal,
-        errors: academicInfoErrors,
-        enhance: academicInfoEnhance,
-        delayed,
-    } = superForm(data.addAcademicInfoModal, {
-        SPA: true,
-        validators: _addAcademicInfoSchema,
         onSubmit() {
-            _submitAddMoreAcademicForm($addAcademicInfoModal)
-                .then((response) => {
-                    tempAcademicRecord.push(response);
-                    console.log('RESPONSE MODAL: ', tempAcademicRecord);
-                })
-                // .then(() => (openAcademicInfoModal = false));
+            _submitAcademicInfoForm($academicInfoForm);
         },
     });
 
@@ -239,6 +225,49 @@
             _submitExperienceInfoForm($experienceInfoForm);
         },
     });
+
+    const {
+        form: addAcademicInfoModal,
+        errors: addAcademicInfoErrors,
+        enhance: addAcademicInfoEnhance,
+        delayed,
+    } = superForm(data.addAcademicModal, {
+        SPA: true,
+        validators: _addAcademicInfoSchema,
+        onSubmit() {
+            _submitAddMoreAcademicForm($addAcademicInfoModal).then(
+                (response) => {
+                    tempAcademicRecord.push(response);
+                    console.log('RESPONSE MODAL: ', tempAcademicRecord);
+                },
+            );
+            // .then(() => (openAcademicInfoModal = false));
+        },
+    });
+
+    const {
+        form: addExperienceModalForm,
+        errors: addExperienceModalErrors,
+        enhance: addExperienceModalEnhance,
+    } = superForm(data.addExperienceModal, {
+        SPA: true,
+        validators: _addExperienceModalSchema,
+        onSubmit() {
+            _submitAddExperienceModal($addExperienceModalForm);
+        },
+    });
+
+    // const {
+    //     form: addMembershipModal,
+    //     errors: addMembershipModalErrors,
+    //     enhance: addMembershipModalEnhance,
+    // } = superForm(data.addExperienceModalForm, {
+    //     SPA: true,
+    //     validators: _addExperienceModalSchema,
+    //     onSubmit() {
+    //         _submitAddMoreAcademicForm($addAcademicInfoModal);
+    //     },
+    // });
 </script>
 
 <ContentHeader
@@ -697,7 +726,7 @@
                 <form
                     id="academicInfoForm"
                     method="POST"
-                    use:addAcademicInfoEnhance
+                    use:academicInfoEnhance
                     class="flex w-full flex-col gap-2"
                 >
                     {#each currentEmployeeEducations as edu, i}
@@ -707,7 +736,7 @@
 
                         <TextField
                             {disabled}
-                            hasError={$addAcademicInfoErrors.sekolah
+                            hasError={$academicInfoErrors.sekolah
                                 ? true
                                 : false}
                             name="sekolah"
@@ -716,16 +745,16 @@
                             bind:value={$academicInfoForm.sekolah}
                         ></TextField>
 
-                        {#if $addAcademicInfoErrors.sekolah}
+                        {#if $academicInfoErrors.sekolah}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$addAcademicInfoErrors.sekolah[0]}</span
+                                >{$academicInfoErrors.sekolah[0]}</span
                             >
                         {/if}
 
                         <TextField
                             {disabled}
-                            hasError={$addAcademicInfoErrors.tahunHabis
+                            hasError={$academicInfoErrors.tahunHabis
                                 ? true
                                 : false}
                             name="tahunHabis"
@@ -734,16 +763,16 @@
                             bind:value={$academicInfoForm.tahunHabis}
                         ></TextField>
 
-                        {#if $addAcademicInfoErrors.tahunHabis}
+                        {#if $academicInfoErrors.tahunHabis}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$addAcademicInfoErrors.tahunHabis[0]}</span
+                                >{$academicInfoErrors.tahunHabis[0]}</span
                             >
                         {/if}
 
                         <TextField
                             {disabled}
-                            hasError={$addAcademicInfoErrors.gredSekolah
+                            hasError={$academicInfoErrors.gredSekolah
                                 ? true
                                 : false}
                             name="gredSekolah"
@@ -752,17 +781,17 @@
                             bind:value={$academicInfoForm.gredSekolah}
                         ></TextField>
 
-                        {#if $addAcademicInfoErrors.gredSekolah}
+                        {#if $academicInfoErrors.gredSekolah}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$addAcademicInfoErrors.gredSekolah[0]}</span
+                                >{$academicInfoErrors.gredSekolah[0]}</span
                             >
                         {/if}
 
                         {#if edu.type == 'Ijazah'}
                             <TextField
                                 {disabled}
-                                hasError={$addAcademicInfoErrors.bidang
+                                hasError={$academicInfoErrors.bidang
                                     ? true
                                     : false}
                                 name="bidang"
@@ -771,10 +800,10 @@
                                 bind:value={$academicInfoForm.bidang}
                             ></TextField>
 
-                            {#if $addAcademicInfoErrors.bidang}
+                            {#if $academicInfoErrors.bidang}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$addAcademicInfoErrors.bidang[0]}</span
+                                    >{$academicInfoErrors.bidang[0]}</span
                                 >
                             {/if}
 
@@ -1254,67 +1283,67 @@
     <form
         id="addAcademicInfoModal"
         method="POST"
-        use:academicInfoEnhance
+        use:addAcademicInfoEnhance
         class="flex h-fit w-full flex-col gap-y-2"
     >
         <TextField
-            hasError={$academicInfoErrors.title ? true : false}
+            hasError={$addAcademicInfoErrors.title ? true : false}
             {disabled}
             name="title"
             label={'Tajuk'}
             bind:value={$addAcademicInfoModal.title}
         ></TextField>
-        {#if $academicInfoErrors.title}
+        {#if $addAcademicInfoErrors.title}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$academicInfoErrors.title}</span
+                >{$addAcademicInfoErrors.title}</span
             >
         {/if}
         <TextField
-            hasError={$academicInfoErrors.institution ? true : false}
+            hasError={$addAcademicInfoErrors.institution ? true : false}
             {disabled}
             name="institution"
             label={'Institusi'}
             bind:value={$addAcademicInfoModal.institution}
         ></TextField>
-        {#if $academicInfoErrors.institution}
+        {#if $addAcademicInfoErrors.institution}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$academicInfoErrors.institution}</span
+                >{$addAcademicInfoErrors.institution}</span
             >
         {/if}
         <TextField
-            hasError={$academicInfoErrors.year ? true : false}
+            hasError={$addAcademicInfoErrors.year ? true : false}
             {disabled}
             name="year"
             label={'Tahun'}
             bind:value={$addAcademicInfoModal.year}
         ></TextField>
-        {#if $academicInfoErrors.year}
+        {#if $addAcademicInfoErrors.year}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$academicInfoErrors.year}</span
+                >{$addAcademicInfoErrors.year}</span
             >
         {/if}
         <TextField
-            hasError={$academicInfoErrors.achievement ? true : false}
+            hasError={$addAcademicInfoErrors.achievement ? true : false}
             {disabled}
             name="achievement"
             label={'Pencapaian'}
             bind:value={$addAcademicInfoModal.achievement}
         ></TextField>
-        {#if $academicInfoErrors.achievement}
+        {#if $addAcademicInfoErrors.achievement}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$academicInfoErrors.achievement}</span
+                >{$addAcademicInfoErrors.achievement}</span
             >
         {/if}
         <LongTextField
-            hasError={$academicInfoErrors.remarks ? true : false}
+            hasError={$addAcademicInfoErrors.remarks ? true : false}
             {disabled}
             name="remarks"
             label={'Catatan'}
             bind:value={$addAcademicInfoModal.remarks}
         ></LongTextField>
-        {#if $academicInfoErrors.remarks}
+        {#if $addAcademicInfoErrors.remarks}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$academicInfoErrors.remarks}</span
+                >{$addAcademicInfoErrors.remarks}</span
             >
         {/if}
         <TextIconButton primary label={'Simpan'} form="addAcademicInfoModal" />
@@ -1325,49 +1354,49 @@
 <Modal title={'Tambah Maklumat Pengalaman'} bind:open={openExperienceInfoModal}>
     <form
         id="addExperienceInfoModal"
-        class="flex w-full flex-col gap-2"
-        use:experienceInfoEnhance
         method="POST"
+        use:addExperienceModalEnhance
+        class="flex w-full flex-col gap-2"
     >
         <TextField
             {disabled}
-            hasError={$experienceInfoErrors.namaMajikan ? true : false}
-            name="namaMajikan"
+            hasError={$addExperienceModalErrors.companyName ? true : false}
+            name="companyName"
             label={'Nama Majikan'}
             type="text"
-            bind:value={$experienceInfoForm.namaMajikan}
+            bind:value={$addExperienceModalForm.companyName}
         ></TextField>
-        {#if $experienceInfoErrors.namaMajikan}
+        {#if $addExperienceModalErrors.companyName}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$experienceInfoErrors.namaMajikan}</span
+                >{$addExperienceModalErrors.companyName}</span
             >
         {/if}
 
         <TextField
             {disabled}
-            hasError={$experienceInfoErrors.alamatMajikan ? true : false}
-            name="alamatMajikan"
+            hasError={$addExperienceModalErrors.companyAddress ? true : false}
+            name="companyAddress"
             label={'Alamat Majikan'}
             type="text"
-            bind:value={$experienceInfoForm.alamatMajikan}
+            bind:value={$addExperienceModalForm.companyAddress}
         ></TextField>
-        {#if $experienceInfoErrors.alamatMajikan}
+        {#if $addExperienceModalErrors.companyAddress}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$experienceInfoErrors.alamatMajikan}</span
+                >{$addExperienceModalErrors.companyAddress}</span
             >
         {/if}
 
         <TextField
             {disabled}
-            hasError={$experienceInfoErrors.jawatanPengalaman ? true : false}
-            name="jawatanPengalaman"
+            hasError={$addExperienceModalErrors.positionCode ? true : false}
+            name="positionCode"
             label={'Jawatan'}
             type="text"
-            bind:value={$experienceInfoForm.jawatanPengalaman}
+            bind:value={$addExperienceModalForm.positionCode}
         ></TextField>
-        {#if $experienceInfoErrors.jawatanPengalaman}
+        {#if $addExperienceModalErrors.positionCode}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$experienceInfoErrors.jawatanPengalaman}</span
+                >{$addExperienceModalErrors.positionCode}</span
             >
         {/if}
 
@@ -1376,43 +1405,48 @@
             name="kodJawatan"
             label={'Kod Jawatan (jika ada)'}
             type="text"
-            bind:value={$experienceInfoForm.kodJawatan}
+            bind:value={$addExperienceModalForm.position}
         ></TextField>
 
         <TextField
             {disabled}
-            hasError={$experienceInfoErrors.tempohPerkhidmatan ? true : false}
-            name="tempohPerkhidmatan"
+            hasError={$addExperienceModalErrors.servicePeriod ? true : false}
+            name="servicePeriod"
             label={'Tempoh Perkhidmatan (tahun)'}
             type="text"
-            bind:value={$experienceInfoForm.tempohPerkhidmatan}
+            bind:value={$addExperienceModalForm.servicePeriod}
         ></TextField>
-        {#if $experienceInfoErrors.tempohPerkhidmatan}
+        {#if $addExperienceModalErrors.servicePeriod}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$experienceInfoErrors.tempohPerkhidmatan}</span
+                >{$addExperienceModalErrors.servicePeriod}</span
             >
         {/if}
 
         <TextField
             {disabled}
-            hasError={$experienceInfoErrors.gajiPengalaman ? true : false}
-            name="gajiPengalaman"
+            hasError={$addExperienceModalErrors.serviceSalary ? true : false}
+            name="serviceSalary"
             label={'Gaji'}
             type="text"
-            bind:value={$experienceInfoForm.gajiPengalaman}
+            bind:value={$addExperienceModalForm.serviceSalary}
         ></TextField>
-        {#if $experienceInfoErrors.gajiPengalaman}
+        {#if $addExperienceModalErrors.serviceSalary}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$experienceInfoErrors.gajiPengalaman}</span
+                >{$addExperienceModalErrors.serviceSalary}</span
             >
         {/if}
+        <TextIconButton
+            primary
+            label={'Simpan'}
+            form="addExperienceInfoModal"
+        />
     </form>
 </Modal>
 
 <!-- Membership Info Modal -->
 <Modal title={'Tambah Kegiatan/Keahlian'} bind:open={openMembershipInfoModal}>
     <form
-        id="addExperienceInfoModal"
+        id="addMembershipInfoModal"
         class="flex w-full flex-col gap-2"
         use:experienceInfoEnhance
         method="POST"
@@ -1494,6 +1528,11 @@
                 >{$experienceInfoErrors.gajiPengalaman}</span
             >
         {/if}
+        <TextIconButton
+            primary
+            label={'Simpan'}
+            form="addMembershipInfoModal"
+        />
     </form>
 </Modal>
 
@@ -1503,7 +1542,7 @@
     bind:open={openFamilyInfoModal}
 >
     <form
-        id="addExperienceInfoModal"
+        id="addFamilyInfoModal"
         class="flex w-full flex-col gap-2"
         use:experienceInfoEnhance
         method="POST"
