@@ -18,7 +18,6 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import { fileSelectionList } from '$lib/stores/globalState';
-    import { error } from '@sveltejs/kit';
     import { onMount } from 'svelte';
     import { Toaster } from 'svelte-french-toast';
     import {
@@ -27,9 +26,6 @@
     } from './+page';
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
-    import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
-
-    let checkedItems: Object[] = [];
 
     //===================== Stepper controls =====================
     let stepperIndex = 0;
@@ -41,9 +37,6 @@
     function goPrevious() {
         stepperIndex -= 1;
     }
-
-    //Date Selector for Tarikh Lapor Diri - Kemaskini Keputusan Mesyuarat Penempatan Kakitangan
-    let selectedDate = new Date();
 
     //upload files for Kemaskini Maklumat Temuduga
     export let selectedFiles: any = [];
@@ -79,10 +72,11 @@
     const { form, errors, enhance } = superForm(data.form, {
         SPA: true,
         validators: _amendmentOfPlacementApplicationSchema,
+        onSubmit(){ _submitActingDirectorResultForm($form)},
         taintedMessage:
             'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
     });
-    
+
 </script>
 
 <!-- header section -->
@@ -284,7 +278,7 @@
                 ><TextIconButton
                     primary
                     label="Seterusnya"
-                    form="formValidation"><SvgArrowRight /></TextIconButton
+                    onClick={() => goNext()}><SvgArrowRight /></TextIconButton
                 ></StepperContentHeader
             >
             <StepperContentBody>
@@ -295,7 +289,6 @@
                     id="formValidation"
                     method="POST"
                     use:enhance
-                    on:submit|preventDefault={_submitActingDirectorResultForm}
                     class="flex w-full flex-col gap-2"
                 >
                     <DropdownSelect
@@ -360,7 +353,7 @@
                     </div>
                 </SectionHeader>
                 <div
-                    class="border-bdr-primaryp-5 flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border p-2.5"
+                    class="border-bdr-primary p-5 flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border p-2.5"
                 >
                     <div class="flex flex-wrap gap-3">
                         {#each $fileSelectionList as item, index}
@@ -392,7 +385,6 @@
                         </div>
                     </div>
                 </div>
-                <SuperDebug data={$form} />
             </StepperContentBody>
         </StepperContent>
 

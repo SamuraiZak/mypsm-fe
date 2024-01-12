@@ -8,32 +8,20 @@ const dateScheme = z.coerce
         errorMap: (issue, { defaultError }) => ({
             message:
                 issue.code === 'invalid_date'
-                    ? 'Tarikh tidak boleh dibiarkan kosong.'
+                    ? 'Tarikh tidak boleh dibiar kosong.'
                     : defaultError,
         }),
     })
     .min(new Date(), {
-        message:
-            'Tarikh lapor diri yang dipohon hendaklah tidak kurang dari tarikh semasa.',
+        message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
     });
 
+
+const generalSelectSchema = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
+
 export const _amendmentOfPlacementApplicationSchema = z.object({
-    amendmentDropdown: z.enum(['true', 'false'], {
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_enum_value'
-                    ? 'Pilihan perlu dipilih.'
-                    : defaultError,
-        }),
-    }),
-    requestedPlacementAmendment: z.enum(['true', 'false'], {
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_enum_value'
-                    ? 'Pilihan perlu dipilih.'
-                    : defaultError,
-        }),
-    }),
+    amendmentDropdown: generalSelectSchema,
+    requestedPlacementAmendment: generalSelectSchema,
     requestedReportingDate: dateScheme,
 });
 
@@ -50,9 +38,7 @@ export const load = async ({ fetch }) => {
     return { form };
 };
 
-export const _submitActingDirectorResultForm = async (event: Event) => {
-    const formElement = event.target as HTMLFormElement;
-    const formData = new FormData(formElement);
+export const _submitActingDirectorResultForm = async (formData: Object) => {
 
     const form = await superValidate(formData, _amendmentOfPlacementApplicationSchema);
 
@@ -79,5 +65,6 @@ export const _submitActingDirectorResultForm = async (event: Event) => {
                 console.log('Response Returned: ', json);
             });
     }
+    
     return { form };
 };
