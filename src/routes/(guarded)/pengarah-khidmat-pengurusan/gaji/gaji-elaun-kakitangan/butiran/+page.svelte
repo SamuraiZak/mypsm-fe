@@ -41,7 +41,6 @@
     let disabled = true;
     let labelBlack = !disabled;
     const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
 
     let tooltipContent: string = '';
     const itkaTooltip: string = 'Imbuhan Tetap Khidmat Awam (ITKA)';
