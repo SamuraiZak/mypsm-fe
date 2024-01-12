@@ -74,7 +74,7 @@
                 <span
                     class="font font-semibold text-ios-labelColors-label-light"
                 >
-                    Calon Kakitangan LKIM
+                    Klinik Panel LKIM
                 </span>
             </p>
         </div>
