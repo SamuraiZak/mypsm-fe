@@ -1,5 +1,4 @@
 <script lang="ts">
-    import DropdownField from '$lib/components/input/DropdownSelect.svelte';
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
@@ -26,20 +25,14 @@
 
     let activeStepper = 0;
     let salaryMovementData = data.currentEmployee;
-    let currSecratery = mockEmployees[2];
     let disabled = true;
-    let isEditable = data.currentEmployee.status === 'baru' ? true : false;
     let labelBlack = !disabled;
-    let selectedMeeting = '2';
-    let selectedMonth = '10';
     let errorData: any;
-    let isChecked: boolean = false;
     let meetingTypeOption: any;
     let meetingDate: any;
     let salaryMovementMonthType: any;
     let radioValue: any = 'sah';
     let isGredChecked: boolean = false;
-    let isSpecialFiAidChecked: boolean = false;
     let isSpecialIncrementTextChecked: boolean = false;
     let gred: any;
     let isSpecialFiAidTextChecked: boolean = false;
@@ -125,15 +118,6 @@
                 })
                 .trim(),
         ),
-        // textFieldExample: z
-        //     .string({ required_error: 'Medan ini tidak boleh kosong.' })
-        //     .min(4, {
-        //         message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        //     })
-        //     .max(124, {
-        //         message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        //     })
-        //     .trim(),
     });
 
     const retirementConfirmationForm = async (event: Event) => {
@@ -455,15 +439,6 @@
                                         >{errorData?.specialIncrementText[0]}</span
                                     >
                                 {/if}
-                                <!-- <Checkbox
-                                    name="specialIncrement"
-                                    bind:checked={isSpecialIncrementChecked}
-                                ></Checkbox>
-
-                                <TextField
-                                    disabled={!isSpecialIncrementChecked}
-                                    label="Kenaikan Khas (RM)"
-                                ></TextField> -->
                             </div>
                         </div>
                     </div>
