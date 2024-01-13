@@ -19,3 +19,5 @@ export const fileSelectionList: Writable<File[]> = writable([]);
 export const selectedRecordId: Writable<number> = writable();
 
 export const selectedPatientTreatmentId: Writable<string> = writable();
+
+export const showLoadingOverlay: Writable<boolean> = writable();
