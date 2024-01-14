@@ -14,7 +14,9 @@
     import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
     import FilterSelectInput from '$lib/components/filter/FilterSelectInput.svelte';
     import FilterDateSelector from '$lib/components/filter/FilterDateSelector.svelte';
+    import type { PageData } from './$types';
 
+    export let data: PageData;
     let selectedStatus = status[0].value; // Default selected filter
 
     // mock data
@@ -41,13 +43,13 @@
         title="Rekod Lantikan Baru"
         description="Hal-hal berkaitan Lantikan Dalam Perkhidmatan"
     >
-        <FormButton
+        <!-- <FormButton
             type="new"
             addLabel="Lengkapkan Butiran Permohonan"
             onClick={() => {
                 goto('./lantikan-baru/butiran-calon');
             }}
-        />
+        /> -->
     </ContentHeader>
 </section>
 
@@ -78,10 +80,10 @@
             withActions
             actionOptions={['detail']}
             detailActions={() => {
-                const url = './lantikan-baru/kemaskini-permohonan';
+                const url = './lantikan-baru/butiran-calon';
                 goto(url);
             }}
-            tableItems={lantikanBaru}
+            tableItems={data.getThisStaffRecord}
             bind:passData={tempStaff}
         ></DynamicTable>
     </div>
