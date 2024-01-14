@@ -11,7 +11,8 @@
     import { Select } from 'flowbite-svelte';
     import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
     import FilterDateSelector from '$lib/components/filter/FilterDateSelector.svelte';
-
+    import type { PageData } from './$types';
+    export let data: PageData;
     let selectedTahun = tahun[0].value;
 </script>
 
@@ -23,7 +24,7 @@
 </section>
 
 <section
-    class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
+    class="flex h-full w-full flex-col items-center justify-start gap-2.5 overflow-y-auto p-2.5"
 >
     <FilterContainer>
         <div class="flex w-full flex-wrap gap-2.5">
@@ -125,16 +126,15 @@
         <!-- <ShortTextField label="Unit Organisasi*" type="text" />
         <ShortTextField label="Message ID" type="text" /> -->
     </FilterContainer>
-    <SectionHeader title="Senarai Cuti Rehat, Kecemasan & Sakit"
-        ><DropdownSelect
-            id="tahun-dropdown"
-            label="Tahun"
-            dropdownType="label-left"
-            bind:index={selectedTahun}
-            options={tahun}
-        ></DropdownSelect></SectionHeader
-    >
+
+    <SectionHeader title="Senarai Keluar Ofis"></SectionHeader>
     <div class="flex max-h-full w-full flex-col items-start justify-start">
-        <DynamicTable tableItems={cutiRks}></DynamicTable>
+        <DynamicTable tableItems={data.hrmisOutOfOffice}></DynamicTable>
+    </div>
+
+    <SectionHeader title="Senarai Cuti Rehat, Kecemasan & Sakit"
+    ></SectionHeader>
+    <div class="flex max-h-full w-full flex-col items-start justify-start">
+        <DynamicTable tableItems={data.hrmisLeaves ?? undefined}></DynamicTable>
     </div>
 </section>
