@@ -67,33 +67,33 @@ export const _addAcademicInfoSchema = z.object({
 
 export const _personalInfoForm = z
     .object({
-        bekasPolisTentera: generalSelectSchema,
         statusPekerjaan: generalSelectSchema,
-        warnaKadPengenalan: generalSelectSchema,
-        warganegara: generalSelectSchema,
-        tempatLahir: generalSelectSchema,
-        bangsa: generalSelectSchema,
-        agama: generalSelectSchema,
+        staffNumber: shortTextSchema,
+        identityDocumentNumber: shortTextSchema,
+        name: shortTextSchema,
+        alternativeName: shortTextSchema,
+        identityDocumentColor: generalSelectSchema,
+        birthDate: maxDateSchema,
+        birthPlace: generalSelectSchema,
+        isMalaysia: generalSelectSchema,
+        raceId: generalSelectSchema,
+        religionId: generalSelectSchema,
+        gender: generalSelectSchema,
         status: generalSelectSchema,
-        jantina: generalSelectSchema,
-        noPekerja: shortTextSchema,
-        noKadPengenalan: shortTextSchema,
-        namaPenuh: shortTextSchema,
-        namaLain: shortTextSchema,
-        tarikhLahir: maxDateSchema,
-        emel: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
-        alamatRumah: shortTextSchema,
-        alamatSuratMenyurat: shortTextSchema,
-        isInRelationshipWithLKIMStaff: generalSelectSchema,
-        noPekerjaPasangan: z.string(),
-        namaPasangan: z.string(),
-        jawatanPasangan: z.string(),
-        hubungan: z.string(),
+        email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
+        homeAddress: shortTextSchema,
+        mailAddress: shortTextSchema,
+        isExPoliceOrSoldier: generalSelectSchema,
+        isInternalRelationship: generalSelectSchema,
+        employeeNumber: z.string(),
+        employeeName: z.string(),
+        employeePosition: z.string(),
+        relationship: z.string(),
     })
     .superRefine(
         (
             {
-                isInRelationshipWithLKIMStaff,
+                isInternalRelationship,
                 // jawatanPasangan,
                 // hubungan,
                 // noPekerjaPasangan,
@@ -107,15 +107,15 @@ export const _personalInfoForm = z
             //     jawatanPasangan,
             //     hubungan,
             // ];
-            if (isInRelationshipWithLKIMStaff === 'true') {
+            if (isInternalRelationship === 'true') {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
                     message: `Sila isi medan ini.`,
                     path: [
-                        'noPekerjaPasangan',
-                        'namaPasangan',
-                        'jawatanPasangan',
-                        'hubungan',
+                        'employeeNumber',
+                        'employeeName',
+                        'employeePosition',
+                        'relationship',
                     ],
                 });
             }
@@ -129,10 +129,16 @@ export const _personalInfoForm = z
 //==========================================================
 
 export const _academicInfoSchema = z.object({
-    sekolah: shortTextSchema,
-    tahunHabis: shortTextSchema,
-    gredSekolah: shortTextSchema,
-    bidang: shortTextSchema,
+    primarySchool: shortTextSchema.nullable(),
+    primaryYearFinished: shortTextSchema.nullable(),
+    primaryGred: shortTextSchema.nullable(),
+    highSchool: shortTextSchema.nullable(),
+    highSchoolYearFinished: shortTextSchema.nullable(),
+    highSchoolGred: shortTextSchema.nullable(),
+    higherLevelEdu: shortTextSchema.nullable(),
+    higherLevelEduYearFinished: shortTextSchema.nullable(),
+    higherLevelEduGred: shortTextSchema.nullable(),
+    higherLevelEduCourse: shortTextSchema.nullable(),
 });
 
 //==========================================================
@@ -144,16 +150,10 @@ export const _experienceInfoSchema = z.object({
     alamatMajikan: shortTextSchema,
     kodJawatan: shortTextSchema.nullable(),
     jawatanPengalaman: shortTextSchema,
-    tempohPerkhidmatan: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(1, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    gajiPengalaman: shortTextSchema,
+    tempohPerkhidmatan: shortTextSchema,
+    gajiPengalaman: z.coerce.number({
+        invalid_type_error: 'Medan ini hendaklah ditetapkan dengan angka',
+    }),
 });
 
 //==========================================================
@@ -165,16 +165,10 @@ export const _addExperienceModalSchema = z.object({
     companyAddress: shortTextSchema,
     positionCode: shortTextSchema.nullable(),
     position: shortTextSchema,
-    servicePeriod: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(1, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    serviceSalary: shortTextSchema,
+    servicePeriod: shortTextSchema,
+    serviceSalary: z.coerce.number({
+        invalid_type_error: 'Medan ini hendaklah ditetapkan dengan angka',
+    }),
 });
 
 //==========================================================
@@ -255,7 +249,7 @@ export const _submitPersonalInfoForm = async (formData: object) => {
 };
 
 export const _submitAcademicInfoForm = async (formData: object) => {
-    const form = await superValidate(formData, _addAcademicInfoSchema);
+    const form = await superValidate(formData, _academicInfoSchema);
 
     console.log('Request: ', form.data);
 
@@ -331,7 +325,7 @@ export const _submitAddExperienceModal = async (formData: object) => {
         return fail(400, form);
     }
 
-    const responsePromise = api
+    const responsePromise: Promise<Response> = api
         .post('https://jsonplaceholder.typicode.com/posts', {
             body: JSON.stringify(form),
             prefixUrl: '',
@@ -340,7 +334,7 @@ export const _submitAddExperienceModal = async (formData: object) => {
 
     getPromiseToast(responsePromise);
 
-    const response = await responsePromise;
+    const response: Response = await responsePromise;
 
     return { response };
 };
