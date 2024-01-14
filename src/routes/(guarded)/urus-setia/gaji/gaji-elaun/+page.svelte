@@ -10,9 +10,15 @@
     import { months } from '$lib/mocks/dateSelection/months';
     import { mockSalaryAndAllowance } from '$lib/mocks/gaji/gaji-elaun/mockSalaryAndAllowance';
     import { status } from '$lib/mocks/status/status';
+    import type { SalaryAndAllowanceListResponse } from '$lib/view-models/mypsm/salary/salary-and-allowance/salary-and-allowancs-list-response.view-model.js';
 
     let selectedMonth = months[5].value;
     let selectedStatus = 'pending';
+
+    export let data;
+
+    let salaryAllowanceList: SalaryAndAllowanceListResponse = data.props.salaryAllowanceResult;
+
 </script>
 
 <!-- content header starts here -->
@@ -61,7 +67,7 @@
                 detailActions={() => {
                     goto('./gaji-elaun/butiran');
                 }}
-                tableItems={mockSalaryAndAllowance}
+                tableItems={salaryAllowanceList.data.allowances}
                 columnKeys={[]}
             ></DynamicTable>
         </div>
