@@ -7,12 +7,18 @@
     import SenaraiTelahDiisi from './tab-contents/SenaraiTelahDiisi.svelte';
     import Tabs from '$lib/components/tabs/Tabs.svelte';
     import TabContent from '$lib/components/tabs/TabContent.svelte';
+    import SectionHeader from '$lib/components/header/SectionHeader.svelte';
+    import DynamicTable from '$lib/components/table/DynamicTable.svelte';
+    import type { NewHireListResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-list-response.view-model';
+    import { _sort } from './+page';
 
     export let data;
 
     // mock data
-    const newStaffUrl = data.props.candidateLists;
+    // const newStaffUrl = data.props.candidateLists;
     const lantikanBaru = data.props.newHireLists;
+
+    const newHireListsResult: NewHireListResponse = data.props.newHireLists;
 
     const base64String = `JVBERi0xLjcKCjEgMCBvYmogICUgZW50cnkgcG9pbnQKPDwKICAvVHlwZSAvQ2F0YWxvZwog
                             IC9QYWdlcyAyIDAgUgo+PgplbmRvYmoKCjIgMCBvYmoKPDwKICAvVHlwZSAvUGFnZXMKICAv
@@ -42,34 +48,6 @@
 
         return dataUrl;
     };
-
-    // const submitFile = async (event: Event) => {
-    //     const form = new FormData(event.target as HTMLFormElement);
-    //     const file = form.getAll('fileInput');
-    //     // const file = (event.target as HTMLFormElement).files?.[0];
-    //     form.get('fileInput');
-    //     // const filename = `uploads/${crypto.randomUUID()}${extname(uploadedFile?.name)}`;
-
-    //     console.table(form.getAll('fileInput'));
-
-    //     if (file) {
-    //         const reader = new FileReader();
-
-    //         reader.onload = (e) => {
-    //             if (e.target) {
-    //                 const base64String = e.target.result as string;
-    //                 console.log(base64String);
-    //             }
-    //         };
-
-    //         reader.readAsDataURL(file);
-    //     }
-    // };
-
-    // onMount(async () => {
-    //     const pdfUrl = await convertBase64toPdf(base64String);
-    //     window.open(pdfUrl, '_blank');
-    // });
 </script>
 
 <!-- content header starts here -->
@@ -82,7 +60,8 @@
             type="new"
             addLabel="Tambah Lantikan Baru"
             onClick={() => {
-                goto('lantikan-baru/permohonan-baru');
+                // goto('lantikan-baru/permohonan-baru');
+                _sort()
             }}
         />
     </ContentHeader>
@@ -93,12 +72,23 @@
 <section
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
-    <Tabs>
+    <!-- <Tabs>
         <TabContent title="Senarai Rekod Selesai Diisi">
             <SenaraiTelahDiisi listData={lantikanBaru} />
         </TabContent>
         <TabContent title="Senarai Rekod Penambahan Calon Lantikan Baru">
             <SenaraiBelumDiisi listData={newStaffUrl} />
+        </TabContent>
+    </Tabs> -->
+
+    <Tabs>
+        <TabContent>
+            <div class="flex w-full flex-col items-start justify-center">
+                <SectionHeader title="Senarai Rekod Pautan Belum Diisi"
+                ></SectionHeader>
+                <DynamicTable tableItems={newHireListsResult.data.newHires}
+                ></DynamicTable>
+            </div>
         </TabContent>
     </Tabs>
 </section>

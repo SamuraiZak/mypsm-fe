@@ -5,6 +5,7 @@
     import { superForm, setMessage } from 'sveltekit-superforms/client';
 
     import { _calonLoginSchema, _submit } from './+page';
+    import { showLoadingOverlay } from '$lib/stores/globalState';
 
     export let data: PageData;
 
@@ -52,7 +53,8 @@
                 }
             },
             onSubmit(input) {
-                _submit($form);
+                showLoadingOverlay.set(true);
+                _submit($form).finally(() => showLoadingOverlay.set(false));
             },
         },
     );
@@ -123,14 +125,17 @@
                         ID Pengguna
                     {/if} -->
 
-                    {idTypeOptions.find(item => item.value == $form.idType)?.text}
+                    {idTypeOptions.find((item) => item.value == $form.idType)
+                        ?.text}
                 </label>
                 <input
                     bind:value={$form.username}
                     type="text"
                     name="username"
                     id="username"
-                    placeholder={idTypeOptions.find(item => item.value == $form.idType)?.placeholder}
+                    placeholder={idTypeOptions.find(
+                        (item) => item.value == $form.idType,
+                    )?.placeholder}
                     class=" autofill:hide-default-inner-shadow block h-9 w-full rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light p-2.5 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
                 />
 

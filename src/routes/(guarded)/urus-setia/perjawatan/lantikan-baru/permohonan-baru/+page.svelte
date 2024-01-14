@@ -1,115 +1,35 @@
 <script lang="ts">
-    // Importing external components and libraries
-    import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
-    import FormButton from '$lib/components/buttons/FormButton.svelte';
     import { goto } from '$app/navigation';
-    import TextField from '$lib/components/input/TextField.svelte';
-
-    const characters: string = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    let generatedLink: string = '';
-
-    function generateRandomString() {
-        let randomString =
-            'https://www.mypsm.com.gov.my/lantikan-baru/calon/daftar-';
-
-        for (let i = 0; i < 15; i++) {
-            randomString +=
-                characters[Math.floor(Math.random() * characters.length)];
-        }
-        generatedLink = randomString + '.com';
-    }
-
-    // funtion to copy text from html body
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { z } from 'zod';
-    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import FormButton from '$lib/components/buttons/FormButton.svelte';
+    import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import { _addNewHireSchema, _submit } from './+page';
 
-    // =====================================================================================
-    // z validation schema for the new employment form fields===============================
-    // =====================================================================================
-    let errorData: any;
+    // =============================================================================
+    // Variables
+    // =============================================================================
 
-    const examApplicationSchema = z.object({
-        temporaryStaffId: z
-            .string({ required_error: 'ID Sementara tidak boleh kosong.' })
-            .min(4, {
-                message: 'ID Sementara hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'ID Sementara tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        staffEmail: z
-            .string({ required_error: 'Emel calon tidak boleh kosong.' })
-            .min(5, {
-                message: 'Emel calon hendaklah lebih daripada 5 karakter.',
-            })
-            .email({ message: 'Emel tidak sah' })
-            .max(124, {
-                message: 'Emel calon tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        // generatedUrl: z
-        //     .string()
-        //     .url({ message: 'Sila klik butang "Jana Pautan"' }),
+    export let data: PageData;
+
+
+    // =============================================================================
+    // Functions
+    // =============================================================================
+
+    const { form, errors, enhance } = superForm(data.form, {
+        SPA: true,
+        validators: _addNewHireSchema,
+        onUpdate({ form }) {},
+        onSubmit(input) {
+            _submit($form);
+        },
     });
-
-    // =========================================================================
-    // new employment form fields submit function===============================
-    // =========================================================================
-
-    const submitNewEmployementForm = async (event: Event) => {
-        const formElement = event.target as HTMLFormElement;
-        const formData = new FormData(formElement);
-
-        const examApplicationData = {
-            temporaryStaffId: String(formData.get('temporaryStaffId')),
-            staffEmail: String(formData.get('staffEmail')),
-            // generatedUrl: String(formData.get('generatedUrl')),
-        };
-
-        try {
-            const result = examApplicationSchema.parse(examApplicationData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                setTimeout(() => goto('../lantikan-baru'), 1500);
-
-                // const response = await api.post('', { body: formData });
-
-                // if (response.ok) {
-                //     toast.success('Berjaya disimpan!', {
-                //         style: 'background: #333; color: #fff;',
-                //     });
-
-                //     // functions
-                // } else {
-                //     toast.error('Tidak Berjaya disimpan. Sila semak lagi');
-                // }
-            }
-        } catch (err: unknown) {
-            if (err instanceof z.ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
 </script>
 
-<!-- test button to click to copy -->
-<!-- <button use:clickToCopy={'generated-link'}> Click to copy </button> -->
+<!-- content header starts -->
 
-<!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader
         title="Maklumat kakitangan baru daripada e-Pengambilan "
@@ -126,75 +46,110 @@
     </ContentHeader>
 </section>
 
-<!-- content body starts here -->
+<!-- content header ends -->
+
+<!-- content body starts -->
+
 <section
-    class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col justify-start overflow-y-auto bg-bgr-primary p-3"
+    class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col justify-start
+overflow-y-auto bg-bgr-primary p-3"
 >
-    <form id="createEmployment" on:submit={submitNewEmployementForm} novalidate>
-        <SectionHeader title="Maklumat kakitangan baru daripada e-Pengambilan"
-            ><TextIconButton
-                primary
-                label="Simpan"
-                form="createEmployment"
-            /></SectionHeader
-        >
+    <form id="addNewHireForm" method="POST" use:enhance>
+        <!--  form header starts -->
 
-        <div class="my-5 space-y-2.5">
-            <TextField
-                hasError={errorData?.temporaryStaffId}
-                type="text"
-                name="temporaryStaffId"
-                label="ID Sementara"
-                placeholder="contoh: 12345"
-                value=""
-            />
-            {#if errorData?.temporaryStaffId}
-                <span
-                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{errorData?.temporaryStaffId[0]}</span
-                >
-            {/if}
-            <TextField
-                hasError={errorData?.staffEmail}
-                type="email"
-                name="staffEmail"
-                placeholder="contoh: ali@lkim.com"
-                label="Emel"
-                value=""
-            />
-            {#if errorData?.staffEmail}
-                <span
-                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{errorData?.staffEmail[0]}</span
-                >
-            {/if}
+        <SectionHeader title="Maklumat Calon Kakitangan">
+            <!-- submit button starts -->
+
+            <button
+                class="flex h-[28px] min-h-[28px] flex-row items-center justify-center gap-1 rounded-[3px] bg-system-primary px-2.5 hover:bg-system-primaryHover"
+            >
+                <div class="flex h-full flex-row items-center justify-center">
+                    <p class="text-sm font-normal leading-loose text-txt-blend">
+                        Simpan
+                    </p>
+                </div>
+            </button>
+
+            <!-- submit button ends -->
+        </SectionHeader>
+
+        <!-- form header ends -->
+
+        <!-- form body starts -->
+
+        <div class="flex flex-col gap-2.5 p-2.5">
+            <!-- temporary id field starts -->
+            <div>
+                <div class="flex items-center justify-start">
+                    <div
+                        class="flex min-h-[28px] w-[200px] grow-0 flex-col items-start justify-start"
+                    >
+                        <label
+                            for="tempId"
+                            class="mb-2 block text-sm font-medium leading-tight text-txt-black dark:text-white"
+                            >ID Sementara</label
+                        >
+                    </div>
+                    <div class="flex grow flex-col">
+                        <input
+                            bind:value={$form.tempId}
+                            type="tempId"
+                            name="tempId"
+                            id="tempId"
+                            class=" autofill:hide-default-inner-shadow block h-8 w-full rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light p-2.5 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
+                        />
+                        <div class="h-5 w-full items-end justify-start">
+                            {#if $errors.tempId}
+                                <p
+                                    class="text-start text-sm italic text-ios-basic-destructiveRed"
+                                >
+                                    {$errors.tempId}
+                                </p>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- temporary id field ends -->
+            <!-- email field starts -->
+            <div>
+                <div class="flex items-center justify-start">
+                    <div
+                        class="flex min-h-[28px] w-[200px] grow-0 flex-col items-start justify-start"
+                    >
+                        <label
+                            for="tempId"
+                            class="mb-2 block text-sm font-medium leading-tight text-txt-black dark:text-white"
+                            >Alamat E-mel</label
+                        >
+                    </div>
+                    <div class="flex grow flex-col">
+                        <input
+                            bind:value={$form.email}
+                            type="email"
+                            name="email"
+                            id="email"
+                            class=" autofill:hide-default-inner-shadow block h-8 w-full rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light p-2.5 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
+                        />
+                        <div class="h-5 w-full items-end justify-start">
+                            {#if $errors.email}
+                                <p
+                                    class="text-start text-sm italic text-ios-basic-destructiveRed"
+                                >
+                                    {$errors.email}
+                                </p>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- email field ends -->
         </div>
-        <!-- <div class="mb-5 w-fit" aria-disabled="true">
-            <FormButton
-                type="generate-link"
-                onClick={() => generateRandomString()}
-            />
-        </div> -->
 
-        <!-- <SectionHeader title="Maklumat kakitangan baru daripada e-Pengambilan"
-        ></SectionHeader>
-        <div class="my-5 space-y-2.5">
-            <TextField
-                hasError={errorData?.generatedUrl}
-                name="generatedUrl"
-                type="text"
-                label="Pautan"
-                placeholder="https://"
-                bind:value={generatedLink}
-            />
-            {#if errorData?.generatedUrl}
-                <span
-                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{errorData?.generatedUrl[0]}</span
-                >
-            {/if}
-        </div> -->
+        <!-- form body ends -->
     </form>
 </section>
 
-<Toaster />
+<!-- content body ends -->

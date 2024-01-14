@@ -5,8 +5,11 @@
     import { superForm, setMessage } from 'sveltekit-superforms/client';
 
     import { _kakitanganLoginSchema, _submit } from './+page';
+    import { showLoadingOverlay } from '$lib/stores/globalState';
 
     export let data: PageData;
+
+    let isLoading = false;
 
     // currentRole options
     let currentRoleOptions = [
@@ -156,7 +159,8 @@
                 }
             },
             onSubmit(input) {
-                _submit($form);
+                showLoadingOverlay.set(true);
+                _submit($form).finally(() => (showLoadingOverlay.set(false)));
             },
         },
     );
