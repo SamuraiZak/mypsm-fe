@@ -31,15 +31,16 @@
     import { mockSalaryAdjustmentWithKey } from '$lib/mocks/gaji/gaji-elaun/mockSalaryAdjustmentWithKey';
     import toast, { Toaster } from 'svelte-french-toast';
     import { z, ZodError } from 'zod';
+    import { _submitSalaryAllowance } from './+page';
 
     export let noPekerja = '00001';
     let activeStepper = 3;
-    let currEmployee = mockEmployees[0];
-    let currEmployeeService = mockCurrentService[0];
+    let currEmployee = mockEmployees;
+    let currEmployeeService = mockCurrentService;
     let currEmployeeGrade = mockLookupGrades.filter(
         (g) => g.id == currEmployeeService.gradeId,
-    )[0];
-    let disabled = true;
+    );
+    let disabled = false;
     let labelBlack = !disabled;
     let errorData: any;
     let jenisPenambahan: any;
@@ -122,8 +123,7 @@
 
     const modalFormSchema = z.object({
         startDate: dateScheme.refine((value) => value >= new Date(endDate), {
-            message:
-                'Tidak boleh kurang daripada tarikh semasa',
+            message: 'Tidak boleh kurang daripada tarikh semasa',
         }),
 
         endDate: dateScheme.refine((value) => value <= new Date(startDate), {
@@ -454,7 +454,7 @@
                     {labelBlack}
                     disabled
                     label="Status Semasa Kakitangan"
-                    value={mockLookupEmploymentStatus[0].name}
+                    value={mockLookupEmploymentStatus.name}
                 ></TextField>
             </div>
         </StepperContentBody>
@@ -678,16 +678,24 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Perubahan Gaji">
-            <FormButton
+            <!-- <FormButton
                 type="back"
                 onClick={() => {
                     activeStepper = 0;
                 }}
-            />
-            <FormButton
+            /> -->
+
+            <!-- <FormButton
                 type="done"
                 onClick={() => {
                     window.history.back();
+                }}
+            /> -->
+            <TextIconButton
+                primary
+                label="Simpan"
+                onClick={() => {
+                    _submitSalaryAllowance();
                 }}
             />
         </StepperContentHeader>
@@ -711,13 +719,13 @@
                             ></FilterDateSelector>
                         </FilterCard>
                     </div>
-                    <SectionHeader title="Rekod Cuti Kakitangan"
-                        ><TextIconButton
+                    <SectionHeader title="Rekod Cuti Kakitangan">
+                        <!-- <TextIconButton
                             primary
                             label="Simpan"
                             form="umumValidation"
-                        /></SectionHeader
-                    >
+                        /> -->
+                    </SectionHeader>
                     <div class="w-full">
                         <DynamicTable
                             tableItems={mockEmployeeLeaveRecord}
@@ -741,7 +749,7 @@
                         >
                             <TextField
                                 {labelBlack}
-                                disabled={true}
+                                disabled={false}
                                 label="Jumlah Potongan Cuti"
                             ></TextField>
                             <DropdownSelect
@@ -760,7 +768,7 @@
                             {#if errorData?.tempohBayaran}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.tempohBayaran[0]}</span
+                                    >{errorData?.tempohBayaran}</span
                                 >
                             {/if}
                         </form>
@@ -769,7 +777,7 @@
                         ><TextIconButton
                             primary
                             label="Tambah"
-                            onClick={() => (openModal = true)}
+                            onClick={() => (openModal = false)}
                             ><SvgPlus /></TextIconButton
                         ></SectionHeader
                     >
@@ -787,7 +795,7 @@
                                     <DateSelector
                                         {labelBlack}
                                         handleDateChange
-                                        disabled={true}
+                                        disabled={false}
                                         labelType="label-200"
                                         label="Tarikh Mula"
                                         selectedDate={item.deductionStartDate}
@@ -795,7 +803,7 @@
                                     <DateSelector
                                         {labelBlack}
                                         handleDateChange
-                                        disabled={true}
+                                        disabled={false}
                                         labelType="label-200"
                                         label="Tarikh Tamat"
                                         selectedDate={item.deductionEndDate}
@@ -806,17 +814,17 @@
                                     bulan
                                 </p>
                                 <DropdownSelect
-                                    disabled={true}
+                                    disabled={false}
                                     dropdownType="label-left-200"
                                     options={deductionType}
                                     label="Jenis Bayaran"
-                                    labelBlack={true}
+                                    labelBlack={false}
                                     bind:value={item.deductionType}
                                 ></DropdownSelect>
                                 <TextField
                                     labelType="label-200"
                                     {labelBlack}
-                                    disabled={true}
+                                    disabled={false}
                                     label="Jumlah Bayaran"
                                 ></TextField>
                             </div>
@@ -852,7 +860,7 @@
                             {#if errorData?.effectiveDate}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.effectiveDate[0]}</span
+                                    >{errorData?.effectiveDate}</span
                                 >
                             {/if}
                             <TextField
@@ -865,7 +873,7 @@
                             {#if errorData?.gred}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.gred[0]}</span
+                                    >{errorData?.gred}</span
                                 >
                             {/if}
                             <TextField
@@ -878,7 +886,7 @@
                             {#if errorData?.salary}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.salary[0]}</span
+                                    >{errorData?.salary}</span
                                 >
                             {/if}
                             <TextField
@@ -893,7 +901,7 @@
                             {#if errorData?.itka}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.itka[0]}</span
+                                    >{errorData?.itka}</span
                                 >
                             {/if}
                             <TextField
@@ -906,7 +914,7 @@
                             {#if errorData?.housingSchemeType}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.housingSchemeType[0]}</span
+                                    >{errorData?.housingSchemeType}</span
                                 >
                             {/if}
                             <TextField
@@ -919,7 +927,7 @@
                             {#if errorData?.totalHousingScheme}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.totalHousingScheme[0]}</span
+                                    >{errorData?.totalHousingScheme}</span
                                 >
                             {/if}
                             <TextField
@@ -934,7 +942,7 @@
                             {#if errorData?.cola}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.cola[0]}</span
+                                    >{errorData?.cola}</span
                                 >
                             {/if}
                             <div
@@ -956,7 +964,7 @@
                                 {#if errorData?.month}
                                     <span
                                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.month[0]}</span
+                                        >{errorData?.month}</span
                                     >
                                 {/if}
                                 <TextField
@@ -970,7 +978,7 @@
                                 {#if errorData?.total}
                                     <span
                                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.total[0]}</span
+                                        >{errorData?.total}</span
                                     >
                                 {/if}
                             </div>
@@ -981,7 +989,7 @@
                         ><TextIconButton
                             primary
                             label="Tambah"
-                            onClick={() => (openModal = true)}
+                            onClick={() => (openModal = false)}
                             ><SvgPlus /></TextIconButton
                         ></SectionHeader
                     >
@@ -1000,7 +1008,7 @@
                                 <TextField
                                     labelType="label-200"
                                     {labelBlack}
-                                    disabled={true}
+                                    disabled={false}
                                     label="Nama Tuntutan"
                                     value="Bil Tuntutan Kakitangan"
                                 ></TextField>
@@ -1010,7 +1018,7 @@
                                     <DateSelector
                                         {labelBlack}
                                         handleDateChange
-                                        disabled={true}
+                                        disabled={false}
                                         labelType="label-200"
                                         label="Tarikh Mula"
                                         selectedDate={object.startDate}
@@ -1018,7 +1026,7 @@
                                     <DateSelector
                                         {labelBlack}
                                         handleDateChange
-                                        disabled={true}
+                                        disabled={false}
                                         labelType="label-200"
                                         label="Tarikh Tamat"
                                         selectedDate={object.endDate}
@@ -1030,20 +1038,20 @@
                                     <TextField
                                         labelType="label-200"
                                         {labelBlack}
-                                        disabled={true}
+                                        disabled={false}
                                         label="Sepatutnya Bayar"
                                     ></TextField>
                                     <TextField
                                         labelType="label-200"
                                         {labelBlack}
-                                        disabled={true}
+                                        disabled={false}
                                         label="Telah Bayar"
                                     ></TextField>
                                 </div>
                                 <TextField
                                     labelType="label-200"
                                     {labelBlack}
-                                    disabled={true}
+                                    disabled={false}
                                     label="Jumlah Potongan / Tunggakan"
                                 ></TextField>
                             </div>
@@ -1056,7 +1064,7 @@
                         ><TextIconButton
                             primary
                             label="Tambah"
-                            onClick={() => (openModal = true)}
+                            onClick={() => (openModal = false)}
                             ><SvgPlus /></TextIconButton
                         ></SectionHeader
                     >
@@ -1071,7 +1079,7 @@
                                 <TextField
                                     labelType="label-200"
                                     {labelBlack}
-                                    disabled={true}
+                                    disabled={false}
                                     label="Jenis Penambahan"
                                     value="Penambahan 1"
                                 ></TextField>
@@ -1081,7 +1089,7 @@
                                     <DateSelector
                                         {labelBlack}
                                         handleDateChange
-                                        disabled={true}
+                                        disabled={false}
                                         labelType="label-200"
                                         label="Tarikh Mula"
                                         selectedDate={item.deductionStartDate}
@@ -1089,14 +1097,14 @@
                                     <DateSelector
                                         {labelBlack}
                                         handleDateChange
-                                        disabled={true}
+                                        disabled={false}
                                         labelType="label-200"
                                         label="Tarikh Tamat"
                                         selectedDate={item.deductionEndDate}
                                     ></DateSelector>
                                 </div>
                                 <DropdownSelect
-                                    disabled={true}
+                                    disabled={false}
                                     dropdownType="label-left-200"
                                     options={deductionType}
                                     label="Jenis Bayaran"
@@ -1106,7 +1114,7 @@
                                 <TextField
                                     labelType="label-200"
                                     {labelBlack}
-                                    disabled={true}
+                                    disabled={false}
                                     label="Jumlah Bayaran"
                                 ></TextField>
                             </div>
@@ -1142,7 +1150,7 @@
             {#if errorData?.jenisPenambahan}
                 <span
                     class="ml-[200px] font-sans text-sm italic text-system-danger"
-                    >{errorData?.jenisPenambahan[0]}</span
+                    >{errorData?.jenisPenambahan}</span
                 >
             {/if}
             <DateSelector
@@ -1156,7 +1164,7 @@
             {#if errorData?.startDate}
                 <span
                     class="ml-[200px] font-sans text-sm italic text-system-danger"
-                    >{errorData?.startDate[0]}</span
+                    >{errorData?.startDate}</span
                 >
             {/if}
 
@@ -1171,12 +1179,12 @@
             {#if errorData?.endDate}
                 <span
                     class="ml-[200px] font-sans text-sm italic text-system-danger"
-                    >{errorData?.endDate[0]}</span
+                    >{errorData?.endDate}</span
                 >
             {/if}
             <DropdownSelect
                 hasError={errorData?.paymentType}
-                dropdownType="label-left-full"
+                dropdownType="label-left-200"
                 id="paymentType"
                 label="Jenis Bayaran"
                 bind:value={paymentType}
@@ -1188,7 +1196,7 @@
             {#if errorData?.paymentType}
                 <span
                     class="ml-[200px] font-sans text-sm italic text-system-danger"
-                    >{errorData?.paymentType[0]}</span
+                    >{errorData?.paymentType}</span
                 >
             {/if}
             <TextField
@@ -1202,7 +1210,7 @@
             {#if errorData?.totalPayment}
                 <span
                     class="ml-[200px] font-sans text-sm italic text-system-danger"
-                    >{errorData?.totalPayment[0]}</span
+                    >{errorData?.totalPayment}</span
                 >
             {/if}
         </div>
