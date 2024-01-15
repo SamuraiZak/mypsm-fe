@@ -33,7 +33,9 @@
     >
         <!-- Table filter placeholder -->
         <FilterContainer>
-            <StaffSelector selectorName="staff-lists" />
+            <FilterTextInput label="No. Pekerja"></FilterTextInput>
+            <FilterTextInput label="Nama"></FilterTextInput>
+            <FilterTextInput label="No. K/P"></FilterTextInput>
             <FilterTextInput label="Jumlah Elaun"></FilterTextInput>
             <!-- Select dropdowns -->
             <DropdownSelect
@@ -54,7 +56,6 @@
         <SectionHeader title="Senarai Kakitangan"></SectionHeader>
         <div class="flex max-h-full w-full flex-col items-start justify-start">
             <DynamicTable
-                hasCheckbox
                 onSelect={() => {}}
                 withActions
                 actionOptions={['detail']}
