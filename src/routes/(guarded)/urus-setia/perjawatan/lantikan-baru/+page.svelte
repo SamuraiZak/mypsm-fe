@@ -16,9 +16,9 @@
 
     // mock data
     // const newStaffUrl = data.props.candidateLists;
-    const lantikanBaru = data.props.newHireLists;
+    const lantikanBaru = data.props.newHireLists
 
-    const newHireListsResult: NewHireListResponse = data.props.newHireLists;
+    const newHireListsResult: NewHireListResponse = data.props.registeredLists;
 
     const base64String = `JVBERi0xLjcKCjEgMCBvYmogICUgZW50cnkgcG9pbnQKPDwKICAvVHlwZSAvQ2F0YWxvZwog
                             IC9QYWdlcyAyIDAgUgo+PgplbmRvYmoKCjIgMCBvYmoKPDwKICAvVHlwZSAvUGFnZXMKICAv
@@ -60,8 +60,8 @@
             type="new"
             addLabel="Tambah Lantikan Baru"
             onClick={() => {
-                // goto('lantikan-baru/permohonan-baru');
-                _sort()
+                goto('lantikan-baru/permohonan-baru');
+                // _sort();
             }}
         />
     </ContentHeader>
@@ -72,16 +72,16 @@
 <section
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
-    <!-- <Tabs>
+    <Tabs>
         <TabContent title="Senarai Rekod Selesai Diisi">
             <SenaraiTelahDiisi listData={lantikanBaru} />
         </TabContent>
         <TabContent title="Senarai Rekod Penambahan Calon Lantikan Baru">
-            <SenaraiBelumDiisi listData={newStaffUrl} />
+            <SenaraiBelumDiisi listData={newHireListsResult} />
         </TabContent>
-    </Tabs> -->
+    </Tabs>
 
-    <Tabs>
+    <!-- <Tabs>
         <TabContent>
             <div class="flex w-full flex-col items-start justify-center">
                 <SectionHeader title="Senarai Rekod Pautan Belum Diisi"
@@ -90,5 +90,5 @@
                 ></DynamicTable>
             </div>
         </TabContent>
-    </Tabs>
+    </Tabs> -->
 </section>
