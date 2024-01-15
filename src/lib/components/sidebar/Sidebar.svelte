@@ -12,6 +12,8 @@
     import { sidebarDefault } from '$lib/config/sidebar/sidebar-default';
     import { sidebarNew } from '$lib/config/sidebar/sidebar-new';
     import SvgArrowDown from '$lib/assets/svg/SvgArrowDown.svelte';
+    import SvgChevronDown from '$lib/assets/svg/SvgChevronDown.svelte';
+    import SvgChevronUp from '$lib/assets/svg/SvgChevronUp.svelte';
 
     export let sidebarItems: SidebarType[] = sidebarNew;
 
@@ -28,8 +30,11 @@
     $: activeUrl = $page.url.pathname;
 </script>
 
-<Sidebar {activeUrl} class="w-[250px] border-r py-2 overflow-y-auto h-full">
-    <SidebarWrapper class="p-0 m-0">
+<Sidebar
+    {activeUrl}
+    class="h-full w-[250px] overflow-y-auto border-r px-2 py-2"
+>
+    <SidebarWrapper class="m-0 p-0">
         <SidebarGroup>
             {#each sidebarItems as item}
                 {#if !item.dropdown && item.redirect}
@@ -40,6 +45,7 @@
                         href={item.redirect}
                         active={activeUrl.includes(item.redirect)}
                         {activeClass}
+                        data-sveltekit-preload-data="tap"
                     />
                 {:else if item.dropdown}
                     <SidebarDropdownWrapper
@@ -47,11 +53,11 @@
                         btnClass="flex items-center p-2 text-base font-normal text-txt-primary transition duration-75 group hover:bg-bgr-tertiary w-full"
                         label={item.name}
                     >
-                        <!-- <svelte:fragment slot="arrowup"
-                            ><ArrowUp /></svelte:fragment
-                        > -->
+                        <svelte:fragment slot="arrowup"
+                            ><SvgChevronUp size="12" /></svelte:fragment
+                        >
                         <svelte:fragment slot="arrowdown">
-                            <SvgArrowDown />
+                            <SvgChevronDown size="12" />
                         </svelte:fragment>
                         {#each item.dropdown as dropdownItem}
                             <SidebarDropdownItem
@@ -61,6 +67,7 @@
                                 active={!!dropdownItem.redirect &&
                                     activeUrl.includes(dropdownItem.redirect)}
                                 activeClass={dropdownActiveClass}
+                                data-sveltekit-preload-data="tap"
                             />
                         {/each}
                     </SidebarDropdownWrapper>
