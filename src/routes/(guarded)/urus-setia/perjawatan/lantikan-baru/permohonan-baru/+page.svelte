@@ -6,13 +6,14 @@
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import { _addNewHireSchema, _submit } from './+page';
+    import TextField from '$lib/components/input/TextField.svelte';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
 
     // =============================================================================
     // Variables
     // =============================================================================
 
     export let data: PageData;
-
 
     // =============================================================================
     // Functions
@@ -57,8 +58,47 @@ overflow-y-auto bg-bgr-primary p-3"
     <form id="addNewHireForm" method="POST" use:enhance>
         <!--  form header starts -->
 
-        <SectionHeader title="Maklumat Calon Kakitangan">
-            <!-- submit button starts -->
+        <SectionHeader title="Maklumat Calon Kakitangan"
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="addNewHireForm"
+            /></SectionHeader
+        >
+
+        <div class="my-5 space-y-2.5">
+            <TextField
+                hasError={$errors.tempId ? true : false}
+                type="text"
+                name="tempId"
+                label="ID Sementara"
+                placeholder="contoh: 12345"
+                bind:value={$form.tempId}
+            />
+            {#if $errors.tempId}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.tempId}</span
+                >
+            {/if}
+            <TextField
+                hasError={$errors.email ? true : false}
+                type="email"
+                name="email"
+                placeholder="contoh: ali@lkim.com"
+                label="Emel"
+                bind:value={$form.email}
+            />
+            {#if $errors.email}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.email}</span
+                >
+            {/if}
+        </div>
+
+        <!-- submit button starts -->
+        <!-- <SectionHeader title="Maklumat Calon Kakitangan">
 
             <button
                 class="flex h-[28px] min-h-[28px] flex-row items-center justify-center gap-1 rounded-[3px] bg-system-primary px-2.5 hover:bg-system-primaryHover"
@@ -70,23 +110,23 @@ overflow-y-auto bg-bgr-primary p-3"
                 </div>
             </button>
 
-            <!-- submit button ends -->
-        </SectionHeader>
+        </SectionHeader> -->
+        <!-- submit button ends -->
 
         <!-- form header ends -->
 
         <!-- form body starts -->
 
-        <div class="flex flex-col gap-2.5 p-2.5">
-            <!-- temporary id field starts -->
-            <div>
+        <!-- temporary id field starts -->
+        <!-- <div class="flex flex-col gap-2.5 p-2.5"> -->
+        <!-- <div>
                 <div class="flex items-center justify-start">
                     <div
                         class="flex min-h-[28px] w-[200px] grow-0 flex-col items-start justify-start"
                     >
                         <label
                             for="tempId"
-                            class="mb-2 block text-sm font-medium leading-tight text-txt-black dark:text-white"
+                            class="text-txt-black mb-2 block text-sm font-medium leading-tight dark:text-white"
                             >ID Sementara</label
                         >
                     </div>
@@ -109,18 +149,18 @@ overflow-y-auto bg-bgr-primary p-3"
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
-            <!-- temporary id field ends -->
-            <!-- email field starts -->
-            <div>
+        <!-- temporary id field ends -->
+        <!-- email field starts -->
+        <!-- <div>
                 <div class="flex items-center justify-start">
                     <div
                         class="flex min-h-[28px] w-[200px] grow-0 flex-col items-start justify-start"
                     >
                         <label
                             for="tempId"
-                            class="mb-2 block text-sm font-medium leading-tight text-txt-black dark:text-white"
+                            class="text-txt-black mb-2 block text-sm font-medium leading-tight dark:text-white"
                             >Alamat E-mel</label
                         >
                     </div>
@@ -143,10 +183,10 @@ overflow-y-auto bg-bgr-primary p-3"
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
-            <!-- email field ends -->
-        </div>
+        <!-- email field ends -->
+        <!-- </div> -->
 
         <!-- form body ends -->
     </form>
