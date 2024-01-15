@@ -6,7 +6,9 @@
     import { tahun } from '$lib/mocks/ketua-seksyen/cuti/tahun';
     import { jenisCuti } from '$lib/mocks/kakitangan/cuti/laporan-cuti/jenis-cuti';
     import { mengikutTahun } from '$lib/mocks/kakitangan/cuti/laporan-cuti/mengikut-tahun';
+    import type { PageData } from './$types';
 
+    export let data: PageData;
     let selectedTahun = tahun[0].value;
 </script>
 
@@ -20,24 +22,26 @@
 <!-- content section -->
 <!-- do not change the style of this section -->
 <section
-    class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
+    class="flex h-full w-full flex-col items-center justify-start gap-2.5 overflow-y-auto p-2.5"
 >
     <!-- start your content with this div and style it with your own preference -->
 
-    <SectionHeader title="Pembahagian Cuti Mengikut Jenis Cuti"><DropdownSelect
-        id="tahun-dropdown"
-        label="Tahun"
-        dropdownType="label-left"
-        bind:index={selectedTahun}
-        options={tahun}
-    ></DropdownSelect></SectionHeader>
+    <SectionHeader title="Pembahagian Cuti Mengikut Jenis Cuti"
+        ><DropdownSelect
+            id="tahun-dropdown"
+            label="Tahun"
+            dropdownType="label-left"
+            bind:index={selectedTahun}
+            options={tahun}
+        ></DropdownSelect></SectionHeader
+    >
     <div class="flex max-h-full w-full flex-col items-start justify-start">
-        <DynamicTable tableItems={jenisCuti}></DynamicTable>
+        <DynamicTable tableItems={data.entitlements}></DynamicTable>
     </div>
-</section>
+    <!-- </section>
 <section
     class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
->
+> -->
     <!-- start your content with this div and style it with your own preference -->
 
     <SectionHeader title="Senarai Cuti Yang Telah Diambil Mengikut Tahun"
@@ -50,6 +54,6 @@
         ></DropdownSelect>
     </SectionHeader>
     <div class="flex max-h-full w-full flex-col items-start justify-start">
-        <DynamicTable tableItems={mengikutTahun}></DynamicTable>
+        <DynamicTable tableItems={data.leaveHistory}></DynamicTable>
     </div>
 </section>
