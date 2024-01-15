@@ -18,6 +18,9 @@
     import toast, { Toaster } from 'svelte-french-toast';
     import { z, ZodError } from 'zod';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
+    import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
+    import FilterSelectInput from '$lib/components/filter/FilterSelectInput.svelte';
+    import FilterDateSelector from '$lib/components/filter/FilterDateSelector.svelte';
 
     export let data;
 
@@ -25,6 +28,8 @@
     let isSpecialFiAidTextChecked: boolean = false;
     let isSpecialIncrementChecked: boolean = false;
     let selectedStatus = status[0].value; // Default selected filter
+    let selectedSalaryMovementMonth = ''; // Default selected filter
+    let selectedGred = ''; // Default selected filter
     let errorData: any;
     let meetingTypeOption: any;
     let meetingDate: any;
@@ -207,9 +212,46 @@
 >
     <!-- Table filter placeholder -->
     <FilterContainer>
-        <!-- Input fields -->
-        <StaffSelector />
-        <DropdownSelect
+        <FilterTextInput label="No. Pekerja"></FilterTextInput>
+        <FilterTextInput label="Nama"></FilterTextInput>
+        <FilterTextInput label="No. K/P"></FilterTextInput>
+        <FilterTextInput label="KGT Pegawai"></FilterTextInput>
+        <FilterSelectInput
+            id="meeting-type-dropdown"
+            label="Bulan Pergerakan Gaji"
+            options={[
+                {
+                    value: 'jan',
+                    name: 'Jan',
+                },
+                {
+                    value: 'apr',
+                    name: 'APR',
+                },
+                {
+                    value: 'jul',
+                    name: 'Jul',
+                },
+                {
+                    value: 'oct',
+                    name: 'Okt',
+                },
+            ]}
+            bind:selectedVal={selectedSalaryMovementMonth}
+        ></FilterSelectInput>
+        <FilterSelectInput
+            id="meeting-type-dropdown"
+            label="Grad"
+            options={data.records.gredLists}
+            bind:selectedVal={selectedGred}
+        ></FilterSelectInput>
+        <FilterSelectInput
+            id="meeting-type-dropdown"
+            label="Status"
+            options={status}
+            bind:selectedVal={selectedStatus}
+        ></FilterSelectInput>
+        <!-- <DropdownSelect
             toolTipID="type-special-fi-aid"
             hasTooltip={true}
             id="salary-movement-month-dropdown"
@@ -217,9 +259,9 @@
             dropdownType="label-left"
             bind:index={selectedStatus}
             options={status}
-        ></DropdownSelect>
-        <ShortTextField label="KGT Pegawai" type="text" />
-        <DropdownSelect
+        ></DropdownSelect> -->
+        <!-- <ShortTextField label="KGT Pegawai" type="text" /> -->
+        <!-- <DropdownSelect
             id="gred-dropdown"
             label="Gred"
             dropdownType="label-left"
@@ -232,7 +274,7 @@
             dropdownType="label-left"
             bind:index={selectedStatus}
             options={status}
-        />
+        /> -->
     </FilterContainer>
 
     <!-- area for setting for bulk salary movements -->
