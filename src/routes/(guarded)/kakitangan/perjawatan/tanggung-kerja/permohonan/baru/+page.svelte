@@ -368,7 +368,7 @@
                     {#if errorData?.currentGrade}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.currentGrade[0]}</span
+                            >{errorData?.currentGrade}</span
                         >
                     {/if}
                     <DropdownSelect
@@ -395,7 +395,7 @@
                     {#if errorData?.position}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.position[0]}</span
+                            >{errorData?.position}</span
                         >
                     {/if}
                     <TextField
@@ -409,7 +409,7 @@
                     {#if errorData?.ministryType}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.ministryType[0]}</span
+                            >{errorData?.ministryType}</span
                         >
                     {/if}
                     <TextField
@@ -423,7 +423,7 @@
                     {#if errorData?.infoNumber}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.infoNumber[0]}</span
+                            >{errorData?.infoNumber}</span
                         >
                     {/if}
                     <DateSelector
@@ -436,7 +436,7 @@
                     {#if errorData?.interimStartDate}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.interimStartDate[0]}</span
+                            >{errorData?.interimStartDate}</span
                         >
                     {/if}
                     <DateSelector
@@ -449,7 +449,7 @@
                     {#if errorData?.interimEndDate}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.interimEndDate[0]}</span
+                            >{errorData?.interimEndDate}</span
                         >
                     {/if}
                     <DropdownSelect
@@ -467,7 +467,7 @@
                     {#if errorData?.vacantPlacement}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.vacantPlacement[0]}</span
+                            >{errorData?.vacantPlacement}</span
                         >
                     {/if}
                     <LongTextField
@@ -479,7 +479,7 @@
                     {#if errorData?.reasonOfVacant}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.reasonOfVacant[0]}</span
+                            >{errorData?.reasonOfVacant}</span
                         >
                     {/if}
                 </form>
@@ -570,7 +570,7 @@
                                 <span
                                     class="font-sans text-sm italic text-system-danger"
                                     >{errorData
-                                        ?.previousInterimFromDate[0]}</span
+                                        ?.previousInterimFromDate}</span
                                 >
                             {/if}
                         </div>
@@ -586,7 +586,7 @@
                             {#if errorData?.previousInterimToDate}
                                 <span
                                     class=" font-sans text-sm italic text-system-danger"
-                                    >{errorData?.previousInterimToDate[0]}</span
+                                    >{errorData?.previousInterimToDate}</span
                                 >
                             {/if}
                         </div>
@@ -646,7 +646,7 @@
                     {#if errorData?.uploadedFiles}
                         <span
                             class="font-sans text-sm italic text-system-danger"
-                            >{errorData?.uploadedFiles[0]}</span
+                            >{errorData?.uploadedFiles}</span
                         >
                     {/if}
                     <div
@@ -725,7 +725,7 @@
                         {#if errorData?.hierchySkipReason}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.hierchySkipReason[0]}</span
+                                >{errorData?.hierchySkipReason}</span
                             >
                         {/if}
                         <div class="w-full py-10">
@@ -741,7 +741,7 @@
                             {#if errorData?.declarationAcceptance}
                                 <span
                                     class="ml-6 font-sans text-sm italic text-system-danger"
-                                    >{errorData?.declarationAcceptance[0]}</span
+                                    >{errorData?.declarationAcceptance}</span
                                 >
                             {/if}
                         </div>
