@@ -26,7 +26,12 @@
     import AddPunishmentFromGroup from '$lib/components/integriti-charges-form-group/AddPunishmentFromGroup.svelte';
     import { goto } from '$app/navigation';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper.js';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import { Toaster } from 'svelte-french-toast';
+
     export let data;
+
     let activeStepper = 0;
     let disabled = true;
     let isCompleted: boolean = false;
@@ -217,103 +222,84 @@
                     {disabled}
                     id="noPerkeja"
                     label={'No. Pekerja'}
-                    value={data.record.currentEmployee.employeeNumber}
                 ></TextField>
                 <TextField
                     {disabled}
                     id="statusPekerjaan"
                     label={'Status Pekerjaan'}
-                    value={data.record.currentEmployee.name}
                 ></TextField>
                 <TextField
                     {disabled}
                     id="noKadPengenalan"
                     label={'No. Kad Pengenalan'}
-                    value={data.record.currentEmployee.identityDocumentNumber}
                 ></TextField>
                 <TextField
                     {disabled}
                     id="namaPenuh"
                     label={'Nama Penuh'}
-                    value={data.record.currentEmployee.name}
                 ></TextField>
                 <TextField
                     {disabled}
                     id="namaLain"
                     label={'Nama Lain'}
-                    value={data.record.currentEmployee.alternativeName}
                 ></TextField>
                 <TextField
                     {disabled}
                     id="warnaKadPengenalan"
                     label={'Warna Kad Pengenalan'}
-                    value={isBlueOrRedIC(
-                        data.record.currentEmployee.isMalaysian,
-                    )}
+                    
                 ></TextField>
                 <DateSelector
                     handleDateChange={() => {}}
                     {disabled}
                     label={'Tarikh Lahir'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployee.birthDate,
-                    ).toString()}
+                    
                 ></DateSelector>
                 <TextField
                     {disabled}
                     id="tempatLahir"
                     label={'Tempat Lahir'}
-                    value={data.record.currentEmployeeBirthState.name}
                 ></TextField>
                 <TextField
                     {disabled}
                     id="warganegara"
                     label={'Warganegara'}
-                    value={data.record.currentEmployee.isMalaysian
-                        ? 'Malaysia'
-                        : 'Bukan'}
+                    
                 ></TextField>
                 <TextField
                     {disabled}
                     id="bangsa"
                     label={'Bangsa'}
-                    value={data.record.currentEmployeeRace.name}
                 ></TextField>
                 <TextField
                     {disabled}
                     id="agama"
                     label={'Agama'}
-                    value={data.record.currentEmployeeReligion.name}
                 ></TextField>
                 <TextField
                     {disabled}
                     id="jantina"
                     label={'Jantina'}
-                    value={data.record.currentEmployee.gender}
                 ></TextField>
                 <TextField
                     {disabled}
                     id="status"
                     label={'Status'}
-                    value={data.record.currentEmployee.marital}
                 ></TextField>
                 <TextField
                     {disabled}
                     id="emel"
                     label={'Emel'}
-                    value={data.record.currentEmployee.email}
                 ></TextField>
                 <LongTextField
                     {disabled}
                     id="alamatRumah"
                     label={'Alamat Rumah'}
-                    value={data.record.currentEmployee.homeAddress}
                 ></LongTextField>
                 <LongTextField
                     {disabled}
                     id="alamatSuratMenyurat"
                     label={'Alamat Surat Menyurat (jika berlainan dari alamat rumah'}
-                    value={data.record.currentEmployee.mailAddress}
                 ></LongTextField>
                 <TextField
                     {disabled}
@@ -337,7 +323,6 @@
                     {disabled}
                     {options}
                     legend={'Bekas Polis / Tentera'}
-                    bind:userSelected={isExPoliceSoldier}
                 ></RadioSingle>
             </div>
 
@@ -351,33 +336,28 @@
                     {options}
                     {disabled}
                     legend={'Perhubungan Dengan Kakitangan LKIM'}
-                    bind:userSelected={isInRelationshipWithLKIMStaff}
                 ></RadioSingle>
                 {#if isInRelationshipWithLKIMStaff === 'true'}
                     <TextField
                         {disabled}
                         id="noPekerjaPasangan"
                         label={'No. Pekerja LKIM'}
-                        value={data.record.currentEmployeeSpouseEmployeeInfo
-                            ?.employeeNumber}
+                        
                     ></TextField>
                     <TextField
                         {disabled}
                         id="namaPasangan"
                         label={'Nama Kakitangan LKIM'}
-                        value={data.record.currentEmployeeSpouse.name}
                     ></TextField>
                     <TextField
                         {disabled}
                         id="jawatanPasangan"
                         label={'Jawatan Kakitangan LKIM'}
-                        value={data.record.currentEmployeeSpouse.position}
                     ></TextField>
                     <TextField
                         {disabled}
                         id="hubungan"
                         label={'Hubungan'}
-                        value={data.record.currentEmployeeSpouse.relationship}
                     ></TextField>
                 {/if}
             </div></StepperContentBody
@@ -393,39 +373,32 @@
                     disabled={true}
                     id="gredSemasa"
                     label={'Gred Semasa'}
-                    value={data.record.currentEmployeeGrade.code}
                 ></TextField>
                 <TextField
                     disabled={true}
                     id="jawatan"
                     label={'Jawatan'}
-                    value={data.record.currentEmployeePosition.name}
                 ></TextField>
                 <TextField
                     disabled={true}
                     id="penempatan"
                     label={'Penempatan'}
-                    value={data.record.currentEmployeeService.placement}
                 ></TextField>
                 <TextField
                     disabled={true}
                     id="tarafPerkhidmatan"
                     label={'Taraf Perkhidmatan'}
-                    value={data.record.currentEmployeeServiceType.name}
                 ></TextField>
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Tarikh Kuatkuasa Lantikan Semasa'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeeService.currentServiceDate,
-                    )}
+                    
                 ></DateSelector>
                 <RadioSingle
                     disabled={true}
                     options={faedahPersaraanOptions}
                     legend={'Faedah Persaraan'}
-                    bind:userSelected={isKWSP}
                 ></RadioSingle>
                 <TextField
                     disabled={true}
@@ -467,50 +440,38 @@
                     disabled={true}
                     id="kelayakanCuti"
                     label={'Kelayakan Cuti'}
-                    value={getEmployeeLeave(
-                        data.record.currentEmployee.employeeNumber,
-                    )}
+                    
                 ></TextField>
 
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Mula Dilantik Perkhidmatan Kerajaan'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeeService.firstServiceDate,
-                    )}
+                    
                 ></DateSelector>
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Mula Dilantik Perkhidmatan LKIM'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeeService.currentServiceDate,
-                    )}
+                    
                 ></DateSelector>
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Mula Dilantik Perkhidmatan Sekarang'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeeService.currentServiceDate,
-                    )}
+                    
                 ></DateSelector>
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Disahkan Dalam Jawatan Pertama LKIM'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeeService.firstServiceDate,
-                    )}
+                    
                 ></DateSelector>
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Disahkan Dalam Jawatan Semasa LKIM'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeeService.currentServiceDate,
-                    )}
+                    
                 ></DateSelector>
 
                 <AccordianField
@@ -537,9 +498,7 @@
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Tarikh Kelulusan Percantuman Perkhidmatan Lepas'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeeService.firstServiceDate,
-                    )}
+                    
                 ></DateSelector>
                 <TextField
                     disabled={true}
@@ -581,9 +540,7 @@
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Tarikh Bersara'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeePensions.retiredDate,
-                    )}
+                    
                 ></DateSelector>
                 <p class={stepperFormTitleClass}>
                     Maklumat Gaji dan Elaun - Elaun
@@ -600,13 +557,11 @@
                             disabled={true}
                             id="tanggaGaji"
                             label={'Tangga Gaji'}
-                            value={CurrencyHelper.formatCurrency(1234.56)}
                         ></TextField>
                         <TextField
                             disabled={true}
                             id="gajiPokok"
                             label={'Gaji Pokok'}
-                            value={CurrencyHelper.formatCurrency(1234.56)}
                         ></TextField>
                     </div>
                     <div class="space-y-2.5">
@@ -616,7 +571,6 @@
                             disabled={true}
                             id="itka"
                             label={'ITKA'}
-                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -624,7 +578,6 @@
                             disabled={true}
                             id="itp"
                             label={'ITP'}
-                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -632,7 +585,6 @@
                             disabled={true}
                             id="epw"
                             label={'EPW'}
-                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         <TextField
                             hasTooltip={true}
@@ -640,7 +592,6 @@
                             disabled={true}
                             id="cola"
                             label={'COLA'}
-                            value={CurrencyHelper.formatCurrency(123.45)}
                         ></TextField>
                         <!-- Tooltip body -->
                         <Tooltip
@@ -673,7 +624,6 @@
                     dropdownType="label-left-full"
                     name="meetings-dropdown"
                     label="Nama dan Bil Mesyuarat"
-                    bind:value={selectedProceedingType}
                     options={[
                         { value: 'charges', name: 'Pertuduhan' },
                         {
@@ -863,7 +813,6 @@
                             disabled={false}
                             options={meetingOptions}
                             legend={'Keputusan Mesyuarat'}
-                            bind:userSelected={meetingResult}
                         ></RadioSingle>
 
                         <hr />
@@ -973,7 +922,6 @@
                     disabled={false}
                     options={meetingOptions}
                     legend={'Keputusan Mesyuarat'}
-                    bind:userSelected={meetingResult}
                 ></RadioSingle>
                 <div
                     class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
@@ -1014,7 +962,6 @@
                                     labelBlack={true}
                                     name="start-date-suspenion-investigation"
                                     label="Tarikh Mula"
-                                    bind:selectedDate={suspensionStartDate}
                                     handleDateChange={() => {}}
                                 />
                                 <DateSelector
