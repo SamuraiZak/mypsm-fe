@@ -1,15 +1,7 @@
 import http from '$lib/services/core/http.service';
 import api from '$lib/services/core/ky.service';
 import { showLoadingOverlay } from '$lib/stores/globalState';
-import type { EmployeesListRequestViewModel } from '$lib/view-models/mypsm/employee/employee-list-request.view-model';
-import {
-    NewHireListRequestConvert,
-    type NewHireListRequest,
-} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-list-request.view-model';
-import {
-    NewHireListResponseConvert,
-    type NewHireListResponse,
-} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-list-response.view-model';
+import { EmployeesListResponseConvert, type EmployeesListResponseViewModel } from '$lib/view-models/mypsm/employee/employee-list-response';
 
 export async function load() {
     showLoadingOverlay.set(true);
@@ -28,56 +20,16 @@ export async function load() {
         })
         .json();
 
-    const newHireListsResponse: NewHireListResponse =
-        NewHireListResponseConvert.fromJson(JSON.stringify(response));
+    const employeeListResponse: EmployeesListResponseViewModel =
+        EmployeesListResponseConvert.fromJson(JSON.stringify(response));
 
-    const newHireLists = newHireListsResponse.data.newHires;
-
-    setTimeout(() => showLoadingOverlay.set(false), 2500);
-    return {
-        props: {
-            newHireLists,
-        },
-    };
-}
-
-export async function _sort() {
-    showLoadingOverlay.set(true);
-
-    const request: NewHireListRequest = {
-        pageNum: 1,
-        pageSize: 5,
-        orderBy: '',
-        orderType: '',
-        filter: {
-            dataType: 'New',
-            identityCard: null,
-            staffNo: null,
-            staffName: null,
-            dateRequest: null,
-            dateHire: null,
-            status: null,
-        },
-    };
-    const response: Response = await http
-        .post('http://127.0.0.1:3333/api/v1/employments/new-hires', {
-            body: NewHireListRequestConvert.toJson(request),
-            headers: {
-                Accept: 'application/json',
-                'Content-type': 'application/json',
-            },
-            prefixUrl: '',
-        })
-        .json();
-
-    const data: NewHireListResponse = NewHireListResponseConvert.fromJson(
-        JSON.stringify(response),
-    );
+    const employeeList = employeeListResponse.data;
 
     setTimeout(() => showLoadingOverlay.set(false), 2500);
     return {
         props: {
-            newHireLists: data,
+            employeeList,
+            request,
         },
     };
 }

@@ -2,7 +2,7 @@
 // Employee List Request View Model
 // =================================================================
 
-export interface EmployeesListRequestViewModel {
+interface EmployeesListRequestViewModel {
     pageNum: number;
     pageSize: number;
     orderBy: string;
@@ -10,10 +10,10 @@ export interface EmployeesListRequestViewModel {
     filter: EmployeesListRequestFilter;
 }
 
-export interface EmployeesListRequestFilter {}
+interface EmployeesListRequestFilter {}
 
 // Converts JSON strings to/from your types
-export class EmployeesListRequestConvert {
+class EmployeesListRequestConvert {
     public static fromJson(json: string): EmployeesListRequestViewModel {
         return JSON.parse(json);
     }
