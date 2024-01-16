@@ -32,7 +32,10 @@
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import FileInputField from '$lib/components/input/FileInputField.svelte';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from "./$types";
 
+    export let data: PageData;
     export let disabled: boolean = true;
 
     let selectedCuti = '';
@@ -130,7 +133,7 @@
                 ></DropdownSelect>
 
                 {#if selectedCuti === 'Cuti Gantian'}
-                    <CutiGantian></CutiGantian>
+                    <CutiGantian {data}></CutiGantian>
                 {:else if selectedCuti === 'Cuti Tanpa Rekod'}
                     <CutiTanpaRekod></CutiTanpaRekod>
                 {:else if selectedCuti === 'Cuti Separuh Gaji'}
@@ -229,3 +232,5 @@
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+
+<Toaster/>

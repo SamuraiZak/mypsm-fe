@@ -92,7 +92,7 @@
         <TextField disabled label="Bilangan Hari" value="7"></TextField>
     </div>
     <div
-        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 pb-5"
     >
         <SectionHeader title="Maklumat Pengajian"></SectionHeader>
         <TextField

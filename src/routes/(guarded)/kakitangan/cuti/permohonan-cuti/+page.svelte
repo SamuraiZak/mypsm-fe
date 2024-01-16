@@ -150,6 +150,7 @@
                 toast.success('Berjaya disimpan!', {
                     style: 'background: #333; color: #fff;',
                 });
+                console.log(result)
             }
         } catch (error: unknown) {
             if (error instanceof ZodError) {
