@@ -42,7 +42,7 @@
 </div>
 <Sidebar
     {activeUrl}
-    class="h-full w-[250px] overflow-y-auto border-r bg-ios-backgroundColors-systemBackground-light"
+    class="h-full w-[200px] overflow-y-auto border-r bg-ios-backgroundColors-systemBackground-light"
 >
     <SidebarWrapper
         class="m-0 rounded-none bg-ios-backgroundColors-systemBackground-light p-0"
