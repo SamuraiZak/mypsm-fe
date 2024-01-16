@@ -22,6 +22,17 @@
     import { mockAllEmployeeAllowances } from '$lib/mocks/elaun/mockAllEmployeeAllowances';
     import { mockEmployeeAllowanceDocList } from '$lib/mocks/elaun/mockEmployeeAllowanceDocList';
     import { selectedRecordId } from '$lib/stores/globalState';
+    import { superForm } from 'sveltekit-superforms/client';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import {
+        _stepperAllowanceApplicationSupport,
+        _submitFormStepperAllowanceApplicationSupport,
+    } from './+page';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+
+    export let data: PageData;
 
     let disabled = true;
     let activeStepper = 0;
@@ -29,8 +40,9 @@
     let selectedAreaType = 'Kawasan 1';
     let mulaPengangkutanDate = '2022-05-12';
     let tamatPengangkutanDate = '2022-05-15';
+    let currentDataId = 1;
     let currRecord = mockAllEmployeeAllowances.filter(
-        (rec) => rec.id == $selectedRecordId, //to be repalced with $selectedRecordId
+        (rec) => rec.id == currentDataId, //to be repalced with $selectedRecordId
     )[0];
     let currentEmployee = mockEmployees.filter((rec) => rec.id == 1)[0];
 
@@ -100,7 +112,22 @@
         relationship: 'Anak',
     };
 
-    let data: any[] = [{ ...famInfo }];
+    // let data: any[] = [{ ...famInfo }];
+
+    //Supporter Approver
+    const {
+        form: allowanceApplicationSupportForm,
+        errors: allowanceApplicationSupportErrors,
+        enhance: allowanceApplicationSupportEnhance,
+    } = superForm(data.stepperAllowanceApplicationSupport, {
+        SPA: true,
+        validators: _stepperAllowanceApplicationSupport,
+        onSubmit() {
+            _submitFormStepperAllowanceApplicationSupport($allowanceApplicationSupportForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -850,28 +877,58 @@
                     activeStepper = 1;
                 }}
             ></FormButton><FormButton type="reset" onClick={() => {}}
-            ></FormButton><FormButton
-                type="send"
-                onClick={() => {
-                    window.history.back();
-                }}
-            ></FormButton></StepperContentHeader
+            ></FormButton><TextIconButton
+                primary
+                label="Simpan"
+                form="FormStepperAllowanceApplicationSupport"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
         >
         <StepperContentBody>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
             >
-                <SectionHeader
-                    title="Ulasan Keputusan daripada Pengarah Bahagian / Negeri"
-                ></SectionHeader>
-
-                <LongTextField label={'Tindakan / Ulasan'} placeholder="-"
-                ></LongTextField>
-                <RadioSingle
-                    options={penyokongan}
-                    bind:userSelected={penyokonganVal}
-                ></RadioSingle>
+                <form
+                    id="FormStepperAllowanceApplicationSupport"
+                    class="flex w-full flex-col gap-2"
+                    use:allowanceApplicationSupportEnhance
+                    method="POST"
+                >
+                    <SectionHeader
+                        title="Ulasan Keputusan daripada Pengarah Bahagian / Negeri"
+                    ></SectionHeader>
+                    <LongTextField
+                        hasError={$allowanceApplicationSupportErrors.actionRemark
+                            ? true
+                            : false}
+                        name="actionRemark"
+                        label="Tindakan / Ulasan"
+                        bind:value={$allowanceApplicationSupportForm.actionRemark}
+                    />
+                    {#if $allowanceApplicationSupportErrors.actionRemark}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$allowanceApplicationSupportErrors.actionRemark[0]}</span
+                        >
+                    {/if}
+                    <RadioSingle
+                        options={penyokongan}
+                        hasError={$allowanceApplicationSupportErrors.resultOption
+                            ? true
+                            : false}
+                        name="resultOption"
+                        bind:userSelected={$allowanceApplicationSupportForm.resultOption}
+                    ></RadioSingle>
+                    {#if $allowanceApplicationSupportErrors.resultOption}
+                        <span
+                            class="ml-[0px] font-sans text-sm italic text-system-danger"
+                            >{$allowanceApplicationSupportErrors.resultOption[0]}</span
+                        >
+                    {/if}
+                </form>
             </div>
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+<Toaster />
