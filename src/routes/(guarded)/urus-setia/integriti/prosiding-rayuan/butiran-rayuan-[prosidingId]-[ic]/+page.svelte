@@ -18,22 +18,17 @@
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import ChargesFormGroup from '$lib/components/integriti-charges-form-group/ChargesFormGroup.svelte';
     import { punishmentMeetingNames } from '$lib/mocks/mesyuarat/integrityMeetingName.js';
-    import EmolumentDepriveDay from '$lib/components/integriti-charges-form-group/EmolumentDepriveDay.svelte';
-    import { greds } from '$lib/mocks/gred/gred.js';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
     import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
-    import SvgPower from '$lib/assets/svg/SvgPower.svelte';
     import SvgLawScale from '$lib/assets/svg/SvgLawScale.svelte';
-    import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
-    import SvgArrowDown from '$lib/assets/svg/SvgArrowDown.svelte';
-    import SvgArrowDownTail from '$lib/assets/svg/SvgArrowDownTail.svelte';
-    import SvgArrowDownTray from '$lib/assets/svg/SvgArrowDownTray.svelte';
     import PunishmentFormGroup from '$lib/components/integriti-charges-form-group/PunishmentFormGroup.svelte';
     import AddPunishmentFromGroup from '$lib/components/integriti-charges-form-group/AddPunishmentFromGroup.svelte';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper.js';
+
     export let data;
+
     let activeStepper = 0;
     let disabled = true;
     let isCompleted: boolean = true;
@@ -51,6 +46,7 @@
     let appealHasBeenMade: boolean = false;
     let appealMeetingResult: string = '';
     let appealFollowUpResult: string = '';
+    let integrityDirectorResult: any = 'free';
 
     function calculateTwoMonthsLater(initialDate: string) {
         // Parse the initial date string to create a Date object
@@ -100,7 +96,6 @@
             label: 'Mengesahkan Keputusan JKTT tetapi Mengubah kepada Hukuman yang Lebih Ringan',
         },
     ];
-    let integrityDirectorResult: any = 'free';
 
     const integrityDirectorOptions: RadioOption[] = [
         {
