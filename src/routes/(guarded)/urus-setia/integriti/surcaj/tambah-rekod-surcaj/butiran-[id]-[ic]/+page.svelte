@@ -13,20 +13,29 @@
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import AccordianField from '$lib/components/input/AccordianField.svelte';
-    import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades.js';
-    import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions.js';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import { meetings } from '$lib/mocks/mesyuarat/mesyuarat.js';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper.js';
-    export let data;
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import { Toaster } from 'svelte-french-toast';
+    import {
+        _stepperButiranSurcaj,
+        _submitFormStepperButiranSurcaj,
+    } from './+page';
+    import {
+        _stepperButiranMesyuarat,
+        _submitFormStepperButiranMesyuarat,
+    } from './+page';
+
+    export let data: PageData;
+
     let activeStepper = 0;
     let disabled = true;
+
     // let isEditable = data.record.currentEmployee.status === 'baru' ? true : false;
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const currYear = currentYear;
-    let meetingResult: string = 'passed';
-    let isCompleted: boolean = false;
     const meetingsOptions: RadioOption[] = [
         {
             value: 'passed',
@@ -81,17 +90,6 @@
         return day + '-' + month + '-' + year;
     }
 
-    let isExPoliceSoldier = data.record.currentEmployee.isExPoliceOrSoldier
-        ? 'true'
-        : 'false';
-
-    let isInRelationshipWithLKIMStaff =
-        data.record.currentEmployeeSpouse.isLKIMStaff == 'Ya'
-            ? 'true'
-            : 'false';
-    let isKWSP =
-        data.record.currentEmployeePensions.type == 'KWSP' ? 'true' : 'false';
-
     let stepperFormTitleClass =
         'w-full h-fit mt-2 bg-bgr-primary text-system-primary text-sm font-medium';
 
@@ -100,6 +98,7 @@
     const itpTooltip: string = 'ITP bermaksud ...';
     const epwTooltip: string = 'EPW bermaksud ...';
     const colaTooltip: string = 'COLA bermaksud ...';
+
     // function to assign the content  of the tooltip
     function assignContent(ev: CustomEvent<HTMLDivElement>) {
         {
@@ -123,13 +122,42 @@
             }
         }
     }
+
+    //Butiran Surcaj
+    const {
+        form: butiranSurcajForm,
+        errors: butiranSurcajErrors,
+        enhance: butiranSurcajEnhance,
+    } = superForm(data.stepperButiranSurcaj, {
+        SPA: true,
+        validators: _stepperButiranSurcaj,
+        onSubmit() {
+            _submitFormStepperButiranSurcaj($butiranSurcajForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+
+    //Butiran Mesyuarat
+    const {
+        form: butiranMesyuaratForm,
+        errors: butiranMesyuaratErrors,
+        enhance: butiranMesyuaratEnhance,
+    } = superForm(data.stepperButiranMesyuarat, {
+        SPA: true,
+        validators: _stepperButiranMesyuarat,
+        onSubmit() {
+            _submitFormStepperButiranMesyuarat($butiranMesyuaratForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader
         title="Rekod Surcaj Baru"
-        description="Hal-hal berkaitan Surcaj {data.record.currentEmployee
-            .name}"
+        description="Hal-hal berkaitan Surcaj {''}"
     >
         <FormButton
             type="close"
@@ -151,103 +179,77 @@
                     {disabled}
                     id="noPerkeja"
                     label={'No. Pekerja'}
-                    value={data.record.currentEmployee.employeeNumber}
+                    value={''}
                 ></TextField>
                 <TextField
                     {disabled}
                     id="statusPekerjaan"
                     label={'Status Pekerjaan'}
-                    value={data.record.currentEmployee.name}
+                    value={''}
                 ></TextField>
                 <TextField
                     {disabled}
                     id="noKadPengenalan"
                     label={'No. Kad Pengenalan'}
-                    value={data.record.currentEmployee.identityDocumentNumber}
+                    value={''}
                 ></TextField>
                 <TextField
                     {disabled}
                     id="namaPenuh"
                     label={'Nama Penuh'}
-                    value={data.record.currentEmployee.name}
+                    value={''}
                 ></TextField>
                 <TextField
                     {disabled}
                     id="namaLain"
                     label={'Nama Lain'}
-                    value={data.record.currentEmployee.alternativeName}
+                    value={''}
                 ></TextField>
                 <TextField
                     {disabled}
                     id="warnaKadPengenalan"
                     label={'Warna Kad Pengenalan'}
-                    value={isBlueOrRedIC(
-                        data.record.currentEmployee.isMalaysian,
-                    )}
+                    value={''}
                 ></TextField>
                 <DateSelector
                     handleDateChange={() => {}}
                     {disabled}
                     label={'Tarikh Lahir'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployee.birthDate,
-                    ).toString()}
+                    selectedDate={''}
                 ></DateSelector>
                 <TextField
                     {disabled}
                     id="tempatLahir"
                     label={'Tempat Lahir'}
-                    value={data.record.currentEmployeeBirthState.name}
+                    value={''}
                 ></TextField>
                 <TextField
                     {disabled}
                     id="warganegara"
                     label={'Warganegara'}
-                    value={data.record.currentEmployee.isMalaysian
-                        ? 'Malaysia'
-                        : 'Bukan'}
+                    value={''}
                 ></TextField>
-                <TextField
-                    {disabled}
-                    id="bangsa"
-                    label={'Bangsa'}
-                    value={data.record.currentEmployeeRace.name}
+                <TextField {disabled} id="bangsa" label={'Bangsa'} value={''}
                 ></TextField>
-                <TextField
-                    {disabled}
-                    id="agama"
-                    label={'Agama'}
-                    value={data.record.currentEmployeeReligion.name}
+                <TextField {disabled} id="agama" label={'Agama'} value={''}
                 ></TextField>
-                <TextField
-                    {disabled}
-                    id="jantina"
-                    label={'Jantina'}
-                    value={data.record.currentEmployee.gender}
+                <TextField {disabled} id="jantina" label={'Jantina'} value={''}
                 ></TextField>
-                <TextField
-                    {disabled}
-                    id="status"
-                    label={'Status'}
-                    value={data.record.currentEmployee.marital}
+                <TextField {disabled} id="status" label={'Status'} value={''}
                 ></TextField>
-                <TextField
-                    {disabled}
-                    id="emel"
-                    label={'Emel'}
-                    value={data.record.currentEmployee.email}
+                <TextField {disabled} id="emel" label={'Emel'} value={''}
                 ></TextField>
                 <LongTextField
                     {disabled}
                     id="alamatRumah"
                     label={'Alamat Rumah'}
-                    value={data.record.currentEmployee.homeAddress}
+                    value={''}
                 ></LongTextField>
                 <LongTextField
                     {disabled}
                     id="alamatSuratMenyurat"
                     label={'Alamat Surat Menyurat (jika berlainan dari alamat rumah'}
-                    value={data.record.currentEmployee.mailAddress}
+                    value={''}
                 ></LongTextField>
                 <TextField
                     {disabled}
@@ -271,7 +273,6 @@
                     {disabled}
                     {options}
                     legend={'Bekas Polis / Tentera'}
-                    bind:userSelected={isExPoliceSoldier}
                 ></RadioSingle>
             </div>
 
@@ -285,35 +286,31 @@
                     {options}
                     {disabled}
                     legend={'Perhubungan Dengan Kakitangan LKIM'}
-                    bind:userSelected={isInRelationshipWithLKIMStaff}
                 ></RadioSingle>
-                {#if isInRelationshipWithLKIMStaff === 'true'}
-                    <TextField
-                        {disabled}
-                        id="noPekerjaPasangan"
-                        label={'No. Pekerja LKIM'}
-                        value={data.record.currentEmployeeSpouseEmployeeInfo
-                            ?.employeeNumber}
-                    ></TextField>
-                    <TextField
-                        {disabled}
-                        id="namaPasangan"
-                        label={'Nama Kakitangan LKIM'}
-                        value={data.record.currentEmployeeSpouse.name}
-                    ></TextField>
-                    <TextField
-                        {disabled}
-                        id="jawatanPasangan"
-                        label={'Jawatan Kakitangan LKIM'}
-                        value={data.record.currentEmployeeSpouse.position}
-                    ></TextField>
-                    <TextField
-                        {disabled}
-                        id="hubungan"
-                        label={'Hubungan'}
-                        value={data.record.currentEmployeeSpouse.relationship}
-                    ></TextField>
-                {/if}
+                <TextField
+                    {disabled}
+                    id="noPekerjaPasangan"
+                    label={'No. Pekerja LKIM'}
+                    value={''}
+                ></TextField>
+                <TextField
+                    {disabled}
+                    id="namaPasangan"
+                    label={'Nama Kakitangan LKIM'}
+                    value={''}
+                ></TextField>
+                <TextField
+                    {disabled}
+                    id="jawatanPasangan"
+                    label={'Jawatan Kakitangan LKIM'}
+                    value={''}
+                ></TextField>
+                <TextField
+                    {disabled}
+                    id="hubungan"
+                    label={'Hubungan'}
+                    value={''}
+                ></TextField>
             </div></StepperContentBody
         >
     </StepperContent>
@@ -327,43 +324,40 @@
                     disabled={true}
                     id="gredSemasa"
                     label={'Gred Semasa'}
-                    value={data.record.currentEmployeeGrade.code}
+                    value={''}
                 ></TextField>
                 <TextField
                     disabled={true}
                     id="jawatan"
                     label={'Jawatan'}
-                    value={data.record.currentEmployeePosition.name}
+                    value={''}
                 ></TextField>
                 <TextField
                     disabled={true}
                     id="penempatan"
                     label={'Penempatan'}
-                    value={data.record.currentEmployeeService.placement}
+                    value={''}
                 ></TextField>
                 <TextField
                     disabled={true}
                     id="tarafPerkhidmatan"
                     label={'Taraf Perkhidmatan'}
-                    value={data.record.currentEmployeeServiceType.name}
+                    value={''}
                 ></TextField>
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Tarikh Kuatkuasa Lantikan Semasa'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeeService.currentServiceDate,
-                    )}
+                    selectedDate={''}
                 ></DateSelector>
                 <RadioSingle
                     disabled={true}
                     options={faedahPersaraanOptions}
                     legend={'Faedah Persaraan'}
-                    bind:userSelected={isKWSP}
                 ></RadioSingle>
                 <TextField
                     disabled={true}
-                    id="noKWSP"
+                    id="surchargeAction"
                     label={'No. KWSP'}
                     value={'1234-5678-9012'}
                 ></TextField>
@@ -401,50 +395,38 @@
                     disabled={true}
                     id="kelayakanCuti"
                     label={'Kelayakan Cuti'}
-                    value={getEmployeeLeave(
-                        data.record.currentEmployee.employeeNumber,
-                    )}
+                    value={''}
                 ></TextField>
 
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Mula Dilantik Perkhidmatan Kerajaan'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeeService.firstServiceDate,
-                    )}
+                    selectedDate={''}
                 ></DateSelector>
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Mula Dilantik Perkhidmatan LKIM'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeeService.currentServiceDate,
-                    )}
+                    selectedDate={''}
                 ></DateSelector>
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Mula Dilantik Perkhidmatan Sekarang'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeeService.currentServiceDate,
-                    )}
+                    selectedDate={''}
                 ></DateSelector>
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Disahkan Dalam Jawatan Pertama LKIM'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeeService.firstServiceDate,
-                    )}
+                    selectedDate={''}
                 ></DateSelector>
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Disahkan Dalam Jawatan Semasa LKIM'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeeService.currentServiceDate,
-                    )}
+                    selectedDate={''}
                 ></DateSelector>
 
                 <AccordianField
@@ -452,7 +434,7 @@
                     label="Sejarah Lantikan Jawatan LKIM"
                     header="Gred, Jawatan, Tarikh Disahkan Jawatan, Tarikh Lantikan"
                 >
-                    {#each data.record.currentEmployeePositionHistory as item, i}
+                    <!-- {#each data.record.currentEmployeePositionHistory as item, i}
                         <label
                             for=""
                             class="border-1 active:border-1 w-full rounded-[3px] border-bdr-primary text-base {disabled
@@ -465,15 +447,13 @@
                                 (position) => position.gradeId === item.gradeId,
                             )?.name}, {item.startDate}, {item.startDate}
                         </label>
-                    {/each}
+                    {/each} -->
                 </AccordianField>
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Tarikh Kelulusan Percantuman Perkhidmatan Lepas'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeeService.firstServiceDate,
-                    )}
+                    selectedDate={''}
                 ></DateSelector>
                 <TextField
                     disabled={true}
@@ -515,9 +495,7 @@
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Tarikh Bersara'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeePensions.retiredDate,
-                    )}
+                    selectedDate={''}
                 ></DateSelector>
                 <p class={stepperFormTitleClass}>
                     Maklumat Gaji dan Elaun - Elaun
@@ -589,89 +567,194 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Butiran Surcaj"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="FormStepperButiranSurcaj"
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton>
         </StepperContentHeader>
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2.5">
-                <DateSelector
-                    handleDateChange={() => {}}
-                    disabled={false}
-                    label={'Tarikh Dilaporkan'}
-                    selectedDate={''}
-                ></DateSelector>
-                <TextField
-                    disabled={false}
-                    id="surcharge-action"
-                    label={'Tindakan Surcaj'}
-                    value={''}
-                ></TextField>
-                <LongTextField
-                    disabled={false}
-                    id="remark"
-                    label={'Ulasan'}
-                    value={''}
-                ></LongTextField>
+                <form
+                    id="FormStepperButiranSurcaj"
+                    class="flex w-full flex-col gap-2"
+                    use:butiranSurcajEnhance
+                    method="POST"
+                >
+                    <DateSelector
+                        hasError={$butiranSurcajErrors.reportedDate
+                            ? true
+                            : false}
+                        name="reportedDate"
+                        handleDateChange
+                        label="Tarikh Dilaporkan"
+                        bind:selectedDate={$butiranSurcajForm.reportedDate}
+                    ></DateSelector>
+                    {#if $butiranSurcajErrors.reportedDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$butiranSurcajErrors.reportedDate[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={$butiranSurcajErrors.surchargeAction
+                            ? true
+                            : false}
+                        name="surchargeAction"
+                        label={'Tindakan Surcaj'}
+                        type="text"
+                        bind:value={$butiranSurcajForm.surchargeAction}
+                    ></TextField>
+
+                    {#if $butiranSurcajErrors.surchargeAction}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$butiranSurcajErrors.surchargeAction[0]}</span
+                        >
+                    {/if}
+                    <LongTextField
+                        hasError={$butiranSurcajErrors.remark ? true : false}
+                        name="remark"
+                        label="Ulasan"
+                        bind:value={$butiranSurcajForm.remark}
+                    />
+                    {#if $butiranSurcajErrors.remark}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$butiranSurcajErrors.remark[0]}</span
+                        >
+                    {/if}
+                </form>
             </div>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Butiran Mesyuarat"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="FormStepperButiranMesyuarat"
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton>
         </StepperContentHeader>
         <StepperContentBody>
-            <DropdownSelect
-                disabled={isCompleted}
-                labelBlack={true}
-                dropdownType="label-left-full"
-                name="meetings-dropdown"
-                label="Nama dan Bil Mesyuarat"
-                value={''}
-                options={meetings}
-            ></DropdownSelect>
-            <DateSelector
-                disabled={isCompleted}
-                labelBlack={true}
-                label="Tarikh Mesyuarat"
-                selectedDate={''}
-                handleDateChange={() => {}}
-            />
-            <TextField
-                labelBlack={true}
-                disabled={false}
-                id="surcharge-amount"
-                type="number"
-                label={'Jumlah Bayaran (RM)'}
-                value={''}
-            ></TextField>
-            <DropdownSelect
-                disabled={isCompleted}
-                labelBlack={true}
-                dropdownType="label-left-full"
-                name="payment-dropdown"
-                label="Cara Bayaran Balik"
-                value={''}
-                options={meetings}
-            ></DropdownSelect>
-            <DropdownSelect
-                disabled={isCompleted}
-                labelBlack={true}
-                dropdownType="label-left-full"
-                name="payment-period-dropdown"
-                label="Tempoh Bayaran Balik (bulan)"
-                value={''}
-                options={meetings}
-            ></DropdownSelect>
-            <DateSelector
-                disabled={isCompleted}
-                labelBlack={true}
-                label="Tarikh Berkuatkuasa"
-                selectedDate={''}
-                handleDateChange={() => {}}
-            />
-        </StepperContentBody>
+            <form
+                id="FormStepperButiranMesyuarat"
+                class="flex w-full flex-col gap-2"
+                use:butiranMesyuaratEnhance
+                method="POST"
+            >
+                <DropdownSelect
+                    hasError={$butiranMesyuaratErrors.meetingDropdown
+                        ? true
+                        : false}
+                    dropdownType="label-left-full"
+                    id="meetingDropdown"
+                    label="Nama dan Bil Mesyuarat"
+                    bind:value={$butiranMesyuaratErrors.meetingDropdown}
+                    options={[
+                        { value: '1', name: 'Semua' },
+                        { value: '2', name: '1/12' },
+                        { value: '3', name: '1/102' },
+                        { value: '4', name: '2/101' },
+                    ]}
+                ></DropdownSelect>
+                {#if $butiranMesyuaratErrors.meetingDropdown}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$butiranMesyuaratErrors.meetingDropdown[0]}</span
+                    >
+                {/if}
+                <DateSelector
+                    hasError={$butiranMesyuaratErrors.meetingDate
+                        ? true
+                        : false}
+                    name="meetingDate"
+                    handleDateChange
+                    label="Tarikh Mesyuarat"
+                    bind:selectedDate={$butiranMesyuaratForm.meetingDate}
+                ></DateSelector>
+                {#if $butiranMesyuaratErrors.meetingDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$butiranMesyuaratErrors.meetingDate[0]}</span
+                    >
+                {/if}
+                <TextField
+                    hasError={$butiranMesyuaratErrors.surchargeAmount
+                        ? true
+                        : false}
+                    name="surchargeAmount"
+                    label={'Jumlah Bayaran (RM)'}
+                    type="number"
+                    bind:value={$butiranMesyuaratErrors.surchargeAmount}
+                ></TextField>
+
+                {#if $butiranMesyuaratErrors.surchargeAmount}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$butiranMesyuaratErrors.surchargeAmount[0]}</span
+                    >
+                {/if}
+                <DropdownSelect
+                    hasError={$butiranMesyuaratErrors.paymentDropdown
+                        ? true
+                        : false}
+                    dropdownType="label-left-full"
+                    id="paymentDropdown"
+                    label="Cara Bayaran Balik"
+                    bind:value={$butiranMesyuaratErrors.paymentDropdown}
+                    options={[
+                        { value: '1', name: 'Tunai' },
+                        { value: '2', name: 'Atas Talian' },
+                    ]}
+                ></DropdownSelect>
+                {#if $butiranMesyuaratErrors.paymentDropdown}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$butiranMesyuaratErrors.paymentDropdown[0]}</span
+                    >
+                {/if}
+                <DropdownSelect
+                    hasError={$butiranMesyuaratErrors.paymentPeriodDropdown
+                        ? true
+                        : false}
+                    dropdownType="label-left-full"
+                    id="paymentPeriodDropdown"
+                    label="Tempoh Bayaran Balik (bulan)"
+                    bind:value={$butiranMesyuaratErrors.paymentPeriodDropdown}
+                    options={[
+                        { value: '1', name: '3' },
+                        { value: '2', name: '6' },
+                    ]}
+                ></DropdownSelect>
+                {#if $butiranMesyuaratErrors.paymentPeriodDropdown}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$butiranMesyuaratErrors
+                            .paymentPeriodDropdown[0]}</span
+                    >
+                {/if}
+                <DateSelector
+                    hasError={$butiranMesyuaratErrors.effectiveDate
+                        ? true
+                        : false}
+                    name="effectiveDate"
+                    handleDateChange
+                    label="Tarikh Berkuatkuasa"
+                    bind:selectedDate={$butiranMesyuaratForm.effectiveDate}
+                ></DateSelector>
+                {#if $butiranMesyuaratErrors.effectiveDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$butiranMesyuaratErrors.effectiveDate[0]}</span
+                    >
+                {/if}
+            </form></StepperContentBody
+        >
     </StepperContent>
 </Stepper>
+<Toaster />
