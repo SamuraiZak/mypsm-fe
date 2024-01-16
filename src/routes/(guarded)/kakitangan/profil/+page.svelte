@@ -9,6 +9,7 @@
     import RekodKesihatan from './tabs/RekodKesihatan.svelte';
     import MaklumatKontrak from './tabs/MaklumatKontrak.svelte';
     import type { PageData } from './$types';
+    import toast, { Toaster } from 'svelte-french-toast';
 
     let currentEmployeeNumber: string = '00003';
     let isEditing: boolean = false;
@@ -74,3 +75,4 @@
         </TabContent>
     </Tabs>
 </section>
+<Toaster />

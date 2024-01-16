@@ -21,6 +21,9 @@
         {
             SPA: true,
             validators: _stepperkontrak,
+            onSubmit() {
+                _submitFormstepperkontrak($form);
+        },
             taintedMessage:
                 'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
         },
@@ -36,7 +39,6 @@
     <div class="flex w-full flex-col gap-2.5">
         <form
             id="Formstepperkontrak"
-            on:submit|preventDefault={_submitFormstepperkontrak}
             class="flex w-full flex-col gap-2 pt-3"
             use:enhance
             method="POST"
@@ -178,4 +180,4 @@
         </form>
     </div>
 </section>
-<Toaster />
+
