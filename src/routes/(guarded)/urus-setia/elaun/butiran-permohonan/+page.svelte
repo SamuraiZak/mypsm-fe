@@ -1,5 +1,7 @@
 <script lang="ts">
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import FormTable from '$lib/components/form-table/FormTable.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
@@ -9,7 +11,6 @@
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    import StepperPill from '$lib/components/side-stepper/StepperPill.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
@@ -21,9 +22,21 @@
     import { areaTypes } from '$lib/mocks/elaun/areas';
     import { mockAllEmployeeAllowances } from '$lib/mocks/elaun/mockAllEmployeeAllowances';
     import { mockEmployeeAllowanceDocList } from '$lib/mocks/elaun/mockEmployeeAllowanceDocList';
-    // import { 450om '$lib/service/services';
-    import { selectedRecordId } from '$lib/stores/globalState';
+    import { superForm } from 'sveltekit-superforms/client';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import {
+        _stepperSupporterApprover,
+        _submitFormStepperSupporterApprover,
+    } from './+page';
+    import {
+        _stepperAllowanceApplicationValidation,
+        _submitFormStepperAllowanceApplicationValidation,
+    } from './+page';
 
+    export let data: PageData;
+
+    let currentDataId = 1;
     let disabled = true;
     let activeStepper = 0;
     let labelBlack = false;
@@ -31,10 +44,10 @@
     let numberOfDays: number = 25;
     let reasonVal: string = 'Boleh diteruskan';
     let currRecord = mockAllEmployeeAllowances.filter(
-        (rec) => rec.id == $selectedRecordId, //to be repalced with $selectedRecordId
+        (rec) => rec.id == currentDataId, //to be repalced with $selectedRecordId
     )[0];
     let currentEmployee = mockEmployees.filter((rec) => rec.id == 1)[0];
-
+    console.log(currRecord);
     let currentEmployeeRace = mockLookupRaces.find((race) => {
         return race.id === currentEmployee.raceId;
     })!;
@@ -89,7 +102,38 @@
         relationship: 'Anak',
     };
 
-    let data: any[] = [{ ...famInfo }];
+    // let data: any[] = [{ ...famInfo }];
+
+    //Supporter Approver
+    const {
+        form: supporterApproverForm,
+        errors: supporterApproverErrors,
+        enhance: supporterApproverEnhance,
+    } = superForm(data.stepperSupporterApprover, {
+        SPA: true,
+        validators: _stepperSupporterApprover,
+        onSubmit() {
+            _submitFormStepperSupporterApprover($supporterApproverForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+
+    const {
+        form: allowanceApplicationValidationForm,
+        errors: allowanceApplicationValidationErrors,
+        enhance: allowanceApplicationValidationEnhance,
+    } = superForm(data.stepperAllowanceApplicationValidation, {
+        SPA: true,
+        validators: _stepperAllowanceApplicationValidation,
+        onSubmit() {
+            _submitFormStepperAllowanceApplicationValidation(
+                $allowanceApplicationValidationForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -891,25 +935,57 @@
                 }}
             ></FormButton>
             <FormButton type="reset" onClick={() => {}}></FormButton>
-            <FormButton
-                type="save"
-                onClick={() => {
-                    activeStepper = 4;
-                }}
-            ></FormButton></StepperContentHeader
+            <TextIconButton
+                primary
+                label="Simpan"
+                form="FormStepperAllowanceApplicationValidation"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
         >
         <StepperContentBody>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
             >
-                <SectionHeader title="Ulasan Penyemakan daripada Urus Setia"
-                ></SectionHeader>
-                <LongTextField label="Tindakan / Ulasan" placeholder="-"
-                ></LongTextField>
-                <RadioSingle
-                    options={pengesahan}
-                    bind:userSelected={pengesahanVal}
-                ></RadioSingle>
+                <form
+                    id="FormStepperAllowanceApplicationValidation"
+                    class="flex w-full flex-col gap-2"
+                    use:allowanceApplicationValidationEnhance
+                    method="POST"
+                >
+                    <SectionHeader title="Ulasan Penyemakan daripada Urus Setia"
+                    ></SectionHeader>
+                    <LongTextField
+                        hasError={$allowanceApplicationValidationErrors.actionRemark
+                            ? true
+                            : false}
+                        name="actionRemark"
+                        label="Tindakan / Ulasan"
+                        bind:value={$allowanceApplicationValidationForm.actionRemark}
+                    />
+                    {#if $allowanceApplicationValidationErrors.actionRemark}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$allowanceApplicationValidationErrors
+                                .actionRemark[0]}</span
+                        >
+                    {/if}
+                    <RadioSingle
+                        options={pengesahan}
+                        hasError={$allowanceApplicationValidationErrors.resultOption
+                            ? true
+                            : false}
+                        name="resultOption"
+                        bind:userSelected={$allowanceApplicationValidationForm.resultOption}
+                    ></RadioSingle>
+                    {#if $allowanceApplicationValidationErrors.resultOption}
+                        <span
+                            class="ml-[0px] font-sans text-sm italic text-system-danger"
+                            >{$allowanceApplicationValidationErrors
+                                .resultOption[0]}</span
+                        >
+                    {/if}
+                </form>
             </div></StepperContentBody
         >
     </StepperContent>
@@ -922,23 +998,59 @@
                 }}
             ></FormButton>
             <FormButton type="reset" onClick={() => {}}></FormButton>
-            <FormButton
-                type="save"
-                onClick={() => {
-                    activeStepper = 5;
-                }}
-            ></FormButton></StepperContentHeader
+            <TextIconButton
+                primary
+                label="Simpan"
+                form="FormStepperSupporterApprover"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
         >
         <StepperContentBody>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
             >
-                <SectionHeader title="Nama Penyokong dan Pelulus (Jika Sah)"
-                ></SectionHeader>
-                <TextField label={'Nama Penyokong'} value={'Mohd Musa Bin Mat'}
-                ></TextField>
-                <TextField label={'Nama Pelulus'} value={'Ramdan Bin Ismail'}
-                ></TextField>
+                <form
+                    id="FormStepperSupporterApprover"
+                    class="flex w-full flex-col gap-2"
+                    use:supporterApproverEnhance
+                    method="POST"
+                >
+                    <SectionHeader title="Nama Penyokong dan Pelulus (Jika Sah)"
+                    ></SectionHeader>
+                    <TextField
+                        hasError={$supporterApproverErrors.supporterName
+                            ? true
+                            : false}
+                        name="supporterName"
+                        label={'Nama Penyokong'}
+                        type="text"
+                        bind:value={$supporterApproverForm.supporterName}
+                    ></TextField>
+
+                    {#if $supporterApproverErrors.supporterName}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$supporterApproverErrors.supporterName[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={$supporterApproverErrors.approverName
+                            ? true
+                            : false}
+                        name="approverName"
+                        label={'Nama Pelulus'}
+                        type="text"
+                        bind:value={$supporterApproverForm.approverName}
+                    ></TextField>
+
+                    {#if $supporterApproverErrors.approverName}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$supporterApproverErrors.approverName[0]}</span
+                        >
+                    {/if}
+                </form>
             </div>
         </StepperContentBody>
     </StepperContent>
@@ -949,11 +1061,7 @@
                 onClick={() => {
                     activeStepper = 4;
                 }}
-            ></FormButton><FormButton
-                type="done"
-                onClick={() => {
-                    window.history.back();
-                }}
+            ></FormButton><FormButton type="done"
             ></FormButton></StepperContentHeader
         >
         <StepperContentBody>
@@ -1002,3 +1110,4 @@
         >
     </StepperContent>
 </Stepper>
+<Toaster />
