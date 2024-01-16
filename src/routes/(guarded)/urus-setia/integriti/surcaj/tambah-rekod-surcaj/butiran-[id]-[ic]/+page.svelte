@@ -654,7 +654,7 @@
                     dropdownType="label-left-full"
                     id="meetingDropdown"
                     label="Nama dan Bil Mesyuarat"
-                    bind:value={$butiranMesyuaratErrors.meetingDropdown}
+                    bind:value={$butiranMesyuaratForm.meetingDropdown}
                     options={[
                         { value: '1', name: 'Semua' },
                         { value: '2', name: '1/12' },
@@ -690,7 +690,7 @@
                     name="surchargeAmount"
                     label={'Jumlah Bayaran (RM)'}
                     type="number"
-                    bind:value={$butiranMesyuaratErrors.surchargeAmount}
+                    bind:value={$butiranMesyuaratForm.surchargeAmount}
                 ></TextField>
 
                 {#if $butiranMesyuaratErrors.surchargeAmount}
@@ -706,7 +706,7 @@
                     dropdownType="label-left-full"
                     id="paymentDropdown"
                     label="Cara Bayaran Balik"
-                    bind:value={$butiranMesyuaratErrors.paymentDropdown}
+                    bind:value={$butiranMesyuaratForm.paymentDropdown}
                     options={[
                         { value: '1', name: 'Tunai' },
                         { value: '2', name: 'Atas Talian' },
@@ -725,7 +725,7 @@
                     dropdownType="label-left-full"
                     id="paymentPeriodDropdown"
                     label="Tempoh Bayaran Balik (bulan)"
-                    bind:value={$butiranMesyuaratErrors.paymentPeriodDropdown}
+                    bind:value={$butiranMesyuaratForm.paymentPeriodDropdown}
                     options={[
                         { value: '1', name: '3' },
                         { value: '2', name: '6' },
