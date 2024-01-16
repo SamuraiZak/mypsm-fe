@@ -8,9 +8,9 @@ export async function load() {
 
     const request: EmployeesListRequestViewModel = {
         pageNum: 1,
-        pageSize: 5,
-        orderBy: '',
-        orderType: '',
+        pageSize: 10,
+        orderBy: 'scheme',
+        orderType: 'asc',
         filter: {
         },
     };
