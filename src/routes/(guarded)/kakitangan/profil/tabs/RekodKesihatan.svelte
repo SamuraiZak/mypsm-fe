@@ -13,8 +13,16 @@
     import { mockEmployeeDocumentLists } from '$lib/mocks/database/mockEmployeeDocumentLists';
     import { z, ZodError } from 'zod';
     import toast, { Toaster } from 'svelte-french-toast';
+    import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import {
+        _stepperSejarahPenyakit,
+        _submitFormStepperSejarahPenyakit,
+    } from '../+page';
 
     export let disabled: boolean = false;
+    export let data: PageData;
 
     let stepperFormTitleClass =
         'w-full h-fit mt-2 bg-bgr-primary text-system-primary text-sm font-medium';
@@ -47,6 +55,20 @@
 
     const currentEmployeeUploadedDocuments = mockEmployeeDocumentLists;
 
+    const {
+        form: sejarahPenyakitForm,
+        errors: sejarahPenyakitErrors,
+        enhance: sejarahPenyakitEnhance,
+    } = superForm(data.stepperSejarahPenyakit, {
+        SPA: true,
+        validators: _stepperSejarahPenyakit,
+        onSubmit() {
+            _submitFormStepperSejarahPenyakit($sejarahPenyakitForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+
     // =================================================================================
     // z validation schema for the example form fields==================================
     // =================================================================================
@@ -56,487 +78,8 @@
     //============== stepper Sejarah Penyakit ==================
     //==========================================================
 
-    const stepperSejarahPenyakit = z.object({
-        penyakitSejakLahir: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi .',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        alahan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(1, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        sakitJiwa: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        epilepsi: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        darahTinggi: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        kencingManis: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        jantungAtatuSalurDarah: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        asma: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        sakitBuahPinggang: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        barah: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        batukKering: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        ketagihanDadah: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        AIDS: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        hepatitisB: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        sejarahPembedahan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        kecacatan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        merokok: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        penyakitSeriusLain: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        sedangMenerimaRawatan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-
-        sendiriPenyakitSejakLahir: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        keluargaPenyakitSejakLahir: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sendiriAlahan: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        keluargaAlahan: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sendiriSakitJiwa: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        keluargaSakitJiwa: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sendiriEpilepsi: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        keluargaEpilepsi: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sendiriDarahTinggi: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        keluargaDarahTinggi: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sendiriKencingManis: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        keluargaKencingManis: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sendiriJantung: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        keluargaJantung: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sendiriAsma: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        keluargaAsma: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sendiriSakitBuahPinggang: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        keluargaSakitBuahPinggang: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sendiriBarah: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        keluargaBarah: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sendiriBatukKering: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        keluargaBatukKering: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sendiriKetagihanDadah: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        keluargaKetagihanDadah: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sendiriAIDS: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        keluargaAIDS: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sendiriHepatitisB: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        keluargaHepatitisB: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sendiriSejarahPembedahan: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        keluargaSejarahPembedahan: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sendiriKecacatan: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        keluargaKecacatan: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sendiriMerokok: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        keluargaMerokok: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sendiriPenyakitSeriusLain: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        keluargaPenyakitSeriusLain: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sendiriSedangMenerimaRawatan: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        keluargaSedangMenerimaRawatan: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-    });
-
     //==========================================================
-    //============== stepper Pemeriksaan Doktor ==================
+    //============== stepper Pemeriksaan Doktor ================
     //==========================================================
 
     const stepperPemeriksaanDoktor = z.object({
@@ -897,135 +440,12 @@
     //---------Stepper Sejarah Penyakit--------------------->
     //------------------------------------------------------>
 
-    const submitFormstepperSejarahPenyakit = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-
-        const exampleFormData = {
-            penyakitSejakLahir: String(formData.get('penyakitSejakLahir')),
-            alahan: String(formData.get('alahan')),
-            sakitJiwa: String(formData.get('sakitJiwa')),
-            epilepsi: String(formData.get('epilepsi')),
-            darahTinggi: String(formData.get('darahTinggi')),
-            kencingManis: String(formData.get('kencingManis')),
-            jantungAtatuSalurDarah: String(
-                formData.get('jantungAtatuSalurDarah'),
-            ),
-            asma: String(formData.get('asma')),
-            sakitBuahPinggang: String(formData.get('sakitBuahPinggang')),
-            barah: String(formData.get('barah')),
-            batukKering: String(formData.get('batukKering')),
-            ketagihanDadah: String(formData.get('ketagihanDadah')),
-            AIDS: String(formData.get('AIDS')),
-            hepatitisB: String(formData.get('hepatitisB')),
-            sejarahPembedahan: String(formData.get('sejarahPembedahan')),
-            kecacatan: String(formData.get('kecacatan')),
-            merokok: String(formData.get('merokok')),
-            penyakitSeriusLain: String(formData.get('penyakitSeriusLain')),
-            sedangMenerimaRawatan: String(
-                formData.get('sedangMenerimaRawatan'),
-            ),
-
-            sendiriPenyakitSejakLahir: String(
-                formData.get('sendiriPenyakitSejakLahir'),
-            ),
-            keluargaPenyakitSejakLahir: String(
-                formData.get('keluargaPenyakitSejakLahir'),
-            ),
-            sendiriAlahan: String(formData.get('sendiriAlahan')),
-            keluargaAlahan: String(formData.get('keluargaAlahan')),
-            sendiriSakitJiwa: String(formData.get('sendiriSakitJiwa')),
-            keluargaSakitJiwa: String(formData.get('keluargaSakitJiwa')),
-            sendiriEpilepsi: String(formData.get('sendiriEpilepsi')),
-            keluargaEpilepsi: String(formData.get('keluargaEpilepsi')),
-            sendiriDarahTinggi: String(formData.get('sendiriDarahTinggi')),
-            keluargaDarahTinggi: String(formData.get('keluargaDarahTinggi')),
-            sendiriKencingManis: String(formData.get('sendiriKencingManis')),
-            keluargaKencingManis: String(formData.get('keluargaKencingManis')),
-            sendiriJantung: String(formData.get('sendiriJantung')),
-            keluargaJantung: String(formData.get('keluargaJantung')),
-            sendiriAsma: String(formData.get('sendiriAsma')),
-            keluargaAsma: String(formData.get('keluargaAsma')),
-            sendiriSakitBuahPinggang: String(
-                formData.get('sendiriSakitBuahPinggang'),
-            ),
-            keluargaSakitBuahPinggang: String(
-                formData.get('keluargaSakitBuahPinggang'),
-            ),
-            sendiriBarah: String(formData.get('sendiriBarah')),
-            keluargaBarah: String(formData.get('keluargaBarah')),
-            sendiriBatukKering: String(formData.get('sendiriBatukKering')),
-            keluargaBatukKering: String(formData.get('keluargaBatukKering')),
-            sendiriKetagihanDadah: String(
-                formData.get('sendiriKetagihanDadah'),
-            ),
-            keluargaKetagihanDadah: String(
-                formData.get('keluargaKetagihanDadah'),
-            ),
-            sendiriAIDS: String(formData.get('sendiriAIDS')),
-            keluargaAIDS: String(formData.get('keluargaAIDS')),
-            sendiriHepatitisB: String(formData.get('sendiriHepatitisB')),
-            keluargaHepatitisB: String(formData.get('keluargaHepatitisB')),
-            sendiriSejarahPembedahan: String(
-                formData.get('sendiriSejarahPembedahan'),
-            ),
-            keluargaSejarahPembedahan: String(
-                formData.get('keluargaSejarahPembedahan'),
-            ),
-            sendiriKecacatan: String(formData.get('sendiriKecacatan')),
-            keluargaKecacatan: String(formData.get('keluargaKecacatan')),
-            sendiriMerokok: String(formData.get('sendiriMerokok')),
-            keluargaMerokok: String(formData.get('keluargaMerokok')),
-            sendiriPenyakitSeriusLain: String(
-                formData.get('sendiriPenyakitSeriusLain'),
-            ),
-            keluargaPenyakitSeriusLain: String(
-                formData.get('keluargaPenyakitSeriusLain'),
-            ),
-            sendiriSedangMenerimaRawatan: String(
-                formData.get('sendiriSedangMenerimaRawatan'),
-            ),
-            keluargaSedangMenerimaRawatan: String(
-                formData.get('keluargaSedangMenerimaRawatan'),
-            ),
-        };
-
-        try {
-            const result = stepperSejarahPenyakit.parse(exampleFormData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedExamFormData = { ...exampleFormData, id };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedExamFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
-
     //------------------------------------------------------>
     //---------Stepper Pemeriksaan Doktor------------------->
     //------------------------------------------------------>
 
     const submitFormstepperPemeriksaanDoktor = async (event: Event) => {
         const formData = new FormData(event.target as HTMLFormElement);
-        
 
         const exampleFormData = {
             tinggi: String(formData.get('tinggi')),
@@ -1033,8 +453,12 @@
             bmi: String(formData.get('bmi')),
             denyutanNadi: String(formData.get('denyutanNadi')),
             bp: String(formData.get('bp')),
-            penglihatanTanpaBantuan: String(formData.get('penglihatanTanpaBantuan')),
-            penglihatanDenganBantuan: String(formData.get('penglihatanDenganBantuan')),
+            penglihatanTanpaBantuan: String(
+                formData.get('penglihatanTanpaBantuan'),
+            ),
+            penglihatanDenganBantuan: String(
+                formData.get('penglihatanDenganBantuan'),
+            ),
             penglihatanWarna: String(formData.get('penglihatanWarna')),
             funduskopi: String(formData.get('funduskopi')),
             telinga: String(formData.get('telinga')),
@@ -1063,7 +487,9 @@
             penyakitKuning: String(formData.get('penyakitKuning')),
             kelenjarLimfa: String(formData.get('kelenjarLimfa')),
             penyakitKulit: String(formData.get('penyakitKulit')),
-            penglihatanWarnaRadio: String(formData.get('penglihatanWarnaRadio'),),
+            penglihatanWarnaRadio: String(
+                formData.get('penglihatanWarnaRadio'),
+            ),
             funduskopiRadio: String(formData.get('funduskopiRadio')),
             telingaRadio: String(formData.get('telingaRadio')),
             ronggaGigiMulutRadio: String(formData.get('ronggaGigiMulutRadio')),
@@ -1127,21 +553,23 @@
                     label="Simpan"
                     form="FormStepperSejarahPenyakit"
                 />
-            {/if}</StepperContentHeader
-        >
+            {/if}
+        </StepperContentHeader>
+        <!------------------------------------------->
+        <!----------- Sejarah Penyakit -------------->
+        <!------------------------------------------->
         <StepperContentBody>
-            <!------------------------------------------->
-            <!----------- Sejarah Penyakit -------------->
-            <!------------------------------------------->
-
             <div class="flex w-full flex-col gap-2.5">
                 <form
                     id="FormStepperSejarahPenyakit"
-                    on:submit|preventDefault={submitFormstepperSejarahPenyakit}
                     class="flex w-full flex-col gap-2"
+                    use:sejarahPenyakitEnhance
+                    method="POST"
                 >
                     <div class="flex w-full flex-col gap-2">
-                        <table class="text-left text-sm">
+                        <table
+                            class="text-left text-sm {stepperFormTitleClass}"
+                        >
                             <tr>
                                 <th></th>
                                 <th>SENDIRI</th>
@@ -1157,48 +585,49 @@
                                         {options}
                                         name="sendiriPenyakitSejakLahir"
                                         legend=""
-                                        userSelected=""
+                                        bind:userSelected={$sejarahPenyakitForm.sendiriPenyakitSejakLahir}
                                     ></RadioSingle>
-                                    {#if errorData?.sendiriPenyakitSejakLahir}
+                                    {#if $sejarahPenyakitErrors.sendiriPenyakitSejakLahir}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.sendiriPenyakitSejakLahir[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sendiriPenyakitSejakLahir[0]}</span
                                         >
                                     {/if}
                                 </td>
-
                                 <td>
                                     <RadioSingle
                                         {disabled}
                                         {options}
                                         name="keluargaPenyakitSejakLahir"
                                         legend=""
-                                        userSelected=""
+                                        bind:userSelected={$sejarahPenyakitForm.keluargaPenyakitSejakLahir}
                                     ></RadioSingle>
-                                    {#if errorData?.keluargaPenyakitSejakLahir}
+                                    {#if $sejarahPenyakitErrors.keluargaPenyakitSejakLahir}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.keluargaPenyakitSejakLahir[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .keluargaPenyakitSejakLahir[0]}</span
                                         >
                                     {/if}
                                 </td>
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={errorData?.penyakitSejakLahir}
+                                        hasError={$sejarahPenyakitForm.penyakitSejakLahir
+                                            ? true
+                                            : false}
                                         name="penyakitSejakLahir"
                                         label=""
                                         type="text"
-                                        value="-"
+                                        bind:value={$sejarahPenyakitForm.penyakitSejakLahir}
                                     ></TextField>
 
-                                    {#if errorData?.penyakitSejakLahir}
+                                    {#if $sejarahPenyakitForm.penyakitSejakLahir}
                                         <span
-                                            class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.penyakitSejakLahir[0]}</span
+                                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                            >{$sejarahPenyakitForm
+                                                .penyakitSejakLahir[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1211,12 +640,13 @@
                                         {options}
                                         name="sendiriAlahan"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.sendiriAlahan}
                                     ></RadioSingle>
-                                    {#if errorData?.sendiriAlahan}
+                                    {#if $sejarahPenyakitErrors.sendiriAlahan}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData?.sendiriAlahan[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sendiriAlahan[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1227,30 +657,33 @@
                                         {options}
                                         name="keluargaAlahan"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.keluargaAlahan}
                                     ></RadioSingle>
-                                    {#if errorData?.keluargaAlahan}
+                                    {#if $sejarahPenyakitErrors.keluargaAlahan}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.keluargaAlahan[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .keluargaAlahan[0]}</span
                                         >
                                     {/if}
                                 </td>
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={errorData?.alahan}
+                                        hasError={$sejarahPenyakitForm.alahan
+                                            ? true
+                                            : false}
                                         name="alahan"
                                         label=""
                                         type="text"
-                                        value="-"
+                                        bind:value={$sejarahPenyakitForm.alahan}
                                     ></TextField>
 
-                                    {#if errorData?.alahan}
+                                    {#if $sejarahPenyakitErrors.alahan}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData?.alahan[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .alahan[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1263,13 +696,13 @@
                                         {options}
                                         name="sendiriSakitJiwa"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.sendiriSakitJiwa}
                                     ></RadioSingle>
-                                    {#if errorData?.sendiriSakitJiwa}
+                                    {#if $sejarahPenyakitErrors.sendiriSakitJiwa}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.sendiriSakitJiwa[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sendiriSakitJiwa[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1280,30 +713,33 @@
                                         {options}
                                         name="keluargaSakitJiwa"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.keluargaSakitJiwa}
                                     ></RadioSingle>
-                                    {#if errorData?.keluargaSakitJiwa}
+                                    {#if $sejarahPenyakitErrors.keluargaSakitJiwa}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.keluargaSakitJiwa[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .keluargaSakitJiwa[0]}</span
                                         >
                                     {/if}
                                 </td>
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={errorData?.sakitJiwa}
+                                        hasError={$sejarahPenyakitErrors.sakitJiwa
+                                            ? true
+                                            : false}
                                         name="sakitJiwa"
                                         label=""
                                         type="text"
-                                        value="-"
+                                        bind:value={$sejarahPenyakitForm.sakitJiwa}
                                     ></TextField>
 
-                                    {#if errorData?.sakitJiwa}
+                                    {#if $sejarahPenyakitErrors.sakitJiwa}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData?.sakitJiwa[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sakitJiwa[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1318,13 +754,13 @@
                                         {options}
                                         name="sendiriEpilepsi"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.sendiriEpilepsi}
                                     ></RadioSingle>
-                                    {#if errorData?.sendiriEpilepsi}
+                                    {#if $sejarahPenyakitErrors.sendiriEpilepsi}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.sendiriEpilepsi[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sendiriEpilepsi[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1335,30 +771,33 @@
                                         {options}
                                         name="keluargaEpilepsi"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.keluargaEpilepsi}
                                     ></RadioSingle>
-                                    {#if errorData?.keluargaEpilepsi}
+                                    {#if $sejarahPenyakitErrors.keluargaEpilepsi}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.keluargaEpilepsi[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .keluargaEpilepsi[0]}</span
                                         >
                                     {/if}
                                 </td>
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={errorData?.epilepsi}
+                                        hasError={$sejarahPenyakitErrors.epilepsi
+                                            ? true
+                                            : false}
                                         name="epilepsi"
                                         label=""
                                         type="text"
-                                        value="-"
+                                        bind:value={$sejarahPenyakitForm.epilepsi}
                                     ></TextField>
 
-                                    {#if errorData?.epilepsi}
+                                    {#if $sejarahPenyakitErrors.epilepsi}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData?.epilepsi[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .epilepsi[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1370,13 +809,13 @@
                                         {options}
                                         name="sendiriDarahTinggi"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.sendiriDarahTinggi}
                                     ></RadioSingle>
-                                    {#if errorData?.sendiriDarahTinggi}
+                                    {#if $sejarahPenyakitErrors.sendiriDarahTinggi}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.sendiriDarahTinggi[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sendiriDarahTinggi[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1387,30 +826,33 @@
                                         {options}
                                         name="keluargaDarahTinggi"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.keluargaDarahTinggi}
                                     ></RadioSingle>
-                                    {#if errorData?.keluargaDarahTinggi}
+                                    {#if $sejarahPenyakitErrors.keluargaDarahTinggi}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.keluargaDarahTinggi[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .keluargaDarahTinggi[0]}</span
                                         >
                                     {/if}
                                 </td>
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={errorData?.darahTinggi}
+                                        hasError={$sejarahPenyakitErrors.darahTinggi
+                                            ? true
+                                            : false}
                                         name="darahTinggi"
                                         label=""
                                         type="text"
-                                        value="-"
+                                        bind:value={$sejarahPenyakitForm.darahTinggi}
                                     ></TextField>
 
-                                    {#if errorData?.darahTinggi}
+                                    {#if $sejarahPenyakitErrors.darahTinggi}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData?.darahTinggi[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .darahTinggi[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1423,13 +865,13 @@
                                         {options}
                                         name="sendiriKencingManis"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.sendiriKencingManis}
                                     ></RadioSingle>
-                                    {#if errorData?.sendiriKencingManis}
+                                    {#if $sejarahPenyakitErrors.sendiriKencingManis}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.sendiriKencingManis[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sendiriKencingManis[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1440,30 +882,33 @@
                                         {options}
                                         name="keluargaKencingManis"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.keluargaKencingManis}
                                     ></RadioSingle>
-                                    {#if errorData?.keluargaKencingManis}
+                                    {#if $sejarahPenyakitErrors.keluargaKencingManis}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.keluargaKencingManis[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .keluargaKencingManis[0]}</span
                                         >
                                     {/if}
                                 </td>
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={errorData?.kencingManis}
+                                        hasError={$sejarahPenyakitErrors.kencingManis
+                                            ? true
+                                            : false}
                                         name="kencingManis"
                                         label=""
                                         type="text"
-                                        value="-"
+                                        bind:value={$sejarahPenyakitForm.kencingManis}
                                     ></TextField>
 
-                                    {#if errorData?.kencingManis}
+                                    {#if $sejarahPenyakitErrors.kencingManis}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData?.kencingManis[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .kencingManis[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1476,13 +921,13 @@
                                         {options}
                                         name="sendiriJantung"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.sendiriJantung}
                                     ></RadioSingle>
-                                    {#if errorData?.sendiriJantung}
+                                    {#if $sejarahPenyakitErrors.sendiriJantung}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.sendiriJantung[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sendiriJantung[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1493,31 +938,33 @@
                                         {options}
                                         name="keluargaJantung"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.keluargaJantung}
                                     ></RadioSingle>
-                                    {#if errorData?.keluargaJantung}
+                                    {#if $sejarahPenyakitErrors.keluargaJantung}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.keluargaJantung[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .keluargaJantung[0]}</span
                                         >
                                     {/if}
                                 </td>
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={errorData?.jantungAtatuSalurDarah}
+                                        hasError={$sejarahPenyakitErrors.jantungAtatuSalurDarah
+                                            ? true
+                                            : false}
                                         name="jantungAtatuSalurDarah"
                                         label=""
                                         type="text"
-                                        value="-"
+                                        bind:value={$sejarahPenyakitForm.jantungAtatuSalurDarah}
                                     ></TextField>
 
-                                    {#if errorData?.jantungAtatuSalurDarah}
+                                    {#if $sejarahPenyakitErrors.jantungAtatuSalurDarah}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.jantungAtatuSalurDarah[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .jantungAtatuSalurDarah[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1531,12 +978,13 @@
                                         {options}
                                         name="sendiriAsma"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.sendiriAsma}
                                     ></RadioSingle>
-                                    {#if errorData?.sendiriAsma}
+                                    {#if $sejarahPenyakitErrors.sendiriAsma}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData?.sendiriAsma[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sendiriAsma[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1547,29 +995,33 @@
                                         {options}
                                         name="keluargaAsma"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.keluargaAsma}
                                     ></RadioSingle>
-                                    {#if errorData?.keluargaAsma}
+                                    {#if $sejarahPenyakitErrors.keluargaAsma}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData?.keluargaAsma[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .keluargaAsma[0]}</span
                                         >
                                     {/if}
                                 </td>
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={errorData?.asma}
+                                        hasError={$sejarahPenyakitErrors.asma
+                                            ? true
+                                            : false}
                                         name="asma"
                                         label=""
                                         type="text"
-                                        value="-"
+                                        bind:value={$sejarahPenyakitForm.asma}
                                     ></TextField>
 
-                                    {#if errorData?.asma}
+                                    {#if $sejarahPenyakitErrors.asma}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData?.asma[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .asma[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1582,13 +1034,13 @@
                                         {options}
                                         name="sendiriSakitBuahPinggang"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.sendiriSakitBuahPinggang}
                                     ></RadioSingle>
-                                    {#if errorData?.sendiriSakitBuahPinggang}
+                                    {#if $sejarahPenyakitErrors.sendiriSakitBuahPinggang}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.sendiriSakitBuahPinggang[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sendiriSakitBuahPinggang[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1599,31 +1051,33 @@
                                         {options}
                                         name="keluargaSakitBuahPinggang"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.keluargaSakitBuahPinggang}
                                     ></RadioSingle>
-                                    {#if errorData?.keluargaSakitBuahPinggang}
+                                    {#if $sejarahPenyakitErrors.keluargaSakitBuahPinggang}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.keluargaSakitBuahPinggang[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .keluargaSakitBuahPinggang[0]}</span
                                         >
                                     {/if}
                                 </td>
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={errorData?.sakitBuahPinggang}
+                                        hasError={$sejarahPenyakitErrors.sakitBuahPinggang
+                                            ? true
+                                            : false}
                                         name="sakitBuahPinggang"
                                         label=""
                                         type="text"
-                                        value="-"
+                                        bind:value={$sejarahPenyakitForm.sakitBuahPinggang}
                                     ></TextField>
 
-                                    {#if errorData?.sakitBuahPinggang}
+                                    {#if $sejarahPenyakitErrors.sakitBuahPinggang}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.sakitBuahPinggang[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sakitBuahPinggang[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1636,12 +1090,13 @@
                                         {options}
                                         name="sendiriBarah"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.sendiriBarah}
                                     ></RadioSingle>
-                                    {#if errorData?.sendiriBarah}
+                                    {#if $sejarahPenyakitErrors.sendiriBarah}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData?.sendiriBarah[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sendiriBarah[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1652,29 +1107,33 @@
                                         {options}
                                         name="keluargaBarah"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.keluargaBarah}
                                     ></RadioSingle>
-                                    {#if errorData?.keluargaBarah}
+                                    {#if $sejarahPenyakitErrors.keluargaBarah}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData?.keluargaBarah[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .keluargaBarah[0]}</span
                                         >
                                     {/if}
                                 </td>
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={errorData?.barah}
+                                        hasError={$sejarahPenyakitErrors.barah
+                                            ? true
+                                            : false}
                                         name="barah"
                                         label=""
                                         type="text"
-                                        value="-"
+                                        bind:value={$sejarahPenyakitForm.barah}
                                     ></TextField>
 
-                                    {#if errorData?.barah}
+                                    {#if $sejarahPenyakitErrors.barah}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData?.barah[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .barah[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1687,13 +1146,13 @@
                                         {options}
                                         name="sendiriBatukKering"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.sendiriBatukKering}
                                     ></RadioSingle>
-                                    {#if errorData?.sendiriBatukKering}
+                                    {#if $sejarahPenyakitErrors.sendiriBatukKering}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.sendiriBatukKering[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sendiriBatukKering[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1704,30 +1163,33 @@
                                         {options}
                                         name="keluargaBatukKering"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.keluargaBatukKering}
                                     ></RadioSingle>
-                                    {#if errorData?.keluargaBatukKering}
+                                    {#if $sejarahPenyakitErrors.keluargaBatukKering}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.keluargaBatukKering[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .keluargaBatukKering[0]}</span
                                         >
                                     {/if}
                                 </td>
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={errorData?.batukKering}
+                                        hasError={$sejarahPenyakitErrors.batukKering
+                                            ? true
+                                            : false}
                                         name="batukKering"
                                         label=""
                                         type="text"
-                                        value="-"
+                                        bind:value={$sejarahPenyakitForm.batukKering}
                                     ></TextField>
 
-                                    {#if errorData?.batukKering}
+                                    {#if $sejarahPenyakitErrors.batukKering}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData?.batukKering[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .batukKering[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1740,13 +1202,13 @@
                                         {options}
                                         name="sendiriKetagihanDadah"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.sendiriKetagihanDadah}
                                     ></RadioSingle>
-                                    {#if errorData?.sendiriKetagihanDadah}
+                                    {#if $sejarahPenyakitErrors.sendiriKetagihanDadah}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.sendiriKetagihanDadah[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sendiriKetagihanDadah[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1757,31 +1219,33 @@
                                         {options}
                                         name="keluargaKetagihanDadah"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.keluargaKetagihanDadah}
                                     ></RadioSingle>
-                                    {#if errorData?.keluargaKetagihanDadah}
+                                    {#if $sejarahPenyakitErrors.keluargaKetagihanDadah}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.keluargaKetagihanDadah[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .keluargaKetagihanDadah[0]}</span
                                         >
                                     {/if}
                                 </td>
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={errorData?.ketagihanDadah}
+                                        hasError={$sejarahPenyakitErrors.ketagihanDadah
+                                            ? true
+                                            : false}
                                         name="ketagihanDadah"
                                         label=""
                                         type="text"
-                                        value="-"
+                                        bind:value={$sejarahPenyakitForm.ketagihanDadah}
                                     ></TextField>
 
-                                    {#if errorData?.ketagihanDadah}
+                                    {#if $sejarahPenyakitErrors.ketagihanDadah}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.ketagihanDadah[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .ketagihanDadah[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1794,12 +1258,13 @@
                                         {options}
                                         name="sendiriAIDS"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.sendiriAIDS}
                                     ></RadioSingle>
-                                    {#if errorData?.sendiriAIDS}
+                                    {#if $sejarahPenyakitErrors.sendiriAIDS}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData?.sendiriAIDS[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sendiriAIDS[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1810,29 +1275,33 @@
                                         {options}
                                         name="keluargaAIDS"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.keluargaAIDS}
                                     ></RadioSingle>
-                                    {#if errorData?.keluargaAIDS}
+                                    {#if $sejarahPenyakitErrors.keluargaAIDS}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData?.keluargaAIDS[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .keluargaAIDS[0]}</span
                                         >
                                     {/if}
                                 </td>
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={errorData?.AIDS}
+                                        hasError={$sejarahPenyakitErrors.AIDS
+                                            ? true
+                                            : false}
                                         name="AIDS"
                                         label=""
                                         type="text"
-                                        value="-"
+                                        bind:value={$sejarahPenyakitForm.AIDS}
                                     ></TextField>
 
-                                    {#if errorData?.AIDS}
+                                    {#if $sejarahPenyakitErrors.AIDS}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData?.AIDS[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .AIDS[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1845,13 +1314,13 @@
                                         {options}
                                         name="sendiriHepatitisB"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.sendiriHepatitisB}
                                     ></RadioSingle>
-                                    {#if errorData?.sendiriHepatitisB}
+                                    {#if $sejarahPenyakitErrors.sendiriHepatitisB}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.sendiriHepatitisB[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sendiriHepatitisB[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1862,30 +1331,33 @@
                                         {options}
                                         name="keluargaHepatitisB"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.keluargaHepatitisB}
                                     ></RadioSingle>
-                                    {#if errorData?.keluargaHepatitisB}
+                                    {#if $sejarahPenyakitErrors.keluargaHepatitisB}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.keluargaHepatitisB[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .keluargaHepatitisB[0]}</span
                                         >
                                     {/if}
                                 </td>
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={errorData?.hepatitisB}
+                                        hasError={$sejarahPenyakitErrors.hepatitisB
+                                            ? true
+                                            : false}
                                         name="hepatitisB"
                                         label=""
                                         type="text"
-                                        value="-"
+                                        bind:value={$sejarahPenyakitForm.hepatitisB}
                                     ></TextField>
 
-                                    {#if errorData?.hepatitisB}
+                                    {#if $sejarahPenyakitErrors.hepatitisB}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData?.hepatitisB[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .hepatitisB[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1898,13 +1370,13 @@
                                         {options}
                                         name="sendiriSejarahPembedahan"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.sendiriSejarahPembedahan}
                                     ></RadioSingle>
-                                    {#if errorData?.sendiriSejarahPembedahan}
+                                    {#if $sejarahPenyakitErrors.sendiriSejarahPembedahan}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.sendiriSejarahPembedahan[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sendiriSejarahPembedahan[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1915,31 +1387,33 @@
                                         {options}
                                         name="keluargaSejarahPembedahan"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.keluargaSejarahPembedahan}
                                     ></RadioSingle>
-                                    {#if errorData?.keluargaSejarahPembedahan}
+                                    {#if $sejarahPenyakitErrors.keluargaSejarahPembedahan}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.keluargaSejarahPembedahan[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .keluargaSejarahPembedahan[0]}</span
                                         >
                                     {/if}
                                 </td>
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={errorData?.sejarahPembedahan}
+                                        hasError={$sejarahPenyakitErrors.sejarahPembedahan
+                                            ? true
+                                            : false}
                                         name="sejarahPembedahan"
                                         label=""
                                         type="text"
-                                        value="-"
+                                        bind:value={$sejarahPenyakitForm.sejarahPembedahan}
                                     ></TextField>
 
-                                    {#if errorData?.sejarahPembedahan}
+                                    {#if $sejarahPenyakitErrors.sejarahPembedahan}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.sejarahPembedahan[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sejarahPembedahan[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1952,13 +1426,13 @@
                                         {options}
                                         name="sendiriKecacatan"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.sendiriKecacatan}
                                     ></RadioSingle>
-                                    {#if errorData?.sendiriKecacatan}
+                                    {#if $sejarahPenyakitErrors.sendiriKecacatan}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.sendiriKecacatan[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sendiriKecacatan[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -1969,30 +1443,33 @@
                                         {options}
                                         name="keluargaKecacatan"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.keluargaKecacatan}
                                     ></RadioSingle>
-                                    {#if errorData?.keluargaKecacatan}
+                                    {#if $sejarahPenyakitErrors.keluargaKecacatan}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.keluargaKecacatan[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .keluargaKecacatan[0]}</span
                                         >
                                     {/if}
                                 </td>
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={errorData?.kecacatan}
+                                        hasError={$sejarahPenyakitErrors.kecacatan
+                                            ? true
+                                            : false}
                                         name="kecacatan"
                                         label=""
                                         type="text"
-                                        value="-"
+                                        bind:value={$sejarahPenyakitForm.kecacatan}
                                     ></TextField>
 
-                                    {#if errorData?.kecacatan}
+                                    {#if $sejarahPenyakitErrors.kecacatan}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData?.kecacatan[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .kecacatan[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -2005,13 +1482,13 @@
                                         {options}
                                         name="sendiriMerokok"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.sendiriMerokok}
                                     ></RadioSingle>
-                                    {#if errorData?.sendiriMerokok}
+                                    {#if $sejarahPenyakitErrors.sendiriMerokok}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.sendiriMerokok[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sendiriMerokok[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -2022,30 +1499,33 @@
                                         {options}
                                         name="keluargaMerokok"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.keluargaMerokok}
                                     ></RadioSingle>
-                                    {#if errorData?.keluargaMerokok}
+                                    {#if $sejarahPenyakitErrors.keluargaMerokok}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.keluargaMerokok[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .keluargaMerokok[0]}</span
                                         >
                                     {/if}
                                 </td>
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={errorData?.merokok}
+                                        hasError={$sejarahPenyakitErrors.merokok
+                                            ? true
+                                            : false}
                                         name="merokok"
                                         label=""
                                         type="text"
-                                        value="-"
+                                        bind:value={$sejarahPenyakitForm.merokok}
                                     ></TextField>
 
-                                    {#if errorData?.merokok}
+                                    {#if $sejarahPenyakitErrors.merokok}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData?.merokok[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .merokok[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -2058,13 +1538,13 @@
                                         {options}
                                         name="sendiriPenyakitSeriusLain"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.sendiriPenyakitSeriusLain}
                                     ></RadioSingle>
-                                    {#if errorData?.sendiriPenyakitSeriusLain}
+                                    {#if $sejarahPenyakitErrors.sendiriPenyakitSeriusLain}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.sendiriPenyakitSeriusLain[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sendiriPenyakitSeriusLain[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -2075,31 +1555,33 @@
                                         {options}
                                         name="keluargaPenyakitSeriusLain"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.keluargaPenyakitSeriusLain}
                                     ></RadioSingle>
-                                    {#if errorData?.keluargaPenyakitSeriusLain}
+                                    {#if $sejarahPenyakitErrors.keluargaPenyakitSeriusLain}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.keluargaPenyakitSeriusLain[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .keluargaPenyakitSeriusLain[0]}</span
                                         >
                                     {/if}
                                 </td>
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={errorData?.penyakitSeriusLain}
+                                        hasError={$sejarahPenyakitErrors.penyakitSeriusLain
+                                            ? true
+                                            : false}
                                         name="penyakitSeriusLain"
                                         label=""
                                         type="text"
-                                        value="-"
+                                        bind:value={$sejarahPenyakitForm.penyakitSeriusLain}
                                     ></TextField>
 
-                                    {#if errorData?.penyakitSeriusLain}
+                                    {#if $sejarahPenyakitErrors.penyakitSeriusLain}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.penyakitSeriusLain[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .penyakitSeriusLain[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -2112,13 +1594,13 @@
                                         {options}
                                         name="sendiriSedangMenerimaRawatan"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.sendiriSedangMenerimaRawatan}
                                     ></RadioSingle>
-                                    {#if errorData?.sendiriSedangMenerimaRawatan}
+                                    {#if $sejarahPenyakitErrors.sendiriSedangMenerimaRawatan}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.sendiriSedangMenerimaRawatan[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sendiriSedangMenerimaRawatan[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -2129,31 +1611,33 @@
                                         {options}
                                         name="keluargaSedangMenerimaRawatan"
                                         legend=""
-                                        bind:userSelected={radioValue}
+                                        bind:userSelected={$sejarahPenyakitForm.keluargaSedangMenerimaRawatan}
                                     ></RadioSingle>
-                                    {#if errorData?.keluargaSedangMenerimaRawatan}
+                                    {#if $sejarahPenyakitErrors.keluargaSedangMenerimaRawatan}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.keluargaSedangMenerimaRawatan[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .keluargaSedangMenerimaRawatan[0]}</span
                                         >
                                     {/if}
                                 </td>
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={errorData?.sedangMenerimaRawatan}
+                                        hasError={$sejarahPenyakitErrors.sedangMenerimaRawatan
+                                            ? true
+                                            : false}
                                         name="sedangMenerimaRawatan"
                                         label=""
                                         type="text"
-                                        value="-"
+                                        bind:value={$sejarahPenyakitForm.sedangMenerimaRawatan}
                                     ></TextField>
 
-                                    {#if errorData?.sedangMenerimaRawatan}
+                                    {#if $sejarahPenyakitErrors.sedangMenerimaRawatan}
                                         <span
                                             class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.sedangMenerimaRawatan[0]}</span
+                                            >{$sejarahPenyakitErrors
+                                                .sedangMenerimaRawatan[0]}</span
                                         >
                                     {/if}
                                 </td>
@@ -2567,8 +2051,7 @@
                                 {#if errorData?.penglihatanWarna}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData
-                                            ?.penglihatanWarna[0]}</span
+                                        >{errorData?.penglihatanWarna[0]}</span
                                     >
                                 {/if}
                             </td>

@@ -65,7 +65,7 @@
 
         <!-- Rekod Kesihatan Tab -->
         <TabContent paddingClass="p-0" title="Rekod Kesihatan"
-            ><RekodKesihatan {disabled}></RekodKesihatan>
+            ><RekodKesihatan {data} {disabled}></RekodKesihatan>
         </TabContent>
 
         <!-- Maklumat Kontrak Tab -->
