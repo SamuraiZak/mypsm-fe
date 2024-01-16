@@ -226,6 +226,15 @@ export default {
                             dark: '#2C2C2E',
                         },
                     },
+                    ui: {
+                        sidebarItem: {
+                            light: {
+                                active: '#E9F2FF',
+                                inactive: '#FFFFFF',
+                                hover: '#F1F2F4',
+                            },
+                        },
+                    },
                 },
             },
         },
