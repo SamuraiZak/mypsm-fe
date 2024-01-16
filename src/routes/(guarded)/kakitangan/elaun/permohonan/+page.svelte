@@ -21,6 +21,9 @@
     import PerpindahanRumah from './forms/PerpindahanRumah.svelte';
     import PembayaranBalikPassport from './forms/PembayaranBalikPassport.svelte';
     import InsuransKesihatan from './forms/InsuransKesihatan.svelte';
+    import type { PageData } from './$types';
+    
+    export let data: PageData;
 
     let activeStepper = 0;
     let currEmp = mockEmployees[0];
@@ -132,7 +135,7 @@
                 ></DropdownSelect>
 
                 {#if selectedAllowance === 'Bantuan Pakaian Istiadat'}
-                    <BantuanPakaianIstiadat></BantuanPakaianIstiadat>
+                    <BantuanPakaianIstiadat {data}></BantuanPakaianIstiadat>
                 {:else if selectedAllowance === 'Bantuan Pakaian Panas'}
                     <BantuanPakaianPanas></BantuanPakaianPanas>
                 {:else if selectedAllowance === 'Tambang Mengunjungi Wilayah Asal'}
