@@ -57,7 +57,7 @@
         >
             <!-- sidebar -->
             <div
-                class="no-scrollbar flex h-full w-[250px] min-w-[250px] max-w-[250px] flex-col overflow-y-auto overflow-x-hidden border-r border-bdr-primary bg-bgr-secondary"
+                class="no-scrollbar flex h-full w-[200px] min-w-[200px] max-w-[200px] flex-col overflow-y-auto overflow-x-hidden border-r border-bdr-primary bg-bgr-secondary"
             >
                 
                 {#if currentActiveRole == 'kakitangan'}
@@ -95,7 +95,7 @@
 
             <!-- content wrapper -->
             <div
-                class="flex h-full w-[calc(100vw-250px)] flex-col items-start justify-start overflow-y-hidden bg-bgr-primary"
+                class="flex h-full w-[calc(100vw-200px)] flex-col items-start justify-start overflow-y-hidden bg-bgr-primary"
             >
                 <!-- breadcrumb -->
                 <div
