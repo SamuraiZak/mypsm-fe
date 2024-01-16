@@ -58,7 +58,7 @@
             SPA: true,
             validators: _stepperMaklumatPeribadi,
             onSubmit() {
-                _submitFormStepperMaklumatPeribadi($form);
+                _submitFormStepperMaklumatPerkhidmatan($form);
             },
             taintedMessage:
                 'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
@@ -1165,12 +1165,11 @@
                         bind:selectedDate={$maklumatPerkhidmatanForm.tarikhBersara}
                     ></DateSelector>
                     {#if $maklumatPerkhidmatanErrors.tarikhBersara}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$maklumatPerkhidmatanErrors
-                                .tarikhBersara[0]}</span
-                        >
-                    {/if}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$maklumatPerkhidmatanErrors.tarikhBersara[0]}</span
+                    >
+                {/if}
 
                     <p class={stepperFormTitleClass}>
                         Maklumat Gaji dan Elaun - Elaun
@@ -1189,12 +1188,11 @@
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.tarikhBerkuatKuasa}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$maklumatPerkhidmatanErrors
-                                        .tarikhBerkuatKuasa[0]}</span
-                                >
-                            {/if}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$maklumatPerkhidmatanErrors.tarikhBerkuatKuasa[0]}</span
+                            >
+                        {/if}
                             <TextField
                                 {disabled}
                                 hasError={$maklumatPerkhidmatanErrors.tanggaGaji
@@ -1207,12 +1205,11 @@
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.tanggaGaji}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$maklumatPerkhidmatanErrors
-                                        .tanggaGaji[0]}</span
-                                >
-                            {/if}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$maklumatPerkhidmatanErrors.tanggaGaji[0]}</span
+                            >
+                        {/if}
 
                             <TextField
                                 {disabled}
@@ -1226,12 +1223,11 @@
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.gajiPokok}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$maklumatPerkhidmatanErrors
-                                        .gajiPokok[0]}</span
-                                >
-                            {/if}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$maklumatPerkhidmatanErrors.gajiPokok[0]}</span
+                            >
+                        {/if}
                         </div>
 
                         <div class="space-y-2.5">
@@ -1249,11 +1245,11 @@
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.itka}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$maklumatPerkhidmatanErrors.itka[0]}</span
-                                >
-                            {/if}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$maklumatPerkhidmatanErrors.itka[0]}</span
+                            >
+                        {/if}
                             <TextField
                                 {disabled}
                                 hasTooltip={true}
@@ -1268,11 +1264,11 @@
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.itp}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$maklumatPerkhidmatanErrors.itp[0]}</span
-                                >
-                            {/if}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$maklumatPerkhidmatanErrors.itp[0]}</span
+                            >
+                        {/if}
 
                             <TextField
                                 {disabled}
@@ -1287,12 +1283,12 @@
                                 bind:value={$maklumatPerkhidmatanForm.epw}
                             ></TextField>
 
-                            {#if $maklumatPerkhidmatanErrors.itp}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$maklumatPerkhidmatanErrors.itp[0]}</span
-                                >
-                            {/if}
+                            {#if $maklumatPerkhidmatanErrors.epw}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$maklumatPerkhidmatanErrors.epw[0]}</span
+                            >
+                        {/if}
 
                             <TextField
                                 {disabled}
@@ -1307,11 +1303,11 @@
                                 bind:value={$maklumatPerkhidmatanForm.cola}
                             ></TextField>
                             {#if $maklumatPerkhidmatanErrors.cola}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$maklumatPerkhidmatanErrors.cola[0]}</span
-                                >
-                            {/if}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$maklumatPerkhidmatanErrors.cola[0]}</span
+                            >
+                        {/if}
                             <!-- Tooltip body -->
                             <Tooltip
                                 type="dark"
@@ -1949,4 +1945,4 @@
         >
     </StepperContent>
 </Stepper>
-<Toaster />
+

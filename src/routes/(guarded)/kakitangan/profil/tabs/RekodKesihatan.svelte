@@ -20,12 +20,16 @@
         _stepperSejarahPenyakit,
         _submitFormStepperSejarahPenyakit,
     } from '../+page';
+    import {
+        _stepperPemeriksaanDoktor,
+        _submitFormStepperPemeriksaanDoktor,
+    } from '../+page';
 
     export let disabled: boolean = false;
     export let data: PageData;
 
     let stepperFormTitleClass =
-        'w-full h-fit mt-2 bg-bgr-primary text-system-primary text-sm font-medium';
+        'w-full h-fit mt-2 bg-bgr-primary text-system- text-sm font-medium';
 
     let radioValue: any = 'tidak';
 
@@ -69,472 +73,22 @@
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
 
-    // =================================================================================
-    // z validation schema for the example form fields==================================
-    // =================================================================================
+    const {
+        form: pemeriksaanDoktorForm,
+        errors: pemeriksaanDoktorErrors,
+        enhance: pemeriksaanDoktorEnhance,
+    } = superForm(data.stepperPemeriksaanDoktor, {
+        SPA: true,
+        validators: _stepperPemeriksaanDoktor,
+        onSubmit() {
+            _submitFormStepperPemeriksaanDoktor($pemeriksaanDoktorForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
     let errorData: any;
 
-    //==========================================================
-    //============== stepper Sejarah Penyakit ==================
-    //==========================================================
 
-    //==========================================================
-    //============== stepper Pemeriksaan Doktor ================
-    //==========================================================
-
-    const stepperPemeriksaanDoktor = z.object({
-        tinggi: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(2, {
-                message: 'Medan ini hendaklah lebih daripada 2 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        berat: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(1, {
-                message: 'Medan ini hendaklah lebih daripada 1 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        bmi: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(1, {
-                message: 'Medan ini hendaklah lebih daripada 1 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        denyutanNadi: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(1, {
-                message: 'Medan ini hendaklah lebih daripada 1 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        bp: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(1, {
-                message: 'Medan ini hendaklah lebih daripada 1 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        penglihatanTanpaBantuan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        penglihatanDenganBantuan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        penglihatanWarna: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        funduskopi: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        telinga: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        ronggaGigiMulut: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        leher: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        kardiovaskular: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        pemeriksaan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        xray: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        tarikhPengambilanXray: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        lokasiPengambilanXray: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        nomborRujukanXray: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        abdomenHernia: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        sistemSaraf: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        sistemMuskuloskeletal: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        mikroskopi: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-
-        kulitPucat: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sianosis: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        edama: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        penyakitKuning: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        kelenjarLimfa: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        penyakitKulit: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        penglihatanWarnaRadio: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        funduskopiRadio: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        telingaRadio: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        ronggaGigiMulutRadio: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        leherRadio: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        kardiovaskularRadio: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        pemeriksaanRadio: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        xrayRadio: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        abdomenHerniaRadio: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sistemSarafRadio: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        sistemMuskuloskeletalRadio: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        gula: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        albumin: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-    });
-
-    //------------------------------------------------------>
-    //---------Stepper Sejarah Penyakit--------------------->
-    //------------------------------------------------------>
-
-    //------------------------------------------------------>
-    //---------Stepper Pemeriksaan Doktor------------------->
-    //------------------------------------------------------>
-
-    const submitFormstepperPemeriksaanDoktor = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-
-        const exampleFormData = {
-            tinggi: String(formData.get('tinggi')),
-            berat: String(formData.get('berat')),
-            bmi: String(formData.get('bmi')),
-            denyutanNadi: String(formData.get('denyutanNadi')),
-            bp: String(formData.get('bp')),
-            penglihatanTanpaBantuan: String(
-                formData.get('penglihatanTanpaBantuan'),
-            ),
-            penglihatanDenganBantuan: String(
-                formData.get('penglihatanDenganBantuan'),
-            ),
-            penglihatanWarna: String(formData.get('penglihatanWarna')),
-            funduskopi: String(formData.get('funduskopi')),
-            telinga: String(formData.get('telinga')),
-            ronggaGigiMulut: String(formData.get('ronggaGigiMulut')),
-            leher: String(formData.get('leher')),
-            kardiovaskular: String(formData.get('kardiovaskular')),
-            pemeriksaan: String(formData.get('pemeriksaan')),
-            xray: String(formData.get('xray')),
-            tarikhPengambilanXray: String(
-                formData.get('tarikhPengambilanXray'),
-            ),
-            lokasiPengambilanXray: String(
-                formData.get('lokasiPengambilanXray'),
-            ),
-            nomborRujukanXray: String(formData.get('nomborRujukanXray')),
-            abdomenHernia: String(formData.get('abdomenHernia')),
-            sistemSaraf: String(formData.get('sistemSaraf')),
-            sistemMuskuloskeletal: String(
-                formData.get('sistemMuskuloskeletal'),
-            ),
-            mikroskopi: String(formData.get('mikroskopi')),
-
-            kulitPucat: String(formData.get('kulitPucat')),
-            sianosis: String(formData.get('sianosis')),
-            edama: String(formData.get('edama')),
-            penyakitKuning: String(formData.get('penyakitKuning')),
-            kelenjarLimfa: String(formData.get('kelenjarLimfa')),
-            penyakitKulit: String(formData.get('penyakitKulit')),
-            penglihatanWarnaRadio: String(
-                formData.get('penglihatanWarnaRadio'),
-            ),
-            funduskopiRadio: String(formData.get('funduskopiRadio')),
-            telingaRadio: String(formData.get('telingaRadio')),
-            ronggaGigiMulutRadio: String(formData.get('ronggaGigiMulutRadio')),
-            leherRadio: String(formData.get('leherRadio')),
-            kardiovaskularRadio: String(formData.get('kardiovaskularRadio')),
-            pemeriksaanRadio: String(formData.get('pemeriksaanRadio')),
-            xrayRadio: String(formData.get('xrayRadio')),
-            abdomenHerniaRadio: String(formData.get('abdomenHerniaRadio')),
-            sistemSarafRadio: String(formData.get('sistemSarafRadio')),
-            sistemMuskuloskeletalRadio: String(
-                formData.get('sistemMuskuloskeletalRadio'),
-            ),
-            gula: String(formData.get('gula')),
-            albumin: String(formData.get('albumin')),
-        };
-
-        try {
-            const result = stepperPemeriksaanDoktor.parse(exampleFormData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedExamFormData = { ...exampleFormData, id };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedExamFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
 </script>
 
 <Stepper>
@@ -614,7 +168,7 @@
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={$sejarahPenyakitForm.penyakitSejakLahir
+                                        hasError={$sejarahPenyakitErrors.penyakitSejakLahir
                                             ? true
                                             : false}
                                         name="penyakitSejakLahir"
@@ -623,10 +177,10 @@
                                         bind:value={$sejarahPenyakitForm.penyakitSejakLahir}
                                     ></TextField>
 
-                                    {#if $sejarahPenyakitForm.penyakitSejakLahir}
+                                    {#if $sejarahPenyakitErrors.penyakitSejakLahir}
                                         <span
-                                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                            >{$sejarahPenyakitForm
+                                            class="font-sans text-sm italic text-system-danger"
+                                            >{$sejarahPenyakitErrors
                                                 .penyakitSejakLahir[0]}</span
                                         >
                                     {/if}
@@ -670,7 +224,7 @@
                                 <td>
                                     <TextField
                                         {disabled}
-                                        hasError={$sejarahPenyakitForm.alahan
+                                        hasError={$sejarahPenyakitErrors.alahan
                                             ? true
                                             : false}
                                         name="alahan"
@@ -1678,8 +1232,9 @@
         <StepperContentBody>
             <form
                 id="FormStepperPemeriksaanDoktor"
-                on:submit|preventDefault={submitFormstepperPemeriksaanDoktor}
                 class="flex w-full flex-col gap-2"
+                use:pemeriksaanDoktorEnhance
+                method="POST"
             >
                 <div
                     class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
@@ -1687,91 +1242,93 @@
                     <p class="text-sm font-bold">Pemeriksaan Am</p>
                     <TextField
                         {disabled}
-                        hasError={errorData?.tinggi}
+                        hasError={$pemeriksaanDoktorErrors.tinggi
+                            ? true
+                            : false}
                         name="tinggi"
                         label="Tinggi (cm)"
                         type="text"
-                        value="169"
+                        bind:value={$pemeriksaanDoktorForm.tinggi}
                     ></TextField>
 
-                    {#if errorData?.tinggi}
+                    {#if $pemeriksaanDoktorErrors.tinggi}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.tinggi[0]}</span
+                            >{$pemeriksaanDoktorErrors.tinggi[0]}</span
                         >
                     {/if}
                     <TextField
                         {disabled}
-                        hasError={errorData?.berat}
+                        hasError={$pemeriksaanDoktorErrors.berat ? true : false}
                         name="berat"
                         label="berat (kg)"
                         type="text"
-                        value="65"
+                        bind:value={$pemeriksaanDoktorForm.berat}
                     ></TextField>
-
-                    {#if errorData?.berat}
+                    {#if $pemeriksaanDoktorErrors.berat}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.berat[0]}</span
+                            >{$pemeriksaanDoktorErrors.berat[0]}</span
                         >
                     {/if}
                     <TextField
                         {disabled}
-                        hasError={errorData?.bmi}
+                        hasError={$pemeriksaanDoktorErrors.bmi ? true : false}
                         name="bmi"
                         label="BMI"
                         type="text"
-                        value="22.76"
+                        bind:value={$pemeriksaanDoktorForm.bmi}
                     ></TextField>
 
-                    {#if errorData?.bmi}
+                    {#if $pemeriksaanDoktorErrors.bmi}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.bmi[0]}</span
+                            >{$pemeriksaanDoktorErrors.bmi[0]}</span
                         >
                     {/if}
                     <TextField
                         {disabled}
-                        hasError={errorData?.denyutanNadi}
+                        hasError={$pemeriksaanDoktorErrors.denyutanNadi
+                            ? true
+                            : false}
                         name="denyutanNadi"
                         label="Denyutan Nadi (setiap minit )"
                         type="text"
-                        value="90"
+                        bind:value={$pemeriksaanDoktorForm.denyutanNadi}
                     ></TextField>
 
-                    {#if errorData?.denyutanNadi}
+                    {#if $pemeriksaanDoktorErrors.denyutanNadi}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.denyutanNadi[0]}</span
+                            >{$pemeriksaanDoktorErrors.denyutanNadi[0]}</span
                         >
                     {/if}
                     <TextField
                         {disabled}
-                        hasError={errorData?.bp}
+                        hasError={$pemeriksaanDoktorErrors.bp ? true : false}
                         name="bp"
                         label="BP (mmHg)"
                         type="text"
-                        value="120/80"
+                        bind:value={$pemeriksaanDoktorForm.bp}
                     ></TextField>
 
-                    {#if errorData?.bp}
+                    {#if $pemeriksaanDoktorErrors.bp}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.bp[0]}</span
+                            >{$pemeriksaanDoktorErrors.bp[0]}</span
                         >
                     {/if}
-
                     <RadioSingle
                         {disabled}
                         {options}
                         name="kulitPucat"
                         legend="Kulit pucat"
-                        bind:userSelected={radioValue}
+                        bind:userSelected={$pemeriksaanDoktorForm.kulitPucat}
                     ></RadioSingle>
-                    {#if errorData?.kulitPucat}
+                    {#if $pemeriksaanDoktorErrors.kulitPucat}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.kulitPucat[0]}</span
+                            >{$pemeriksaanDoktorErrors.kulitPucat[0]}</span
                         >
                     {/if}
                     <RadioSingle
@@ -1779,12 +1336,12 @@
                         {options}
                         name="sianosis"
                         legend="Sianosis"
-                        bind:userSelected={radioValue}
+                        bind:userSelected={$pemeriksaanDoktorForm.sianosis}
                     ></RadioSingle>
-                    {#if errorData?.sianosis}
+                    {#if $pemeriksaanDoktorErrors.sianosis}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.sianosis[0]}</span
+                            >{$pemeriksaanDoktorErrors.sianosis[0]}</span
                         >
                     {/if}
                     <RadioSingle
@@ -1792,12 +1349,12 @@
                         {options}
                         name="edama"
                         legend="Edama"
-                        bind:userSelected={radioValue}
+                        bind:userSelected={$pemeriksaanDoktorForm.edama}
                     ></RadioSingle>
-                    {#if errorData?.edama}
+                    {#if $pemeriksaanDoktorErrors.edama}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.edama[0]}</span
+                            >{$pemeriksaanDoktorErrors.edama[0]}</span
                         >
                     {/if}
                     <RadioSingle
@@ -1805,12 +1362,12 @@
                         {options}
                         name="penyakitKuning"
                         legend="Penyakit kuning"
-                        bind:userSelected={radioValue}
+                        bind:userSelected={$pemeriksaanDoktorForm.penyakitKuning}
                     ></RadioSingle>
-                    {#if errorData?.penyakitKuning}
+                    {#if $pemeriksaanDoktorErrors.penyakitKuning}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.penyakitKuning[0]}</span
+                            >{$pemeriksaanDoktorErrors.penyakitKuning[0]}</span
                         >
                     {/if}
                     <RadioSingle
@@ -1818,12 +1375,12 @@
                         {options}
                         name="kelenjarLimfa"
                         legend="Kelenjar limfa"
-                        bind:userSelected={radioValue}
+                        bind:userSelected={$pemeriksaanDoktorForm.kelenjarLimfa}
                     ></RadioSingle>
-                    {#if errorData?.kelenjarLimfa}
+                    {#if $pemeriksaanDoktorErrors?.kelenjarLimfa}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.kelenjarLimfa[0]}</span
+                            >{$pemeriksaanDoktorErrors?.kelenjarLimfa[0]}</span
                         >
                     {/if}
                     <RadioSingle
@@ -1831,12 +1388,12 @@
                         {options}
                         name="penyakitKulit"
                         legend="Penyakit kulit"
-                        bind:userSelected={radioValue}
+                        bind:userSelected={$pemeriksaanDoktorForm.penyakitKulit}
                     ></RadioSingle>
-                    {#if errorData?.penyakitKulit}
+                    {#if $pemeriksaanDoktorErrors.penyakitKulit}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.penyakitKulit[0]}</span
+                            >{$pemeriksaanDoktorErrors.penyakitKulit[0]}</span
                         >
                     {/if}
                 </div>
@@ -1852,18 +1409,19 @@
                             <td class="w-[200px] min-w-[160px] max-w-[220px]">
                                 <TextField
                                     {disabled}
-                                    hasError={errorData?.penglihatanTanpaBantuan}
+                                    hasError={$pemeriksaanDoktorErrors.penglihatanTanpaBantuan
+                                        ? true
+                                        : false}
                                     name="penglihatanTanpaBantuan"
                                     label=""
                                     type="text"
-                                    value="6/6"
+                                    bind:value={$pemeriksaanDoktorForm.penglihatanTanpaBantuan}
                                 ></TextField>
-
-                                {#if errorData?.penglihatanTanpaBantuan}
+                                {#if $pemeriksaanDoktorErrors.penglihatanTanpaBantuan}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData
-                                            ?.penglihatanTanpaBantuan[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .penglihatanTanpaBantuan[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -1871,36 +1429,38 @@
                             <td>
                                 <TextField
                                     {disabled}
-                                    hasError={errorData?.penglihatanTanpaBantuan}
-                                    name="penglihatanTanpaBantuan"
+                                    hasError={$pemeriksaanDoktorErrors.penglihatanTanpaBantuan2
+                                        ? true
+                                        : false}
+                                    name="penglihatanTanpaBantuan2"
                                     label=""
                                     type="text"
-                                    value="6/6"
+                                    bind:value={$pemeriksaanDoktorForm.penglihatanTanpaBantuan2}
                                 ></TextField>
-
-                                {#if errorData?.penglihatanTanpaBantuan}
+                                {#if $pemeriksaanDoktorErrors.penglihatanTanpaBantuan2}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData
-                                            ?.penglihatanTanpaBantuan[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .penglihatanTanpaBantuan2[0]}</span
                                     >
                                 {/if}
                             </td>
                             <td>
                                 <TextField
                                     {disabled}
-                                    hasError={errorData?.penglihatanTanpaBantuan}
-                                    name="penglihatanTanpaBantuan"
+                                    hasError={$pemeriksaanDoktorErrors.penglihatanTanpaBantuan3
+                                        ? true
+                                        : false}
+                                    name="penglihatanTanpaBantuan3"
                                     label=""
                                     type="text"
-                                    value=""
+                                    bind:value={$pemeriksaanDoktorForm.penglihatanTanpaBantuan3}
                                 ></TextField>
-
-                                {#if errorData?.penglihatanTanpaBantuan}
+                                {#if $pemeriksaanDoktorErrors.penglihatanTanpaBantuan3}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData
-                                            ?.penglihatanTanpaBantuan[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .penglihatanTanpaBantuan3[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -1910,54 +1470,57 @@
                             <td>
                                 <TextField
                                     {disabled}
-                                    hasError={errorData?.penglihatanTanpaBantuan}
-                                    name="penglihatanTanpaBantuan"
+                                    hasError={$pemeriksaanDoktorErrors.penglihatanTanpaBantuan4
+                                        ? true
+                                        : false}
+                                    name="penglihatanTanpaBantuan4"
                                     label=""
                                     type="text"
-                                    value="6/6"
+                                    bind:value={$pemeriksaanDoktorForm.penglihatanTanpaBantuan4}
                                 ></TextField>
-
-                                {#if errorData?.penglihatanTanpaBantuan}
+                                {#if $pemeriksaanDoktorErrors.penglihatanTanpaBantuan4}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData
-                                            ?.penglihatanTanpaBantuan[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .penglihatanTanpaBantuan4[0]}</span
                                     >
                                 {/if}
                             </td>
                             <td>
                                 <TextField
                                     {disabled}
-                                    hasError={errorData?.penglihatanTanpaBantuan}
-                                    name="penglihatanTanpaBantuan"
+                                    hasError={$pemeriksaanDoktorErrors.penglihatanTanpaBantuan5
+                                        ? true
+                                        : false}
+                                    name="penglihatanTanpaBantuan5"
                                     label=""
                                     type="text"
-                                    value="6/6"
+                                    bind:value={$pemeriksaanDoktorForm.penglihatanTanpaBantuan5}
                                 ></TextField>
-
-                                {#if errorData?.penglihatanTanpaBantuan}
+                                {#if $pemeriksaanDoktorErrors.penglihatanTanpaBantuan5}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData
-                                            ?.penglihatanTanpaBantuan[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .penglihatanTanpaBantuan5[0]}</span
                                     >
                                 {/if}
                             </td>
                             <td>
                                 <TextField
                                     {disabled}
-                                    hasError={errorData?.penglihatanTanpaBantuan}
-                                    name="penglihatanTanpaBantuan"
+                                    hasError={$pemeriksaanDoktorErrors.penglihatanTanpaBantuan6
+                                        ? true
+                                        : false}
+                                    name="penglihatanTanpaBantuan6"
                                     label=""
                                     type="text"
-                                    value=""
+                                    bind:value={$pemeriksaanDoktorForm.penglihatanTanpaBantuan6}
                                 ></TextField>
-
-                                {#if errorData?.penglihatanTanpaBantuan}
+                                {#if $pemeriksaanDoktorErrors.penglihatanTanpaBantuan6}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData
-                                            ?.penglihatanTanpaBantuan[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .penglihatanTanpaBantuan6[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -1967,58 +1530,64 @@
                             <td>
                                 <TextField
                                     {disabled}
-                                    hasError={errorData?.penglihatanDenganBantuan}
+                                    hasError={$pemeriksaanDoktorErrors.penglihatanDenganBantuan
+                                        ? true
+                                        : false}
                                     name="penglihatanDenganBantuan"
                                     label=""
                                     type="text"
-                                    value="6/6"
+                                    bind:value={$pemeriksaanDoktorForm.penglihatanDenganBantuan}
                                 ></TextField>
-
-                                {#if errorData?.penglihatanDenganBantuan}
+                                {#if $pemeriksaanDoktorErrors.penglihatanDenganBantuan}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData
-                                            ?.penglihatanDenganBantuan[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .penglihatanDenganBantuan[0]}</span
                                     >
                                 {/if}
                             </td>
                             <td>
                                 <TextField
                                     {disabled}
-                                    hasError={errorData?.penglihatanDenganBantuan}
-                                    name="penglihatanDenganBantuan"
+                                    hasError={$pemeriksaanDoktorErrors.penglihatanDenganBantuan2
+                                        ? true
+                                        : false}
+                                    name="penglihatanDenganBantuan2"
                                     label=""
                                     type="text"
-                                    value="6/6"
+                                    bind:value={$pemeriksaanDoktorForm.penglihatanDenganBantuan2}
                                 ></TextField>
 
-                                {#if errorData?.penglihatanDenganBantuan}
+                                {#if $pemeriksaanDoktorErrors.penglihatanDenganBantuan2}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData
-                                            ?.penglihatanDenganBantuan[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .penglihatanDenganBantuan2[0]}</span
                                     >
                                 {/if}
                             </td>
                             <td>
                                 <TextField
                                     {disabled}
-                                    hasError={errorData?.penglihatanDenganBantuan}
-                                    name="penglihatanDenganBantuan"
+                                    hasError={$pemeriksaanDoktorErrors.penglihatanDenganBantuan3
+                                        ? true
+                                        : false}
+                                    name="penglihatanDenganBantuan3"
                                     label=""
                                     type="text"
-                                    value=""
+                                    bind:value={$pemeriksaanDoktorForm.penglihatanDenganBantuan3}
                                 ></TextField>
 
-                                {#if errorData?.penglihatanDenganBantuan}
+                                {#if $pemeriksaanDoktorErrors.penglihatanDenganBantuan3}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData
-                                            ?.penglihatanDenganBantuan[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .penglihatanDenganBantuan3[0]}</span
                                     >
                                 {/if}
                             </td>
                         </tr>
+
                         <tr>
                             <td>Penglihatan Warna</td>
                             <td>
@@ -2027,13 +1596,13 @@
                                     options={normalAbnormalOptions}
                                     name="penglihatanWarnaRadio"
                                     legend=""
-                                    bind:userSelected={isNormal}
+                                    bind:userSelected={$pemeriksaanDoktorForm.penglihatanWarnaRadio}
                                 ></RadioSingle>
-                                {#if errorData?.penglihatanWarnaRadio}
+                                {#if $pemeriksaanDoktorErrors.penglihatanWarnaRadio}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData
-                                            ?.penglihatanWarnaRadio[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .penglihatanWarnaRadio[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -2041,17 +1610,20 @@
                             <td colspan="2">
                                 <TextField
                                     {disabled}
-                                    hasError={errorData?.penglihatanWarna}
+                                    hasError={$pemeriksaanDoktorErrors.penglihatanWarna
+                                        ? true
+                                        : false}
                                     name="penglihatanWarna"
                                     label=""
                                     type="text"
-                                    value="Didisease"
+                                    bind:value={$pemeriksaanDoktorForm.penglihatanWarna}
                                 ></TextField>
 
-                                {#if errorData?.penglihatanWarna}
+                                {#if $pemeriksaanDoktorErrors.penglihatanWarna}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.penglihatanWarna[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .penglihatanWarna[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -2064,12 +1636,13 @@
                                     options={normalAbnormalOptions}
                                     name="funduskopiRadio"
                                     legend=""
-                                    bind:userSelected={isNormal}
+                                    bind:userSelected={$pemeriksaanDoktorForm.funduskopiRadio}
                                 ></RadioSingle>
-                                {#if errorData?.funduskopiRadio}
+                                {#if $pemeriksaanDoktorErrors.funduskopiRadio}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.funduskopiRadio[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .funduskopiRadio[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -2077,17 +1650,20 @@
                             <td colspan="2">
                                 <TextField
                                     {disabled}
-                                    hasError={errorData?.funduskopi}
+                                    hasError={$pemeriksaanDoktorErrors.funduskopi
+                                        ? true
+                                        : false}
                                     name="funduskopi"
                                     label=""
                                     type="text"
-                                    value="-"
+                                    bind:value={$pemeriksaanDoktorForm.funduskopi}
                                 ></TextField>
 
-                                {#if errorData?.funduskopi}
+                                {#if $pemeriksaanDoktorErrors.funduskopi}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.funduskopi[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .funduskopi[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -2108,12 +1684,13 @@
                                     options={normalAbnormalOptions}
                                     name="telingaRadio"
                                     legend=""
-                                    bind:userSelected={isNormal}
+                                    bind:userSelected={$pemeriksaanDoktorForm.telingaRadio}
                                 ></RadioSingle>
-                                {#if errorData?.telingaRadio}
+                                {#if $pemeriksaanDoktorErrors.telingaRadio}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.telingaRadio[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .telingaRadio[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -2121,17 +1698,19 @@
                             <td colspan="2">
                                 <TextField
                                     {disabled}
-                                    hasError={errorData?.telinga}
+                                    hasError={$pemeriksaanDoktorErrors.telinga
+                                        ? true
+                                        : false}
                                     name="telinga"
                                     label=""
                                     type="text"
-                                    value=""
+                                    bind:value={$pemeriksaanDoktorForm.telinga}
                                 ></TextField>
-
-                                {#if errorData?.telinga}
+                                {#if $pemeriksaanDoktorErrors.telinga}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.telinga[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .telinga[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -2148,13 +1727,13 @@
                                     options={normalAbnormalOptions}
                                     name="ronggaGigiMulutRadio"
                                     legend=""
-                                    bind:userSelected={isNormal}
+                                    bind:userSelected={$pemeriksaanDoktorForm.ronggaGigiMulutRadio}
                                 ></RadioSingle>
-                                {#if errorData?.ronggaGigiMulutRadio}
+                                {#if $pemeriksaanDoktorErrors.ronggaGigiMulutRadio}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData
-                                            ?.ronggaGigiMulutRadio[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .ronggaGigiMulutRadio[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -2162,17 +1741,19 @@
                             <td colspan="2">
                                 <TextField
                                     {disabled}
-                                    hasError={errorData?.ronggaGigiMulut}
+                                    hasError={$pemeriksaanDoktorErrors.ronggaGigiMulut
+                                        ? true
+                                        : false}
                                     name="ronggaGigiMulut"
                                     label=""
                                     type="text"
-                                    value=""
+                                    bind:value={$pemeriksaanDoktorForm.ronggaGigiMulut}
                                 ></TextField>
-
-                                {#if errorData?.ronggaGigiMulut}
+                                {#if $pemeriksaanDoktorErrors.ronggaGigiMulut}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.ronggaGigiMulut[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .ronggaGigiMulut[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -2185,12 +1766,13 @@
                                     options={normalAbnormalOptions}
                                     name="leherRadio"
                                     legend=""
-                                    bind:userSelected={isNormal}
+                                    bind:userSelected={$pemeriksaanDoktorForm.leherRadio}
                                 ></RadioSingle>
-                                {#if errorData?.leherRadio}
+                                {#if $pemeriksaanDoktorErrors.leherRadio}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.leherRadio[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .leherRadio[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -2198,17 +1780,19 @@
                             <td colspan="2">
                                 <TextField
                                     {disabled}
-                                    hasError={errorData?.leher}
+                                    hasError={$pemeriksaanDoktorErrors.leher
+                                        ? true
+                                        : false}
                                     name="leher"
                                     label=""
                                     type="text"
-                                    value=""
+                                    bind:value={$pemeriksaanDoktorForm.leher}
                                 ></TextField>
-
-                                {#if errorData?.leher}
+                                {#if $pemeriksaanDoktorErrors.leher}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.leher[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .leher[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -2225,13 +1809,13 @@
                                     options={normalAbnormalOptions}
                                     name="kardiovaskularRadio"
                                     legend=""
-                                    bind:userSelected={isNormal}
+                                    bind:userSelected={$pemeriksaanDoktorForm.kardiovaskularRadio}
                                 ></RadioSingle>
-                                {#if errorData?.kardiovaskularRadio}
+                                {#if $pemeriksaanDoktorErrors.kardiovaskularRadio}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData
-                                            ?.kardiovaskularRadio[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .kardiovaskularRadio[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -2239,17 +1823,19 @@
                             <td colspan="2">
                                 <TextField
                                     {disabled}
-                                    hasError={errorData?.kardiovaskular}
+                                    hasError={$pemeriksaanDoktorErrors.kardiovaskular
+                                        ? true
+                                        : false}
                                     name="kardiovaskular"
                                     label=""
                                     type="text"
-                                    value=""
+                                    bind:value={$pemeriksaanDoktorForm.kardiovaskular}
                                 ></TextField>
-
-                                {#if errorData?.kardiovaskular}
+                                {#if $pemeriksaanDoktorErrors.kardiovaskular}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.kardiovaskular[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .kardiovaskular[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -2271,12 +1857,13 @@
                                     options={normalAbnormalOptions}
                                     name="pemeriksaanRadio"
                                     legend=""
-                                    bind:userSelected={isNormal}
+                                    bind:userSelected={$pemeriksaanDoktorForm.pemeriksaanRadio}
                                 ></RadioSingle>
-                                {#if errorData?.pemeriksaanRadio}
+                                {#if $pemeriksaanDoktorErrors.pemeriksaanRadio}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.pemeriksaanRadio[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .pemeriksaanRadio[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -2284,17 +1871,19 @@
                             <td colspan="2">
                                 <TextField
                                     {disabled}
-                                    hasError={errorData?.pemeriksaan}
+                                    hasError={$pemeriksaanDoktorErrors.pemeriksaan
+                                        ? true
+                                        : false}
                                     name="pemeriksaan"
                                     label=""
                                     type="text"
-                                    value=""
+                                    bind:value={$pemeriksaanDoktorForm.pemeriksaan}
                                 ></TextField>
-
-                                {#if errorData?.pemeriksaan}
+                                {#if $pemeriksaanDoktorErrors.pemeriksaan}
                                     <span
-                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.pemeriksaan[0]}</span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$pemeriksaanDoktorErrors
+                                            .pemeriksaan[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -2307,12 +1896,13 @@
                                     options={normalAbnormalOptions}
                                     name="xrayRadio"
                                     legend=""
-                                    bind:userSelected={isNormal}
+                                    bind:userSelected={$pemeriksaanDoktorForm.xrayRadio}
                                 ></RadioSingle>
-                                {#if errorData?.xrayRadio}
+                                {#if $pemeriksaanDoktorErrors.xrayRadio}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.xrayRadio[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .xrayRadio[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -2320,17 +1910,19 @@
                             <td colspan="2">
                                 <TextField
                                     {disabled}
-                                    hasError={errorData?.xray}
+                                    hasError={$pemeriksaanDoktorErrors.xray
+                                        ? true
+                                        : false}
                                     name="xray"
                                     label=""
                                     type="text"
-                                    value=""
+                                    bind:value={$pemeriksaanDoktorForm.xray}
                                 ></TextField>
-
-                                {#if errorData?.xray}
+                                {#if $pemeriksaanDoktorErrors.xray}
                                     <span
-                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.xray[0]}</span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$pemeriksaanDoktorErrors
+                                            .xray[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -2339,49 +1931,57 @@
 
                     <TextField
                         {disabled}
-                        hasError={errorData?.tarikhPengambilanXray}
+                        hasError={$pemeriksaanDoktorErrors.tarikhPengambilanXray
+                            ? true
+                            : false}
                         name="tarikhPengambilanXray"
                         label="Tarikh pengambilan x-ray"
                         type="text"
-                        value="16/8/2023"
+                        bind:value={$pemeriksaanDoktorForm.tarikhPengambilanXray}
                     ></TextField>
-
-                    {#if errorData?.tarikhPengambilanXray}
+                    {#if $pemeriksaanDoktorErrors.tarikhPengambilanXray}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.tarikhPengambilanXray[0]}</span
+                            >{$pemeriksaanDoktorErrors
+                                .tarikhPengambilanXray[0]}</span
                         >
                     {/if}
 
                     <TextField
                         {disabled}
-                        hasError={errorData?.lokasiPengambilanXray}
+                        hasError={$pemeriksaanDoktorErrors.lokasiPengambilanXray
+                            ? true
+                            : false}
                         name="lokasiPengambilanXray"
                         label="Lokasi pengambilan x-ray"
                         type="text"
-                        value="Pusat Kesihatan Kuching"
+                        bind:value={$pemeriksaanDoktorForm.lokasiPengambilanXray}
                     ></TextField>
 
-                    {#if errorData?.lokasiPengambilanXray}
+                    {#if $pemeriksaanDoktorErrors.lokasiPengambilanXray}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.lokasiPengambilanXray[0]}</span
+                            >{$pemeriksaanDoktorErrors
+                                .lokasiPengambilanXray[0]}</span
                         >
                     {/if}
 
                     <TextField
                         {disabled}
-                        hasError={errorData?.nomborRujukanXray}
+                        hasError={$pemeriksaanDoktorErrors.nomborRujukanXray
+                            ? true
+                            : false}
                         name="nomborRujukanXray"
                         label="Nombor Rujukan x-ray"
                         type="text"
-                        value="7273659"
+                        bind:value={$pemeriksaanDoktorForm.nomborRujukanXray}
                     ></TextField>
 
-                    {#if errorData?.nomborRujukanXray}
+                    {#if $pemeriksaanDoktorErrors.nomborRujukanXray}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.nomborRujukanXray[0]}</span
+                            >{$pemeriksaanDoktorErrors
+                                .nomborRujukanXray[0]}</span
                         >
                     {/if}
                 </div>
@@ -2401,13 +2001,13 @@
                                     options={normalAbnormalOptions}
                                     name="abdomenHerniaRadio"
                                     legend=""
-                                    bind:userSelected={isNormal}
+                                    bind:userSelected={$pemeriksaanDoktorForm.abdomenHerniaRadio}
                                 ></RadioSingle>
-                                {#if errorData?.abdomenHerniaRadio}
+                                {#if $pemeriksaanDoktorErrors.abdomenHerniaRadio}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData
-                                            ?.abdomenHerniaRadio[0]}</span
+                                        >{$pemeriksaanDoktorErrors
+                                            .abdomenHerniaRadio[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -2415,19 +2015,22 @@
                             <td colspan="2">
                                 <TextField
                                     {disabled}
-                                    hasError={errorData?.abdomenHernia}
+                                    hasError={$pemeriksaanDoktorErrors.abdomenHernia
+                                        ? true
+                                        : false}
                                     name="abdomenHernia"
                                     label=""
                                     type="text"
-                                    value=""
+                                    bind:value={$pemeriksaanDoktorForm.abdomenHernia}
                                 ></TextField>
 
-                                {#if errorData?.abdomenHernia}
-                                    <span
-                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.abdomenHernia[0]}</span
-                                    >
-                                {/if}
+                                {#if $pemeriksaanDoktorErrors.abdomenHernia}
+                                <span
+                                    class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                    >{$pemeriksaanDoktorErrors
+                                        .abdomenHernia[0]}</span
+                                >
+                            {/if}
                             </td>
                         </tr>
                         <tr>
@@ -2442,32 +2045,36 @@
                                     options={normalAbnormalOptions}
                                     name="sistemSarafRadio"
                                     legend=""
-                                    bind:userSelected={isNormal}
+                                    bind:userSelected={$pemeriksaanDoktorForm.sistemSarafRadio}
                                 ></RadioSingle>
-                                {#if errorData?.sistemSarafRadio}
-                                    <span
-                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.sistemSarafRadio[0]}</span
-                                    >
-                                {/if}
+                                {#if $pemeriksaanDoktorErrors.sistemSarafRadio}
+                                <span
+                                    class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                    >{$pemeriksaanDoktorErrors
+                                        .sistemSarafRadio[0]}</span
+                                >
+                            {/if}
                             </td>
 
                             <td colspan="2">
                                 <TextField
                                     {disabled}
-                                    hasError={errorData?.sistemSaraf}
+                                    hasError={$pemeriksaanDoktorErrors.sistemSaraf
+                                        ? true
+                                        : false}
                                     name="sistemSaraf"
                                     label=""
                                     type="text"
-                                    value=""
+                                    bind:value={$pemeriksaanDoktorForm.sistemSaraf}
                                 ></TextField>
 
-                                {#if errorData?.sistemSaraf}
-                                    <span
-                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.sistemSaraf[0]}</span
-                                    >
-                                {/if}
+                                {#if $pemeriksaanDoktorErrors.sistemSaraf}
+                                <span
+                                    class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                    >{$pemeriksaanDoktorErrors
+                                        .sistemSaraf[0]}</span
+                                >
+                            {/if}
                             </td>
                         </tr>
                         <tr>
@@ -2482,34 +2089,36 @@
                                     options={normalAbnormalOptions}
                                     name="sistemMuskuloskeletalRadio"
                                     legend=""
-                                    bind:userSelected={isNormal}
+                                    bind:userSelected={$pemeriksaanDoktorForm.sistemMuskuloskeletalRadio}
                                 ></RadioSingle>
-                                {#if errorData?.sistemMuskuloskeletalRadio}
-                                    <span
-                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData
-                                            ?.sistemMuskuloskeletalRadio[0]}</span
-                                    >
-                                {/if}
+                                {#if $pemeriksaanDoktorErrors.sistemMuskuloskeletalRadio}
+                                <span
+                                    class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                    >{$pemeriksaanDoktorErrors
+                                        .sistemMuskuloskeletalRadio[0]}</span
+                                >
+                            {/if}
                             </td>
 
                             <td colspan="2">
                                 <TextField
                                     {disabled}
-                                    hasError={errorData?.sistemMuskuloskeletal}
+                                    hasError={$pemeriksaanDoktorErrors.sistemMuskuloskeletal
+                                        ? true
+                                        : false}
                                     name="sistemMuskuloskeletal"
                                     label=""
                                     type="text"
-                                    value=""
+                                    bind:value={$pemeriksaanDoktorForm.sistemMuskuloskeletal}
                                 ></TextField>
 
-                                {#if errorData?.sistemMuskuloskeletal}
-                                    <span
-                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{errorData
-                                            ?.sistemMuskuloskeletal[0]}</span
-                                    >
-                                {/if}
+                                {#if $pemeriksaanDoktorErrors.sistemMuskuloskeletal}
+                                <span
+                                    class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                    >{$pemeriksaanDoktorErrors
+                                        .sistemMuskuloskeletal[0]}</span
+                                >
+                            {/if}
                             </td>
                         </tr>
                     </table>
@@ -2523,42 +2132,47 @@
                         options={normalAbnormalOptions}
                         name="gula"
                         legend="Gula"
-                        bind:userSelected={isNormal}
+                        bind:userSelected={$pemeriksaanDoktorForm.gula}
                     ></RadioSingle>
-                    {#if errorData?.gula}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.gula[0]}</span
-                        >
-                    {/if}
+                    {#if $pemeriksaanDoktorErrors.gula}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$pemeriksaanDoktorErrors
+                                        .gula[0]}</span
+                                >
+                            {/if}
                     <RadioSingle
                         {disabled}
                         options={normalAbnormalOptions}
                         name="albumin"
                         legend="Albumin"
-                        bind:userSelected={isNormal}
+                        bind:userSelected={$pemeriksaanDoktorForm.albumin}
                     ></RadioSingle>
-                    {#if errorData?.albumin}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.albumin[0]}</span
-                        >
-                    {/if}
+                    {#if $pemeriksaanDoktorErrors.albumin}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$pemeriksaanDoktorErrors
+                                        .albumin[0]}</span
+                                >
+                            {/if}
                     <TextField
                         {disabled}
-                        hasError={errorData?.mikroskopi}
+                        hasError={$pemeriksaanDoktorErrors.mikroskopi
+                            ? true
+                            : false}
                         name="mikroskopi"
                         label="Mikroskopi"
                         type="text"
-                        value=""
+                        bind:value={$pemeriksaanDoktorForm.mikroskopi}
                     ></TextField>
 
-                    {#if errorData?.mikroskopi}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.mikroskopi[0]}</span
-                        >
-                    {/if}
+                    {#if $pemeriksaanDoktorErrors.mikroskopi}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$pemeriksaanDoktorErrors
+                            .mikroskopi[0]}</span
+                    >
+                {/if}
                 </div>
             </form>
             <div class="flex w-full flex-col gap-2.5">
@@ -2584,4 +2198,5 @@
         >
     </StepperContent>
 </Stepper>
-<Toaster />
+
+

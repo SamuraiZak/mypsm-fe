@@ -6,7 +6,15 @@
     import TextField from '$lib/components/input/TextField.svelte';
     import { fileSelectionList } from '$lib/stores/globalState';
     import { onMount } from 'svelte';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from '../$types';
+    import {
+        _stepperBantuanPakaianIstiadat,
+        _submitFormStepperBantuanPakaianIstiadat,
+    } from './+page';
+   ;
 
+   export let data: PageData;
     export let selectedFiles: any = [];
     let target: any;
     let texthidden = false;
@@ -36,6 +44,22 @@
         selectedFiles.splice(index, 1);
         fileSelectionList.set(selectedFiles);
     }
+
+    const {
+        form,
+        errors,
+        enhance,
+    } = superForm(data.form, {
+        SPA: true,
+        validators: _stepperBantuanPakaianIstiadat,
+        onSubmit() {
+            _submitFormStepperBantuanPakaianIstiadat($bantuanPakaianIstiadatForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+
+    let errorData: any;
 </script>
 
 <section>
@@ -51,6 +75,10 @@
                 '1. Pegawai yang telah diberi Bayaran Pakaian Istiadat tidak layak menuntut Bayaran Pakaian Menghadiri Upacara Rasmi dalam temph tiga (3) tahun yang sama.',
                 '2. Muat Naik salinan resit ASAL yang disahkan perbelanjaan adalah di atas urusan rasmi dan sesalinan jemputan ke majlis/upacara rasmi atau surat arahan bertugas di Parlimen atau Dewan Undangan Negeri.',
             ]}
+             hasError={$bantuanPakaianIstiadatErrors.penyakitSejakLahir
+                ? true
+                : false}
+            name="penyakitSejakLahir"
             label=""
         ></TextField>
     </div>
@@ -59,7 +87,7 @@
     >
         <SectionHeader title="Amaun"></SectionHeader>
         <TextField label="Sendiri" bind:value={selfAmount}></TextField>
-        <TextField label="Sendiri" bind:value={partnerAmount}></TextField>
+        <TextField label="Pasangan" bind:value={partnerAmount}></TextField>
     </div>
     <!-- Document Upload -->
     <div

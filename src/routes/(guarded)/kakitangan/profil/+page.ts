@@ -1,8 +1,8 @@
-import { fail } from '@sveltejs/kit';
-
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
+import { getPromiseToast, getErrorToast } from '$lib/toast/toast-service';
+import { error, fail } from '@sveltejs/kit';
 
 // =========================================================================
 // z validation schema and submit function for the new employment form fields
@@ -619,7 +619,7 @@ export const _stepperMaklumatWaris = z.object({
 
         penyakitSejakLahir: z
             .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
+            .min(4, {
                 message: 'Medan ini hendaklah diisi .',
             })
             .max(124, {
@@ -790,6 +790,301 @@ export const _stepperMaklumatWaris = z.object({
             .trim(),
         });
 
+//==========================================================
+//============== stepper Pemeriksaan Doktor ================
+//==========================================================
+
+
+    const pemeriksaanDoktorSelectSchema = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+    export const _stepperPemeriksaanDoktor = z.object({
+
+        sistemMuskuloskeletalRadio: pemeriksaanDoktorSelectSchema,
+        kulitPucat: pemeriksaanDoktorSelectSchema,
+        sianosis: pemeriksaanDoktorSelectSchema,
+        edama: pemeriksaanDoktorSelectSchema,
+        penyakitKuning: pemeriksaanDoktorSelectSchema,
+        kelenjarLimfa: pemeriksaanDoktorSelectSchema,
+        penyakitKulit: pemeriksaanDoktorSelectSchema,
+        penglihatanWarnaRadio: pemeriksaanDoktorSelectSchema,
+        funduskopiRadio: pemeriksaanDoktorSelectSchema,
+        telingaRadio: pemeriksaanDoktorSelectSchema,
+        ronggaGigiMulutRadio: pemeriksaanDoktorSelectSchema,
+        leherRadio: pemeriksaanDoktorSelectSchema,
+        kardiovaskularRadio: pemeriksaanDoktorSelectSchema,
+        pemeriksaanRadio: pemeriksaanDoktorSelectSchema,
+        xrayRadio: pemeriksaanDoktorSelectSchema,
+        abdomenHerniaRadio: pemeriksaanDoktorSelectSchema,
+        sistemSarafRadio: pemeriksaanDoktorSelectSchema,
+        gula: pemeriksaanDoktorSelectSchema,
+        albumin: pemeriksaanDoktorSelectSchema,
+
+        tinggi: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(2, {
+                message: 'Medan ini hendaklah lebih daripada 2 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        berat: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(1, {
+                message: 'Medan ini hendaklah lebih daripada 1 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        bmi: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(1, {
+                message: 'Medan ini hendaklah lebih daripada 1 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        denyutanNadi: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(1, {
+                message: 'Medan ini hendaklah lebih daripada 1 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        bp: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(1, {
+                message: 'Medan ini hendaklah lebih daripada 1 karakter.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        penglihatanTanpaBantuan: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+            penglihatanTanpaBantuan2: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+            penglihatanTanpaBantuan3: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+            penglihatanTanpaBantuan4: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+            penglihatanTanpaBantuan5: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+            penglihatanTanpaBantuan6: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        penglihatanDenganBantuan: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+            penglihatanDenganBantuan2: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+            penglihatanDenganBantuan3: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        penglihatanWarna: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        funduskopi: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        telinga: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        ronggaGigiMulut: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        leher: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        kardiovaskular: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        pemeriksaan: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        xray: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        tarikhPengambilanXray: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        lokasiPengambilanXray: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        nomborRujukanXray: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        abdomenHernia: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        sistemSaraf: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+            sistemMuskuloskeletal: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(0, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+            mikroskopi: z
+            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+            .min(4, {
+                message: 'Medan ini hendaklah diisi.',
+            })
+            .max(124, {
+                message: 'Medan ini tidak boleh melebihi 124 karakter.',
+            })
+            .trim(),
+        });
+
+
 // =========================================================================
 // =========================Maklumat Kontrak================================
 // =========================================================================
@@ -894,7 +1189,6 @@ export const _approverResultSchema = z.object({
 
 export const load = async () => {
     // const id = parseInt(params.id);
-
     const stepperMaklumatPeribadi = await superValidate(
         _stepperMaklumatPeribadi,
     );
@@ -912,6 +1206,8 @@ export const load = async () => {
 
     const stepperSejarahPenyakit = await superValidate(_stepperSejarahPenyakit);
 
+    const stepperPemeriksaanDoktor = await superValidate(_stepperPemeriksaanDoktor);
+
 
 
     return {
@@ -922,150 +1218,99 @@ export const load = async () => {
         stepperMaklumatPengalaman,
         stepperMaklumatWaris,
         stepperSejarahPenyakit,
+        stepperPemeriksaanDoktor,
     };
-};
-//==================================================
-//=============== Rekod Kesihatan ==================
-//==================================================
-
-//=============== Sejarah Penyakit =================
-//==================================================
-
-export const _submitFormSejarahPenyakit = async (event: Event) => {
-    const formElement = event.target as HTMLFormElement;
-    const formData = new FormData(formElement);
-    const form = await superValidate(formData, _stepperSejarahPenyakit);
-
-    if (!form.valid) {
-        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
-            style: 'background: #333; color: #fff;',
-        });
-        return fail(400, form);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(form),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log('Response Returned: 1-54', json);
-            });
-    }
-    return { form };
 };
 
 
 //==================================================
 //=============== Maklumat Kontrak =================
 //==================================================
-export const _submitFormstepperkontrak = async (event: Event) => {
-    const formElement = event.target as HTMLFormElement;
-    const formData = new FormData(formElement);
+
+
+export const _submitFormstepperkontrak = async (formData: Object) => {
     const form = await superValidate(formData, _stepperkontrak);
 
     if (!form.valid) {
-        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
-            style: 'background: #333; color: #fff;',
-        });
+        getErrorToast();
+        console.log (form);
         return fail(400, form);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(form),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log('Response Returned: 1-54', json);
-            });
     }
+
+
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(form),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+
+    getPromiseToast(responsePromise)
+
     return { form };
 };
 
 //==================================================
 //=============== Maklumat Peribadi ================
 //==================================================
-export const _submitFormStepperMaklumatPeribadi = async (formData: object) => {
-    console.log('HEREEE', formData);
+export const _submitFormStepperMaklumatPeribadi = async (formData: Object) => {
+    const form = await superValidate(formData, _stepperMaklumatPeribadi);
 
-    const stepperMaklumatPeribadi = await superValidate(
-        formData,
-        _stepperMaklumatPeribadi,
-    );
-
-    if (!stepperMaklumatPeribadi.valid) {
-        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
-            style: 'background: #333; color: #fff;',
-        });
-        console.log(stepperMaklumatPeribadi);
-        return fail(400, stepperMaklumatPeribadi);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(stepperMaklumatPeribadi),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log('Response Returned: 1-54', json);
-            });
+    if (!form.valid) {
+        getErrorToast();
+        return fail(400, form);
     }
-    return { stepperMaklumatPeribadi };
+
+
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(form),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+
+    getPromiseToast(responsePromise)
+
+    return { form };
 };
 
 //==================================================
 //=============== Maklumat Perkhidmatan ============
 //==================================================
 
-export const _submitFormStepperMaklumatPerkhidmatan = async (formData: object) => {
-
-    const stepperMaklumatPerkhidmatan = await superValidate(
-        formData,
-        _stepperMaklumatPerkhidmatan,
-    );
+export const _submitFormStepperMaklumatPerkhidmatan = async (formData: Object) => {
+    const stepperMaklumatPerkhidmatan = await superValidate(formData, _stepperMaklumatPerkhidmatan);
 
     if (!stepperMaklumatPerkhidmatan.valid) {
-        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
-            style: 'background: #333; color: #fff;',
-        });
-        console.log(stepperMaklumatPerkhidmatan);
+        getErrorToast();
         return fail(400, stepperMaklumatPerkhidmatan);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(stepperMaklumatPerkhidmatan),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log('Response Returned: 1-54', json);
-            });
     }
+
+
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(stepperMaklumatPerkhidmatan),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+
+    getPromiseToast(responsePromise)
+
     return { stepperMaklumatPerkhidmatan };
 };
 
@@ -1073,71 +1318,60 @@ export const _submitFormStepperMaklumatPerkhidmatan = async (formData: object) =
 //=============== Maklumat Akademik ================
 //==================================================
 
-export const _submitFormStepperMaklumatAkademik = async (formData: object) => {
-
-    const stepperMaklumatAkademik = await superValidate(
-        formData,
-        _stepperMaklumatAkademik,
-    );
+export const _submitFormStepperMaklumatAkademik = async (formData: Object) => {
+    const stepperMaklumatAkademik = await superValidate(formData, _stepperMaklumatAkademik);
 
     if (!stepperMaklumatAkademik.valid) {
-        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
-            style: 'background: #333; color: #fff;',
-        });
+        getErrorToast();
         return fail(400, stepperMaklumatAkademik);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(stepperMaklumatAkademik),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log('Response Returned: 1-54', json);
-            });
     }
+
+
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(stepperMaklumatAkademik),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+
+    getPromiseToast(responsePromise)
+
     return { stepperMaklumatAkademik };
 };
+
 
 //==================================================
 //============= Maklumat Pengalaman ================
 //==================================================
 
-export const _submitFormStepperMaklumatPengalaman = async (formData: object) => {
-
-    const stepperMaklumatPengalaman = await superValidate(
-        formData,
-        _stepperMaklumatPengalaman,
-    );
+export const _submitFormStepperMaklumatPengalaman = async (formData: Object) => {
+    const stepperMaklumatPengalaman = await superValidate(formData, _stepperMaklumatPengalaman);
 
     if (!stepperMaklumatPengalaman.valid) {
-        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
-            style: 'background: #333; color: #fff;',
-        });
+        getErrorToast();
         return fail(400, stepperMaklumatPengalaman);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(stepperMaklumatPengalaman),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log('Response Returned: 1-54', json);
-            });
     }
+
+
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(stepperMaklumatPengalaman),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+
+    getPromiseToast(responsePromise)
+
     return { stepperMaklumatPengalaman };
 };
 
@@ -1145,76 +1379,65 @@ export const _submitFormStepperMaklumatPengalaman = async (formData: object) => 
 //=============== Maklumat Waris ===================
 //==================================================
 
-export const _submitFormStepperMaklumatWaris = async (formData: object) => {
-
-    const stepperMaklumatWaris = await superValidate(
-        formData,
-        _stepperMaklumatWaris,
-    );
+export const _submitFormStepperMaklumatWaris = async (formData: Object) => {
+    const stepperMaklumatWaris = await superValidate(formData, _stepperMaklumatWaris);
 
     if (!stepperMaklumatWaris.valid) {
-        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
-            style: 'background: #333; color: #fff;',
-        });
+        getErrorToast();
         return fail(400, stepperMaklumatWaris);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(stepperMaklumatWaris),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log('Response Returned: 1-54', json);
-            });
     }
+
+
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(stepperMaklumatWaris),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+
+    getPromiseToast(responsePromise)
+
     return { stepperMaklumatWaris };
 };
+
 
 //==================================================
 //=============== Rekod Kesihatan ==================
 //==================================================
 
+
 //==================================================
 //=============== Sejarah Penyakit =================
 //==================================================
 
-export const _submitFormStepperSejarahPenyakit = async (formData: object) => {
-
-    const stepperSejarahPenyakit = await superValidate(
-        formData,
-        _stepperSejarahPenyakit,
-    );
+export const _submitFormStepperSejarahPenyakit = async (formData: Object) => {
+    const stepperSejarahPenyakit = await superValidate(formData, _stepperSejarahPenyakit);
 
     if (!stepperSejarahPenyakit.valid) {
-        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
-            style: 'background: #333; color: #fff;',
-        });
-        console.log(stepperSejarahPenyakit);
+        getErrorToast();
         return fail(400, stepperSejarahPenyakit);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(stepperSejarahPenyakit),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log('Response Returned: 1-54', json);
-            });
     }
+
+
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(stepperSejarahPenyakit),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+
+    getPromiseToast(responsePromise)
+
     return { stepperSejarahPenyakit };
 };
 
@@ -1226,7 +1449,7 @@ export const _submitFormStepperPemeriksaanDoktor = async (formData: object) => {
 
     const stepperPemeriksaanDoktor = await superValidate(
         formData,
-        _stepperSejarahPenyakit,
+        _stepperPemeriksaanDoktor,
     );
 
     if (!stepperPemeriksaanDoktor.valid) {
