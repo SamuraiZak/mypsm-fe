@@ -27,31 +27,6 @@ const stepperButiranSurcaj = z
     })
     .trim();
 
-//Butiran Mesyuarat
-const dateStepperButiranMesyuarat = z.coerce
-    .date({
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_date'
-                    ? 'Tarikh tidak boleh dibiar kosong.'
-                    : defaultError,
-        }),
-    })
-    .max(new Date(), {
-        message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
-    });
-
-const stepperButiranMesyuarat = z
-    .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-    .min(4, {
-        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-    })
-    .max(124, {
-        message: 'Medan ini tidak boleh melebihi 124 karakter.',
-    })
-    .trim();
-
-//Butiran Surcaj Schema
 export const _stepperButiranSurcaj = z.object({
     reportedDate: dateStepperButiranSurcaj.refine((date) =>
         date.toLocaleDateString(),
@@ -60,38 +35,6 @@ export const _stepperButiranSurcaj = z.object({
     remark: stepperButiranSurcaj,
 });
 
-//Butiran Mesyuarat Schema
-const butiranMesyuaratSelectSchema = z
-    .string()
-    .min(1, { message: 'Sila tetapkan pilihan anda.' });
-    
-export const _stepperButiranMesyuarat = z.object({
-    meetingDate: dateStepperButiranMesyuarat.refine((date) =>
-        date.toLocaleDateString(),
-    ),
-    effectiveDate: dateStepperButiranMesyuarat.refine((date) =>
-        date.toLocaleDateString(),
-    ),
-    surchargeAmount: stepperButiranMesyuarat,
-    meetingDropdown: butiranMesyuaratSelectSchema,
-    paymentDropdown: butiranMesyuaratSelectSchema,
-    paymentPeriodDropdown: butiranMesyuaratSelectSchema,
-});
-
-//Async
-export const load = async () => {
-    const stepperButiranSurcaj = await superValidate(_stepperButiranSurcaj);
-    const stepperButiranMesyuarat = await superValidate(
-        _stepperButiranMesyuarat,
-    );
-
-    return {
-        stepperButiranSurcaj,
-        stepperButiranMesyuarat,
-    };
-};
-
-//Submit Form Butiran Surcaj
 export const _submitFormStepperButiranSurcaj = async (formData: object) => {
     const stepperButiranSurcaj = await superValidate(
         formData,
@@ -123,7 +66,47 @@ export const _submitFormStepperButiranSurcaj = async (formData: object) => {
     return { stepperButiranSurcaj };
 };
 
-//Submit Form Butiran Mesyuarat
+//Butiran Mesyuarat
+const dateStepperButiranMesyuarat = z.coerce
+    .date({
+        errorMap: (issue, { defaultError }) => ({
+            message:
+                issue.code === 'invalid_date'
+                    ? 'Tarikh tidak boleh dibiar kosong.'
+                    : defaultError,
+        }),
+    })
+    .max(new Date(), {
+        message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
+    });
+
+const stepperButiranMesyuarat = z
+    .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+    .min(4, {
+        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+    })
+    .max(124, {
+        message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    })
+    .trim();
+
+const butiranMesyuaratSelectSchema = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+export const _stepperButiranMesyuarat = z.object({
+    meetingDate: dateStepperButiranMesyuarat.refine((date) =>
+        date.toLocaleDateString(),
+    ),
+    effectiveDate: dateStepperButiranMesyuarat.refine((date) =>
+        date.toLocaleDateString(),
+    ),
+    surchargeAmount: stepperButiranMesyuarat,
+    meetingDropdown: butiranMesyuaratSelectSchema,
+    paymentDropdown: butiranMesyuaratSelectSchema,
+    paymentPeriodDropdown: butiranMesyuaratSelectSchema,
+});
+
 export const _submitFormStepperButiranMesyuarat = async (formData: object) => {
     const stepperButiranMesyuarat = await superValidate(
         formData,
@@ -153,4 +136,17 @@ export const _submitFormStepperButiranMesyuarat = async (formData: object) => {
             });
     }
     return { stepperButiranMesyuarat };
+};
+
+//Async
+export const load = async () => {
+    const stepperButiranSurcaj = await superValidate(_stepperButiranSurcaj);
+    const stepperButiranMesyuarat = await superValidate(
+        _stepperButiranMesyuarat,
+    );
+
+    return {
+        stepperButiranSurcaj,
+        stepperButiranMesyuarat,
+    };
 };
