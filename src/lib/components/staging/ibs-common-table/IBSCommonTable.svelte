@@ -4,7 +4,7 @@
     import SvgSortDown from '$lib/assets/svg/SvgSortDown.svelte';
     import SvgSortUp from '$lib/assets/svg/SvgSortUp.svelte';
 
-    export let tableData = [
+    export let tableData:any[] = [
         {
             vitae: 'dolorem',
             lectus: 'ipsum',
@@ -17,12 +17,13 @@
         },
     ];
 
-    let sortBy: string = Object.keys(tableData[0])[0];
-    let sortDirection: string = 'ascending';
+    export let sortBy: string = Object.keys(tableData[0])[0];
+    export let sortDirection: string = 'ascending';
 
     // =====================================================================
     // Functions
     // =====================================================================
+    export let sortFunction = ()=>{};
 
     function handleSort(columnName: string) {
         // check the current sortBy
@@ -65,7 +66,7 @@
                         class="flex h-full flex-row items-center justify-between"
                     >
                         <span
-                            class="text-center align-middle text-base font-semibold"
+                            class="text-center align-middle text-sm text-ios-labelColors-secondaryLabel-light font-semibold"
                         >
                             {columnHeading}
                         </span>
