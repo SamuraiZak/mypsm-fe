@@ -35,7 +35,7 @@ export const _hasApplicationReasonSchema = z.object({
     totalDay: generalSelectSchema,
 })
 
-export const _generalEarlyBirthSchema = z.object({
+export const _generalMaternityLeaveSchema = z.object({
     applicationReason: generalSelectSchema,
     expectedBirthDate: generalSelectSchema,
     startDate: dateScheme,
@@ -56,7 +56,7 @@ export const load = async ({ fetch }) => {
 
     const userData = await request.json();
 
-    const replacementLeaveForm4 = await superValidate(
+    const replacementLeaveForm = await superValidate(
         userData,
         _replacementLeaveSchema4,
     )
@@ -76,8 +76,8 @@ export const load = async ({ fetch }) => {
         userData, _halfSalaryLeaveSchema3
     )
 
-    const earlyBirthLeaveForm = await superValidate(
-        userData, _earlyBirthLeaveSchema4
+    const earlyMaternityLeaveForm = await superValidate(
+        userData, _earlyMaternityLeaveSchema4
     )
 
     const officerMaternityLeaveForm = await superValidate(
@@ -90,12 +90,12 @@ export const load = async ({ fetch }) => {
 
 
     return {
-        replacementLeaveForm4,
+        replacementLeaveForm,
         leaveTypeForm,
         officialTaskOnHolidayForm,
         leaveWithoutRecordForm,
         halfSalaryLeaveForm,
-        earlyBirthLeaveForm,
+        earlyMaternityLeaveForm,
         officerMaternityLeaveForm,
         generalLeaveForm,
     };
@@ -505,26 +505,26 @@ export const _submitHalfSalaryLeaveForm = async (formData: Object, startDate: bo
 // ==================================================
 // Cuti Bersalin Awal ===============================
 // ==================================================
-export const _earlyBirthLeaveSchema2 = z.object({
+export const _earlyMaternityLeaveSchema2 = z.object({
     halfDayStartDate: optionalScheme,
-}).merge(_generalEarlyBirthSchema)
+}).merge(_generalMaternityLeaveSchema)
 
-export const _earlyBirthLeaveSchema3 = z.object({
+export const _earlyMaternityLeaveSchema3 = z.object({
     halfDayEndDate: optionalScheme,
-}).merge(_generalEarlyBirthSchema)
+}).merge(_generalMaternityLeaveSchema)
 
-export const _earlyBirthLeaveSchema4 = z.object({
+export const _earlyMaternityLeaveSchema4 = z.object({
     halfDayStartDate: optionalScheme,
     halfDayEndDate: optionalScheme,
-}).merge(_generalEarlyBirthSchema)
+}).merge(_generalMaternityLeaveSchema)
 
-export const _submitEarlyBirthLeaveForm = async (formData: Object, startDate: boolean, endDate: boolean) => {
+export const _submitEarlyMaternityLeaveForm = async (formData: Object, startDate: boolean, endDate: boolean) => {
 
     let hasHalfDayStartDate: boolean = startDate;
     let hasHalfDayEndDate: boolean = endDate;
 
     if (hasHalfDayStartDate && !hasHalfDayEndDate) {
-        const earlyBirthLeaveForm = await superValidate(formData, _earlyBirthLeaveSchema2);
+        const earlyBirthLeaveForm = await superValidate(formData, _earlyMaternityLeaveSchema2);
         if (!earlyBirthLeaveForm.valid) {
             getErrorToast();
             console.log(earlyBirthLeaveForm)
@@ -545,7 +545,7 @@ export const _submitEarlyBirthLeaveForm = async (formData: Object, startDate: bo
         getPromiseToast(responsePromise)
         return { earlyBirthLeaveForm }
     } else if (!hasHalfDayStartDate && hasHalfDayEndDate) {
-        const earlyBirthLeaveForm = await superValidate(formData, _earlyBirthLeaveSchema3);
+        const earlyBirthLeaveForm = await superValidate(formData, _earlyMaternityLeaveSchema3);
         if (!earlyBirthLeaveForm.valid) {
             getErrorToast();
             console.log(earlyBirthLeaveForm)
@@ -566,7 +566,7 @@ export const _submitEarlyBirthLeaveForm = async (formData: Object, startDate: bo
         getPromiseToast(responsePromise)
         return { earlyBirthLeaveForm }
     } else if (hasHalfDayStartDate && hasHalfDayEndDate) {
-        const earlyBirthLeaveForm = await superValidate(formData, _earlyBirthLeaveSchema4);
+        const earlyBirthLeaveForm = await superValidate(formData, _earlyMaternityLeaveSchema4);
         if (!earlyBirthLeaveForm.valid) {
             getErrorToast();
             console.log(earlyBirthLeaveForm)
@@ -587,7 +587,7 @@ export const _submitEarlyBirthLeaveForm = async (formData: Object, startDate: bo
         getPromiseToast(responsePromise)
         return { earlyBirthLeaveForm }
     } else {
-        const earlyBirthLeaveForm = await superValidate(formData, _generalEarlyBirthSchema);
+        const earlyBirthLeaveForm = await superValidate(formData, _generalMaternityLeaveSchema);
         if (!earlyBirthLeaveForm.valid) {
             getErrorToast();
             console.log(earlyBirthLeaveForm)
@@ -615,7 +615,7 @@ export const _submitEarlyBirthLeaveForm = async (formData: Object, startDate: bo
 // ==================================================
 export const _earlyMaternityLeaveOfficerSchema1 = z.object({
     address: generalSelectSchema,
-}).merge(_generalEarlyBirthSchema)
+}).merge(_generalMaternityLeaveSchema)
 
 export const _earlyMaternityLeaveOfficerSchema2 = z.object({
     halfDayStartDate: optionalScheme,
