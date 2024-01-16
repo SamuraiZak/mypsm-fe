@@ -22,6 +22,17 @@
     import { mockAllEmployeeAllowances } from '$lib/mocks/elaun/mockAllEmployeeAllowances';
     import { mockEmployeeAllowanceDocList } from '$lib/mocks/elaun/mockEmployeeAllowanceDocList';
     import { selectedRecordId } from '$lib/stores/globalState';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+    import { superForm } from 'sveltekit-superforms/client';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import {
+        _stepperSupporterApprover,
+        _submitFormStepperSupporterApprover,
+    } from './+page';
+
+    export let data: PageData;
 
     let disabled = true;
     let activeStepper = 0;
@@ -29,11 +40,11 @@
     let selectedAreaType = 'Kawasan 1';
     let mulaPengangkutanDate = '2022-05-12';
     let tamatPengangkutanDate = '2022-05-15';
+    let currentDataId = 1;
     let currRecord = mockAllEmployeeAllowances.filter(
-        (rec) => rec.id == $selectedRecordId, //to be repalced with $selectedRecordId
+        (rec) => rec.id == currentDataId, //to be repalced with $selectedRecordId
     )[0];
     let currentEmployee = mockEmployees.filter((rec) => rec.id == 1)[0];
-
     let currentEmployeeRace = mockLookupRaces.find((race) => {
         return race.id === currentEmployee.raceId;
     })!;
@@ -100,7 +111,21 @@
         relationship: 'Anak',
     };
 
-    let data: any[] = [{ ...famInfo }];
+    // let data: any[] = [{ ...famInfo }];
+    //Supporter Approver
+    const {
+        form: supporterApproverForm,
+        errors: supporterApproverErrors,
+        enhance: supporterApproverEnhance,
+    } = superForm(data.stepperSupporterApprover, {
+        SPA: true,
+        validators: _stepperSupporterApprover,
+        onSubmit() {
+            _submitFormStepperSupporterApprover($supporterApproverForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -939,25 +964,55 @@
                 }}
             ></FormButton>
             <FormButton type="reset" onClick={() => {}}></FormButton>
-            <FormButton
-                type="send"
-                onClick={() => {
-                    window.history.back();
-                }}
-            ></FormButton></StepperContentHeader
+            <TextIconButton
+                primary
+                label="Simpan"
+                form="FormStepperSupporterApprover"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
         >
         <StepperContentBody>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
             >
-                <SectionHeader title="Ulasan Kelulusan daipada Pelulus"
-                ></SectionHeader>
-                <LongTextField label={'Tindakan / Ulasan'} placeholder="-"
-                ></LongTextField>
-                <RadioSingle
-                    options={kelulusan}
-                    bind:userSelected={kelulusanVal}
-                ></RadioSingle>
+                <form
+                    id="FormStepperSupporterApprover"
+                    class="flex w-full flex-col gap-2"
+                    use:supporterApproverEnhance
+                    method="POST"
+                >
+                    <SectionHeader title="Ulasan Kelulusan daipada Pelulus"
+                    ></SectionHeader>
+                    <LongTextField
+                        hasError={$supporterApproverErrors.actionRemark
+                            ? true
+                            : false}
+                        name="actionRemark"
+                        label="Tindakan / Ulasan"
+                        bind:value={$supporterApproverForm.actionRemark}
+                    />
+                    {#if $supporterApproverErrors.actionRemark}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$supporterApproverErrors.actionRemark[0]}</span
+                        >
+                    {/if}
+                    <RadioSingle
+                        options={kelulusan}
+                        hasError={$supporterApproverErrors.resultOption
+                            ? true
+                            : false}
+                        name="resultOption"
+                        bind:userSelected={$supporterApproverForm.resultOption}
+                    ></RadioSingle>
+                    {#if $supporterApproverErrors.resultOption}
+                        <span
+                            class="ml-[0px] font-sans text-sm italic text-system-danger"
+                            >{$supporterApproverErrors.resultOption[0]}</span
+                        >
+                    {/if}
+                </form>
             </div>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
@@ -989,3 +1044,4 @@
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+<Toaster />
