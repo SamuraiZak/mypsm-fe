@@ -121,7 +121,7 @@
         >
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Maklumat Cuti"></StepperContentHeader>
+        <StepperContentHeader title="Maklumat Cuti"><TextIconButton primary label="Simpan" form="formValidation"/></StepperContentHeader>
         <StepperContentBody>
             <div class="flex max-h-full w-full flex-col gap-2.5 border-b border-bdr-primary pb-5">
                 <DropdownSelect
@@ -135,15 +135,15 @@
                 {#if selectedCuti === 'Cuti Gantian'}
                     <CutiGantian {data}></CutiGantian>
                 {:else if selectedCuti === 'Cuti Tanpa Rekod'}
-                    <CutiTanpaRekod></CutiTanpaRekod>
+                    <CutiTanpaRekod {data}></CutiTanpaRekod>
                 {:else if selectedCuti === 'Cuti Separuh Gaji'}
-                    <CutiSeparuhGaji></CutiSeparuhGaji>
+                    <CutiSeparuhGaji {data}></CutiSeparuhGaji>
                 {:else if selectedCuti === 'Cuti Tanpa Gaji'}
-                    <CutiTanpaGaji></CutiTanpaGaji>
+                    <CutiTanpaGaji {data}></CutiTanpaGaji>
                 {:else if selectedCuti === 'Cuti Bersalin Awal'}
-                    <CutiBersalinAwal></CutiBersalinAwal>
+                    <CutiBersalinAwal {data}></CutiBersalinAwal>
                 {:else if selectedCuti === 'Cuti Bersalin Pegawai'}
-                    <CutiBersalinPegawai></CutiBersalinPegawai>
+                    <CutiBersalinPegawai {data}></CutiBersalinPegawai>
                 {:else if selectedCuti === 'Cuti Isteri Bersalin'}
                     <CutiIsteriBersalin></CutiIsteriBersalin>
                 {:else if selectedCuti === 'Cuti Haji'}
