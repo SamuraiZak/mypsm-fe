@@ -4,10 +4,8 @@
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import FilterCard from '$lib/components/filter/FilterCard.svelte';
-    import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import StaffSelector from '$lib/components/staff-selector/StaffSelector.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
