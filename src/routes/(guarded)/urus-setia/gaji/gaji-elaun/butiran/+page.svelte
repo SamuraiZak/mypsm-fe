@@ -34,6 +34,7 @@
     import { _submitSalaryAllowance } from './+page';
 
     export let noPekerja = '00001';
+    export let data;
     let activeStepper = 3;
     let currEmployee = mockEmployees;
     let currEmployeeService = mockCurrentService;
@@ -416,33 +417,31 @@
                     {labelBlack}
                     disabled
                     label="No. Pekerja"
-                    value={currEmployee.employeeNumber}
+                    value={data.props.salaryDetailData.employeeNo}
                 ></TextField>
                 <TextField
                     {labelBlack}
                     disabled
                     label="Nama"
-                    value={currEmployee.name}
+                    value={data.props.salaryDetailData.name}
                 ></TextField>
                 <TextField
                     {labelBlack}
                     disabled
                     label="No. K/P"
-                    value={currEmployee.identityDocumentNumber}
+                    value={data.props.salaryDetailData.identityCard}
                 ></TextField>
                 <TextField
                     {labelBlack}
                     disabled
                     label="Gred"
-                    value={currEmployeeGrade.code +
-                        ' - ' +
-                        currEmployeeGrade.name}
+                    value={data.props.salaryDetailData.grade}
                 ></TextField>
                 <TextField
                     {labelBlack}
                     disabled
                     label="Penempatan"
-                    value={currEmployeeService.placement}
+                    value={data.props.salaryDetailData.currentPlacement}
                 ></TextField>
                 <TextField
                     {labelBlack}
@@ -491,9 +490,9 @@
                     {labelBlack}
                     disabled
                     label="Gred"
-                    value={currEmployeeGrade.code}
+                    value={data.props.salaryDetailData.grade}
                 ></TextField>
-                <TextField {labelBlack} disabled label="Gaji Pokok"></TextField>
+                <TextField {labelBlack} disabled label="Gaji Pokok" value={data.props.salaryDetailData.currentPlacement}></TextField>
                 <TextField
                     {labelBlack}
                     hasTooltip
