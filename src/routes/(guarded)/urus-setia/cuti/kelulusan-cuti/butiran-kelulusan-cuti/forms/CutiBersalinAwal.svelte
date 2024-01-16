@@ -1,42 +1,53 @@
 <script lang="ts">
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import { fileSelectionList } from '$lib/stores/globalState';
-    import { onMount } from 'svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import { tarikh } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/tarikh';
     import { setengahHari } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/setengah-hari';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
+    import { Checkbox } from 'flowbite-svelte';
+    import type { PageData } from './$types';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _submitEarlyBirthLeaveForm,
+        _generalEarlyBirthSchema,
+        _earlyBirthLeaveSchema2,
+        _earlyBirthLeaveSchema3,
+        _earlyBirthLeaveSchema4,
+    } from '../+page';
 
-    export let selectedFiles: any = [];
-    export let disabled: boolean = true;
+    export let data: PageData;
+    let hasHalfDayStartDate: boolean = false;
+    let hasHalfDayEndDate: boolean = false;
 
-    let target: any;
-    let texthidden = false;
-    let selectedSetengahHari = setengahHari[0].value;
+    // ==================================
+    // Form Validation ==================
+    // ==================================
+    const { form, errors, enhance, options } = superForm(
+        data.earlyBirthLeaveForm,
+        {
+            SPA: true,
+            onSubmit() {
+                _submitEarlyBirthLeaveForm(
+                    $form,
+                    hasHalfDayStartDate,
+                    hasHalfDayEndDate,
+                );
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+        },
+    );
 
-    onMount(() => {
-        target = document.getElementById('fileInput');
-    });
-
-    // Function to handle the file changes
-    function handleOnChange() {
-        texthidden = true;
-        const files = target.files;
-        if (files) {
-            for (let i = 0; i < files.length; i++) {
-                selectedFiles.push(files[i]);
-            }
-        }
-
-        fileSelectionList.set(selectedFiles);
-    }
-
-    // Function to handle the file deletion
-    function handleDelete(index: number) {
-        selectedFiles.splice(index, 1);
-        fileSelectionList.set(selectedFiles);
+    $: if (hasHalfDayStartDate && !hasHalfDayEndDate) {
+        options.validators = _earlyBirthLeaveSchema2;
+    } else if (hasHalfDayEndDate && !hasHalfDayStartDate) {
+        options.validators = _earlyBirthLeaveSchema3;
+    } else if (hasHalfDayEndDate && hasHalfDayStartDate) {
+        options.validators = _earlyBirthLeaveSchema4;
+    } else if (!hasHalfDayStartDate && !hasHalfDayEndDate) {
+        options.validators = _generalEarlyBirthSchema;
     }
 </script>
 
@@ -45,62 +56,136 @@
         class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
     >
         <SectionHeader title="Cuti Bersalin Awal"></SectionHeader>
-        <LongTextField
-            label="Tujuan Permohonan"
-            placeholder="Sila taip jawapan anda dalam ruangan ini"
-        ></LongTextField>
-        <div
-                    class="flex flex w-full w-full flex-row items-center justify-start gap-2.5"
+        <form
+            id="formValidation"
+            method="POST"
+            use:enhance
+            class="flex w-full flex-col gap-2"
+        >
+            <LongTextField
+                hasError={$errors.applicationReason ? true : false}
+                name="applicationReason"
+                label="Tujuan Permohonan"
+                bind:value={$form.applicationReason}
+                placeholder="Sila taip jawapan anda dalam ruangan ini"
+            ></LongTextField>
+            {#if $errors.applicationReason}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.applicationReason}</span
                 >
-                    <DateSelector handleDateChange label="Tarikh Mula"
+            {/if}
+            <div
+                class="flex flex w-full w-full flex-row items-center justify-start gap-2.5"
+            >
+                <div class="flex w-full flex-col">
+                    <DateSelector
+                        hasError={$errors.startDate ? true : false}
+                        name="startDate"
+                        handleDateChange
+                        bind:selectedDate={$form.startDate}
+                        label="Tarikh Mula"
                     ></DateSelector>
-                    <input
-                        id="default-checkbox"
-                        type="checkbox"
-                        value=""
-                        class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-                    />
-                    <label
-                        for="default-checkbox"
-                        class="w-[100px] text-sm font-medium text-gray-900 dark:text-gray-300"
-                        >Setengah Hari</label
-                    >
+                    {#if $errors.startDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.startDate}</span
+                        >
+                    {/if}
+                </div>
+                <Checkbox
+                    name="hasHalfDayStartDate"
+                    bind:checked={hasHalfDayStartDate}
+                    class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                />
+                <label
+                    for="hasHalfDayStartDate"
+                    class="w-[100px] text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >Setengah Hari</label
+                >
+                <div class="flex w-full flex-col">
                     <DropdownSelect
+                        hasError={$errors.halfDayStartDate ? true : false}
+                        id="halfDayStartDate"
+                        disabled={!hasHalfDayStartDate}
                         options={setengahHari}
-                        bind:index={selectedSetengahHari}
+                        bind:value={$form.halfDayStartDate}
                         dropdownType="noLabel"
                         label=""
                     ></DropdownSelect>
+                    {#if $errors.halfDayStartDate}
+                        <span
+                            class="font-sans text-sm italic text-system-danger"
+                            >{$errors.halfDayStartDate}</span
+                        >
+                    {/if}
                 </div>
-                <div
-                    class="flex flex w-full w-full flex-row items-center justify-start gap-2.5"
-                >
-                    <DateSelector handleDateChange label="Tarikh Tamat"
+            </div>
+            <div
+                class="flex flex w-full w-full flex-row items-center justify-start gap-2.5"
+            >
+                <div class="flex w-full flex-col">
+                    <DateSelector
+                        hasError={$errors.endDate ? true : false}
+                        name="endDate"
+                        handleDateChange
+                        label="Tarikh Tamat"
+                        bind:selectedDate={$form.endDate}
                     ></DateSelector>
-                    <input
-                        id="default-checkbox"
-                        type="checkbox"
-                        value=""
-                        class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-                    />
-                    <label
-                        for="default-checkbox"
-                        class="w-[100px] text-sm font-medium text-gray-900 dark:text-gray-300"
-                        >Setengah Hari</label
-                    >
+                    {#if $errors.endDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.endDate}</span
+                        >
+                    {/if}
+                </div>
+                <Checkbox
+                    name="hasHalfDayEndDate"
+                    bind:checked={hasHalfDayEndDate}
+                    class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+                />
+                <label
+                    for="default-checkbox"
+                    class="w-[100px] text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >Setengah Hari</label
+                >
+                <div class="flex w-full flex-col">
                     <DropdownSelect
+                        hasError={$errors.halfDayEndDate ? true : false}
+                        id="halfDayEndDate"
+                        disabled={!hasHalfDayEndDate}
                         options={setengahHari}
-                        bind:index={selectedSetengahHari}
+                        bind:value={$form.halfDayEndDate}
                         dropdownType="noLabel"
                         label=""
                     ></DropdownSelect>
+                    {#if $errors.halfDayEndDate}
+                        <span
+                            class="font-sans text-sm italic text-system-danger"
+                            >{$errors.halfDayEndDate}</span
+                        >
+                    {/if}
                 </div>
-        <DateSelector handleDateChange label="Tarikh Dijangka Bersalin (EDD)"></DateSelector>
+            </div>
+            <DateSelector
+                hasError={$errors.expectedBirthDate ? true : false}
+                name="expectedBirthDate"
+                handleDateChange
+                label="Tarikh Dijangka Bersalin (EDD)"
+                bind:selectedDate={$form.expectedBirthDate}
+            ></DateSelector>
+            {#if $errors.expectedBirthDate}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.expectedBirthDate}</span
+                >
+            {/if}
+        </form>
     </div>
     <div class="flex max-h-full w-full flex-col items-start justify-start">
-        <SectionHeader title="Cuti Bersalin Awal yang telah diambil dalam tahun semasa"></SectionHeader>
-        <DynamicTable
-            tableItems={tarikh}
-        ></DynamicTable>
+        <SectionHeader
+            title="Cuti Bersalin Awal yang telah diambil dalam tahun semasa"
+        ></SectionHeader>
+        <DynamicTable tableItems={tarikh}></DynamicTable>
     </div>
 </section>

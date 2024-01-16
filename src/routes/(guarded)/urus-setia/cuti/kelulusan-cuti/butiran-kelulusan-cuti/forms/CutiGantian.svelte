@@ -20,11 +20,9 @@
         _replacementLeaveSchema4,
         _submitReplacementLeaveForm,
     } from '../+page';
-    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
 
     export let data: PageData;
     let selectedJenisGantian = '';
-
     let hasHalfDayStartDate: boolean = false;
     let hasHalfDayEndDate: boolean = false;
 
@@ -35,7 +33,6 @@
         data.replacementLeaveForm4,
         {
             SPA: true,
-            // validators: _replacementLeaveSchema4,
             onSubmit() {
                 _submitReplacementLeaveForm(
                     $form,
@@ -57,6 +54,7 @@
     } else if (!hasHalfDayStartDate && !hasHalfDayEndDate) {
         options.validators = _replacementLeaveSchema1;
     }
+
 </script>
 
 <section
@@ -65,13 +63,7 @@
     <!-- start your content with this div and style it with your own preference -->
     <CustomTab>
         <CustomTabContent title="Maklumat Gantian">
-            <SectionHeader title="Cuti Gantian"
-                ><TextIconButton
-                    primary
-                    label="Simpan"
-                    form="formValidation"
-                /></SectionHeader
-            >
+            <SectionHeader title="Cuti Gantian"></SectionHeader>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 pb-5"
             >
@@ -96,7 +88,7 @@
                         >
                     {/if}
                     <div
-                        class="flex flex w-full w-full flex-row items-center justify-start gap-2.5"
+                        class="flex w-full flex-row items-center justify-start gap-2.5"
                     >
                         <div class="flex w-full flex-col">
                             <DateSelector
@@ -144,7 +136,7 @@
                         </div>
                     </div>
                     <div
-                        class="flex flex w-full w-full flex-row items-center justify-start gap-2.5"
+                        class="flex w-full flex-row items-center justify-start gap-2.5"
                     >
                         <div class="flex w-full flex-col">
                             <DateSelector
@@ -225,9 +217,9 @@
                 ></DropdownSelect>
 
                 {#if selectedJenisGantian === 'Bekerja Lebih Masa'}
-                    <BekerjaLebihMasa></BekerjaLebihMasa>
+                    <BekerjaLebihMasa {data}></BekerjaLebihMasa>
                 {:else if selectedJenisGantian === 'Tugas-tugas Rasmi Yang Jatuh Pada Hari Cuti'}
-                    <TugasTugasRasmiYangJatuhPadaHariCuti
+                    <TugasTugasRasmiYangJatuhPadaHariCuti {data}
                     ></TugasTugasRasmiYangJatuhPadaHariCuti>
                 {/if}
             </div>
