@@ -22,7 +22,9 @@
     import PembayaranBalikPassport from './forms/PembayaranBalikPassport.svelte';
     import InsuransKesihatan from './forms/InsuransKesihatan.svelte';
     import type { PageData } from './$types';
-    
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import { Toaster } from 'svelte-french-toast';
+
     export let data: PageData;
 
     let activeStepper = 0;
@@ -116,12 +118,7 @@
                     onClick={() => {
                         activeStepper = 0;
                     }}
-                /><FormButton
-                    type="send"
-                    onClick={() => {
-                        console.log(famData);
-                    }}
-                />
+                /><TextIconButton primary label="Simpan" form="formValidation"/>
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
@@ -137,25 +134,26 @@
                 {#if selectedAllowance === 'Bantuan Pakaian Istiadat'}
                     <BantuanPakaianIstiadat {data}></BantuanPakaianIstiadat>
                 {:else if selectedAllowance === 'Bantuan Pakaian Panas'}
-                    <BantuanPakaianPanas></BantuanPakaianPanas>
+                    <BantuanPakaianPanas {data}></BantuanPakaianPanas>
                 {:else if selectedAllowance === 'Tambang Mengunjungi Wilayah Asal'}
-                    <TambangMengunjungiWilayahAsal bind:data={famData}
+                    <TambangMengunjungiWilayahAsal {data}
                     ></TambangMengunjungiWilayahAsal>
                 {:else if selectedAllowance === 'Bantuan Mengurus Jenazah'}
-                    <BantuanMengurusJenazah></BantuanMengurusJenazah>
+                    <BantuanMengurusJenazah {data}></BantuanMengurusJenazah>
                 {:else if selectedAllowance === 'Tabung Kebajikan Kakitangan'}
-                    <TabungKebajikanKakitangan></TabungKebajikanKakitangan>
+                    <TabungKebajikanKakitangan {data}></TabungKebajikanKakitangan>
                 {:else if selectedAllowance === 'Perpindahan Rumah'}
-                    <PerpindahanRumah></PerpindahanRumah>
+                    <PerpindahanRumah {data}></PerpindahanRumah>
                 {:else if selectedAllowance === 'Pembayaran Balik Passport'}
-                    <PembayaranBalikPassport></PembayaranBalikPassport>
+                    <PembayaranBalikPassport {data}></PembayaranBalikPassport>
                 {:else if selectedAllowance === 'Insurans Kesihatan'}
-                    <InsuransKesihatan></InsuransKesihatan>
+                    <InsuransKesihatan {data}></InsuransKesihatan>
                 {:else if selectedAllowance === 'Bayaran Balik Pengangkutan Barang Melalui Jalan Laut'}
-                    <BayaranBalikPengagkutanBarangaMelaluiJalanLaut
+                    <BayaranBalikPengagkutanBarangaMelaluiJalanLaut {data}
                     ></BayaranBalikPengagkutanBarangaMelaluiJalanLaut>
                 {/if}
             </div>
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+<Toaster/>

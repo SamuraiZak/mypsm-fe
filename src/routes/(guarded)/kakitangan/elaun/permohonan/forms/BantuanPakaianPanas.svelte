@@ -6,6 +6,13 @@
     import TextField from '$lib/components/input/TextField.svelte';
     import { fileSelectionList } from '$lib/stores/globalState';
     import { onMount } from 'svelte';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _stepperBantuanPakaianPanas,
+        _submitPakaianPanasForm,
+    } from '../+page';
+    import type { PageData } from '../$types';
+    export let data: PageData;
 
     export let selectedFiles: any = [];
     let target: any;
@@ -35,22 +42,65 @@
         selectedFiles.splice(index, 1);
         fileSelectionList.set(selectedFiles);
     }
+    const { form, errors, enhance } = superForm(
+        data.bantuanPakaianPanasForm,
+        {
+            SPA: true,
+            validators: _stepperBantuanPakaianPanas,
+            onSubmit() {
+                _submitPakaianPanasForm($form);
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+        },
+    );
+    let errorData: any;
+
 </script>
 
 <section>
+    <div>
+        <form
+            id="formValidation"
+            method="POST"
+            use:enhance
+            class="flex w-full flex-col gap-2"
+        >
     <div
         class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
     >
         <SectionHeader title="Bantuan Pakaian Panas"></SectionHeader>
-        <LongTextField label="Tujuan Permohonan" bind:value={reasonVal}
+        <LongTextField
+        hasError={$errors.tujuanPermohonan ? true : false}
+        name="tujuanPermohonan"
+        label="Tujuan Permohonan"
+        bind:value={$form.tujuanPermohonan}
         ></LongTextField>
+        {#if $errors.tujuanPermohonan}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.tujuanPermohonan[0]}</span
+                    >
+                {/if}
     </div>
     <div
         class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
     >
         <SectionHeader title="Amaun"></SectionHeader>
-        <TextField label="Jumlah Tuntutan" bind:value={selfAmount}></TextField>
-        
+        <TextField
+        hasError={$errors.jumlahTuntutan ? true : false}
+        name="jumlahTuntutan"
+        label="Jumlah Tuntutan"
+        bind:value={$form.jumlahTuntutan}
+        ></TextField>
+        {#if $errors.jumlahTuntutan}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.jumlahTuntutan[0]}</span
+                    >
+                {/if}
+
+
     </div>
     <!-- Document Upload -->
     <div
@@ -108,6 +158,8 @@
                 </div>
             </div>
         </div>
+    </div>
+    </form>
     </div>
     <p class="text-sm text-system-danger pb-5">
         Sila muat naik dokumen sokongan anda pada ruangan yang disediakan di

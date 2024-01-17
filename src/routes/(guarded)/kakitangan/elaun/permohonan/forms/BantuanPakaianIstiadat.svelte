@@ -7,14 +7,13 @@
     import { fileSelectionList } from '$lib/stores/globalState';
     import { onMount } from 'svelte';
     import { superForm } from 'sveltekit-superforms/client';
-    import type { PageData } from '../$types';
     import {
         _stepperBantuanPakaianIstiadat,
-        _submitFormStepperBantuanPakaianIstiadat,
-    } from './+page';
-   ;
+        _submitPakaianIstiadatForm,
+    } from '../+page';
+    import type { PageData } from '../$types';
 
-   export let data: PageData;
+    export let data: PageData;
     export let selectedFiles: any = [];
     let target: any;
     let texthidden = false;
@@ -22,9 +21,9 @@
     onMount(() => {
         target = document.getElementById('fileInput');
     });
-    export let reasonVal = '-';
-    export let selfAmount: any = '-';
-    export let partnerAmount: any = '-';
+    // export let reasonVal = '-';
+    // export let selfAmount: any = '-';
+    // export let partnerAmount: any = '-';
 
     // Function to handle the file changes
     function handleOnChange() {
@@ -45,50 +44,89 @@
         fileSelectionList.set(selectedFiles);
     }
 
-    const {
-        form,
-        errors,
-        enhance,
-    } = superForm(data.form, {
-        SPA: true,
-        validators: _stepperBantuanPakaianIstiadat,
-        onSubmit() {
-            _submitFormStepperBantuanPakaianIstiadat($bantuanPakaianIstiadatForm);
+    const { form, errors, enhance } = superForm(
+        data.bantuanPakaianIstiadatForm,
+        {
+            SPA: true,
+            validators: _stepperBantuanPakaianIstiadat,
+            onSubmit() {
+                _submitPakaianIstiadatForm($form);
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
         },
-        taintedMessage:
-            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
-    });
+    );
 
     let errorData: any;
 </script>
 
 <section>
-    <div
-        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
-    >
-        <SectionHeader title="Bantuan Pakiaan Istiadat"></SectionHeader>
-        <LongTextField label="Tujuan Permohonan" bind:value={reasonVal}
-        ></LongTextField>
-        <TextField
-            labelType="read-only-list-value"
-            valueList={[
-                '1. Pegawai yang telah diberi Bayaran Pakaian Istiadat tidak layak menuntut Bayaran Pakaian Menghadiri Upacara Rasmi dalam temph tiga (3) tahun yang sama.',
-                '2. Muat Naik salinan resit ASAL yang disahkan perbelanjaan adalah di atas urusan rasmi dan sesalinan jemputan ke majlis/upacara rasmi atau surat arahan bertugas di Parlimen atau Dewan Undangan Negeri.',
-            ]}
-             hasError={$bantuanPakaianIstiadatErrors.penyakitSejakLahir
-                ? true
-                : false}
-            name="penyakitSejakLahir"
-            label=""
-        ></TextField>
+    <div>
+        <form
+            id="formValidation"
+            method="POST"
+            use:enhance
+            class="flex w-full flex-col gap-2"
+        >
+            <div
+                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+            >
+                <SectionHeader title="Bantuan Pakiaan Istiadat"></SectionHeader>
+
+                <LongTextField
+                    hasError={$errors.tujuanPermohonan ? true : false}
+                    name="tujuanPermohonan"
+                    label="Tujuan Permohonan"
+                    bind:value={$form.tujuanPermohonan}
+                ></LongTextField>
+                {#if $errors.tujuanPermohonan}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.tujuanPermohonan[0]}</span
+                    >
+                {/if}
+                <TextField
+                    labelType="read-only-list-value"
+                    valueList={[
+                        '1. Pegawai yang telah diberi Bayaran Pakaian Istiadat tidak layak menuntut Bayaran Pakaian Menghadiri Upacara Rasmi dalam temph tiga (3) tahun yang sama.',
+                        '2. Muat Naik salinan resit ASAL yang disahkan perbelanjaan adalah di atas urusan rasmi dan sesalinan jemputan ke majlis/upacara rasmi atau surat arahan bertugas di Parlimen atau Dewan Undangan Negeri.',
+                    ]}
+                    label=""
+                ></TextField>
+            </div>
+
+            <div
+                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+            >
+                <SectionHeader title="Amaun"></SectionHeader>
+                <TextField
+                    hasError={$errors.sendiri ? true : false}
+                    name="sendiri"
+                    label="Sendiri"
+                    bind:value={$form.sendiri}
+                ></TextField>
+                {#if $errors.sendiri}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.sendiri[0]}</span
+                    >
+                {/if}
+                <TextField
+                    hasError={$errors.pasangan ? true : false}
+                    name="pasangan"
+                    label="Pasangan"
+                    bind:value={$form.pasangan}
+                ></TextField>
+                {#if $errors.pasangan}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.pasangan[0]}</span
+                    >
+                {/if}
+            </div>
+        </form>
     </div>
-    <div
-        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
-    >
-        <SectionHeader title="Amaun"></SectionHeader>
-        <TextField label="Sendiri" bind:value={selfAmount}></TextField>
-        <TextField label="Pasangan" bind:value={partnerAmount}></TextField>
-    </div>
+
     <!-- Document Upload -->
     <div
         class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 pb-5 pt-5"
@@ -146,7 +184,7 @@
             </div>
         </div>
     </div>
-    <p class="text-sm text-system-danger pb-5">
+    <p class="pb-5 text-sm text-system-danger">
         Sila muat naik dokumen sokongan anda pada ruangan yang disediakan di
         atas.
     </p>

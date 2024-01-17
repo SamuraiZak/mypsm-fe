@@ -6,7 +6,14 @@
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import { fileSelectionList } from '$lib/stores/globalState';
     import { onMount } from 'svelte';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _stepperPerpindahanRumah,
+        _submitPerpindahanRumahForm,
+    } from '../+page';
+    import type { PageData } from '../$types';
 
+    export let data: PageData;
     export let selectedFiles: any = [];
     let target: any;
     let texthidden = false;
@@ -36,19 +43,70 @@
         selectedFiles.splice(index, 1);
         fileSelectionList.set(selectedFiles);
     }
+
+    const { form, errors, enhance } = superForm(data.perpindahanRumahForm, {
+        SPA: true,
+        validators: _stepperPerpindahanRumah,
+        onSubmit() {
+            _submitPerpindahanRumahForm($form);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section>
-    <div
-        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
-    >
-        <SectionHeader title="Perpindahan Rumah"></SectionHeader>
-        <DateSelector handleDateChange label="Tarikh Pindah Rumah"
-        ></DateSelector>
-        <LongTextField label="Alamat Rumah Lama" bind:value={oldAddress}
-        ></LongTextField>
-        <LongTextField label="Alamat Rumah Baru" bind:value={newAddress}
-        ></LongTextField>
+    <div>
+        <form
+            id="formValidation"
+            method="POST"
+            use:enhance
+            class="flex w-full flex-col gap-2"
+        >
+            <div
+                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+            >
+                <SectionHeader title="Perpindahan Rumah"></SectionHeader>
+                <DateSelector
+                hasError={$errors.tarikhPindahRumah ? true : false}
+                name="tarikhPindahRumah"
+                handleDateChange
+                bind:selectedDate={$form.tarikhPindahRumah}
+                label="Tarikh Pindah Rumah"
+                ></DateSelector>
+                {#if $errors.tarikhPindahRumah}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.tarikhPindahRumah[0]}</span
+                >
+            {/if}
+
+                <LongTextField
+                hasError={$errors.alamatRumahLama ? true : false}
+                name="alamatRumahLama"
+                label="Alamat Rumah Lama"
+                bind:value={$form.alamatRumahLama}
+                ></LongTextField>
+                {#if $errors.alamatRumahLama}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.alamatRumahLama[0]}</span
+                >
+            {/if}
+                <LongTextField
+                hasError={$errors.alamatRumahBaru ? true : false}
+                name="alamatRumahBaru"
+                label="Alamat Rumah Baru"
+                bind:value={$form.alamatRumahBaru}
+                ></LongTextField>
+                {#if $errors.alamatRumahBaru}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.alamatRumahBaru[0]}</span
+                >
+            {/if}
+            </div>
+        </form>
     </div>
     <!-- Document Upload -->
     <div

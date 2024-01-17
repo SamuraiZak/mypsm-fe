@@ -7,6 +7,14 @@
     import TextField from '$lib/components/input/TextField.svelte';
     import { fileSelectionList } from '$lib/stores/globalState';
     import { onMount } from 'svelte';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _stepperInsuransKesihatan,
+        _submitInsuransKesihatanForm,
+    } from '../+page';
+    import type { PageData } from '../$types';
+
+    export let data: PageData;
 
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { areaTypes } from '$lib/mocks/elaun/areas';
@@ -21,7 +29,6 @@
         target = document.getElementById('fileInput');
     });
     export let reasonVal: string = '-';
-
 
     // Function to handle the file changes
     function handleOnChange() {
@@ -41,62 +48,132 @@
         selectedFiles.splice(index, 1);
         fileSelectionList.set(selectedFiles);
     }
+
+    const { form, errors, enhance } = superForm(data.insuransKesihatanForm, {
+        SPA: true,
+        validators: _stepperInsuransKesihatan,
+        onSubmit() {
+            _submitInsuransKesihatanForm($form);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section>
-    <div
-        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
-    >
-        <SectionHeader title="Maklumat Elaun"></SectionHeader>
-        <DateSelector handleDateChange label="Tarikh Perjalanan"></DateSelector>
-        <DateSelector handleDateChange label="Sehingga Tarikh"></DateSelector>
-        <TextField
-            label="Bilangan Hari"
-            type="number"
-            bind:value={numberOfDays}
-        />
-        <LongTextField label="Tujuan" bind:value={reasonVal}></LongTextField>
+    <div>
+        <form
+            id="formValidation"
+            method="POST"
+            use:enhance
+            class="flex w-full flex-col gap-2"
+        >
+            <div
+                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+            >
+                <SectionHeader title="Maklumat Elaun"></SectionHeader>
+                <DateSelector
+                hasError={$errors.tarikhPerjalanan ? true : false}
+                name="tarikhPerjalanan"
+                handleDateChange
+                bind:selectedDate={$form.tarikhPerjalanan}
+                label="Tarikh Perjalanan"
+                ></DateSelector>
+                {#if $errors.tarikhPerjalanan}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.tarikhPerjalanan[0]}</span
+                >
+            {/if}
+                <DateSelector
+                hasError={$errors.sehinggaTarikh ? true : false}
+                name="sehinggaTarikh"
+                handleDateChange
+                bind:selectedDate={$form.sehinggaTarikh}
+                label="Sehingga Tarikh"
+                ></DateSelector>
+                {#if $errors.sehinggaTarikh}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.sehinggaTarikh[0]}</span
+                >
+            {/if}
+                <TextField
+                hasError={$errors.bilanganHari ? true : false}
+                name="bilanganHari"
+                    label="Bilangan Hari"
+                    type="number"
+                    bind:value={$form.bilanganHari}
+                />
+                {#if $errors.bilanganHari}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.bilanganHari[0]}</span
+                >
+            {/if}
+                <LongTextField
+                hasError={$errors.tujuan ? true : false}
+                name="tujuan"
+                label="Tujuan"
+                bind:value={$form.tujuan}
+                ></LongTextField>
+                {#if $errors.tujuan}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.tujuan[0]}</span
+                >
+            {/if}
 
-        <DropdownSelect
-            dropdownType="label-left-full"
-            label="Kawasan ( Kumpulan negara 1 atau 2 atau 3)"
-            options={areaTypes}
-            bind:value={selectedAreaType}
-        ></DropdownSelect>
+                <DropdownSelect
+                hasError={$errors.kawasan ? true : false}
+                    dropdownType="label-left-full"
+                    label="Kawasan ( Kumpulan negara 1 atau 2 atau 3)"
+                    options={areaTypes}
+                    bind:value={$form.kawasan}
+                ></DropdownSelect>
+                {#if $errors.kawasan}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.kawasan[0]}</span
+                >
+            {/if}
 
-        <!-- nested read-only text -->
-        <div class="ml-2.5 font-sans text-sm italic text-txt-tertiary">
-            Nota:
-            <ul class="list-inside list-decimal">
-                <li>
-                    Kawasan 1:
-                    <ul class="list-inside list-disc pl-4">
+
+                <!-- nested read-only text -->
+                <div class="ml-2.5 font-sans text-sm italic text-txt-tertiary">
+                    Nota:
+                    <ul class="list-inside list-decimal">
                         <li>
-                            Singapura, Brunei, Thailand, Indonesia, Filipina,
-                            Myanmar, Nepal, Kemboja, Laos, China, India, Jepun,
-                            Korea Selatan, Korea Utara, Pakistan, Sri Lanka,
-                            Taiwan, Vietnam, Hong Kong, Macau dan di dalam
-                            Malaysia
+                            Kawasan 1:
+                            <ul class="list-inside list-disc pl-4">
+                                <li>
+                                    Singapura, Brunei, Thailand, Indonesia,
+                                    Filipina, Myanmar, Nepal, Kemboja, Laos,
+                                    China, India, Jepun, Korea Selatan, Korea
+                                    Utara, Pakistan, Sri Lanka, Taiwan, Vietnam,
+                                    Hong Kong, Macau dan di dalam Malaysia
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            Kawasan 2:
+                            <ul class="list-inside list-disc pl-4">
+                                <li>
+                                    Seluruh dunia kecuali USA/Kanada dan
+                                    negara-negara di Kawasan 1.
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            Kawasan 3:
+                            <ul class="list-inside list-disc pl-4">
+                                <li>USA/Kanada</li>
+                            </ul>
                         </li>
                     </ul>
-                </li>
-                <li>
-                    Kawasan 2:
-                    <ul class="list-inside list-disc pl-4">
-                        <li>
-                            Seluruh dunia kecuali USA/Kanada dan negara-negara
-                            di Kawasan 1.
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    Kawasan 3:
-                    <ul class="list-inside list-disc pl-4">
-                        <li>USA/Kanada</li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
+                </div>
+            </div>
+        </form>
     </div>
     <!-- Document Upload -->
     <div
