@@ -179,7 +179,7 @@
 
                                     {#if $sejarahPenyakitErrors.penyakitSejakLahir}
                                         <span
-                                            class="font-sans text-sm italic text-system-danger"
+                                            class=" ml-[0px] font-sans text-sm italic text-system-danger"
                                             >{$sejarahPenyakitErrors
                                                 .penyakitSejakLahir[0]}</span
                                         >
