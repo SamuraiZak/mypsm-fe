@@ -487,7 +487,9 @@
                             {disabled}
                             id="gaji"
                             label={'Gaji'}
-                            value={CurrencyHelper.formatCurrency(parseInt(item.salary))}
+                            value={CurrencyHelper.formatCurrency(
+                                parseInt(item.salary),
+                            )}
                         ></TextField>
                     {:else}
                         <TextField
@@ -941,19 +943,24 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Keputusan daripada Peranan - Peranan Lain"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="FormStepperResultFromRoles"
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2.5">
+                
                 <div class="mb-5">
                     <b class="text-sm text-system-primary">Keputusan Pelulus</b>
                 </div>
                 <LongTextField
                     id="passer-remark"
                     label="Tindakan/Ulasan"
-                    value=""
+                    value="1"
                 ></LongTextField>
 
                 <RadioSingle
