@@ -19,13 +19,13 @@
     import ChargesFormGroup from '$lib/components/integriti-charges-form-group/ChargesFormGroup.svelte';
     import { punishmentMeetingNames } from '$lib/mocks/mesyuarat/integrityMeetingName.js';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
-    import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
-    import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import PunishmentFormGroup from '$lib/components/integriti-charges-form-group/PunishmentFormGroup.svelte';
     import AddPunishmentFromGroup from '$lib/components/integriti-charges-form-group/AddPunishmentFromGroup.svelte';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper.js';
-    export let data;
+    // export let data;
+    import type { PageData } from './$types';
+    export let data: PageData;
     let activeStepper = 0;
     let disabled = true;
     let isCompleted: boolean = false;
@@ -43,6 +43,13 @@
         data.record.currentProceeding.isAppealed === true;
     let appealMeetingResult: string = 'fail';
     let appealFollowUpResult: string = '';
+
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _integrityDirectorChargesRemarkSchema,
+        _submitIntegrityDirectorChargesRemarkForm,
+    } from './+page';
+    import { Toaster } from 'svelte-french-toast';
 
     function calculateTwoMonthsLater(initialDate: string) {
         // Parse the initial date string to create a Date object
@@ -190,6 +197,63 @@
             }
         }
     }
+
+    // =========================================
+    // Form Validation =========================
+    // =========================================
+    const {
+        form: integrityDirectorChargesRemarkForm,
+        errors: integrityDirectorChargesRemarkErrors,
+        enhance: integrityDirectorChargesRemarkEnhance,
+        formId: integrityDirectorChargesRemarkId,
+    } = superForm(data.integrityDirectorChargesRemarkForm, {
+        SPA: true,
+        validators: _integrityDirectorChargesRemarkSchema,
+        onSubmit() {
+            _submitIntegrityDirectorChargesRemarkForm(
+                $integrityDirectorChargesRemarkForm,
+            );
+            console.log('this is charges form');
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
+
+    const {
+        form: integrityDirectorPunishmentRemarkForm,
+        errors: integrityDirectorPunishmentRemarkErrors,
+        enhance: integrityDirectorPunishmentRemarkEnhance,
+        formId: integrityDirectorPunishmentRemarkId,
+    } = superForm(data.integrityDirectorPunishmentRemarkForm, {
+        SPA: true,
+        validators: _integrityDirectorChargesRemarkSchema,
+        onSubmit() {
+            _submitIntegrityDirectorChargesRemarkForm(
+                $integrityDirectorPunishmentRemarkForm,
+            );
+            console.log('this is punishment form');
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
+
+    const {
+        form: integrityDirectorSuspensionRemarkForm,
+        errors: integrityDirectorSuspensionRemarkErrors,
+        enhance: integrityDirectorSuspensionRemarkEnhance,
+        formId: integrityDirectorSuspensionRemarkId,
+    } = superForm(data.integrityDirectorSuspensionRemarkForm, {
+        SPA: true,
+        validators: _integrityDirectorChargesRemarkSchema,
+        onSubmit() {
+            _submitIntegrityDirectorChargesRemarkForm(
+                $integrityDirectorSuspensionRemarkForm,
+            );
+            console.log('this is suspension form');
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -740,7 +804,10 @@
             <StepperContentHeader
                 title="Pengesahan Pengarah Integriti - Pertuduhan"
             >
-                <TextIconButton primary label="simpan"
+                <TextIconButton
+                    primary
+                    label="simpan"
+                    form={$integrityDirectorChargesRemarkId}
                     ><SvgCheck /></TextIconButton
                 ></StepperContentHeader
             >
@@ -757,10 +824,11 @@
                     {#if isCompleted}
                         <LongTextField
                             disabled
-                            id="integrity-director-remark"
+                            id="integrityDirectorRemark"
                             label="Tindakan/Ulasan"
                             value="bebas"
                         ></LongTextField>
+
                         <div class="flex w-full flex-row text-sm">
                             <label
                                 for="integrity-director-result"
@@ -774,20 +842,43 @@
                             >
                         </div>
                     {:else}
-                        <LongTextField
-                            disabled={false}
-                            labelBlack={false}
-                            name="integrity-director-remark"
-                            label="Tindakan/Ulasan"
-                            value={'bebas'}
-                        />
-                        <RadioSingle
-                            disabled={false}
-                            labelBlack={false}
-                            options={integrityDirectorOptions}
-                            legend="Keputusan"
-                            bind:userSelected={integrityDirectorResult}
-                        />
+                        <form
+                            id={$integrityDirectorChargesRemarkId}
+                            method="POST"
+                            use:integrityDirectorChargesRemarkEnhance
+                            class="flex w-full flex-col gap-2"
+                        >
+                            <LongTextField
+                                hasError={$integrityDirectorChargesRemarkErrors.integrityDirectorRemark
+                                    ? true
+                                    : false}
+                                disabled={false}
+                                labelBlack={false}
+                                name="integrityDirectorRemark"
+                                label="Tindakan/Ulasan"
+                                bind:value={$integrityDirectorChargesRemarkForm.integrityDirectorRemark}
+                            />
+                            {#if $integrityDirectorChargesRemarkErrors.integrityDirectorRemark}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$integrityDirectorChargesRemarkErrors.integrityDirectorRemark}</span
+                                >
+                            {/if}
+                            <RadioSingle
+                                disabled={false}
+                                labelBlack={false}
+                                name="integrityDirectorResult"
+                                options={integrityDirectorOptions}
+                                legend="Keputusan"
+                                bind:userSelected={$integrityDirectorChargesRemarkForm.integrityDirectorResult}
+                            />
+                            {#if $integrityDirectorChargesRemarkErrors.integrityDirectorResult}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$integrityDirectorChargesRemarkErrors.integrityDirectorResult}</span
+                                >
+                            {/if}
+                        </form>
                     {/if}
                 </div>
             </StepperContentBody>
@@ -870,7 +961,10 @@
             <StepperContentHeader
                 title="Pengesahan Pengarah Integriti - Hukuman"
             >
-                <TextIconButton primary label="simpan"
+                <TextIconButton
+                    primary
+                    label="simpan"
+                    form={$integrityDirectorPunishmentRemarkId}
                     ><SvgCheck /></TextIconButton
                 >
             </StepperContentHeader>
@@ -903,20 +997,43 @@
                             >
                         </div>
                     {:else}
-                        <LongTextField
-                            disabled={false}
-                            labelBlack={false}
-                            name="integrity-director-remark"
-                            label="Tindakan/Ulasan"
-                            value={'bebas'}
-                        />
-                        <RadioSingle
-                            disabled={false}
-                            labelBlack={false}
-                            options={integrityDirectorOptions}
-                            legend="Keputusan"
-                            bind:userSelected={integrityDirectorResult}
-                        />
+                        <form
+                            id={$integrityDirectorPunishmentRemarkId}
+                            method="POST"
+                            use:integrityDirectorPunishmentRemarkEnhance
+                            class="flex w-full flex-col gap-2"
+                        >
+                            <LongTextField
+                                hasError={$integrityDirectorPunishmentRemarkErrors.integrityDirectorRemark
+                                    ? true
+                                    : false}
+                                disabled={false}
+                                labelBlack={false}
+                                name="integrityDirectorRemark"
+                                label="Tindakan/Ulasan"
+                                bind:value={$integrityDirectorPunishmentRemarkForm.integrityDirectorRemark}
+                            />
+                            {#if $integrityDirectorPunishmentRemarkErrors.integrityDirectorRemark}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$integrityDirectorPunishmentRemarkErrors.integrityDirectorRemark}</span
+                                >
+                            {/if}
+                            <RadioSingle
+                                disabled={false}
+                                labelBlack={false}
+                                name="integrityDirectorResult"
+                                options={integrityDirectorOptions}
+                                legend="Keputusan"
+                                bind:userSelected={$integrityDirectorPunishmentRemarkForm.integrityDirectorResult}
+                            />
+                            {#if $integrityDirectorPunishmentRemarkErrors.integrityDirectorResult}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$integrityDirectorPunishmentRemarkErrors.integrityDirectorResult}</span
+                                >
+                            {/if}
+                        </form>
                     {/if}
                 </div>
             </StepperContentBody>
@@ -1269,7 +1386,10 @@
             <StepperContentHeader
                 title="Pengesahan Pengarah Integriti - Tahan Kerja"
             >
-                <TextIconButton primary label="simpan"
+                <TextIconButton
+                    primary
+                    label="simpan"
+                    form={$integrityDirectorSuspensionRemarkId}
                     ><SvgCheck /></TextIconButton
                 >
             </StepperContentHeader>
@@ -1302,23 +1422,48 @@
                             >
                         </div>
                     {:else}
-                        <LongTextField
-                            disabled={false}
-                            labelBlack={false}
-                            name="integrity-director-remark"
-                            label="Tindakan/Ulasan"
-                            value={'bebas'}
-                        />
-                        <RadioSingle
-                            disabled={false}
-                            labelBlack={false}
-                            options={integrityDirectorOptions}
-                            legend="Keputusan"
-                            bind:userSelected={integrityDirectorResult}
-                        />
+                        <form
+                            id={$integrityDirectorSuspensionRemarkId}
+                            method="POST"
+                            use:integrityDirectorSuspensionRemarkEnhance
+                            class="flex w-full flex-col gap-2"
+                        >
+                            <LongTextField
+                                hasError={$integrityDirectorSuspensionRemarkErrors.integrityDirectorRemark
+                                    ? true
+                                    : false}
+                                disabled={false}
+                                labelBlack={false}
+                                name="integrityDirectorRemark"
+                                label="Tindakan/Ulasan"
+                                bind:value={$integrityDirectorSuspensionRemarkForm.integrityDirectorRemark}
+                            />
+                            {#if $integrityDirectorSuspensionRemarkErrors.integrityDirectorRemark}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$integrityDirectorSuspensionRemarkErrors.integrityDirectorRemark}</span
+                                >
+                            {/if}
+                            <RadioSingle
+                                disabled={false}
+                                labelBlack={false}
+                                name="integrityDirectorResult"
+                                options={integrityDirectorOptions}
+                                legend="Keputusan"
+                                bind:userSelected={$integrityDirectorSuspensionRemarkForm.integrityDirectorResult}
+                            />
+                            {#if $integrityDirectorSuspensionRemarkErrors.integrityDirectorResult}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$integrityDirectorSuspensionRemarkErrors.integrityDirectorResult}</span
+                                >
+                            {/if}
+                        </form>
                     {/if}
                 </div>
             </StepperContentBody>
         </StepperContent>
     {/if}
 </Stepper>
+
+<Toaster />

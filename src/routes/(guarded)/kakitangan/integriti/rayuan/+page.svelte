@@ -86,7 +86,7 @@
                 actionOptions={['detail']}
                 detailActions={() => {
                     const url =
-                        './prosiding/butiran-prosiding-' +
+                        './rayuan/butiran-rayuan-' +
                         selectedRow.id +
                         '-' +
                         selectedRow.identityDocumentNumber;

@@ -16,8 +16,12 @@ import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
 import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
 import { mockProsiding } from '$lib/mocks/integriti/prosiding/mockProsiding.js';
 import { getEmployees } from '$lib/service/employees/staff-service.js';
+import { fail } from '@sveltejs/kit';
+import { getErrorToast, getPromiseToast } from '$lib/toast/toast-service';
+import { superValidate } from 'sveltekit-superforms/client';
+import { z } from "zod";
 
-export async function load({ params }) {
+export async function load ({ params }) {
     const proceedingData: IntProsiding[] = await mockProsiding;
 
     const currentProceeding: IntProsiding | undefined = proceedingData.find(
@@ -105,6 +109,24 @@ export async function load({ params }) {
 
     if (!currentEmployee) throw new Error('Record not found');
 
+    const integrityDirectorChargesRemarkForm = await superValidate(
+        _integrityDirectorChargesRemarkSchema, {
+            // id: "chargesForm"
+        }
+    )
+
+    const integrityDirectorPunishmentRemarkForm = await superValidate(
+        _integrityDirectorChargesRemarkSchema, {
+            id: "punishmentForm"
+        }
+    )
+
+    const integrityDirectorSuspensionRemarkForm = await superValidate(
+        _integrityDirectorChargesRemarkSchema, {
+            id: "suspensionForm"
+        }
+    )
+
     return {
         record: {
             data,
@@ -127,5 +149,48 @@ export async function load({ params }) {
             currentEmployeeNextOfKins,
             currentEmployeeUploadedDocuments,
         },
+        integrityDirectorChargesRemarkForm,
+        integrityDirectorPunishmentRemarkForm,
+        integrityDirectorSuspensionRemarkForm
     };
+}
+
+
+// ===================================================
+// General Form Schema
+// ===================================================
+const generalSelectSchema = z.string().min(1, { message: "Sila tetapkan pilihan anda. " });
+
+
+// ===================================================
+// Pengesahan Pengarah Integriti - Pertuduhan
+// ===================================================
+export const _integrityDirectorChargesRemarkSchema = z.object({
+    integrityDirectorRemark: generalSelectSchema,
+    integrityDirectorResult: generalSelectSchema,
+})
+
+
+export const _submitIntegrityDirectorChargesRemarkForm = async (formData: Object) => {
+
+    const integrityDirectorChargesRemarkForm = await superValidate(formData, _integrityDirectorChargesRemarkSchema);
+        if (!integrityDirectorChargesRemarkForm.valid) {
+            getErrorToast();
+            console.log(integrityDirectorChargesRemarkForm)
+            return fail(400, integrityDirectorChargesRemarkForm);
+        }
+        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify(integrityDirectorChargesRemarkForm),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                console.log('Response Returned: ', json);
+            });
+
+        getPromiseToast(responsePromise)
+        return { integrityDirectorChargesRemarkForm }
 }

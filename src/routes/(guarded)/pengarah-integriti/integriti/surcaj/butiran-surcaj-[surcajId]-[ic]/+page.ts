@@ -16,6 +16,10 @@ import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
 import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
 import { mockSurcaj } from '$lib/mocks/integriti/surcaj/mockSurcaj.js';
 import { getEmployees } from '$lib/service/employees/staff-service.js';
+import { fail } from '@sveltejs/kit';
+import { getErrorToast, getPromiseToast } from '$lib/toast/toast-service';
+import { superValidate } from 'sveltekit-superforms/client';
+import { z } from "zod";
 
 export async function load({ params }) {
     const currentSurcaj: IntSurcaj | undefined = mockSurcaj.find(
@@ -103,6 +107,10 @@ export async function load({ params }) {
 
     if (!currentEmployee) throw new Error('Record not found');
 
+    const integrityDirectorChargesRemarkForm = await superValidate(
+        _integrityDirectorValidationSchema, {
+        }
+    )
     return {
         record: {
             data,
@@ -125,5 +133,45 @@ export async function load({ params }) {
             currentEmployeeNextOfKins,
             currentEmployeeUploadedDocuments,
         },
+        integrityDirectorChargesRemarkForm,
     };
+}
+
+// ===================================================
+// General Form Schema
+// ===================================================
+const generalSelectSchema = z.string().min(1, { message: "Sila tetapkan pilihan anda. " });
+
+
+// ===================================================
+// Pengesahan Pengarah Integriti - Pertuduhan
+// ===================================================
+export const _integrityDirectorValidationSchema = z.object({
+    integrityDirectorRemark: generalSelectSchema,
+    integrityDirectorResult: generalSelectSchema,
+})
+
+
+export const _submitIntegrityDirectorValidationForm = async (formData: Object) => {
+
+    const integrityDirectorValidationForm = await superValidate(formData, _integrityDirectorValidationSchema);
+        if (!integrityDirectorValidationForm.valid) {
+            getErrorToast();
+            console.log(integrityDirectorValidationForm)
+            return fail(400, integrityDirectorValidationForm);
+        }
+        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify(integrityDirectorValidationForm),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                console.log('Response Returned: ', json);
+            });
+
+        getPromiseToast(responsePromise)
+        return { integrityDirectorValidationForm }
 }
