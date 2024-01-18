@@ -27,10 +27,18 @@ export interface EmployeesListResponseData {
 
 // Converts JSON strings to/from your types
 export class EmployeesListResponseConvert {
+
+    // to model from response
+    public static fromResponse(response: Response): EmployeesListResponseViewModel {
+        return JSON.parse(JSON.stringify(response));
+    }
+
+    // to model from json string
     public static fromJson(json: string): EmployeesListResponseViewModel {
         return JSON.parse(json);
     }
 
+    // to json string from model
     public static toJson(value: EmployeesListResponseViewModel): string {
         return JSON.stringify(value);
     }
