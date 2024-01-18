@@ -51,7 +51,17 @@
     import { goto } from '$app/navigation';
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import FileInputField from '$lib/components/input/FileInputField.svelte';
-    import { _personalInfoForm, _submitPersonalInfoForm } from './+page';
+    import {
+        _personalInfoForm,
+        _submitPersonalInfoForm,
+        _academicInfoSchema,
+        _addAcademicInfoSchema,
+        _submitAcademicInfoForm,
+        _experienceInfoSchema,
+        _submitExperienceInfoForm,
+        _kinInfoSchema,
+        _submitKinInfoForm,
+    } from './+page';
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import toast, { Toaster } from 'svelte-french-toast';
@@ -59,11 +69,12 @@
     import { fileSelectionList } from '$lib/stores/globalState';
     import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-
+    import { z,ZodError } from 'zod';
 
     let employeeLists: SelectOptionType<any>[] = [];
     let selectedSupporter: string;
     let selectedApprover: string;
+
 
     onMount(async () => {
         const staffs: IntEmployees[] = await getEmployees();
@@ -304,6 +315,65 @@
     let tempAcademicRecord: any[] = [];
     let tempExperienceRecord: any[] = [];
 
+    const uploadedFileSchema = z.object({
+    uploadedFiles: z.any().array().nonempty({
+        message: 'Sila muat naik dokumen - dokumen berkaitan.',
+    }),
+});
+    // Function to handle the file changes
+    let selectedFiles: File[] = [];
+    let target: any;
+    let texthidden = false;
+
+    onMount(() => {
+        target = document.getElementById('fileInput');
+    });
+    function handleOnChange() {
+        texthidden = true;
+        const files = target.files;
+        if (files) {
+            for (let i = 0; i < files.length; i++) {
+                selectedFiles.push(files[i]);
+            }
+        }
+
+        fileSelectionList.set(selectedFiles);
+    }
+
+    // Function to handle the file deletion
+    function handleDelete(index: number) {
+        selectedFiles.splice(index, 1);
+        fileSelectionList.set(selectedFiles);
+    }
+
+    let errorData: any;
+    //File uploaded validation
+    const submitFilesForm = async () => {
+        let uploadedFiles = selectedFiles;
+        const uploadedFileData = {
+            uploadedFiles: uploadedFiles,
+        };
+
+        try {
+            const result = uploadedFileSchema.parse(uploadedFileData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                console.log(result)
+            }
+        } catch (error: unknown) {
+            if (error instanceof ZodError) {
+                const { fieldErrors: errors } = error.flatten();
+                errorData = errors;
+                toast.error('Sila pastikan dokumen telah dimuat naik.', {
+                    style: 'background: #333; color: #fff;',
+                });
+            }
+        }
+    };
+
     export const { form, errors, enhance } = superForm(data.personalInfoForm, {
         SPA: true,
         validators: _personalInfoForm,
@@ -315,6 +385,42 @@
         onSubmit() {
             // console.log('HERE: ', $form);
             _submitPersonalInfoForm($form);
+        },
+    });
+    const {
+        form: academicInfoForm,
+        errors: academicInfoErrors,
+        enhance: academicInfoEnhance,
+    } = superForm(data.academicInfoForm, {
+        SPA: true,
+        validators: _academicInfoSchema,
+        onSubmit() {
+                _submitAcademicInfoForm($academicInfoForm);
+        },
+    });
+
+    const {
+        form: experienceInfoForm,
+        errors: experienceInfoErrors,
+        enhance: experienceInfoEnhance,
+    } = superForm(data.experienceInfoForm, {
+        SPA: true,
+        validators: _experienceInfoSchema,
+        onSubmit() {
+            _submitExperienceInfoForm($experienceInfoForm);
+        },
+    });
+    const {
+        form: kinInfoForm,
+        errors: kinInfoErrors,
+        enhance: kinInfoEnhance,
+        formId: kinInfoId,
+    } = superForm(data.kinInfoForm, {
+        SPA: true,
+        id: "formStepperWaris",
+        validators: _kinInfoSchema,
+        onSubmit() {
+            _submitKinInfoForm($kinInfoForm);
         },
     });
 </script>
@@ -726,59 +832,213 @@
     <StepperContent>
         <StepperContentHeader
             title="Maklumat Akademik / Kelayakan / Latihan yang Lalu"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton primary label="Simpan" form="academicInfoForm">
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2.5">
-                {#each currentEmployeeEducations as edu, i}
-                    <p class={stepperFormTitleClass}>
-                        {edu.type}
-                    </p>
+                <form
+                    id="academicInfoForm"
+                    method="POST"
+                    use:academicInfoEnhance
+                    class="flex w-full flex-col gap-2"
+                >
+                    <p class={stepperFormTitleClass}>UPSR / Darjah 6</p>
+
                     <TextField
                         {disabled}
-                        id="sekolah"
+                        hasError={$academicInfoErrors.primarySchool
+                            ? true
+                            : false}
+                        name="primarySchool"
                         label={'Sekolah'}
-                        value={edu.instituteName}
+                        type="text"
+                        bind:value={$academicInfoForm.primarySchool}
                     ></TextField>
-                    <TextField
-                        {disabled}
-                        id="tahunHabis"
-                        label={'Tahun'}
-                        value={edu.completionYear}
-                    ></TextField>
-                    <TextField
-                        {disabled}
-                        id="gredSekolah"
-                        label={edu.type == 'Ijazah' ? 'CGPA' : 'Gred'}
-                        value={edu.finalGrade}
-                    ></TextField>
-                    {#if edu.type == 'Ijazah'}
-                        <TextField
-                            {disabled}
-                            id="bidang"
-                            label={'Bidang'}
-                            value={edu.course}
-                        ></TextField>
-                        <AccordianField
-                            disabled={!disabled}
-                            label="Catatan"
-                            header="Catatan"
+
+                    {#if $academicInfoErrors.primarySchool}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$academicInfoErrors.primarySchool}</span
                         >
-                            {#each edu.remark as val, i}
-                                <label
-                                    for=""
-                                    class="border-1 active:border-1 w-full rounded-[3px] border-bdr-primary text-base {disabled
-                                        ? 'text-txt-tertiary'
-                                        : 'text-txt-primary'}
-                                            hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0"
-                                    >{i + 1}. {val}</label
-                                >
-                            {/each}
-                        </AccordianField>
                     {/if}
-                {/each}
+                    <TextField
+                        {disabled}
+                        hasError={$academicInfoErrors.primaryYearFinished
+                            ? true
+                            : false}
+                        name="primaryYearFinished"
+                        label={'Tahun'}
+                        type="text"
+                        bind:value={$academicInfoForm.primaryYearFinished}
+                    ></TextField>
+
+                    {#if $academicInfoErrors.primaryYearFinished}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$academicInfoErrors.primaryYearFinished}</span
+                        >
+                    {/if}
+                    <TextField
+                        {disabled}
+                        hasError={$academicInfoErrors.primaryGred
+                            ? true
+                            : false}
+                        name="primaryGred"
+                        label={'Gred'}
+                        type="text"
+                        bind:value={$academicInfoForm.primaryGred}
+                    ></TextField>
+
+                    {#if $academicInfoErrors.primaryGred}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$academicInfoErrors.primaryGred}</span
+                        >
+                    {/if}
+                    <p class={stepperFormTitleClass}>SPM/ MCE</p>
+
+                    <TextField
+                        {disabled}
+                        hasError={!!$academicInfoErrors.highSchool}
+                        name="highSchool"
+                        label={'Sekolah'}
+                        type="text"
+                        bind:value={$academicInfoForm.highSchool}
+                    ></TextField>
+
+                    {#if $academicInfoErrors.highSchool}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$academicInfoErrors.highSchool}</span
+                        >
+                    {/if}
+                    <TextField
+                        {disabled}
+                        hasError={$academicInfoErrors.highSchoolYearFinished
+                            ? true
+                            : false}
+                        name="highSchoolYearFinished"
+                        label={'Tahun'}
+                        type="text"
+                        bind:value={$academicInfoForm.highSchoolYearFinished}
+                    ></TextField>
+
+                    {#if $academicInfoErrors.highSchoolYearFinished}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$academicInfoErrors.highSchoolYearFinished}</span
+                        >
+                    {/if}
+                    <TextField
+                        {disabled}
+                        hasError={$academicInfoErrors.highSchoolGred
+                            ? true
+                            : false}
+                        name="highSchoolGred"
+                        label={'Ijazah/ CGPA/ Gred'}
+                        type="text"
+                        bind:value={$academicInfoForm.highSchoolGred}
+                    ></TextField>
+
+                    {#if $academicInfoErrors.highSchoolGred}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$academicInfoErrors.highSchoolGred}</span
+                        >
+                    {/if}
+                    <p class={stepperFormTitleClass}>
+                        Institut Pengajian Tinggi
+                    </p>
+
+                    <TextField
+                        {disabled}
+                        hasError={$academicInfoErrors.higherLevelEdu
+                            ? true
+                            : false}
+                        name="higherLevelEdu"
+                        label={'IPT'}
+                        type="text"
+                        bind:value={$academicInfoForm.higherLevelEdu}
+                    ></TextField>
+
+                    {#if $academicInfoErrors.higherLevelEdu}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$academicInfoErrors.higherLevelEdu}</span
+                        >
+                    {/if}
+                    <TextField
+                        {disabled}
+                        hasError={$academicInfoErrors.higherLevelEduYearFinished
+                            ? true
+                            : false}
+                        name="higherLevelEduYearFinished"
+                        label={'Tahun'}
+                        type="text"
+                        bind:value={$academicInfoForm.higherLevelEduYearFinished}
+                    ></TextField>
+
+                    {#if $academicInfoErrors.higherLevelEduYearFinished}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$academicInfoErrors.higherLevelEduYearFinished}</span
+                        >
+                    {/if}
+                    <TextField
+                        {disabled}
+                        hasError={$academicInfoErrors.higherLevelEduGred
+                            ? true
+                            : false}
+                        name="higherLevelEduGred"
+                        label={'CGPA/ Gred'}
+                        type="text"
+                        bind:value={$academicInfoForm.higherLevelEduGred}
+                    ></TextField>
+
+                    {#if $academicInfoErrors.higherLevelEduGred}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$academicInfoErrors.higherLevelEduGred}</span
+                        >
+                    {/if}
+
+                    <TextField
+                        {disabled}
+                        hasError={$academicInfoErrors.higherLevelEduCourse
+                            ? true
+                            : false}
+                        name="higherLevelEduCourse"
+                        label={'Bidang'}
+                        type="text"
+                        bind:value={$academicInfoForm.higherLevelEduCourse}
+                    ></TextField>
+
+                    {#if $academicInfoErrors.higherLevelEduCourse}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$academicInfoErrors.higherLevelEduCourse}</span
+                        >
+                    {/if}
+
+                    <!-- <AccordianField
+                        disabled={!disabled}
+                        label="Catatan"
+                        header="Catatan"
+                    >
+                        {#each edu.remark as val, i}
+                            <label
+                                for=""
+                                class="border-1 active:border-1 w-full rounded-[3px] border-bdr-primary text-base {disabled
+                                    ? 'text-txt-tertiary'
+                                    : 'text-txt-primary'}
+                                            hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0"
+                                >{i + 1}. {val}</label
+                            >
+                        {/each}
+                    </AccordianField> -->
+                </form>
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
                         primary
@@ -817,101 +1077,212 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Maklumat Pengalaman"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="formStepperPengalaman"
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2.5">
-                {#each currentEmployeeExperience as item, i}
-                    <p class={stepperFormTitleClass}>
-                        Maklumat Pengalaman #{i + 1}
-                    </p>
-                    {#if item.company !== '-'}
-                        <TextField
-                            {disabled}
-                            id="namaMajikan"
-                            label={'Nama Majikan'}
-                            value={item.company}
-                        ></TextField>
-                        <TextField
-                            {disabled}
-                            id="alamatMajikan"
-                            label={'Alamat Majikan'}
-                            value="{item.address}, {item.postcode}, {item.city}, {mockLookupStates.find(
-                                (state) => state.id === item.stateId,
-                            )?.name}, {item.country}"
-                        ></TextField>
-                        <TextField
-                            {disabled}
-                            id="jawatan"
-                            label={'Jawatan'}
-                            value={item.position}
-                        ></TextField>
-                        <TextField
-                            {disabled}
-                            id="kodJawatan"
-                            label={'Kod Jawatan (Jika ada)'}
-                            value={item.grade}
-                        ></TextField>
-                        <TextField
-                            {disabled}
-                            id="tempohPerkhidmatan"
-                            label={'Tempoh Perkhidmatan (Tahun)'}
-                            value={getDurationYear(
-                                item.startDate,
-                                item.endDate,
-                            ).toString()}
-                        ></TextField>
-                        <TextField
-                            {disabled}
-                            id="gaji"
-                            label={'Gaji'}
-                            value={item.salary}
-                        ></TextField>
-                    {:else}
-                        <TextField
-                            {disabled}
-                            id="namaMajikan"
-                            label={'Nama Majikan'}
-                            value="-"
-                        ></TextField>
-                        <TextField
-                            {disabled}
-                            id="alamatMajikan"
-                            label={'Alamat Majikan'}
-                            value="-"
-                        ></TextField>
-                        <TextField
-                            {disabled}
-                            id="jawatan"
-                            label={'Jawatan'}
-                            value="-"
-                        ></TextField>
-                        <TextField
-                            {disabled}
-                            id="kodJawatan"
-                            label={'Kod Jawatan (Jika ada)'}
-                            value="-"
-                        ></TextField>
-                        <TextField
-                            {disabled}
-                            id="tempohPerkhidmatan"
-                            label={'Tempoh Perkhidmatan (Tahun)'}
-                            value="-"
-                        ></TextField>
-                        <TextField {disabled} id="gaji" label={'Gaji'} value="-"
-                        ></TextField>{/if}
-                {/each}
-                <div class="w-full rounded-[3px] border-b border-t p-2.5">
-                    <TextIconButton
-                        primary
-                        label="Tambah Pengalaman"
-                        onClick={() => {}}
-                    >
-                        <SvgPlus></SvgPlus>
-                    </TextIconButton>
-                </div>
+                <form
+                    id="formStepperPengalaman"
+                    class="flex w-full flex-col gap-2"
+                    use:experienceInfoEnhance
+                    method="POST"
+                >
+                    {#each currentEmployeeExperience as item, i}
+                        <p class={stepperFormTitleClass}>
+                            Maklumat Pengalaman #{i + 1}
+                        </p>
+                        {#if item.company !== '-'}
+                            <TextField
+                                {disabled}
+                                hasError={$experienceInfoErrors.namaMajikan
+                                    ? true
+                                    : false}
+                                name="namaMajikan"
+                                label={'Nama Majikan'}
+                                type="text"
+                                bind:value={$experienceInfoForm.namaMajikan}
+                            ></TextField>
+                            {#if $experienceInfoErrors.namaMajikan}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$experienceInfoErrors.namaMajikan}</span
+                                >
+                            {/if}
+                            <TextField
+                                {disabled}
+                                hasError={$experienceInfoErrors.alamatMajikan
+                                    ? true
+                                    : false}
+                                name="alamatMajikan"
+                                label={'Alamat Majikan'}
+                                type="text"
+                                bind:value={$experienceInfoForm.alamatMajikan}
+                            ></TextField>
+                            {#if $experienceInfoErrors.alamatMajikan}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$experienceInfoErrors.alamatMajikan}</span
+                                >
+                            {/if}
+                            <TextField
+                                {disabled}
+                                hasError={$experienceInfoErrors.jawatanPengalaman
+                                    ? true
+                                    : false}
+                                name="jawatanPengalaman"
+                                label={'Jawatan'}
+                                type="text"
+                                bind:value={$experienceInfoForm.jawatanPengalaman}
+                            ></TextField>
+                            {#if $experienceInfoErrors.jawatanPengalaman}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$experienceInfoErrors.jawatanPengalaman}</span
+                                >
+                            {/if}
+                            <TextField
+                                {disabled}
+                                id="kodJawatan"
+                                label={'Kod Jawatan (Jika ada)'}
+                                value={item.grade}
+                            ></TextField>
+                            <TextField
+                                {disabled}
+                                hasError={$experienceInfoErrors.tempohPerkhidmatan
+                                    ? true
+                                    : false}
+                                name="tempohPerkhidmatan"
+                                label={'Tempoh Perkhidmatan (tahun)'}
+                                type="text"
+                                bind:value={$experienceInfoForm.tempohPerkhidmatan}
+                            ></TextField>
+                            {#if $experienceInfoErrors.tempohPerkhidmatan}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$experienceInfoErrors.tempohPerkhidmatan}</span
+                                >
+                            {/if}
+                            <TextField
+                                {disabled}
+                                hasError={$experienceInfoErrors.gajiPengalaman
+                                    ? true
+                                    : false}
+                                name="gajiPengalaman"
+                                label={'Gaji'}
+                                type="text"
+                                bind:value={$experienceInfoForm.gajiPengalaman}
+                            ></TextField>
+                            {#if $experienceInfoErrors.gajiPengalaman}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$experienceInfoErrors.gajiPengalaman}</span
+                                >
+                            {/if}
+                        {:else}
+                            <TextField
+                                {disabled}
+                                hasError={$experienceInfoErrors.namaMajikan
+                                    ? true
+                                    : false}
+                                name="namaMajikan"
+                                label={'Nama Majikan'}
+                                type="text"
+                                bind:value={$experienceInfoForm.namaMajikan}
+                            ></TextField>
+                            {#if $experienceInfoErrors.namaMajikan}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$experienceInfoErrors.namaMajikan}</span
+                                >
+                            {/if}
+                            <TextField
+                                {disabled}
+                                hasError={$experienceInfoErrors.alamatMajikan
+                                    ? true
+                                    : false}
+                                name="alamatMajikan"
+                                label={'Alamat Majikan'}
+                                type="text"
+                                bind:value={$experienceInfoForm.alamatMajikan}
+                            ></TextField>
+                            {#if $experienceInfoErrors.alamatMajikan}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$experienceInfoErrors.alamatMajikan}</span
+                                >
+                            {/if}
+                            <TextField
+                                {disabled}
+                                hasError={$experienceInfoErrors.jawatanPengalaman
+                                    ? true
+                                    : false}
+                                name="jawatanPengalaman"
+                                label={'Jawatan'}
+                                type="text"
+                                bind:value={$experienceInfoForm.jawatanPengalaman}
+                            ></TextField>
+                            {#if $experienceInfoErrors.jawatanPengalaman}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$experienceInfoErrors.jawatanPengalaman}</span
+                                >
+                            {/if}
+                            <TextField
+                                {disabled}
+                                id="kodJawatan"
+                                label={'Kod Jawatan (Jika ada)'}
+                                value="-"
+                            ></TextField>
+                            <TextField
+                                {disabled}
+                                hasError={$experienceInfoErrors.tempohPerkhidmatan
+                                    ? true
+                                    : false}
+                                name="tempohPerkhidmatan"
+                                label={'Tempoh Perkhidmatan (tahun)'}
+                                type="text"
+                                bind:value={$experienceInfoForm.tempohPerkhidmatan}
+                            ></TextField>
+                            {#if $experienceInfoErrors.tempohPerkhidmatan}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$experienceInfoErrors.tempohPerkhidmatan}</span
+                                >
+                            {/if}
+                            <TextField
+                                {disabled}
+                                hasError={$experienceInfoErrors.gajiPengalaman
+                                    ? true
+                                    : false}
+                                name="gajiPengalaman"
+                                label={'Gaji'}
+                                type="text"
+                                bind:value={$experienceInfoForm.gajiPengalaman}
+                            ></TextField>
+                            {#if $experienceInfoErrors.gajiPengalaman}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$experienceInfoErrors.gajiPengalaman}</span
+                                >
+                            {/if}
+                        {/if}
+                    {/each}
+                    <div class="w-full rounded-[3px] border-b border-t p-2.5">
+                        <TextIconButton
+                            primary
+                            label="Tambah Pengalaman"
+                            onClick={() => {}}
+                        >
+                            <SvgPlus></SvgPlus>
+                        </TextIconButton>
+                    </div>
+                </form>
             </div></StepperContentBody
         >
     </StepperContent>
@@ -981,90 +1352,171 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Maklumat Waris"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton primary label="Simpan" form="formStepperWaris">
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2.5">
-                <TextField
-                    {disabled}
-                    id="namaWaris"
-                    label={'Nama Waris'}
-                    value={currentEmployeeNextOfKins.name}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="noKP"
-                    label={'No. Kad Pengenalan'}
-                    value={currentEmployeeNextOfKins.identityDocumentNumber}
-                ></TextField>
-                <DateSelector
-                    {handleDateChange}
-                    {disabled}
-                    label="Tarikh Lahir"
-                    selectedDate={dateFormatter(
-                        currentEmployeeNextOfKins.birthDate,
-                    )}
-                ></DateSelector>
-                <TextField
-                    {disabled}
-                    id="hubungan"
-                    label={'Hubungan Dengan Waris'}
-                    value={currentEmployeeNextOfKins.relationship}
-                ></TextField>
-                <DateSelector
-                    {handleDateChange}
-                    {disabled}
-                    label={'Tarikh Kahwin (Jika berkenaan)'}
-                    selectedDate={dateFormatter(
-                        currentEmployeeNextOfKins.marriageDate !== undefined
-                            ? currentEmployeeNextOfKins.marriageDate
-                            : '',
-                    )}
-                ></DateSelector>
-                <TextField
-                    {disabled}
-                    id="warnaKP"
-                    label={'Warna Kad Pengenalan'}
-                    value={isBlueOrRedIC(currentEmployeeNextOfKins.isMalaysian)}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="telefonRumah"
-                    label={'Telefon (R)'}
-                    value={currentEmployeeNextOfKins.homeNumber}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="telefonPeribadi"
-                    label={'Telefon (P)'}
-                    value={currentEmployeeNextOfKins.mobileNumber}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="pekerjaan"
-                    label={'Pekerjaan'}
-                    value={currentEmployeeNextOfKins.position}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="namaMajikan"
-                    label={'Nama Majikan'}
-                    value={currentEmployeeNextOfKins.company}
-                ></TextField>
-                <LongTextField
-                    {disabled}
-                    id="alamatMajikan"
-                    label={'Alamat Majikan'}
-                    value={currentEmployeeNextOfKins.companyAddress}
-                ></LongTextField>
+                <form
+                    id="formStepperWaris"
+                    class="flex w-full flex-col gap-2"
+                    use:kinInfoEnhance
+                    method="POST"
+                >
+                    <TextField
+                        {disabled}
+                        hasError={$kinInfoErrors.namaWaris ? true : false}
+                        name="namaWaris"
+                        label={'Nama Waris'}
+                        bind:value={$kinInfoForm.namaWaris}
+                    ></TextField>
+                    {#if $kinInfoErrors.namaWaris}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$kinInfoErrors.namaWaris}</span
+                        >
+                    {/if}
+                    <TextField
+                        {disabled}
+                        hasError={$kinInfoErrors.noKP ? true : false}
+                        name="noKP"
+                        label={'No. Kad Pengenalan'}
+                        bind:value={$kinInfoForm.noKP}
+                    ></TextField>
+                    {#if $kinInfoErrors.noKP}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$kinInfoErrors.noKP}</span
+                    >
+                {/if}
+                    <DateSelector
+
+                        {disabled}
+                        hasError={!!$kinInfoErrors.kinBirthDate}
+                        name="kinBirthDate"
+                        {handleDateChange}
+                        label="Tarikh Lahir"
+                        bind:selectedDate={$kinInfoForm.kinBirthDate}
+                    ></DateSelector>
+                    {#if $kinInfoErrors.kinBirthDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$kinInfoErrors.kinBirthDate}</span
+                    >
+                {/if}
+                    <TextField
+                        {disabled}
+                        hasError={$kinInfoErrors.hubunganWaris ? true : false}
+                        name="hubunganWaris"
+                        label={'Hubungan Dengan Waris'}
+                        bind:value={$kinInfoForm.hubunganWaris}
+                    ></TextField>
+                    {#if $kinInfoErrors.hubunganWaris}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$kinInfoErrors.hubunganWaris}</span
+                    >
+                {/if}
+                    <DateSelector
+                        {handleDateChange}
+                        {disabled}
+                        hasError={!!$kinInfoErrors.marriageDate}
+                        name="marriageDate"
+                        label={'Tarikh Kahwin (Jika berkenaan)'}
+                        bind:selectedDate={$kinInfoForm.marriageDate}
+                    ></DateSelector>
+                    {#if $kinInfoErrors.marriageDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$kinInfoErrors.marriageDate}</span
+                    >
+                {/if}
+                    <TextField
+                        {disabled}
+                        hasError={$kinInfoErrors.warnaKP ? true : false}
+                        name="warnaKP"
+                        label={'Warna Kad Pengenalan'}
+                        bind:value={$kinInfoForm.warnaKP}
+                    ></TextField>
+                    {#if $kinInfoErrors.warnaKP}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$kinInfoErrors.warnaKP}</span
+                    >
+                {/if}
+                    <TextField
+                        {disabled}
+                        hasError={$kinInfoErrors.telephoneH ? true : false}
+                        name="telephoneH"
+                        label={'Telefon (R)'}
+                        bind:value={$kinInfoForm.telephoneH}
+                    ></TextField>
+                    {#if $kinInfoErrors.telephoneH}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$kinInfoErrors.telephoneH}</span
+                    >
+                {/if}
+                    <TextField
+                    hasError={$kinInfoErrors.telephoneP ? true : false}
+                        {disabled}
+                        name="telephoneP"
+                        label={'Telefon (P)'}
+                        bind:value={$kinInfoForm.telephoneP}
+                    ></TextField>
+                    {#if $kinInfoErrors.telephoneP}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$kinInfoErrors.telephoneP}</span
+                    >
+                {/if}
+                    <TextField
+                    hasError={$kinInfoErrors.pekerjaanWaris ? true : false}
+                        {disabled}
+                        id="pekerjaanWaris"
+                        label={'Pekerjaan'}
+                        bind:value={$kinInfoForm.pekerjaanWaris}
+                    ></TextField>
+                    {#if $kinInfoErrors.pekerjaanWaris}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$kinInfoErrors.pekerjaanWaris}</span
+                    >
+                {/if}
+                    <TextField
+                    hasError={$kinInfoErrors.namaMajikanWaris ? true : false}
+                        {disabled}
+                        id="namaMajikanWaris"
+                        label={'Nama Majikan'}
+                        bind:value={$kinInfoForm.namaMajikanWaris}
+                    ></TextField>
+                    {#if $kinInfoErrors.namaMajikanWaris}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$kinInfoErrors.namaMajikanWaris}</span
+                    >
+                {/if}
+                    <LongTextField
+                    hasError={$kinInfoErrors.alamatMajikanWaris ? true : false}
+                        {disabled}
+                        id="alamatMajikanWaris"
+                        label={'Alamat Majikan'}
+                        bind:value={$kinInfoForm.alamatMajikanWaris}
+                    ></LongTextField>
+                    {#if $kinInfoErrors.alamatMajikanWaris}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$kinInfoErrors.alamatMajikanWaris}</span
+                    >
+                {/if}
+                </form>
             </div></StepperContentBody
         >
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Dokumen - Dokumen Sokongan yang Berkaitan"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton primary label="Simpan" onClick={() => {submitFilesForm()}}>
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
@@ -1088,17 +1540,68 @@
                         Berkenaan Dengan Akta Rahsia Rasmi, 1972
                     </li>
                 </ul>
-                <div
-                    class="flex flex-col items-center justify-center rounded-[3px] border border-system-primaryTint p-2.5"
-                >
-                    <p class="text-base text-txt-secondary">
-                        Seret dan lepas fail anda ke dalam ruangan ini atau
-                        pilih fail dari peranti anda
-                    </p>
-                    <span>
-                        <FileInputField />
-                    </span>
-                </div>
+                <!-- Seret dan lepas fail anda ke dalam ruangan ini atau
+                        pilih fail dari peranti anda -->
+                        <div class="flex w-full flex-col"></div>
+                        <SectionHeader
+                            ><div hidden={$fileSelectionList.length == 0}>
+                                <FileInputField id="fileInput" {handleOnChange}
+                                ></FileInputField>
+                            </div></SectionHeader
+                        >
+                        <div class="w-full">
+                            {#if errorData?.uploadedFiles}
+                                <span class="font-sans text-sm italic text-system-danger"
+                                    >{errorData?.uploadedFiles[0]}</span
+                                >
+                            {/if}
+                        </div>
+                        <div
+                            class="border-bdr-primaryp-5 flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border p-2.5"
+                        >
+                            <div class="flex flex-wrap gap-3">
+                                {#each $fileSelectionList as item, index}
+                                    <FileInputFieldChildren
+                                        childrenType="grid"
+                                        handleDelete={() => handleDelete(index)}
+                                        fileName={item.name}
+                                    />
+                                {/each}
+                            </div>
+                            <div class="flex flex-col items-center justify-center gap-2.5">
+                                <p
+                                    class=" text-sm text-txt-tertiary"
+                                    hidden={$fileSelectionList.length > 0}
+                                >
+                                    Pilih fail dari peranti anda.
+                                </p>
+                                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                                <div
+                                    class="text-txt-tertiary"
+                                    hidden={$fileSelectionList.length > 0}
+                                >
+                                    <svg
+                                        width={40}
+                                        height={40}
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.5"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                                        />
+                                    </svg>
+                                </div>
+                                <div hidden={$fileSelectionList.length > 0}>
+                                    <FileInputField id="fileInput" {handleOnChange}
+                                    ></FileInputField>
+                                </div>
+                            </div>
+                        </div>
                 <p class={stepperFormTitleClass}>Fail-fail yang dimuat naik:</p>
                 {#each currentEmployeeUploadedDocuments as item, i}
                     <div
@@ -1117,7 +1620,7 @@
         >
     </StepperContent>
 </Stepper>
- <Toaster/>
+<Toaster />
 
 <!-- content header starts here -->
 <!-- <section class="flex w-full flex-col items-start justify-start">

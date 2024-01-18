@@ -1,4 +1,4 @@
-import api from '$lib/services/core/ky.service.js';
+
 import { getErrorToast, getPromiseToast } from '$lib/toast/toast-service';
 import { fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/client';
@@ -55,6 +55,15 @@ const maxDateSchema = z.coerce
     .max(new Date(), {
         message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
     });
+
+// New employment - add academic section
+export const _addAcademicInfoSchema = z.object({
+    title: shortTextSchema,
+    institution: shortTextSchema,
+    year: shortTextSchema,
+    achievement: shortTextSchema,
+    remarks: longTextSchema,
+});
 
     export const _personalInfoForm = z
     .object({
@@ -115,35 +124,170 @@ const maxDateSchema = z.coerce
         },
     );
 
+//==========================================================
+//================== Maklumat Akademik =====================
+//==========================================================
 
+export const _academicInfoSchema = z.object({
+    primarySchool: shortTextSchema,
+    primaryYearFinished: shortTextSchema,
+    primaryGred: shortTextSchema,
+    highSchool: shortTextSchema,
+    highSchoolYearFinished: shortTextSchema,
+    highSchoolGred: shortTextSchema,
+    higherLevelEdu: shortTextSchema,
+    higherLevelEduYearFinished: shortTextSchema,
+    higherLevelEduGred: shortTextSchema,
+    higherLevelEduCourse: shortTextSchema,
+});
+
+//==========================================================
+//================== Maklumat Pengalaman ===================
+//==========================================================
+
+export const _experienceInfoSchema = z.object({
+    namaMajikan: shortTextSchema,
+    alamatMajikan: shortTextSchema,
+    kodJawatan: shortTextSchema.nullable(),
+    jawatanPengalaman: shortTextSchema,
+    tempohPerkhidmatan: shortTextSchema,
+    gajiPengalaman: z.coerce.number({
+        invalid_type_error: 'Medan ini hendaklah ditetapkan dengan angka',
+    }),
+});
+
+//==========================================================
+//================== Maklumat waris ========================
+//==========================================================
+
+export const _kinInfoSchema = z.object({
+    namaWaris: shortTextSchema,
+    noKP: shortTextSchema,
+    kinBirthDate: maxDateSchema,
+    hubunganWaris: shortTextSchema,
+    marriageDate: maxDateSchema.nullable(),
+    warnaKP: shortTextSchema,
+    telephoneH: z.coerce.number({
+        invalid_type_error: 'Medan ini hendaklah ditetapkan dengan angka',
+    }),
+    telephoneP: z.coerce.number({
+        invalid_type_error: 'Medan ini hendaklah ditetapkan dengan angka',
+    }),
+    pekerjaanWaris: shortTextSchema,
+    namaMajikanWaris: shortTextSchema,
+    alamatMajikanWaris: shortTextSchema,
+});
 
 
     export const load = async () => {
         const personalInfoForm = await superValidate(_personalInfoForm);
-  
+        const academicInfoForm = await superValidate(_academicInfoSchema);
+        const experienceInfoForm = await superValidate(_experienceInfoSchema);
+        const kinInfoForm = await superValidate(_kinInfoSchema, {id: "formStepperWaris"});
+
         return {
             personalInfoForm,
+            academicInfoForm,
+            experienceInfoForm,
+            kinInfoForm,
+
 
         };
     };
 
     // personal detail submit function
 export const _submitPersonalInfoForm = async (formData: object) => {
-    console.log('HERE: ', formData);
 
     const form = await superValidate(formData, _personalInfoForm);
 
     if (!form.valid) {
         getErrorToast();
+        console.log("experience personal form")
         return fail(400, form);
     }
 
-    const responsePromise = api
-        .post('https://jsonplaceholder.typicode.com/posts', {
-            body: JSON.stringify(form),
-            prefixUrl: '',
-        })
-        .json()
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(form),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+    .then((response) => response.json())
+        .then((json) => console.log('Response: ', json));
+
+    getPromiseToast(responsePromise);
+    return { form };
+};
+
+export const _submitAcademicInfoForm = async (formData: object) => {
+    const form = await superValidate(formData, _academicInfoSchema);
+
+    console.log('Request: ', form.data);
+
+    if (!form.valid) {
+        getErrorToast();
+        console.log("experience academic form")
+        return fail(400, form);
+    }
+
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(form),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+    .then((response) => response.json())
+        .then((json) => console.log('Response: ', json));
+
+    getPromiseToast(responsePromise);
+
+    return { form };
+};
+
+export const _submitExperienceInfoForm = async (formData: object) => {
+    const form = await superValidate(formData, _experienceInfoSchema);
+
+    if (!form.valid) {
+        getErrorToast();
+        console.log("experience info form")
+        return fail(400, form);
+    }
+
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(form),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+    .then((response) => response.json())
+        .then((json) => console.log('Response: ', json));
+
+    getPromiseToast(responsePromise);
+    return { form };
+};
+
+export const _submitKinInfoForm = async (formData: object) => {
+    console.log('HERE: ', formData);
+
+    const form = await superValidate(formData, _kinInfoSchema);
+
+    if (!form.valid) {
+        getErrorToast();
+        console.log("kinInfo")
+        return fail(400, form);
+    }
+
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(form),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+    .then((response) => response.json())
         .then((json) => console.log('Response: ', json));
 
     getPromiseToast(responsePromise);
