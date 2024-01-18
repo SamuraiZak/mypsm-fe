@@ -38,11 +38,13 @@
         _addAcademicInfoSchema,
         _addExperienceModalSchema,
         _experienceInfoSchema,
+        _nextOfKinInfoSchema,
         _personalInfoForm,
         _submitAcademicInfoForm,
         _submitAddExperienceModal,
         _submitAddMoreAcademicForm,
         _submitExperienceInfoForm,
+        _submitNextOfKinForm,
         _submitPersonalInfoForm,
     } from './+page';
     import { superForm } from 'sveltekit-superforms/client';
@@ -59,11 +61,11 @@
 
     const approveOptions: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'LULUS',
         },
         {
-            value: 'false',
+            value: false,
             label: 'TIDAK LULUS',
         },
     ];
@@ -192,11 +194,11 @@
 
     const options: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'Ya',
         },
         {
-            value: 'false',
+            value: false,
             label: 'Tidak',
         },
     ];
@@ -258,6 +260,18 @@
     });
 
     const {
+        form: nextOfKinForm,
+        errors: nextOfKinErrors,
+        enhance: nextOfKinEnhance,
+    } = superForm(data.nextOfKinInfoForm, {
+        SPA: true,
+        validators: _nextOfKinInfoSchema,
+        onSubmit() {
+            _submitNextOfKinForm($nextOfKinForm);
+        },
+    });
+
+    const {
         form: addAcademicInfoModal,
         errors: addAcademicInfoErrors,
         enhance: addAcademicInfoEnhance,
@@ -293,17 +307,17 @@
         },
     });
 
-    // const {
-    //     form: addMembershipModal,
-    //     errors: addMembershipModalErrors,
-    //     enhance: addMembershipModalEnhance,
-    // } = superForm(data.addExperienceModalForm, {
-    //     SPA: true,
-    //     validators: _addExperienceModalSchema,
-    //     onSubmit() {
-    //         _submitAddMoreAcademicForm($addAcademicInfoModal);
-    //     },
-    // });
+    const {
+        form: addMembershipModal,
+        errors: addMembershipModalErrors,
+        enhance: addMembershipModalEnhance,
+    } = superForm(data.addExperienceModalForm, {
+        SPA: true,
+        validators: _addExperienceModalSchema,
+        onSubmit() {
+            _submitAddMoreAcademicForm($addAcademicInfoModal);
+        },
+    });
 </script>
 
 <ContentHeader
@@ -717,7 +731,7 @@
                         legend={'Perhubungan Dengan Kakitangan LKIM'}
                         bind:userSelected={$form.isInternalRelationship}
                     ></RadioSingle>
-                    {#if $form.isInternalRelationship === 'true'}
+                    {#if $form.isInternalRelationship}
                         <TextField
                             {disabled}
                             hasError={!!$errors.employeeNumber}
@@ -1342,91 +1356,172 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Maklumat Waris"
-            ><TextIconButton
-                primary
-                label="Simpan"
-                onClick={() => {
-                    getSuccessToast();
-                }}
-            >
+            ><TextIconButton primary label="Simpan" form="nextOfKinForm">
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
         <StepperContentBody
-            ><div class="flex w-full flex-col gap-2.5">
+            ><form
+                id="nextOfKinForm"
+                class="flex w-full flex-col gap-2"
+                use:nextOfKinEnhance
+                method="POST"
+            >
                 <TextField
+                    hasError={!!$nextOfKinErrors.name}
                     {disabled}
-                    id="namaWaris"
+                    id="name"
+                    name="name"
                     label={'Nama Waris'}
-                    value={currentEmployeeNextOfKins.name}
+                    value={$nextOfKinForm.name}
                 ></TextField>
+                {#if $nextOfKinErrors.name}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$nextOfKinErrors.name}</span
+                    >
+                {/if}
                 <TextField
+                    hasError={!!$nextOfKinErrors.identityDocumentNumber}
                     {disabled}
-                    id="noKP"
+                    id="identityDocumentNumber"
+                    name="identityDocumentNumber"
                     label={'No. Kad Pengenalan'}
-                    value={currentEmployeeNextOfKins.identityDocumentNumber}
+                    value={$nextOfKinForm.identityDocumentNumber}
                 ></TextField>
+                {#if $nextOfKinErrors.identityDocumentNumber}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$nextOfKinErrors.identityDocumentNumber}</span
+                    >
+                {/if}
                 <DateSelector
+                    hasError={!!$nextOfKinErrors.birthDate}
                     {handleDateChange}
                     {disabled}
+                    name="birthDate"
                     label="Tarikh Lahir"
-                    selectedDate={dateFormatter(
-                        currentEmployeeNextOfKins.birthDate,
-                    )}
+                    selectedDate={$nextOfKinForm.birthDate}
                 ></DateSelector>
+                {#if $nextOfKinErrors.birthDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$nextOfKinErrors.birthDate}</span
+                    >
+                {/if}
                 <TextField
+                    hasError={!!$nextOfKinErrors.relationship}
                     {disabled}
                     id="relationship"
+                    name="relationship"
                     label={'Hubungan Dengan Waris'}
-                    value={currentEmployeeNextOfKins.relationship}
+                    value={$nextOfKinForm.relationship}
                 ></TextField>
+                {#if $nextOfKinErrors.relationship}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$nextOfKinErrors.relationship}</span
+                    >
+                {/if}
                 <DateSelector
+                    hasError={!!$nextOfKinErrors.marriageDate}
                     {handleDateChange}
                     {disabled}
+                    name="marriageDate"
                     label={'Tarikh Kahwin (Jika berkenaan)'}
-                    selectedDate={dateFormatter(
-                        currentEmployeeNextOfKins.marriageDate !== undefined
-                            ? currentEmployeeNextOfKins.marriageDate
-                            : '',
-                    )}
+                    selectedDate={$nextOfKinForm.marriageDate}
                 ></DateSelector>
+                {#if $nextOfKinErrors.marriageDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$nextOfKinErrors.marriageDate}</span
+                    >
+                {/if}
                 <TextField
+                    hasError={!!$nextOfKinErrors.identityDocumentType}
                     {disabled}
-                    id="warnaKP"
+                    id="identityDocumentType"
+                    name="identityDocumentType"
                     label={'Warna Kad Pengenalan'}
-                    value={isBlueOrRedIC(currentEmployeeNextOfKins.isMalaysian)}
+                    value={$nextOfKinForm.identityDocumentType}
                 ></TextField>
+                {#if $nextOfKinErrors.identityDocumentType}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$nextOfKinErrors.identityDocumentType}</span
+                    >
+                {/if}
                 <TextField
+                    hasError={!!$nextOfKinErrors.homeNumber}
                     {disabled}
-                    id="telefonRumah"
+                    id="homeNumber"
+                    name="homeNumber"
                     label={'Telefon (R)'}
-                    value={currentEmployeeNextOfKins.homeNumber}
+                    value={$nextOfKinForm.homeNumber}
                 ></TextField>
+                {#if $nextOfKinErrors.homeNumber}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$nextOfKinErrors.homeNumber}</span
+                    >
+                {/if}
                 <TextField
+                    hasError={!!$nextOfKinErrors.mobileNumber}
                     {disabled}
-                    id="telefonPeribadi"
+                    id="mobileNumber"
+                    name="mobileNumber"
                     label={'Telefon (P)'}
-                    value={currentEmployeeNextOfKins.mobileNumber}
+                    value={$nextOfKinForm.mobileNumber}
                 ></TextField>
+                {#if $nextOfKinErrors.mobileNumber}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$nextOfKinErrors.mobileNumber}</span
+                    >
+                {/if}
                 <TextField
+                    hasError={!!$nextOfKinErrors.position}
                     {disabled}
-                    id="pekerjaan"
+                    id="position"
+                    name="position"
                     label={'Pekerjaan'}
-                    value={currentEmployeeNextOfKins.position}
+                    value={$nextOfKinForm.position}
                 ></TextField>
+                {#if $nextOfKinErrors.position}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$nextOfKinErrors.position}</span
+                    >
+                {/if}
                 <TextField
+                    hasError={!!$nextOfKinErrors.company}
                     {disabled}
-                    id="namaMajikan"
+                    id="company"
+                    name="company"
                     label={'Nama Majikan'}
-                    value={currentEmployeeNextOfKins.company}
+                    value={$nextOfKinForm.company}
                 ></TextField>
+                {#if $nextOfKinErrors.company}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$nextOfKinErrors.company}</span
+                    >
+                {/if}
                 <LongTextField
+                    hasError={!!$nextOfKinErrors.companyAddress}
                     {disabled}
-                    id="alamatMajikan"
+                    id="companyAddress"
+                    name="companyAddress"
                     label={'Alamat Majikan'}
-                    value={currentEmployeeNextOfKins.companyAddress}
+                    value={$nextOfKinForm.companyAddress}
                 ></LongTextField>
-            </div></StepperContentBody
+                {#if $nextOfKinErrors.companyAddress}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$nextOfKinErrors.companyAddress}</span
+                    >
+                {/if}
+            </form></StepperContentBody
         >
     </StepperContent>
     <StepperContent>
@@ -1736,7 +1831,7 @@
     <form
         id="addMembershipInfoModal"
         class="flex w-full flex-col gap-2"
-        use:experienceInfoEnhance
+        use:addMembershipInfoEnhance
         method="POST"
     >
         <TextField
