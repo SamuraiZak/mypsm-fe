@@ -16,6 +16,10 @@ import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
 import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
 import { mockExamAppls } from '$lib/mocks/latihan/mockExamAppls.js';
 import { getEmployees } from '$lib/service/employees/staff-service.js';
+import { fail } from '@sveltejs/kit';
+import { getErrorToast, getPromiseToast } from '$lib/toast/toast-service';
+import { superValidate } from 'sveltekit-superforms/client';
+import { z } from "zod";
 
 export async function load({ params }) {
     const data: IntExamAppl[] = await mockExamAppls;
@@ -107,6 +111,10 @@ export async function load({ params }) {
 
     if (!currentExam) throw new Error('Record not found');
 
+    const secretaryExaminationResultForm = await superValidate(
+        _secretaryExaminationResultSchema
+    )
+
     return {
         record: {
             data,
@@ -129,5 +137,42 @@ export async function load({ params }) {
             currentEmployeeNextOfKins,
             currentEmployeeUploadedDocuments,
         },
+        secretaryExaminationResultForm,
     };
+}
+
+//========================================
+// New Examination Schema ================
+//========================================
+const generalSchema = z.string().min(1, { message: "Sila tetapkan pilihan anda." })
+
+export const _secretaryExaminationResultSchema = z.object({
+    secretaryRemark: generalSchema,
+    secretaryResult: generalSchema,
+    secretaryExaminationResult: generalSchema,
+})
+
+//========================================
+// Form Validation Function ==============
+//========================================
+export const _submitSecretaryExaminationResultForm = async (formData: Object) => {
+    const secretaryExaminationResultForm = await superValidate(formData, _secretaryExaminationResultSchema);
+    if (!secretaryExaminationResultForm.valid) {
+        getErrorToast();
+        return fail(400, secretaryExaminationResultForm);
+    }
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(secretaryExaminationResultForm),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+
+    getPromiseToast(responsePromise)
+    return { secretaryExaminationResultForm }
 }

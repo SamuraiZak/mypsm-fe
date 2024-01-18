@@ -13,7 +13,10 @@
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import { goto, invalidateAll } from '$app/navigation';
     import toast, { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
     import { z } from 'zod';
+    import { _newExaminationSchema, _submitNewExaminationForm } from './+page';
     let activeStepper = 0;
 
     // =====================================================================================
@@ -26,114 +29,130 @@
     let examDate: string = '';
     let examLocation: string = '';
     let errorData: any;
+    export let data: PageData;
 
-    const dateScheme = z.coerce
-        .date({
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_date'
-                        ? 'Tarikh tidak boleh dibiar kosong.'
-                        : defaultError,
-            }),
-        })
-        .min(new Date(), {
-            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
-        });
-    const examFormSchema = z.object({
-        examType: z.enum(['perkhidmatan', 'psl'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Jenis latihan perlu dipilih.'
-                        : defaultError,
-            }),
-        }),
-        examTitle: z
-            .string({ required_error: 'Tajuk latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Tajuk hendaklah lebih daripada 4 karakter.',
-            })
-            .max(84, { message: 'Tajuk tidak boleh melebihi 84 karakter.' })
-            .trim(),
-        examApplicationOpenDate: dateScheme,
-        examApplicationCloseDate: dateScheme.refine(
-            (data) => data >= new Date(examApplicationOpenDate),
-            {
-                message:
-                    'Tarikh tutup tidak boleh lebih awal daripada tarikh buka permohonan',
-            },
-        ),
-        examDate: dateScheme.refine(
-            (data) => data >= new Date(examApplicationCloseDate),
-            {
-                message:
-                    'Tarikh peperiksaan tidak boleh lebih awal daripada tarikh tutup permohonan',
-            },
-        ),
-        examLocation: z
-            .string({ required_error: 'Lokasi tidak boleh kosong.' })
-            .min(4, {
-                message: 'Lokasi hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Lokasi tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-    });
+    // const dateScheme = z.coerce
+    //     .date({
+    //         errorMap: (issue, { defaultError }) => ({
+    //             message:
+    //                 issue.code === 'invalid_date'
+    //                     ? 'Tarikh tidak boleh dibiar kosong.'
+    //                     : defaultError,
+    //         }),
+    //     })
+    //     .min(new Date(), {
+    //         message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+    //     });
+    // const examFormSchema = z.object({
+    //     examType: z.enum(['perkhidmatan', 'psl'], {
+    //         errorMap: (issue, { defaultError }) => ({
+    //             message:
+    //                 issue.code === 'invalid_enum_value'
+    //                     ? 'Jenis latihan perlu dipilih.'
+    //                     : defaultError,
+    //         }),
+    //     }),
+    //     examTitle: z
+    //         .string({ required_error: 'Tajuk latihan tidak boleh kosong.' })
+    //         .min(4, {
+    //             message: 'Tajuk hendaklah lebih daripada 4 karakter.',
+    //         })
+    //         .max(84, { message: 'Tajuk tidak boleh melebihi 84 karakter.' })
+    //         .trim(),
+    //     examApplicationOpenDate: dateScheme,
+    //     examApplicationCloseDate: dateScheme.refine(
+    //         (data) => data >= new Date(examApplicationOpenDate),
+    //         {
+    //             message:
+    //                 'Tarikh tutup tidak boleh lebih awal daripada tarikh buka permohonan',
+    //         },
+    //     ),
+    //     examDate: dateScheme.refine(
+    //         (data) => data >= new Date(examApplicationCloseDate),
+    //         {
+    //             message:
+    //                 'Tarikh peperiksaan tidak boleh lebih awal daripada tarikh tutup permohonan',
+    //         },
+    //     ),
+    //     examLocation: z
+    //         .string({ required_error: 'Lokasi tidak boleh kosong.' })
+    //         .min(4, {
+    //             message: 'Lokasi hendaklah lebih daripada 4 karakter.',
+    //         })
+    //         .max(124, {
+    //             message: 'Lokasi tidak boleh melebihi 124 karakter.',
+    //         })
+    //         .trim(),
+    // });
 
-    // =====================================================================================
-    // exam form fields submit function=====================================================
-    // =====================================================================================
-    const submitExamForm = async (event: Event) => {
-        const formElement = event.target as HTMLFormElement;
-        const formData = new FormData(formElement);
-        const examTypeSelector = document.getElementById(
-            'examType',
-        ) as HTMLSelectElement;
+    // // =====================================================================================
+    // // exam form fields submit function=====================================================
+    // // =====================================================================================
+    // const submitExamForm = async (event: Event) => {
+    //     const formElement = event.target as HTMLFormElement;
+    //     const formData = new FormData(formElement);
+    //     const examTypeSelector = document.getElementById(
+    //         'examType',
+    //     ) as HTMLSelectElement;
 
-        const examFormData = {
-            examType: String(examTypeSelector.value),
-            examTitle: String(formData.get('examTitle')),
-            examApplicationOpenDate: String(
-                formData.get('examApplicationOpenDate'),
-            ),
-            examApplicationCloseDate: String(
-                formData.get('examApplicationCloseDate'),
-            ),
-            examDate: String(formData.get('examDate')),
-            examLocation: String(formData.get('examLocation')),
-        };
+    //     const examFormData = {
+    //         examType: String(examTypeSelector.value),
+    //         examTitle: String(formData.get('examTitle')),
+    //         examApplicationOpenDate: String(
+    //             formData.get('examApplicationOpenDate'),
+    //         ),
+    //         examApplicationCloseDate: String(
+    //             formData.get('examApplicationCloseDate'),
+    //         ),
+    //         examDate: String(formData.get('examDate')),
+    //         examLocation: String(formData.get('examLocation')),
+    //     };
 
-        try {
-            const result = examFormSchema.parse(examFormData);
-            if (result) {
-                errorData = [];
+    //     try {
+    //         const result = examFormSchema.parse(examFormData);
+    //         if (result) {
+    //             errorData = [];
 
-                const id = crypto.randomUUID().toString();
-                const validatedExamFormData: IntExams = { ...examFormData, id };
+    //             const id = crypto.randomUUID().toString();
+    //             const validatedExamFormData: IntExams = { ...examFormData, id };
 
-                console.log(JSON.stringify(validatedExamFormData));
+    //             console.log(JSON.stringify(validatedExamFormData));
 
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
+    //             toast.success('Berjaya disimpan!', {
+    //                 style: 'background: #333; color: #fff;',
+    //             });
 
-                await invalidateAll();
-            }
-        } catch (err: unknown) {
-            if (err instanceof z.ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
+    //             await invalidateAll();
+    //         }
+    //     } catch (err: unknown) {
+    //         if (err instanceof z.ZodError) {
+    //             const { fieldErrors: errors } = err.flatten();
+    //             errorData = errors;
+    //             toast.error(
+    //                 'Sila pastikan maklumat adalah lengkap dengan tepat.',
+    //                 {
+    //                     style: 'background: #333; color: #fff;',
+    //                 },
+    //             );
+    //             console.log('ERROR!', errorData);
+    //         }
+    //     }
+    // };
+
+    const { form, errors, enhance } = superForm(
+        data.newExaminationForm,
+        {
+            SPA: true,
+            validators: _newExaminationSchema,
+            onSubmit() {
+                _submitNewExaminationForm(
+                    $form
                 );
-                console.log('ERROR!', errorData);
-            }
-        }
-    };
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+        },
+    );
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -161,85 +180,86 @@
         <StepperContentBody>
             <form
                 id="examForm"
-                on:submit|preventDefault={submitExamForm}
+                use:enhance
+                method="POST"
                 class="flex w-full flex-col gap-2"
             >
                 <DropdownSelect
-                    hasError={errorData?.examType}
+                    hasError={$errors.examType ? true : false}
                     dropdownType="label-left-full"
                     id="examType"
                     label="Jenis Peperiksaan"
-                    bind:value={examType}
+                    bind:value={$form.examType}
                     options={examTypes}
                 ></DropdownSelect>
-                {#if errorData?.examType}
+                {#if $errors.examType}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.examType[0]}</span
+                        >{$errors.examType[0]}</span
                     >
                 {/if}
                 <TextField
-                    hasError={errorData?.examTitle}
+                    hasError={$errors.examTitle ? true : false}
                     name="examTitle"
                     label="Tajuk Peperiksaan"
                     type="text"
-                    bind:value={examTitle}
+                    bind:value={$form.examTitle}
                 />
-                {#if errorData?.examTitle}
+                {#if $errors.examTitle}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.examTitle[0]}</span
+                        >{$errors.examTitle[0]}</span
                     >
                 {/if}
                 <DateSelector
-                    hasError={errorData?.examApplicationOpenDate}
+                    hasError={$errors.examApplicationOpenDate ? true : false}
                     name="examApplicationOpenDate"
                     handleDateChange
                     label="Tarikh Mula Permohonam"
-                    bind:selectedDate={examApplicationOpenDate}
+                    bind:selectedDate={$form.examApplicationOpenDate}
                 ></DateSelector>
-                {#if errorData?.examApplicationOpenDate}
+                {#if $errors.examApplicationOpenDate}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.examApplicationOpenDate[0]}</span
+                        >{$errors.examApplicationOpenDate[0]}</span
                     >
                 {/if}
                 <DateSelector
-                    hasError={errorData?.examApplicationCloseDate}
+                    hasError={$errors.examApplicationCloseDate ? true : false}
                     name="examApplicationCloseDate"
                     handleDateChange
                     label="Tarikh Tutup Permohonan"
-                    bind:selectedDate={examApplicationCloseDate}
+                    bind:selectedDate={$form.examApplicationCloseDate}
                 ></DateSelector>
-                {#if errorData?.examApplicationCloseDate}
+                {#if $errors.examApplicationCloseDate}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.examApplicationCloseDate[0]}</span
+                        >{$errors.examApplicationCloseDate[0]}</span
                     >
                 {/if}
                 <DateSelector
-                    hasError={errorData?.examDate}
+                    hasError={$errors.examDate ? true : false}
                     name="examDate"
                     handleDateChange
                     label="Tarikh Peperiksaan"
-                    bind:selectedDate={examDate}
+                    bind:selectedDate={$form.examDate}
                 ></DateSelector>
-                {#if errorData?.examDate}
+                {#if $errors.examDate}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.examDate[0]}</span
+                        >{$errors.examDate[0]}</span
                     >
                 {/if}
                 <LongTextField
-                    hasError={errorData?.examLocation}
+                    hasError={$errors.examLocation ? true : false}
                     name="examLocation"
                     label="Lokasi Peperiksaan"
-                    bind:value={examLocation}
+                    bind:value={$form.examLocation}
                 />
-                {#if errorData?.examLocation}
+                {#if $errors.examLocation}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.examLocation[0]}</span
+                        >{$errors.examLocation[0]}</span
                     >
                 {/if}
             </form>
