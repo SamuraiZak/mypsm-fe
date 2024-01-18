@@ -20,12 +20,21 @@ import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
-// Result From Roles
-const resultOption = z
-    .string()
-    .min(1, { message: 'Sila tetapkan pilihan anda.' });
+// Stepper Update New Appointment
+const date = z.coerce
+    .date({
+        errorMap: (issue, { defaultError }) => ({
+            message:
+                issue.code === 'invalid_date'
+                    ? 'Tarikh tidak boleh dibiar kosong.'
+                    : defaultError,
+        }),
+    })
+    .max(new Date(), {
+        message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
+    });
 
-const stepperResultFromRoles = z
+const textField = z
     .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
     .min(4, {
         message: 'Medan ini hendaklah lebih daripada 4 karakter.',
@@ -35,27 +44,46 @@ const stepperResultFromRoles = z
     })
     .trim();
 
-export const _stepperResultFromRoles = z.object({
-    actionRemark: stepperResultFromRoles,
-    resultOption: resultOption,
+export const _stepperUpdateNewAppointment = z.object({
+    contractStartDate: date,
+    contractEndDate: date,
+    wageRates: textField,
+    placement: textField,
+    jobTitle: textField,
+    reportDutyDate: date,
+    noKWSP: textField,
+    noSOCSO: textField,
+    taxNo: textField,
+    bank: textField,
+    accountNo: textField,
+    serviceLevel: textField,
+    effectiveDateCurrentAppointment: date,
+    leaveEntitlement: textField,
+    firstAppointedGovernmentService: date,
+    startAppointedService: date,
+    startAppointedCurrentService: date,
+    confirmedFirstPosition: date,
+    confirmedCurrentPosition: date,
 });
 
-export const _submitFormStepperResultFromRoles = async (formData: object) => {
-    const stepperResultFromRoles = await superValidate(
+export const _submitFormStepperUpdateNewAppointment = async (
+    formData: object,
+) => {
+    const stepperUpdateNewAppointment = await superValidate(
         formData,
-        _stepperResultFromRoles,
+        _stepperUpdateNewAppointment,
     );
 
-    if (!stepperResultFromRoles.valid) {
+    if (!stepperUpdateNewAppointment.valid) {
         toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
             style: 'background: #333; color: #fff;',
         });
-        return fail(400, stepperResultFromRoles);
+        return fail(400, stepperUpdateNewAppointment);
     } else {
         console.log('Request Body: ', formData);
         fetch('https://jsonplaceholder.typicode.com/posts', {
             method: 'POST',
-            body: JSON.stringify(stepperResultFromRoles),
+            body: JSON.stringify(stepperUpdateNewAppointment),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
@@ -65,14 +93,116 @@ export const _submitFormStepperResultFromRoles = async (formData: object) => {
                 toast.success('Berjaya disimpan!', {
                     style: 'background: #333; color: #fff;',
                 });
-                console.log('Response Returned: ResultFromRoles-54', json);
+                console.log('Response Returned: UpdateNewAppointment-54', json);
             });
     }
-    return { stepperResultFromRoles };
+    return { stepperUpdateNewAppointment };
+};
+
+// Stepper New Appointment Result
+const stepperNewAppointmentResult = z
+    .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+    .min(4, {
+        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+    })
+    .max(124, {
+        message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    })
+    .trim();
+
+const option = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+export const _stepperNewAppointmentResult = z.object({
+    actionRemark: stepperNewAppointmentResult,
+    resultOption: option,
+});
+
+export const _submitFormStepperNewAppointmentResult = async (
+    formData: object,
+) => {
+    const stepperNewAppointmentResult = await superValidate(
+        formData,
+        _stepperNewAppointmentResult,
+    );
+
+    if (!stepperNewAppointmentResult.valid) {
+        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+            style: 'background: #333; color: #fff;',
+        });
+        return fail(400, stepperNewAppointmentResult);
+    } else {
+        console.log('Request Body: ', formData);
+        fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify(stepperNewAppointmentResult),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                console.log('Response Returned: NewAppointmentResult-54', json);
+            });
+    }
+    return { stepperNewAppointmentResult };
+};
+
+// Stepper Set Supporter Approver
+const resultOption = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+export const _stepperSetSupporterApprover = z.object({
+    supporterNameDropdown: resultOption,
+    approverNameDropdown: resultOption,
+});
+
+export const _submitFormStepperSetSupporterApprover = async (
+    formData: object,
+) => {
+    const stepperSetSupporterApprover = await superValidate(
+        formData,
+        _stepperSetSupporterApprover,
+    );
+
+    if (!stepperSetSupporterApprover.valid) {
+        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+            style: 'background: #333; color: #fff;',
+        });
+        return fail(400, stepperSetSupporterApprover);
+    } else {
+        console.log('Request Body: ', formData);
+        fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify(stepperSetSupporterApprover),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                console.log('Response Returned: SetSupporterApprover-54', json);
+            });
+    }
+    return { stepperSetSupporterApprover };
 };
 
 export async function load({ params }) {
-    const stepperResultFromRoles = await superValidate(_stepperResultFromRoles);
+    const stepperUpdateNewAppointment = await superValidate(
+        _stepperUpdateNewAppointment,
+    );
+    const stepperNewAppointmentResult = await superValidate(
+        _stepperNewAppointmentResult,
+    );
+    const stepperSetSupporterApprover = await superValidate(
+        _stepperSetSupporterApprover,
+    );
 
     const data: IntEmployees[] = await getEmployees();
 
@@ -154,8 +284,10 @@ export async function load({ params }) {
     if (!currentEmployee) throw new Error('Record not found');
 
     return {
+        stepperUpdateNewAppointment,
+        stepperNewAppointmentResult,
+        stepperSetSupporterApprover,
         record: {
-            stepperResultFromRoles,
             data,
             currentEmployee,
             currentEmployeeRace,
