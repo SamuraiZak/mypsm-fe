@@ -44,6 +44,16 @@
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import { goto } from '$app/navigation';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
+    import { superForm } from 'sveltekit-superforms/client';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import {
+        _stepperResultFromRoles,
+        _submitFormStepperResultFromRoles,
+    } from './+page';
+
+    export let data: PageData;
+
     let employeeLists: SelectOptionType<any>[] = [];
     let selectedSupporter: string;
     let selectedApprover: string;
@@ -187,6 +197,20 @@
         const [year, month, day] = date.split('/');
         return day + '-' + month + '-' + year;
     }
+
+    const {
+        form: resultFromRolesForm,
+        errors: resultFromRolesErrors,
+        enhance: resultFromRolesEnhance,
+    } = superForm(data.stepperResultFromRoles, {
+        SPA: true,
+        validators: _stepperResultFromRoles,
+        onSubmit() {
+            _submitFormStepperResultFromRoles($resultFromRolesForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <ContentHeader
@@ -371,7 +395,6 @@
             </div></StepperContentBody
         >
     </StepperContent>
-
     <StepperContent>
         <StepperContentHeader
             title="Maklumat Akademik / Kelayakan / Latihan yang Lalu"
@@ -477,7 +500,9 @@
                             {disabled}
                             id="gaji"
                             label={'Gaji'}
-                            value={CurrencyHelper.formatCurrency(parseInt(item.salary))}
+                            value={CurrencyHelper.formatCurrency(
+                                parseInt(item.salary),
+                            )}
                         ></TextField>
                     {:else}
                         <TextField
@@ -800,50 +825,79 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Keputusan daripada Peranan - Peranan Lain"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="FormStepperResultFromRoles"
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2.5">
-                <!-- Penyokong Card -->
-                <div class="mb-5">
-                    <b class="text-sm text-system-primary"
-                        >Keputusan Penyokong</b
-                    >
-                </div>
-                <LongTextField
-                    id="supporter-remark"
-                    label="Tindakan/Ulasan"
-                    value=""
-                ></LongTextField>
-
-                <RadioSingle
-                    options={supportOptions}
-                    legend={'Keputusan'}
-                    bind:userSelected={isSupported}
-                ></RadioSingle>
-                <hr />
-                <!-- Pelulus Card -->
-                <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                <form
+                    id="FormStepperResultFromRoles"
+                    class="flex w-full flex-col gap-2"
+                    use:resultFromRolesEnhance
+                    method="POST"
+                >
+                    <!-- Penyokong Card -->
                     <div class="mb-5">
-                        <b class="text-sm text-system-primary">Pelulus</b>
-                    </div>
-                    <TextField
-                        disabled
-                        type="text"
-                        id="passer-name"
-                        label="Nama"
-                        value=""
-                    ></TextField>
-                    <div class="text-sm text-system-primary">
-                        <i class=""
-                            ><li>
-                                ● Menunggu keputusan daripada PENYOKONG.
-                            </li></i
+                        <b class="text-sm text-system-primary"
+                            >Keputusan Penyokong</b
                         >
                     </div>
-                </div>
+                    <LongTextField
+                        hasError={$resultFromRolesErrors.actionRemark
+                            ? true
+                            : false}
+                        name="actionRemark"
+                        label="Tindakan / Ulasan"
+                        bind:value={$resultFromRolesForm.actionRemark}
+                    />
+                    {#if $resultFromRolesErrors.actionRemark}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$resultFromRolesErrors.actionRemark[0]}</span
+                        >
+                    {/if}
+                    <RadioSingle
+                        options={supportOptions}
+                        hasError={$resultFromRolesErrors.resultOption
+                            ? true
+                            : false}
+                        name="resultOption"
+                        legend="Keputusan"
+                        bind:userSelected={$resultFromRolesForm.resultOption}
+                    ></RadioSingle>
+                    {#if $resultFromRolesErrors.resultOption}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$resultFromRolesErrors.resultOption[0]}</span
+                        >
+                    {/if}
+                    <hr />
+                    <!-- Pelulus Card -->
+                    <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                        <div class="mb-5">
+                            <b class="text-sm text-system-primary">Pelulus</b>
+                        </div>
+                        <TextField
+                            disabled
+                            type="text"
+                            id="passer-name"
+                            label="Nama"
+                            value=""
+                        ></TextField>
+                        <div class="text-sm text-system-primary">
+                            <i class=""
+                                ><li>
+                                    ● Menunggu keputusan daripada PENYOKONG.
+                                </li></i
+                            >
+                        </div>
+                    </div>
+                </form>
             </div>
         </StepperContentBody>
     </StepperContent>
@@ -862,3 +916,4 @@
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+<Toaster />
