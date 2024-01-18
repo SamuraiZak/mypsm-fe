@@ -34,6 +34,13 @@
     import { Checkbox } from 'flowbite-svelte';
     import { onMount } from 'svelte';
 
+    import { _butiranPinjamanForm, _submitButiranPinjamanForm } from './+page';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import toast, { Toaster } from 'svelte-french-toast'
+import { z,ZodError } from 'zod';
+
+
     let disabled = true;
     let labelBlack = false;
     let selectedLoanPayback = '';
@@ -115,6 +122,8 @@
         }
         return age;
     }
+
+    export let data: PageData;
     export let selectedFiles: any = [];
     let target: any;
     let texthidden = false;
@@ -141,6 +150,20 @@
         selectedFiles.splice(index, 1);
         fileSelectionList.set(selectedFiles);
     }
+
+    export const { form, errors, enhance } = superForm(data.butiranPinjamanForm, {
+        SPA: true,
+        validators: _butiranPinjamanForm,
+        delayMs: 500,
+        timeoutMs: 2000,
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+
+        onSubmit() {
+            // console.log('HERE: ', $form);
+            _submitButiranPinjamanForm($form);
+        },
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -254,7 +277,9 @@
                 {disabled}
                 {labelBlack}
                 label={'Jumlah Potongan'}
-                value={CurrencyHelper.formatCurrency(currEmpSalary.salaryDeduction)}
+                value={CurrencyHelper.formatCurrency(
+                    currEmpSalary.salaryDeduction,
+                )}
             ></TextField>
         </StepperContentBody>
     </StepperContent>
