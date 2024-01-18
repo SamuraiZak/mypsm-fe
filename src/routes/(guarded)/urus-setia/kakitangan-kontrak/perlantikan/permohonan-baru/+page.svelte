@@ -189,19 +189,6 @@
                     >{$newAppointmentsErrors.wageRates[0]}</span
                 >
             {/if}
-            <!-- <DropdownSelect
-                labelBlack={true}
-                dropdownType="label-left-full"
-                name="contract-placement-dropdown"
-                label="Penempatan"
-                options={[
-                    { value: 'selangor-lkim-01', name: 'LKIM Negeri Selangor' },
-                    {
-                        value: 'sarawak-lkim-01',
-                        name: 'LKIM Negeri Sarawak',
-                    },
-                ]}
-            ></DropdownSelect> -->
             <DropdownSelect
                 hasError={$newAppointmentsErrors.contractPlacementDropdown
                     ? true
