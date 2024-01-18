@@ -56,6 +56,11 @@ const maxDateSchema = z.coerce
         message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
     });
 
+const booleanSchema = z.boolean({
+    required_error: 'Sila tetapkan pilihan anda.',
+    invalid_type_error: 'Medan ini haruslah jenis boolean.',
+});
+
 // New employment - add academic section
 export const _addAcademicInfoSchema = z.object({
     title: shortTextSchema,
@@ -67,11 +72,11 @@ export const _addAcademicInfoSchema = z.object({
 
 export const _personalInfoForm = z
     .object({
-        statusPekerjaan: generalSelectSchema,
-        candidateNumber: shortTextSchema,
+        // statusPekerjaan: generalSelectSchema,
+        candidateNumber: z.string().readonly(),
         identityDocumentNumber: shortTextSchema,
         name: shortTextSchema,
-        alternativeName: shortTextSchema,
+        alternativeName: shortTextSchema.nullable(),
         identityDocumentColor: generalSelectSchema,
         birthDate: maxDateSchema,
         birthPlace: generalSelectSchema,
@@ -85,18 +90,18 @@ export const _personalInfoForm = z
         propertyDeclarationDate: maxDateSchema,
         homeAddress: shortTextSchema,
         mailAddress: shortTextSchema,
-        isExPoliceOrSoldier: generalSelectSchema,
-        isInternalRelationship: generalSelectSchema,
-        employeeNumber: z.string(),
-        employeeName: z.string(),
-        employeePosition: z.string(),
-        relationship: z.string(),
+        isExPoliceOrSoldier: booleanSchema,
+        isInternalRelationship: booleanSchema,
+        employeeNumber: z.string().nullable(),
+        employeeName: shortTextSchema.nullable(),
+        employeePosition: generalSelectSchema.nullable(),
+        relationship: generalSelectSchema.nullable(),
     })
     .superRefine(({ isInternalRelationship }, ctx) => {
-        if (isInternalRelationship === 'true') {
+        if (isInternalRelationship) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
-                message: `Sila isi medan ini.`,
+                message: 'Sila isi medan ini.',
                 path: [
                     'employeeNumber',
                     'employeeName',
@@ -129,12 +134,13 @@ export const _academicInfoSchema = z.object({
 //==========================================================
 
 export const _experienceInfoSchema = z.object({
-    namaMajikan: shortTextSchema,
-    alamatMajikan: shortTextSchema,
-    kodJawatan: shortTextSchema.nullable(),
-    jawatanPengalaman: shortTextSchema,
-    tempohPerkhidmatan: shortTextSchema,
-    gajiPengalaman: z.coerce.number({
+    company: shortTextSchema,
+    address: shortTextSchema,
+    position: shortTextSchema.nullable(),
+    positionCode: shortTextSchema,
+    startDate: minDateSchema,
+    endDate: minDateSchema,
+    salary: z.coerce.number({
         invalid_type_error: 'Medan ini hendaklah ditetapkan dengan angka',
     }),
 });
@@ -144,12 +150,13 @@ export const _experienceInfoSchema = z.object({
 //==========================================================
 
 export const _addExperienceModalSchema = z.object({
-    companyName: shortTextSchema,
-    companyAddress: shortTextSchema,
-    positionCode: shortTextSchema.nullable(),
-    position: shortTextSchema,
-    servicePeriod: shortTextSchema,
-    serviceSalary: z.coerce.number({
+    addCompany: shortTextSchema,
+    addAddress: shortTextSchema,
+    addPosition: shortTextSchema.nullable(),
+    addPositionCode: shortTextSchema,
+    addStartDate: minDateSchema,
+    addEndDate: minDateSchema,
+    addSalary: z.coerce.number({
         invalid_type_error: 'Medan ini hendaklah ditetapkan dengan angka',
     }),
 });
@@ -190,23 +197,65 @@ export const _serviceInfoSchema = z.object({
     kenaikanPangkatAkhir: minDateSchema,
 });
 
-export const load = async () => {
+//==========================================================
+//================== Maklumat Waris ========================
+//==========================================================
+export const _nextOfKinInfoSchema = z.object({
+    name: shortTextSchema,
+    identityDocumentNumber: shortTextSchema,
+    birthDate: minDateSchema,
+    relationship: generalSelectSchema,
+    marriageDate: maxDateSchema,
+    identityDocumentType: generalSelectSchema,
+    homeNumber: shortTextSchema,
+    mobileNumber: shortTextSchema,
+    position: shortTextSchema,
+    company: shortTextSchema,
+    companyAddress: shortTextSchema,
+});
+
+//==========================================================
+//================== Add Maklumat Waris ========================
+//==========================================================
+export const _addNextOfKinInfoSchema = z.object({
+    name: shortTextSchema,
+    identityDocumentNumber: shortTextSchema,
+    birthDate: minDateSchema,
+    relationship: generalSelectSchema,
+    marriageDate: maxDateSchema,
+    identityDocumentType: generalSelectSchema,
+    homeNumber: shortTextSchema,
+    mobileNumber: shortTextSchema,
+    position: shortTextSchema,
+    company: shortTextSchema,
+    companyAddress: shortTextSchema,
+});
+
+export const load = async ({ params }) => {
+    // const candidateId = parseInt(params.tempId);
     const response = await api
-        .get('api/v1/employments/new-hire-personal-detail/C1234')
+        .get(`api/v1/employments/new-hire-personal-detail/${params.tempId}`)
         .json();
 
-    const personalInfoForm = await superValidate(response.data, _personalInfoForm);
+    const personalInfoForm = await superValidate(
+        response.data,
+        _personalInfoForm,
+    );
     const academicInfoForm = await superValidate(_academicInfoSchema);
     const serviceInfoForm = await superValidate(_serviceInfoSchema);
     const experienceInfoForm = await superValidate(_experienceInfoSchema);
+    const nextOfKinInfoForm = await superValidate(_nextOfKinInfoSchema);
     const addAcademicModal = await superValidate(_addAcademicInfoSchema);
     const addExperienceModal = await superValidate(_addExperienceModalSchema);
+
+    personalInfoForm.data.candidateNumber = params.tempId;
 
     return {
         personalInfoForm,
         academicInfoForm,
         serviceInfoForm,
         experienceInfoForm,
+        nextOfKinInfoForm,
         addAcademicModal,
         addExperienceModal,
     };
@@ -259,6 +308,26 @@ export const _submitAcademicInfoForm = async (formData: object) => {
 };
 
 export const _submitExperienceInfoForm = async (formData: object) => {
+    const form = await superValidate(formData, _experienceInfoSchema);
+
+    if (!form.valid) {
+        getErrorToast();
+        return fail(400, form);
+    }
+
+    const responsePromise = api
+        .post('https://jsonplaceholder.typicode.com/posts', {
+            body: JSON.stringify(form),
+            prefixUrl: '',
+        })
+        .json()
+        .then((json) => console.log('Response: ', json));
+
+    getPromiseToast(responsePromise);
+    return { form };
+};
+
+export const _submitNextOfKinForm = async (formData: object) => {
     const form = await superValidate(formData, _experienceInfoSchema);
 
     if (!form.valid) {
