@@ -19,13 +19,12 @@ export const load = async () => {
 
 export const _submit = async (formData: object) => {
     const response: Response = await http
-        .post('http://127.0.0.1:3333/api/v1/authentication/login', {
+        .post('/api/v1/authentication/login', {
             body: JSON.stringify(formData),
             headers: {
                 Accept: 'application/json',
                 'Content-type': 'application/json',
             },
-            prefixUrl: '',
         })
         .json();
 
