@@ -341,11 +341,11 @@
                     name="candidateNumber"
                     label={'No. Calon'}
                     type="text"
-                    bind:value={$form.staffNumber}
+                    bind:value={$form.candidateNumber}
                 ></TextField>
                 <!-- <TextField
                     {disabled}
-                    hasError={$errors.staffNumber ? true : false}
+                    hasError={!!$errors.staffNumber}
                     name="staffNumber"
                     label={'No. Pekerja'}
                     type="text"
@@ -361,7 +361,7 @@
 
                 <!-- <DropdownSelect
                     {disabled}
-                    hasError={$errors.statusPekerjaan ? true : false}
+                    hasError={!!$errors.statusPekerjaan}
                     dropdownType="label-left-full"
                     id="statusPekerjaan"
                     name="statusPekerjaan"
@@ -401,7 +401,7 @@
 
                 <TextField
                     {disabled}
-                    hasError={$errors.name ? true : false ? true : false}
+                    hasError={!!$errors.name}
                     name="name"
                     label={'Nama Penuh'}
                     type="text"
@@ -437,7 +437,7 @@
 
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.identityDocumentColor ? true : false}
+                    hasError={!!$errors.identityDocumentColor}
                     dropdownType="label-left-full"
                     id="identityDocumentColor"
                     name="identityDocumentColor"
@@ -457,7 +457,7 @@
 
                 <DateSelector
                     {disabled}
-                    hasError={$errors.birthDate ? true : false ? true : false}
+                    hasError={!!$errors.birthDate}
                     name="birthDate"
                     handleDateChange
                     label="Tarikh Lahir"
@@ -471,7 +471,7 @@
                 {/if}
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.birthPlace ? true : false}
+                    hasError={!!$errors.birthPlace}
                     dropdownType="label-left-full"
                     id="birthPlace"
                     name="birthPlace"
@@ -491,7 +491,7 @@
 
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.isMalaysia ? true : false}
+                    hasError={!!$errors.isMalaysia}
                     dropdownType="label-left-full"
                     id="isMalaysia"
                     name="isMalaysia"
@@ -511,27 +511,27 @@
 
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.isMalaysia ? true : false}
+                    hasError={!!$errors.raceId}
                     dropdownType="label-left-full"
-                    id="isMalaysia"
-                    name="isMalaysia"
+                    id="raceId"
+                    name="raceId"
                     label="Bangsa"
-                    bind:value={$form.isMalaysia}
+                    bind:value={$form.raceId}
                     options={[
                         { value: '1', name: 'Melayu' },
                         { value: '2', name: 'Cina' },
                     ]}
                 ></DropdownSelect>
-                {#if $errors.isMalaysia}
+                {#if $errors.raceId}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.isMalaysia}</span
+                        >{$errors.raceId}</span
                     >
                 {/if}
 
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.religionId ? true : false}
+                    hasError={!!$errors.religionId}
                     dropdownType="label-left-full"
                     id="religionId"
                     name="religionId"
@@ -551,15 +551,15 @@
 
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.gender ? true : false}
+                    hasError={!!$errors.gender}
                     dropdownType="label-left-full"
                     id="gender"
                     name="gender"
                     label="Jantina"
                     bind:value={$form.gender}
                     options={[
-                        { value: '1', name: 'Lelaki' },
-                        { value: '2', name: 'Perempuan' },
+                        { value: 'male', name: 'Lelaki' },
+                        { value: 'female', name: 'Perempuan' },
                     ]}
                 ></DropdownSelect>
                 {#if $errors.gender}
@@ -571,26 +571,26 @@
 
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.status ? true : false}
+                    hasError={!!$errors.marital}
                     dropdownType="label-left-full"
-                    id="status"
-                    label="Status"
-                    bind:value={$form.status}
+                    id="marital"
+                    label="marital"
+                    bind:value={$form.marital}
                     options={[
                         { value: '1', name: 'Bujang' },
                         { value: '2', name: 'Berkahwin' },
                     ]}
                 ></DropdownSelect>
-                {#if $errors.status}
+                {#if $errors.marital}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.status}</span
+                        >{$errors.marital}</span
                     >
                 {/if}
 
                 <TextField
                     {disabled}
-                    hasError={$errors.email ? true : false ? true : false}
+                    hasError={!!$errors.email}
                     name="email"
                     label={'Emel'}
                     type="text"
@@ -605,7 +605,7 @@
                 {/if}
 
                 <LongTextField
-                    hasError={$errors.homeAddress ? true : false ? true : false}
+                    hasError={!!$errors.homeAddress}
                     {disabled}
                     name="homeAddress"
                     label="Alamat Rumah"
@@ -619,7 +619,7 @@
                 {/if}
 
                 <LongTextField
-                    hasError={$errors.mailAddress ? true : false}
+                    hasError={!!$errors.mailAddress}
                     {disabled}
                     name="mailAddress"
                     label="Alamat Surat Menyurat (jika berlainan dari alamat rumah)"
@@ -629,6 +629,41 @@
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
                         >{$errors.mailAddress}</span
+                    >
+                {/if}
+
+                <DropdownSelect
+                    {disabled}
+                    hasError={!!$errors.propertyDeclarationStatus}
+                    dropdownType="label-left-full"
+                    id="propertyDeclarationStatus"
+                    name="propertyDeclarationStatus"
+                    label="Status Pengikstiharan Harta"
+                    bind:value={$form.propertyDeclarationStatus}
+                    options={[
+                        { value: 'true', name: 'Biru' },
+                        { value: 'false', name: 'Merah' },
+                    ]}
+                ></DropdownSelect>
+                {#if $errors.propertyDeclarationStatus}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.propertyDeclarationStatus}</span
+                    >
+                {/if}
+
+                <DateSelector
+                    {disabled}
+                    hasError={!!$errors.propertyDeclarationDate}
+                    name="propertyDeclarationDate"
+                    handleDateChange
+                    label="Tarikh Pengikstiharan Harta"
+                    bind:selectedDate={$form.propertyDeclarationDate}
+                ></DateSelector>
+                {#if $errors.propertyDeclarationDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.propertyDeclarationDate}</span
                     >
                 {/if}
 
@@ -685,7 +720,7 @@
                     {#if $form.isInternalRelationship === 'true'}
                         <TextField
                             {disabled}
-                            hasError={$errors.employeeNumber ? true : false}
+                            hasError={!!$errors.employeeNumber}
                             name="employeeNumber"
                             label={'No. Pekerja LKIM'}
                             type="text"
@@ -721,7 +756,7 @@
 
                         <DropdownSelect
                             {disabled}
-                            hasError={$errors.employeePosition ? true : false}
+                            hasError={!!$errors.employeePosition}
                             dropdownType="label-left-full"
                             id="employeePosition"
                             label="Jawatan Kakitangan LKIM"
@@ -740,7 +775,7 @@
 
                         <DropdownSelect
                             {disabled}
-                            hasError={$errors.relationship ? true : false}
+                            hasError={!!$errors.relationship}
                             dropdownType="label-left-full"
                             id="relationship"
                             label="Hubungan"
@@ -836,7 +871,7 @@
 
                     <TextField
                         {disabled}
-                        hasError={$academicInfoErrors.highSchool ? true : false}
+                        hasError={!!$academicInfoErrors.highSchool}
                         name="highSchool"
                         label={'Sekolah'}
                         type="text"
@@ -1539,7 +1574,7 @@
         class="flex h-fit w-full flex-col gap-y-2"
     >
         <TextField
-            hasError={$addAcademicInfoErrors.title ? true : false}
+            hasError={!!$addAcademicInfoErrors.title}
             {disabled}
             name="title"
             label={'Tajuk'}
@@ -1551,7 +1586,7 @@
             >
         {/if}
         <TextField
-            hasError={$addAcademicInfoErrors.institution ? true : false}
+            hasError={!!$addAcademicInfoErrors.institution}
             {disabled}
             name="institution"
             label={'Institusi'}
@@ -1563,7 +1598,7 @@
             >
         {/if}
         <TextField
-            hasError={$addAcademicInfoErrors.year ? true : false}
+            hasError={!!$addAcademicInfoErrors.year}
             {disabled}
             name="year"
             label={'Tahun'}
@@ -1575,7 +1610,7 @@
             >
         {/if}
         <TextField
-            hasError={$addAcademicInfoErrors.achievement ? true : false}
+            hasError={!!$addAcademicInfoErrors.achievement}
             {disabled}
             name="achievement"
             label={'Pencapaian'}
@@ -1587,7 +1622,7 @@
             >
         {/if}
         <LongTextField
-            hasError={$addAcademicInfoErrors.remarks ? true : false}
+            hasError={!!$addAcademicInfoErrors.remarks}
             {disabled}
             name="remarks"
             label={'Catatan'}
@@ -1612,7 +1647,7 @@
     >
         <TextField
             {disabled}
-            hasError={$addExperienceModalErrors.companyName ? true : false}
+            hasError={!!$addExperienceModalErrors.companyName}
             name="companyName"
             label={'Nama Majikan'}
             type="text"
@@ -1626,7 +1661,7 @@
 
         <TextField
             {disabled}
-            hasError={$addExperienceModalErrors.companyAddress ? true : false}
+            hasError={!!$addExperienceModalErrors.companyAddress}
             name="companyAddress"
             label={'Alamat Majikan'}
             type="text"
@@ -1640,7 +1675,7 @@
 
         <TextField
             {disabled}
-            hasError={$addExperienceModalErrors.position ? true : false}
+            hasError={!!$addExperienceModalErrors.position}
             name="position"
             label={'Jawatan'}
             type="text"
@@ -1654,7 +1689,7 @@
 
         <TextField
             {disabled}
-            hasError={$addExperienceModalErrors.positionCode ? true : false}
+            hasError={!!$addExperienceModalErrors.positionCode}
             name="positionCode"
             label={'Kod Jawatan (jika ada)'}
             type="text"
@@ -1663,7 +1698,7 @@
 
         <TextField
             {disabled}
-            hasError={$addExperienceModalErrors.servicePeriod ? true : false}
+            hasError={!!$addExperienceModalErrors.servicePeriod}
             name="servicePeriod"
             label={'Tempoh Perkhidmatan (tahun)'}
             type="text"
@@ -1677,7 +1712,7 @@
 
         <TextField
             {disabled}
-            hasError={$addExperienceModalErrors.serviceSalary ? true : false}
+            hasError={!!$addExperienceModalErrors.serviceSalary}
             name="serviceSalary"
             label={'Gaji'}
             type="text"
@@ -1706,7 +1741,7 @@
     >
         <TextField
             {disabled}
-            hasError={$experienceInfoErrors.namaMajikan ? true : false}
+            hasError={!!$experienceInfoErrors.namaMajikan}
             name="namaMajikan"
             label={'Nama Majikan'}
             type="text"
@@ -1720,7 +1755,7 @@
 
         <TextField
             {disabled}
-            hasError={$experienceInfoErrors.alamatMajikan ? true : false}
+            hasError={!!$experienceInfoErrors.alamatMajikan}
             name="alamatMajikan"
             label={'Alamat Majikan'}
             type="text"
@@ -1734,7 +1769,7 @@
 
         <TextField
             {disabled}
-            hasError={$experienceInfoErrors.jawatanPengalaman ? true : false}
+            hasError={!!$experienceInfoErrors.jawatanPengalaman}
             name="jawatanPengalaman"
             label={'Jawatan'}
             type="text"
@@ -1756,7 +1791,7 @@
 
         <TextField
             {disabled}
-            hasError={$experienceInfoErrors.tempohPerkhidmatan ? true : false}
+            hasError={!!$experienceInfoErrors.tempohPerkhidmatan}
             name="tempohPerkhidmatan"
             label={'Tempoh Perkhidmatan (tahun)'}
             type="text"
@@ -1770,7 +1805,7 @@
 
         <TextField
             {disabled}
-            hasError={$experienceInfoErrors.gajiPengalaman ? true : false}
+            hasError={!!$experienceInfoErrors.gajiPengalaman}
             name="gajiPengalaman"
             label={'Gaji'}
             type="text"
@@ -1802,7 +1837,7 @@
     >
         <TextField
             {disabled}
-            hasError={$experienceInfoErrors.namaMajikan ? true : false}
+            hasError={!!$experienceInfoErrors.namaMajikan}
             name="namaMajikan"
             label={'Nama Majikan'}
             type="text"
@@ -1816,7 +1851,7 @@
 
         <TextField
             {disabled}
-            hasError={$experienceInfoErrors.alamatMajikan ? true : false}
+            hasError={!!$experienceInfoErrors.alamatMajikan}
             name="alamatMajikan"
             label={'Alamat Majikan'}
             type="text"
@@ -1830,7 +1865,7 @@
 
         <TextField
             {disabled}
-            hasError={$experienceInfoErrors.jawatanPengalaman ? true : false}
+            hasError={!!$experienceInfoErrors.jawatanPengalaman}
             name="jawatanPengalaman"
             label={'Jawatan'}
             type="text"
@@ -1852,7 +1887,7 @@
 
         <TextField
             {disabled}
-            hasError={$experienceInfoErrors.tempohPerkhidmatan ? true : false}
+            hasError={!!$experienceInfoErrors.tempohPerkhidmatan}
             name="tempohPerkhidmatan"
             label={'Tempoh Perkhidmatan (tahun)'}
             type="text"
@@ -1866,7 +1901,7 @@
 
         <TextField
             {disabled}
-            hasError={$experienceInfoErrors.gajiPengalaman ? true : false}
+            hasError={!!$experienceInfoErrors.gajiPengalaman}
             name="gajiPengalaman"
             label={'Gaji'}
             type="text"
@@ -1893,7 +1928,7 @@
     >
         <TextField
             {disabled}
-            hasError={$experienceInfoErrors.namaMajikan ? true : false}
+            hasError={!!$experienceInfoErrors.namaMajikan}
             name="namaMajikan"
             label={'Nama Majikan'}
             type="text"
@@ -1907,7 +1942,7 @@
 
         <TextField
             {disabled}
-            hasError={$experienceInfoErrors.alamatMajikan ? true : false}
+            hasError={!!$experienceInfoErrors.alamatMajikan}
             name="alamatMajikan"
             label={'Alamat Majikan'}
             type="text"
@@ -1921,7 +1956,7 @@
 
         <TextField
             {disabled}
-            hasError={$experienceInfoErrors.jawatanPengalaman ? true : false}
+            hasError={!!$experienceInfoErrors.jawatanPengalaman}
             name="jawatanPengalaman"
             label={'Jawatan'}
             type="text"
@@ -1943,7 +1978,7 @@
 
         <TextField
             {disabled}
-            hasError={$experienceInfoErrors.tempohPerkhidmatan ? true : false}
+            hasError={!!$experienceInfoErrors.tempohPerkhidmatan}
             name="tempohPerkhidmatan"
             label={'Tempoh Perkhidmatan (tahun)'}
             type="text"
@@ -1957,7 +1992,7 @@
 
         <TextField
             {disabled}
-            hasError={$experienceInfoErrors.gajiPengalaman ? true : false}
+            hasError={!!$experienceInfoErrors.gajiPengalaman}
             name="gajiPengalaman"
             label={'Gaji'}
             type="text"
