@@ -25,7 +25,7 @@ export const load = async () => {
     console.log('RESPONSE', response);
 
     const getThisStaffRecord = response.data.newHires.filter(
-        (list) => list.temporaryId === '12457',
+        (list) => list.temporaryId === 'C1234',
     );
 
     console.log('SPECIFIC', getThisStaffRecord);

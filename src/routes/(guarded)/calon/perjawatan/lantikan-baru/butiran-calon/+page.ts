@@ -68,7 +68,7 @@ export const _addAcademicInfoSchema = z.object({
 export const _personalInfoForm = z
     .object({
         statusPekerjaan: generalSelectSchema,
-        staffNumber: shortTextSchema,
+        candidateNumber: shortTextSchema,
         identityDocumentNumber: shortTextSchema,
         name: shortTextSchema,
         alternativeName: shortTextSchema,
@@ -79,8 +79,10 @@ export const _personalInfoForm = z
         raceId: generalSelectSchema,
         religionId: generalSelectSchema,
         gender: generalSelectSchema,
-        status: generalSelectSchema,
+        marital: generalSelectSchema,
         email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
+        propertyDeclarationStatus: generalSelectSchema,
+        propertyDeclarationDate: maxDateSchema,
         homeAddress: shortTextSchema,
         mailAddress: shortTextSchema,
         isExPoliceOrSoldier: generalSelectSchema,
@@ -90,39 +92,20 @@ export const _personalInfoForm = z
         employeePosition: z.string(),
         relationship: z.string(),
     })
-    .superRefine(
-        (
-            {
-                isInternalRelationship,
-                // jawatanPasangan,
-                // hubungan,
-                // noPekerjaPasangan,
-                // namaPasangan,
-            },
-            ctx,
-        ) => {
-            // const fieldsToCheck = [
-            //     noPekerjaPasangan,
-            //     namaPasangan,
-            //     jawatanPasangan,
-            //     hubungan,
-            // ];
-            if (isInternalRelationship === 'true') {
-                ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
-                    message: `Sila isi medan ini.`,
-                    path: [
-                        'employeeNumber',
-                        'employeeName',
-                        'employeePosition',
-                        'relationship',
-                    ],
-                });
-            }
-
-            return true;
-        },
-    );
+    .superRefine(({ isInternalRelationship }, ctx) => {
+        if (isInternalRelationship === 'true') {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: `Sila isi medan ini.`,
+                path: [
+                    'employeeNumber',
+                    'employeeName',
+                    'employeePosition',
+                    'relationship',
+                ],
+            });
+        }
+    });
 
 //==========================================================
 //================== Maklumat Akademik =====================
@@ -208,7 +191,11 @@ export const _serviceInfoSchema = z.object({
 });
 
 export const load = async () => {
-    const personalInfoForm = await superValidate(_personalInfoForm);
+    const response = await api
+        .get('api/v1/employments/new-hire-personal-detail/C1234')
+        .json();
+
+    const personalInfoForm = await superValidate(response.data, _personalInfoForm);
     const academicInfoForm = await superValidate(_academicInfoSchema);
     const serviceInfoForm = await superValidate(_serviceInfoSchema);
     const experienceInfoForm = await superValidate(_experienceInfoSchema);
