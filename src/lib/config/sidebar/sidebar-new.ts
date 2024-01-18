@@ -103,7 +103,7 @@ export const sidebarNew = [
             },
             {
                 name: 'Prosiding Tatatertib - Rayuan',
-                redirect: '/integriti/prosiding-rayuan',
+                redirect: '/integriti/rayuan',
             },
         ],
     },

@@ -26,7 +26,7 @@ export const sidebarPengarahIntegriti = [
             },
             {
                 name: 'Prosiding Tatatertib - Rayuan',
-                redirect: '/pengarah-integriti/integriti/prosiding-rayuan',
+                redirect: '/pengarah-integriti/integriti/rayuan',
             },
         ],
     },

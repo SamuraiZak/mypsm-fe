@@ -83,7 +83,7 @@ export const sidebarKakitangan = [
             },
             {
                 name: 'Prosiding Tatatertib - Rayuan',
-                redirect: '/kakitangan/integriti/prosiding-rayuan',
+                redirect: '/kakitangan/integriti/rayuan',
             },
         ],
     },
