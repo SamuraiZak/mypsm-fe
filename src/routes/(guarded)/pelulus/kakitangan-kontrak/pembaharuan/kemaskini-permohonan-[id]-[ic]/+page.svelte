@@ -27,7 +27,16 @@
     import { meetings } from '$lib/mocks/mesyuarat/mesyuarat.js';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper.js';
-    export let data;
+    import { superForm } from 'sveltekit-superforms/client';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import {
+        _stepperResultFromRoles,
+        _submitFormStepperResultFromRoles,
+    } from './+page';
+
+    export let data: PageData;
+
     let employeeLists: SelectOptionType<any>[] = [];
     let selectedSupporter: string;
     let selectedApprover: string;
@@ -193,6 +202,20 @@
             }
         }
     }
+
+    const {
+        form: resultFromRolesForm,
+        errors: resultFromRolesErrors,
+        enhance: resultFromRolesEnhance,
+    } = superForm(data.stepperResultFromRoles, {
+        SPA: true,
+        validators: _stepperResultFromRoles,
+        onSubmit() {
+            _submitFormStepperResultFromRoles($resultFromRolesForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <ContentHeader
@@ -953,50 +976,77 @@
         >
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2.5">
-                
-                <div class="mb-5">
-                    <b class="text-sm text-system-primary">Keputusan Pelulus</b>
-                </div>
-                <LongTextField
-                    id="passer-remark"
-                    label="Tindakan/Ulasan"
-                    value="1"
-                ></LongTextField>
-
-                <RadioSingle
-                    options={passerOptions}
-                    legend={'Keputusan'}
-                    bind:userSelected={isPassed}
-                ></RadioSingle>
-                <hr />
-                <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                <form
+                    id="FormStepperResultFromRoles"
+                    class="flex w-full flex-col gap-2"
+                    use:resultFromRolesEnhance
+                    method="POST"
+                >
                     <div class="mb-5">
-                        <b class="text-sm text-system-primary">Penyokong</b>
-                    </div>
-                    <TextField
-                        disabled
-                        type="text"
-                        id="supporter-name"
-                        label="Nama"
-                        value="Mohd Rahim Ismail"
-                    ></TextField>
-                    <LongTextField
-                        disabled
-                        id="supporter-remark"
-                        label="Tindakan/Ulasan"
-                        value="Layak"
-                    ></LongTextField>
-                    <div class="flex w-full flex-row text-sm">
-                        <label for="supporter-result" class="w-[220px]"
-                            >Keputusan</label
-                        ><Badge
-                            border
-                            color={isSupported == 'true' ? 'green' : 'red'}
-                            >{results[2].name}</Badge
+                        <b class="text-sm text-system-primary"
+                            >Keputusan Pelulus</b
                         >
                     </div>
-                </div>
+                    <LongTextField
+                        hasError={$resultFromRolesErrors.actionRemark
+                            ? true
+                            : false}
+                        name="actionRemark"
+                        label="Tindakan / Ulasan"
+                        bind:value={$resultFromRolesForm.actionRemark}
+                    />
+                    {#if $resultFromRolesErrors.actionRemark}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$resultFromRolesErrors.actionRemark[0]}</span
+                        >
+                    {/if}
+                    <RadioSingle
+                        options={passerOptions}
+                        hasError={$resultFromRolesErrors.resultOption
+                            ? true
+                            : false}
+                        name="resultOption"
+                        legend="Keputusan"
+                        bind:userSelected={$resultFromRolesForm.resultOption}
+                    ></RadioSingle>
+                    {#if $resultFromRolesErrors.resultOption}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$resultFromRolesErrors.resultOption[0]}</span
+                        >
+                    {/if}
+                    <hr />
+                    <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                        <div class="mb-5">
+                            <b class="text-sm text-system-primary">Penyokong</b>
+                        </div>
+                        <TextField
+                            disabled
+                            type="text"
+                            id="supporter-name"
+                            label="Nama"
+                            value="Mohd Rahim Ismail"
+                        ></TextField>
+                        <LongTextField
+                            disabled
+                            id="supporter-remark"
+                            label="Tindakan/Ulasan"
+                            value="Layak"
+                        ></LongTextField>
+                        <div class="flex w-full flex-row text-sm">
+                            <label for="supporter-result" class="w-[220px]"
+                                >Keputusan</label
+                            ><Badge
+                                border
+                                color={isSupported == 'true' ? 'green' : 'red'}
+                                >{results[2].name}</Badge
+                            >
+                        </div>
+                    </div>
+                </form>
             </div>
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+<Toaster />
