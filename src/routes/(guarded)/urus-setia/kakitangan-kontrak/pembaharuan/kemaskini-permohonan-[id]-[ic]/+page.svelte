@@ -27,7 +27,16 @@
     import { meetings } from '$lib/mocks/mesyuarat/mesyuarat.js';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper.js';
-    export let data;
+    import { superForm } from 'sveltekit-superforms/client';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import {
+        _stepperConfirmationNewContractAgreement,
+        _submitFormStepperConfirmationNewContractAgreement,
+    } from './+page';
+
+    export let data: PageData;
+
     let employeeLists: SelectOptionType<any>[] = [];
     let selectedSupporter: string;
     let selectedApprover: string;
@@ -170,6 +179,23 @@
             }
         }
     }
+
+    //Update New Appointment
+    const {
+        form: confirmationNewContractAgreementForm,
+        errors: confirmationNewContractAgreementErrors,
+        enhance: confirmationNewContractAgreementEnhance,
+    } = superForm(data.stepperConfirmationNewContractAgreement, {
+        SPA: true,
+        validators: _stepperConfirmationNewContractAgreement,
+        onSubmit() {
+            _submitFormStepperConfirmationNewContractAgreement(
+                $confirmationNewContractAgreementForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <ContentHeader
@@ -464,7 +490,9 @@
                             {disabled}
                             id="gaji"
                             label={'Gaji'}
-                            value={CurrencyHelper.formatCurrency(parseInt(item.salary))}
+                            value={CurrencyHelper.formatCurrency(
+                                parseInt(item.salary),
+                            )}
                         ></TextField>
                     {:else}
                         <TextField
@@ -1054,7 +1082,11 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Pengesahan Perjanjian Kontrak Baru"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="FormStepperConfirmationNewContractAgreement"
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
@@ -1065,12 +1097,49 @@
 
         <StepperContentBody>
             <span class="w-full text-left text-sm italic text-system-primary">
-                <ul class="list-inside list-disc">
-                    <li>
-                        Keputusan akan dihantar ke peranan - peranan berkaitan.
-                    </li>
-                </ul>
-            </span>
+                <form
+                    id="FormStepperConfirmationNewContractAgreement"
+                    class="flex w-full flex-col gap-2"
+                    use:confirmationNewContractAgreementEnhance
+                    method="POST"
+                >
+                    <ul class="list-inside list-disc">
+                        <li>
+                            Keputusan akan dihantar ke peranan - peranan
+                            berkaitan.
+                        </li>
+                    </ul>
+                </form></span
+            >
+            <LongTextField
+                hasError={$confirmationNewContractAgreementErrors.actionRemark
+                    ? true
+                    : false}
+                name="actionRemark"
+                label="Tindakan / Ulasan"
+                bind:value={$confirmationNewContractAgreementForm.actionRemark}
+            />
+            {#if $confirmationNewContractAgreementErrors.actionRemark}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$confirmationNewContractAgreementErrors.actionRemark[0]}</span
+                >
+            {/if}
+            <RadioSingle
+                options={certifyOptions}
+                hasError={$confirmationNewContractAgreementErrors.resultOption
+                    ? true
+                    : false}
+                name="resultOption"
+                legend="Keputusan"
+                bind:userSelected={$confirmationNewContractAgreementForm.resultOption}
+            ></RadioSingle>
+            {#if $confirmationNewContractAgreementErrors.resultOption}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$confirmationNewContractAgreementErrors.resultOption[0]}</span
+                >
+            {/if}
             <LongTextField
                 disabled={false}
                 id="secretary-new-contract-remark"
