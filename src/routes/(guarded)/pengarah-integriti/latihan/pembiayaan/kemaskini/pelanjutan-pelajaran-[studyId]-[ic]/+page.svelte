@@ -23,7 +23,17 @@
     import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades.js';
     import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions.js';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper.js';
-    export let data;
+    import { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _stepperTetapanSokongan,
+        _submitTetapanSokonganForm,
+    } from './+page';
+    import type { PageData } from './$types';
+
+
+
+    export let data:PageData;
     let activeStepper = 0;
     let selectedIntegrityResult: any = '-';
 
@@ -135,6 +145,19 @@
             return document.id === 1;
         },
     )!;
+
+    const { form, errors, enhance } = superForm(
+        data.tetapanSokonganForm,
+        {
+            SPA: true,
+            validators: _stepperTetapanSokongan,
+            onSubmit() {
+                _submitTetapanSokonganForm($form);
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+        },
+    );
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -814,10 +837,16 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Tetapan Sokongan (Pengarah Integriti)"
-            ><TextIconButton primary label="Simpan" /></StepperContentHeader
+            ><TextIconButton primary label="Simpan" form="stepperTetapanSokongan"/></StepperContentHeader
         >
         <div class="flex w-full flex-col gap-2">
             <StepperContentBody>
+                <form
+                id="stepperTetapanSokongan"
+                method="POST"
+                use:enhance
+                class="flex w-full flex-col gap-2"
+            >
                 {#if data.record.currentApplication.status !== 'SOKONG - Pengarah Bahagian/Negeri'}
                     <div
                         class="mb-2.5 flex w-full flex-row items-center text-sm italic text-system-primary"
@@ -842,20 +871,36 @@
                             </ul>
                         </span>
                     </div>
+                    <!-- integrityDirectorRemark -->
                     <LongTextField
                         disabled={false}
                         labelBlack={false}
-                        name="integrity-director-remark"
+                        hasError={$errors.integrityDirectorRemark ? true : false}
+                        name="integrityDirectorRemark"
                         label="Tindakan/Ulasan"
-                        value={'bebas'}
+                        bind:value={$form.integrityDirectorRemark}
+
                     />
+                    {#if $errors.integrityDirectorRemark}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.integrityDirectorRemark[0]}</span
+                    >
+                {/if}
                     <RadioSingle
                         disabled={false}
                         labelBlack={false}
                         options={results}
                         legend="Keputusan"
-                        bind:userSelected={selectedIntegrityResult}
+                        bind:userSelected={$form.selectedIntegrityResult}
                     />
+                    {#if $errors.selectedIntegrityResult}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors
+                            .selectedIntegrityResult[0]}</span
+                    >
+                {/if}
                     <div
                         class="h-fit w-full space-y-2.5 rounded-[3px] border p-2.5"
                     >
@@ -890,7 +935,9 @@
                         </div>
                     </div>
                 {/if}
+                </form>
             </StepperContentBody>
         </div>
     </StepperContent>
 </Stepper>
+<Toaster/>

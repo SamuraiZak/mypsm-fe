@@ -16,6 +16,10 @@ import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
 import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
 import { mockContStudy } from '$lib/mocks/latihan/mockContStudy.js';
 import { getEmployees } from '$lib/service/employees/staff-service.js';
+import { superValidate } from 'sveltekit-superforms/client';
+import { z } from 'zod';
+import { getPromiseToast, getErrorToast } from '$lib/toast/toast-service';
+import { error, fail } from '@sveltejs/kit';
 
 export async function load({ params }) {
     const data: IntContStudy[] = await mockContStudy;
@@ -107,6 +111,10 @@ export async function load({ params }) {
 
     if (!currentApplication) throw new Error('Record not found');
 
+    const tetapanSokonganForm = await superValidate(
+         _stepperTetapanSokongan
+    )
+
     return {
         record: {
             data,
@@ -129,5 +137,58 @@ export async function load({ params }) {
             currentEmployeeNextOfKins,
             currentEmployeeUploadedDocuments,
         },
+            tetapanSokonganForm,
     };
 }
+
+const GeneralTextSchema = z
+    .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+    .min(4, {
+        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+    })
+    .max(124, {
+        message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    })
+    .trim();
+
+    const generalSelectSchema = z.string().min(1, { message: "Sila tetapkan pilihan anda. " });
+
+    export const _stepperTetapanSokongan = z.object({
+        integrityDirectorRemark:GeneralTextSchema,
+        selectedIntegrityResult:generalSelectSchema,
+
+
+    });
+
+//===========================================================
+
+//===========================================================
+
+export const _submitTetapanSokonganForm = async (formData: Object) => {
+    const TetapanSokonganForm = await superValidate(formData, _stepperTetapanSokongan);
+
+    if (!TetapanSokonganForm.valid) {
+        getErrorToast();
+        return fail(400, TetapanSokonganForm);
+    }
+
+
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(TetapanSokonganForm),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+
+    getPromiseToast(responsePromise)
+
+
+
+    return { TetapanSokonganForm };
+};
+

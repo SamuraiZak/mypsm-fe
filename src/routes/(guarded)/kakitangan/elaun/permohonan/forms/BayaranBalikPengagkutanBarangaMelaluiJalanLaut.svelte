@@ -8,6 +8,15 @@
     import { fileSelectionList } from '$lib/stores/globalState';
     import { onMount } from 'svelte';
 
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _stepperBayaranBalikPengangkutanBaranganMelaluiJalanLaut,
+        _submitBayaranBalikPengangkutanBaranganMelaluiJalanLautForm,
+    } from '../+page';
+    import type { PageData } from '../$types';
+
+    export let data: PageData;
+
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { areaTypes } from '$lib/mocks/elaun/areas';
     let selectedAreaType: string = '';
@@ -24,7 +33,6 @@
         target = document.getElementById('fileInput');
     });
     export let reasonVal: string = '-';
-
 
     // Function to handle the file changes
     function handleOnChange() {
@@ -44,38 +52,129 @@
         selectedFiles.splice(index, 1);
         fileSelectionList.set(selectedFiles);
     }
+    const { form, errors, enhance } = superForm(
+        data.bayaranBalikPengangkutanBaranganMelaluiJalanLautForm,
+        {
+            SPA: true,
+            validators:
+                _stepperBayaranBalikPengangkutanBaranganMelaluiJalanLaut,
+            onSubmit() {
+                _submitBayaranBalikPengangkutanBaranganMelaluiJalanLautForm(
+                    $form,
+                );
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+        },
+    );
 </script>
 
 <section>
-    <div
-        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
-    >
-        <SectionHeader title="Maklumat Perjalanan"></SectionHeader>
-        <DateSelector handleDateChange label="Tarikh Perjalanan"></DateSelector>
-        <DateSelector handleDateChange label="Sehingga Tarikh"></DateSelector>
-        <TextField
-            label="Bilangan Hari"
-            type="number"
-            bind:value={numberOfDays}
-        />
-        <TextField
-            label="Tempat Permulaan"
-            type="text"
-            bind:value={locationStart}
-        />
-        <TextField
-            label="Tempat Penamatan"
-            type="text"
-            bind:value={locationEnd}
-        />
-        <TextField
-            label="Anggaran Jarak (KM)"
-            type="text"
-            bind:value={estimatedDistance}
-        />
-        <LongTextField label="Tujuan" bind:value={reasonVal}
-        ></LongTextField>
+    <div>
+        <form
+            id="formValidation"
+            method="POST"
+            use:enhance
+            class="flex w-full flex-col gap-2"
+        >
+            <div
+                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+            >
+                <SectionHeader title="Maklumat Perjalanan"></SectionHeader>
+                <DateSelector
+                    hasError={$errors.tarikhPerjalanan ? true : false}
+                    name="tarikhPerjalanan"
+                    handleDateChange
+                    bind:selectedDate={$form.tarikhPerjalanan}
+                    label="Tarikh Perjalanan"
+                ></DateSelector>
+                {#if $errors.tarikhPerjalanan}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.tarikhPerjalanan[0]}</span
+                    >
+                {/if}
+                <DateSelector
+                    hasError={$errors.sehinggaTarikh ? true : false}
+                    name="sehinggaTarikh"
+                    handleDateChange
+                    bind:selectedDate={$form.sehinggaTarikh}
+                    label="Sehingga Tarikh"
+                ></DateSelector>
+                {#if $errors.sehinggaTarikh}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.sehinggaTarikh[0]}</span
+                    >
+                {/if}
+                <TextField
+                    hasError={$errors.bilanganHari ? true : false}
+                    name="bilanganHari"
+                    label="Bilangan Hari"
+                    type="number"
+                    bind:value={$form.bilanganHari}
+                />
+                {#if $errors.bilanganHari}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.bilanganHari[0]}</span
+                    >
+                {/if}
+                <TextField
+                    hasError={$errors.tempatPermulaan ? true : false}
+                    name="tempatPermulaan"
+                    label="Tempat Permulaan"
+                    type="text"
+                    bind:value={$form.tempatPermulaan}
+                />
+                {#if $errors.tempatPermulaan}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.tempatPermulaan[0]}</span
+                    >
+                {/if}
+                <TextField
+                    hasError={$errors.tempatPenamatan ? true : false}
+                    name="tempatPenamatan"
+                    label="Tempat Penamatan"
+                    type="text"
+                    bind:value={$form.tempatPenamatan}
+                />
+                {#if $errors.tempatPenamatan}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.tempatPenamatan[0]}</span
+                    >
+                {/if}
+                <TextField
+                    hasError={$errors.anggaranJarak ? true : false}
+                    name="anggaranJarak"
+                    label="Anggaran Jarak (KM)"
+                    type="text"
+                    bind:value={$form.anggaranJarak}
+                />{#if $errors.anggaranJarak}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.anggaranJarak[0]}</span
+                    >
+                {/if}
+
+                <LongTextField
+                    hasError={$errors.tujuan ? true : false}
+                    name="tujuan"
+                    label="Tujuan"
+                    bind:value={$form.tujuan}
+                ></LongTextField>
+                {#if $errors.tujuan}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.tujuan[0]}</span
+                    >
+                {/if}
+            </div>
+        </form>
     </div>
+
     <!-- Document Upload -->
     <div
         class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 pb-5 pt-5"

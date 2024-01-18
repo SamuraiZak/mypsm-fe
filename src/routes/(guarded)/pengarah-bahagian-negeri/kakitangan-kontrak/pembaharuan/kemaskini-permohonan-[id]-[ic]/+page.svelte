@@ -29,7 +29,16 @@
     import ContractAssessmentForm from './contract-assessment-form/contractAssessmentForm.svelte';
     import { years } from '$lib/mocks/dateSelection/years';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
-    export let data;
+    import { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _stepperPengesahanUntukDinilai,
+        _submitPengesahanUntukDinilaiForm,
+    } from './+page';
+    import type { PageData } from './$types';
+
+
+    export let data:PageData;
     let employeeLists: SelectOptionType<any>[] = [];
     let selectedSupporter: string;
     let selectedApprover: string;
@@ -171,6 +180,18 @@
             }
         }
     }
+    const { form, errors, enhance } = superForm(
+        data.pengesahanUntukDinilaiForm,
+        {
+            SPA: true,
+            validators: _stepperPengesahanUntukDinilai,
+            onSubmit() {
+                _submitPengesahanUntukDinilaiForm($form);
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+        },
+    );
 </script>
 
 <ContentHeader
@@ -765,11 +786,17 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Pengesahan untuk Dinilai"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton primary label="Simpan" form="stepperPengesahanUntukDinilai" onClick={() => {}}>
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
         <StepperContentBody>
+            <form
+            id="stepperPengesahanUntukDinilai"
+            method="POST"
+            use:enhance
+            class="flex w-full flex-col gap-2"
+        >
             <div class="flex w-full flex-col gap-2.5">
                 <div class="mb-5">
                     <b class="text-sm text-system-primary"
@@ -777,19 +804,35 @@
                     >
                 </div>
                 <LongTextField
-                    id="supporter-remark"
-                    label="Tindakan/Ulasan"
-                    value=""
+                hasError={$errors.supporterRemark ? true : false}
+                name="supporterRemark"
+                label="Tindakan/Ulasan"
+                bind:value={$form.supporterRemark}
                 ></LongTextField>
+                {#if $errors.supporterRemark}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.supporterRemark[0]}</span
+                >
+            {/if}
 
                 <RadioSingle
                     disabled={false}
                     options={certifyOptions}
                     legend={'Keputusan'}
-                    bind:userSelected={isCertified}
+                    bind:userSelected={$form.isCertified}
                 ></RadioSingle>
+                {#if $errors.isCertified}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.isCertified[0]}</span
+                >
+            {/if}
+
                 <hr />
             </div>
+            </form>
+
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -812,3 +855,4 @@
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+<Toaster/>

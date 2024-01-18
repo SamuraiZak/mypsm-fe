@@ -8,7 +8,14 @@
     import { fareType } from '$lib/mocks/elaun/fareType';
     import { fileSelectionList } from '$lib/stores/globalState';
     import { onMount } from 'svelte';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _stepperTambangMengungjungiWilayahAsal,
+        _submitTambangMengungjungiWilayahAsalForm,
+    } from '../+page';
+    import type { PageData } from '../$types';
 
+    export let data: PageData;
     export let selectedFiles: any = [];
     let target: any;
     let texthidden = false;
@@ -45,28 +52,70 @@
         relationship: '',
     };
 
-    export let data: any[] = [{ ...famInfo }];
+    // export let data: any[] = [{ ...famInfo }];
+
+    const { form, errors, enhance } = superForm(
+        data.TambangMengungjungiWilayahAsalForm,
+        {
+            SPA: true,
+            validators: _stepperTambangMengungjungiWilayahAsal,
+            onSubmit() {
+                _submitTambangMengungjungiWilayahAsalForm($form);
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+        },
+    );
 </script>
 
 <section>
-    <div
-        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
-    >
-        <SectionHeader title="Tambang Mengunjungi Wilayah Asal"></SectionHeader>
-        <DropdownSelect
-            options={fareType}
-            bind:value={selectedFareType}
-            dropdownType="label-left-full"
-            label="Memohon Untuk"
-        ></DropdownSelect>
-        <LongTextField label="Wilayah Asal" bind:value={wilayahVal}
-        ></LongTextField>
-    </div>
-    <div
-        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
-    >
-        <SectionHeader title="Maklumat Keluarga"></SectionHeader>
-        <FormTable sampleData={famInfo} bind:data></FormTable>
+    <div>
+        <form
+            id="formValidation"
+            method="POST"
+            use:enhance
+            class="flex w-full flex-col gap-2"
+        >
+            <div
+                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+            >
+                <SectionHeader title="Tambang Mengunjungi Wilayah Asal"
+                ></SectionHeader>
+                <DropdownSelect
+                    hasError={$errors.memohonUntuk ? true : false}
+                    id="memohonUntuk"
+                    options={fareType}
+                    bind:value={$form.memohonUntuk}
+                    dropdownType="label-left-full"
+                    label="Memohon Untuk"
+                ></DropdownSelect>
+                {#if $errors.memohonUntuk}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.memohonUntuk}</span
+                    >
+                {/if}
+                <LongTextField
+                    hasError={$errors.wilayahAsal ? true : false}
+                    name="wilayahAsal"
+                    label="Wilayah Asal"
+                    bind:value={$form.wilayahAsal}
+                ></LongTextField>
+                {#if $errors.wilayahAsal}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.wilayahAsal[0]}</span
+                    >
+                {/if}
+            </div>
+            <div
+                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+            >
+                <SectionHeader title="Maklumat Keluarga"></SectionHeader>
+                <FormTable sampleData={famInfo}></FormTable>
+            </div>
+            <!-- bind:data -->
+        </form>
     </div>
     <!-- Document Upload -->
     <div

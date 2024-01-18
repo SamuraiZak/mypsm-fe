@@ -15,6 +15,10 @@ import { mockLookupServiceTypes } from '$lib/mocks/database/mockLookupServiceTyp
 import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
 import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
 import { getEmployees } from '$lib/service/employees/staff-service.js';
+import { superValidate } from 'sveltekit-superforms/client';
+import { z } from 'zod';
+import { getPromiseToast, getErrorToast } from '$lib/toast/toast-service';
+import { error, fail } from '@sveltejs/kit';
 
 export async function load({ params }) {
     const data: IntEmployees[] = await getEmployees();
@@ -95,6 +99,11 @@ export async function load({ params }) {
     )!;
 
     if (!currentEmployee) throw new Error('Record not found');
+    const pengesahanUntukDinilaiForm = await superValidate(
+        _stepperPengesahanUntukDinilai
+
+    )
+
 
     return {
         record: {
@@ -117,5 +126,58 @@ export async function load({ params }) {
             currentEmployeeNextOfKins,
             currentEmployeeUploadedDocuments,
         },
+        pengesahanUntukDinilaiForm,
     };
+
 }
+
+const GeneralTextSchema = z
+    .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+    .min(4, {
+        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+    })
+    .max(124, {
+        message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    })
+    .trim();
+
+    const generalSelectSchema = z.string().min(1, { message: "Sila tetapkan pilihan anda. " });
+
+    export const _stepperPengesahanUntukDinilai = z.object({
+        supporterRemark:GeneralTextSchema,
+        isCertified:generalSelectSchema,
+
+
+    });
+
+//===========================================================
+
+//===========================================================
+
+export const _submitPengesahanUntukDinilaiForm = async (formData: Object) => {
+    const pengesahanUntukDinilaiForm = await superValidate(formData, _stepperPengesahanUntukDinilai);
+
+    if (!pengesahanUntukDinilaiForm.valid) {
+        getErrorToast();
+        return fail(400, pengesahanUntukDinilaiForm);
+    }
+
+
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(pengesahanUntukDinilaiForm),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+
+    getPromiseToast(responsePromise)
+
+
+
+    return { pengesahanUntukDinilaiForm };
+};

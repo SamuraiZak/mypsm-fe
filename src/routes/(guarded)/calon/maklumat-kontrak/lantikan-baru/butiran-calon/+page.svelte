@@ -51,6 +51,16 @@
     import { goto } from '$app/navigation';
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import FileInputField from '$lib/components/input/FileInputField.svelte';
+    import { _personalInfoForm, _submitPersonalInfoForm } from './+page';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { getErrorToast, getSuccessToast } from '$lib/toast/toast-service';
+    import { fileSelectionList } from '$lib/stores/globalState';
+    import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
+    import SectionHeader from '$lib/components/header/SectionHeader.svelte';
+
+
     let employeeLists: SelectOptionType<any>[] = [];
     let selectedSupporter: string;
     let selectedApprover: string;
@@ -79,6 +89,17 @@
     ];
 
     let passerResult: string = 'passed';
+    let editable: boolean = true;
+    const approveOptions: RadioOption[] = [
+        {
+            value: 'true',
+            label: 'LULUS',
+        },
+        {
+            value: 'false',
+            label: 'TIDAK LULUS',
+        },
+    ];
 
     let isCertified: string = 'true';
     const certifyOptions: RadioOption[] = [
@@ -279,6 +300,23 @@
             }
         }
     }
+    export let data: PageData;
+    let tempAcademicRecord: any[] = [];
+    let tempExperienceRecord: any[] = [];
+
+    export const { form, errors, enhance } = superForm(data.personalInfoForm, {
+        SPA: true,
+        validators: _personalInfoForm,
+        delayMs: 500,
+        timeoutMs: 2000,
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+
+        onSubmit() {
+            // console.log('HERE: ', $form);
+            _submitPersonalInfoForm($form);
+        },
+    });
 </script>
 
 <ContentHeader
@@ -294,166 +332,395 @@
 <Stepper>
     <StepperContent>
         <StepperContentHeader title="Maklumat Peribadi"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="FormStepperMaklumatPeribadi"
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
         <StepperContentBody
             ><!-- Maklumat Peribadi -->
-            <div class="flex w-full flex-col gap-2.5">
-                <p class={stepperFormTitleClass}>Maklumat Peribadi</p>
-                <TextField
-                    {disabled}
-                    id="noKadPengenalan"
-                    label={'No. Kad Pengenalan'}
-                    value={currentEmployee.identityDocumentNumber}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="namaPenuh"
-                    label={'Nama Penuh'}
-                    value={currentEmployee.name}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="namaLain"
-                    label={'Nama Lain'}
-                    value={currentEmployee.alternativeName}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="warnaKadPengenalan"
-                    label={'Warna Kad Pengenalan'}
-                    value={isBlueOrRedIC(currentEmployee.isMalaysian)}
-                ></TextField>
-                <DateSelector
-                    {handleDateChange}
-                    {disabled}
-                    label={'Tarikh Lahir'}
-                    selectedDate={dateFormatter(
-                        currentEmployee.birthDate,
-                    ).toString()}
-                ></DateSelector>
-                <TextField
-                    {disabled}
-                    id="tempatLahir"
-                    label={'Tempat Lahir'}
-                    value={currentEmployeeBirthState.name}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="warganegara"
-                    label={'Warganegara'}
-                    value={currentEmployee.isMalaysian ? 'Malaysia' : 'Bukan'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="bangsa"
-                    label={'Bangsa'}
-                    value={currentEmployeeRace.name}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="agama"
-                    label={'Agama'}
-                    value={currentEmployeeReligion.name}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="jantina"
-                    label={'Jantina'}
-                    value={currentEmployee.gender}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="status"
-                    label={'Status'}
-                    value={currentEmployee.marital}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="emel"
-                    label={'Emel'}
-                    value={currentEmployee.email}
-                ></TextField>
-                <LongTextField
-                    {disabled}
-                    id="alamatRumah"
-                    label={'Alamat Rumah'}
-                    value={currentEmployee.homeAddress}
-                ></LongTextField>
-                <LongTextField
-                    {disabled}
-                    id="alamatSuratMenyurat"
-                    label={'Alamat Surat Menyurat (jika berlainan dari alamat rumah'}
-                    value={currentEmployee.mailAddress}
-                ></LongTextField>
-                <TextField
-                    {disabled}
-                    id="perumahan"
-                    label={'Perumahan'}
-                    value={'-'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="pinjPerumahan"
-                    label={'Pinjaman Perumahan'}
-                    value={'-'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="pinjKenderaan"
-                    label={'Pinjaman Kenderaan'}
-                    value={'-'}
-                ></TextField>
-                <RadioSingle
-                    {disabled}
-                    {options}
-                    legend={'Bekas Polis / Tentera'}
-                    bind:userSelected={isExPoliceSoldier}
-                ></RadioSingle>
-            </div>
+            <form
+                id="FormStepperMaklumatPeribadi"
+                class="flex w-full flex-col gap-2"
+                use:enhance
+                method="POST"
+            >
+                <div class="flex w-full flex-col gap-2.5">
+                    <p class={stepperFormTitleClass}>Maklumat Peribadi</p>
+                    <TextField
+                        {disabled}
+                        hasError={$errors.identityDocumentNumber
+                            ? true
+                            : false
+                              ? true
+                              : false}
+                        name="identityDocumentNumber"
+                        label={'No. Kad Pengenalan'}
+                        type="text"
+                        bind:value={$form.identityDocumentNumber}
+                    ></TextField>
 
-            <div class="flex w-full flex-col gap-2">
-                <p class={stepperFormTitleClass}>
-                    Maklumat Pertalian Dengan Kakitangan LKIM
-                </p>
+                    {#if $errors.identityDocumentNumber}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.identityDocumentNumber}</span
+                        >
+                    {/if}
+                    <TextField
+                        {disabled}
+                        hasError={$errors.name ? true : false ? true : false}
+                        name="name"
+                        label={'Nama Penuh'}
+                        type="text"
+                        bind:value={$form.name}
+                    ></TextField>
 
-                <!-- kakitanganLKIM? -->
-                <RadioSingle
-                    {options}
-                    {disabled}
-                    legend={'Perhubungan Dengan Kakitangan LKIM'}
-                    bind:userSelected={isInRelationshipWithLKIMStaff}
-                ></RadioSingle>
-                {#if isInRelationshipWithLKIMStaff === 'true'}
+                    {#if $errors.name}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.name}</span
+                        >
+                    {/if}
                     <TextField
                         {disabled}
-                        id="noPekerjaPasangan"
-                        label={'No. Pekerja LKIM'}
-                        value={currentEmployeeSpouseEmployeeInfo?.employeeNumber}
+                        hasError={$errors.alternativeName
+                            ? true
+                            : false
+                              ? true
+                              : false}
+                        name="alternativeName"
+                        label={'Nama Lain'}
+                        type="text"
+                        bind:value={$form.alternativeName}
+                    ></TextField>
+
+                    {#if $errors.alternativeName}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.alternativeName}</span
+                        >
+                    {/if}
+                    <DropdownSelect
+                        {disabled}
+                        hasError={$errors.identityDocumentColor ? true : false}
+                        dropdownType="label-left-full"
+                        id="identityDocumentColor"
+                        name="identityDocumentColor"
+                        label="Warna Kad Pengenalan"
+                        bind:value={$form.identityDocumentColor}
+                        options={[
+                            { value: 'true', name: 'Biru' },
+                            { value: 'false', name: 'Merah' },
+                        ]}
+                    ></DropdownSelect>
+                    {#if $errors.identityDocumentColor}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.identityDocumentColor}</span
+                        >
+                    {/if}
+                    <DateSelector
+                        {disabled}
+                        hasError={$errors.birthDate
+                            ? true
+                            : false
+                              ? true
+                              : false}
+                        name="birthDate"
+                        handleDateChange
+                        label="Tarikh Lahir"
+                        bind:selectedDate={$form.birthDate}
+                    ></DateSelector>
+                    {#if $errors?.birthDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors?.birthDate}</span
+                        >
+                    {/if}
+                    <DropdownSelect
+                        {disabled}
+                        hasError={$errors.birthPlace ? true : false}
+                        dropdownType="label-left-full"
+                        id="birthPlace"
+                        name="birthPlace"
+                        label="Tempat Lahir"
+                        bind:value={$form.birthPlace}
+                        options={[
+                            { value: '1', name: 'Sarawak' },
+                            { value: '2', name: 'Sabah' },
+                        ]}
+                    ></DropdownSelect>
+                    {#if $errors.birthPlace}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.birthPlace}</span
+                        >
+                    {/if}
+                    <DropdownSelect
+                        {disabled}
+                        hasError={$errors.isMalaysia ? true : false}
+                        dropdownType="label-left-full"
+                        id="isMalaysia"
+                        name="isMalaysia"
+                        label="Warganegara"
+                        bind:value={$form.isMalaysia}
+                        options={[
+                            { value: '1', name: 'Warganegara' },
+                            { value: '2', name: 'Bukan Warganegara' },
+                        ]}
+                    ></DropdownSelect>
+                    {#if $errors.isMalaysia}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.isMalaysia}</span
+                        >
+                    {/if}
+                    <DropdownSelect
+                        {disabled}
+                        hasError={$errors.isMalaysia ? true : false}
+                        dropdownType="label-left-full"
+                        id="isMalaysia"
+                        name="isMalaysia"
+                        label="Bangsa"
+                        bind:value={$form.isMalaysia}
+                        options={[
+                            { value: '1', name: 'Melayu' },
+                            { value: '2', name: 'Cina' },
+                        ]}
+                    ></DropdownSelect>
+                    {#if $errors.isMalaysia}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.isMalaysia}</span
+                        >
+                    {/if}
+                    <DropdownSelect
+                        {disabled}
+                        hasError={$errors.religionId ? true : false}
+                        dropdownType="label-left-full"
+                        id="religionId"
+                        name="religionId"
+                        label="Agama"
+                        bind:value={$form.religionId}
+                        options={[
+                            { value: '1', name: 'Islam' },
+                            { value: '2', name: 'Kristen' },
+                        ]}
+                    ></DropdownSelect>
+                    {#if $errors.religionId}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.religionId}</span
+                        >
+                    {/if}
+                    <DropdownSelect
+                        {disabled}
+                        hasError={$errors.gender ? true : false}
+                        dropdownType="label-left-full"
+                        id="gender"
+                        name="gender"
+                        label="Jantina"
+                        bind:value={$form.gender}
+                        options={[
+                            { value: '1', name: 'Lelaki' },
+                            { value: '2', name: 'Perempuan' },
+                        ]}
+                    ></DropdownSelect>
+                    {#if $errors.gender}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.gender}</span
+                        >
+                    {/if}
+                    <DropdownSelect
+                        {disabled}
+                        hasError={$errors.status ? true : false}
+                        dropdownType="label-left-full"
+                        id="status"
+                        label="Status"
+                        bind:value={$form.status}
+                        options={[
+                            { value: '1', name: 'Bujang' },
+                            { value: '2', name: 'Berkahwin' },
+                        ]}
+                    ></DropdownSelect>
+                    {#if $errors.status}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.status}</span
+                        >
+                    {/if}
+                    <TextField
+                        {disabled}
+                        hasError={$errors.email ? true : false ? true : false}
+                        name="email"
+                        label={'Emel'}
+                        type="text"
+                        bind:value={$form.email}
+                    ></TextField>
+
+                    {#if $errors?.email}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors?.email}</span
+                        >
+                    {/if}
+                    <LongTextField
+                        hasError={$errors.homeAddress
+                            ? true
+                            : false
+                              ? true
+                              : false}
+                        {disabled}
+                        name="homeAddress"
+                        label="Alamat Rumah"
+                        bind:value={$form.homeAddress}
+                    />
+                    {#if $errors.homeAddress}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.homeAddress}</span
+                        >
+                    {/if}
+                    <LongTextField
+                        hasError={$errors.mailAddress ? true : false}
+                        {disabled}
+                        name="mailAddress"
+                        label="Alamat Surat Menyurat (jika berlainan dari alamat rumah)"
+                        bind:value={$form.mailAddress}
+                    />
+                    {#if $errors.mailAddress}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.mailAddress}</span
+                        >
+                    {/if}
+                    <TextField
+                        {disabled}
+                        id="perumahan"
+                        label={'Perumahan'}
+                        value={'-'}
                     ></TextField>
                     <TextField
                         {disabled}
-                        id="namaPasangan"
-                        label={'Nama Kakitangan LKIM'}
-                        value={currentEmployeeSpouse.name}
+                        id="pinjPerumahan"
+                        label={'Pinjaman Perumahan'}
+                        value={'-'}
                     ></TextField>
                     <TextField
                         {disabled}
-                        id="jawatanPasangan"
-                        label={'Jawatan Kakitangan LKIM'}
-                        value={currentEmployeeSpouse.position}
+                        id="pinjKenderaan"
+                        label={'Pinjaman Kenderaan'}
+                        value={'-'}
                     ></TextField>
-                    <TextField
+                    <RadioSingle
+                        name="isExPoliceOrSoldier"
+                        disabled={!editable}
+                        options={approveOptions}
+                        legend={'Bekas Polis / Tentera'}
+                        bind:userSelected={$form.isExPoliceOrSoldier}
+                    ></RadioSingle>
+                    {#if $errors.isExPoliceOrSoldier}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.isExPoliceOrSoldier}</span
+                        >
+                    {/if}
+                </div>
+
+                <div class="flex w-full flex-col gap-2">
+                    <p class={stepperFormTitleClass}>
+                        Maklumat Pertalian Dengan Kakitangan LKIM
+                    </p>
+
+                    <!-- kakitanganLKIM? -->
+                    <RadioSingle
+                        name="isInternalRelationship"
+                        {options}
                         {disabled}
-                        id="hubungan"
-                        label={'Hubungan'}
-                        value={currentEmployeeSpouse.relationship}
-                    ></TextField>
-                {/if}
-            </div></StepperContentBody
-        >
+                        legend={'Perhubungan Dengan Kakitangan LKIM'}
+                        bind:userSelected={$form.isInternalRelationship}
+                    ></RadioSingle>
+                    {#if $form.isInternalRelationship === 'true'}
+                        <TextField
+                            {disabled}
+                            hasError={$errors.employeeNumber ? true : false}
+                            name="employeeNumber"
+                            label={'No. Pekerja LKIM'}
+                            type="text"
+                            bind:value={$form.employeeNumber}
+                        ></TextField>
+
+                        {#if $errors.employeeNumber}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$errors.employeeNumber}</span
+                            >
+                        {/if}
+
+                        <TextField
+                            {disabled}
+                            hasError={$errors.employeeName
+                                ? true
+                                : false
+                                  ? true
+                                  : false}
+                            name="employeeName"
+                            label={'Nama Kakitangan LKIM'}
+                            type="text"
+                            bind:value={$form.employeeName}
+                        ></TextField>
+
+                        {#if $errors.employeeName}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$errors.employeeName}</span
+                            >
+                        {/if}
+                        <DropdownSelect
+                            {disabled}
+                            hasError={$errors.employeePosition ? true : false}
+                            dropdownType="label-left-full"
+                            id="employeePosition"
+                            label="Jawatan Kakitangan LKIM"
+                            bind:value={$form.employeePosition}
+                            options={[
+                                { value: '1', name: 'Pegawai IT' },
+                                { value: '2', name: 'Akauntan' },
+                            ]}
+                        ></DropdownSelect>
+                        {#if $errors.employeePosition}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$errors.employeePosition}</span
+                            >
+                        {/if}
+
+                        <DropdownSelect
+                            {disabled}
+                            hasError={$errors.employeePosition ? true : false}
+                            dropdownType="label-left-full"
+                            id="employeePosition"
+                            label="Jawatan Kakitangan LKIM"
+                            bind:value={$form.employeePosition}
+                            options={[
+                                { value: '1', name: 'Pegawai IT' },
+                                { value: '2', name: 'Akauntan' },
+                            ]}
+                        ></DropdownSelect>
+                        {#if $errors.employeePosition}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$errors.employeePosition}</span
+                            >
+                        {/if}
+                    {/if}
+                </div>
+            </form>
+        </StepperContentBody>
     </StepperContent>
 
     <StepperContent>
@@ -850,6 +1117,7 @@
         >
     </StepperContent>
 </Stepper>
+ <Toaster/>
 
 <!-- content header starts here -->
 <!-- <section class="flex w-full flex-col items-start justify-start">

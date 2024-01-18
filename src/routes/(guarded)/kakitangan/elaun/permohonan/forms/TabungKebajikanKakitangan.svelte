@@ -6,7 +6,14 @@
     import { donationType } from '$lib/mocks/elaun/donationType';
     import { fileSelectionList } from '$lib/stores/globalState';
     import { onMount } from 'svelte';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _stepperTabungKebajikanKakitangan,
+        _submitTabungKebajikanKakitanganForm,
+    } from '../+page';
+    import type { PageData } from '../$types';
 
+    export let data: PageData;
     export let selectedFiles: any = [];
     let target: any;
     let texthidden = false;
@@ -35,15 +42,51 @@
         selectedFiles.splice(index, 1);
         fileSelectionList.set(selectedFiles);
     }
+
+    const { form, errors, enhance } = superForm(
+        data.TabungKebajikanKakitanganForm,
+        {
+            SPA: true,
+            validators: _stepperTabungKebajikanKakitangan,
+            onSubmit() {
+                _submitTabungKebajikanKakitanganForm($form);
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+        },
+    );
+
+    let errorData: any;
 </script>
 
 <section>
-    <div
-        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
-    >
-        <SectionHeader title="Maklumat Kematian"></SectionHeader>
-        <DropdownSelect dropdownType="label-left-full" label="Jenis Sumbangan" options={donationType} bind:value={selectedDonationType}></DropdownSelect>
+    <div>
+        <form
+            id="formValidation"
+            method="POST"
+            use:enhance
+            class="flex w-full flex-col gap-2"
+        >
+            <div
+                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+            >
+                <SectionHeader title="Maklumat Kematian"></SectionHeader>
+                <DropdownSelect
+                    hasError={$errors.jenisSumbangan ? true : false}
+                    dropdownType="label-left-full"
+                    label="Jenis Sumbangan"
+                    options={donationType}
+                    bind:value={$form.jenisSumbangan}
+                ></DropdownSelect>
+                {#if $errors.jenisSumbangan}
+                    <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.jenisSumbangan}</span
+                    >
+                {/if}
+            </div>
+        </form>
     </div>
+
     <!-- Document Upload -->
     <div
         class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 pb-5 pt-5"

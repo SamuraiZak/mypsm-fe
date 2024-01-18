@@ -6,6 +6,14 @@
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import { fileSelectionList } from '$lib/stores/globalState';
     import { onMount } from 'svelte';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _stepperPembayaranBalikPassport,
+        _submitPembayaranBalikPassportForm,
+    } from '../+page';
+    import type { PageData } from '../$types';
+
+    export let data: PageData;
 
     export let selectedFiles: any = [];
     let target: any;
@@ -35,16 +43,63 @@
         selectedFiles.splice(index, 1);
         fileSelectionList.set(selectedFiles);
     }
+
+    const { form, errors, enhance } = superForm(
+        data.pembayaranBalikPassportForm,
+        {
+            SPA: true,
+            validators: _stepperPembayaranBalikPassport,
+            onSubmit() {
+                _submitPembayaranBalikPassportForm($form);
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+        },
+    );
+
+    let errorData: any;
 </script>
 
 <section>
-    <div
-        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
-    >
-        <SectionHeader title="Pembayaran Balik Passport"></SectionHeader>
-        <DateSelector handleDateChange label="Tarikh Pembaharuan"
-        ></DateSelector>
-        <LongTextField label="Tujuan" bind:value={purpose}></LongTextField>
+    <div>
+        <form
+            id="formValidation"
+            method="POST"
+            use:enhance
+            class="flex w-full flex-col gap-2"
+        >
+            <div
+                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+            >
+                <SectionHeader title="Pembayaran Balik Passport"
+                ></SectionHeader>
+                <DateSelector
+                hasError={$errors.tarikhPembaharuan ? true : false}
+                name="tarikhPembaharuan"
+                handleDateChange
+                bind:selectedDate={$form.tarikhPembaharuan}
+                label="Tarikh Pembaharuan"
+                ></DateSelector>
+                {#if $errors.tarikhPembaharuan}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.tarikhPembaharuan[0]}</span
+                >
+            {/if}
+                <LongTextField
+                hasError={$errors.tujuan ? true : false}
+                name="tujuam"
+                label="Tujuan"
+                bind:value={$form.tujuan}
+                ></LongTextField>
+                {#if $errors.tujuan}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.tujuan[0]}</span
+                >
+            {/if}
+            </div>
+        </form>
     </div>
     <!-- Document Upload -->
     <div
