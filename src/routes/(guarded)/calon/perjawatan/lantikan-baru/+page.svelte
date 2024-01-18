@@ -80,7 +80,8 @@
             withActions
             actionOptions={['detail']}
             detailActions={() => {
-                const url = './lantikan-baru/butiran-calon';
+                const url =
+                    './lantikan-baru/butiran-calon-' + tempStaff.temporaryId;
                 goto(url);
             }}
             tableItems={data.getThisStaffRecord}
