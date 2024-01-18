@@ -8,7 +8,7 @@
     class="flex max-h-[50px] w-full justify-between border-b bg-white text-black"
 >
     <div
-        class="flex h-[50px] w-[250px] min-w-[250px] items-center justify-center border-r"
+        class="flex h-[50px] w-[200px] min-w-[200px] items-center justify-center border-r"
     >
         <div class="flex items-center justify-between gap-2">
             <img class="h-10" src="/src/lib/assets/logo.png" alt="" />
