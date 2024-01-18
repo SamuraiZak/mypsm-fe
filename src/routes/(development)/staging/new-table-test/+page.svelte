@@ -7,6 +7,8 @@
     let sortDirection: string = 'none';
 
     let tableFilter:EmployeesListRequestViewModel = data.props.request;
+
+    console.log(data.props.employeeList);
 </script>
 
 <button on:click={()=>{
@@ -16,5 +18,5 @@
 </button>
 <p>in page orderBy {tableFilter.orderBy}</p>
 <div class="h-full w-full p-6">
-    <IbsCommonTable bind:param = {tableFilter} tableData={data.props.employeeList}></IbsCommonTable>
+    <IbsCommonTable bind:param = {tableFilter} tableData={data.props.employeeList.data}></IbsCommonTable>
 </div>

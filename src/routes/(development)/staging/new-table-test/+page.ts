@@ -1,5 +1,5 @@
-import http from '$lib/services/core/http.service';
 import api from '$lib/services/core/ky.service';
+import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
 import { showLoadingOverlay } from '$lib/stores/globalState';
 import { EmployeesListResponseConvert, type EmployeesListResponseViewModel } from '$lib/view-models/mypsm/employee/employee-list-response';
 
@@ -9,21 +9,13 @@ export async function load() {
     const request: EmployeesListRequestViewModel = {
         pageNum: 1,
         pageSize: 10,
-        orderBy: 'scheme',
+        orderBy: 'programme',
         orderType: 'asc',
         filter: {
         },
     };
-    const response: Response = await api
-        .post('api/v1/employees/employees', {
-            body: JSON.stringify(request),
-        })
-        .json();
 
-    const employeeListResponse: EmployeesListResponseViewModel =
-        EmployeesListResponseConvert.fromJson(JSON.stringify(response));
-
-    const employeeList = employeeListResponse.data;
+    const employeeList:EmployeesListResponseViewModel = await EmployeeService.getEmployeeList(request);
 
     setTimeout(() => showLoadingOverlay.set(false), 2500);
     return {
