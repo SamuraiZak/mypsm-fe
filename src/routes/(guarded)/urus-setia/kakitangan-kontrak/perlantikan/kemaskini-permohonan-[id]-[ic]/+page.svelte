@@ -36,10 +36,25 @@
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import { goto } from '$app/navigation';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper.js';
-    export let data;
+    import { superForm } from 'sveltekit-superforms/client';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import {
+        _stepperNewAppointmentResult,
+        _submitFormStepperNewAppointmentResult,
+    } from './+page';
+    import {
+        _stepperSetSupporterApprover,
+        _submitFormStepperSetSupporterApprover,
+    } from './+page';
+    import {
+        _stepperUpdateNewAppointment,
+        _submitFormStepperUpdateNewAppointment,
+    } from './+page';
+
+    export let data: PageData;
+
     let employeeLists: SelectOptionType<any>[] = [];
-    let selectedSupporter: string;
-    let selectedApprover: string;
 
     onMount(async () => {
         employeeLists = data.record.data.map((staff) => ({
@@ -176,6 +191,49 @@
             }
         }
     }
+
+    //Update New Appointment
+    const {
+        form: updateNewAppointmentForm,
+        errors: updateNewAppointmentErrors,
+        enhance: updateNewAppointmentEnhance,
+    } = superForm(data.stepperUpdateNewAppointment, {
+        SPA: true,
+        validators: _stepperUpdateNewAppointment,
+        onSubmit() {
+            _submitFormStepperUpdateNewAppointment($updateNewAppointmentForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+    //New Appointment Result
+    const {
+        form: newAppointmentResultForm,
+        errors: newAppointmentResultErrors,
+        enhance: newAppointmentResultEnhance,
+    } = superForm(data.stepperNewAppointmentResult, {
+        SPA: true,
+        validators: _stepperNewAppointmentResult,
+        onSubmit() {
+            _submitFormStepperNewAppointmentResult($newAppointmentResultForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+    //Set Supporter Approver
+    const {
+        form: setSupporterApproverForm,
+        errors: setSupporterApproverErrors,
+        enhance: setSupporterApproverEnhance,
+    } = superForm(data.stepperSetSupporterApprover, {
+        SPA: true,
+        validators: _stepperSetSupporterApprover,
+        onSubmit() {
+            _submitFormStepperSetSupporterApprover($setSupporterApproverForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <ContentHeader
@@ -365,7 +423,6 @@
             </div></StepperContentBody
         >
     </StepperContent>
-
     <StepperContent>
         <StepperContentHeader
             title="Maklumat Akademik / Kelayakan / Latihan yang Lalu"
@@ -471,7 +528,9 @@
                             {disabled}
                             id="gaji"
                             label={'Gaji'}
-                            value={CurrencyHelper.formatCurrency(parseInt(item.salary))}
+                            value={CurrencyHelper.formatCurrency(
+                                parseInt(item.salary),
+                            )}
                         ></TextField>
                     {:else}
                         <TextField
@@ -644,197 +703,469 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Kemaskini Lantikan Baru (Kontrak)"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="FormStepperUpdateNewAppointment"
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton>
         </StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2.5">
-                <p class={stepperFormTitleClass}>Maklumat Perkhidmatan</p>
-                <DateSelector
-                    {handleDateChange}
-                    disabled={false}
-                    label={'Tarikh Mula Kontrak'}
-                    selectedDate={''}
-                ></DateSelector>
-                <DateSelector
-                    {handleDateChange}
-                    disabled={false}
-                    label={'Tarikh Tamat Kontrak'}
-                    selectedDate={''}
-                ></DateSelector>
-                <TextField
-                    disabled={false}
-                    type="number"
-                    id="payrate-contract"
-                    label={'Kadar Upah (RM)'}
-                    value={''}
-                ></TextField>
-                <TextField
-                    disabled={false}
-                    id="placement-contract"
-                    label={'Penempatan'}
-                    value={''}
-                ></TextField>
-                <TextField
-                    disabled={false}
-                    id="job-title"
-                    label={'Gelaran Tugas'}
-                    value={''}
-                ></TextField>
-                <DateSelector
-                    {handleDateChange}
-                    disabled={false}
-                    label={'Tarikh Lapor Diri'}
-                    selectedDate={''}
-                ></DateSelector>
-                <TextField
-                    disabled={false}
-                    id="noKWSP"
-                    label={'No. KWSP'}
-                    value={'1234-5678-9012'}
-                ></TextField>
-                <TextField
-                    disabled={false}
-                    id="noSOCSO"
-                    label={'No. SOCSO'}
-                    value={'1234-5678-9012'}
-                ></TextField>
-                <TextField
-                    disabled={false}
-                    id="noCukai"
-                    label={'No. Cukai (LHDN)'}
-                    value={'1234-5678-9012'}
-                ></TextField>
-                <TextField
-                    disabled={false}
-                    id="bank"
-                    label={'Bank'}
-                    value={'Maybank Berhad'}
-                ></TextField>
-                <TextField
-                    disabled={false}
-                    id="noAkaun"
-                    label={'No. Akaun'}
-                    value={'1234-5678-9012'}
-                ></TextField>
-                <TextField
-                    disabled={false}
-                    id="tarafPerkhidmatan"
-                    label={'Taraf Perkhidmatan'}
-                    value={data.record.currentEmployeeServiceType.name}
-                ></TextField>
-                <DateSelector
-                    {handleDateChange}
-                    disabled={false}
-                    label={'Tarikh Kuatkuasa Lantikan Semasa'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeeService.currentServiceDate,
-                    )}
-                ></DateSelector>
-                <TextField
-                    disabled={false}
-                    id="kelayakanCuti"
-                    label={'Kelayakan Cuti'}
-                    value={getEmployeeLeave(
-                        data.record.currentEmployee.employeeNumber,
-                    )}
-                ></TextField>
-                <DateSelector
-                    {handleDateChange}
-                    disabled={false}
-                    label={'Mula Dilantik Perkhidmatan Kerajaan'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeeService.firstServiceDate,
-                    )}
-                ></DateSelector>
-                <DateSelector
-                    {handleDateChange}
-                    disabled={false}
-                    label={'Mula Dilantik Perkhidmatan LKIM'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeeService.currentServiceDate,
-                    )}
-                ></DateSelector>
-                <DateSelector
-                    {handleDateChange}
-                    disabled={false}
-                    label={'Mula Dilantik Perkhidmatan Sekarang'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeeService.currentServiceDate,
-                    )}
-                ></DateSelector>
-                <DateSelector
-                    {handleDateChange}
-                    disabled={false}
-                    label={'Disahkan Dalam Jawatan Pertama LKIM'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeeService.firstServiceDate,
-                    )}
-                ></DateSelector>
-                <DateSelector
-                    {handleDateChange}
-                    disabled={false}
-                    label={'Disahkan Dalam Jawatan Semasa LKIM'}
-                    selectedDate={dateFormatter(
-                        data.record.currentEmployeeService.currentServiceDate,
-                    )}
-                ></DateSelector>
+                <form
+                    id="FormStepperUpdateNewAppointment"
+                    class="flex w-full flex-col gap-2"
+                    use:updateNewAppointmentEnhance
+                    method="POST"
+                >
+                    <p class={stepperFormTitleClass}>Maklumat Perkhidmatan</p>
+                    <DateSelector
+                        hasError={$updateNewAppointmentErrors.contractStartDate
+                            ? true
+                            : false}
+                        name="contractStartDate"
+                        handleDateChange
+                        label="Tarikh Mula Kontrak"
+                        bind:selectedDate={$updateNewAppointmentForm.contractStartDate}
+                    ></DateSelector>
+                    {#if $updateNewAppointmentErrors.contractStartDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateNewAppointmentErrors
+                                .contractStartDate[0]}</span
+                        >
+                    {/if}
+                    <DateSelector
+                        hasError={$updateNewAppointmentErrors.contractEndDate
+                            ? true
+                            : false}
+                        name="contractEndDate"
+                        handleDateChange
+                        label="Tarikh Tamat Kontrak"
+                        bind:selectedDate={$updateNewAppointmentForm.contractEndDate}
+                    ></DateSelector>
+                    {#if $updateNewAppointmentErrors.contractEndDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateNewAppointmentErrors
+                                .contractEndDate[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={$updateNewAppointmentErrors.wageRates
+                            ? true
+                            : false}
+                        name="wageRates"
+                        label={'Kadar Upah (RM)'}
+                        type="number"
+                        bind:value={$updateNewAppointmentForm.wageRates}
+                    ></TextField>
+
+                    {#if $updateNewAppointmentErrors.wageRates}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateNewAppointmentErrors.wageRates[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={$updateNewAppointmentErrors.placement
+                            ? true
+                            : false}
+                        name="placement"
+                        label={'Penempatan'}
+                        type="text"
+                        bind:value={$updateNewAppointmentForm.placement}
+                    ></TextField>
+
+                    {#if $updateNewAppointmentErrors.placement}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateNewAppointmentErrors.placement[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={$updateNewAppointmentErrors.jobTitle
+                            ? true
+                            : false}
+                        name="jobTitle"
+                        label={'Gelaran Tugas'}
+                        type="text"
+                        bind:value={$updateNewAppointmentForm.jobTitle}
+                    ></TextField>
+
+                    {#if $updateNewAppointmentErrors.jobTitle}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateNewAppointmentErrors.jobTitle[0]}</span
+                        >
+                    {/if}
+                    <DateSelector
+                        hasError={$updateNewAppointmentErrors.reportDutyDate
+                            ? true
+                            : false}
+                        name="reportDutyDate"
+                        handleDateChange
+                        label="Tarikh Lapor Diri"
+                        bind:selectedDate={$updateNewAppointmentForm.reportDutyDate}
+                    ></DateSelector>
+                    {#if $updateNewAppointmentErrors.reportDutyDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateNewAppointmentErrors
+                                .reportDutyDate[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={$updateNewAppointmentErrors.noKWSP
+                            ? true
+                            : false}
+                        name="noKWSP"
+                        label={'No. KWSP'}
+                        type="text"
+                        bind:value={$updateNewAppointmentForm.noKWSP}
+                    ></TextField>
+
+                    {#if $updateNewAppointmentErrors.noKWSP}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateNewAppointmentErrors.noKWSP[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={$updateNewAppointmentErrors.noSOCSO
+                            ? true
+                            : false}
+                        name="noSOCSO"
+                        label={'No. SOCSO'}
+                        type="text"
+                        bind:value={$updateNewAppointmentForm.noSOCSO}
+                    ></TextField>
+
+                    {#if $updateNewAppointmentErrors.noSOCSO}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateNewAppointmentErrors.noSOCSO[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={$updateNewAppointmentErrors.taxNo
+                            ? true
+                            : false}
+                        name="taxNo"
+                        label={'No. Cukai (LHDN)'}
+                        type="text"
+                        bind:value={$updateNewAppointmentForm.taxNo}
+                    ></TextField>
+
+                    {#if $updateNewAppointmentErrors.taxNo}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateNewAppointmentErrors.taxNo[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={$updateNewAppointmentErrors.bank
+                            ? true
+                            : false}
+                        name="bank"
+                        label={'Bank'}
+                        type="text"
+                        bind:value={$updateNewAppointmentForm.bank}
+                    ></TextField>
+
+                    {#if $updateNewAppointmentErrors.bank}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateNewAppointmentErrors.bank[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={$updateNewAppointmentErrors.accountNo
+                            ? true
+                            : false}
+                        name="accountNo"
+                        label={'No. Akaun'}
+                        type="text"
+                        bind:value={$updateNewAppointmentForm.accountNo}
+                    ></TextField>
+
+                    {#if $updateNewAppointmentErrors.accountNo}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateNewAppointmentErrors.accountNo[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={$updateNewAppointmentErrors.serviceLevel
+                            ? true
+                            : false}
+                        name="serviceLevel"
+                        label={'Taraf Perkhidmatan'}
+                        type="text"
+                        bind:value={$updateNewAppointmentForm.serviceLevel}
+                    ></TextField>
+
+                    {#if $updateNewAppointmentErrors.serviceLevel}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateNewAppointmentErrors.serviceLevel[0]}</span
+                        >
+                    {/if}
+                    <DateSelector
+                        hasError={$updateNewAppointmentErrors.effectiveDateCurrentAppointment
+                            ? true
+                            : false}
+                        name="effectiveDateCurrentAppointment"
+                        handleDateChange
+                        label="Tarikh Kuatkuasa Lantikan Semasa"
+                        bind:selectedDate={$updateNewAppointmentForm.effectiveDateCurrentAppointment}
+                    ></DateSelector>
+                    {#if $updateNewAppointmentErrors.effectiveDateCurrentAppointment}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateNewAppointmentErrors
+                                .effectiveDateCurrentAppointment[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={$updateNewAppointmentErrors.leaveEntitlement
+                            ? true
+                            : false}
+                        name="leaveEntitlement"
+                        label={'Kelayakan Cuti'}
+                        type="text"
+                        bind:value={$updateNewAppointmentForm.leaveEntitlement}
+                    ></TextField>
+
+                    {#if $updateNewAppointmentErrors.leaveEntitlement}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateNewAppointmentErrors
+                                .leaveEntitlement[0]}</span
+                        >
+                    {/if}
+                    <DateSelector
+                        hasError={$updateNewAppointmentErrors.firstAppointedGovernmentService
+                            ? true
+                            : false}
+                        name="firstAppointedGovernmentService"
+                        handleDateChange
+                        label="Mula Dilantik Perkhidmatan Kerajaan"
+                        bind:selectedDate={$updateNewAppointmentForm.firstAppointedGovernmentService}
+                    ></DateSelector>
+                    {#if $updateNewAppointmentErrors.firstAppointedGovernmentService}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateNewAppointmentErrors
+                                .firstAppointedGovernmentService[0]}</span
+                        >
+                    {/if}
+                    <DateSelector
+                        hasError={$updateNewAppointmentErrors.startAppointedService
+                            ? true
+                            : false}
+                        name="startAppointedService"
+                        handleDateChange
+                        label="Mula Dilantik Perkhidmatan LKIM"
+                        bind:selectedDate={$updateNewAppointmentForm.startAppointedService}
+                    ></DateSelector>
+                    {#if $updateNewAppointmentErrors.startAppointedService}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateNewAppointmentErrors
+                                .startAppointedService[0]}</span
+                        >
+                    {/if}
+                    <DateSelector
+                        hasError={$updateNewAppointmentErrors.startAppointedCurrentService
+                            ? true
+                            : false}
+                        name="startAppointedCurrentService"
+                        handleDateChange
+                        label="Mula Dilantik Perkhidmatan Sekarang"
+                        bind:selectedDate={$updateNewAppointmentForm.startAppointedCurrentService}
+                    ></DateSelector>
+                    {#if $updateNewAppointmentErrors.startAppointedCurrentService}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateNewAppointmentErrors
+                                .startAppointedCurrentService[0]}</span
+                        >
+                    {/if}
+                    <DateSelector
+                        hasError={$updateNewAppointmentErrors.confirmedFirstPosition
+                            ? true
+                            : false}
+                        name="confirmedFirstPosition"
+                        handleDateChange
+                        label="Disahkan Dalam Jawatan Pertama LKIM"
+                        bind:selectedDate={$updateNewAppointmentForm.confirmedFirstPosition}
+                    ></DateSelector>
+                    {#if $updateNewAppointmentErrors.confirmedFirstPosition}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateNewAppointmentErrors
+                                .confirmedFirstPosition[0]}</span
+                        >
+                    {/if}
+                    <DateSelector
+                        hasError={$updateNewAppointmentErrors.confirmedCurrentPosition
+                            ? true
+                            : false}
+                        name="confirmedCurrentPosition"
+                        handleDateChange
+                        label="Disahkan Dalam Jawatan Semasa LKIM"
+                        bind:selectedDate={$updateNewAppointmentForm.confirmedCurrentPosition}
+                    ></DateSelector>
+                    {#if $updateNewAppointmentErrors.confirmedCurrentPosition}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateNewAppointmentErrors
+                                .confirmedCurrentPosition[0]}</span
+                        >
+                    {/if}
+                </form>
             </div>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
         <StepperContentHeader
             title="Keputusan Lantikan Baru - Kontrak (Urus Setia Perjawatan)"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="FormStepperNewAppointmentResult"
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2.5">
-                <div class="mb-5">
-                    <b class="text-sm text-system-primary"
-                        >Keputusan Urus Setia Perjawatan</b
-                    >
-                </div>
-                <LongTextField
-                    id="supporter-remark"
-                    label="Tindakan/Ulasan"
-                    value=""
-                ></LongTextField>
-
-                <RadioSingle
-                    disabled={false}
-                    options={certifyOptions}
-                    legend={'Keputusan'}
-                    bind:userSelected={isCertified}
-                ></RadioSingle>
-                <hr />
+                <form
+                    id="FormStepperNewAppointmentResult"
+                    class="flex w-full flex-col gap-2"
+                    use:newAppointmentResultEnhance
+                    method="POST"
+                >
+                    <div class="mb-5">
+                        <b class="text-sm text-system-primary"
+                            >Keputusan Urus Setia Perjawatan</b
+                        >
+                    </div>
+                    <LongTextField
+                        hasError={$newAppointmentResultErrors.actionRemark
+                            ? true
+                            : false}
+                        name="actionRemark"
+                        label="Tindakan / Ulasan"
+                        bind:value={$newAppointmentResultForm.actionRemark}
+                    />
+                    {#if $newAppointmentResultErrors.actionRemark}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$newAppointmentResultErrors.actionRemark[0]}</span
+                        >
+                    {/if}
+                    <RadioSingle
+                        options={certifyOptions}
+                        hasError={$newAppointmentResultErrors.resultOption
+                            ? true
+                            : false}
+                        name="resultOption"
+                        legend="Keputusan"
+                        bind:userSelected={$newAppointmentResultForm.resultOption}
+                    ></RadioSingle>
+                    {#if $newAppointmentResultErrors.resultOption}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$newAppointmentResultErrors.resultOption[0]}</span
+                        >
+                    {/if}
+                    <hr />
+                </form>
             </div>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Tetapkan Penyokong dan Pelulus (Jika Sah)"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="FormStepperSetSupporterApprover"
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2">
-                <DropdownSelect
-                    id="staffs-supporter"
-                    label="Nama Penyokong"
-                    dropdownType="label-left-full"
-                    options={employeeLists}
-                    bind:index={selectedSupporter}
-                />
-                <DropdownSelect
-                    id="staffs-approver"
-                    label="Nama Pelulus"
-                    dropdownType="label-left-full"
-                    options={employeeLists}
-                    bind:index={selectedApprover}
-                />
+                <form
+                    id="FormStepperSetSupporterApprover"
+                    class="flex w-full flex-col gap-2"
+                    use:setSupporterApproverEnhance
+                    method="POST"
+                >
+                    <DropdownSelect
+                        hasError={$setSupporterApproverErrors.supporterNameDropdown
+                            ? true
+                            : false}
+                        dropdownType="label-left-full"
+                        id="supporterNameDropdown"
+                        label="Nama Penyokong"
+                        bind:value={$setSupporterApproverForm.supporterNameDropdown}
+                        options={[
+                            {
+                                value: '1',
+                                name: 'Ali',
+                            },
+                            {
+                                value: '2',
+                                name: 'Abu',
+                            },
+                            {
+                                value: '3',
+                                name: 'Ahmad',
+                            },
+                        ]}
+                    ></DropdownSelect>
+                    {#if $setSupporterApproverErrors.supporterNameDropdown}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$setSupporterApproverErrors
+                                .supporterNameDropdown[0]}</span
+                        >
+                    {/if}
+                    <DropdownSelect
+                        hasError={$setSupporterApproverErrors.approverNameDropdown
+                            ? true
+                            : false}
+                        dropdownType="label-left-full"
+                        id="approverNameDropdown"
+                        label="Nama Pelulus"
+                        bind:value={$setSupporterApproverForm.approverNameDropdown}
+                        options={[
+                            {
+                                value: '1',
+                                name: 'Ali',
+                            },
+                            {
+                                value: '2',
+                                name: 'Abu',
+                            },
+                            {
+                                value: '3',
+                                name: 'Ahmad',
+                            },
+                        ]}
+                    ></DropdownSelect>
+                    {#if $setSupporterApproverErrors.approverNameDropdown}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$setSupporterApproverErrors
+                                .approverNameDropdown[0]}</span
+                        >
+                    {/if}
+                </form>
             </div>
         </StepperContentBody>
     </StepperContent>
@@ -945,7 +1276,7 @@
         </StepperContentBody>
     </StepperContent>
 </Stepper>
-
+<Toaster />
 <!-- content header starts here -->
 <!-- <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader
