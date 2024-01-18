@@ -3,7 +3,6 @@
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
-    import DataTable from '$lib/components/data-table/DataTable.svelte';
     import FilterCard from '$lib/components/filter/FilterCard.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
@@ -87,7 +86,7 @@
                 actionOptions={['detail']}
                 detailActions={() => {
                     const url =
-                        './prosiding/butiran-prosiding-' +
+                        './rayuan/butiran-rayuan-' +
                         selectedRow.id +
                         '-' +
                         selectedRow.identityDocumentNumber;

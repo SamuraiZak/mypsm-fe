@@ -10,11 +10,11 @@
     import type { PageData } from './$types';
     import { superForm } from 'sveltekit-superforms/client';
     import {
-        _submitEarlyBirthLeaveForm,
-        _generalEarlyBirthSchema,
-        _earlyBirthLeaveSchema2,
-        _earlyBirthLeaveSchema3,
-        _earlyBirthLeaveSchema4,
+        _submitEarlyMaternityLeaveForm,
+        _generalMaternityLeaveSchema,
+        _earlyMaternityLeaveSchema2,
+        _earlyMaternityLeaveSchema3,
+        _earlyMaternityLeaveSchema4,
     } from '../+page';
 
     export let data: PageData;
@@ -25,11 +25,11 @@
     // Form Validation ==================
     // ==================================
     const { form, errors, enhance, options } = superForm(
-        data.earlyBirthLeaveForm,
+        data.earlyMaternityLeaveForm,
         {
             SPA: true,
             onSubmit() {
-                _submitEarlyBirthLeaveForm(
+                _submitEarlyMaternityLeaveForm(
                     $form,
                     hasHalfDayStartDate,
                     hasHalfDayEndDate,
@@ -41,13 +41,13 @@
     );
 
     $: if (hasHalfDayStartDate && !hasHalfDayEndDate) {
-        options.validators = _earlyBirthLeaveSchema2;
+        options.validators = _earlyMaternityLeaveSchema2;
     } else if (hasHalfDayEndDate && !hasHalfDayStartDate) {
-        options.validators = _earlyBirthLeaveSchema3;
+        options.validators = _earlyMaternityLeaveSchema3;
     } else if (hasHalfDayEndDate && hasHalfDayStartDate) {
-        options.validators = _earlyBirthLeaveSchema4;
+        options.validators = _earlyMaternityLeaveSchema4;
     } else if (!hasHalfDayStartDate && !hasHalfDayEndDate) {
-        options.validators = _generalEarlyBirthSchema;
+        options.validators = _generalMaternityLeaveSchema;
     }
 </script>
 

@@ -27,13 +27,7 @@
 <section
     class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
 >
-    <SectionHeader title="Bekerja Lebih Masa"
-        ><TextIconButton
-            primary
-            label="Simpan"
-            form="validateForm"
-        /></SectionHeader
-    >
+    <SectionHeader title="Bekerja Lebih Masa"></SectionHeader>
     <form
         id="validateForm"
         method="POST"

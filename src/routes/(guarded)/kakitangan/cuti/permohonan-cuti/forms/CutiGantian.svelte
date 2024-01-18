@@ -11,7 +11,7 @@
     import { jenisGantian } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/jenis-gantian';
     import { setengahHari } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/setengah-hari';
     import { maklumatGantian } from '../schema';
-    import toast, { Toaster } from 'svelte-french-toast';
+    import toast from 'svelte-french-toast';
     import { ZodError } from 'zod';
     import { Checkbox } from 'flowbite-svelte';
 

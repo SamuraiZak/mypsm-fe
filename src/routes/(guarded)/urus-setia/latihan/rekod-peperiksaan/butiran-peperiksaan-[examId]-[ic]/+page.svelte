@@ -20,7 +20,14 @@
     import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions.js';
     import { Tooltip } from 'flowbite-svelte';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper.js';
-    export let data;
+    import { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _secretaryExaminationResultSchema,
+        _submitSecretaryExaminationResultForm,
+    } from './+page';
+    import type { PageData } from './$types';
+    export let data: PageData;
     let activeStepper = 0;
     let disabled = true;
     let selectedCertify: any = '-';
@@ -125,6 +132,19 @@
             }
         }
     }
+    const { form, errors, enhance } = superForm(
+        data.secretaryExaminationResultForm,
+        {
+            SPA: true,
+            validators: _secretaryExaminationResultSchema,
+            onSubmit() {
+                _submitSecretaryExaminationResultForm($form);
+                console.log("HANCURKANLAH INGATAN KU")
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum disimpan. Adakah anda henda keluar dari laman ini?',
+        },
+    );
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -596,8 +616,9 @@
     <StepperContent>
         <StepperContentHeader title="Maklumat Peperiksaan LKIM Diambil"
         ></StepperContentHeader>
-        <form action="" class="flex w-full flex-col gap-2">
-            <StepperContentBody>
+
+        <StepperContentBody>
+            <form action="" class="flex w-full flex-col gap-2">
                 <DropdownSelect
                     {disabled}
                     dropdownType="label-left-full"
@@ -642,39 +663,72 @@
                     label="Lokasi Peperiksaan"
                     bind:value={data.record.currentExam.exam.examLocation}
                 />
-            </StepperContentBody>
-        </form>
+            </form>
+        </StepperContentBody>
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Pengesahan Urus Setia Latihan"
         ></StepperContentHeader>
-        <form action="" class="flex w-full flex-col gap-2">
-            <StepperContentBody>
-                <SectionHeader
-                    color="system-primary"
-                    title="Sistem akan menjana surat panggilan peperiksaan serta maklumat berkaitan lokasi, tarikh bagi peperiksaan dan menghantar surat ke email kakitangan."
-                ></SectionHeader>
+
+        <StepperContentBody>
+            <SectionHeader
+                color="system-primary"
+                title="Sistem akan menjana surat panggilan peperiksaan serta maklumat berkaitan lokasi, tarikh bagi peperiksaan dan menghantar surat ke email kakitangan."
+            ></SectionHeader>
+            <form
+                action="examinationResultForm"
+                use:enhance
+                method="POST"
+                class="flex w-full flex-col gap-2"
+            >
                 <LongTextField
+                    hasError={$errors.secretaryRemark ? true : false}
+                    name="secretaryRemark"
                     label="Tindakan / Ulasan"
                     labelBlack
                     placeholder="Boleh diteruskan"
+                    bind:value={$form.secretaryRemark}
                 ></LongTextField>
+                {#if $errors.secretaryRemark}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.secretaryRemark}</span
+                    >
+                {/if}
                 <RadioSingle
                     {options}
+                    name="secretaryResult"
                     legend="Keputusan"
-                    bind:userSelected={selectedCertify}
+                    bind:userSelected={$form.secretaryResult}
                 />
-            </StepperContentBody>
-        </form>
+                {#if $errors.secretaryResult}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.secretaryResult}</span
+                    >
+                {/if}
+            </form>
+        </StepperContentBody>
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Keputusan Peperiksaan"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="examinationResultForm"
+                
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
-        <form action="" class="flex w-full flex-col gap-2">
-            <StepperContentBody>
+
+        <StepperContentBody>
+            <form
+                action="examinationResultForm"
+                use:enhance
+                method="POST"
+                class="flex w-full flex-col gap-2"
+            >
                 <SectionHeader
                     color="system-primary"
                     title="Tetapan keputusan Panel Pemeriksa:"
@@ -708,11 +762,20 @@
                     bind:value={data.record.currentExam.exam.examDate}
                 />
                 <RadioSingle
+                    name="secretaryExaminationResult"
                     options={results}
                     legend="Keputusan Peperiksaan"
-                    bind:userSelected={selectedExamResult}
+                    bind:userSelected={$form.secretaryExaminationResult}
                 />
-            </StepperContentBody>
-        </form>
+                {#if $errors.secretaryExaminationResult}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.secretaryExaminationResult}</span
+                    >
+                {/if}
+            </form>
+        </StepperContentBody>
     </StepperContent>
 </Stepper>
+
+<Toaster />

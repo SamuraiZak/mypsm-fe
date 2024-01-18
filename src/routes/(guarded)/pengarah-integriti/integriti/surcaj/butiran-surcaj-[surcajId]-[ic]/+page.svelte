@@ -18,7 +18,15 @@
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { meetings } from '$lib/mocks/mesyuarat/mesyuarat.js';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper.js';
-    export let data;
+    // export let data;
+    import type { PageData } from './$types';
+    export let data: PageData;
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _integrityDirectorValidationSchema,
+        _submitIntegrityDirectorValidationForm,
+    } from './+page';
+    import { Toaster } from 'svelte-french-toast';
     let activeStepper = 0;
     let disabled = true;
     // let isEditable = data.record.currentEmployee.status === 'baru' ? true : false;
@@ -124,6 +132,23 @@
             }
         }
     }
+
+    // =========================================
+    // Form Validation =========================
+    // =========================================
+    const { form, errors, enhance } = superForm(
+        data.integrityDirectorChargesRemarkForm,
+        {
+            SPA: true,
+            validators: _integrityDirectorValidationSchema,
+            onSubmit() {
+                _submitIntegrityDirectorValidationForm($form);
+                console.log('this is charges form');
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+        },
+    );
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -685,7 +710,12 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Pengesahan Pengarah Integriti">
-            <TextIconButton primary label="simpan"><SvgCheck /></TextIconButton>
+            <TextIconButton
+                primary
+                label="simpan"
+                form="integrityDirectorValidationForm"
+                ><SvgCheck /></TextIconButton
+            >
         </StepperContentHeader>
         <StepperContentBody>
             <div class="h-fit w-full space-y-2.5 rounded-[3px] border p-2.5">
@@ -712,22 +742,47 @@
                         >
                     </div>
                 {:else}
-                    <LongTextField
-                        disabled={false}
-                        labelBlack={false}
-                        name="integrity-director-remark"
-                        label="Tindakan/Ulasan"
-                        value={'bebas'}
-                    />
-                    <RadioSingle
-                        disabled={false}
-                        labelBlack={false}
-                        options={integrityDirectorOptions}
-                        legend="Keputusan"
-                        bind:userSelected={integrityDirectorResult}
-                    />
+                    <form
+                        id="integrityDirectorValidationForm"
+                        method="POST"
+                        use:enhance
+                        class="flex w-full flex-col gap-2"
+                    >
+                        <LongTextField
+                            hasError={$errors.integrityDirectorRemark
+                                ? true
+                                : false}
+                            disabled={false}
+                            labelBlack={false}
+                            name="integrityDirectorRemark"
+                            label="Tindakan/Ulasan"
+                            bind:value={$form.integrityDirectorRemark}
+                        />
+                        {#if $errors.integrityDirectorRemark}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$errors.integrityDirectorRemark}</span
+                            >
+                        {/if}
+                        <RadioSingle
+                            name="integrityDirectorResult"
+                            disabled={false}
+                            labelBlack={false}
+                            options={integrityDirectorOptions}
+                            legend="Keputusan"
+                            bind:userSelected={$form.integrityDirectorResult}
+                        />
+                        {#if $errors.integrityDirectorResult}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$errors.integrityDirectorResult}</span
+                            >
+                        {/if}
+                    </form>
                 {/if}
             </div>
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+
+<Toaster />

@@ -28,7 +28,7 @@
     // Form Validation ==================
     // ==================================
     const { form, errors, enhance, options } = superForm(
-        data.halfSalaryLeaveForm,
+        data.leaveWithoutRecordForm,
         {
             SPA: true,
             onSubmit() {

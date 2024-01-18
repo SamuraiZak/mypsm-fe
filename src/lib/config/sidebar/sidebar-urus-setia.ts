@@ -101,7 +101,7 @@ export const sidebarUrusSetia = [
             },
             {
                 name: 'Prosiding Tatatertib - Rayuan',
-                redirect: '/urus-setia/integriti/prosiding-rayuan',
+                redirect: '/urus-setia/integriti/rayuan',
             },
         ],
     },
