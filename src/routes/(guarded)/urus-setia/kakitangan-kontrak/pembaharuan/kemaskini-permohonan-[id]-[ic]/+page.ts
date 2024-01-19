@@ -20,7 +20,158 @@ import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
-// Stepper Update New Appointment
+// Stepper Evaluate Confirmation
+const optionEvaluateConfirmation = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+const textFieldEvaluateConfirmation = z
+    .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+    .min(4, {
+        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+    })
+    .max(124, {
+        message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    })
+    .trim();
+
+export const _stepperEvaluateConfirmation = z.object({
+    actionRemark: textFieldEvaluateConfirmation,
+    resultOption: optionEvaluateConfirmation,
+});
+
+export const _submitFormStepperEvaluateConfirmation = async (
+    formData: object,
+) => {
+    const stepperEvaluateConfirmation = await superValidate(
+        formData,
+        _stepperEvaluateConfirmation,
+    );
+
+    if (!stepperEvaluateConfirmation.valid) {
+        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+            style: 'background: #333; color: #fff;',
+        });
+        return fail(400, stepperEvaluateConfirmation);
+    } else {
+        console.log('Request Body: ', formData);
+        fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify(stepperEvaluateConfirmation),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                console.log(
+                    'Response Returned: EvaluateConfirmation-54',
+                    json,
+                );
+            });
+    }
+    return { stepperEvaluateConfirmation };
+};
+
+// Stepper Assessment Certification PBN
+const optionAssessmentCertificationPBN = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+const textFieldAssessmentCertificationPBN = z
+    .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+    .min(4, {
+        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+    })
+    .max(124, {
+        message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    })
+    .trim();
+
+export const _stepperAssessmentCertificationPBN = z.object({
+    actionRemark: textFieldAssessmentCertificationPBN,
+    resultOption: optionAssessmentCertificationPBN,
+});
+
+export const _submitFormStepperAssessmentCertificationPBN = async (
+    formData: object,
+) => {
+    const stepperAssessmentCertificationPBN = await superValidate(
+        formData,
+        _stepperAssessmentCertificationPBN,
+    );
+
+    if (!stepperAssessmentCertificationPBN.valid) {
+        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+            style: 'background: #333; color: #fff;',
+        });
+        return fail(400, stepperAssessmentCertificationPBN);
+    } else {
+        console.log('Request Body: ', formData);
+        fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify(stepperAssessmentCertificationPBN),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                console.log(
+                    'Response Returned: EvaluateConfirmation-54',
+                    json,
+                );
+            });
+    }
+    return { stepperAssessmentCertificationPBN };
+};
+
+// Stepper Set Supporter Approver
+const resultOption = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+export const _stepperSetSupporterApprover = z.object({
+    supporterNameDropdown: resultOption,
+    approverNameDropdown: resultOption,
+});
+
+export const _submitFormStepperSetSupporterApprover = async (
+    formData: object,
+) => {
+    const stepperSetSupporterApprover = await superValidate(
+        formData,
+        _stepperSetSupporterApprover,
+    );
+
+    if (!stepperSetSupporterApprover.valid) {
+        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+            style: 'background: #333; color: #fff;',
+        });
+        return fail(400, stepperSetSupporterApprover);
+    } else {
+        console.log('Request Body: ', formData);
+        fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify(stepperSetSupporterApprover),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                console.log('Response Returned: SetSupporterApprover-54', json);
+            });
+    }
+    return { stepperSetSupporterApprover };
+};
+
+// Stepper Confirmation New Contract
 const option = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
 
 const textField = z
@@ -75,6 +226,19 @@ export const _submitFormStepperConfirmationNewContractAgreement = async (
 };
 
 export async function load({ params }) {
+    const stepperEvaluateConfirmation = await superValidate(
+        _stepperEvaluateConfirmation,
+    );
+    
+    const stepperAssessmentCertificationPBN = await superValidate(
+        
+        _stepperAssessmentCertificationPBN,
+    );
+
+    const stepperSetSupporterApprover = await superValidate(
+        _stepperSetSupporterApprover,
+    );
+
     const stepperConfirmationNewContractAgreement = await superValidate(
         _stepperConfirmationNewContractAgreement,
     );
@@ -159,6 +323,9 @@ export async function load({ params }) {
     if (!currentEmployee) throw new Error('Record not found');
 
     return {
+        stepperEvaluateConfirmation,
+        stepperAssessmentCertificationPBN,
+        stepperSetSupporterApprover,
         stepperConfirmationNewContractAgreement,
         record: {
             data,
