@@ -13,13 +13,15 @@
     import DropdownField from '$lib/components/input/DropdownSelect.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    import { Button, Modal, P } from 'flowbite-svelte';
+    import { Button, Input, Modal, P } from 'flowbite-svelte';
     import { letterTypes } from '$lib/mocks/letters/letterTypes';
     import { afterUpdate, onMount } from 'svelte';
     import RichTextEditor from '$lib/components/rich-text-ediitor/RichTextEditor.svelte';
     import { mockLetterTemplates } from '$lib/mocks/letters/mockLetterTemplates';
     import ExportButton from '$lib/components/buttons/ExportButton.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
+    import DateSelector from '$lib/components/input/DateSelector.svelte';
+    import { list } from 'postcss';
 
     export let referenceNumber = '123456789';
     export let dateOfLetter = '12 Disember 2021';
@@ -31,6 +33,10 @@
         modalOpened = !modalOpened;
     }
 
+    interface Person {
+        id: number[]
+    }
+
     let modalOpened = true;
     let showPreview = false;
 
@@ -39,20 +45,22 @@
     let letterTemplate = mockLetterTemplates;
 
     //TO BE REVIEWED : any :
-    let preview: any;
-    let previewReceiverReference: any;
-    let previewSenderReference: any;
-    let previewLetterDate: any;
-    let previewReceiverInfo: any;
+    let sendToBE: Object;
+    let preview: string;
+    let previewReceiverReference: string | undefined;
+    let previewSenderReference: string | undefined;
+    let previewLetterDate: string;
+    let previewReceiverInfo: string;
     let previewSubject: any;
-    let previewBody: any;
-    let previewFooter: any;
-    let previewReceiverTitle: any;
-    let pdfReadyLetter: any;
-    let previewHeader: any;
+    let previewBody: string | undefined;
+    let previewFooter: string | undefined;
+    let previewReceiverTitle: string | undefined;
+    let pdfReadyLetter: string | undefined;
+    let previewHeader: string | undefined;
     let docName: any;
-    let selectedSelect: any;
-
+    let selectedSelect: string | undefined;
+    let time: Date;
+    let listOfReceiver: string[] = ['user1'];
     //Binding for the letter editor
     receiverReference.set(referenceNumber);
     senderReference.set(letterTemplate[0].senderReference);
@@ -69,7 +77,14 @@
             document.getElementById('receiver-reference')?.innerHTML;
         previewSenderReference =
             document.getElementById('sender-reference')?.innerHTML;
-        previewLetterDate = document.getElementById('letter-date')?.innerHTML;
+        // previewLetterDate = document.getElementById('letter-date')?.innerHTML;
+
+        let tempDate = new Date(time);
+        previewLetterDate = tempDate.toLocaleDateString('ms', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+        });
         previewReceiverTitle =
             document.getElementById('receiver-title')?.innerHTML;
         previewSubject = document.getElementById('letter-subject')?.innerHTML;
@@ -77,9 +92,7 @@
         previewFooter = document.getElementById('letter-footer')?.innerHTML;
         pdfReadyLetter = document.getElementById('letterPreview')?.innerHTML;
 
-        // console.log(previewReceiverInfo)
-
-        previewHeader =
+        previewHeader = 
             'Ruj. Tuan/Puan: ' +
             previewReceiverReference +
             '<br>' +
@@ -87,27 +100,25 @@
             previewSenderReference +
             '<br>' +
             'Tarikh: ' +
-            previewLetterDate;
+            '&emsp;' +
+            previewLetterDate +
+            '<br>';
         preview =
             '<br>' +
-            previewReceiverInfo +
+            listOfReceiver +
+            '<br>' +
+            '<br>' +
             previewReceiverTitle +
             previewSubject +
             previewBody +
             previewFooter;
 
-            // console.log(preview)
+        console.log(previewHeader + preview);
     };
-
-    // onMount(() => {
-        
-    // })
-
-    
 
     //Convert HTML to PDF
     function htmlToPDF(fileName: string) {
-        var doc = new jsPDF('p', 'mm', 'a4');
+        var doc = new jsPDF('p', 'in', 'letter');
 
         //HTML source
         var sourceHTML = document.getElementById(
@@ -116,7 +127,7 @@
 
         doc.html(sourceHTML, {
             html2canvas: {
-                scale: 0.66,
+                scale: 0.01,
             },
             callback: function (doc) {
                 fileName = fileName.trim();
@@ -150,18 +161,13 @@
         document.body.removeChild(fileDownload);
     }
 
-
-    const updateElement = () => {
-        const selectedOption = document.getElementById('receiver-info')?.innerHTML;
-        previewReceiverInfo = selectedSelect.innerHTML;
-
-        
-        console.log(selectedSelect)
-        console.log(previewReceiverInfo)
-        console.log(selectedOption)
-    };
-
-    
+    function updateReceiver() {
+        if (listOfReceiver.includes('user1')) {
+            listOfReceiver.pop();
+        }
+        listOfReceiver.push(previewReceiverInfo);
+        console.log(listOfReceiver);
+    }
 </script>
 
 <!-- <div class="flex h-screen w-full flex-col items-center justify-center gap-10">
@@ -245,12 +251,18 @@
                         labelType="right-justify-end"
                         bind:value={$senderReference}
                     ></TextField>
-                    <TextField
+                    <!-- <TextField
                         id="letter-date"
                         label="Tarikh:"
                         labelType="right-justify-end"
                         bind:value={$letterDate}
-                    ></TextField>
+                    ></TextField> -->
+
+                    <DateSelector
+                        name="letter-date"
+                        label="Tarikh: "
+                        bind:selectedDate={time}
+                    ></DateSelector>
                 </div>
                 <div class="flex flex-col gap-2">
                     <p class="text-sm font-semibold text-txt-primary">
@@ -266,14 +278,22 @@
                         dropdownType="label-left-full"
                         options={[
                             {
-                                value: 'Mohd Irfan bin Ali',
+                                value: '1077',
                                 name: 'Mohd Irfan bin Ali',
                             },
-                            { value: 'Lebron James', name: 'Lebron James' },
+                            { value: '1092', name: 'Lebron James' },
+                            {
+                                value: '1072',
+                                name: 'Jon Doe',
+                            },
+                            {
+                                value: '1122',
+                                name: 'Ali Bin Abu',
+                            },
                         ]}
                         label="Nama Penerima: "
-                        bind:value={selectedSelect}
-                        onSelect={updateElement}
+                        bind:value={previewReceiverInfo}
+                        onSelect={updateReceiver}
                     ></DropdownSelect>
                 </div>
 
