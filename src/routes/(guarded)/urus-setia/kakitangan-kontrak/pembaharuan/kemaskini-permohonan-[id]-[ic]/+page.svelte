@@ -31,6 +31,18 @@
     import { Toaster } from 'svelte-french-toast';
     import type { PageData } from './$types';
     import {
+        _stepperEvaluateConfirmation,
+        _submitFormStepperEvaluateConfirmation,
+    } from './+page';
+    import {
+        _stepperAssessmentCertificationPBN,
+        _submitFormStepperAssessmentCertificationPBN,
+    } from './+page';
+    import {
+        _stepperSetSupporterApprover,
+        _submitFormStepperSetSupporterApprover,
+    } from './+page';
+    import {
         _stepperConfirmationNewContractAgreement,
         _submitFormStepperConfirmationNewContractAgreement,
     } from './+page';
@@ -69,11 +81,11 @@
     let isCertified: string = 'true';
     const certifyOptions: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'SAH',
         },
         {
-            value: 'false',
+            value: false,
             label: 'TIDAK SAH',
         },
     ];
@@ -179,6 +191,55 @@
             }
         }
     }
+
+    //Evaluate Confirmation
+    const {
+        form: evaluateConfirmationForm,
+        errors: evaluateConfirmationErrors,
+        enhance: evaluateConfirmationEnhance,
+    } = superForm(data.stepperEvaluateConfirmation, {
+        SPA: true,
+        validators: _stepperEvaluateConfirmation,
+        onSubmit() {
+            _submitFormStepperEvaluateConfirmation($evaluateConfirmationForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+
+    //Assessment Certification PBN
+    const {
+        form: assessmentCertificationPBNForm,
+        errors: assessmentCertificationPBNErrors,
+        enhance: assessmentCertificationPBNEnhance,
+    } = superForm(data.stepperAssessmentCertificationPBN, {
+        SPA: true,
+        id: "FormStepperAssessmentCertificationPBN",
+        validators: _stepperAssessmentCertificationPBN,
+        onSubmit() {
+            console.log ('ihiihi')
+            _submitFormStepperAssessmentCertificationPBN(
+                $assessmentCertificationPBNForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+
+    //Set Supporter Approver
+    const {
+        form: setSupporterApproverForm,
+        errors: setSupporterApproverErrors,
+        enhance: setSupporterApproverEnhance,
+    } = superForm(data.stepperSetSupporterApprover, {
+        SPA: true,
+        validators: _stepperSetSupporterApprover,
+        onSubmit() {
+            _submitFormStepperSetSupporterApprover($setSupporterApproverForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 
     //Update New Appointment
     const {
@@ -792,93 +853,154 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Pengesahan untuk Dinilai"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="FormStepperEvaluateConfirmation"
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2.5">
-                <div class="mb-5">
-                    <b class="text-sm text-system-primary"
-                        >Keputusan Urus Setia Perjawatan</b
-                    >
-                </div>
-                <LongTextField
-                    id="supporter-remark"
-                    label="Tindakan/Ulasan"
-                    value=""
-                ></LongTextField>
-
-                <RadioSingle
-                    disabled={false}
-                    options={certifyOptions}
-                    legend={'Keputusan'}
-                    bind:userSelected={isCertified}
-                ></RadioSingle>
-                <hr />
+                <form
+                    id="FormStepperEvaluateConfirmation"
+                    class="flex w-full flex-col gap-2"
+                    use:evaluateConfirmationEnhance
+                    method="POST"
+                >
+                    <div class="mb-5">
+                        <b class="text-sm text-system-primary"
+                            >Keputusan Urus Setia Perjawatan</b
+                        >
+                    </div>
+                    <LongTextField
+                        hasError={$evaluateConfirmationErrors.actionRemark
+                            ? true
+                            : false}
+                        name="actionRemark"
+                        label="Tindakan / Ulasan"
+                        bind:value={$evaluateConfirmationForm.actionRemark}
+                    />
+                    {#if $evaluateConfirmationErrors.actionRemark}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$evaluateConfirmationErrors.actionRemark[0]}</span
+                        >
+                    {/if}
+                    <RadioSingle
+                        options={certifyOptions}
+                        hasError={$evaluateConfirmationErrors.resultOption
+                            ? true
+                            : false}
+                        name="resultOption"
+                        legend="Keputusan"
+                        bind:userSelected={$evaluateConfirmationForm.resultOption}
+                    ></RadioSingle>
+                    {#if $evaluateConfirmationErrors.resultOption}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$evaluateConfirmationErrors.resultOption[0]}</span
+                        >
+                    {/if}
+                    <hr />
+                </form>
             </div>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
         <StepperContentHeader
             title="Penilaian Dan Perakuan Daripada Pengarah Bahagian/Negeri"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="FormStepperAssessmentCertificationPBN"
+                onClick ={()=>console.log('hehehhe')  }
+            >
                 <SvgCheck></SvgCheck>
+                
             </TextIconButton></StepperContentHeader
         >
         <ContentHeader
             title="Penilaian dan Perakuan Kakitangan"
             description=""
         />
-        <StepperContentBody>
-            <div class="flex w-full flex-col gap-2">
-                <TextField
-                    {disabled}
-                    id="stated-director-certification"
-                    label={'Nama'}
-                    value={'Mustaqim Bin Ahmad'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="assessment-mark"
-                    label={'Markah Penilaian (/100)'}
-                    value={'79'}
-                ></TextField>
+        <StepperContentBody
+            ><form
+                id="FormStepperAssessmentCertificationPBN"
+                class="flex w-full flex-col gap-2"
+                use:assessmentCertificationPBNEnhance
+                method="POST"
+            >
+                <div class="flex w-full flex-col gap-2">
+                    <TextField
+                        {disabled}
+                        id="stated-director-certification"
+                        label={'Nama'}
+                        value={'Mustaqim Bin Ahmad'}
+                    ></TextField>
+                    <TextField
+                        {disabled}
+                        id="assessment-mark"
+                        label={'Markah Penilaian (/100)'}
+                        value={'79'}
+                    ></TextField>
+                    <div class="flex w-full flex-row text-sm">
+                        <label for="supporter-result" class="w-[220px]"
+                            >Keputusan</label
+                        ><Badge
+                            border
+                            color={certifierResult == 'certified'
+                                ? 'green'
+                                : 'red'}>{results[5].name}</Badge
+                        >
+                    </div>
+                </div>
                 <div class="flex w-full flex-row text-sm">
                     <label for="supporter-result" class="w-[220px]"
-                        >Keputusan</label
-                    ><Badge
-                        border
-                        color={certifierResult == 'certified' ? 'green' : 'red'}
-                        >{results[5].name}</Badge
-                    >
+                        >Cetak Markah Penilaian:
+                    </label>
+                    <TextIconButton label="Markah Keseluruhan">
+                        <SvgPdf />
+                    </TextIconButton>
                 </div>
-            </div>
-            <div class="flex w-full flex-row text-sm">
-                <label for="supporter-result" class="w-[220px]"
-                    >Cetak Markah Penilaian:
-                </label>
-                <TextIconButton label="Markah Keseluruhan">
-                    <SvgPdf />
-                </TextIconButton>
-            </div>
-            <ContentHeader
-                title="Pengesahan Semakan Urus Setia"
-                description=""
-            />
-            <LongTextField
-                disabled={false}
-                id="secretary-remark"
-                label="Tindakan/Ulasan"
-                value="Layak"
-            ></LongTextField>
-            <RadioSingle
-                disabled={false}
-                options={certifyOptions}
-                legend={'Keputusan'}
-                userSelected={'certified'}
-            ></RadioSingle>
-        </StepperContentBody>
+                <ContentHeader
+                    title="Pengesahan Semakan Urus Setia"
+                    description=""
+                />
+                <LongTextField
+                    hasError={$assessmentCertificationPBNErrors.actionRemark
+                        ? true
+                        : false}
+                    name="actionRemark"
+                    label="Tindakan / Ulasan"
+                    bind:value={$assessmentCertificationPBNForm.actionRemark}
+                />
+                {#if $assessmentCertificationPBNErrors.actionRemark}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$assessmentCertificationPBNErrors
+                            .actionRemark[0]}</span
+                    >
+                {/if}
+                <RadioSingle
+                    options={certifyOptions}
+                    hasError={$assessmentCertificationPBNErrors.resultOption
+                        ? true
+                        : false}
+                    name="resultOption"
+                    legend="Keputusan"
+                    bind:userSelected={$assessmentCertificationPBNForm.resultOption}
+                ></RadioSingle>
+                {#if $assessmentCertificationPBNErrors.resultOption}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$assessmentCertificationPBNErrors
+                            .resultOption[0]}</span
+                    >
+                {/if}
+            </form></StepperContentBody
+        >
     </StepperContent>
     <StepperContent>
         <StepperContentHeader
@@ -943,26 +1065,83 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Tetapkan Penyokong dan Pelulus (Jika Sah)"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="FormStepperSetSupporterApprover"
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2">
-                <DropdownSelect
-                    id="staffs-supporter"
-                    label="Nama Penyokong"
-                    dropdownType="label-left-full"
-                    options={employeeLists}
-                    bind:index={selectedSupporter}
-                />
-                <DropdownSelect
-                    id="staffs-approver"
-                    label="Nama Pelulus"
-                    dropdownType="label-left-full"
-                    options={employeeLists}
-                    bind:index={selectedApprover}
-                />
+                <form
+                    id="FormStepperSetSupporterApprover"
+                    class="flex w-full flex-col gap-2"
+                    use:setSupporterApproverEnhance
+                    method="POST"
+                >
+                    <DropdownSelect
+                        hasError={$setSupporterApproverErrors.supporterNameDropdown
+                            ? true
+                            : false}
+                        dropdownType="label-left-full"
+                        id="supporterNameDropdown"
+                        label="Nama Penyokong"
+                        bind:value={$setSupporterApproverForm.supporterNameDropdown}
+                        options={[
+                            {
+                                value: '1',
+                                name: 'Ali',
+                            },
+                            {
+                                value: '2',
+                                name: 'Abu',
+                            },
+                            {
+                                value: '3',
+                                name: 'Ahmad',
+                            },
+                        ]}
+                    ></DropdownSelect>
+                    {#if $setSupporterApproverErrors.supporterNameDropdown}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$setSupporterApproverErrors
+                                .supporterNameDropdown[0]}</span
+                        >
+                    {/if}
+                    <DropdownSelect
+                        hasError={$setSupporterApproverErrors.approverNameDropdown
+                            ? true
+                            : false}
+                        dropdownType="label-left-full"
+                        id="approverNameDropdown"
+                        label="Nama Pelulus"
+                        bind:value={$setSupporterApproverForm.approverNameDropdown}
+                        options={[
+                            {
+                                value: '1',
+                                name: 'Ali',
+                            },
+                            {
+                                value: '2',
+                                name: 'Abu',
+                            },
+                            {
+                                value: '3',
+                                name: 'Ahmad',
+                            },
+                        ]}
+                    ></DropdownSelect>
+                    {#if $setSupporterApproverErrors.approverNameDropdown}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$setSupporterApproverErrors
+                                .approverNameDropdown[0]}</span
+                        >
+                    {/if}
+                </form>
             </div>
         </StepperContentBody>
     </StepperContent>
@@ -1096,12 +1275,14 @@
         />
 
         <StepperContentBody>
-            <span class="w-full text-left text-sm italic text-system-primary">
-                <form
-                    id="FormStepperConfirmationNewContractAgreement"
-                    class="flex w-full flex-col gap-2"
-                    use:confirmationNewContractAgreementEnhance
-                    method="POST"
+            <form
+                id="FormStepperConfirmationNewContractAgreement"
+                class="flex w-full flex-col gap-2"
+                use:confirmationNewContractAgreementEnhance
+                method="POST"
+            >
+                <span
+                    class="w-full text-left text-sm italic text-system-primary"
                 >
                     <ul class="list-inside list-disc">
                         <li>
@@ -1109,49 +1290,39 @@
                             berkaitan.
                         </li>
                     </ul>
-                </form></span
-            >
-            <LongTextField
-                hasError={$confirmationNewContractAgreementErrors.actionRemark
-                    ? true
-                    : false}
-                name="actionRemark"
-                label="Tindakan / Ulasan"
-                bind:value={$confirmationNewContractAgreementForm.actionRemark}
-            />
-            {#if $confirmationNewContractAgreementErrors.actionRemark}
-                <span
-                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$confirmationNewContractAgreementErrors.actionRemark[0]}</span
-                >
-            {/if}
-            <RadioSingle
-                options={certifyOptions}
-                hasError={$confirmationNewContractAgreementErrors.resultOption
-                    ? true
-                    : false}
-                name="resultOption"
-                legend="Keputusan"
-                bind:userSelected={$confirmationNewContractAgreementForm.resultOption}
-            ></RadioSingle>
-            {#if $confirmationNewContractAgreementErrors.resultOption}
-                <span
-                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$confirmationNewContractAgreementErrors.resultOption[0]}</span
-                >
-            {/if}
-            <LongTextField
-                disabled={false}
-                id="secretary-new-contract-remark"
-                label="Tindakan/Ulasan"
-                value="Layak"
-            ></LongTextField>
-            <RadioSingle
-                disabled={false}
-                options={certifyOptions}
-                legend={'Keputusan'}
-                userSelected={'certified'}
-            ></RadioSingle>
+                </span>
+                <LongTextField
+                    hasError={$confirmationNewContractAgreementErrors.actionRemark
+                        ? true
+                        : false}
+                    name="actionRemark"
+                    label="Tindakan / Ulasan"
+                    bind:value={$confirmationNewContractAgreementForm.actionRemark}
+                />
+                {#if $confirmationNewContractAgreementErrors.actionRemark}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$confirmationNewContractAgreementErrors
+                            .actionRemark[0]}</span
+                    >
+                {/if}
+                <RadioSingle
+                    options={certifyOptions}
+                    hasError={$confirmationNewContractAgreementErrors.resultOption
+                        ? true
+                        : false}
+                    name="resultOption"
+                    legend="Keputusan"
+                    bind:userSelected={$confirmationNewContractAgreementForm.resultOption}
+                ></RadioSingle>
+                {#if $confirmationNewContractAgreementErrors.resultOption}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$confirmationNewContractAgreementErrors
+                            .resultOption[0]}</span
+                    >
+                {/if}
+            </form>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -1242,3 +1413,4 @@
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+<Toaster />
