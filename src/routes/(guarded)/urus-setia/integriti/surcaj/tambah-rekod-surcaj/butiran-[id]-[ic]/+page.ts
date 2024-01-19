@@ -76,9 +76,6 @@ const dateStepperButiranMesyuarat = z.coerce
                     : defaultError,
         }),
     })
-    .max(new Date(), {
-        message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
-    });
 
 const stepperButiranMesyuarat = z
     .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
@@ -95,8 +92,8 @@ const butiranMesyuaratSelectSchema = z
     .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
 export const _stepperButiranMesyuarat = z.object({
-    meetingDate: dateStepperButiranMesyuarat.refine((date) =>
-        date.toLocaleDateString(),
+    meetingDate: dateStepperButiranMesyuarat.refine((data) =>
+        data <= new Date(), {message: 'Tidak boleh lebih daripada tarikh semasa'}
     ),
     effectiveDate: dateStepperButiranMesyuarat.refine((date) =>
         date.toLocaleDateString(),
