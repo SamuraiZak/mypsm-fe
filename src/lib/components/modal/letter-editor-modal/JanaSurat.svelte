@@ -19,6 +19,7 @@
     import RichTextEditor from '$lib/components/rich-text-ediitor/RichTextEditor.svelte';
     import { mockLetterTemplates } from '$lib/mocks/letters/mockLetterTemplates';
     import ExportButton from '$lib/components/buttons/ExportButton.svelte';
+    import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
 
     export let referenceNumber = '123456789';
     export let dateOfLetter = '12 Disember 2021';
@@ -30,7 +31,7 @@
         modalOpened = !modalOpened;
     }
 
-    let modalOpened = false;
+    let modalOpened = true;
     let showPreview = false;
 
     let selectedValue: any = 'Sila Pilih';
@@ -50,12 +51,13 @@
     let pdfReadyLetter: any;
     let previewHeader: any;
     let docName: any;
+    let selectedSelect: any;
 
     //Binding for the letter editor
     receiverReference.set(referenceNumber);
     senderReference.set(letterTemplate[0].senderReference);
     letterDate.set(dateOfLetter);
-    receiverNameAddress.set(letterTemplate[0].receiverNameAddress);
+    // receiverNameAddress.set(letterTemplate[0].receiverNameAddress);
     receiverTitle.set(letterTemplate[0].receiverTitle);
     letterSubject.set(letterTemplate[0].letterSubject);
     letterBody.set(letterTemplate[0].letterBody);
@@ -68,14 +70,14 @@
         previewSenderReference =
             document.getElementById('sender-reference')?.innerHTML;
         previewLetterDate = document.getElementById('letter-date')?.innerHTML;
-        previewReceiverInfo =
-            document.getElementById('receiver-info')?.innerHTML;
         previewReceiverTitle =
             document.getElementById('receiver-title')?.innerHTML;
         previewSubject = document.getElementById('letter-subject')?.innerHTML;
         previewBody = document.getElementById('letter-body')?.innerHTML;
         previewFooter = document.getElementById('letter-footer')?.innerHTML;
         pdfReadyLetter = document.getElementById('letterPreview')?.innerHTML;
+
+        // console.log(previewReceiverInfo)
 
         previewHeader =
             'Ruj. Tuan/Puan: ' +
@@ -93,7 +95,15 @@
             previewSubject +
             previewBody +
             previewFooter;
+
+            // console.log(preview)
     };
+
+    // onMount(() => {
+        
+    // })
+
+    
 
     //Convert HTML to PDF
     function htmlToPDF(fileName: string) {
@@ -104,8 +114,6 @@
             'letterPreview',
         ) as HTMLElement;
 
-        
-     
         doc.html(sourceHTML, {
             html2canvas: {
                 scale: 0.66,
@@ -116,7 +124,6 @@
             },
         });
     }
-
     //Convert HTML to Word
     function htmlToWord(fileName: string) {
         var header =
@@ -142,11 +149,24 @@
         fileDownload.click();
         document.body.removeChild(fileDownload);
     }
+
+
+    const updateElement = () => {
+        const selectedOption = document.getElementById('receiver-info')?.innerHTML;
+        previewReceiverInfo = selectedSelect.innerHTML;
+
+        
+        console.log(selectedSelect)
+        console.log(previewReceiverInfo)
+        console.log(selectedOption)
+    };
+
+    
 </script>
 
-<div class="flex h-screen w-full flex-col items-center justify-center gap-10">
+<!-- <div class="flex h-screen w-full flex-col items-center justify-center gap-10">
     <Button color="red" on:click={openModal}>OPEN MODAL</Button>
-</div>
+</div> -->
 
 <Modal
     title={showPreview
@@ -236,11 +256,25 @@
                     <p class="text-sm font-semibold text-txt-primary">
                         Kepala Surat:
                     </p>
-                    <RichTextEditor
+                    <!-- <RichTextEditor
                         id="receiver-info"
                         label="Nama & Alamat Penerima:"
                         bind:value={$receiverNameAddress}
-                    ></RichTextEditor>
+                    ></RichTextEditor> -->
+                    <DropdownSelect
+                        id="receiver-info"
+                        dropdownType="label-left-full"
+                        options={[
+                            {
+                                value: 'Mohd Irfan bin Ali',
+                                name: 'Mohd Irfan bin Ali',
+                            },
+                            { value: 'Lebron James', name: 'Lebron James' },
+                        ]}
+                        label="Nama Penerima: "
+                        bind:value={selectedSelect}
+                        onSelect={updateElement}
+                    ></DropdownSelect>
                 </div>
 
                 <div class="flex flex-col gap-2">
