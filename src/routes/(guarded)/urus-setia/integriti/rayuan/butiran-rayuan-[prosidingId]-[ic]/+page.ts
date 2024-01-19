@@ -16,8 +16,67 @@ import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
 import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
 import { mockProsiding } from '$lib/mocks/integriti/prosiding/mockProsiding.js';
 import { getEmployees } from '$lib/service/employees/staff-service.js';
+import { fail } from '@sveltejs/kit';
+import toast from 'svelte-french-toast';
+import { superValidate } from 'sveltekit-superforms/client';
+import { z } from 'zod';
+
+const date = z.coerce
+    .date({
+        errorMap: (issue, { defaultError }) => ({
+            message:
+                issue.code === 'invalid_date'
+                    ? 'Tarikh tidak boleh dibiar kosong.'
+                    : defaultError,
+        }),
+    })
+    .max(new Date(), {
+        message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
+    });
+
+const option = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+export const _stepperMeetingResult = z.object({
+    meetingDate: date.refine((date) => date.toLocaleDateString()),
+    meetingNumberDropdown: option,
+    meetingNameDropdown: option,
+    meetingResultOption: option,
+});
+
+export const _submitFormStepperMeetingResult = async (formData: object) => {
+    const stepperMeetingResult = await superValidate(
+        formData,
+        _stepperMeetingResult,
+    );
+
+    if (!stepperMeetingResult.valid) {
+        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+            style: 'background: #333; color: #fff;',
+        });
+        return fail(400, stepperMeetingResult);
+    } else {
+        console.log('Request Body: ', formData);
+        fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify(stepperMeetingResult),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                console.log('Response Returned: StepperMeetingResult-54', json);
+            });
+    }
+    return { stepperMeetingResult };
+};
 
 export async function load({ params }) {
+    const stepperMeetingResult = await superValidate(_stepperMeetingResult);
+
     const proceedingData: IntProsiding[] = await mockProsiding;
 
     const currentProceeding: IntProsiding | undefined = proceedingData.find(
@@ -106,6 +165,7 @@ export async function load({ params }) {
     if (!currentEmployee) throw new Error('Record not found');
 
     return {
+        stepperMeetingResult,
         record: {
             data,
             currentProceeding,
