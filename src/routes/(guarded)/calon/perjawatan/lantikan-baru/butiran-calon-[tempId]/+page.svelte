@@ -821,10 +821,10 @@
                     id="academicInfoForm"
                     method="POST"
                     use:academicInfoEnhance
-                    class="flex w-full flex-col gap-2"
+                    class="flex w-full flex-col gap-2.5"
                 >
                     {#each mockEmployeeEducations as item, i}
-                        <div class=" space-2.5 gap-y-2.5 rounded-[3px] border">
+                        <div class="space-y-2.5 rounded-[3px] border p-2.5">
                             <div
                                 class="mb-5 mt-2.5 text-sm text-system-primary"
                             >
@@ -843,6 +843,22 @@
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
                                     >{$academicInfoErrors.name}</span
+                                >
+                            {/if}
+
+                            <TextField
+                                {disabled}
+                                hasError={!!$academicInfoErrors.type}
+                                name="type"
+                                label={'Jenis Kelulusan'}
+                                type="text"
+                                bind:value={$academicInfoForm.type}
+                            ></TextField>
+
+                            {#if $academicInfoErrors.type}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$academicInfoErrors.type}</span
                                 >
                             {/if}
 
@@ -895,9 +911,23 @@
                                     >{$academicInfoErrors.field}</span
                                 >
                             {/if}
+
+                            <LongTextField
+                                {disabled}
+                                hasError={!!$academicInfoErrors.remark}
+                                name="remark"
+                                label={'Catatan'}
+                                bind:value={$academicInfoForm.remark}
+                            ></LongTextField>
+
+                            {#if $academicInfoErrors.remark}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$academicInfoErrors.remark}</span
+                                >
+                            {/if}
                         </div>
                     {/each}
-                    <p class={stepperFormTitleClass}>UPSR / Darjah 6</p>
                 </form>
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton

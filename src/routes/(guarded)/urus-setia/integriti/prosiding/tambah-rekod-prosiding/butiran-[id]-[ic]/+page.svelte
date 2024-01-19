@@ -218,10 +218,7 @@
             ><!-- Maklumat Peribadi -->
             <div class="flex w-full flex-col gap-2.5">
                 <p class={stepperFormTitleClass}>Maklumat Peribadi</p>
-                <TextField
-                    {disabled}
-                    id="noPerkeja"
-                    label={'No. Pekerja'}
+                <TextField {disabled} id="noPerkeja" label={'No. Pekerja'}
                 ></TextField>
                 <TextField
                     {disabled}
@@ -233,64 +230,30 @@
                     id="noKadPengenalan"
                     label={'No. Kad Pengenalan'}
                 ></TextField>
-                <TextField
-                    {disabled}
-                    id="namaPenuh"
-                    label={'Nama Penuh'}
+                <TextField {disabled} id="namaPenuh" label={'Nama Penuh'}
                 ></TextField>
-                <TextField
-                    {disabled}
-                    id="namaLain"
-                    label={'Nama Lain'}
+                <TextField {disabled} id="namaLain" label={'Nama Lain'}
                 ></TextField>
                 <TextField
                     {disabled}
                     id="warnaKadPengenalan"
                     label={'Warna Kad Pengenalan'}
-                    
                 ></TextField>
                 <DateSelector
                     handleDateChange={() => {}}
                     {disabled}
                     label={'Tarikh Lahir'}
-                    
                 ></DateSelector>
-                <TextField
-                    {disabled}
-                    id="tempatLahir"
-                    label={'Tempat Lahir'}
+                <TextField {disabled} id="tempatLahir" label={'Tempat Lahir'}
                 ></TextField>
-                <TextField
-                    {disabled}
-                    id="warganegara"
-                    label={'Warganegara'}
-                    
+                <TextField {disabled} id="warganegara" label={'Warganegara'}
                 ></TextField>
-                <TextField
-                    {disabled}
-                    id="bangsa"
-                    label={'Bangsa'}
+                <TextField {disabled} id="bangsa" label={'Bangsa'}></TextField>
+                <TextField {disabled} id="agama" label={'Agama'}></TextField>
+                <TextField {disabled} id="jantina" label={'Jantina'}
                 ></TextField>
-                <TextField
-                    {disabled}
-                    id="agama"
-                    label={'Agama'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="jantina"
-                    label={'Jantina'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="status"
-                    label={'Status'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="emel"
-                    label={'Emel'}
-                ></TextField>
+                <TextField {disabled} id="status" label={'Status'}></TextField>
+                <TextField {disabled} id="emel" label={'Emel'}></TextField>
                 <LongTextField
                     {disabled}
                     id="alamatRumah"
@@ -342,7 +305,6 @@
                         {disabled}
                         id="noPekerjaPasangan"
                         label={'No. Pekerja LKIM'}
-                        
                     ></TextField>
                     <TextField
                         {disabled}
@@ -354,10 +316,7 @@
                         id="jawatanPasangan"
                         label={'Jawatan Kakitangan LKIM'}
                     ></TextField>
-                    <TextField
-                        {disabled}
-                        id="hubungan"
-                        label={'Hubungan'}
+                    <TextField {disabled} id="hubungan" label={'Hubungan'}
                     ></TextField>
                 {/if}
             </div></StepperContentBody
@@ -369,20 +328,11 @@
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2.5">
                 <p class={stepperFormTitleClass}>Maklumat Perkhidmatan</p>
-                <TextField
-                    disabled={true}
-                    id="gredSemasa"
-                    label={'Gred Semasa'}
+                <TextField disabled={true} id="gredSemasa" label={'Gred Semasa'}
                 ></TextField>
-                <TextField
-                    disabled={true}
-                    id="jawatan"
-                    label={'Jawatan'}
+                <TextField disabled={true} id="jawatan" label={'Jawatan'}
                 ></TextField>
-                <TextField
-                    disabled={true}
-                    id="penempatan"
-                    label={'Penempatan'}
+                <TextField disabled={true} id="penempatan" label={'Penempatan'}
                 ></TextField>
                 <TextField
                     disabled={true}
@@ -393,7 +343,6 @@
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Tarikh Kuatkuasa Lantikan Semasa'}
-                    
                 ></DateSelector>
                 <RadioSingle
                     disabled={true}
@@ -440,38 +389,32 @@
                     disabled={true}
                     id="kelayakanCuti"
                     label={'Kelayakan Cuti'}
-                    
                 ></TextField>
 
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Mula Dilantik Perkhidmatan Kerajaan'}
-                    
                 ></DateSelector>
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Mula Dilantik Perkhidmatan LKIM'}
-                    
                 ></DateSelector>
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Mula Dilantik Perkhidmatan Sekarang'}
-                    
                 ></DateSelector>
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Disahkan Dalam Jawatan Pertama LKIM'}
-                    
                 ></DateSelector>
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Disahkan Dalam Jawatan Semasa LKIM'}
-                    
                 ></DateSelector>
 
                 <AccordianField
@@ -498,7 +441,6 @@
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Tarikh Kelulusan Percantuman Perkhidmatan Lepas'}
-                    
                 ></DateSelector>
                 <TextField
                     disabled={true}
@@ -540,7 +482,6 @@
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Tarikh Bersara'}
-                    
                 ></DateSelector>
                 <p class={stepperFormTitleClass}>
                     Maklumat Gaji dan Elaun - Elaun
@@ -631,6 +572,7 @@
                             name: 'Tahan Kerja/Gantung Kerja',
                         },
                     ]}
+                    bind:value={selectedProceedingType}
                 ></DropdownSelect>
             </div>
         </StepperContentBody>

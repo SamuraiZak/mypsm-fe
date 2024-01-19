@@ -118,16 +118,11 @@ export const _personalInfoForm = z
 
 export const _academicInfoSchema = z.object({
     name: shortTextSchema,
+    type: shortTextSchema,
     completionYear: shortTextSchema,
     finalGrade: shortTextSchema,
     field: shortTextSchema,
     remark: shortTextSchema,
-
-    highSchoolGred: shortTextSchema.nullable(),
-    higherLevelEdu: shortTextSchema.nullable(),
-    higherLevelEduYearFinished: shortTextSchema.nullable(),
-    higherLevelEduGred: shortTextSchema.nullable(),
-    higherLevelEduCourse: shortTextSchema.nullable(),
 });
 
 //==========================================================
