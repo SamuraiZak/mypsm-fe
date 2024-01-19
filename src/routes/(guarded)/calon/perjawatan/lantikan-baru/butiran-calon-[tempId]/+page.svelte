@@ -237,13 +237,11 @@
         form: academicInfoForm,
         errors: academicInfoErrors,
         enhance: academicInfoEnhance,
-        tainted: academicInfoTainted,
     } = superForm(data.academicInfoForm, {
         SPA: true,
         validators: _academicInfoSchema,
         onSubmit() {
-            if ($academicInfoTainted)
-                _submitAcademicInfoForm($academicInfoForm);
+            _submitAcademicInfoForm($academicInfoForm);
         },
     });
 
@@ -817,216 +815,89 @@
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
-        <StepperContentBody
-            ><div class="flex w-full flex-col gap-2.5">
+        <StepperContentBody>
+            <div class="flex w-full flex-col gap-2.5">
                 <form
                     id="academicInfoForm"
                     method="POST"
                     use:academicInfoEnhance
                     class="flex w-full flex-col gap-2"
                 >
-                    <p class={stepperFormTitleClass}>UPSR / Darjah 6</p>
-
-                    <TextField
-                        {disabled}
-                        hasError={$academicInfoErrors.primarySchool
-                            ? true
-                            : false}
-                        name="primarySchool"
-                        label={'Sekolah'}
-                        type="text"
-                        bind:value={$academicInfoForm.primarySchool}
-                    ></TextField>
-
-                    {#if $academicInfoErrors.primarySchool}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$academicInfoErrors.primarySchool}</span
-                        >
-                    {/if}
-
-                    <TextField
-                        {disabled}
-                        hasError={$academicInfoErrors.primaryYearFinished
-                            ? true
-                            : false}
-                        name="primaryYearFinished"
-                        label={'Tahun'}
-                        type="text"
-                        bind:value={$academicInfoForm.primaryYearFinished}
-                    ></TextField>
-
-                    {#if $academicInfoErrors.primaryYearFinished}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$academicInfoErrors.primaryYearFinished}</span
-                        >
-                    {/if}
-
-                    <TextField
-                        {disabled}
-                        hasError={$academicInfoErrors.primaryGred
-                            ? true
-                            : false}
-                        name="primaryGred"
-                        label={'Gred'}
-                        type="text"
-                        bind:value={$academicInfoForm.primaryGred}
-                    ></TextField>
-
-                    {#if $academicInfoErrors.primaryGred}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$academicInfoErrors.primaryGred}</span
-                        >
-                    {/if}
-
-                    <p class={stepperFormTitleClass}>SPM/ MCE</p>
-
-                    <TextField
-                        {disabled}
-                        hasError={!!$academicInfoErrors.highSchool}
-                        name="highSchool"
-                        label={'Sekolah'}
-                        type="text"
-                        bind:value={$academicInfoForm.highSchool}
-                    ></TextField>
-
-                    {#if $academicInfoErrors.highSchool}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$academicInfoErrors.highSchool}</span
-                        >
-                    {/if}
-
-                    <TextField
-                        {disabled}
-                        hasError={$academicInfoErrors.highSchoolYearFinished
-                            ? true
-                            : false}
-                        name="highSchoolYearFinished"
-                        label={'Tahun'}
-                        type="text"
-                        bind:value={$academicInfoForm.highSchoolYearFinished}
-                    ></TextField>
-
-                    {#if $academicInfoErrors.highSchoolYearFinished}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$academicInfoErrors.highSchoolYearFinished}</span
-                        >
-                    {/if}
-
-                    <TextField
-                        {disabled}
-                        hasError={$academicInfoErrors.highSchoolGred
-                            ? true
-                            : false}
-                        name="highSchoolGred"
-                        label={'Ijazah/ CGPA/ Gred'}
-                        type="text"
-                        bind:value={$academicInfoForm.highSchoolGred}
-                    ></TextField>
-
-                    {#if $academicInfoErrors.highSchoolGred}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$academicInfoErrors.highSchoolGred}</span
-                        >
-                    {/if}
-
-                    <p class={stepperFormTitleClass}>
-                        Institut Pengajian Tinggi
-                    </p>
-
-                    <TextField
-                        {disabled}
-                        hasError={$academicInfoErrors.higherLevelEdu
-                            ? true
-                            : false}
-                        name="higherLevelEdu"
-                        label={'IPT'}
-                        type="text"
-                        bind:value={$academicInfoForm.higherLevelEdu}
-                    ></TextField>
-
-                    {#if $academicInfoErrors.higherLevelEdu}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$academicInfoErrors.higherLevelEdu}</span
-                        >
-                    {/if}
-
-                    <TextField
-                        {disabled}
-                        hasError={$academicInfoErrors.higherLevelEduYearFinished
-                            ? true
-                            : false}
-                        name="higherLevelEduYearFinished"
-                        label={'Tahun'}
-                        type="text"
-                        bind:value={$academicInfoForm.higherLevelEduYearFinished}
-                    ></TextField>
-
-                    {#if $academicInfoErrors.higherLevelEduYearFinished}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$academicInfoErrors.higherLevelEduYearFinished}</span
-                        >
-                    {/if}
-
-                    <TextField
-                        {disabled}
-                        hasError={$academicInfoErrors.higherLevelEduGred
-                            ? true
-                            : false}
-                        name="higherLevelEduGred"
-                        label={'CGPA/ Gred'}
-                        type="text"
-                        bind:value={$academicInfoForm.higherLevelEduGred}
-                    ></TextField>
-
-                    {#if $academicInfoErrors.higherLevelEduGred}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$academicInfoErrors.higherLevelEduGred}</span
-                        >
-                    {/if}
-
-                    <TextField
-                        {disabled}
-                        hasError={$academicInfoErrors.higherLevelEduCourse
-                            ? true
-                            : false}
-                        name="higherLevelEduCourse"
-                        label={'Bidang'}
-                        type="text"
-                        bind:value={$academicInfoForm.higherLevelEduCourse}
-                    ></TextField>
-
-                    {#if $academicInfoErrors.higherLevelEduCourse}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$academicInfoErrors.higherLevelEduCourse}</span
-                        >
-                    {/if}
-
-                    <!-- <AccordianField
-                                disabled={!disabled}
-                                label="Catatan"
-                                header="Catatan"
+                    {#each mockEmployeeEducations as item, i}
+                        <div class=" space-2.5 gap-y-2.5 rounded-[3px] border">
+                            <div
+                                class="mb-5 mt-2.5 text-sm text-system-primary"
                             >
-                                {#each edu.remark as val, i}
-                                    <label
-                                        for=""
-                                        class="border-1 active:border-1 w-full rounded-[3px] border-bdr-primary text-base {disabled
-                                            ? 'text-txt-tertiary'
-                                            : 'text-txt-primary'}
-                                            hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0"
-                                        >{i + 1}. {val}</label
-                                    >
-                                {/each}
-                            </AccordianField> -->
+                                <p>Maklumat Akademik #{i + 1}</p>
+                            </div>
+                            <TextField
+                                {disabled}
+                                hasError={!!$academicInfoErrors.name}
+                                name="name"
+                                label={'Nama Institusi/Sekolah'}
+                                type="text"
+                                bind:value={$academicInfoForm.name}
+                            ></TextField>
+
+                            {#if $academicInfoErrors.name}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$academicInfoErrors.name}</span
+                                >
+                            {/if}
+
+                            <TextField
+                                {disabled}
+                                hasError={$academicInfoErrors.completionYear
+                                    ? true
+                                    : false}
+                                name="completionYear"
+                                label={'Tahun Kelulusan'}
+                                type="text"
+                                bind:value={$academicInfoForm.completionYear}
+                            ></TextField>
+
+                            {#if $academicInfoErrors.completionYear}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$academicInfoErrors.completionYear}</span
+                                >
+                            {/if}
+
+                            <TextField
+                                {disabled}
+                                hasError={!!$academicInfoErrors.finalGrade}
+                                name="finalGrade"
+                                label={'Gred'}
+                                type="text"
+                                bind:value={$academicInfoForm.finalGrade}
+                            ></TextField>
+
+                            {#if $academicInfoErrors.finalGrade}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$academicInfoErrors.finalGrade}</span
+                                >
+                            {/if}
+
+                            <TextField
+                                {disabled}
+                                hasError={!!$academicInfoErrors.field}
+                                name="field"
+                                label={'Bidang'}
+                                type="text"
+                                bind:value={$academicInfoForm.field}
+                            ></TextField>
+
+                            {#if $academicInfoErrors.field}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$academicInfoErrors.field}</span
+                                >
+                            {/if}
+                        </div>
+                    {/each}
+                    <p class={stepperFormTitleClass}>UPSR / Darjah 6</p>
                 </form>
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
@@ -1054,7 +925,7 @@
             ><div class="flex w-full flex-col gap-2.5">
                 <form
                     id="formStepperPengalaman"
-                    class="flex w-full flex-col gap-2"
+                    class="flex w-full flex-col gap-2 rounded-[3px] border p-2.5"
                     use:experienceInfoEnhance
                     method="POST"
                 >
@@ -1062,193 +933,114 @@
                         <p class={stepperFormTitleClass}>
                             Maklumat Pengalaman #{i + 1}
                         </p>
+                        <TextField
+                            {disabled}
+                            hasError={$experienceInfoErrors.company
+                                ? true
+                                : false}
+                            name="company"
+                            label={'Nama Majikan'}
+                            type="text"
+                            bind:value={$experienceInfoForm.company}
+                        ></TextField>
+                        {#if $experienceInfoErrors.company}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$experienceInfoErrors.company}</span
+                            >
+                        {/if}
 
-                        {#if item.company !== '-'}
-                            <TextField
-                                {disabled}
-                                hasError={$experienceInfoErrors.namaMajikan
-                                    ? true
-                                    : false}
-                                name="namaMajikan"
-                                label={'Nama Majikan'}
-                                type="text"
-                                bind:value={$experienceInfoForm.namaMajikan}
-                            ></TextField>
-                            {#if $experienceInfoErrors.namaMajikan}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$experienceInfoErrors.namaMajikan}</span
-                                >
-                            {/if}
+                        <TextField
+                            {disabled}
+                            hasError={$experienceInfoErrors.address
+                                ? true
+                                : false}
+                            name="address"
+                            label={'Alamat Majikan'}
+                            type="text"
+                            bind:value={$experienceInfoForm.address}
+                        ></TextField>
+                        {#if $experienceInfoErrors.address}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$experienceInfoErrors.address}</span
+                            >
+                        {/if}
 
-                            <TextField
-                                {disabled}
-                                hasError={$experienceInfoErrors.alamatMajikan
-                                    ? true
-                                    : false}
-                                name="alamatMajikan"
-                                label={'Alamat Majikan'}
-                                type="text"
-                                bind:value={$experienceInfoForm.alamatMajikan}
-                            ></TextField>
-                            {#if $experienceInfoErrors.alamatMajikan}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$experienceInfoErrors.alamatMajikan}</span
-                                >
-                            {/if}
+                        <TextField
+                            {disabled}
+                            hasError={$experienceInfoErrors.position
+                                ? true
+                                : false}
+                            name="position"
+                            label={'Jawatan'}
+                            type="text"
+                            bind:value={$experienceInfoForm.position}
+                        ></TextField>
+                        {#if $experienceInfoErrors.position}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$experienceInfoErrors.position}</span
+                            >
+                        {/if}
 
-                            <TextField
-                                {disabled}
-                                hasError={$experienceInfoErrors.jawatanPengalaman
-                                    ? true
-                                    : false}
-                                name="jawatanPengalaman"
-                                label={'Jawatan'}
-                                type="text"
-                                bind:value={$experienceInfoForm.jawatanPengalaman}
-                            ></TextField>
-                            {#if $experienceInfoErrors.jawatanPengalaman}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$experienceInfoErrors.jawatanPengalaman}</span
-                                >
-                            {/if}
+                        <TextField
+                            {disabled}
+                            name="positionCode"
+                            label={'Kod Jawatan (jika ada)'}
+                            type="text"
+                            bind:value={$experienceInfoForm.positionCode}
+                        ></TextField>
 
-                            <TextField
-                                {disabled}
-                                name="kodJawatan"
-                                label={'Kod Jawatan (jika ada)'}
-                                type="text"
-                                bind:value={$experienceInfoForm.kodJawatan}
-                            ></TextField>
+                        <TextField
+                            {disabled}
+                            hasError={$experienceInfoErrors.startDate
+                                ? true
+                                : false}
+                            name="startDate"
+                            label={'Dari (tahun)'}
+                            type="text"
+                            bind:value={$experienceInfoForm.startDate}
+                        ></TextField>
+                        {#if $experienceInfoErrors.startDate}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$experienceInfoErrors.startDate}</span
+                            >
+                        {/if}
 
-                            <TextField
-                                {disabled}
-                                hasError={$experienceInfoErrors.tempohPerkhidmatan
-                                    ? true
-                                    : false}
-                                name="tempohPerkhidmatan"
-                                label={'Tempoh Perkhidmatan (tahun)'}
-                                type="text"
-                                bind:value={$experienceInfoForm.tempohPerkhidmatan}
-                            ></TextField>
-                            {#if $experienceInfoErrors.tempohPerkhidmatan}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$experienceInfoErrors.tempohPerkhidmatan}</span
-                                >
-                            {/if}
+                        <TextField
+                            {disabled}
+                            hasError={$experienceInfoErrors.endDate
+                                ? true
+                                : false}
+                            name="endDate"
+                            label={'Hingga (tahun)'}
+                            type="text"
+                            bind:value={$experienceInfoForm.endDate}
+                        ></TextField>
+                        {#if $experienceInfoErrors.endDate}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$experienceInfoErrors.endDate}</span
+                            >
+                        {/if}
 
-                            <TextField
-                                {disabled}
-                                hasError={$experienceInfoErrors.gajiPengalaman
-                                    ? true
-                                    : false}
-                                name="gajiPengalaman"
-                                label={'Gaji'}
-                                type="text"
-                                bind:value={$experienceInfoForm.gajiPengalaman}
-                            ></TextField>
-                            {#if $experienceInfoErrors.gajiPengalaman}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$experienceInfoErrors.gajiPengalaman}</span
-                                >
-                            {/if}
-                        {:else}
-                            <TextField
-                                {disabled}
-                                hasError={$experienceInfoErrors.namaMajikan
-                                    ? true
-                                    : false}
-                                name="namaMajikan"
-                                label={'Nama Majikan'}
-                                type="text"
-                                bind:value={$experienceInfoForm.namaMajikan}
-                            ></TextField>
-                            {#if $experienceInfoErrors.namaMajikan}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$experienceInfoErrors.namaMajikan}</span
-                                >
-                            {/if}
-
-                            <TextField
-                                {disabled}
-                                hasError={$experienceInfoErrors.alamatMajikan
-                                    ? true
-                                    : false}
-                                name="alamatMajikan"
-                                label={'Alamat Majikan'}
-                                type="text"
-                                bind:value={$experienceInfoForm.alamatMajikan}
-                            ></TextField>
-                            {#if $experienceInfoErrors.alamatMajikan}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$experienceInfoErrors.alamatMajikan}</span
-                                >
-                            {/if}
-
-                            <TextField
-                                {disabled}
-                                hasError={$experienceInfoErrors.jawatanPengalaman
-                                    ? true
-                                    : false}
-                                name="jawatanPengalaman"
-                                label={'Jawatan'}
-                                type="text"
-                                bind:value={$experienceInfoForm.jawatanPengalaman}
-                            ></TextField>
-                            {#if $experienceInfoErrors.jawatanPengalaman}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$experienceInfoErrors.jawatanPengalaman}</span
-                                >
-                            {/if}
-
-                            <TextField
-                                {disabled}
-                                name="kodJawatan"
-                                label={'Kod Jawatan (jika ada)'}
-                                type="text"
-                                bind:value={item.grade}
-                            ></TextField>
-
-                            <TextField
-                                {disabled}
-                                hasError={$experienceInfoErrors.tempohPerkhidmatan
-                                    ? true
-                                    : false}
-                                name="tempohPerkhidmatan"
-                                label={'Tempoh Perkhidmatan (tahun)'}
-                                type="text"
-                                bind:value={$experienceInfoForm.tempohPerkhidmatan}
-                            ></TextField>
-                            {#if $experienceInfoErrors.tempohPerkhidmatan}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$experienceInfoErrors.tempohPerkhidmatan}</span
-                                >
-                            {/if}
-
-                            <TextField
-                                {disabled}
-                                hasError={$experienceInfoErrors.gajiPengalaman
-                                    ? true
-                                    : false}
-                                name="gajiPengalaman"
-                                label={'Gaji'}
-                                type="text"
-                                bind:value={$experienceInfoForm.gajiPengalaman}
-                            ></TextField>
-                            {#if $experienceInfoErrors.gajiPengalaman}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$experienceInfoErrors.gajiPengalaman}</span
-                                >
-                            {/if}
+                        <TextField
+                            {disabled}
+                            hasError={$experienceInfoErrors.salary
+                                ? true
+                                : false}
+                            name="salary"
+                            label={'Gaji'}
+                            type="text"
+                            bind:value={$experienceInfoForm.salary}
+                        ></TextField>
+                        {#if $experienceInfoErrors.salary}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$experienceInfoErrors.salary}</span
+                            >
                         {/if}
                     {/each}
                 </form>
@@ -1742,80 +1534,93 @@
     >
         <TextField
             {disabled}
-            hasError={!!$addExperienceModalErrors.companyName}
-            name="companyName"
+            hasError={!!$addExperienceModalErrors.addCompany}
+            name="addCompany"
             label={'Nama Majikan'}
             type="text"
-            bind:value={$addExperienceModalForm.companyName}
+            bind:value={$addExperienceModalForm.addCompany}
         ></TextField>
-        {#if $addExperienceModalErrors.companyName}
+        {#if $addExperienceModalErrors.addCompany}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$addExperienceModalErrors.companyName}</span
+                >{$addExperienceModalErrors.addCompany}</span
             >
         {/if}
 
         <TextField
             {disabled}
-            hasError={!!$addExperienceModalErrors.companyAddress}
-            name="companyAddress"
+            hasError={!!$addExperienceModalErrors.addAddress}
+            name="addAddress"
             label={'Alamat Majikan'}
             type="text"
-            bind:value={$addExperienceModalForm.companyAddress}
+            bind:value={$addExperienceModalForm.addAddress}
         ></TextField>
-        {#if $addExperienceModalErrors.companyAddress}
+        {#if $addExperienceModalErrors.addAddress}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$addExperienceModalErrors.companyAddress}</span
+                >{$addExperienceModalErrors.addAddress}</span
             >
         {/if}
 
         <TextField
             {disabled}
-            hasError={!!$addExperienceModalErrors.position}
-            name="position"
+            hasError={!!$addExperienceModalErrors.addPosition}
+            name="addPosition"
             label={'Jawatan'}
             type="text"
-            bind:value={$addExperienceModalForm.position}
+            bind:value={$addExperienceModalForm.addPosition}
         ></TextField>
-        {#if $addExperienceModalErrors.position}
+        {#if $addExperienceModalErrors.addPosition}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$addExperienceModalErrors.position}</span
+                >{$addExperienceModalErrors.addPosition}</span
             >
         {/if}
 
         <TextField
             {disabled}
-            hasError={!!$addExperienceModalErrors.positionCode}
-            name="positionCode"
+            hasError={!!$addExperienceModalErrors.addPositionCode}
+            name="addPositionCode"
             label={'Kod Jawatan (jika ada)'}
             type="text"
-            bind:value={$addExperienceModalForm.positionCode}
+            bind:value={$addExperienceModalForm.addPositionCode}
         ></TextField>
 
         <TextField
             {disabled}
-            hasError={!!$addExperienceModalErrors.servicePeriod}
-            name="servicePeriod"
-            label={'Tempoh Perkhidmatan (tahun)'}
+            hasError={!!$addExperienceModalErrors.addStartDate}
+            name="addStartDate"
+            label={'Dari (tahun)'}
             type="text"
-            bind:value={$addExperienceModalForm.servicePeriod}
+            bind:value={$addExperienceModalForm.addStartDate}
         ></TextField>
-        {#if $addExperienceModalErrors.servicePeriod}
+        {#if $addExperienceModalErrors.addStartDate}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$addExperienceModalErrors.servicePeriod}</span
+                >{$addExperienceModalErrors.addStartDate}</span
+            >
+        {/if}
+        <TextField
+            {disabled}
+            hasError={!!$addExperienceModalErrors.addEndDate}
+            name="addEndDate"
+            label={'Hingga (tahun)'}
+            type="text"
+            bind:value={$addExperienceModalForm.addEndDate}
+        ></TextField>
+        {#if $addExperienceModalErrors.addEndDate}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addExperienceModalErrors.addEndDate}</span
             >
         {/if}
 
         <TextField
             {disabled}
-            hasError={!!$addExperienceModalErrors.serviceSalary}
-            name="serviceSalary"
+            hasError={!!$addExperienceModalErrors.addSalary}
+            name="addSalary"
             label={'Gaji'}
             type="text"
-            bind:value={$addExperienceModalForm.serviceSalary}
+            bind:value={$addExperienceModalForm.addSalary}
         ></TextField>
-        {#if $addExperienceModalErrors.serviceSalary}
+        {#if $addExperienceModalErrors.addSalary}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$addExperienceModalErrors.serviceSalary}</span
+                >{$addExperienceModalErrors.addSalary}</span
             >
         {/if}
         <TextIconButton
