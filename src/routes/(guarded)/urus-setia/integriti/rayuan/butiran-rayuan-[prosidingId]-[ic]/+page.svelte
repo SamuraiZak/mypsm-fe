@@ -26,8 +26,15 @@
     import PunishmentFormGroup from '$lib/components/integriti-charges-form-group/PunishmentFormGroup.svelte';
     import AddPunishmentFromGroup from '$lib/components/integriti-charges-form-group/AddPunishmentFromGroup.svelte';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper.js';
+    import { superForm } from 'sveltekit-superforms/client';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import {
+        _stepperMeetingResult,
+        _submitFormStepperMeetingResult,
+    } from './+page';
 
-    export let data;
+    export let data: PageData;
 
     let activeStepper = 0;
     let disabled = true;
@@ -96,7 +103,6 @@
             label: 'Mengesahkan Keputusan JKTT tetapi Mengubah kepada Hukuman yang Lebih Ringan',
         },
     ];
-
     const integrityDirectorOptions: RadioOption[] = [
         {
             value: 'free',
@@ -107,7 +113,6 @@
             label: 'TIDAK BEBAS',
         },
     ];
-
     const options: RadioOption[] = [
         {
             value: 'sah',
@@ -118,7 +123,6 @@
             label: 'TIDAK SAH',
         },
     ];
-
     const faedahPersaraanOptions: RadioOption[] = [
         {
             value: 'true',
@@ -193,6 +197,21 @@
             }
         }
     }
+
+    //Stepper Meeting Result
+    const {
+        form: stepperMeetingResultForm,
+        errors: stepperMeetingResultErrors,
+        enhance: stepperMeetingResultEnhance,
+    } = superForm(data.stepperMeetingResult, {
+        SPA: true,
+        validators: _stepperMeetingResult,
+        onSubmit() {
+            _submitFormStepperMeetingResult($stepperMeetingResultForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -924,7 +943,19 @@
         <StepperContent>
             <StepperContentHeader
                 title="Mesyuarat Keputusan Jawatankuasa Rayuan Tatatertib"
-            ></StepperContentHeader>
+                ><FormButton
+                    type="reset"
+                    addLabel="Simpan"
+                    onClick={() => {}}
+                />
+                <TextIconButton
+                    primary
+                    label="Simpan"
+                    form="FormStepperMeetingResult"
+                >
+                    <SvgCheck></SvgCheck>
+                </TextIconButton></StepperContentHeader
+            >
             <StepperContentBody>
                 <div class="flex w-full flex-row items-center">
                     <label
@@ -934,87 +965,147 @@
                     </label>
                     <Checkbox bind:checked={appealHasBeenMade} />
                 </div>
-                {#if appealHasBeenMade}
-                    <SectionHeader
-                        color="system-primary"
-                        title="Maklumat Mesyuarat"
-                    />
-                    <DateSelector
-                        disabled={false}
-                        labelBlack={true}
-                        label="Tarikh Mesyuarat"
-                        selectedDate={''}
-                        handleDateChange={() => {}}
-                    />
-                    <DropdownSelect
-                        disabled={false}
-                        labelBlack={true}
-                        dropdownType="label-left-full"
-                        name="meeting-number-dropdown"
-                        label="Bil Mesyuarat"
-                        value={''}
-                        options={meetings}
-                    ></DropdownSelect>
-                    <DropdownSelect
-                        disabled={false}
-                        labelBlack={true}
-                        dropdownType="label-left-full"
-                        name="meeting-name-dropdown"
-                        label="Nama Mesyuarat"
-                        value={''}
-                        options={punishmentMeetingNames}
-                    ></DropdownSelect>
-
-                    <RadioSingle
-                        disabled={false}
-                        options={appealMeetingOptions}
-                        legend={'Keputusan Mesyuarat'}
-                        bind:userSelected={appealMeetingResult}
-                    ></RadioSingle>
-
-                    {#if appealMeetingResult === 'pass'}
+                <form
+                    id="FormStepperMeetingResult"
+                    class="flex w-full flex-col gap-2"
+                    use:stepperMeetingResultEnhance
+                    method="POST"
+                >
+                    {#if appealHasBeenMade}
                         <SectionHeader
                             color="system-primary"
-                            title="Susulan Rayuan"
+                            title="Maklumat Mesyuarat"
                         />
+                        <DateSelector
+                            hasError={$stepperMeetingResultErrors.meetingDate
+                                ? true
+                                : false}
+                            name="meetingDate"
+                            handleDateChange
+                            label="Tarikh Mesyuarat"
+                            bind:selectedDate={$stepperMeetingResultForm.meetingDate}
+                        ></DateSelector>
+                        {#if $stepperMeetingResultErrors.meetingDate}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$stepperMeetingResultErrors
+                                    .meetingDate[0]}</span
+                            >
+                        {/if}
+                        <DropdownSelect
+                            hasError={$stepperMeetingResultErrors.meetingNumberDropdown
+                                ? true
+                                : false}
+                            dropdownType="label-left-full"
+                            id="meetingNumberDropdown"
+                            label="Bil Mesyuarat"
+                            bind:value={$stepperMeetingResultForm.meetingNumberDropdown}
+                            options={[
+                                {
+                                    value: '1',
+                                    name: 'Semua',
+                                },
+                                {
+                                    value: '2',
+                                    name: '1/12',
+                                },
+                            ]}
+                        ></DropdownSelect>
+                        {#if $stepperMeetingResultErrors.meetingNumberDropdown}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$stepperMeetingResultErrors
+                                    .meetingNumberDropdown[0]}</span
+                            >
+                        {/if}
+                        <DropdownSelect
+                            hasError={$stepperMeetingResultErrors.meetingNameDropdown
+                                ? true
+                                : false}
+                            dropdownType="label-left-full"
+                            id="meetingNameDropdown"
+                            label="Nama Mesyuarat"
+                            bind:value={$stepperMeetingResultForm.meetingNameDropdown}
+                            options={[
+                                {
+                                    value: 'non-demotion',
+                                    name: 'Jawatankuasa Tatatertib Bukan Dengan Tujuan Buang Kerja Atau Turun Pangkat Bagi Kumpulan Pengurusan Dan Profesional LKIM (JKTT B BK/TP PP)',
+                                },
+                                {
+                                    value: 'with-demotion',
+                                    name: 'Jawatankuasa Tatatertib Dengan Tujuan Buang Kerja Atau Turun Pangkat Bagi Kumpulan Pengurusan Dan Profesional LKIM (JKTT  BK/TP PP)',
+                                },
+                            ]}
+                        ></DropdownSelect>
+                        {#if $stepperMeetingResultErrors.meetingNameDropdown}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$stepperMeetingResultErrors
+                                    .meetingNameDropdown[0]}</span
+                            >
+                        {/if}
+
                         <RadioSingle
-                            isVertical
-                            disabled={false}
-                            options={appealFollowUpOptions}
-                            legend={'Keputusan Rayuan'}
-                            bind:userSelected={appealFollowUpResult}
+                            options={appealMeetingOptions}
+                            hasError={$stepperMeetingResultErrors.meetingResultOption
+                                ? true
+                                : false}
+                            name="meetingResultOption"
+                            legend="Keputusan Mesyuarat"
+                            bind:userSelected={$stepperMeetingResultForm.meetingResultOption}
                         ></RadioSingle>
-                    {/if}
+                        {#if $stepperMeetingResultErrors.meetingResultOption}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$stepperMeetingResultErrors
+                                    .meetingResultOption[0]}</span
+                            >
+                        {/if}
 
-                    <hr />
-
-                    {#if appealFollowUpResult === 'lightenPunishment'}
-                        <div
-                            class="mt-5 flex w-full flex-col gap-2.5 border-b border-t"
-                        >
+                        {#if appealMeetingResult === 'pass'}
                             <SectionHeader
-                                title="Sila Pilih Hukuman - Hukuman Yang Dikenakan"
-                            ></SectionHeader>
-                            {#each Object.entries(data.record.currentProceeding.proceedingMeetingResult) as [key, result], index}
-                                <div
-                                    class="rounded-[3px] border border-system-primary p-2.5"
-                                >
-                                    <SectionHeader
-                                        color="system-primary"
-                                        title="Pertuduhan #{index +
-                                            1}: {result.chargeName}"
-                                    ></SectionHeader>
-                                    <hr />
+                                color="system-primary"
+                                title="Susulan Rayuan"
+                            />
+                            <RadioSingle
+                                isVertical
+                                disabled={false}
+                                options={appealFollowUpOptions}
+                                legend={'Keputusan Rayuan'}
+                                bind:userSelected={appealFollowUpResult}
+                            ></RadioSingle>
+                        {/if}
 
-                                    <div class="mx-2.5">
-                                        <AddPunishmentFromGroup />
+                        <hr />
+
+                        {#if appealFollowUpResult === 'lightenPunishment'}
+                            <div
+                                class="mt-5 flex w-full flex-col gap-2.5 border-b border-t"
+                            >
+                                <SectionHeader
+                                    title="Sila Pilih Hukuman - Hukuman Yang Dikenakan"
+                                ></SectionHeader>
+                                {#each Object.entries(data.record.currentProceeding.proceedingMeetingResult) as [key, result], index}
+                                    <div
+                                        class="rounded-[3px] border border-system-primary p-2.5"
+                                    >
+                                        <SectionHeader
+                                            color="system-primary"
+                                            title="Pertuduhan #{index +
+                                                1}: {result.chargeName}"
+                                        ></SectionHeader>
+                                        <hr />
+
+                                        <div class="mx-2.5">
+                                            <AddPunishmentFromGroup />
+                                        </div>
                                     </div>
-                                </div>
-                            {/each}
-                        </div>
+                                {/each}
+                            </div>
+                        {/if}
                     {/if}
-                {/if}
-            </StepperContentBody>
+                </form></StepperContentBody
+            >
         </StepperContent>
     {/if}
     {#if selectedProceedingType === 'suspension'}
@@ -1321,3 +1412,4 @@
         </StepperContent>
     {/if}
 </Stepper>
+<Toaster />
