@@ -26,7 +26,8 @@
     import { mockFinalSalary } from '$lib/mocks/gaji/gaji-elaun/mockFinalSalary';
     import { loanPaybackMonthsOptions } from '$lib/mocks/pinjaman-kuarters/loanPaybackDurationOptions';
     import { mockRekodPinjaman } from '$lib/mocks/pinjaman-kuarters/mockRekodPinjaman';
-
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
     import {
         fileSelectionList,
         selectedRecordId,
@@ -37,9 +38,8 @@
     import { _butiranPinjamanForm, _submitButiranPinjamanForm } from './+page';
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
-    import toast, { Toaster } from 'svelte-french-toast'
-import { z,ZodError } from 'zod';
-
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { z, ZodError } from 'zod';
 
     let disabled = true;
     let labelBlack = false;
@@ -101,11 +101,11 @@ import { z,ZodError } from 'zod';
     }
     const options: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'Ya',
         },
         {
-            value: 'false',
+            value: false,
             label: 'Tidak',
         },
     ];
@@ -151,7 +151,7 @@ import { z,ZodError } from 'zod';
         fileSelectionList.set(selectedFiles);
     }
 
-    export const { form, errors, enhance } = superForm(data.butiranPinjamanForm, {
+    const { form, errors, enhance } = superForm(data.butiranPinjamanForm, {
         SPA: true,
         validators: _butiranPinjamanForm,
         delayMs: 500,
@@ -160,7 +160,7 @@ import { z,ZodError } from 'zod';
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
 
         onSubmit() {
-            // console.log('HERE: ', $form);
+            console.log('HERE: ', $form);
             _submitButiranPinjamanForm($form);
         },
     });
@@ -286,23 +286,47 @@ import { z,ZodError } from 'zod';
     <StepperContent>
         <StepperContentHeader title="Butiran Pinjaman">
             <FormButton type="reset" onClick={() => {}}></FormButton>
-            <FormButton
-                onClick={() => {
-                    activeStepper = 2;
-                }}
-            ></FormButton>
+            <TextIconButton
+                primary
+                label="Simpan"
+                form="FormButiranPinjaman"
+            >
+
+            </TextIconButton>
         </StepperContentHeader>
         <StepperContentBody>
-            <TextField
-                label={'Jumlah yang Dipohon (RM)'}
-                value={CurrencyHelper.formatCurrency(0)}
-            ></TextField>
-            <DropdownSelect
-                dropdownType="label-left-full"
-                label={'Tempoh Pembayaran'}
-                options={loanPaybackMonthsOptions}
-                value={selectedLoanPayback}
-            ></DropdownSelect>
+            <form
+                id="FormButiranPinjaman"
+                class="flex w-full flex-col gap-2"
+                use:enhance
+                method="POST"
+            >
+                <TextField
+                    hasError={$errors.jumlahYangDipohon ? true : false}
+                    name="jumlahYangDipohon"
+                    label={'Jumlah yang Dipohon (RM)'}
+                    bind:value={$form.jumlahYangDipohon}
+                ></TextField>
+                {#if $errors.jumlahYangDipohon}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.jumlahYangDipohon}</span
+                    >
+                {/if}
+                <DropdownSelect
+                    hasError={$errors.tempohPembayaran ? true : false}
+                    dropdownType="label-left-full"
+                    label={'Tempoh Pembayaran'}
+                    options={loanPaybackMonthsOptions}
+                    bind:value={$form.tempohPembayaran}
+                ></DropdownSelect>
+                {#if $errors.tempohPembayaran}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.tempohPembayaran}</span
+                    >
+                {/if}
+            </form>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -314,84 +338,87 @@ import { z,ZodError } from 'zod';
                 }}
             ></FormButton>
             <FormButton type="reset" onClick={() => {}}></FormButton>
-            <FormButton
-                type="send"
-                onClick={() => {
-                    window.history.back();
-                }}
-            ></FormButton></StepperContentHeader
-        >
+        </StepperContentHeader>
+
         <StepperContentBody>
-            <!-- Document Upload -->
-            <div
-                class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 pb-5"
+            <form
+                id="FormButiranPinjaman"
+                class="flex w-full flex-col gap-2"
+                use:enhance
+                method="POST"
             >
-                <SectionHeader title="Dokumen Sokongan"
-                    ><div hidden={$fileSelectionList.length == 0}>
-                        <FileInputField id="fileInput" {handleOnChange}
-                        ></FileInputField>
-                    </div></SectionHeader
-                >
+                <!-- Document Upload -->
                 <div
-                    class="flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border border-bdr-primary p-2.5"
+                    class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 pb-5"
                 >
-                    <div class="flex flex-wrap gap-3">
-                        {#each $fileSelectionList as item, index}
-                            <FileInputFieldChildren
-                                childrenType="grid"
-                                handleDelete={() => handleDelete(index)}
-                                fileName={item.name}
-                            />
-                        {/each}
-                    </div>
-                    <div
-                        class="flex flex-col items-center justify-center gap-2.5"
-                    >
-                        <p
-                            class=" text-sm text-txt-tertiary"
-                            hidden={$fileSelectionList.length > 0}
-                        >
-                            Pilih fail dari peranti anda.
-                        </p>
-                        <!-- svelte-ignore a11y-click-events-have-key-events -->
-                        <div
-                            class="text-txt-tertiary"
-                            hidden={$fileSelectionList.length > 0}
-                        >
-                            <svg
-                                width={40}
-                                height={40}
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                                />
-                            </svg>
-                        </div>
-                        <div hidden={$fileSelectionList.length > 0}>
+                    <SectionHeader title="Dokumen Sokongan"
+                        ><div hidden={$fileSelectionList.length == 0}>
                             <FileInputField id="fileInput" {handleOnChange}
                             ></FileInputField>
+                        </div></SectionHeader
+                    >
+                    <div
+                        class="flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border border-bdr-primary p-2.5"
+                    >
+                        <div class="flex flex-wrap gap-3">
+                            {#each $fileSelectionList as item, index}
+                                <FileInputFieldChildren
+                                    childrenType="grid"
+                                    handleDelete={() => handleDelete(index)}
+                                    fileName={item.name}
+                                />
+                            {/each}
+                        </div>
+                        <div
+                            class="flex flex-col items-center justify-center gap-2.5"
+                        >
+                            <p
+                                class=" text-sm text-txt-tertiary"
+                                hidden={$fileSelectionList.length > 0}
+                            >
+                                Pilih fail dari peranti anda.
+                            </p>
+                            <!-- svelte-ignore a11y-click-events-have-key-events -->
+                            <div
+                                class="text-txt-tertiary"
+                                hidden={$fileSelectionList.length > 0}
+                            >
+                                <svg
+                                    width={40}
+                                    height={40}
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                                    />
+                                </svg>
+                            </div>
+                            <div hidden={$fileSelectionList.length > 0}>
+                                <FileInputField id="fileInput" {handleOnChange}
+                                ></FileInputField>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <SectionHeader title="Pengesahan"></SectionHeader>
-            <div
-                class="flex h-fit w-full flex-col items-start justify-start gap-2.5"
-            >
-                <Checkbox checked={infoTrue}
-                    ><p>
-                        Saya dengan ini mengesahkan bahawa maklumat sebagaimana
-                        yang dinyatakan berikut adalah benar
-                    </p></Checkbox
+                <SectionHeader title="Pengesahan"></SectionHeader>
+                <div
+                    class="flex h-fit w-full flex-col items-start justify-start gap-2.5"
                 >
-            </div>
+                    <Checkbox checked={infoTrue}
+                        ><p>
+                            Saya dengan ini mengesahkan bahawa maklumat
+                            sebagaimana yang dinyatakan berikut adalah benar
+                        </p></Checkbox
+                    >
+                </div>
+            </form>
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+<Toaster />

@@ -49,7 +49,6 @@ export const _submitButiranPinjamanForm = async (formData: object) => {
 
     if (!form.valid) {
         getErrorToast();
-        console.log('experience personal form');
         return fail(400, form);
     }
 
