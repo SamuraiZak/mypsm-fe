@@ -15,8 +15,200 @@ import { mockLookupServiceTypes } from '$lib/mocks/database/mockLookupServiceTyp
 import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
 import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
 import { getEmployees } from '$lib/service/employees/staff-service.js';
+import { fail } from '@sveltejs/kit';
+import toast from 'svelte-french-toast';
+import { superValidate } from 'sveltekit-superforms/client';
+import { z } from 'zod';
+
+//Stepper Charges Meeting Info
+const dateChargesMeetingInfo = z.coerce
+    .date({
+        errorMap: (issue, { defaultError }) => ({
+            message:
+                issue.code === 'invalid_date'
+                    ? 'Tarikh tidak boleh dibiar kosong.'
+                    : defaultError,
+        }),
+    })
+    .max(new Date(), {
+        message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
+    });
+
+const optionChargesMeetingInfo = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+export const _stepperChargesMeetingInfo = z.object({
+    meetingDate: dateChargesMeetingInfo.refine((date) => date.toLocaleDateString()),
+    meetingsDropdown: optionChargesMeetingInfo,
+});
+
+export const _submitFormStepperChargesMeetingInfo = async (
+    formData: object,
+) => {
+    const stepperChargesMeetingInfo = await superValidate(
+        formData,
+        _stepperChargesMeetingInfo,
+    );
+
+    if (!stepperChargesMeetingInfo.valid) {
+        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+            style: 'background: #333; color: #fff;',
+        });
+        return fail(400, stepperChargesMeetingInfo);
+    } else {
+        console.log('Request Body: ', formData);
+        fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify(stepperChargesMeetingInfo),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                console.log(
+                    'Response Returned: StepperChargesMeetingInfo-54',
+                    json,
+                );
+            });
+    }
+    return { stepperChargesMeetingInfo };
+};
+
+//Stepper Charges Meeting Info Determination Proceeding Punishment
+const dateChargesMeetingInfoDeterminationProceedingPunishment = z.coerce
+    .date({
+        errorMap: (issue, { defaultError }) => ({
+            message:
+                issue.code === 'invalid_date'
+                    ? 'Tarikh tidak boleh dibiar kosong.'
+                    : defaultError,
+        }),
+    })
+    .max(new Date(), {
+        message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
+    });
+
+const optionChargesMeetingInfoDeterminationProceedingPunishment = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+export const _stepperChargesMeetingInfoDeterminationProceedingPunishment = z.object({
+    meetingDate: dateChargesMeetingInfoDeterminationProceedingPunishment.refine((date) => date.toLocaleDateString()),
+    meetingNumberDropdown: optionChargesMeetingInfoDeterminationProceedingPunishment,
+    meetingNameDropdown: optionChargesMeetingInfoDeterminationProceedingPunishment,
+    meetingResultOption: optionChargesMeetingInfoDeterminationProceedingPunishment,
+});
+
+export const _submitFormStepperChargesMeetingInfoDeterminationProceedingPunishment = async (
+    formData: object,
+) => {
+    const stepperChargesMeetingInfoDeterminationProceedingPunishment = await superValidate(
+        formData,
+        _stepperChargesMeetingInfoDeterminationProceedingPunishment,
+    );
+
+    if (!stepperChargesMeetingInfoDeterminationProceedingPunishment.valid) {
+        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+            style: 'background: #333; color: #fff;',
+        });
+        return fail(400, stepperChargesMeetingInfoDeterminationProceedingPunishment);
+    } else {
+        console.log('Request Body: ', formData);
+        fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify(stepperChargesMeetingInfoDeterminationProceedingPunishment),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                console.log(
+                    'Response Returned: StepperChargesMeetingInfoDeterminationProceedingPunishment-54',
+                    json,
+                );
+            });
+    }
+    return { stepperChargesMeetingInfoDeterminationProceedingPunishment };
+};
+
+//Stepper Suspension Meeting Info
+const date = z.coerce
+    .date({
+        errorMap: (issue, { defaultError }) => ({
+            message:
+                issue.code === 'invalid_date'
+                    ? 'Tarikh tidak boleh dibiar kosong.'
+                    : defaultError,
+        }),
+    })
+    .max(new Date(), {
+        message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
+    });
+
+const option = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+export const _stepperSuspensionMeetingInfo = z.object({
+    meetingDate: date.refine((date) => date.toLocaleDateString()),
+    meetingNumberDropdown: date.refine((date) => date.toLocaleDateString()),
+    meetingNameDropdown: option,
+    meetingResultOption: option,
+    suspensionTypeDropdown: option,
+    startDateSuspensionInvestigation: option,
+    startDateSuspensionSuspended: option,
+});
+
+export const _submitFormStepperSuspensionMeetingInfo = async (
+    formData: object,
+) => {
+    const stepperSuspensionMeetingInfo = await superValidate(
+        formData,
+        _stepperSuspensionMeetingInfo,
+    );
+
+    if (!stepperSuspensionMeetingInfo.valid) {
+        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+            style: 'background: #333; color: #fff;',
+        });
+        return fail(400, stepperSuspensionMeetingInfo);
+    } else {
+        console.log('Request Body: ', formData);
+        fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify(stepperSuspensionMeetingInfo),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                console.log(
+                    'Response Returned: StepperSuspensionMeetingInfo-54',
+                    json,
+                );
+            });
+    }
+    return { stepperSuspensionMeetingInfo };
+};
 
 export async function load({ params }) {
+    const stepperChargesMeetingInfo = await superValidate(
+        _stepperChargesMeetingInfo,
+    );
+    const stepperChargesMeetingInfoDeterminationProceedingPunishment = await superValidate(
+        _stepperChargesMeetingInfoDeterminationProceedingPunishment,
+    );
+    const stepperSuspensionMeetingInfo = await superValidate(
+        _stepperSuspensionMeetingInfo,
+    );
+
     const data: IntEmployees[] = await getEmployees();
 
     const currentEmployee: IntEmployees | undefined = data.find(
@@ -99,6 +291,9 @@ export async function load({ params }) {
     if (!currentEmployee) throw new Error('Record not found');
 
     return {
+        stepperChargesMeetingInfo,
+        stepperChargesMeetingInfoDeterminationProceedingPunishment,
+        stepperSuspensionMeetingInfo,
         record: {
             data,
             currentEmployee,
