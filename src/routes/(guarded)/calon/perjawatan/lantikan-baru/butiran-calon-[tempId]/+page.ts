@@ -117,11 +117,12 @@ export const _personalInfoForm = z
 //==========================================================
 
 export const _academicInfoSchema = z.object({
-    primarySchool: shortTextSchema.nullable(),
-    primaryYearFinished: shortTextSchema.nullable(),
-    primaryGred: shortTextSchema.nullable(),
-    highSchool: shortTextSchema.nullable(),
-    highSchoolYearFinished: shortTextSchema.nullable(),
+    name: shortTextSchema,
+    completionYear: shortTextSchema,
+    finalGrade: shortTextSchema,
+    field: shortTextSchema,
+    remark: shortTextSchema,
+
     highSchoolGred: shortTextSchema.nullable(),
     higherLevelEdu: shortTextSchema.nullable(),
     higherLevelEduYearFinished: shortTextSchema.nullable(),
@@ -136,8 +137,8 @@ export const _academicInfoSchema = z.object({
 export const _experienceInfoSchema = z.object({
     company: shortTextSchema,
     address: shortTextSchema,
-    position: shortTextSchema.nullable(),
-    positionCode: shortTextSchema,
+    position: shortTextSchema,
+    positionCode: shortTextSchema.nullable(),
     startDate: minDateSchema,
     endDate: minDateSchema,
     salary: z.coerce.number({
@@ -152,8 +153,8 @@ export const _experienceInfoSchema = z.object({
 export const _addExperienceModalSchema = z.object({
     addCompany: shortTextSchema,
     addAddress: shortTextSchema,
-    addPosition: shortTextSchema.nullable(),
-    addPositionCode: shortTextSchema,
+    addPosition: shortTextSchema,
+    addPositionCode: shortTextSchema.nullable(),
     addStartDate: minDateSchema,
     addEndDate: minDateSchema,
     addSalary: z.coerce.number({
