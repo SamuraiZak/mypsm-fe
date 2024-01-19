@@ -24,8 +24,7 @@
             onSubmit() {
                 _submitFormstepperkontrak($form);
         },
-            taintedMessage:
-                'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+            taintedMessage:false
         },
     );
 </script>

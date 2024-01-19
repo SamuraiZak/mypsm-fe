@@ -21,6 +21,7 @@
     import { mockEmployeeExperience } from '$lib/mocks/database/mockEmployeeExperience';
     import { mockEmployeeDocumentLists } from '$lib/mocks/database/mockEmployeeDocumentLists';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
+    import { Modal } from 'flowbite-svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
@@ -28,56 +29,55 @@
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { superForm } from 'sveltekit-superforms/client';
+    import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import type { PageData } from './$types';
     import {
+        _submitAddMoreAcademicForm,
+        _addAcademicInfoSchema,
         _stepperMaklumatPeribadi,
         _submitFormStepperMaklumatPeribadi,
-    } from '../+page';
-    import {
         _stepperMaklumatPerkhidmatan,
         _submitFormStepperMaklumatPerkhidmatan,
-    } from '../+page';
-    import {
         _stepperMaklumatAkademik,
         _submitFormStepperMaklumatAkademik,
-    } from '../+page';
-    import {
         _stepperMaklumatPengalaman,
         _submitFormStepperMaklumatPengalaman,
-    } from '../+page';
-    import {
         _stepperMaklumatWaris,
         _submitFormStepperMaklumatWaris,
     } from '../+page';
 
+    export let disabled: boolean = true;
     export let data: PageData;
 
-    const { form, errors, message, constraints, enhance } = superForm(
-        data.stepperMaklumatPeribadi,
-        {
-            SPA: true,
-            validators: _stepperMaklumatPeribadi,
-            onSubmit() {
-                _submitFormStepperMaklumatPerkhidmatan($form);
-            },
-            taintedMessage:
-                'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    export let openAcademicInfoModal: boolean = false;
+
+    const {
+        form,
+        errors,
+        enhance,
+        options: stepperMaklumatPeribadiOption,
+    } = superForm(data.stepperMaklumatPeribadi, {
+        SPA: true,
+        onSubmit() {
+            console.log('check for stepepr maklumat peribadi');
+            _submitFormStepperMaklumatPeribadi($form);
         },
-    );
+        taintedMessage: false,
+        validators: false,
+    });
 
     const {
         form: maklumatPerkhidmatanForm,
         errors: maklumatPerkhidmatanErrors,
         enhance: maklumatPerkhidmatanEnhance,
-    } = superForm(data.stepperMaklumatPerkhidmatan,
-    {
+        options: maklumatPerkhidmatanOption,
+    } = superForm(data.stepperMaklumatPerkhidmatan, {
         SPA: true,
-        validators: _stepperMaklumatPerkhidmatan,
+        validators: false,
         onSubmit() {
-                _submitFormStepperMaklumatPerkhidmatan($maklumatPerkhidmatanForm);
-            },
-        taintedMessage:
-            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+            _submitFormStepperMaklumatPerkhidmatan($maklumatPerkhidmatanForm);
+        },
+        taintedMessage: false,
     });
     const {
         form: maklumatAkademikForm,
@@ -87,10 +87,9 @@
         SPA: true,
         validators: _stepperMaklumatAkademik,
         onSubmit() {
-                _submitFormStepperMaklumatAkademik($maklumatAkademikForm);
-            },
-        taintedMessage:
-            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+            _submitFormStepperMaklumatAkademik($maklumatAkademikForm);
+        },
+        taintedMessage: false,
     });
     const {
         form: maklumatPengalamanForm,
@@ -101,10 +100,9 @@
         validators: _stepperMaklumatPengalaman,
         onSubmit() {
             _submitFormStepperMaklumatPengalaman($maklumatPengalamanForm);
-            },
+        },
 
-        taintedMessage:
-            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+        taintedMessage: false,
     });
     const {
         form: maklumatWarisForm,
@@ -114,27 +112,52 @@
         SPA: true,
         validators: _stepperMaklumatWaris,
         onSubmit() {
-                _submitFormStepperMaklumatWaris($maklumatWarisForm);
-            },
-        taintedMessage:
-            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+            _submitFormStepperMaklumatWaris($maklumatWarisForm);
+        },
+        taintedMessage: false,
+    });
+    const {
+        form: addAcademicInfoModal,
+        errors: addAcademicInfoErrors,
+        enhance: addAcademicInfoEnhance,
+        delayed,
+    } = superForm(data.addAcademicModal, {
+        SPA: true,
+        validators: _addAcademicInfoSchema,
+        onSubmit() {
+            _submitAddMoreAcademicForm($addAcademicInfoModal).then(
+                (response) => {
+                    tempAcademicRecord.push(response);
+                    console.log('RESPONSE MODAL: ', tempAcademicRecord);
+                },
+            );
+            // .then(() => (openAcademicInfoModal = false));
+        },
     });
 
+    if (disabled) {
+        stepperMaklumatPeribadiOption.validators = _stepperMaklumatPeribadi;
+        stepperMaklumatPeribadiOption.taintedMessage =
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini-1?';
+        maklumatPerkhidmatanOption.taintedMessage =
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini-1?';
+        maklumatPerkhidmatanOption.validators = _stepperMaklumatPerkhidmatan;
+    }
+
     export let employeeNumber: string = '00001';
-    export let disabled: boolean = true;
+
     let editable: boolean = true;
 
     const approveOptions: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'LULUS',
         },
         {
-            value: 'false',
+            value: false,
             label: 'TIDAK LULUS',
         },
     ];
-
 
     let currentEmployee = mockEmployees.find((employee) => {
         return employee.employeeNumber === employeeNumber;
@@ -178,11 +201,11 @@
         },
     )!;
 
-
     // =================================================================================
     // z validation schema for the example form fields==================================
     // =================================================================================
     let errorData: any;
+    let tempAcademicRecord: any[] = [];
 
     // Stepper Classes //
 
@@ -221,21 +244,21 @@
     let radioChosen: string = '';
     const faedahPersaraanOptions: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'KWSP',
         },
         {
-            value: 'false',
+            value: false,
             label: 'Pencen',
         },
     ];
     const options: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'Ya',
         },
         {
-            value: 'false',
+            value: false,
             label: 'Tidak',
         },
     ];
@@ -629,9 +652,10 @@
                         {options}
                         {disabled}
                         legend={'Perhubungan Dengan Kakitangan LKIM'}
-                        bind:userSelected={isInRelationshipWithLKIMStaff}
+                        bind:userSelected={$form.isInRelationshipWithLKIMStaff}
                     ></RadioSingle>
-                    {#if isInRelationshipWithLKIMStaff === 'true'}
+
+                    {#if $form.isInRelationshipWithLKIMStaff}
                         <TextField
                             {disabled}
                             hasError={errorData?.noPekerjaPasangan}
@@ -1165,11 +1189,12 @@
                         bind:selectedDate={$maklumatPerkhidmatanForm.tarikhBersara}
                     ></DateSelector>
                     {#if $maklumatPerkhidmatanErrors.tarikhBersara}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$maklumatPerkhidmatanErrors.tarikhBersara[0]}</span
-                    >
-                {/if}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$maklumatPerkhidmatanErrors
+                                .tarikhBersara[0]}</span
+                        >
+                    {/if}
 
                     <p class={stepperFormTitleClass}>
                         Maklumat Gaji dan Elaun - Elaun
@@ -1188,11 +1213,12 @@
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.tarikhBerkuatKuasa}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatPerkhidmatanErrors.tarikhBerkuatKuasa[0]}</span
-                            >
-                        {/if}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatPerkhidmatanErrors
+                                        .tarikhBerkuatKuasa[0]}</span
+                                >
+                            {/if}
                             <TextField
                                 {disabled}
                                 hasError={$maklumatPerkhidmatanErrors.tanggaGaji
@@ -1205,11 +1231,12 @@
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.tanggaGaji}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatPerkhidmatanErrors.tanggaGaji[0]}</span
-                            >
-                        {/if}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatPerkhidmatanErrors
+                                        .tanggaGaji[0]}</span
+                                >
+                            {/if}
 
                             <TextField
                                 {disabled}
@@ -1223,11 +1250,12 @@
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.gajiPokok}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatPerkhidmatanErrors.gajiPokok[0]}</span
-                            >
-                        {/if}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatPerkhidmatanErrors
+                                        .gajiPokok[0]}</span
+                                >
+                            {/if}
                         </div>
 
                         <div class="space-y-2.5">
@@ -1245,11 +1273,11 @@
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.itka}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatPerkhidmatanErrors.itka[0]}</span
-                            >
-                        {/if}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatPerkhidmatanErrors.itka[0]}</span
+                                >
+                            {/if}
                             <TextField
                                 {disabled}
                                 hasTooltip={true}
@@ -1264,11 +1292,11 @@
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.itp}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatPerkhidmatanErrors.itp[0]}</span
-                            >
-                        {/if}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatPerkhidmatanErrors.itp[0]}</span
+                                >
+                            {/if}
 
                             <TextField
                                 {disabled}
@@ -1284,11 +1312,11 @@
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.epw}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatPerkhidmatanErrors.epw[0]}</span
-                            >
-                        {/if}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatPerkhidmatanErrors.epw[0]}</span
+                                >
+                            {/if}
 
                             <TextField
                                 {disabled}
@@ -1303,11 +1331,11 @@
                                 bind:value={$maklumatPerkhidmatanForm.cola}
                             ></TextField>
                             {#if $maklumatPerkhidmatanErrors.cola}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatPerkhidmatanErrors.cola[0]}</span
-                            >
-                        {/if}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatPerkhidmatanErrors.cola[0]}</span
+                                >
+                            {/if}
                             <!-- Tooltip body -->
                             <Tooltip
                                 type="dark"
@@ -1345,103 +1373,202 @@
                     use:maklumatAkademikEnhance
                     method="POST"
                 >
-                    {#each currentEmployeeEducations as edu, i}
-                        <p class={stepperFormTitleClass}>
-                            {edu.type}
-                        </p>
+                    {#each mockEmployeeEducations as item, i(i)}
 
-                        <TextField
-                            {disabled}
-                            hasError={$maklumatAkademikErrors.sekolah
-                                ? true
-                                : false}
-                            name="sekolah"
-                            label={'Sekolah'}
-                            type="text"
-                            bind:value={$maklumatAkademikForm.sekolah}
-                        ></TextField>
-
-                        {#if $maklumatAkademikErrors.sekolah}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatAkademikErrors.sekolah[0]}</span
+                            <div
+                                class="mb-5 mt-2.5 text-sm text-system-primary"
                             >
-                        {/if}
+                                <p>Maklumat Akademik #{i+1}</p>
+                            </div>
+                            <p class={stepperFormTitleClass}>UPSR / Darjah 6</p>
 
-                        <TextField
-                            {disabled}
-                            hasError={$maklumatAkademikErrors.tahunHabis
-                                ? true
-                                : false}
-                            name="tahunHabis"
-                            label={'Tahun'}
-                            type="text"
-                            bind:value={$maklumatAkademikForm.tahunHabis}
-                        ></TextField>
-
-                        {#if $maklumatAkademikErrors.tahunHabis}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatAkademikErrors.tahunHabis[0]}</span
-                            >
-                        {/if}
-
-                        <TextField
-                            {disabled}
-                            hasError={$maklumatAkademikErrors.gredSekolah
-                                ? true
-                                : false}
-                            name="gredSekolah"
-                            label={edu.type == 'Ijazah' ? 'CGPA' : 'Gred'}
-                            type="text"
-                            bind:value={$maklumatAkademikForm.gredSekolah}
-                        ></TextField>
-
-                        {#if $maklumatAkademikErrors.gredSekolah}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatAkademikErrors.gredSekolah[0]}</span
-                            >
-                        {/if}
-
-                        {#if edu.type == 'Ijazah'}
                             <TextField
                                 {disabled}
-                                hasError={$maklumatAkademikErrors.bidang
+                                hasError={$maklumatAkademikErrors.primarySchool
                                     ? true
                                     : false}
-                                name="bidang"
-                                label={'Bidang'}
+                                name="primarySchool"
+                                label={'Sekolah'}
                                 type="text"
-                                bind:value={$maklumatAkademikForm.bidang}
+                                bind:value={$maklumatAkademikForm.primarySchool}
                             ></TextField>
 
-                            {#if $maklumatAkademikErrors.bidang}
+                            {#if $maklumatAkademikErrors.primarySchool}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$maklumatAkademikErrors.bidang[0]}</span
+                                    >{$maklumatAkademikErrors.primarySchool}</span
+                                >
+                            {/if}
+                            <TextField
+                                {disabled}
+                                hasError={$maklumatAkademikErrors.primaryYearFinished
+                                    ? true
+                                    : false}
+                                name="primaryYearFinished"
+                                label={'Tahun'}
+                                type="text"
+                                bind:value={$maklumatAkademikForm.primaryYearFinished}
+                            ></TextField>
+
+                            {#if $maklumatAkademikErrors.primaryYearFinished}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatAkademikErrors.primaryYearFinished}</span
+                                >
+                            {/if}
+                            <TextField
+                                {disabled}
+                                hasError={$maklumatAkademikErrors.primaryGred
+                                    ? true
+                                    : false}
+                                name="primaryGred"
+                                label={'Gred'}
+                                type="text"
+                                bind:value={$maklumatAkademikForm.primaryGred}
+                            ></TextField>
+
+                            {#if $maklumatAkademikErrors.primaryGred}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatAkademikErrors.primaryGred}</span
+                                >
+                            {/if}
+                            <p class={stepperFormTitleClass}>SPM/ MCE</p>
+
+                            <TextField
+                                {disabled}
+                                hasError={!!$maklumatAkademikErrors.highSchool}
+                                name="highSchool"
+                                label={'Sekolah'}
+                                type="text"
+                                bind:value={$maklumatAkademikForm.highSchool}
+                            ></TextField>
+
+                            {#if $maklumatAkademikErrors.highSchool}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatAkademikErrors.highSchool}</span
+                                >
+                            {/if}
+                            <TextField
+                                {disabled}
+                                hasError={$maklumatAkademikErrors.highSchoolYearFinished
+                                    ? true
+                                    : false}
+                                name="highSchoolYearFinished"
+                                label={'Tahun'}
+                                type="text"
+                                bind:value={$maklumatAkademikForm.highSchoolYearFinished}
+                            ></TextField>
+
+                            {#if $maklumatAkademikErrors.highSchoolYearFinished}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatAkademikErrors.highSchoolYearFinished}</span
+                                >
+                            {/if}
+                            <TextField
+                                {disabled}
+                                hasError={$maklumatAkademikErrors.highSchoolGred
+                                    ? true
+                                    : false}
+                                name="highSchoolGred"
+                                label={'Ijazah/ CGPA/ Gred'}
+                                type="text"
+                                bind:value={$maklumatAkademikForm.highSchoolGred}
+                            ></TextField>
+
+                            {#if $maklumatAkademikErrors.highSchoolGred}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatAkademikErrors.highSchoolGred}</span
+                                >
+                            {/if}
+                            <p class={stepperFormTitleClass}>
+                                Institut Pengajian Tinggi
+                            </p>
+
+                            <TextField
+                                {disabled}
+                                hasError={$maklumatAkademikErrors.higherLevelEdu
+                                    ? true
+                                    : false}
+                                name="higherLevelEdu"
+                                label={'IPT'}
+                                type="text"
+                                bind:value={$maklumatAkademikForm.higherLevelEdu}
+                            ></TextField>
+
+                            {#if $maklumatAkademikErrors.higherLevelEdu}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatAkademikErrors.higherLevelEdu}</span
+                                >
+                            {/if}
+                            <TextField
+                                {disabled}
+                                hasError={$maklumatAkademikErrors.higherLevelEduYearFinished
+                                    ? true
+                                    : false}
+                                name="higherLevelEduYearFinished"
+                                label={'Tahun'}
+                                type="text"
+                                bind:value={$maklumatAkademikForm.higherLevelEduYearFinished}
+                            ></TextField>
+
+                            {#if $maklumatAkademikErrors.higherLevelEduYearFinished}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatAkademikErrors.higherLevelEduYearFinished}</span
+                                >
+                            {/if}
+                            <TextField
+                                {disabled}
+                                hasError={$maklumatAkademikErrors.higherLevelEduGred
+                                    ? true
+                                    : false}
+                                name="higherLevelEduGred"
+                                label={'CGPA/ Gred'}
+                                type="text"
+                                bind:value={$maklumatAkademikForm.higherLevelEduGred}
+                            ></TextField>
+
+                            {#if $maklumatAkademikErrors.higherLevelEduGred}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatAkademikErrors.higherLevelEduGred}</span
                                 >
                             {/if}
 
-                            <AccordianField
-                                disabled={!disabled}
-                                label="Catatan"
-                                header="Catatan"
-                            >
-                                {#each edu.remark as val, i}
-                                    <label
-                                        for=""
-                                        class="border-1 active:border-1 w-full rounded-[3px] border-bdr-primary text-base {disabled
-                                            ? 'text-txt-tertiary'
-                                            : 'text-txt-primary'}
-                                            hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0"
-                                        >{i + 1}. {val}</label
-                                    >
-                                {/each}
-                            </AccordianField>
-                        {/if}
+                            <TextField
+                                {disabled}
+                                hasError={$maklumatAkademikErrors.higherLevelEduCourse
+                                    ? true
+                                    : false}
+                                name="higherLevelEduCourse"
+                                label={'Bidang'}
+                                type="text"
+                                bind:value={$maklumatAkademikForm.higherLevelEduCourse}
+                            ></TextField>
+
+                            {#if $maklumatAkademikErrors.higherLevelEduCourse}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$maklumatAkademikErrors.higherLevelEduCourse}</span
+                                >
+                            {/if}
+
                     {/each}
                 </form>
+                <div class="w-full rounded-[3px] border-b border-t p-2.5">
+                    <TextIconButton
+                        primary
+                        label="Tambah Akademik/Kelayakan/Latihan yang Lalu"
+                        onClick={() => (openAcademicInfoModal = true)}
+                    >
+                        <SvgPlus></SvgPlus>
+                    </TextIconButton>
+                </div>
             </div></StepperContentBody
         >
     </StepperContent>
@@ -1818,9 +1945,7 @@
                     {/if}
                     <DropdownSelect
                         {disabled}
-                        hasError={$maklumatWarisErrors.warnaKP
-                            ? true
-                            : false}
+                        hasError={$maklumatWarisErrors.warnaKP ? true : false}
                         dropdownType="label-left-full"
                         id="warnaKP"
                         label="Warna Kad Pengenalan"
@@ -1831,12 +1956,11 @@
                         ]}
                     ></DropdownSelect>
                     {#if $maklumatWarisErrors.warnaKP}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$maklumatWarisErrors.warnaKP[0]}</span
-                    >
-                {/if}
-
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$maklumatWarisErrors.warnaKP[0]}</span
+                        >
+                    {/if}
 
                     <TextField
                         {disabled}
@@ -1946,3 +2070,77 @@
     </StepperContent>
 </Stepper>
 
+<!-- Academic Info Modal -->
+<Modal
+    title={'Tambah Maklumat Akademik / Kelayakan / Latihan yang Lalu'}
+    bind:open={openAcademicInfoModal}
+>
+    <form
+        id="addAcademicInfoModal"
+        method="POST"
+        use:addAcademicInfoEnhance
+        class="flex h-fit w-full flex-col gap-y-2"
+    >
+        <TextField
+            hasError={!!$addAcademicInfoErrors.title}
+            {disabled}
+            name="title"
+            label={'Tajuk'}
+            bind:value={$addAcademicInfoModal.title}
+        ></TextField>
+        {#if $addAcademicInfoErrors.title}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addAcademicInfoErrors.title}</span
+            >
+        {/if}
+        <TextField
+            hasError={!!$addAcademicInfoErrors.institution}
+            {disabled}
+            name="institution"
+            label={'Institusi'}
+            bind:value={$addAcademicInfoModal.institution}
+        ></TextField>
+        {#if $addAcademicInfoErrors.institution}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addAcademicInfoErrors.institution}</span
+            >
+        {/if}
+        <TextField
+            hasError={!!$addAcademicInfoErrors.year}
+            {disabled}
+            name="year"
+            label={'Tahun'}
+            bind:value={$addAcademicInfoModal.year}
+        ></TextField>
+        {#if $addAcademicInfoErrors.year}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addAcademicInfoErrors.year}</span
+            >
+        {/if}
+        <TextField
+            hasError={!!$addAcademicInfoErrors.achievement}
+            {disabled}
+            name="achievement"
+            label={'Pencapaian'}
+            bind:value={$addAcademicInfoModal.achievement}
+        ></TextField>
+        {#if $addAcademicInfoErrors.achievement}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addAcademicInfoErrors.achievement}</span
+            >
+        {/if}
+        <LongTextField
+            hasError={!!$addAcademicInfoErrors.remarks}
+            {disabled}
+            name="remarks"
+            label={'Catatan'}
+            bind:value={$addAcademicInfoModal.remarks}
+        ></LongTextField>
+        {#if $addAcademicInfoErrors.remarks}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addAcademicInfoErrors.remarks}</span
+            >
+        {/if}
+        <TextIconButton primary label={'Simpan'} form="addAcademicInfoModal" />
+    </form>
+</Modal>
