@@ -29,8 +29,20 @@
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import { Toaster } from 'svelte-french-toast';
+    import {
+        _stepperChargesMeetingInfo,
+        _submitFormStepperChargesMeetingInfo,
+    } from './+page';
+    import {
+        _stepperChargesMeetingInfoDeterminationProceedingPunishment,
+        _submitFormStepperChargesMeetingInfoDeterminationProceedingPunishment,
+    } from './+page';
+    import {
+        _stepperSuspensionMeetingInfo,
+        _submitFormStepperSuspensionMeetingInfo,
+    } from './+page';
 
-    export let data;
+    export let data: PageData;
 
     let activeStepper = 0;
     let disabled = true;
@@ -194,6 +206,62 @@
         // Add an initial form group
         // addChargeFormGroup();
     });
+
+    //Stepper Charges Meeting Info
+    const {
+        form: stepperChargesMeetingInfoForm,
+        errors: stepperChargesMeetingInfoErrors,
+        enhance: stepperChargesMeetingInfoEnhance,
+    } = superForm(data.stepperChargesMeetingInfo, {
+        SPA: true,
+        validators: _stepperChargesMeetingInfo,
+        onSubmit() {
+            _submitFormStepperChargesMeetingInfo(
+                $stepperChargesMeetingInfoForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+
+    //Stepper Charges Meeting Info Determination Proceeding Punishment
+    const {
+        form: stepperChargesMeetingInfoDeterminationProceedingPunishmentForm,
+        errors: stepperChargesMeetingInfoDeterminationProceedingPunishmentErrors,
+        enhance:
+            stepperChargesMeetingInfoDeterminationProceedingPunishmentEnhance,
+    } = superForm(
+        data.stepperChargesMeetingInfoDeterminationProceedingPunishment,
+        {
+            SPA: true,
+            validators:
+                _stepperChargesMeetingInfoDeterminationProceedingPunishment,
+            onSubmit() {
+                _submitFormStepperChargesMeetingInfoDeterminationProceedingPunishment(
+                    $stepperChargesMeetingInfoDeterminationProceedingPunishmentForm,
+                );
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+        },
+    );
+
+    //Stepper Suspension Meeting Info
+    const {
+        form: stepperSuspensionMeetingInfoForm,
+        errors: stepperSuspensionMeetingInfoErrors,
+        enhance: stepperSuspensionMeetingInfoEnhance,
+    } = superForm(data.stepperSuspensionMeetingInfo, {
+        SPA: true,
+        validators: _stepperSuspensionMeetingInfo,
+        onSubmit() {
+            _submitFormStepperSuspensionMeetingInfo(
+                $stepperSuspensionMeetingInfoForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -218,10 +286,7 @@
             ><!-- Maklumat Peribadi -->
             <div class="flex w-full flex-col gap-2.5">
                 <p class={stepperFormTitleClass}>Maklumat Peribadi</p>
-                <TextField
-                    {disabled}
-                    id="noPerkeja"
-                    label={'No. Pekerja'}
+                <TextField {disabled} id="noPerkeja" label={'No. Pekerja'}
                 ></TextField>
                 <TextField
                     {disabled}
@@ -233,64 +298,30 @@
                     id="noKadPengenalan"
                     label={'No. Kad Pengenalan'}
                 ></TextField>
-                <TextField
-                    {disabled}
-                    id="namaPenuh"
-                    label={'Nama Penuh'}
+                <TextField {disabled} id="namaPenuh" label={'Nama Penuh'}
                 ></TextField>
-                <TextField
-                    {disabled}
-                    id="namaLain"
-                    label={'Nama Lain'}
+                <TextField {disabled} id="namaLain" label={'Nama Lain'}
                 ></TextField>
                 <TextField
                     {disabled}
                     id="warnaKadPengenalan"
                     label={'Warna Kad Pengenalan'}
-                    
                 ></TextField>
                 <DateSelector
                     handleDateChange={() => {}}
                     {disabled}
                     label={'Tarikh Lahir'}
-                    
                 ></DateSelector>
-                <TextField
-                    {disabled}
-                    id="tempatLahir"
-                    label={'Tempat Lahir'}
+                <TextField {disabled} id="tempatLahir" label={'Tempat Lahir'}
                 ></TextField>
-                <TextField
-                    {disabled}
-                    id="warganegara"
-                    label={'Warganegara'}
-                    
+                <TextField {disabled} id="warganegara" label={'Warganegara'}
                 ></TextField>
-                <TextField
-                    {disabled}
-                    id="bangsa"
-                    label={'Bangsa'}
+                <TextField {disabled} id="bangsa" label={'Bangsa'}></TextField>
+                <TextField {disabled} id="agama" label={'Agama'}></TextField>
+                <TextField {disabled} id="jantina" label={'Jantina'}
                 ></TextField>
-                <TextField
-                    {disabled}
-                    id="agama"
-                    label={'Agama'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="jantina"
-                    label={'Jantina'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="status"
-                    label={'Status'}
-                ></TextField>
-                <TextField
-                    {disabled}
-                    id="emel"
-                    label={'Emel'}
-                ></TextField>
+                <TextField {disabled} id="status" label={'Status'}></TextField>
+                <TextField {disabled} id="emel" label={'Emel'}></TextField>
                 <LongTextField
                     {disabled}
                     id="alamatRumah"
@@ -342,7 +373,6 @@
                         {disabled}
                         id="noPekerjaPasangan"
                         label={'No. Pekerja LKIM'}
-                        
                     ></TextField>
                     <TextField
                         {disabled}
@@ -354,10 +384,7 @@
                         id="jawatanPasangan"
                         label={'Jawatan Kakitangan LKIM'}
                     ></TextField>
-                    <TextField
-                        {disabled}
-                        id="hubungan"
-                        label={'Hubungan'}
+                    <TextField {disabled} id="hubungan" label={'Hubungan'}
                     ></TextField>
                 {/if}
             </div></StepperContentBody
@@ -369,20 +396,11 @@
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2.5">
                 <p class={stepperFormTitleClass}>Maklumat Perkhidmatan</p>
-                <TextField
-                    disabled={true}
-                    id="gredSemasa"
-                    label={'Gred Semasa'}
+                <TextField disabled={true} id="gredSemasa" label={'Gred Semasa'}
                 ></TextField>
-                <TextField
-                    disabled={true}
-                    id="jawatan"
-                    label={'Jawatan'}
+                <TextField disabled={true} id="jawatan" label={'Jawatan'}
                 ></TextField>
-                <TextField
-                    disabled={true}
-                    id="penempatan"
-                    label={'Penempatan'}
+                <TextField disabled={true} id="penempatan" label={'Penempatan'}
                 ></TextField>
                 <TextField
                     disabled={true}
@@ -393,7 +411,6 @@
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Tarikh Kuatkuasa Lantikan Semasa'}
-                    
                 ></DateSelector>
                 <RadioSingle
                     disabled={true}
@@ -440,38 +457,32 @@
                     disabled={true}
                     id="kelayakanCuti"
                     label={'Kelayakan Cuti'}
-                    
                 ></TextField>
 
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Mula Dilantik Perkhidmatan Kerajaan'}
-                    
                 ></DateSelector>
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Mula Dilantik Perkhidmatan LKIM'}
-                    
                 ></DateSelector>
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Mula Dilantik Perkhidmatan Sekarang'}
-                    
                 ></DateSelector>
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Disahkan Dalam Jawatan Pertama LKIM'}
-                    
                 ></DateSelector>
                 <DateSelector
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Disahkan Dalam Jawatan Semasa LKIM'}
-                    
                 ></DateSelector>
 
                 <AccordianField
@@ -498,7 +509,6 @@
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Tarikh Kelulusan Percantuman Perkhidmatan Lepas'}
-                    
                 ></DateSelector>
                 <TextField
                     disabled={true}
@@ -540,7 +550,6 @@
                     handleDateChange={() => {}}
                     disabled={true}
                     label={'Tarikh Bersara'}
-                    
                 ></DateSelector>
                 <p class={stepperFormTitleClass}>
                     Maklumat Gaji dan Elaun - Elaun
@@ -608,10 +617,8 @@
         <StepperContentHeader title="Jenis Prosiding"
             ><TextIconButton
                 primary
-                label="Seterusnya"
-                onClick={() => {
-                    activeStepper = 3;
-                }}
+                label="Simpan"
+                form="FormStepperButiranMesyuarat"
             >
                 <SvgCheck></SvgCheck>
             </TextIconButton>
@@ -631,6 +638,7 @@
                             name: 'Tahan Kerja/Gantung Kerja',
                         },
                     ]}
+                    bind:value={selectedProceedingType}
                 ></DropdownSelect>
             </div>
         </StepperContentBody>
@@ -639,7 +647,11 @@
         <StepperContent>
             <StepperContentHeader
                 title="Maklumat Keputusan Mesyuarat Prosiding Pertuduhan"
-                ><TextIconButton primary label="Simpan" onClick={() => {}}>
+                ><TextIconButton
+                    primary
+                    label="Simpan"
+                    form="FormStepperChargesMeetingInfo"
+                >
                     <SvgCheck></SvgCheck>
                 </TextIconButton>
             </StepperContentHeader>
@@ -648,57 +660,92 @@
                     color="system-primary"
                     title="Maklumat Mesyuarat"
                 />
-                <DateSelector
-                    disabled={isCompleted}
-                    labelBlack={true}
-                    label="Tarikh Mesyuarat"
-                    selectedDate={''}
-                    handleDateChange={() => {}}
-                />
-                <DropdownSelect
-                    disabled={isCompleted}
-                    labelBlack={true}
-                    dropdownType="label-left-full"
-                    name="meetings-dropdown"
-                    label="Nama dan Bil Mesyuarat"
-                    value={''}
-                    options={meetings}
-                ></DropdownSelect>
-                <div class="my-5 h-fit w-full">
-                    <hr />
-                </div>
-                <div
-                    class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
+                <form
+                    id="FormStepperChargesMeetingInfo"
+                    class="flex w-full flex-col gap-2"
+                    use:stepperChargesMeetingInfoEnhance
+                    method="POST"
                 >
-                    <SectionHeader
-                        color="system-primary"
-                        title="Senarai Pertuduhan"
-                        ><div class="mr-2">
-                            <TextIconButton
-                                primary
-                                onClick={() => {
-                                    addChargeFormGroup();
-                                }}
-                                label="Tambah Tuduhan"
-                                ><SvgPlus /></TextIconButton
-                            >
-                        </div></SectionHeader
-                    >
-                    <hr />
-                    {#each Object.entries(chargesFormGroup) as [groupId, group], index}
-                        <div
-                            class="flex w-full flex-row items-center gap-x-2.5 text-base"
+                    <DateSelector
+                        hasError={$stepperChargesMeetingInfoErrors.meetingDate
+                            ? true
+                            : false}
+                        name="meetingDate"
+                        handleDateChange
+                        label="Tarikh Mesyuarat"
+                        bind:selectedDate={$stepperChargesMeetingInfoForm.meetingDate}
+                    ></DateSelector>
+                    {#if $stepperChargesMeetingInfoErrors.meetingDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$stepperChargesMeetingInfoErrors
+                                .meetingDate[0]}</span
                         >
-                            <span class="w-4">{index + 1}.</span>
-                            <ChargesFormGroup
-                                isEditMode={true}
-                                bind:group={chargesFormGroup[groupId]}
-                                onDelete={() => removeChargeFormGroup(groupId)}
-                            />
-                        </div>
-                    {/each}
-                </div>
-            </StepperContentBody>
+                    {/if}
+
+                    <DropdownSelect
+                        hasError={$stepperChargesMeetingInfoErrors.meetingsDropdown
+                            ? true
+                            : false}
+                        dropdownType="label-left-full"
+                        id="meetingNameDropdown"
+                        label="Nama dan Bil Mesyuarat"
+                        bind:value={$stepperChargesMeetingInfoForm.meetingsDropdown}
+                        options={[
+                            {
+                                value: 'non-demotion',
+                                name: 'Jawatankuasa Tatatertib Bukan Dengan Tujuan Buang Kerja Atau Turun Pangkat Bagi Kumpulan Pengurusan Dan Profesional LKIM (JKTT B BK/TP PP)',
+                            },
+                            {
+                                value: 'with-demotion',
+                                name: 'Jawatankuasa Tatatertib Dengan Tujuan Buang Kerja Atau Turun Pangkat Bagi Kumpulan Pengurusan Dan Profesional LKIM (JKTT  BK/TP PP)',
+                            },
+                        ]}
+                    ></DropdownSelect>
+                    {#if $stepperChargesMeetingInfoErrors.meetingsDropdown}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$stepperChargesMeetingInfoErrors
+                                .meetingsDropdown[0]}</span
+                        >
+                    {/if}
+                    <div class="my-5 h-fit w-full">
+                        <hr />
+                    </div>
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
+                    >
+                        <SectionHeader
+                            color="system-primary"
+                            title="Senarai Pertuduhan"
+                            ><div class="mr-2">
+                                <TextIconButton
+                                    primary
+                                    onClick={() => {
+                                        addChargeFormGroup();
+                                    }}
+                                    label="Tambah Tuduhan"
+                                    ><SvgPlus /></TextIconButton
+                                >
+                            </div></SectionHeader
+                        >
+                        <hr />
+                        {#each Object.entries(chargesFormGroup) as [groupId, group], index}
+                            <div
+                                class="flex w-full flex-row items-center gap-x-2.5 text-base"
+                            >
+                                <span class="w-4">{index + 1}.</span>
+                                <ChargesFormGroup
+                                    isEditMode={true}
+                                    bind:group={chargesFormGroup[groupId]}
+                                    onDelete={() =>
+                                        removeChargeFormGroup(groupId)}
+                                />
+                            </div>
+                        {/each}
+                    </div>
+                </form></StepperContentBody
+            >
         </StepperContent>
         <StepperContent>
             <StepperContentHeader
@@ -758,7 +805,11 @@
             <StepperContentHeader
                 title="Maklumat Keputusan Mesyuarat Prosiding Penentuan
         Hukuman"
-                ><TextIconButton primary label="Simpan" onClick={() => {}}>
+                ><TextIconButton
+                    primary
+                    label="Simpan"
+                    form="FormStepperChargesMeetingInfoDeterminationProceedingPunishment"
+                >
                     <SvgCheck></SvgCheck>
                 </TextIconButton>
             </StepperContentHeader>
@@ -767,62 +818,125 @@
                     color="system-primary"
                     title="Maklumat Mesyuarat"
                 />
-                <DateSelector
-                    disabled={isCompleted}
-                    labelBlack={true}
-                    label="Tarikh Mesyuarat"
-                    selectedDate={''}
-                    handleDateChange={() => {}}
-                />
-                <DropdownSelect
-                    disabled={isCompleted}
-                    labelBlack={true}
-                    dropdownType="label-left-full"
-                    name="meeting-number-dropdown"
-                    label="Bil Mesyuarat"
-                    value={''}
-                    options={meetings}
-                ></DropdownSelect>
-                <DropdownSelect
-                    disabled={isCompleted}
-                    labelBlack={true}
-                    dropdownType="label-left-full"
-                    name="meeting-name-dropdown"
-                    label="Nama Mesyuarat"
-                    value={''}
-                    options={punishmentMeetingNames}
-                ></DropdownSelect>
+                <form
+                    id="FormStepperChargesMeetingInfoDeterminationProceedingPunishment"
+                    class="flex w-full flex-col gap-2"
+                    use:stepperChargesMeetingInfoDeterminationProceedingPunishmentEnhance
+                    method="POST"
+                >
+                    <DateSelector
+                        hasError={$stepperChargesMeetingInfoDeterminationProceedingPunishmentErrors.meetingDate
+                            ? true
+                            : false}
+                        name="meetingDate"
+                        handleDateChange
+                        label="Tarikh Mesyuarat"
+                        bind:selectedDate={$stepperChargesMeetingInfoDeterminationProceedingPunishmentForm.meetingDate}
+                    ></DateSelector>
+                    {#if $stepperChargesMeetingInfoDeterminationProceedingPunishmentErrors.meetingDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$stepperChargesMeetingInfoDeterminationProceedingPunishmentErrors
+                                .meetingDate[0]}</span
+                        >
+                    {/if}
 
-                <div class="my-5 h-fit w-full border-b border-t">
-                    <SectionHeader
-                        color="system-primary"
-                        title="Maklumat Keputusan Mesyuarat Prosiding Penentuan Hukuman"
-                    ></SectionHeader>
-                </div>
+                    <DropdownSelect
+                        hasError={$stepperChargesMeetingInfoDeterminationProceedingPunishmentErrors.meetingNumberDropdown
+                            ? true
+                            : false}
+                        dropdownType="label-left-full"
+                        id="meetingNumberDropdown"
+                        label="Bil Mesyuarat"
+                        bind:value={$stepperChargesMeetingInfoDeterminationProceedingPunishmentForm.meetingNumberDropdown}
+                        options={[
+                            {
+                                value: 'non-demotion',
+                                name: 'Jawatankuasa Tatatertib Bukan Dengan Tujuan Buang Kerja Atau Turun Pangkat Bagi Kumpulan Pengurusan Dan Profesional LKIM (JKTT B BK/TP PP)',
+                            },
+                            {
+                                value: 'with-demotion',
+                                name: 'Jawatankuasa Tatatertib Dengan Tujuan Buang Kerja Atau Turun Pangkat Bagi Kumpulan Pengurusan Dan Profesional LKIM (JKTT  BK/TP PP)',
+                            },
+                        ]}
+                    ></DropdownSelect>
+                    {#if $stepperChargesMeetingInfoDeterminationProceedingPunishmentErrors.meetingNumberDropdown}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$stepperChargesMeetingInfoDeterminationProceedingPunishmentErrors
+                                .meetingNumberDropdown[0]}</span
+                        >
+                    {/if}
 
-                {#each Object.entries(mockCharges) as [key, charge]}
-                    <div
-                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
-                    >
+                    <DropdownSelect
+                        hasError={$stepperChargesMeetingInfoDeterminationProceedingPunishmentErrors.meetingNameDropdown
+                            ? true
+                            : false}
+                        dropdownType="label-left-full"
+                        id="meetingNameDropdown"
+                        label="Nama Mesyuarat"
+                        bind:value={$stepperChargesMeetingInfoDeterminationProceedingPunishmentForm.meetingNameDropdown}
+                        options={[
+                            {
+                                value: 'non-demotion',
+                                name: 'Jawatankuasa Tatatertib Bukan Dengan Tujuan Buang Kerja Atau Turun Pangkat Bagi Kumpulan Pengurusan Dan Profesional LKIM (JKTT B BK/TP PP)',
+                            },
+                            {
+                                value: 'with-demotion',
+                                name: 'Jawatankuasa Tatatertib Dengan Tujuan Buang Kerja Atau Turun Pangkat Bagi Kumpulan Pengurusan Dan Profesional LKIM (JKTT  BK/TP PP)',
+                            },
+                        ]}
+                    ></DropdownSelect>
+                    {#if $stepperChargesMeetingInfoDeterminationProceedingPunishmentErrors.meetingNameDropdown}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$stepperChargesMeetingInfoDeterminationProceedingPunishmentErrors
+                                .meetingNameDropdown[0]}</span
+                        >
+                    {/if}
+
+                    <div class="my-5 h-fit w-full border-b border-t">
                         <SectionHeader
                             color="system-primary"
-                            title="Pertuduhan #{key}: {charge?.title}"
+                            title="Maklumat Keputusan Mesyuarat Prosiding Penentuan Hukuman"
                         ></SectionHeader>
-                        <hr />
-                        <RadioSingle
-                            disabled={false}
-                            options={meetingOptions}
-                            legend={'Keputusan Mesyuarat'}
-                        ></RadioSingle>
-
-                        <hr />
-
-                        <div class="mx-2.5">
-                            <AddPunishmentFromGroup {key} />
-                        </div>
                     </div>
-                {/each}
-            </StepperContentBody>
+
+                    {#each Object.entries(mockCharges) as [key, charge]}
+                        <div
+                            class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
+                        >
+                            <SectionHeader
+                                color="system-primary"
+                                title="Pertuduhan #{key}: {charge?.title}"
+                            ></SectionHeader>
+                            <hr />
+
+                            <RadioSingle
+                                options={meetingOptions}
+                                hasError={$stepperChargesMeetingInfoDeterminationProceedingPunishmentErrors.meetingResultOption
+                                    ? true
+                                    : false}
+                                name="meetingResultOption"
+                                legend="Keputusan Mesyuarat"
+                                bind:userSelected={$stepperChargesMeetingInfoDeterminationProceedingPunishmentForm.meetingResultOption}
+                            ></RadioSingle>
+                            {#if $stepperChargesMeetingInfoDeterminationProceedingPunishmentErrors.meetingResultOption}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$stepperChargesMeetingInfoDeterminationProceedingPunishmentErrors
+                                        .meetingResultOption[0]}</span
+                                >
+                            {/if}
+                            
+                            <hr />
+                            <div class="mx-2.5">
+                                <AddPunishmentFromGroup {key} />
+                            </div>
+                        </div>
+                    {/each}
+                </form></StepperContentBody
+            >
         </StepperContent>
         <StepperContent>
             <StepperContentHeader
@@ -883,7 +997,12 @@
         <StepperContent>
             <StepperContentHeader
                 title="Maklumat Keputusan Mesyuarat Prosiding Tatatertib"
-                ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            >
+                <TextIconButton
+                    primary
+                    label="Simpan"
+                    form="FormStepperSuspensionMeetingInfo"
+                >
                     <SvgCheck></SvgCheck>
                 </TextIconButton>
             </StepperContentHeader>
@@ -892,144 +1011,225 @@
                     color="system-primary"
                     title="Maklumat Mesyuarat"
                 />
-                <DateSelector
-                    disabled={isCompleted}
-                    labelBlack={true}
-                    label="Tarikh Mesyuarat"
-                    selectedDate={''}
-                    handleDateChange={() => {}}
-                />
-                <DropdownSelect
-                    disabled={isCompleted}
-                    labelBlack={true}
-                    dropdownType="label-left-full"
-                    name="meeting-number-dropdown"
-                    label="Bil Mesyuarat"
-                    value={''}
-                    options={meetings}
-                ></DropdownSelect>
-                <DropdownSelect
-                    disabled={isCompleted}
-                    labelBlack={true}
-                    dropdownType="label-left-full"
-                    name="meeting-name-dropdown"
-                    label="Nama Mesyuarat"
-                    value={''}
-                    options={punishmentMeetingNames}
-                ></DropdownSelect>
-
-                <RadioSingle
-                    disabled={false}
-                    options={meetingOptions}
-                    legend={'Keputusan Mesyuarat'}
-                ></RadioSingle>
-                <div
-                    class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
+                <form
+                    id="FormStepperSuspensionMeetingInfo"
+                    class="flex w-full flex-col gap-2"
+                    use:stepperSuspensionMeetingInfoEnhance
+                    method="POST"
                 >
-                    <SectionHeader
-                        title="Maklumat Keputusan Mesyuarat Prosiding Tatatertib"
-                    ></SectionHeader>
+                    <DateSelector
+                        hasError={$stepperSuspensionMeetingInfoErrors.meetingDate
+                            ? true
+                            : false}
+                        name="meetingDate"
+                        handleDateChange
+                        label="Tarikh Mesyuarat"
+                        bind:selectedDate={$stepperSuspensionMeetingInfoForm.meetingDate}
+                    ></DateSelector>
+                    {#if $stepperSuspensionMeetingInfoErrors.meetingDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$stepperSuspensionMeetingInfoErrors
+                                .meetingDate[0]}</span
+                        >
+                    {/if}
+
+                    <DateSelector
+                        hasError={$stepperSuspensionMeetingInfoErrors.meetingNumberDropdown
+                            ? true
+                            : false}
+                        name="meetingNumberDropdown"
+                        handleDateChange
+                        label="Bil Mesyuarat"
+                        bind:selectedDate={$stepperSuspensionMeetingInfoForm.meetingNumberDropdown}
+                    ></DateSelector>
+                    {#if $stepperSuspensionMeetingInfoErrors.meetingNumberDropdown}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$stepperSuspensionMeetingInfoErrors
+                                .meetingNumberDropdown[0]}</span
+                        >
+                    {/if}
 
                     <DropdownSelect
-                        disabled={isCompleted}
-                        labelBlack={true}
+                        hasError={$stepperSuspensionMeetingInfoErrors.meetingNameDropdown
+                            ? true
+                            : false}
                         dropdownType="label-left-full"
-                        name="suspension-type-dropdown"
-                        id="suspension-type-dropdown"
-                        label="Jenis Prosiding Tahan Kerja"
-                        bind:value={selectedSuspensionType}
+                        id="meetingNameDropdown"
+                        label="Nama Mesyuarat"
+                        bind:value={$stepperSuspensionMeetingInfoForm.meetingNameDropdown}
                         options={[
                             {
-                                value: 'suspension-investigation',
-                                name: 'Tahan Kerja - Penyiasatan',
+                                value: 'non-demotion',
+                                name: 'Jawatankuasa Tatatertib Bukan Dengan Tujuan Buang Kerja Atau Turun Pangkat Bagi Kumpulan Pengurusan Dan Profesional LKIM (JKTT B BK/TP PP)',
                             },
                             {
-                                value: 'suspension-criminal-offence',
-                                name: 'Tahan Kerja - Prosiding Jenayah',
+                                value: 'with-demotion',
+                                name: 'Jawatankuasa Tatatertib Dengan Tujuan Buang Kerja Atau Turun Pangkat Bagi Kumpulan Pengurusan Dan Profesional LKIM (JKTT  BK/TP PP)',
                             },
                         ]}
                     ></DropdownSelect>
+                    {#if $stepperSuspensionMeetingInfoErrors.meetingNameDropdown}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$stepperSuspensionMeetingInfoErrors
+                                .meetingNameDropdown[0]}</span
+                        >
+                    {/if}
 
-                    <form action="">
-                        <div class="mb-2.5 flex w-full flex-col gap-2.5">
-                            {#if selectedSuspensionType === 'suspension-investigation'}
-                                <SectionHeader
-                                    color="system-primary"
-                                    title="Butiran Tahan Kerja - Tujuan Penyiasatan"
-                                ></SectionHeader>
-                                <DateSelector
-                                    disabled={isCompleted}
-                                    labelBlack={true}
-                                    name="start-date-suspenion-investigation"
-                                    label="Tarikh Mula"
-                                    handleDateChange={() => {}}
-                                />
-                                <DateSelector
-                                    disabled={true}
-                                    labelBlack={true}
-                                    name="end-date-suspenion-investigation"
-                                    label="Tarikh Akhir - 2 Bulan Dari Tarikh Mula"
-                                    selectedDate={calculateTwoMonthsLater(
-                                        suspensionStartDate,
-                                    )}
-                                    handleDateChange={() => {}}
-                                />
-                                <TextField
-                                    disabled={true}
-                                    type="text"
-                                    id="entitled-emolument-suspenion-investigation"
-                                    label="Emolumen Yang Layak Diterima"
-                                    value={'100%'}
-                                ></TextField>
-                            {/if}
-                            {#if selectedSuspensionType === 'suspension-criminal-offence'}
-                                <SectionHeader
-                                    color="system-primary"
-                                    title="Butiran Tahan Kerja - Prosiding Jenayah"
-                                ></SectionHeader>
-                                <DateSelector
-                                    disabled={isCompleted}
-                                    labelBlack={true}
-                                    name="start-date-suspenion-criminal-offence"
-                                    label="Tarikh Mula"
-                                    selectedDate={''}
-                                    handleDateChange={() => {}}
-                                />
-                                <TextField
-                                    disabled={true}
-                                    type="text"
-                                    id="entitled-emolument-criminal-offence"
-                                    label="Emolumen Yang Layak Diterima"
-                                    value={'50%'}
-                                ></TextField>
-                            {/if}
-                        </div>
-                    </form>
-                </div>
-                <div
-                    class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
-                >
-                    <div class="mb-2.5 flex w-full flex-col gap-2.5">
-                        <SectionHeader title="Butiran Gantung Kerja"
+                    <RadioSingle
+                        options={meetingOptions}
+                        hasError={$stepperSuspensionMeetingInfoErrors.meetingResultOption
+                            ? true
+                            : false}
+                        name="meetingResultOption"
+                        legend="Keputusan Mesyuarat"
+                        bind:userSelected={$stepperSuspensionMeetingInfoForm.meetingResultOption}
+                    ></RadioSingle>
+                    {#if $stepperSuspensionMeetingInfoErrors.meetingResultOption}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$stepperSuspensionMeetingInfoErrors
+                                .meetingResultOption[0]}</span
+                        >
+                    {/if}
+
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
+                    >
+                        <SectionHeader
+                            title="Maklumat Keputusan Mesyuarat Prosiding Tatatertib"
                         ></SectionHeader>
-                        <DateSelector
-                            disabled={isCompleted}
-                            labelBlack={true}
-                            name="start-date-suspenion-suspended"
-                            label="Tarikh Mula"
-                            selectedDate={''}
-                            handleDateChange={() => {}}
-                        />
-                        <TextField
-                            disabled={true}
-                            type="text"
-                            id="entitled-emolument-suspended"
-                            label="Emolumen Yang Layak Diterima"
-                            value={'0%'}
-                        ></TextField>
+
+                        <DropdownSelect
+                            hasError={$stepperSuspensionMeetingInfoErrors.suspensionTypeDropdown
+                                ? true
+                                : false}
+                            dropdownType="label-left-full"
+                            id="suspensionTypeDropdown"
+                            label="Jenis Prosiding Tahan Kerja"
+                            bind:value={$stepperSuspensionMeetingInfoForm.suspensionTypeDropdown}
+                            options={[
+                                {
+                                    value: 'suspension-investigation',
+                                    name: 'Tahan Kerja - Penyiasatan',
+                                },
+                                {
+                                    value: 'suspension-criminal-offence',
+                                    name: 'Tahan Kerja - Prosiding Jenayah',
+                                },
+                            ]}
+                        ></DropdownSelect>
+                        {#if $stepperSuspensionMeetingInfoErrors.suspensionTypeDropdown}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$stepperSuspensionMeetingInfoErrors
+                                    .suspensionTypeDropdown[0]}</span
+                            >
+                        {/if}
+
+                        <form action="">
+                            <div class="mb-2.5 flex w-full flex-col gap-2.5">
+                                {#if selectedSuspensionType === 'suspension-investigation'}
+                                    <SectionHeader
+                                        color="system-primary"
+                                        title="Butiran Tahan Kerja - Tujuan Penyiasatan"
+                                    ></SectionHeader>
+                                    <DateSelector
+                                        hasError={$stepperSuspensionMeetingInfoErrors.startDateSuspensionInvestigation
+                                            ? true
+                                            : false}
+                                        name="startDateSuspensionInvestigation"
+                                        handleDateChange
+                                        label="Tarikh Mula"
+                                        bind:selectedDate={$stepperSuspensionMeetingInfoForm.startDateSuspensionInvestigation}
+                                    ></DateSelector>
+                                    {#if $stepperSuspensionMeetingInfoErrors.startDateSuspensionInvestigation}
+                                        <span
+                                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                            >{$stepperSuspensionMeetingInfoErrors
+                                                .startDateSuspensionInvestigation[0]}</span
+                                        >
+                                    {/if}
+
+                                    <DateSelector
+                                        disabled={true}
+                                        labelBlack={true}
+                                        name="end-date-suspenion-investigation"
+                                        label="Tarikh Akhir - 2 Bulan Dari Tarikh Mula"
+                                        selectedDate={calculateTwoMonthsLater(
+                                            suspensionStartDate,
+                                        )}
+                                        handleDateChange={() => {}}
+                                    />
+                                    <TextField
+                                        disabled={true}
+                                        type="text"
+                                        id="entitled-emolument-suspenion-investigation"
+                                        label="Emolumen Yang Layak Diterima"
+                                        value={'100%'}
+                                    ></TextField>
+                                {/if}
+                                {#if selectedSuspensionType === 'suspension-criminal-offence'}
+                                    <SectionHeader
+                                        color="system-primary"
+                                        title="Butiran Tahan Kerja - Prosiding Jenayah"
+                                    ></SectionHeader>
+                                    <DateSelector
+                                        disabled={isCompleted}
+                                        labelBlack={true}
+                                        name="start-date-suspenion-criminal-offence"
+                                        label="Tarikh Mula"
+                                        selectedDate={''}
+                                        handleDateChange={() => {}}
+                                    />
+                                    <TextField
+                                        disabled={true}
+                                        type="text"
+                                        id="entitled-emolument-criminal-offence"
+                                        label="Emolumen Yang Layak Diterima"
+                                        value={'50%'}
+                                    ></TextField>
+                                {/if}
+                            </div>
+                        </form>
                     </div>
-                </div>
-            </StepperContentBody>
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
+                    >
+                        <div class="mb-2.5 flex w-full flex-col gap-2.5">
+                            <SectionHeader title="Butiran Gantung Kerja"
+                            ></SectionHeader>
+                            <DateSelector
+                                hasError={$stepperSuspensionMeetingInfoErrors.startDateSuspensionSuspended
+                                    ? true
+                                    : false}
+                                name="startDateSuspensionSuspended"
+                                handleDateChange
+                                label="Tarikh Mula"
+                                bind:selectedDate={$stepperSuspensionMeetingInfoForm.startDateSuspensionSuspended}
+                            ></DateSelector>
+                            {#if $stepperSuspensionMeetingInfoErrors.startDateSuspensionSuspended}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$stepperSuspensionMeetingInfoErrors
+                                        .startDateSuspensionSuspended[0]}</span
+                                >
+                            {/if}
+
+                            <TextField
+                                disabled={true}
+                                type="text"
+                                id="entitled-emolument-suspended"
+                                label="Emolumen Yang Layak Diterima"
+                                value={'0%'}
+                            ></TextField>
+                        </div>
+                    </div>
+                </form></StepperContentBody
+            >
         </StepperContent>
     {/if}
 </Stepper>
+<Toaster />
