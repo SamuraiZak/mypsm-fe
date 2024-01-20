@@ -1,13 +1,13 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
-    import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import { Badge } from 'flowbite-svelte';
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { ZodError, z } from 'zod';
-
+    import { superForm } from 'sveltekit-superforms/client';
+    import { _approverResultSchema, _submitApproverResultForm } from '../+page';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from '../$types';
+    export let data: PageData;
     let results = [
         { value: 'passed', name: 'LULUS' },
         { value: 'notPassed', name: 'TIDAK LULUS' },
@@ -15,85 +15,37 @@
         { value: 'notSupported', name: 'TIDAK SOKONG' },
     ];
 
-    let isApproved: string = 'true';
+    let isApproved: boolean = true;
     const approveOptions: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'LULUS',
         },
         {
-            value: 'false',
+            value: false,
             label: 'TIDAK LULUS',
         },
     ];
 
     let passerResult: string = 'passed';
-    // =========================================================================
-    // z validation schema and submit function for the new employment form fields
-    // =========================================================================
-    let errorData: any;
 
-    const longTextSchema = z
-        .string({ required_error: 'Medan ini tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim();
-
-    // New Employment - Approver Result section
-    const approverResultSchema = z.object({
-        approverRemark: longTextSchema,
-        approverResult: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
+    export const { form, errors, enhance } = superForm(data.supporterForm, {
+        SPA: true,
+        validators: _approverResultSchema,
+        delayMs: 500,
+        timeoutMs: 2000,
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+        onSubmit() {
+            _submitApproverResultForm($form);
+        },
     });
-
-    export const submitApproverResultForm = async (event: Event) => {
-        const formElement = event.target as HTMLFormElement;
-        const formData = new FormData(formElement);
-
-        const approverResultData = {
-            approverRemark: String(formData.get('approverRemark')),
-            approverResult: String(formData.get('approverResult')),
-        };
-
-        try {
-            errorData = [];
-            const result = approverResultSchema.parse(approverResultData);
-
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                setTimeout(() => goto('../../perjawatan/tawaran-baru'), 1500);
-            }
-        } catch (error: unknown) {
-            if (error instanceof ZodError) {
-                const { fieldErrors: errors } = error.flatten();
-                errorData = errors;
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
 </script>
 
 <form
     id="approverResultForm"
-    on:submit={submitApproverResultForm}
+    method="POST"
+    use:enhance
     class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
 >
     <div class="mb-5">
@@ -103,15 +55,15 @@
         <b class="text-sm text-system-primary">Keputusan Pelulus</b>
     </div>
     <LongTextField
-        hasError={errorData?.approverRemark}
+        hasError={!!$errors.approverRemark}
         name="approverRemark"
         id="approver-remark"
         label="Tindakan/Ulasan"
-        value=""
+        bind:value={$form.approverRemark}
     ></LongTextField>
-    {#if errorData?.approverRemark}
+    {#if $errors.approverRemark}
         <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-            >{errorData?.approverRemark[0]}</span
+            >{$errors.approverRemark}</span
         >
     {/if}
 
@@ -120,11 +72,11 @@
         disabled={false}
         options={approveOptions}
         legend={'Keputusan'}
-        bind:userSelected={isApproved}
+        bind:userSelected={$form.approverResult}
     ></RadioSingle>
-    {#if errorData?.approverResult}
+    {#if $errors.approverResult}
         <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-            >{errorData?.approverResult[0]}</span
+            >{$errors.approverResult}</span
         >
     {/if}
 </form>

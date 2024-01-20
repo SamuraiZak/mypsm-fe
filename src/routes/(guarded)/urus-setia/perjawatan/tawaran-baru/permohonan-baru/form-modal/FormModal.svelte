@@ -3,7 +3,6 @@
     import GeneralButton from '$lib/components/buttons/GeneralButton.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
-    import type { PageData } from '../$types';
     import { superForm } from 'sveltekit-superforms/client';
     import {
         _advancementSchema,
@@ -12,11 +11,11 @@
     import { Toaster } from 'svelte-french-toast';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
 
-    export let data: PageData;
+    export let data;
     export let selectedStaffs: any[];
     export let isOpen: boolean = false;
 
-    export const { form, errors, enhance } = superForm(data?.advancementForm, {
+    export const { form, errors, enhance } = superForm(data, {
         SPA: true,
         validators: _advancementSchema,
         async onSubmit() {

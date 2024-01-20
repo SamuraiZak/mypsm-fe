@@ -16,7 +16,8 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
-
+    import type { PageData } from './$types';
+    export let data: PageData;
     let id: string = '193699';
     let status: string = 'Baru';
 </script>
@@ -89,7 +90,7 @@
             >
             <StepperContentBody
                 ><div class="flex w-full flex-col gap-2.5">
-                    <KeputusanPerananLain />
+                    <KeputusanPerananLain {data} />
                 </div></StepperContentBody
             >
         </StepperContent>

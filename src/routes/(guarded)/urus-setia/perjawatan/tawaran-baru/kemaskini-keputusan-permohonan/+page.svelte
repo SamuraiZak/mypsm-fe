@@ -17,7 +17,8 @@
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import { createEventDispatcher, onMount } from 'svelte';
-
+    import type { PageData } from './$types';
+    export let data: PageData;
     let id: string = '193699';
     let status: string = 'Baru';
 
@@ -76,7 +77,7 @@
             >
             <StepperContentBody
                 ><div class="flex w-full flex-col gap-2.5">
-                    <KeputusanMesyuarat />
+                    <KeputusanMesyuarat bind:data />
                 </div></StepperContentBody
             >
         </StepperContent>

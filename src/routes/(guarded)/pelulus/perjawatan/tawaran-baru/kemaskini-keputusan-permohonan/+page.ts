@@ -24,21 +24,21 @@ const booleanSchema = z.boolean({
 });
 
 // New Employment - Supporter Result section
-export const _supporterResultSchema = z.object({
-    supporterRemark: longTextSchema,
-    supporterResult: booleanSchema,
+export const _approverResultSchema = z.object({
+    approverRemark: longTextSchema,
+    approverResult: booleanSchema,
 });
 
 export const load = async () => {
-    const supporterForm = await superValidate(_supporterResultSchema);
+    const supporterForm = await superValidate(_approverResultSchema);
 
     return {
         supporterForm,
     };
 };
 
-export const _submitSupporterResultForm = async (formData: object) => {
-    const form = await superValidate(formData, _supporterResultSchema);
+export const _submitApproverResultForm = async (formData: object) => {
+    const form = await superValidate(formData, _approverResultSchema);
 
     if (!form.valid) {
         getErrorToast();

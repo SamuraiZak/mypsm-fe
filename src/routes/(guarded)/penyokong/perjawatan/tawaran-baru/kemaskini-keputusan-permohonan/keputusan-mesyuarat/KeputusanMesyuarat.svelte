@@ -13,14 +13,14 @@
     let selectedMeetingType: string = meetings[2].value;
     let meetingDate: Date;
     let staffs: any[] = maklumatPeribadiForm;
-    let selectedResult: { staff: string; meetingResult: string }[];
+    let selectedResult: { staff: string; meetingResult: boolean }[];
     let errorData: any;
     let options: RadioOption[] = [
-        { value: 'pass', label: 'LULUS' },
-        { value: 'failed', label: 'TIDAK LULUS' },
+        { value: true, label: 'LULUS' },
+        { value: false, label: 'TIDAK LULUS' },
     ];
-    let radioValue: string[] = [options[0].value];
-    let meetingTypeOption: any;
+    let radioValue: boolean[] = [true];
+    let meetingTypeOption: any = '1';
     let salaryMovementMonthTypeOption: string = '1';
 
     // export let data: MaklumatPeribadi[] = [];
@@ -31,15 +31,6 @@
             meetingResult: radioValue[0],
         },
     ];
-
-    // function handleSumbit() {
-    //     selectedResult.forEach((entry, index) => {
-    //         // entry.staff = staffs[index].namaPenuh;
-    //         // entry.meetingResult = radioValue[index];
-    //         // console.table(selectedResult);
-    //         console.log(entry);
-    //     });
-    // }
 </script>
 
 <em class="text-sm text-system-primary"
@@ -48,6 +39,12 @@
 >
 <form>
     <div class="space-y-2.5">
+        <TextField
+            label="Kumpulan Mesyuarat"
+            disabled={true}
+            value={currMeetingBat}
+            type="text"
+        />
         <DropdownSelect
             disabled
             hasError={errorData?.meetingTypeOption}
@@ -80,52 +77,13 @@
                 >{errorData?.meetingDate[0]}</span
             >
         {/if}
-        <DropdownSelect
-            disabled
-            hasError={errorData?.salaryMovementMonthTypeOption}
-            dropdownType="label-left-full"
-            id="salaryMovementMonthTypeOption"
-            label="Bulan Pergerakan Gaji"
-            bind:value={salaryMovementMonthTypeOption}
-            options={[
-                { value: '1', name: 'Januari' },
-                { value: '2', name: 'April' },
-                { value: '3', name: 'Julai' },
-                { value: '4', name: 'Oktober' },
-            ]}
-        ></DropdownSelect>
-        {#if errorData?.salaryMovementMonthTypeOption}
-            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{errorData?.salaryMovementMonthTypeOption[0]}</span
-            >
-        {/if}
-        <TextField
-            label="Kumpulan Mesyuarat"
-            disabled={true}
-            value={currMeetingBat}
-            type="text"
-        />
         <TextField
             label="Jumlah Kakitangan Terlibat"
             disabled={true}
             value={staffAmount}
             type="text"
         />
-        <DropdownSelect
-            disabled={true}
-            id="meeting-type"
-            label="Nama dan Bilangan Mesyuarat"
-            dropdownType="label-left-full"
-            options={meetings}
-            bind:index={selectedMeetingType}
-        />
-        <TextField
-            disabled={true}
-            label="Tarikh Mesyuarat"
-            placeholder=""
-            bind:value={meetingDate}
-            type="date"
-        />
+        
     </div>
 
     <hr class="my-2.5" />

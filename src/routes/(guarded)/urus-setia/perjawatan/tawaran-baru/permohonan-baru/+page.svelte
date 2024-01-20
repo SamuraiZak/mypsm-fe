@@ -123,4 +123,4 @@
 
 <Toaster />
 
-<FormModal bind:selectedStaffs={$form.selectedStaffs} bind:isOpen={openModal} />
+<FormModal bind:data={data.advancementForm} bind:selectedStaffs={$form.selectedStaffs} bind:isOpen={openModal} />

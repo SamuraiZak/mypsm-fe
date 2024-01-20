@@ -9,10 +9,9 @@
     import { ZodError, string, z } from 'zod';
     import { json } from '@sveltejs/kit';
     import toast, { Toaster } from 'svelte-french-toast';
-    import type { PageData } from '../$types';
     import { _meetingResultSchema, _submitMeetingResultResult } from '../+page';
     import { superForm } from 'sveltekit-superforms/client';
-    export let data: PageData;
+    export let data;
     let currMeetingBat: string = mesyuarat[0].mesyuarat;
     let staffAmount: number = mesyuarat[0].jumlahKakitangan;
     let selectedMeetingType: string = meetings[0].value;
@@ -83,7 +82,7 @@
         />
         {#if $errors.meetingType}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$errors.meetingType[0]}</span
+                >{$errors.meetingType}</span
             >
         {/if}
         <TextField
@@ -96,7 +95,7 @@
         />
         {#if $errors.meetingDate}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$errors.meetingDate[0]}</span
+                >{$errors.meetingDate}</span
             >
         {/if}
     </div>
@@ -115,14 +114,14 @@
                 value={value.id}
             />
             <LongTextField
-                hasError={!!$errors.meetingRemark}
+                hasError={!!value.meetingRemark}
                 name="meetingRemark"
                 label="Tindakan/Ulasan Mesyuarat"
             />
-            {#if $errors.meetingRemark}
+            {#if value.meetingRemark}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$errors.meetingRemark[0]}</span
+                    >{value.meetingRemark[0]}</span
                 >
             {/if}
             <RadioSingle
@@ -132,10 +131,10 @@
                 legend="Keputusan Mesyuarat"
                 userSelected={radioValue[index]}
             />
-            {#if $errors.meetingResult}
+            {#if value.noPekerja}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$errors.meetingResult[0]}</span
+                    >{value.noPekerja}</span
                 >
             {/if}
         </div>

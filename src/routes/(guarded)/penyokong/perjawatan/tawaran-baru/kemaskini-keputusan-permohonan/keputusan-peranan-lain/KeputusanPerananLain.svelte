@@ -1,12 +1,17 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
-    import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import { Badge } from 'flowbite-svelte';
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { ZodError, z } from 'zod';
+    import { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _submitSupporterResultForm,
+        _supporterResultSchema,
+    } from '../+page';
+    import type { PageData } from '../$types';
+
+    export let data: PageData;
 
     let results = [
         { value: 'passed', name: 'LULUS' },
@@ -15,26 +20,36 @@
         { value: 'notSupported', name: 'TIDAK SOKONG' },
     ];
 
-    let isSupported: string = 'true';
     const supportOptions: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'SOKONG',
         },
         {
-            value: 'false',
+            value: false,
             label: 'TIDAK SOKONG',
         },
     ];
 
     let passerResult: string = 'passed';
 
-
+    export const { form, errors, enhance } = superForm(data.supporterForm, {
+        SPA: true,
+        validators: _supporterResultSchema,
+        delayMs: 500,
+        timeoutMs: 2000,
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+        onSubmit() {
+            _submitSupporterResultForm($form);
+        },
+    });
 </script>
 
 <form
     id="supporterResultForm"
-    on:submit|preventDefault={submitSupporterResultForm}
+    method="POST"
+    use:enhance
     class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
 >
     <div class="mb-5">
@@ -44,15 +59,15 @@
         <b class="text-sm text-system-primary">Keputusan Penyokong</b>
     </div>
     <LongTextField
-        hasError={errorData?.supporterRemark}
+        hasError={!!$errors.supporterRemark}
         name="supporterRemark"
         id="supporter-remark"
         label="Tindakan/Ulasan"
-        value=""
+        bind:value={$form.supporterRemark}
     ></LongTextField>
-    {#if errorData?.supporterRemark}
+    {#if $errors.supporterRemark}
         <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-            >{errorData?.supporterRemark[0]}</span
+            >{$errors.supporterRemark}</span
         >
     {/if}
 
@@ -61,11 +76,11 @@
         disabled={false}
         options={supportOptions}
         legend={'Keputusan'}
-        bind:userSelected={isSupported}
+        bind:userSelected={$form.supporterResult}
     ></RadioSingle>
-    {#if errorData?.supporterResult}
+    {#if $errors.supporterResult}
         <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-            >{errorData?.supporterResult[0]}</span
+            >{$errors.supporterResult}</span
         >
     {/if}
 </form>
