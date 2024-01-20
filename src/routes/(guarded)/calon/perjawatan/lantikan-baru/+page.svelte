@@ -78,8 +78,8 @@
         <SectionHeader title="Senarai Permohonan"></SectionHeader>
         <DynamicTable
             withActions
-            actionOptions={['detail']}
-            detailActions={() => {
+            actionOptions={['edit']}
+            editActions={() => {
                 const url =
                     './lantikan-baru/butiran-calon-' + tempStaff.temporaryId;
                 goto(url);
