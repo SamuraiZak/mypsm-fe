@@ -16,6 +16,15 @@ const shortTextSchema = z
         message: 'Medan ini tidak boleh melebihi 124 karakter.',
     })
     .trim();
+const codeSchema = z
+    .string({ required_error: 'Medan ini tidak boleh kosong.' })
+    .min(1, {
+        message: 'Medan ini hendaklah lebih daripada 1 karakter.',
+    })
+    .max(124, {
+        message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    })
+    .trim();
 const longTextSchema = z
     .string({ required_error: 'Medan ini tidak boleh kosong.' })
     .min(4, {
@@ -61,13 +70,13 @@ const booleanSchema = z.boolean({
     invalid_type_error: 'Medan ini haruslah jenis boolean.',
 });
 
-// New employment - add academic section
-export const _addAcademicInfoSchema = z.object({
-    title: shortTextSchema,
-    institution: shortTextSchema,
-    year: shortTextSchema,
-    achievement: shortTextSchema,
-    remarks: longTextSchema,
+const checkboxSchema = z.enum(['on'], {
+    errorMap: (issue, { defaultError }) => ({
+        message:
+            issue.code === 'invalid_enum_value'
+                ? 'Sila tandakan kotak semak.'
+                : defaultError,
+    }),
 });
 
 export const _personalInfoForm = z
@@ -116,13 +125,35 @@ export const _personalInfoForm = z
 //================== Maklumat Akademik =====================
 //==========================================================
 
+const academicListSchema = z.object({
+    type: z.string(),
+    name: codeSchema,
+    completionYear: z.number(),
+    finalGrade: codeSchema,
+    field: z.string(),
+    remark: z.string(),
+});
+
 export const _academicInfoSchema = z.object({
-    name: shortTextSchema,
+    academicList: z.array(academicListSchema),
+    isReadonly: z.boolean(),
+});
+
+// New employment - add academic section
+export const _addAcademicInfoSchema = z.object({
     type: shortTextSchema,
+    name: codeSchema,
     completionYear: shortTextSchema,
-    finalGrade: shortTextSchema,
+    finalGrade: codeSchema,
     field: shortTextSchema,
-    remark: shortTextSchema,
+    remark: longTextSchema,
+});
+// New employment - add activity section
+export const _addActivitiesInfoSchema = z.object({
+    name: shortTextSchema,
+    joinDate: maxDateSchema,
+    position: shortTextSchema,
+    description: longTextSchema,
 });
 
 //==========================================================
@@ -155,6 +186,43 @@ export const _addExperienceModalSchema = z.object({
     addSalary: z.coerce.number({
         invalid_type_error: 'Medan ini hendaklah ditetapkan dengan angka',
     }),
+});
+
+//==========================================================
+//================== Maklumat Aktiviti Modal ===================
+//==========================================================
+
+export const _addActivityModalSchema = z.object({
+    addName: shortTextSchema,
+    addJoinDate: maxDateSchema,
+    addPosition: shortTextSchema,
+    addDescription: shortTextSchema,
+});
+
+//==========================================================
+//================== Maklumat Keluarga Modal ===================
+//==========================================================
+
+export const _addFamilyModalSchema = z.object({
+    addName: shortTextSchema,
+    addIdentityDocumentNumber: shortTextSchema,
+    addGender: generalSelectSchema,
+    addRelationship: generalSelectSchema,
+    addOccupation: shortTextSchema.nullish(),
+    addIsInSchool: booleanSchema,
+});
+
+//==========================================================
+//================== Maklumat Bukan Keluarga Modal ===================
+//==========================================================
+
+export const _addNonFamilyModalSchema = z.object({
+    addNonFamilyName: shortTextSchema,
+    addNonFamilyIdentityDocumentNumber: shortTextSchema,
+    addNonFamilyGender: generalSelectSchema,
+    addNonFamilyRelationship: generalSelectSchema,
+    addNonFamilyOccupation: shortTextSchema.nullish(),
+    addNonFamilyIsInSchool: booleanSchema,
 });
 
 //==========================================================
@@ -199,7 +267,7 @@ export const _serviceInfoSchema = z.object({
 export const _nextOfKinInfoSchema = z.object({
     name: shortTextSchema,
     identityDocumentNumber: shortTextSchema,
-    birthDate: minDateSchema,
+    birthDate: maxDateSchema,
     relationship: generalSelectSchema,
     marriageDate: maxDateSchema,
     identityDocumentType: generalSelectSchema,
@@ -214,46 +282,115 @@ export const _nextOfKinInfoSchema = z.object({
 //================== Add Maklumat Waris ========================
 //==========================================================
 export const _addNextOfKinInfoSchema = z.object({
-    name: shortTextSchema,
-    identityDocumentNumber: shortTextSchema,
-    birthDate: minDateSchema,
-    relationship: generalSelectSchema,
-    marriageDate: maxDateSchema,
-    identityDocumentType: generalSelectSchema,
-    homeNumber: shortTextSchema,
-    mobileNumber: shortTextSchema,
-    position: shortTextSchema,
-    company: shortTextSchema,
-    companyAddress: shortTextSchema,
+    addNextOfKinName: shortTextSchema,
+    addNextOfKinIdentityDocumentNumber: shortTextSchema,
+    addNextOfKinBirthDate: maxDateSchema,
+    addNextOfKinRelationship: generalSelectSchema,
+    addNextOfKinMarriageDate: maxDateSchema,
+    addNextOfKinIdentityDocumentType: generalSelectSchema,
+    addNextOfKinHomeNumber: shortTextSchema,
+    addNextOfKinMobileNumber: shortTextSchema,
+    addNextOfKinPosition: shortTextSchema,
+    addNextOfKinCompany: shortTextSchema,
+    addNextOfKinCompanyAddress: shortTextSchema,
 });
+
+interface IAcademicResponse {
+    academicList: [
+        {
+            type: string;
+            name: string;
+            completionYear: string;
+            finalGrade: string;
+            field: string;
+            remark: string;
+        },
+    ];
+    isReadonly: boolean;
+}
+interface IExperienceResponse {
+    experienceList: [
+        {
+            company: string;
+            address: string;
+            position: string;
+            positionCode: string;
+            startDate: Date;
+            endDate: Date;
+            salary: number;
+        },
+    ];
+    isReadonly: boolean;
+}
+interface IActivityResponse {
+    activityList: [
+        {
+            name: string;
+            joinDate: Date;
+            position: string;
+            description: string;
+        },
+    ];
+    isReadonly: boolean;
+}
 
 export const load = async ({ params }) => {
     // const candidateId = parseInt(params.tempId);
-    const response = await api
+    const personalInfoResponse = await api
         .get(`api/v1/employments/new-hire-personal-detail/${params.tempId}`)
         .json();
 
+    const academicInfoResponse = await api
+        .get(`api/v1/employments/new-hire-academic/${params.tempId}`)
+        .json();
+
+    const academicDetails: IAcademicResponse = academicInfoResponse.data;
+
+    const experienceInfoResponse = await api
+        .get(`api/v1/employments/new-hire-experience/${params.tempId}`)
+        .json();
+    const experienceDetails: IExperienceResponse = experienceInfoResponse.data;
+
+    const activityInfoResponse = await api
+        .get(`api/v1/employments/new-hire-activity/${params.tempId}`)
+        .json();
+    const activityDetails: IActivityResponse = activityInfoResponse.data;
+
     const personalInfoForm = await superValidate(
-        response.data,
+        personalInfoResponse.data,
         _personalInfoForm,
     );
-    const academicInfoForm = await superValidate(_academicInfoSchema);
+    const academicInfoForm = await superValidate(
+        academicInfoResponse.data,
+        _academicInfoSchema,
+    );
     const serviceInfoForm = await superValidate(_serviceInfoSchema);
     const experienceInfoForm = await superValidate(_experienceInfoSchema);
     const nextOfKinInfoForm = await superValidate(_nextOfKinInfoSchema);
     const addAcademicModal = await superValidate(_addAcademicInfoSchema);
     const addExperienceModal = await superValidate(_addExperienceModalSchema);
+    const addActivityModal = await superValidate(_addActivityModalSchema);
+    const addFamilyModal = await superValidate(_addFamilyModalSchema);
+    const addNonFamilyModal = await superValidate(_addNonFamilyModalSchema);
+    const addNextOfKinModal = await superValidate(_addNextOfKinInfoSchema);
 
     personalInfoForm.data.candidateNumber = params.tempId;
 
     return {
         personalInfoForm,
+        academicDetails,
         academicInfoForm,
         serviceInfoForm,
+        experienceDetails,
         experienceInfoForm,
+        activityDetails,
         nextOfKinInfoForm,
         addAcademicModal,
         addExperienceModal,
+        addActivityModal,
+        addFamilyModal,
+        addNonFamilyModal,
+        addNextOfKinModal,
     };
 };
 
