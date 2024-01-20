@@ -3,35 +3,14 @@ import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
-//Permohonan Persaraan
-const dateStepperPermohonanPersaraan = z.coerce
-    .date({
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_date'
-                    ? 'Tarikh tidak boleh dibiar kosong.'
-                    : defaultError,
-        }),
-    })
-    .max(new Date(), {
-        message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
-    });
-
-// const exampleFormSchema = z.object({
-//     earlyRetirementDate: dateStepperPermohonanPersaraan.refine(
-//         (value) => value >= new Date(earlyRetirementApplicationDate),
-//         {
-//             message:
-//                 'Tidak boleh kurang daripada tarikh permohonan bersara awal',
-//         },
-//     ),
-//     earlyRetirementApplicationDate: dateStepperPermohonanPersaraan.refine(
-//         (value) => value <= new Date(earlyRetirementDate),
-//         {
-//             message: 'Tidak boleh lebih daripada tarikh bersara awal',
-//         },
-//     ),
-// });
+const dateStepperPermohonanPersaraan = z.coerce.date({
+    errorMap: (issue, { defaultError }) => ({
+        message:
+            issue.code === 'invalid_date'
+                ? 'Tarikh tidak boleh dibiar kosong.'
+                : defaultError,
+    }),
+});
 
 const stepperPermohonanPersaraan = z
     .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
@@ -43,18 +22,18 @@ const stepperPermohonanPersaraan = z
     })
     .trim();
 
-//Permohonan Persaraan Schema
 export const _stepperPermohonanPersaraan = z.object({
-    earlyRetirementApplicationDate: dateStepperPermohonanPersaraan.refine(
-        (date) => date.toLocaleDateString(),
+    earlyRetirementDate: dateStepperPermohonanPersaraan.refine(
+        (data) => data >= new Date(),
+        { message: 'Tidak boleh kurang atau pada tarikh semasa' },
     ),
-    earlyRetirementDate: dateStepperPermohonanPersaraan.refine((date) =>
-        date.toLocaleDateString(),
+    earlyRetirementApplicationDate: dateStepperPermohonanPersaraan.refine(
+        (data) => data <= new Date(),
+        { message: 'Tidak boleh lebih daripada tarikh semasa' },
     ),
     applicationPurpose: stepperPermohonanPersaraan,
 });
 
-//Async
 export const load = async () => {
     const stepperPermohonanPersaraan = await superValidate(
         _stepperPermohonanPersaraan,
@@ -65,7 +44,6 @@ export const load = async () => {
     };
 };
 
-//Submit Form Stepper Permohonan Persaraan
 export const _submitFormStepperPermohonanPersaraan = async (
     formData: object,
 ) => {
