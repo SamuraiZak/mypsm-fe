@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { jsPDF } from 'jspdf';
     import {
         receiverReference,
         senderReference,
@@ -14,12 +13,9 @@
     import RichTextEditor from '$lib/components/rich-text-ediitor/RichTextEditor.svelte';
     import { mockLetterTemplates } from '$lib/mocks/letters/mockLetterTemplates';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import DateSelector from '$lib/components/input/DateSelector.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
-    import SvgMinusCircle from '$lib/assets/svg/SvgMinusCircle.svelte';
     import IncrementButton from '$lib/components/buttons/IncrementButton.svelte';
-    import { list } from 'postcss';
 
     export let referenceNumber = '123456789';
     export let dateOfLetter = '12 Disember 2021';
@@ -29,8 +25,6 @@
     let letterTemplate = mockLetterTemplates;
 
     //TO BE REVIEWED : any :
-    let sendToBE: object;
-    let preview: string;
     let previewReceiverReference: string | undefined;
     let previewSenderReference: string | undefined;
     let previewLetterDate: string;
@@ -90,26 +84,25 @@
             '<br>' +
             previewReceiverTitle +
             previewSubject +
-            previewBody ;
+            previewBody;
 
-        previewFooter = 
-        '<br>' +
-            previewFooter;
+        previewFooter = '<br>' + previewFooter;
 
-            const sentLetter = [{
+        const sentLetter = [
+            {
                 receiver: listOfReceiver,
                 letterHeader: previewHeader,
             },
             {
-                letterBody: previewBody
+                letterBody: previewBody,
             },
             {
-                letterFooter: previewFooter
-            }
-        ]
+                letterFooter: previewFooter,
+            },
+        ];
 
         // ============================= TODO: post sentLetter to api =============================
-        console.log(sentLetter)
+        console.log(sentLetter);
     };
     const updateReceiver = () => {
         if (previewReceiverInfo !== '') {
@@ -133,7 +126,7 @@
     };
 </script>
 
-<Modal title="Surat Penangguhan Pertukaran" bind:open={modalOpened} size="lg">
+<Modal title="Surat Tawaran Pemangkuan" bind:open={modalOpened} size="lg">
     <form class="flex h-fit flex-col space-y-6">
         <div class="flex w-full flex-row justify-end">
             <div class="flex flex-row gap-2">
@@ -176,7 +169,7 @@
                     class="border-1 active:border-1 flex h-8 w-[200px] flex-row items-center rounded-[3px]
                     border-bdr-primary text-sm text-txt-primary hover:border-system-primary
                     focus:border-system-primary"
-                >
+                />
             </div>
         </div>
         <div class="flex flex-col gap-2">

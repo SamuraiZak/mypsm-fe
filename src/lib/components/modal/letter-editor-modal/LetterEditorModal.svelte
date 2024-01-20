@@ -53,15 +53,49 @@
 
     //Binding for the letter editor
     receiverReference.set(referenceNumber);
-    senderReference.set(letterTemplate[0].senderReference);
+    senderReference.set(letterTemplate[1].senderReference);
     letterDate.set(dateOfLetter);
-    receiverNameAddress.set(letterTemplate[0].receiverNameAddress);
-    receiverTitle.set(letterTemplate[0].receiverTitle);
-    letterSubject.set(letterTemplate[0].letterSubject);
-    letterBody.set(letterTemplate[0].letterBody);
-    letterFooter.set(letterTemplate[0].letterFooter);
+    receiverNameAddress.set(letterTemplate[1].receiverNameAddress);
+    receiverTitle.set(letterTemplate[1].receiverTitle);
+    letterSubject.set(letterTemplate[1].letterSubject);
+    letterBody.set(letterTemplate[1].letterBody);
+    letterFooter.set(letterTemplate[1].letterFooter);
 
-    afterUpdate(() => {
+    // afterUpdate(() => {
+    //     docName = document.getElementById('letter-subject')?.innerText;
+    //     previewReceiverReference =
+    //         document.getElementById('receiver-reference')?.innerHTML;
+    //     previewSenderReference =
+    //         document.getElementById('sender-reference')?.innerHTML;
+    //     previewLetterDate = document.getElementById('letter-date')?.innerHTML;
+    //     previewReceiverInfo =
+    //         document.getElementById('receiver-info')?.innerHTML;
+    //     previewReceiverTitle =
+    //         document.getElementById('receiver-title')?.innerHTML;
+    //     previewSubject = document.getElementById('letter-subject')?.innerHTML;
+    //     previewBody = document.getElementById('letter-body')?.innerHTML;
+    //     previewFooter = document.getElementById('letter-footer')?.innerHTML;
+    //     pdfReadyLetter = document.getElementById('letterPreview')?.innerHTML;
+
+    //     previewHeader =
+    //         'Ruj. Tuan/Puan: ' +
+    //         previewReceiverReference +
+    //         '<br>' +
+    //         'Ruj. Kami: ' +
+    //         previewSenderReference +
+    //         '<br>' +
+    //         'Tarikh: ' +
+    //         previewLetterDate;
+    //     preview =
+    //         '<br>' +
+    //         previewReceiverInfo +
+    //         previewReceiverTitle +
+    //         previewSubject +
+    //         previewBody +
+    //         previewFooter;
+    // });
+
+    const updateLetter = () => {
         docName = document.getElementById('letter-subject')?.innerText;
         previewReceiverReference =
             document.getElementById('receiver-reference')?.innerHTML;
@@ -93,7 +127,8 @@
             previewSubject +
             previewBody +
             previewFooter;
-    });
+    };
+
 
     //Convert HTML to PDF
     function htmlToPDF(fileName: string) {
@@ -175,7 +210,9 @@
                         <FormButton
                             type="next"
                             onClick={() => {
+                                updateLetter();
                                 showPreview = true;
+                                
                             }}
                         ></FormButton>
                     {:else}
@@ -184,6 +221,7 @@
                                 type="back"
                                 onClick={() => {
                                     showPreview = false;
+                                    
                                 }}
                             ></FormButton>
                             <ExportButton
