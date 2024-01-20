@@ -304,8 +304,7 @@
                 if (!response.valid) {
                     getErrorToast();
                 } else {
-                    tempAcademicRecord.push(response.data);
-                    console.log(tempAcademicRecord);
+                    tempAcademicRecord = [...tempAcademicRecord, response.data];
                     openAcademicInfoModal = false;
                 }
             });
@@ -327,7 +326,11 @@
                 if (!response.valid) {
                     getErrorToast();
                 } else {
-                    tempExperienceRecord.push(response.data);
+                    tempExperienceRecord = [
+                        ...tempExperienceRecord,
+                        response.data,
+                    ];
+                    openExperienceInfoModal = false;
                 }
             });
         },
@@ -348,7 +351,8 @@
                 if (!response.valid) {
                     getErrorToast();
                 } else {
-                    tempActivityRecord.push(response.data);
+                    tempActivityRecord = [...tempActivityRecord, response.data];
+                    openMembershipInfoModal = false;
                 }
             });
         },
@@ -367,7 +371,8 @@
                     if (!response.valid) {
                         getErrorToast();
                     } else {
-                        tempFamilyRecord.push(response.data);
+                        tempFamilyRecord = [...tempFamilyRecord, response.data];
+                        openFamilyInfoModal = false;
                     }
                 },
             );
@@ -389,7 +394,11 @@
                 if (!response.valid) {
                     getErrorToast();
                 } else {
-                    tempNonFamilyRecord.push(response.data);
+                    tempNonFamilyRecord = [
+                        ...tempNonFamilyRecord,
+                        response.data,
+                    ];
+                    openNonFamilyInfoModal = false;
                 }
             });
         },
@@ -410,7 +419,11 @@
                 if (!response.valid) {
                     getErrorToast();
                 } else {
-                    tempNextOfKinRecord.push(response.data);
+                    tempNextOfKinRecord = [
+                        ...tempNextOfKinRecord,
+                        response.data,
+                    ];
+                    openNextOfKinInfoModal = false;
                 }
             });
         },
@@ -914,46 +927,65 @@
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
-        {#if tempAcademicRecord.length > 0}
-            <div class="flex w-full flex-col gap-2.5">
-                <div class="mb-5 mt-2.5 text-sm text-system-primary">
-                    <p>Rekod Yang Akan Disimpan</p>
-                </div>
-                {#each tempAcademicRecord as academic, i}
-                    <div class="mb-2.5 mt-2.5 text-sm text-system-primary">
-                        <p>Maklumat Akademik #{i + 1}</p>
-                    </div>
-                    <ul class="list-disc">
-                        <li>
-                            Jenis Kelulusan: &nbsp;
-                            {academic.type}
-                        </li>
-                        <li>
-                            Nama Institusi/Sekolah: &nbsp;
-                            {academic.name}
-                        </li>
-                        <li>
-                            Tahun Kelulusan: &nbsp;
-                            {academic.completionYear}
-                        </li>
-                        <li>
-                            Gred: &nbsp;
-                            {academic.finalGrade}
-                        </li>
-                        <li>
-                            Bidang: &nbsp;
-                            {academic.field}
-                        </li>
-                        <li>
-                            Catatan: &nbsp;
-                            {academic.remark}
-                        </li>
-                    </ul>
-                {/each}
-            </div>
-        {/if}
+
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2.5">
+                {#if tempAcademicRecord.length > 0}
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                    >
+                        <div class="mb-2.5 text-sm font-medium">
+                            <p>Preview Rekod Untuk Disimpan</p>
+                        </div>
+                        {#each tempAcademicRecord as academic, i}
+                            <div class="text-sm text-system-primary">
+                                <p>
+                                    {i + 1}. Maklumat Akademik - {academic.type}
+                                </p>
+                            </div>
+                            <ul
+                                class="list-inside list-disc rounded-[3px] border p-2.5 text-sm text-system-primary"
+                            >
+                                <li>
+                                    <span class="italic text-black">
+                                        Jenis Akademik:
+                                    </span>
+                                    {academic.type}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Nama Kelulusan/Sijil:
+                                    </span>
+                                    {academic.name}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Tahun Kelulusan/Sijil:
+                                    </span>
+                                    {academic.completionYear}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Gred:
+                                    </span>
+                                    {academic.finalGrade}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Bidang:
+                                    </span>
+                                    {academic.field}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Catatan:
+                                    </span>
+                                    {academic.remark}
+                                </li>
+                            </ul>
+                        {/each}
+                    </div>
+                {/if}
                 <form
                     id="academicInfoForm"
                     method="POST"
@@ -970,7 +1002,7 @@
                             <TextField
                                 disabled
                                 name="name"
-                                label={'Nama Institusi/Sekolah'}
+                                label={'Nama Kelulusan/Sijil'}
                                 type="text"
                                 bind:value={academic.name}
                             ></TextField>
@@ -1044,6 +1076,68 @@
         >
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2.5">
+                {#if tempExperienceRecord.length > 0}
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                    >
+                        <div class="mb-2.5 text-sm font-medium">
+                            <p>Preview Rekod Untuk Disimpan</p>
+                        </div>
+                        {#each tempExperienceRecord as experience, i}
+                            <div class="text-sm text-system-primary">
+                                <p>
+                                    {i + 1}. Maklumat Pengalaman - {experience.addCompany}
+                                </p>
+                            </div>
+                            <ul
+                                class="list-inside list-disc rounded-[3px] border p-2.5 text-sm text-system-primary"
+                            >
+                                <li>
+                                    <span class="italic text-black">
+                                        Nama Majikan:
+                                    </span>
+                                    {experience.addCompany}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Alamat Majikan:
+                                    </span>
+                                    {experience.addAddress}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Jawatan:
+                                    </span>
+                                    {experience.addPosition}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Kod Jawatan (jika ada):
+                                    </span>
+                                    {experience.addPositionCode}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Dari (tahun):
+                                    </span>
+                                    {experience.addStartDate}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Hingga (tahun):
+                                    </span>
+                                    {experience.addEndDate}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Gaji:
+                                    </span>
+                                    {experience.addSalary}
+                                </li>
+                            </ul>
+                        {/each}
+                    </div>
+                {/if}
                 <form
                     id="formStepperPengalaman"
                     class="flex w-full flex-col gap-2 rounded-[3px] border p-2.5"
@@ -1141,6 +1235,50 @@
         >
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
+                {#if tempActivityRecord.length > 0}
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                    >
+                        <div class="mb-2.5 text-sm font-medium">
+                            <p>Preview Rekod Untuk Disimpan</p>
+                        </div>
+                        {#each tempActivityRecord as activity, i}
+                            <div class="text-sm text-system-primary">
+                                <p>
+                                    {i + 1}. Maklumat Kegiatan/Keahlian - {activity.addName}
+                                </p>
+                            </div>
+                            <ul
+                                class="list-inside list-disc rounded-[3px] border p-2.5 text-sm text-system-primary"
+                            >
+                                <li>
+                                    <span class="italic text-black">
+                                        Nama Majikan:
+                                    </span>
+                                    {activity.addName}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Alamat Majikan:
+                                    </span>
+                                    {activity.addJoinDate}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Jawatan:
+                                    </span>
+                                    {activity.addPosition}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Kod Jawatan (jika ada):
+                                    </span>
+                                    {activity.addDescription}
+                                </li>
+                            </ul>
+                        {/each}
+                    </div>
+                {/if}
                 <DynamicTable tableItems={data.activityDetails.activityList}
                 ></DynamicTable>
             </div>
@@ -1171,6 +1309,62 @@
         >
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
+                {#if tempFamilyRecord.length > 0}
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                    >
+                        <div class="mb-2.5 text-sm font-medium">
+                            <p>Preview Rekod Untuk Disimpan</p>
+                        </div>
+                        {#each tempFamilyRecord as family, i}
+                            <div class="text-sm text-system-primary">
+                                <p>
+                                    {i + 1}. Maklumat Keluarga - {family.addName}
+                                </p>
+                            </div>
+                            <ul
+                                class="list-inside list-disc rounded-[3px] border p-2.5 text-sm text-system-primary"
+                            >
+                                <li>
+                                    <span class="italic text-black">
+                                        Nama:
+                                    </span>
+                                    {family.addName}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        No. Kad Pengenalan:
+                                    </span>
+                                    {family.addIdentityDocumentNumber}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Jantina:
+                                    </span>
+                                    {family.addGender}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Hubungan:
+                                    </span>
+                                    {family.addRelationship}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Pekerjaan (Jika Ada):
+                                    </span>
+                                    {family.addOccupation ?? ''}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Bersekolah:
+                                    </span>
+                                    {family.addIsInSchool ? 'Ya' : 'Tidak'}
+                                </li>
+                            </ul>
+                        {/each}
+                    </div>
+                {/if}
                 <DynamicTable tableItems={maklumatKeluargaTable}></DynamicTable>
             </div>
             <div class="w-full rounded-[3px] border-b border-t p-2.5">
@@ -1187,7 +1381,8 @@
         >
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Maklumat Tanggungan Selain Isteri dan Anak"
+        <StepperContentHeader
+            title="Maklumat Tanggungan Selain Suami/Isteri dan Anak"
             ><TextIconButton
                 primary
                 label="Simpan"
@@ -1200,6 +1395,65 @@
         >
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
+                {#if tempNonFamilyRecord.length > 0}
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                    >
+                        <div class="mb-2.5 text-sm font-medium">
+                            <p>Preview Rekod Untuk Disimpan</p>
+                        </div>
+                        {#each tempNonFamilyRecord as nonFamily, i}
+                            <div class="text-sm text-system-primary">
+                                <p>
+                                    {i + 1}. Maklumat Selain Suami/Isteri dan
+                                    Anak - {nonFamily.addNonFamilyName}
+                                </p>
+                            </div>
+                            <ul
+                                class="list-inside list-disc rounded-[3px] border p-2.5 text-sm text-system-primary"
+                            >
+                                <li>
+                                    <span class="italic text-black">
+                                        Nama:
+                                    </span>
+                                    {nonFamily.addNonFamilyName}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        No. Kad Pengenalan:
+                                    </span>
+                                    {nonFamily.addNonFamilyIdentityDocumentNumber}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Jantina:
+                                    </span>
+                                    {nonFamily.addNonFamilyGender}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Hubungan:
+                                    </span>
+                                    {nonFamily.addNonFamilyRelationship}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Pekerjaan (Jika Ada):
+                                    </span>
+                                    {nonFamily.addNonFamilyOccupation ?? ''}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Bersekolah:
+                                    </span>
+                                    {nonFamily.addNonFamilyIsInSchool
+                                        ? 'Ya'
+                                        : 'Tidak'}
+                                </li>
+                            </ul>
+                        {/each}
+                    </div>
+                {/if}
                 <DynamicTable tableItems={maklumatTanggunganLain}
                 ></DynamicTable>
             </div>
@@ -1222,8 +1476,94 @@
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
-        <StepperContentBody
-            ><form
+        <StepperContentBody>
+            {#if tempNextOfKinRecord.length > 0}
+                <div
+                    class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                >
+                    <div class="mb-2.5 text-sm font-medium">
+                        <p>Preview Rekod Untuk Disimpan</p>
+                    </div>
+                    {#each tempNextOfKinRecord as nextOfKin, i}
+                        <div class="text-sm text-system-primary">
+                            <p>
+                                {i + 1}. Maklumat Waris - {nextOfKin.addNextOfKinName}
+                            </p>
+                        </div>
+                        <ul
+                            class="list-inside list-disc rounded-[3px] border p-2.5 text-sm text-system-primary"
+                        >
+                            <li>
+                                <span class="italic text-black">
+                                    Nama Waris:
+                                </span>
+                                {nextOfKin.addNextOfKinName}
+                            </li>
+                            <li>
+                                <span class="italic text-black">
+                                    No. Kad Pengenalan:
+                                </span>
+                                {nextOfKin.addNextOfKinIdentityDocumentNumber}
+                            </li>
+                            <li>
+                                <span class="italic text-black">
+                                    Tarikh Lahir:
+                                </span>
+                                {nextOfKin.addNextOfKinBirthDate}
+                            </li>
+                            <li>
+                                <span class="italic text-black">
+                                    Hubungan Dengan Waris:
+                                </span>
+                                {nextOfKin.addNextOfKinRelationship}
+                            </li>
+                            <li>
+                                <span class="italic text-black">
+                                    Tarikh Kahwin (Jika berkenaan):
+                                </span>
+                                {nextOfKin.addNextOfKinMarriageDate}
+                            </li>
+                            <li>
+                                <span class="italic text-black">
+                                    Warna Kad Pengenalan:
+                                </span>
+                                {nextOfKin.addNextOfKinIdentityDocumentType}
+                            </li>
+                            <li>
+                                <span class="italic text-black">
+                                    Telefon (R):
+                                </span>
+                                {nextOfKin.addNextOfKinHomeNumber ?? ''}
+                            </li>
+                            <li>
+                                <span class="italic text-black">
+                                    Telefon (P):
+                                </span>
+                                {nextOfKin.addNextOfKinMobileNumber}
+                            </li>
+                            <li>
+                                <span class="italic text-black">
+                                    Pekerjaan:
+                                </span>
+                                {nextOfKin.addNextOfKinPosition}
+                            </li>
+                            <li>
+                                <span class="italic text-black">
+                                    Nama Majikan:
+                                </span>
+                                {nextOfKin.addNextOfKinCompany ?? ''}
+                            </li>
+                            <li>
+                                <span class="italic text-black">
+                                    Alamat Majikan:
+                                </span>
+                                {nextOfKin.addNextOfKinCompanyAddress ?? ''}
+                            </li>
+                        </ul>
+                    {/each}
+                </div>
+            {/if}
+            <form
                 id="nextOfKinForm"
                 class="flex w-full flex-col gap-2 rounded-[3px] border p-2.5"
                 use:nextOfKinEnhance
@@ -1602,27 +1942,25 @@
             bind:value={$addExperienceModalForm.addPositionCode}
         ></TextField>
 
-        <TextField
+        <DateSelector
             {disabled}
             hasError={!!$addExperienceModalErrors.addStartDate}
             name="addStartDate"
             label={'Dari (tahun)'}
-            type="text"
-            bind:value={$addExperienceModalForm.addStartDate}
-        ></TextField>
+            bind:selectedDate={$addExperienceModalForm.addStartDate}
+        ></DateSelector>
         {#if $addExperienceModalErrors.addStartDate}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
                 >{$addExperienceModalErrors.addStartDate}</span
             >
         {/if}
-        <TextField
+        <DateSelector
             {disabled}
             hasError={!!$addExperienceModalErrors.addEndDate}
             name="addEndDate"
             label={'Hingga (tahun)'}
-            type="text"
-            bind:value={$addExperienceModalForm.addEndDate}
-        ></TextField>
+            bind:selectedDate={$addExperienceModalForm.addEndDate}
+        ></DateSelector>
         {#if $addExperienceModalErrors.addEndDate}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
                 >{$addExperienceModalErrors.addEndDate}</span
@@ -1760,14 +2098,18 @@
             >
         {/if}
 
-        <TextField
+        <DropdownSelect
             {disabled}
             hasError={!!$addFamilyErrors.addGender}
             name="addGender"
             label={'Jantina'}
-            type="text"
+            dropdownType="label-left-full"
+            options={[
+                { value: 'male', name: 'Lelaki' },
+                { value: 'female', name: 'Perempuan' },
+            ]}
             bind:value={$addFamilyModal.addGender}
-        ></TextField>
+        ></DropdownSelect>
         {#if $addFamilyErrors.addGender}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
                 >{$addFamilyErrors.addGender}</span
@@ -1780,6 +2122,10 @@
             name="addRelationship"
             label={'Hubungan'}
             dropdownType="label-left-full"
+            options={[
+                { value: 'husband', name: 'Suami' },
+                { value: 'wife', name: 'Isteri' },
+            ]}
             bind:value={$addFamilyModal.addRelationship}
         ></DropdownSelect>
         {#if $addFamilyErrors.addRelationship}
@@ -1861,14 +2207,18 @@
             >
         {/if}
 
-        <TextField
+        <DropdownSelect
             {disabled}
             hasError={!!$addNonFamilyErrors.addNonFamilyGender}
             name="addGender"
             label={'Jantina'}
-            type="text"
+            dropdownType="label-left-full"
+            options={[
+                { value: 'male', name: 'Lelaki' },
+                { value: 'female', name: 'Perempuan' },
+            ]}
             bind:value={$addNonFamilyModal.addNonFamilyGender}
-        ></TextField>
+        ></DropdownSelect>
         {#if $addNonFamilyErrors.addNonFamilyGender}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
                 >{$addNonFamilyErrors.addNonFamilyGender}</span
@@ -1881,6 +2231,10 @@
             name="addRelationship"
             label={'Hubungan'}
             dropdownType="label-left-full"
+            options={[
+                { value: 'husband', name: 'Suami' },
+                { value: 'wife', name: 'Isteri' },
+            ]}
             bind:value={$addNonFamilyModal.addNonFamilyRelationship}
         ></DropdownSelect>
         {#if $addNonFamilyErrors.addNonFamilyRelationship}
