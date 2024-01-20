@@ -22,13 +22,11 @@ export const load = async () => {
             body: JSON.stringify(getAllLists),
         })
         .json();
-    console.log('RESPONSE', response);
 
     const getThisStaffRecord = response.data.newHires.filter(
         (list) => list.temporaryId === 'C1234',
     );
 
-    console.log('SPECIFIC', getThisStaffRecord);
 
     return {
         getThisStaffRecord,

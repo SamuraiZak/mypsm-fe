@@ -17,13 +17,9 @@
     let employeeLists: SelectOptionType<any>[] = [];
     let selectedSupporter: string;
     let selectedApprover: string;
-    export let status: string;
+    let status: string = 'baru';
 
     let passerResult: string = 'passed';
-    let supporterResult: string = 'notSupported';
-
-    let stepperFormTitleClass =
-        'w-full h-fit mt-2 bg-bgr-primary text-system-primary text-sm font-medium';
 
     onMount(async () => {
         const staffs: IntEmployees[] = mockEmployees;

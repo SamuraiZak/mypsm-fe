@@ -17,6 +17,16 @@
     import FilterDateSelector from '$lib/components/filter/FilterDateSelector.svelte';
     import { z } from 'zod';
     import toast, { Toaster } from 'svelte-french-toast';
+    import { superForm, superValidate } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import {
+        _applicantsSchema,
+        _submitAdvancementApplicantsForm,
+    } from './+page';
+    import SvgPrinter from '$lib/assets/svg/SvgPrinter.svelte';
+    import { getErrorToast } from '$lib/toast/toast-service';
+    export let data: PageData;
 
     let selectedGred: string = greds[0].value; // Default selected filter
     let selectedEdu: string = eduLevels[0].value; // Default selected filter
@@ -28,50 +38,20 @@
 
     let openModal = false;
 
-    let selectedStaffs: any[] = [];
-    // =====================================================================================
-    // z validation schema for the advancement form fields
-    // =====================================================================================
-    let errorData: any;
-
-    const applicantsSchema = z.object({
-        selectedStaffs: z.any().array().nonempty({
-            message: 'Sila pilih sekurang - kurangnya satu pekerja',
-        }),
+    export const { form, errors, enhance } = superForm(data.applicantsForm, {
+        SPA: true,
+        validators: _applicantsSchema,
+        async onSubmit() {
+            await superValidate($form, _applicantsSchema).then((res) => {
+                if (!res.valid) {
+                    getErrorToast();
+                } else openModal = true;
+            });
+        },
     });
-
-    // =========================================================================
-    // advancement form fields submit function
-    // =========================================================================
-    const adavancementApplicantsForm = async () => {
-        const applicantsData = {
-            selectedStaffs: selectedStaffs,
-        };
-        console.log('ARRAY!', applicantsData.selectedStaffs);
-
-        try {
-            const result = applicantsSchema.parse(applicantsData);
-            if (result) {
-                errorData = [];
-                // toast.success('Permohonan berjaya dihantar!', {
-                //     style: 'background: #333; color: #fff;',
-                // });
-
-                openModal = true;
-            }
-        } catch (err: unknown) {
-            if (err instanceof z.ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                toast.error('Pilih senarai pekerja untuk dicetak.', {
-                    style: 'background: #333; color: #fff;',
-                });
-            }
-        }
-    };
 </script>
 
-<!-- content header starts here -->
+<!-- content header     starts here -->
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader
         title="Rekod Tawaran Baru Dalam Perkhidmatan"
@@ -117,27 +97,30 @@
             >Nota: Cetak senarai nama kakitangan yang terlibat untuk dibawa ke
             mesyuarat berkaitan.</span
         >
-        <FormButton
-            type="print"
-            addLabel="Cetak"
-            onClick={() => adavancementApplicantsForm()}
-        />
+        <TextIconButton primary label="Cetak" form="staffToSelect">
+            <SvgPrinter />
+        </TextIconButton>
     </div>
     <!-- Table showing the lists of candidates to be taken in bulk for 'tawaran baru' -->
-    <div class="flex w-full flex-col items-center justify-start p-2.5">
-        {#if errorData?.selectedStaffs}
+    <form
+        id="staffToSelect"
+        method="POST"
+        use:enhance
+        class="flex w-full flex-col items-center justify-start p-2.5"
+    >
+        {#if $errors.selectedStaffs}
             <span class="font-sans text-sm italic text-system-danger"
-                >{errorData?.selectedStaffs[0]}</span
+                >{$errors.selectedStaffs._errors}</span
             >
         {/if}
         <DynamicTable
             tableItems={staffs}
             hasCheckbox
-            bind:checkedItems={selectedStaffs}
+            bind:checkedItems={$form.selectedStaffs}
         />
-    </div>
+    </form>
 </section>
 
 <Toaster />
 
-<FormModal bind:isOpen={openModal} />
+<FormModal bind:data={data.advancementForm} bind:selectedStaffs={$form.selectedStaffs} bind:isOpen={openModal} />

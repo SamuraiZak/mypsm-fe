@@ -1,68 +1,33 @@
 <script lang="ts">
-    import { Label, Input, Modal } from 'flowbite-svelte';
+    import { Modal } from 'flowbite-svelte';
     import GeneralButton from '$lib/components/buttons/GeneralButton.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    import { goto } from '$app/navigation';
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { z } from 'zod';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _advancementSchema,
+        _submitAdvancementApplicantsForm,
+    } from '../+page';
+    import { Toaster } from 'svelte-french-toast';
+    import DateSelector from '$lib/components/input/DateSelector.svelte';
 
-    let meetingBatch: string;
+    export let data;
+    export let selectedStaffs: any[];
     export let isOpen: boolean = false;
 
-    // =====================================================================================
-    // z validation schema for the meeting batch form fields
-    // =====================================================================================
-    let errorData: any;
-
-    const meetingBatchSchema = z.object({
-        batchNumber: z
-            .string({
-                required_error: 'Medan ini tidak boleh dibiar kosong.',
-            })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter',
-            }),
+    export const { form, errors, enhance } = superForm(data, {
+        SPA: true,
+        validators: _advancementSchema,
+        async onSubmit() {
+            $form.employees = selectedStaffs.map((data) => data.noPekerja);
+            await _submitAdvancementApplicantsForm($form);
+        },
     });
-
-    // =========================================================================
-    // meeting batch form fields submit function
-    // =========================================================================
-    const submitAdvancementMeetingBatchForm = async (event: Event) => {
-        const formElement = event.target as HTMLFormElement;
-        const formData = new FormData(formElement);
-
-        const meetingBatchData = {
-            batchNumber: formData.get('batchNumber'),
-        };
-
-        try {
-            const result = meetingBatchSchema.parse(meetingBatchData);
-            if (result) {
-                errorData = [];
-                toast.success('Permohonan berjaya dihantar!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                setTimeout(() => goto('../../perjawatan/tawaran-baru'), 1500);
-            }
-        } catch (err: unknown) {
-            if (err instanceof z.ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
 </script>
 
 <Modal bind:open={isOpen} size="xs" autoclose={false} class="w-full">
     <div class="text-center">
-        <form class="flex flex-col items-center space-y-6" action="#">
+        <div class="flex flex-col items-center space-y-6">
             <svg
                 fill="#ffffff"
                 width="64px"
@@ -106,26 +71,37 @@
             <span>
                 <form
                     id="advancementMeetingBatchForm"
-                    on:submit|preventDefault={submitAdvancementMeetingBatchForm}
+                    method="POST"
+                    use:enhance
                     class="flex w-full flex-col gap-2.5"
                 >
                     <TextField
-                        hasError={errorData?.batchNumber}
+                        hasError={!!$errors.meetingGroupName}
                         type="text"
-                        name="batchNumber"
-                        onChange={() => {
-                            console.log('Changed!');
-                        }}
+                        name="meetingGroupName"
                         labelType="top"
-                        label="Sila Tetapkan Nama Kumpulan Mesyuarat"
-                        placeholder="Kumpulan #12"
-                        textCenter={true}
-                        bind:value={meetingBatch}
+                        label="Sila Tetapkan Nama Kumpulan dan Tarikh Mesyuarat"
+                        placeholder="Contoh: 12"
+                        bind:value={$form.meetingGroupName}
                     ></TextField>
-                    {#if errorData?.batchNumber}
+                    {#if $errors.meetingGroupName}
                         <span
                             class="font-sans text-sm italic text-system-danger"
-                            >{errorData?.batchNumber[0]}</span
+                            >{$errors.meetingGroupName}</span
+                        >
+                    {/if}
+
+                    <DateSelector
+                        hasError={!!$errors.meetingDate}
+                        name="meetingDate"
+                        labelType="top"
+                        label=""
+                        bind:selectedDate={$form.meetingDate}
+                    />
+                    {#if $errors.meetingDate}
+                        <span
+                            class="font-sans text-sm italic text-system-danger"
+                            >{$errors.meetingDate}</span
                         >
                     {/if}
                 </form>
@@ -145,7 +121,7 @@
                     }}
                 />
             </div>
-        </form>
+        </div>
     </div>
 </Modal>
 

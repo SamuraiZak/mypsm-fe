@@ -41,9 +41,15 @@
     import { ZodError, z } from 'zod';
     import toast, { Toaster } from 'svelte-french-toast';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import {
+        _submitSupporterResultForm,
+        _supporterResultSchema,
+    } from './+page';
     let employeeLists: SelectOptionType<any>[] = [];
-    let selectedSupporter: string;
-    let selectedApprover: string;
+
+    export let data: PageData;
 
     onMount(async () => {
         const staffs: IntEmployees[] = mockEmployees;
@@ -52,8 +58,6 @@
             value: staff.id.toString(),
             name: staff.name,
         }));
-        selectedSupporter = employeeLists[0].value;
-        selectedApprover = employeeLists[0].value;
     });
 
     export let employeeNumber: string = '00001';
@@ -61,35 +65,25 @@
     // export let isEditing: boolean = false;
     export let disabled: boolean = true;
 
-    let results = [
-        { value: 'passed', name: 'LULUS' },
-        { value: 'notPassed', name: 'TIDAK LULUS' },
-        { value: 'supported', name: 'SOKONG' },
-        { value: 'notSupported', name: 'TIDAK SOKONG' },
-    ];
-
-    let passerResult: string = 'passed';
-
-    let isSupported: string = 'true';
     const supportOptions: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'SOKONG',
         },
         {
-            value: 'false',
+            value: false,
             label: 'TIDAK SOKONG',
         },
     ];
 
-    let isCertified: string = 'true';
+    let isCertified: boolean = true;
     const certifyOptions: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'SAH',
         },
         {
-            value: 'false',
+            value: false,
             label: 'TIDAK SAH',
         },
     ];
@@ -196,52 +190,30 @@
     let stepperFormTitleClass =
         'w-full h-fit mt-2 bg-bgr-primary text-system-primary text-sm font-medium';
 
-    let steppers: string[] = [
-        'Maklumat Peribadi',
+    let isExPoliceSoldier = false;
 
-        'Maklumat Perkhidmatan',
-
-        'Maklumat Akademik / Kelayakan / Latihan yang Lalu',
-
-        'Maklumat Pengalaman',
-
-        'Maklumat Kegiatan / Keahlian',
-
-        'Maklumat Keluarga',
-
-        'Maklumat Tanggungan Selain Isteri dan Anak',
-
-        'Maklumat Waris',
-
-        'Dokumen - Dokumen Sokongan yang Berkaitan',
-    ];
-    let isExPoliceSoldier = currentEmployee.isExPoliceOrSoldier
-        ? 'true'
-        : 'false';
-
-    let isInRelationshipWithLKIMStaff =
-        currentEmployeeSpouse.isLKIMStaff == 'Ya' ? 'true' : 'false';
-    let isKWSP = currentEmployeePensions.type == 'KWSP' ? 'true' : 'false';
+    let isInRelationshipWithLKIMStaff = true;
+    let isKWSP = true;
 
     // Radio Functions
 
     const faedahPersaraanOptions: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'KWSP',
         },
         {
-            value: 'false',
+            value: false,
             label: 'Pencen',
         },
     ];
     const options: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'Ya',
         },
         {
-            value: 'false',
+            value: false,
             label: 'Tidak',
         },
     ];
@@ -283,65 +255,17 @@
         }
     }
 
-    // =========================================================================
-    // z validation schema and submit function for the new employment form fields
-    // =========================================================================
-    let errorData: any;
-
-    const longTextSchema = z
-        .string({ required_error: 'Medan ini tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim();
-
-    // New Employment - Supporter Result section
-    const supporterResultSchema = z.object({
-        supporterRemark: longTextSchema,
-        supporterResult: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
+    export const { form, errors, enhance } = superForm(data.supporterForm, {
+        SPA: true,
+        validators: _supporterResultSchema,
+        delayMs: 500,
+        timeoutMs: 2000,
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+        onSubmit() {
+            _submitSupporterResultForm($form);
+        },
     });
-
-    export const submitSupporterResultForm = async (event: Event) => {
-        const formElement = event.target as HTMLFormElement;
-        const formData = new FormData(formElement);
-
-        const supporterResultData = {
-            supporterRemark: String(formData.get('supporterRemark')),
-            supporterResult: String(formData.get('supporterResult')),
-        };
-
-        try {
-            errorData = [];
-            const result = supporterResultSchema.parse(supporterResultData);
-             if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-            }
-        } catch (error: unknown) {
-            if (error instanceof ZodError) {
-                const { fieldErrors: errors } = error.flatten();
-                errorData = errors;
-                  toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
 </script>
 
 <ContentHeader
@@ -497,7 +421,7 @@
                     legend={'Perhubungan Dengan Kakitangan LKIM'}
                     bind:userSelected={isInRelationshipWithLKIMStaff}
                 ></RadioSingle>
-                {#if isInRelationshipWithLKIMStaff === 'true'}
+                {#if isInRelationshipWithLKIMStaff}
                     <TextField
                         {disabled}
                         id="noPekerjaPasangan"
@@ -632,7 +556,9 @@
                             {disabled}
                             id="gaji"
                             label={'Gaji'}
-                            value={CurrencyHelper.formatCurrency(parseInt(item.salary))}
+                            value={CurrencyHelper.formatCurrency(
+                                parseInt(item.salary),
+                            )}
                         ></TextField>
                     {:else}
                         <TextField
@@ -1100,7 +1026,8 @@
         <StepperContentBody>
             <form
                 id="supporterResultForm"
-                on:submit|preventDefault={submitSupporterResultForm}
+                method="POST"
+                use:enhance
                 class="flex w-full flex-col gap-2.5"
             >
                 <!-- Penyokong Card -->
@@ -1110,14 +1037,15 @@
                     >
                 </div>
                 <LongTextField
-                    hasError={errorData?.supporterRemark}
+                    hasError={!!$errors.remark}
                     name="supporterRemark"
                     label="Tindakan/Ulasan"
+                    bind:value={$form.remark}
                 ></LongTextField>
-                {#if errorData?.supporterRemark}
+                {#if $errors.remark}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.supporterRemark[0]}</span
+                        >{$errors.remark}</span
                     >
                 {/if}
 
@@ -1126,12 +1054,12 @@
                     name="supporterResult"
                     options={supportOptions}
                     legend={'Keputusan'}
-                    bind:userSelected={isSupported}
+                    bind:userSelected={$form.isApproved}
                 ></RadioSingle>
-                {#if errorData?.supporterResult}
+                {#if $errors.isApproved}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.supporterResult[0]}</span
+                        >{$errors.isApproved}</span
                     >
                 {/if}
                 <hr />
