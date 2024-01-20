@@ -5,6 +5,10 @@
     import FileInputField from '$lib/components/input/FileInputField.svelte';
     import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
+    import TextField from '$lib/components/input/TextField.svelte';
+    import { Modal } from 'flowbite-svelte';
     import { fareType } from '$lib/mocks/elaun/fareType';
     import { fileSelectionList } from '$lib/stores/globalState';
     import { onMount } from 'svelte';
@@ -12,11 +16,15 @@
     import {
         _stepperTambangMengungjungiWilayahAsal,
         _submitTambangMengungjungiWilayahAsalForm,
+        _submitAddMoreMaklumatKeluargaForm,
+        _addMaklumatKeluargaInfoSchema,
     } from '../+page';
     import type { PageData } from '../$types';
 
     export let data: PageData;
+    export let disabled: boolean = false;
     export let selectedFiles: any = [];
+    export let openMaklumatKeluargaModal: boolean = false;
     let target: any;
     let texthidden = false;
 
@@ -66,6 +74,19 @@
                 'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
         },
     );
+    const {
+        form: addMaklumatKeluargaModalForm,
+        errors: addMaklumatKeluargaErrors,
+        enhance: addmaklumatKeluargaEnhance,
+    } = superForm(data.MaklumatKeluargaForm, {
+        SPA: true,
+        validators: _addMaklumatKeluargaInfoSchema,
+        onSubmit() {
+            _submitAddMoreMaklumatKeluargaForm($addMaklumatKeluargaModalForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section>
@@ -108,14 +129,24 @@
                     >
                 {/if}
             </div>
-            <div
-                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
-            >
-                <SectionHeader title="Maklumat Keluarga"></SectionHeader>
-                <FormTable sampleData={famInfo}></FormTable>
-            </div>
-            <!-- bind:data -->
         </form>
+        <div
+            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+        >
+            <SectionHeader title="Maklumat Keluarga"></SectionHeader>
+            <div class="w-full rounded-[3px] border-b border-t p-2.5">
+                <TextIconButton
+                    primary
+                    label="Tambah Maklumat Keluarga"
+                    onClick={() => (openMaklumatKeluargaModal = true)}
+                >
+                    <SvgPlus></SvgPlus>
+                </TextIconButton>
+            </div>
+
+            <FormTable sampleData={famInfo}></FormTable>
+        </div>
+        <!-- bind:data -->
     </div>
     <!-- Document Upload -->
     <div
@@ -179,3 +210,55 @@
         atas.
     </p>
 </section>
+
+<Modal title={'Tambah Maklumat Keluarga'} bind:open={openMaklumatKeluargaModal}>
+    <form
+        id="addNaklumatKeluargaModal"
+        method="POST"
+        use:addmaklumatKeluargaEnhance
+        class="flex h-fit w-full flex-col gap-y-2"
+    >
+        <TextField
+            hasError={!!$addMaklumatKeluargaErrors.namaKeluarga}
+            {disabled}
+            name="namaKeluarga"
+            label={'Nama'}
+            bind:value={$addMaklumatKeluargaModalForm.namaKeluarga}
+        ></TextField>
+        {#if $addMaklumatKeluargaErrors.namaKeluarga}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addMaklumatKeluargaErrors.namaKeluarga}</span
+            >
+        {/if}
+        <TextField
+            hasError={!!$addMaklumatKeluargaErrors.umurKeluarga}
+            {disabled}
+            name="umurKeluarga"
+            label={'Umur'}
+            bind:value={$addMaklumatKeluargaModalForm.umurKeluarga}
+        ></TextField>
+        {#if $addMaklumatKeluargaErrors.umurKeluarga}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addMaklumatKeluargaErrors.umurKeluarga}</span
+            >
+        {/if}
+        <TextField
+            hasError={!!$addMaklumatKeluargaErrors.hubunganKeluarga}
+            {disabled}
+            name="year"
+            label={'Hubungan'}
+            bind:value={$addMaklumatKeluargaModalForm.hubunganKeluarga}
+        ></TextField>
+        {#if $addMaklumatKeluargaErrors.hubunganKeluarga}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addMaklumatKeluargaErrors.hubunganKeluarga}</span
+            >
+        {/if}
+
+        <TextIconButton
+            primary
+            label={'Simpan'}
+            form="addNaklumatKeluargaModal"
+        />
+    </form>
+</Modal>

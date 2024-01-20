@@ -41,6 +41,25 @@
     import { onMount } from 'svelte';
     import toast, { Toaster } from 'svelte-french-toast';
     import { ZodError, z } from 'zod';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _submitUpdateResultMeetingInterviewForm,
+        _submitUpdateInterviewDetailsForm,
+        _submitUpdateInterviewResult,
+        _submitPromotionResult,
+        _submitStaffPlacement,
+        _submitStaffPlacementAmendmentForm,
+        _submitUpdateActingForm,
+        _updateInterviewDetails,
+        _updateResultsMeetingInterview,
+        _updateInterviewResult,
+        _promotionResult,
+        _staffPlacement,
+        _staffPlacementAmendmentForm,
+        _updateActing,
+    } from './+page';
+    import type { PageData } from './$types';
+    export let data: PageData;
 
     //===================== Stepper controls =====================
     let stepperIndex = 0;
@@ -55,7 +74,6 @@
 
     //===================== Page Init Data =====================
 
-    
     let editMode: boolean = false;
 
     //===================== Step 1 =====================
@@ -110,786 +128,109 @@
         selectedFiles.splice(index, 1);
     }
 
-    // =================================================================================
-    // z validation schema for the example form fields==================================
-    // =================================================================================
-    let errorData: any;
-
-    // Kemaskini Keputusan Mesyuarat Pemilihan Calon Stepper Form
-    const exampleFormSchema = z.object({
-        secretaryName: z.enum(['0', '1', '2', '3', '4'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila pilih nama Urus Setia Integriti yang berkaitan.'
-                        : defaultError,
-            }),
-        }),
-        directorName: z.enum(['0', '1', '2', '3', '4'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila pilih nama Pengarah Bahagian/Negeri yang berkaitan.'
-                        : defaultError,
-            }),
-        }),
-        keputusanPemilihanDropdown: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila pilih keputusan pemilihan yang berkaitan.'
-                        : defaultError,
-            }),
-        }),
-    });
-
-    const submitForm = async (event: Event) => {
-        const secretaryName = document.getElementById(
-            'secretaryName',
-        ) as HTMLSelectElement;
-        const directorName = document.getElementById(
-            'directorName',
-        ) as HTMLSelectElement;
-        const keputusanPemilihanDropdown = document.getElementById(
-            'keputusanPemilihanDropdown',
-        ) as HTMLSelectElement;
-
-        const exampleFormData = {
-            secretaryName: String(secretaryName.value),
-            directorName: String(directorName.value),
-            keputusanPemilihanDropdown: String(
-                keputusanPemilihanDropdown.value,
-            ),
-        };
-        try {
-            const result = exampleFormSchema.parse(exampleFormData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedExamFormData = { ...exampleFormData, id };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedExamFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
-
-    // Kemaskini Maklumat Temuduga Stepper Form
-    const updateInterviewDetails = z.object({
-        meetingName: z
-            .string({ required_error: 'Nama mesyuarat tidak boleh kosong.' })
-            .min(10, {
-                message: 'Nama mesyuarat hendaklah melebihi 10 karakter.',
-            })
-            .max(100, {
-                message:
-                    'Nama mesyuarat yang dimasukkan telah melebihi had yang dibenarkan.',
-            })
-            .trim(),
-
-        meetingDate: z
-            .string({ required_error: 'Tarikh mesyuarat tidak boleh kosong.' })
-            .min(8, {
-                message:
-                    'Tarikh mesyuarat hendaklah mengikut format hh/bb/tttt.',
-            })
-            .max(10, {
-                message:
-                    'Format tarikh mesyuarat yang dimasukkan adalah tidak betul. Gunakan format hh/bb/tttt',
-            })
-            .trim(),
-
-        gred: z
-            .string({ required_error: 'Gred tidak boleh kosong.' })
-            .min(4, {
-                message: 'Masukkan gred yang betul.',
-            })
-            .max(10, {
-                message: 'Gred yang dimasukkan adalah tidak betul.',
-            })
-            .trim(),
-
-        position: z
-            .string({ required_error: 'Jawatan tidak boleh kosong.' })
-            .min(8, {
-                message: 'Jawatan hendaklah melebihi 8 karakter.',
-            })
-            .max(20, {
-                message: 'Jawatan hendaklah tidak melebihi 20 karakter.',
-            })
-            .trim(),
-
-        interviewDate: z
-            .string({ required_error: 'Tarikh temuduga tidak boleh kosong.' })
-            .min(8, {
-                message:
-                    'Tarikh temuduga hendaklah mengikut format hh/bb/tttt.',
-            })
-            .max(10, {
-                message:
-                    'Format tarikh temuduga yang dimasukkan adalah tidak betul. Gunakan format hh/bb/tttt',
-            })
-            .trim(),
-
-        interviewTime: z
-            .string({ required_error: 'Masa temuduga tidak boleh kosong.' })
-            .min(11, {
-                message:
-                    'Gunakan format masa [10am - 11am atau 10.30am - 11.30am].',
-            })
-            .max(18, {
-                message: 'Format masa yang dimasukkan adalah tidak dibenarkan.',
-            })
-            .trim(),
-
-        state: z
-            .string({ required_error: 'Negeri tidak boleh kosong.' })
-            .min(4, {
-                message: 'Nama negeri hendaklah melebihi 4 karakter.',
-            })
-            .max(30, {
-                message: 'Nama negeri melebihi format yang dibenarkan.',
-            })
-            .trim(),
-
-        interviewVenue: z
-            .string({ required_error: 'Pusat temuduga tidak boleh kosong.' })
-            .min(4, {
-                message: 'Nama pusat temuduga hendaklah melebihi 4 karakter.',
-            })
-            .max(124, {
-                message:
-                    'Nama pusat temuduga hendaklah tidak melebihi 124 karakter.',
-            })
-            .trim(),
-    });
-    const submitUpdateInterviewDetailsForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-
-        const updateInterviewFormData = {
-            meetingName: String(formData.get('meetingName')),
-            meetingDate: String(formData.get('meetingDate')),
-            gred: String(formData.get('gred')),
-            position: String(formData.get('position')),
-            interviewDate: String(formData.get('interviewDate')),
-            interviewTime: String(formData.get('interviewTime')),
-            state: String(formData.get('state')),
-            interviewVenue: String(formData.get('interviewVenue')),
-            // dateSelector: String(formData.get('dateSelector')),
-        };
-        try {
-            const result = updateInterviewDetails.parse(
-                updateInterviewFormData,
+    const {
+        form: updateResultMeetingInterviewForm,
+        errors: updateResultMeetingInterviewErrors,
+        enhance: updateResultMeetingInterviewEnhance,
+    } = superForm(data.updateResultMeetingInterviewFormData, {
+        SPA: true,
+        validators: _updateResultsMeetingInterview,
+        onSubmit() {
+            _submitUpdateResultMeetingInterviewForm(
+                $updateResultMeetingInterviewForm,
             );
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedMeetingFormData = {
-                    ...updateInterviewFormData,
-                    id,
-                };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedMeetingFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
-
-    // Kemaskini Keputusan Temuduga Stepper Form
-    const updateInterviewResult = z.object({
-        totalInterviewScore: z
-            .string({ required_error: 'Pusat temuduga tidak boleh kosong.' })
-            .min(1, {
-                message:
-                    'Markah keputusan temuduga tidak boleh dibenarkan kosong.',
-            })
-            .max(4, {
-                message:
-                    'Markah yang dimasukkan adalah melebihi markah yang dibenarkan.',
-            })
-            .trim(),
-    });
-    const submitInterviewResultForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-        const interviewResultData = {
-            totalInterviewScore: String(formData.get('totalInterviewScore')),
-        };
-        try {
-            const result = updateInterviewResult.parse(interviewResultData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedInterviewFormData = {
-                    ...interviewResultData,
-                    id,
-                };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedInterviewFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
-
-    const updatePromotionResult = z.object({
-        meetingName: z
-            .string({ required_error: 'Nama mesyuarat tidak boleh kosong.' })
-            .min(10, {
-                message: 'Nama mesyuarat hendaklah melebihi 10 karakter.',
-            })
-            .max(100, {
-                message:
-                    'Nama mesyuarat yang dimasukkan telah melebihi had yang dibenarkan.',
-            })
-            .trim(),
-
-        meetingDate: z
-            .string({ required_error: 'Tarikh mesyuarat tidak boleh kosong.' })
-            .min(8, {
-                message:
-                    'Tarikh mesyuarat hendaklah mengikut format hh/bb/tttt. Contoh: 12/5/2023.',
-            })
-            .max(10, {
-                message:
-                    'Format tarikh mesyuarat yang dimasukkan adalah tidak betul. Contoh: 12/5/2023.',
-            })
-            .trim(),
-
-        meetingResult: z
-            .string({
-                required_error: 'Keputusan mesyuarat tidak boleh kosong.',
-            })
-            .min(7, {
-                message:
-                    'Masukkan keputusan mesyuarat yang betul (Berjaya/Tidak Berjaya).',
-            })
-            .max(13, {
-                message:
-                    'Keputusan yang dimasukkan adalah tidak betul. Masukkan keputusan mesyuarat yang betul (Berjaya/Tidak Berjaya).',
-            })
-            .trim(),
-
-        actingPosition: z
-            .string({
-                required_error: 'Jawatan pemangkuan tidak boleh kosong.',
-            })
-            .min(8, {
-                message: 'Jawatan pemangkuan hendaklah melebihi 8 karakter.',
-            })
-            .max(20, {
-                message:
-                    'Jawatan pemangkuan hendaklah tidak melebihi 20 karakter.',
-            })
-            .trim(),
-
-        actingGred: z
-            .string({ required_error: 'Gred pemangkuan tidak boleh kosong.' })
-            .min(3, {
-                message:
-                    'Gred pemangkuan hendaklah dalam format yang betul. Contoh: N32',
-            })
-            .max(4, {
-                message:
-                    'Format gred pemangkuan yang dimasukkan adalah tidak betul. Contoh: N32',
-            })
-            .trim(),
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
 
-    const submitPromotionResultForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-        const promotionResultData = {
-            meetingName: String(formData.get('meetingName')),
-            meetingDate: String(formData.get('meetingDate')),
-            meetingResult: String(formData.get('meetingResult')),
-            actingPosition: String(formData.get('actingPosition')),
-            actingGred: String(formData.get('actingGred')),
-        };
-        try {
-            const result = updatePromotionResult.parse(promotionResultData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedPromotionFormData = {
-                    ...promotionResultData,
-                    id,
-                };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedPromotionFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
-    const promotionResult = z.object({
-        meetingResultDropdown: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila pilih keputusan mesyuarat.'
-                        : defaultError,
-            }),
-        }),
+    const {
+        form: updateInterviewForm,
+        errors: updateInterviewErrors,
+        enhance: updateInterviewEnhance,
+    } = superForm(data.updateInterviewFormData, {
+        SPA: true,
+        validators: _updateInterviewDetails,
+        onSubmit() {
+            _submitUpdateResultMeetingInterviewForm(
+                $updateResultMeetingInterviewForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
 
-    const promotionResultForm = async (event: Event) => {
-        const meetingResultDropdown = document.getElementById(
-            'meetingResultDropdown',
-        ) as HTMLSelectElement;
-        const promotionResultData = {
-            meetingResultDropdown: String(meetingResultDropdown.value),
-        };
-        try {
-            const result = promotionResult.parse(promotionResultData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
+    // const {
+    //     form: updateInterviewForm,
+    //     errors: updateInterviewErrors,
+    //     enhance: updateInterviewEnhance,
+    // } = superForm(data.updateInterviewFormData, {
+    //     SPA: true,
+    //     validators: _updateInterviewDetails,
+    //     onSubmit() {
+    //         _submitUpdateResultMeetingInterviewForm(
+    //             $updateResultMeetingInterviewForm,
+    //         );
+    //     },
+    //     taintedMessage:
+    //         'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    // });
 
-                const id = crypto.randomUUID().toString();
-                const validatedPromotionFormData = {
-                    ...promotionResultData,
-                    id,
-                };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedPromotionFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
-
-    // Kemaskini Keputusan Mesyuarat Penempatan Kakitangan
-    const staffPlacement = z.object({
-        meetingName: z
-            .string({ required_error: 'Nama mesyuarat tidak boleh kosong.' })
-            .min(10, {
-                message: 'Nama mesyuarat hendaklah melebihi 10 karakter.',
-            })
-            .max(100, {
-                message:
-                    'Nama mesyuarat yang dimasukkan telah melebihi had yang dibenarkan.',
-            })
-            .trim(),
-
-        meetingDate: z
-            .string({ required_error: 'Tarikh mesyuarat tidak boleh kosong.' })
-            .min(8, {
-                message:
-                    'Tarikh mesyuarat hendaklah mengikut format hh/bb/tttt. Contoh: 12/5/2023.',
-            })
-            .max(10, {
-                message:
-                    'Format tarikh mesyuarat yang dimasukkan adalah tidak betul. Contoh: 12/5/2023.',
-            })
-            .trim(),
-        keputusanMesyuaratDropdown: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila pilih keputusan pemilihan yang berkaitan.'
-                        : defaultError,
-            }),
-        }),
-    });
-    const staffPlacementForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-        const keputusanMesyuaratDropdown = document.getElementById(
-            'keputusanMesyuaratDropdown',
-        ) as HTMLSelectElement;
-        const placementFormData = {
-            meetingName: String(formData.get('meetingName')),
-            meetingDate: String(formData.get('meetingDate')),
-            keputusanMesyuaratDropdown: String(
-                keputusanMesyuaratDropdown.value,
-            ),
-        };
-        try {
-            const result = staffPlacement.parse(placementFormData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedPromotionFormData = {
-                    ...placementFormData,
-                    id,
-                };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedPromotionFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
-
-    const dateScheme = z.coerce
-        .date({
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_date'
-                        ? 'Tarikh tidak boleh dibiarkan kosong.'
-                        : defaultError,
-            }),
-        })
-        .min(new Date(), {
-            message:
-                'Tarikh lapor diri yang dipohon hendaklah tidak kurang dari tarikh semasa.',
-        });
-
-    const meetingPlacementResult = z.object({
-        newPlacement: z
-            .string({ required_error: 'Penempatan baru tidak boleh kosong.' })
-            .min(10, {
-                message: 'Nama penempatan baru hendaklah melebihi 10 karakter.',
-            })
-            .max(100, {
-                message:
-                    'Nama penempatan yang dimasukkan telah melebihi had yang dibenarkan.',
-            })
-            .trim(),
-        newDirector: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila pilih pengarah baru yang berkaitan.'
-                        : defaultError,
-            }),
-        }),
-        reportingDate: dateScheme,
-    });
-    const placementMeetingResultForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-        const newDirector = document.getElementById(
-            'newDirector',
-        ) as HTMLSelectElement;
-        const placementResult = {
-            newPlacement: String(formData.get('newPlacement')),
-            newDirector: String(newDirector.value),
-            reportingDate: String(formData.get('reportingDate')),
-        };
-        try {
-            const result = meetingPlacementResult.parse(placementResult);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedPromotionFormData = {
-                    ...placementResult,
-                    id,
-                };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedPromotionFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
-
-    //Permohonan Penangguhan/Pindaan Penempatan Dari Kakitangan
-    const staffPlacementAmendmentForm = z.object({
-        placementAmendmentResult: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila pilih keputusan penangguhan/pindaan yang berkaitan.'
-                        : defaultError,
-            }),
-        }),
-        placementAmendmentApproval: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila pilih kelulusan pindaan penempatan yang berkaitan.'
-                        : defaultError,
-            }),
-        }),
-        approvedNewReportingDate: dateScheme,
+    const {
+        form: promotionResultorm,
+        errors: promotionResultErrors,
+        enhance: promotionResultEnhance,
+    } = superForm(data.promotionResult, {
+        SPA: true,
+        validators: _promotionResult,
+        onSubmit() {
+            _submitPromotionResult($promotionResultorm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
 
-    const staffPlacementAmendment = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-        const placementAmendmentResult = document.getElementById(
-            'placementAmendmentResult',
-        ) as HTMLSelectElement;
-        const placementAmendmentApproval = document.getElementById(
-            'placementAmendmentApproval',
-        ) as HTMLSelectElement;
-
-        const placementResult = {
-            placementAmendmentResult: String(placementAmendmentResult.value),
-            placementAmendmentApproval: String(
-                placementAmendmentApproval.value,
-            ),
-            approvedNewReportingDate: String(
-                formData.get('approvedNewReportingDate'),
-            ),
-        };
-        try {
-            const result = staffPlacementAmendmentForm.parse(placementResult);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedPromotionFormData = {
-                    ...placementResult,
-                    id,
-                };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedPromotionFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
-
-    //Kemaskini Keputusan Pemangkuan
-    const updateActing = z.object({
-        actingResult: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila pilih keputusan pemangkuan yang berkaitan.'
-                        : defaultError,
-            }),
-        }),
-        actingPosition: z
-            .string({
-                required_error: 'Jawatan pemangkuan tidak boleh kosong.',
-            })
-            .min(4, {
-                message: 'Jawatan pemangkuan hendaklah melebihi 4 karakter.',
-            })
-            .max(30, {
-                message: 'Jawatan pemangkuan tidak boleh melebihi 30 karakter.',
-            })
-            .trim(),
-        actingGred: z
-            .string({ required_error: 'Gred pemangkuan tidak boleh kosong.' })
-            .min(3, {
-                message:
-                    'Sila isi maklumat gred pemangkuan yang betul. Contoh: DV41',
-            })
-            .max(4, {
-                message:
-                    'Maklumat gred pemangkuan yang diisi adalah tidak dibenarkan. Contoh gred: DV41',
-            })
-            .trim(),
-        newPlacement: z
-            .string({
-                required_error: 'Nama penempatan baru tidak boleh kosong.',
-            })
-            .min(4, {
-                message: 'Penempatan baru hendaklah melebihi 4 karakter.',
-            })
-            .max(124, {
-                message: 'Nama penempatan baru terlalu panjang.',
-            })
-            .trim(),
-        reportingDate: z
-            .string({ required_error: 'Tarikh lapor diri tidak boleh kosong.' })
-            .min(8, {
-                message:
-                    'Sila isi tarikh lapor diri yang betul dengan menggunakan format hh/bb/tttt. Contoh: 1/8/2023.',
-            })
-            .max(10, {
-                message:
-                    'Sila isi tarikh lapor diri yang betul. Gunakan format hh/bb/tttt. Contoh: 1/8/2023',
-            })
-            .trim(),
-        supporterName: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila pilih nama penyokong yang berkaitan.'
-                        : defaultError,
-            }),
-        }),
-        approverName: z.enum(['true', 'false'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila pilih nama pelulus yang berkaitan.'
-                        : defaultError,
-            }),
-        }),
+    const {
+        form: staffPlacementform,
+        errors: staffPlacementErrors,
+        enhance: staffPlacementEnhance,
+    } = superForm(data.staffPlacement, {
+        SPA: true,
+        validators: _staffPlacement,
+        onSubmit() {
+            _submitStaffPlacement($staffPlacementform);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
 
-    const updateActingResult = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-        const actingResult = document.getElementById(
-            'actingResult',
-        ) as HTMLSelectElement;
-        const supporterName = document.getElementById(
-            'supporterName',
-        ) as HTMLSelectElement;
-        const approverName = document.getElementById(
-            'approverName',
-        ) as HTMLSelectElement;
+    const {
+        form: staffPlacementAmendmentform,
+        errors: staffPlacementAmendmentErrors,
+        enhance: PlacementAmendmentEnhance,
+    } = superForm(data.staffPlacementAmendmentForm, {
+        SPA: true,
+        validators: _staffPlacementAmendmentForm,
+        onSubmit() {
+            _submitStaffPlacementAmendmentForm($staffPlacementAmendmentform);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 
-        const actingResultForm = {
-            actingResult: String(actingResult.value),
-            actingPosition: String(formData.get('actingPosition')),
-            actingGred: String(formData.get('actingGred')),
-            newPlacement: String(formData.get('newPlacement')),
-            reportingDate: String(formData.get('reportingDate')),
-            supporterName: String(supporterName.value),
-            approverName: String(approverName.value),
-        };
-        try {
-            const result = updateActing.parse(actingResultForm);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedActingFormData = {
-                    ...actingResultForm,
-                    id,
-                };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedActingFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
+    const {
+        form: updateActingform,
+        errors: updateActingErrors,
+        enhance: updateActingResultEnhance,
+    } = superForm(data.updateActing, {
+        SPA: true,
+        validators: _updateActing,
+        onSubmit() {
+            _submitUpdateActingForm($updateActingform);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <!-- header section -->
@@ -1018,6 +359,8 @@
                 >
                     <SvgArrowRight></SvgArrowRight>
                 </TextIconButton>
+                <TextIconButton primary label="Simpan" form="Formstepperkontrak"
+                ></TextIconButton>
             </StepperContentHeader>
 
             <StepperContentBody>
@@ -1027,35 +370,43 @@
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
                     <form
-                        id="formValidation"
-                        on:submit|preventDefault={submitForm}
+                        id="Formstepperkontrak"
                         class="flex w-full flex-col gap-2"
+                        use:updateResultMeetingInterviewEnhance
+                        method="POST"
                     >
                         <DropdownSelect
-                            hasError={errorData?.secretaryName}
+                            hasError={$updateResultMeetingInterviewErrors.secretaryName
+                                ? true
+                                : false}
                             id="secretaryName"
                             label="Nama Urus Setia Integriti"
                             dropdownType="label-left-full"
                             options={positions}
+                            bind:value={$updateResultMeetingInterviewForm.secretaryName}
                         />
-                        {#if errorData?.secretaryName}
+                        {#if $updateResultMeetingInterviewErrors.secretaryName}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.secretaryName[0]}</span
+                                >{$updateResultMeetingInterviewErrors
+                                    .secretaryName[0]}</span
                             >
                         {/if}
 
                         <DropdownSelect
-                            hasError={errorData?.directorName}
+                            hasError={$updateResultMeetingInterviewErrors.directorName
+                                ? true
+                                : false}
                             id="directorName"
                             label="Nama Pengarah Bahagian / Negeri"
                             dropdownType="label-left-full"
                             options={positions}
                         />
-                        {#if errorData?.directorName}
+                        {#if $updateResultMeetingInterviewErrors.directorName}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.directorName[0]}</span
+                                >{$updateResultMeetingInterviewErrors
+                                    .directorName[0]}</span
                             >
                         {/if}
                     </form>
@@ -1155,19 +506,13 @@
                                     <DtTableDataCell>
                                         <div class="flex flex-col">
                                             <DropdownSelect
-                                                hasError={errorData?.keputusanPemilihanDropdown}
+
                                                 id="keputusanPemilihanDropdown"
                                                 label=""
                                                 dropdownType="label-left"
                                                 options={keputusanPemilihan}
                                             />
-                                            {#if errorData?.keputusanPemilihanDropdown}
-                                                <span
-                                                    class="font-sans text-sm italic text-system-danger"
-                                                    >{errorData
-                                                        ?.keputusanPemilihanDropdown[0]}</span
-                                                >
-                                            {/if}
+
                                         </div>
                                     </DtTableDataCell>
                                     <DtTableDataCell>
@@ -1210,6 +555,11 @@
                 >
                     <SvgArrowRight></SvgArrowRight>
                 </TextIconButton>
+                <TextIconButton
+                    primary
+                    label="Simpan"
+                    form="updateMeetingValidation"
+                ></TextIconButton>
             </StepperContentHeader>
             <StepperContentBody>
                 <SectionHeader
@@ -1218,113 +568,115 @@
                 ></SectionHeader>
                 <form
                     id="updateMeetingValidation"
-                    on:submit|preventDefault={submitUpdateInterviewDetailsForm}
+                    use:updateInterviewEnhance
+                    method="POST"
                     class="flex w-full flex-col gap-2"
                 >
                     <TextField
-                        hasError={errorData?.meetingName}
+                        hasError={$updateInterviewErrors.meetingName  ? true
+                            : false}
                         name="meetingName"
                         type="text"
                         label="Nama Mesyuarat"
-                        value="Mesyuarat Tersebut"
+                       bind:value={$updateInterviewForm.meetingName}
                     ></TextField>
-                    {#if errorData?.meetingName}
+                    {#if $updateInterviewErrors.meetingName}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.meetingName[0]}</span
+                            >{$updateInterviewErrors.meetingName[0]}</span
                         >
                     {/if}
 
                     <TextField
-                        hasError={errorData?.meetingDate}
+                    hasError={$updateInterviewErrors.meetingDate ? true : false}
                         name="meetingDate"
                         label={'Tarikh Mesyuarat'}
-                        value={'01/08/2023'}
+                        bind:value={$updateInterviewForm.meetingDate}
                     ></TextField>
-                    {#if errorData?.meetingDate}
+                    {#if $updateInterviewErrors.meetingDate}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.meetingDate[0]}</span
+                            >{$updateInterviewErrors.meetingDate[0]}</span
                         >
                     {/if}
 
                     <TextField
-                        hasError={errorData?.gred}
+                        hasError={$updateInterviewErrors.gred  ? true : false}
                         name="gred"
                         label={'Gred'}
-                        value={'DV41'}
+                        bind:value={$updateInterviewForm.gred}
                     ></TextField>
-                    {#if errorData?.gred}
+                    {#if $updateInterviewErrors.gred}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.gred[0]}</span
+                            >{$updateInterviewErrors.gred[0]}</span
                         >
                     {/if}
 
                     <TextField
-                        hasError={errorData?.position}
+                        hasError={$updateInterviewErrors.position  ? true : false}
                         name="position"
                         label={'Jawatan'}
-                        value={'Setiausaha Pejabat'}
+                        bind:value={$updateInterviewForm.position}
                     ></TextField>
-                    {#if errorData?.position}
+                    {#if $updateInterviewErrors.position}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.position[0]}</span
+                            >{$updateInterviewErrors.position[0]}</span
                         >
                     {/if}
 
                     <TextField
-                        hasError={errorData?.interviewDate}
+                        hasError={$updateInterviewErrors.interviewDate  ? true : false}
                         name="interviewDate"
                         label={'Tarikh Temuduga'}
-                        value={'07/09/2023'}
+                        bind:value={$updateInterviewForm.interviewDate}
                     ></TextField>
-                    {#if errorData?.interviewDate}
+                    {#if $updateInterviewErrors.interviewDate}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.interviewDate[0]}</span
+                            >{$updateInterviewErrors.interviewDate[0]}</span
                         >
                     {/if}
 
                     <TextField
-                        hasError={errorData?.interviewTime}
+                        hasError={$updateInterviewErrors.interviewTime  ? true : false}
                         name="interviewTime"
                         label={'Masa Temuduga'}
-                        value={'10am - 11am'}
+                        bind:value={$updateInterviewForm.interviewTime}
                     ></TextField>
-                    {#if errorData?.interviewTime}
+                    {#if $updateInterviewErrors.interviewTime}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.interviewTime[0]}</span
+                            >{$updateInterviewErrors.interviewTime[0]}</span
                         >
                     {/if}
 
                     <TextField
-                        hasError={errorData?.state}
+                    hasError={$updateInterviewErrors.state  ? true : false}
                         name="state"
                         label={'Negeri'}
-                        value={'Sabah'}
+                        bind:value={$updateInterviewForm.state}
                     ></TextField>
-                    {#if errorData?.state}
+                    {#if $updateInterviewErrors.state}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.state[0]}</span
+                            >{$updateInterviewErrors.state[0]}</span
                         >
                     {/if}
 
                     <TextField
-                        hasError={errorData?.interviewVenue}
+                    hasError={$updateInterviewErrors.interviewVenue  ? true : false}
                         name="interviewVenue"
                         label={'Pusat Temuduga'}
-                        value={'LKIM SARAWAK - KUCHING'}
+                        bind:value={$updateInterviewForm.interviewVenue}
                     ></TextField>
-                    {#if errorData?.interviewVenue}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.interviewVenue[0]}</span
-                        >
-                    {/if}
+                    {#if $updateInterviewErrors.interviewVenue}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$updateInterviewErrors.interviewVenue[0]}</span
+                    >
+                {/if}
                 </form>
 
                 <!-- Document Upload -->
@@ -1541,20 +893,21 @@
 
                     <form
                         id="updateInterviewResult"
-                        on:submit|preventDefault={submitInterviewResultForm}
+                        use:promotionResultEnhance
+                        method="POST"
                         class="flex w-full flex-col gap-2"
                     >
                         <TextField
-                            hasError={errorData?.totalInterviewScore}
+                            hasError={$promotionResultErrors.totalInterviewScore}
                             name="totalInterviewScore"
                             type="text"
                             label={'Markah Keseluruhan'}
-                            value={'79%'}
+                            bind:value={$promotionResultorm.totalInterviewScore}
                         ></TextField>
-                        {#if errorData?.totalInterviewScore}
+                        {#if $promotionResultErrors.totalInterviewScore}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.totalInterviewScore[0]}</span
+                                >{$promotionResultErrors.totalInterviewScore[0]}</span
                             >
                         {/if}
                     </form>
@@ -1657,84 +1010,86 @@
                     >
                         <SvgArrowRight></SvgArrowRight>
                     </TextIconButton>
+                    <TextIconButton primary label="Simpan" form="updatePromotionResult" />
                 </StepperContentHeader>
 
                 <StepperContentBody>
                     <SectionHeader title="Keputusan Mesyuarat"></SectionHeader>
                     <form
                         id="updatePromotionResult"
-                        on:submit|preventDefault={submitPromotionResultForm}
+                        use:promotionResultEnhance
+                        method="POST"
                         class="flex w-full flex-col gap-2"
                     >
                         <TextField
-                            hasError={errorData?.meetingName}
+                            hasError={$promotionResultErrors.meetingName ? true : false}
                             type="text"
                             name="meetingName"
                             label={'Nama Mesyuarat'}
-                            value={'Mesyuarat Tersebut'}
+                            bind:value={$promotionResultorm.meetingName}
                         ></TextField>
-                        {#if errorData?.meetingName}
+                        {#if $promotionResultErrors.meetingName}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.meetingName[0]}</span
+                                >{$promotionResultErrors.meetingName[0]}</span
                             >
                         {/if}
 
                         <TextField
-                            hasError={errorData?.meetingDate}
+                        hasError={$promotionResultErrors.meetingDate ? true : false}
                             type="text"
                             name="meetingDate"
                             label={'Tarikh Mesyuarat'}
-                            value={'01/08/2023'}
+                            bind:value={$promotionResultorm.meetingDate}
                         ></TextField>
-                        {#if errorData?.meetingDate}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.meetingDate[0]}</span
-                            >
-                        {/if}
+                        {#if $promotionResultErrors.meetingDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$promotionResultErrors.meetingDate[0]}</span
+                        >
+                    {/if}
 
                         <TextField
-                            hasError={errorData?.meetingResult}
+                        hasError={$promotionResultErrors.meetingResult ? true : false}
                             type="text"
                             name="meetingResult"
                             label={'Keputusan Mesyuarat'}
-                            value={'Berjaya/Tidak Berjaya'}
+                            bind:value={$promotionResultorm.meetingResult}
                         ></TextField>
-                        {#if errorData?.meetingResult}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.meetingResult[0]}</span
-                            >
-                        {/if}
+                        {#if $promotionResultErrors.meetingResult}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$promotionResultErrors.meetingResult[0]}</span
+                        >
+                    {/if}
 
                         <TextField
-                            hasError={errorData?.actingPosition}
+                        hasError={$promotionResultErrors.actingPosition ? true : false}
                             type="text"
                             name="actingPosition"
                             label={'Jawatan Pemangkuan'}
-                            value={'Setiausaha Pejabat'}
+                            bind:value={$promotionResultorm.actingPosition}
                         ></TextField>
-                        {#if errorData?.actingPosition}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.actingPosition[0]}</span
-                            >
-                        {/if}
+                        {#if $promotionResultErrors.actingPosition}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$promotionResultErrors.actingPosition[0]}</span
+                        >
+                    {/if}
 
                         <TextField
-                            hasError={errorData?.actingGred}
+                        hasError={$promotionResultErrors.actingGred ? true : false}
                             type="text"
                             name="actingGred"
                             label={'Gred Pemangkuan'}
-                            value={'N32'}
+                            bind:value={$promotionResultorm.actingGred}
                         ></TextField>
-                        {#if errorData?.actingGred}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.actingGred[0]}</span
-                            >
-                        {/if}
+                        {#if $promotionResultErrors.actingGred}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$promotionResultErrors.actingGred[0]}</span
+                        >
+                    {/if}
                     </form>
                     <SectionHeader title="Senarai Calon Yang Terpilih"
                     ></SectionHeader>
@@ -1828,28 +1183,37 @@
                         label={'No. K/P'}
                         value={'890701-13-5667'}
                     ></TextField>
-                    <SectionHeader title="Keputusan Mesyuarat"></SectionHeader>
+                    <SectionHeader title="Keputusan Mesyuarat">
+
+                    </SectionHeader>
+                    <TextIconButton
+                    primary
+                    label="Simpan"
+                    form="FormStepperMaklumatPeribadi"/>
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start"
                     >
                         <form
                             id="updatePromotionResult"
-                            on:submit|preventDefault={promotionResultForm}
+                            use:promotionResultEnhance
+                             method="POST"
                             class="flex w-full flex-col gap-2"
                         >
                             <DropdownSelect
+                            hasError={$promotionResultErrors.meetingResultDropdown ? true : false}
                                 id="meetingResultDropdown"
                                 label="Keputusan"
                                 dropdownType="label-left-full"
+                                bind:value={$promotionResultorm.meetingResultDropdown}
                                 options={[
                                     { value: 'true', name: 'Berjaya' },
                                     { value: 'false', name: 'Tidak Berjaya' },
                                 ]}
                             />
-                            {#if errorData?.meetingResultDropdown}
+                            {#if $promotionResultErrors.meetingResultDropdown}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.meetingResultDropdown[0]}</span
+                                    >{$promotionResultErrors.meetingResultDropdown[0]}</span
                                 >
                             {/if}
                         </form>
@@ -1889,35 +1253,41 @@
                 </StepperContentHeader>
 
                 <StepperContentBody>
-                    <SectionHeader title="Keputusan Mesyuarat"></SectionHeader>
+                    <SectionHeader title="Keputusan Mesyuarat">
+                        <TextIconButton
+                    primary
+                    label="Simpan"
+                    form="FormStepperMaklumatPeribadi"/>
+                    </SectionHeader>
                     <form
-                        id="placementResultForm"
-                        on:submit|preventDefault={staffPlacementForm}
+                        id="FormStepperMaklumatPeribadi"
+                        use:staffPlacementEnhance
+                        method="post"
                         class="flex w-full flex-col gap-2"
                     >
                         <TextField
-                            hasError={errorData?.meetingName}
+                            hasError={$staffPlacementErrors.meetingName ? true : false}
                             name="meetingName"
                             label={'Nama Mesyuarat'}
-                            value={'Mesyuarat Tersebut'}
+                            bind:value={$staffPlacementForm.meetingName}
                         ></TextField>
-                        {#if errorData?.meetingName}
+                        {#if $staffPlacementErrors.meetingName}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.meetingName[0]}</span
+                                >{$staffPlacementErrors.meetingName[0]}</span
                             >
                         {/if}
 
                         <TextField
-                            hasError={errorData?.meetingDate}
+                        hasError={$staffPlacementErrors.meetingDate ? true : false}
                             name="meetingDate"
                             label={'Tarikh Mesyuarat'}
-                            value={'01/08/2023'}
+                            bind:value={$staffPlacementForm.meetingDate}
                         ></TextField>
-                        {#if errorData?.meetingDate}
+                        {#if $staffPlacementErrors.meetingDate}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.meetingDate[0]}</span
+                                >{$staffPlacementErrors.meetingDate[0]}</span
                             >
                         {/if}
                     </form>
@@ -2010,19 +1380,13 @@
                                         ></DtTableDataCell>
                                         <DtTableDataCell>
                                             <DropdownSelect
-                                                hasError={errorData?.keputusanMesyuaratDropdown}
+
                                                 id="keputusanMesyuaratDropdown"
                                                 label=""
                                                 dropdownType="label-left"
                                                 options={keputusanPemilihan}
                                             />
-                                            {#if errorData?.keputusanMesyuaratDropdown}
-                                                <span
-                                                    class="font-sans text-sm italic text-system-danger"
-                                                    >{errorData
-                                                        ?.keputusanMesyuaratDropdown[0]}</span
-                                                >
-                                            {/if}
+
                                         </DtTableDataCell>
                                         <DtTableDataCell>
                                             <IconButton
@@ -2073,10 +1437,17 @@
                         value={'890701-13-5667'}
                     ></TextField>
 
-                    <SectionHeader title="Keputusan Mesyuarat"></SectionHeader>
+                    <SectionHeader title="Keputusan Mesyuarat">
+                        <TextIconButton
+                    primary
+                    label="Simpan"
+                    form="placementMeetingResult"
+                />
+                    </SectionHeader>
                     <form
                         id="placementMeetingResult"
-                        on:submit|preventDefault={placementMeetingResultForm}
+                        use:enhance
+                        method="POST"
                         class="flex w-full flex-col gap-2"
                     >
                         <TextField
@@ -2293,41 +1664,53 @@
                         value={'Bahagian Teknologi'}
                     ></TextField>
 
+                    <StepperContentHeader >
+
+                            <TextIconButton
+                                primary
+                                label="Simpan"
+                                form="placementAmendmentForm"
+                            />
+                        </StepperContentHeader>
+
                     <form
                         id="placementAmendmentForm"
-                        on:submit|preventDefault={staffPlacementAmendment}
+                        use:PlacementAmendmentEnhance
+                         method="POST"
                         class="flex w-full flex-col gap-2"
                     >
                         <div
                             class="flex max-h-full w-full flex-col items-start justify-start"
                         >
                             <DropdownSelect
-                                hasError={errorData?.placementAmendmentResult}
+                                hasError={$staffPlacementAmendmentErrors.placementAmendmentResult ? true: false }
                                 id="placementAmendmentResult"
                                 label="Keputusan"
                                 labelBlack={false}
                                 dropdownType="label-left-full"
                                 options={keputusanPemilihan}
-                            />{#if errorData?.placementAmendmentResult}
+                            />{#if $staffPlacementAmendmentErrors.placementAmendmentResult}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData
-                                        ?.placementAmendmentResult[0]}</span
+                                    >{$staffPlacementAmendmentErrors.placementAmendmentResult[0]}</span
                                 >
                             {/if}
                         </div>
 
                         <DateSelector
-                            hasError={errorData?.approvedNewReportingDate}
+                        hasError={$staffPlacementAmendmentErrors.approvedNewReportingDate
+                            ? true
+                            : false}
                             name="approvedNewReportingDate"
                             {handleDateChange}
                             labelBlack={false}
                             label={'Kelulusan Tarikh Lapor Diri Baru'}
+                            bind:selectedDate={$staffPlacementAmendmentform.approvedNewReportingDate}
                         />
-                        {#if errorData?.approvedNewReportingDate}
+                        {#if $staffPlacementAmendmentErrors.approvedNewReportingDate}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.approvedNewReportingDate[0]}</span
+                                >{$staffPlacementAmendmentErrors.approvedNewReportingDate[0]}</span
                             >
                         {/if}
 
@@ -2335,18 +1718,17 @@
                             class="flex max-h-full w-full flex-col items-start justify-start"
                         >
                             <DropdownSelect
-                                hasError={errorData?.placementAmendmentApproval}
+                                hasError={$staffPlacementAmendmentErrors.placementAmendmentApproval ? true :false }
                                 id="placementAmendmentApproval"
                                 label="Kelulusan Pindaan Penempatan Dipohon"
                                 labelBlack={false}
                                 dropdownType="label-left-full"
                                 options={keputusanPemilihan}
                             />
-                            {#if errorData?.placementAmendmentApproval}
+                            {#if $staffPlacementAmendmentErrors.placementAmendmentApproval}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData
-                                        ?.placementAmendmentApproval[0]}</span
+                                    >{$staffPlacementAmendmentErrors.placementAmendmentApproval[0]}</span
                                 >
                             {/if}
                         </div>
@@ -2510,7 +1892,13 @@
                 >
 
                 <StepperContentBody>
-                    <SectionHeader title="Maklumat Calon"></SectionHeader>
+                    <SectionHeader title="Maklumat Calon">
+                        <TextIconButton
+                    primary
+                    label="Simpan"
+                    form="FormStepperMaklumatPerkhidmatan"
+                />
+                    </SectionHeader>
                     <TextField
                         disabled
                         labelBlack={false}
@@ -2535,7 +1923,8 @@
 
                     <form
                         id="updateActingResultForm"
-                        on:submit|preventDefault={updateActingResult}
+                        use:updateActingResultEnhance
+                        method="POST"
                         class="flex w-full flex-col gap-2"
                     >
                         <SectionHeader title="Butiran Pemangkuan"
@@ -2552,111 +1941,116 @@
                             class="flex max-h-full w-full flex-col items-start justify-start"
                         >
                             <DropdownSelect
-                                hasError={errorData?.actingResult}
+                                hasError={$updateActingErrors.actingResult ? true : false}
                                 id="actingResult"
                                 label="Keputusan Pemangkuan"
                                 labelBlack={false}
                                 dropdownType="label-left-full"
                                 options={keputusanPemilihan}
+                                bind:value={$updateActingform.actingResult}
                             />
-                            {#if errorData?.actingResult}
+                            {#if $updateActingErrors.actingResult}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.actingResult[0]}</span
+                                    >{$updateActingErrors.actingResult[0]}</span
                                 >
                             {/if}
                         </div>
 
                         <TextField
-                            hasError={errorData?.actingPosition}
+                            hasError={$updateActingErrors.actingPosition ? true : false}
                             labelBlack={false}
                             name="actingPosition"
                             label={'Jawatan Pemangkuan'}
-                            value={'Setiausaha Pejabat'}
+                           bind:value={$updateActingform.actingPosition}
                         ></TextField>
-                        {#if errorData?.actingPosition}
+                        {#if $updateActingErrors.actingPosition}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.actingPosition[0]}</span
+                                >{$updateActingErrors.actingPosition[0]}</span
                             >
                         {/if}
 
                         <TextField
-                            hasError={errorData?.actingGred}
+                        hasError={$updateActingErrors.actingGred ? true : false}
                             labelBlack={false}
                             name="actingGred"
                             label={'Gred Pemangkuan'}
-                            value={'N32'}
+                            bind:value={$updateActingform.actingGred}
                         ></TextField>
-                        {#if errorData?.actingGred}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.actingGred[0]}</span
-                            >
-                        {/if}
+                        {#if $updateActingErrors.actingGred}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateActingErrors.actingGred[0]}</span
+                        >
+                    {/if}
+
 
                         <TextField
-                            hasError={errorData?.newPlacement}
+                        hasError={$updateActingErrors.newPlacement ? true : false}
                             labelBlack={false}
                             name="newPlacement"
                             label={'Penempatan Baru'}
-                            value={'Bahagian Pengurusan'}
+                            bind:value={$updateActingform.newPlacement}
                         ></TextField>
-                        {#if errorData?.newPlacement}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.newPlacement[0]}</span
-                            >
-                        {/if}
+                        {#if $updateActingErrors.newPlacement}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateActingErrors.newPlacement[0]}</span
+                        >
+                    {/if}
+
 
                         <TextField
-                            hasError={errorData?.reportingDate}
+                        hasError={$updateActingErrors.reportingDate ? true : false}
                             labelBlack={false}
                             name="reportingDate"
                             label={'Tarikh Lapor Diri'}
-                            value={'19/10/2023'}
+                            bind:value={$updateActingform.reportingDate}
                         ></TextField>
-                        {#if errorData?.reportingDate}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.reportingDate[0]}</span
-                            >
-                        {/if}
+                        {#if $updateActingErrors.reportingDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateActingErrors.reportingDate[0]}</span
+                        >
+                    {/if}
                         <SectionHeader title="Pengesah Keputusan"
                         ></SectionHeader>
                         <div
                             class="flex max-h-full w-full flex-col items-start justify-start"
                         >
                             <DropdownSelect
-                                hasError={errorData?.supporterName}
+                            hasError={$updateActingErrors.supporterName ? true : false}
                                 id="supporterName"
                                 label="Nama Penyokong"
                                 labelBlack={false}
                                 dropdownType="label-left-full"
                                 options={keputusanPemilihan}
+                                bind:value={$updateActingform.supporterName}
                             />
-                            {#if errorData?.supporterName}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.supporterName[0]}</span
-                                >
-                            {/if}
+                            {#if $updateActingErrors.supporterName}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$updateActingErrors.supporterName[0]}</span
+                        >
+                    {/if}
                         </div>
                         <div
                             class="flex max-h-full w-full flex-col items-start justify-start"
                         >
                             <DropdownSelect
-                                hasError={errorData?.approverName}
+                            hasError={$updateActingErrors.approverName ? true : false}
                                 id="approverName"
                                 label="Nama Pelulus"
                                 labelBlack={false}
                                 dropdownType="label-left-full"
                                 options={keputusanPemilihan}
+                                bind:value={$updateActingform.approverName}
                             />
-                            {#if errorData?.approverName}
+                            {#if $updateActingErrors.approverName}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.approverName[0]}</span
+                                    >{$updateActingErrors.approverName[0]}</span
                                 >
                             {/if}
                         </div>
