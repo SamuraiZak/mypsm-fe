@@ -70,14 +70,12 @@ const booleanSchema = z.boolean({
     invalid_type_error: 'Medan ini haruslah jenis boolean.',
 });
 
-const checkboxSchema = z.enum(['on'], {
-    errorMap: (issue, { defaultError }) => ({
-        message:
-            issue.code === 'invalid_enum_value'
-                ? 'Sila tandakan kotak semak.'
-                : defaultError,
-    }),
-});
+const numberIdSchema = z.coerce
+    .number({
+        required_error: 'Tidak tepat.',
+        invalid_type_error: 'Sila pastikan ID ditaip dengan angka',
+    })
+    .min(12, { message: 'Kurang daripada 12 angka mengikut ID Malaysia' });
 
 export const _personalInfoForm = z
     .object({
@@ -180,9 +178,9 @@ export const _addExperienceModalSchema = z.object({
     addCompany: shortTextSchema,
     addAddress: shortTextSchema,
     addPosition: shortTextSchema,
-    addPositionCode: shortTextSchema.nullable(),
-    addStartDate: minDateSchema,
-    addEndDate: minDateSchema,
+    addPositionCode: codeSchema.nullish(),
+    addStartDate: maxDateSchema,
+    addEndDate: maxDateSchema,
     addSalary: z.coerce.number({
         invalid_type_error: 'Medan ini hendaklah ditetapkan dengan angka',
     }),
@@ -205,7 +203,7 @@ export const _addActivityModalSchema = z.object({
 
 export const _addFamilyModalSchema = z.object({
     addName: shortTextSchema,
-    addIdentityDocumentNumber: shortTextSchema,
+    addIdentityDocumentNumber: numberIdSchema,
     addGender: generalSelectSchema,
     addRelationship: generalSelectSchema,
     addOccupation: shortTextSchema.nullish(),
@@ -218,7 +216,7 @@ export const _addFamilyModalSchema = z.object({
 
 export const _addNonFamilyModalSchema = z.object({
     addNonFamilyName: shortTextSchema,
-    addNonFamilyIdentityDocumentNumber: shortTextSchema,
+    addNonFamilyIdentityDocumentNumber: numberIdSchema,
     addNonFamilyGender: generalSelectSchema,
     addNonFamilyRelationship: generalSelectSchema,
     addNonFamilyOccupation: shortTextSchema.nullish(),
@@ -283,16 +281,16 @@ export const _nextOfKinInfoSchema = z.object({
 //==========================================================
 export const _addNextOfKinInfoSchema = z.object({
     addNextOfKinName: shortTextSchema,
-    addNextOfKinIdentityDocumentNumber: shortTextSchema,
+    addNextOfKinIdentityDocumentNumber: numberIdSchema,
     addNextOfKinBirthDate: maxDateSchema,
     addNextOfKinRelationship: generalSelectSchema,
     addNextOfKinMarriageDate: maxDateSchema,
     addNextOfKinIdentityDocumentType: generalSelectSchema,
-    addNextOfKinHomeNumber: shortTextSchema,
+    addNextOfKinHomeNumber: shortTextSchema.nullish(),
     addNextOfKinMobileNumber: shortTextSchema,
     addNextOfKinPosition: shortTextSchema,
-    addNextOfKinCompany: shortTextSchema,
-    addNextOfKinCompanyAddress: shortTextSchema,
+    addNextOfKinCompany: shortTextSchema.nullish(),
+    addNextOfKinCompanyAddress: shortTextSchema.nullish(),
 });
 
 interface IAcademicResponse {
