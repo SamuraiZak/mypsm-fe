@@ -5,19 +5,20 @@
     // import { getEmployees } from '$lib/service/employees/staff-service';
     import { onMount } from 'svelte';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
-    let radioValueExSoldier: string | undefined = 'tidak';
-    let radioValueRelationToStaff: string | undefined = 'ya';
+    import type { PageData } from '../$types';
+    let radioValueExSoldier: boolean | undefined = false;
+    let radioValueRelationToStaff: boolean | undefined = true;
     let staffData: IntEmployees | undefined;
-    export let ptbData: PtbAndKwap;
+    export let data: PageData;
     export let editable: boolean = false;
 
     const options: RadioOption[] = [
         {
-            value: 'ya',
+            value: true,
             label: 'YA',
         },
         {
-            value: 'tidak',
+            value: false,
             label: 'Tidak',
         },
     ];
@@ -28,8 +29,8 @@
 
         staffData = data.find((staff) => {
             return (
-                staff.employeeNumber === ptbData.noPekerja &&
-                staff.identityDocumentNumber === ptbData.noKadPengenalan
+                staff.employeeNumber === '111' &&
+                staff.identityDocumentNumber === '111'
             );
         });
     });

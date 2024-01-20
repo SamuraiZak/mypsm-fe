@@ -4,9 +4,6 @@
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import { goto } from '$app/navigation';
-    import Form from '$lib/components/form/Form.svelte';
-    import FormHeading from '$lib/components/form/FormHeading.svelte';
-    import FormContents from '$lib/components/form/FormContents.svelte';
     import MaklumatKakitangan from './forms/MaklumatKakitangan.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
@@ -20,20 +17,14 @@
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    export let data;
-    let status: string = 'SOKONG - Urus setia';
+    import type { PageData } from './$types';
+    export let data: PageData;
     let stepperIndex = 0;
-
-    // Stepper Names
-    onMount(() => {
-        console.log(data.record.status);
-    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader
-        title="Maklumat Permohonan Pemberian Taraf Berpencen {data.record
-            .namaPekerja} ({data.record.noPekerja})"
+        title="Maklumat Permohonan Pemberian Taraf Berpencen"
         description="Kemaskini maklumat PTB dan KWAP berikut"
         ><FormButton
             type="close"
@@ -55,10 +46,7 @@
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
-                    <MaklumatKakitangan
-                        ptbData={data.record}
-                        editable={false}
-                    />
+                    <MaklumatKakitangan bind:data editable={false} />
                 </div>
             </StepperContentBody>
             <!-- {:else} -->
@@ -80,63 +68,52 @@
 
         <StepperContent>
             <StepperContentHeader title="Kemaskini Maklumat PTB dan KWAP">
-                {#if data.record.status === 'Baru'}
-                    <TextIconButton
-                        primary
-                        label="Simpan"
-                        form="meetingResultForm"
-                    >
-                        <SvgCheck></SvgCheck>
-                    </TextIconButton>
-                {/if}
+                <TextIconButton primary label="Simpan" form="meetingResultForm">
+                    <SvgCheck></SvgCheck>
+                </TextIconButton>
             </StepperContentHeader>
             <StepperContentBody>
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
-                    <MaklumatPtbAndKwap
-                        editable={data.record.status === 'Baru' ? true : false}
-                    />
+                    <MaklumatPtbAndKwap bind:data />
                 </div>
             </StepperContentBody>
         </StepperContent>
-        {#if data.record.status === 'Baru'}
-            <StepperContent>
-                <StepperContentHeader
-                    title="Masukkan Maklumat Peranan - Peranan Berkaitan"
+        <StepperContent>
+            <StepperContentHeader
+                title="Masukkan Maklumat Peranan - Peranan Berkaitan"
+            >
+                <TextIconButton
+                    primary
+                    label="Simpan"
+                    form="newEmploymentAssignApproverSupporterForm"
                 >
-                    <TextIconButton
-                        primary
-                        label="Simpan"
-                        form="newEmploymentAssignApproverSupporterForm"
-                    >
-                        <SvgCheck></SvgCheck>
-                    </TextIconButton>
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <SectionHeader
-                        subTitle="Masukkan nama Penyokong dan Pelulus (Jika Sah)"
-                    ></SectionHeader>
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start"
-                    >
-                        <KemaskiniPerananLain />
-                    </div>
-                </StepperContentBody>
-            </StepperContent>
-        {:else if data.record.status === 'SOKONG' || data.record.status === 'LULUS'}
-            <StepperContent>
-                <StepperContentHeader
-                    title="Keputusan Daripada Peranan - Peranan Berkaitan"
-                ></StepperContentHeader>
-                <StepperContentBody>
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start"
-                    >
-                        <KeputusanPerananLain status={data.record.status} />
-                    </div>
-                </StepperContentBody>
-            </StepperContent>
-        {/if}
+                    <SvgCheck></SvgCheck>
+                </TextIconButton>
+            </StepperContentHeader>
+            <StepperContentBody>
+                <SectionHeader
+                    subTitle="Masukkan nama Penyokong dan Pelulus (Jika Sah)"
+                ></SectionHeader>
+                <div
+                    class="flex max-h-full w-full flex-col items-start justify-start"
+                >
+                    <KemaskiniPerananLain />
+                </div>
+            </StepperContentBody>
+        </StepperContent>
+        <StepperContent>
+            <StepperContentHeader
+                title="Keputusan Daripada Peranan - Peranan Berkaitan"
+            ></StepperContentHeader>
+            <StepperContentBody>
+                <div
+                    class="flex max-h-full w-full flex-col items-start justify-start"
+                >
+                    <KeputusanPerananLain status={data} />
+                </div>
+            </StepperContentBody>
+        </StepperContent>
     </Stepper>
 </section>

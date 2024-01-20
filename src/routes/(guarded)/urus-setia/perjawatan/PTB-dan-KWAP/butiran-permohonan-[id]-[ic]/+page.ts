@@ -1,16 +1,78 @@
+import http from '$lib/services/provider/service-provider.service';
+import { getErrorToast, getPromiseToast } from '$lib/toast/toast-service';
+import { fail } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms/client';
+import { z } from 'zod';
 
-import { mockPTBdanKWAP } from '$lib/mocks/perjawatan/PTB-dan-KWAP/ptb-dan-kwap.js';
+// =========================================================================
+// z validation schema and submit function for the ptb form fields
+// =========================================================================
 
-export async function load({ params }) {
-    const data: PtbAndKwap[] = mockPTBdanKWAP;
+const textSchema = z
+    .string({ required_error: 'Medan ini tidak boleh kosong.' })
+    .min(4, {
+        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+    })
+    .max(124, {
+        message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    })
+    .trim();
 
-    const record: PtbAndKwap | undefined = data.find(
-        (record) =>
-            record.noPekerja === params.id &&
-            record.noKadPengenalan === params.ic,
-    );
+const dateSchema = z.coerce
+    .date({
+        errorMap: (issue, { defaultError }) => ({
+            message:
+                issue.code === 'invalid_date'
+                    ? 'Tarikh tidak boleh dibiar kosong.'
+                    : defaultError,
+        }),
+    })
+    .optional();
 
-    if (!record) throw new Error('Record not found');
+// PTB info update section
+export const _ptbInfoSchema = z.object({
+    applicantsName: textSchema.readonly(),
+    applicantsId: textSchema.readonly(),
+    applicationDate: dateSchema.nullish(),
+    PTBDate: dateSchema,
+    referenceNumber: textSchema,
+    referenceDate: dateSchema,
+    status: textSchema.readonly(),
+    remark: textSchema.nullish(),
+    pensionNumber: dateSchema,
+    KWAPEmailDate: dateSchema,
+});
 
-    return { record };
-}
+export const load = async ({ params }) => {
+    const record = await http
+        .get(`api/v1/employments/pension-detail/${params.id}`, {
+            prefixUrl: '',
+        })
+        .json();
+
+    const PTBKWAPInfoForm = await superValidate(record.data, _ptbInfoSchema);
+
+    return {
+        PTBKWAPInfoForm,
+    };
+};
+
+export const _submitPTBResult = async (formData: object) => {
+    const form = await superValidate(formData, _ptbInfoSchema);
+
+    if (!form.valid) {
+        getErrorToast();
+        return fail(400, form);
+    }
+
+    const responsePromise = http
+        .post('https://jsonplaceholder.typicode.com/posts', {
+            body: JSON.stringify(form),
+            prefixUrl: '',
+        })
+        .json()
+        .then((json) => console.log('Response: ', json));
+
+    getPromiseToast(responsePromise);
+    return { form };
+};
