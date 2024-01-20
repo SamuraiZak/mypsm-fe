@@ -3,17 +3,18 @@
 // ===============================================================
 
 import http from "$lib/services/provider/service-provider.service";
+import { EnumAgencyGroupConvert } from "$lib/view-models/core/lookup/agency-group/agency-group-senum.view-model";
+import { EnumAssetDeclarationStatusResponseConvert } from "$lib/view-models/core/lookup/asset-declaration/asset-declaration-enum.view-model";
 import { IDTypeListConvert } from "$lib/view-models/core/lookup/lookup-id-type-list-response.view-model";
 import { RoleListConvert } from "$lib/view-models/core/lookup/lookup-role-list-response.view-model";
 
 export class LookupService{
 
-    // get all available role
-    static async getEnumRoles(){
+    // get list of agency group
+    static async getEnumAgencyGroup(){
 
-        // fetch
         const response: Response = await http
-        .get('/authentication/login-employee', {
+        .get('/lookups/agency-groups', {
             headers: {
                 Accept: 'application/json',
                 'Content-type': 'application/json',
@@ -21,15 +22,14 @@ export class LookupService{
         })
         .json();
 
-        return RoleListConvert.fromResponse(response);
+        return EnumAgencyGroupConvert.fromResponse(response);
     }
 
-    // get all login option
-    static async getEnumIdType(){
+    // get list of asset declation status
+    static async getEnumAssetDeclarationStatus(){
 
-        // fetch
         const response: Response = await http
-        .get('/authentication/login-employee', {
+        .get('/lookups/agency-groups', {
             headers: {
                 Accept: 'application/json',
                 'Content-type': 'application/json',
@@ -37,6 +37,8 @@ export class LookupService{
         })
         .json();
 
-        return IDTypeListConvert.fromResponse(response);
+        return EnumAssetDeclarationStatusResponseConvert.fromResponse(response);
     }
+
+
 }
