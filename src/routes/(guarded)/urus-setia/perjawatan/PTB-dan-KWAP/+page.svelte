@@ -33,7 +33,7 @@
 <!-- content body starts here -->
 <!-- notes: you may change the flex directions but do not change the height and max height of this section -->
 <section
-    class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
+    class="flex h-full w-full flex-col overflow-y-auto"
 >
     <Tabs>
         <TabContent title="Senarai Kakitangan Baharu diberi PTB dan KWAP">
