@@ -9,7 +9,7 @@
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import { goto } from '$app/navigation';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
-    import { z, ZodError } from 'zod';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import { Toaster } from 'svelte-french-toast';
@@ -17,13 +17,8 @@
         _stepperPermohonanPersaraan,
         _submitFormStepperPermohonanPersaraan,
     } from './+page';
-    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
 
     export let data: PageData;
-
-    let earlyRetirementApplicationDate: string;
-    let earlyRetirementDate: string;
-    let applicationPurpose: string;
 
     let selectedDate = new Date();
     function handleDateChange(event: any) {
@@ -35,8 +30,6 @@
         });
         console.log(formattedDate);
     }
-
-    let errorData: any;
 
     const {
         form: permohonanPersaraanForm,
@@ -51,75 +44,6 @@
         taintedMessage:
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
-    // date common schema
-    // const dateScheme = z.coerce
-    //     .date({
-    //         errorMap: (issue, { defaultError }) => ({
-    //             message:
-    //                 issue.code === 'invalid_date'
-    //                     ? 'Tarikh tidak boleh dibiar kosong.'
-    //                     : defaultError,
-    //         }),
-    //     })
-    //     .min(new Date(), {
-    //         message: 'Tarikh tidak boleh kurang dari tarikh semasa.',
-    //     });
-
-    // const exampleFormSchema = z.object({
-    //     earlyRetirementDate: dateScheme.refine(
-    //         (value) => value >= new Date(earlyRetirementApplicationDate),
-    //         {
-    //             message:
-    //                 'Tidak boleh kurang daripada tarikh permohonan bersara awal',
-    //         },
-    //     ),
-    //     earlyRetirementApplicationDate: dateScheme.refine(
-    //         (value) => value <= new Date(earlyRetirementDate),
-    //         {
-    //             message: 'Tidak boleh lebih daripada tarikh bersara awal',
-    //         },
-    //     ),
-    // });
-
-    // const submitForm = async (event: Event) => {
-    //     const formData = new FormData(event.target as HTMLFormElement);
-
-    //     const exampleFormData = {
-    //         applicationPurpose: String(formData.get('applicationPurpose')),
-    //         earlyRetirementDate: String(formData.get('earlyRetirementDate')),
-    //         earlyRetirementApplicationDate: String(
-    //             formData.get('earlyRetirementApplicationDate'),
-    //         ),
-    //     };
-    //     try {
-    //         const result = exampleFormSchema.parse(exampleFormData);
-    //         if (result) {
-    //             errorData = [];
-    //             toast.success('Berjaya disimpan!', {
-    //                 style: 'background: #333; color: #fff;',
-    //             });
-
-    //             const id = crypto.randomUUID().toString();
-    //             const validatedExamFormData = { ...exampleFormData, id };
-    //             console.log(
-    //                 'REQUEST BODY: ',
-    //                 JSON.stringify(validatedExamFormData),
-    //             );
-    //         }
-    //     } catch (err: unknown) {
-    //         if (err instanceof ZodError) {
-    //             const { fieldErrors: errors } = err.flatten();
-    //             errorData = errors;
-    //             console.log('ERROR!', err.flatten());
-    //             toast.error(
-    //                 'Sila pastikan maklumat adalah lengkap dengan tepat.',
-    //                 {
-    //                     style: 'background: #333; color: #fff;',
-    //                 },
-    //             );
-    //         }
-    //     }
-    // };
 </script>
 
 <ContentHeader
@@ -170,6 +94,7 @@
                                     .earlyRetirementDate[0]}</span
                             >
                         {/if}
+
                         <DateSelector
                             hasError={$permohonanPersaraanErrors.earlyRetirementApplicationDate
                                 ? true
@@ -186,6 +111,7 @@
                                     .earlyRetirementApplicationDate[0]}</span
                             >
                         {/if}
+
                         <LongTextField
                             hasError={$permohonanPersaraanErrors.applicationPurpose
                                 ? true
