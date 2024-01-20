@@ -68,9 +68,6 @@ export const _stepperBantuanMengurusJenazah = z.object({
 });
 export const _stepperTambangMengungjungiWilayahAsal = z.object({
     wilayahAsal: GeneralTextSchema,
-    nama: GeneralTextSchema,
-    umur: GeneralTextSchema,
-    hubungan: GeneralTextSchema,
     memohonUntuk:generalSelectSchema,
 });
 
@@ -115,7 +112,12 @@ export const _stepperBayaranBalikPengangkutanBaranganMelaluiJalanLaut = z.object
 
 });
 
+export const _addMaklumatKeluargaInfoSchema = z.object({
+    namaKeluarga: GeneralTextSchemaDay,
+    umurKeluarga: GeneralTextSchemaDay,
+    hubunganKeluarga: GeneralTextSchemaDay,
 
+});
 
 
 // =======================================================================
@@ -162,6 +164,11 @@ export const load = async ({fetch}) => {
         _stepperBayaranBalikPengangkutanBaranganMelaluiJalanLaut
     )
 
+    const MaklumatKeluargaForm = await superValidate( userData,
+        _addMaklumatKeluargaInfoSchema
+    )
+
+
 
 
 
@@ -174,7 +181,8 @@ export const load = async ({fetch}) => {
         perpindahanRumahForm,
         pembayaranBalikPassportForm,
         insuransKesihatanForm,
-        bayaranBalikPengangkutanBaranganMelaluiJalanLautForm
+        bayaranBalikPengangkutanBaranganMelaluiJalanLautForm,
+        MaklumatKeluargaForm,
 
     };
 
@@ -293,7 +301,9 @@ export const _submitTambangMengungjungiWilayahAsalForm = async (formData: Object
 
     if (!TambangMengungjungiWilayahAsalForm.valid) {
         getErrorToast();
+        console.log (TambangMengungjungiWilayahAsalForm)
         return fail(400, TambangMengungjungiWilayahAsalForm);
+
     }
 
 
@@ -477,5 +487,30 @@ export const _submitBayaranBalikPengangkutanBaranganMelaluiJalanLautForm = async
 };
 
 
+export const _submitAddMoreMaklumatKeluargaForm = async (formData: object) => {
+    const addMaklumatKeluargaModalForm = await superValidate(formData, _addMaklumatKeluargaInfoSchema);
 
+    console.log('Request: ', addMaklumatKeluargaModalForm.data);
+    if (!addMaklumatKeluargaModalForm.valid) {
+        getErrorToast();
+        return fail(400, addMaklumatKeluargaModalForm);
+    }
+
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(addMaklumatKeluargaModalForm),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise);
+
+    const response = await responsePromise;
+
+    return { response };
+};
 

@@ -35,11 +35,11 @@
 
     const options: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'Ya',
         },
         {
-            value: 'false',
+            value: false,
             label: 'Tidak',
         },
     ];
@@ -48,11 +48,11 @@
 
     const normalAbnormalOptions: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'Normal',
         },
         {
-            value: 'false',
+            value: false,
             label: 'Abnormal',
         },
     ];

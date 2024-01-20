@@ -1,8 +1,8 @@
+import { getErrorToast, getPromiseToast } from '$lib/toast/toast-service';
+import { error, fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
-import { getPromiseToast, getErrorToast } from '$lib/toast/toast-service';
-import { error, fail } from '@sveltejs/kit';
 
 // =========================================================================
 // z validation schema and submit function for the new employment form fields
@@ -16,6 +16,34 @@ const longTextSchema = z
         message: 'Medan ini tidak boleh melebihi 124 karakter.',
     })
     .trim();
+    const minDateSchema = z.coerce
+    .date({
+        errorMap: (issue, { defaultError }) => ({
+            message:
+                issue.code === 'invalid_date'
+                    ? 'Tarikh tidak boleh dibiar kosong.'
+                    : defaultError,
+        }),
+    })
+    .min(new Date(), {
+        message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+    });
+
+    const shortTextSchema = z
+    .string({ required_error: 'Medan ini tidak boleh kosong.' })
+    .min(4, {
+        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+    })
+    .max(124, {
+        message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    })
+    .trim();
+
+    const booleanSchema = z.boolean({
+        required_error: 'Sila tetapkan pilihan anda.',
+        invalid_type_error: 'Medan ini haruslah jenis boolean.',
+    });
+
 // =========================================================================
 // =========================Maklumat Peribadi===============================
 // =========================================================================
@@ -44,14 +72,7 @@ const maklumatPeribadiSelectSchema = z
     .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
 export const _stepperMaklumatPeribadi = z.object({
-    bekasPolisTentera: z.enum(['true', 'false'], {
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_enum_value'
-                    ? 'Sila tetapkan pilihan anda.'
-                    : defaultError,
-        }),
-    }),
+    bekasPolisTentera: booleanSchema,
 
     statusPekerjaan: maklumatPeribadiSelectSchema,
     warnaKadPengenalan: maklumatPeribadiSelectSchema,
@@ -61,6 +82,18 @@ export const _stepperMaklumatPeribadi = z.object({
     agama: maklumatPeribadiSelectSchema,
     status: maklumatPeribadiSelectSchema,
     jantina: maklumatPeribadiSelectSchema,
+
+    noPekerja: shortTextSchema,
+    noKadPengenalan: shortTextSchema,
+    namaPenuh: shortTextSchema,
+    namaLain: shortTextSchema,
+    emel: shortTextSchema,
+    noPekerjaPasangan: shortTextSchema,
+    namaPasangan: shortTextSchema,
+    alamatRumah: shortTextSchema,
+    alamatSuratMenyurat: shortTextSchema,
+
+    tarikhLahir: dateStepper1,
 
     isInRelationshipWithLKIMStaff: z.enum(['true', 'false'], {
         errorMap: (issue, { defaultError }) => ({
@@ -91,111 +124,6 @@ export const _stepperMaklumatPeribadi = z.object({
             }),
         }),
     ),
-
-    noPekerja: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    noKadPengenalan: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    namaPenuh: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    namaLain: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-
-    emel: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    noPekerjaPasangan: z.optional(
-        z
-            .string({
-                required_error: 'Medan ini latihan tidak boleh kosong.',
-            })
-            .min(1, {
-                message: 'Medan ini hendaklah lebih daripada  karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-    ),
-    namaPasangan: z.optional(
-        z
-            .string({
-                required_error: 'Medan ini latihan tidak boleh kosong.',
-            })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-    ),
-
-    tarikhLahir: dateStepper1,
-
-    longTextExample: z
-        .string({ required_error: 'Medan ini tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-
-    alamatRumah: z
-        .string({ required_error: 'Medan ini tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-
-    alamatSuratMenyurat: z
-        .string({ required_error: 'Medan ini tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
 });
 
 //==========================================================
@@ -233,14 +161,7 @@ const maklumatPerkhidmatanSelectSchema = z
     .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
 export const _stepperMaklumatPerkhidmatan = z.object({
-    faedahPersaraanPerkhidmatan: z.enum(['true', 'false'], {
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_enum_value'
-                    ? 'Sila tetapkan pilihan anda.'
-                    : defaultError,
-        }),
-    }),
+    faedahPersaraanPerkhidmatan:booleanSchema,
 
     gredSemasa: maklumatPerkhidmatanSelectSchema,
     jawatan: maklumatPerkhidmatanSelectSchema,
@@ -248,126 +169,19 @@ export const _stepperMaklumatPerkhidmatan = z.object({
     tarafPerkhidmatan: maklumatPerkhidmatanSelectSchema,
     bulanKGT: maklumatPerkhidmatanSelectSchema,
 
-    noKWSP: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    noSOCSO: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    noCukai: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    bank: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    noAkaun: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-
-    tarikhBerkuatKuasa: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-
-    tanggaGaji: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    gajiPokok: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    itka: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    itp: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    epw: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    cola: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-
-    kelayakanCuti: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(1, {
-            message: 'Medan ini hendaklah lebih daripada 1 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
+    noKWSP: shortTextSchema,
+    noSOCSO: shortTextSchema,
+    noCukai: shortTextSchema,
+    bank: shortTextSchema,
+    noAkaun: shortTextSchema,
+    tarikhBerkuatKuasa: shortTextSchema,
+    tanggaGaji: shortTextSchema,
+    gajiPokok: shortTextSchema,
+    itka: shortTextSchema,
+    itp: shortTextSchema,
+    epw: shortTextSchema,
+    cola: shortTextSchema,
+    kelayakanCuti: shortTextSchema,
 
     mulaDilantikPerkhidmatanKerajaan: dateStepper2max,
     mulaDilantikPerkhidmatanLKIM: dateStepper2max,
@@ -385,88 +199,29 @@ export const _stepperMaklumatPerkhidmatan = z.object({
 //================== Maklumat Akademik =====================
 //==========================================================
 
-const generalTextSchema = z
-    .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-    .min(4, {
-        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-    })
-    .max(124, {
-        message: 'Medan ini tidak boleh melebihi 124 karakter.',
-    })
-    .trim();
 export const _stepperMaklumatAkademik = z.object({
-    sekolah: generalTextSchema,
-    tahunHabis: generalTextSchema,
-
-    gredSekolah: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    bidang: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
+    primarySchool: shortTextSchema,
+    primaryYearFinished: shortTextSchema,
+    primaryGred: shortTextSchema,
+    highSchool: shortTextSchema,
+    highSchoolYearFinished: shortTextSchema,
+    highSchoolGred: shortTextSchema,
+    higherLevelEdu: shortTextSchema,
+    higherLevelEduYearFinished: shortTextSchema,
+    higherLevelEduGred: shortTextSchema,
+    higherLevelEduCourse: shortTextSchema,
 });
+
 //==========================================================
 //================== Maklumat Pengalaman ===================
 //==========================================================
 
 export const _stepperMaklumatPengalaman = z.object({
-    namaMajikan: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    alamatMajikan: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    jawatanPengalaman: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    tempohPerkhidmatan: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(1, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    gajiPengalaman: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
+    namaMajikan: shortTextSchema,
+    alamatMajikan: shortTextSchema,
+    jawatanPengalaman: shortTextSchema,
+    tempohPerkhidmatan: shortTextSchema,
+    gajiPengalaman: shortTextSchema,
 });
 
 //==========================================================
@@ -486,78 +241,21 @@ const dateStepper8 = z.coerce
         message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
     });
 
-    const maklumatWarisSelectSchema = z
+const maklumatWarisSelectSchema = z
     .string()
     .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
 export const _stepperMaklumatWaris = z.object({
-
     warnaKP: maklumatWarisSelectSchema,
     hubunganWaris: maklumatWarisSelectSchema,
 
-    namaWaris: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    noKP: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    telefonRumah: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    telefonPeribadi: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    pekerjaanWaris: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    namaMajikanWaris: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    alamatMajikanWaris: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
+    namaWaris: shortTextSchema,
+    noKP: shortTextSchema,
+    telefonRumah: shortTextSchema,
+    telefonPeribadi: shortTextSchema,
+    pekerjaanWaris: shortTextSchema,
+    namaMajikanWaris: shortTextSchema,
+    alamatMajikanWaris: shortTextSchema,
 
     tarikhLahirWaris: dateStepper8,
     tarikhKahwin: dateStepper8,
@@ -571,519 +269,143 @@ export const _stepperMaklumatWaris = z.object({
 //============== stepper Sejarah Penyakit ==================
 //==========================================================
 
-
-    const SejarahPenyakitSelectSchema = z
+const SejarahPenyakitSelectSchema = z
     .string()
     .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
-    export const _stepperSejarahPenyakit = z.object({
+export const _stepperSejarahPenyakit = z.object({
+    sendiriPenyakitSejakLahir: SejarahPenyakitSelectSchema,
+    keluargaPenyakitSejakLahir: SejarahPenyakitSelectSchema,
+    sendiriAlahan: SejarahPenyakitSelectSchema,
+    keluargaAlahan: SejarahPenyakitSelectSchema,
+    sendiriSakitJiwa: SejarahPenyakitSelectSchema,
+    keluargaSakitJiwa: SejarahPenyakitSelectSchema,
+    sendiriEpilepsi: SejarahPenyakitSelectSchema,
+    keluargaEpilepsi: SejarahPenyakitSelectSchema,
+    sendiriDarahTinggi: SejarahPenyakitSelectSchema,
+    keluargaDarahTinggi: SejarahPenyakitSelectSchema,
+    sendiriKencingManis: SejarahPenyakitSelectSchema,
+    keluargaKencingManis: SejarahPenyakitSelectSchema,
+    sendiriJantung: SejarahPenyakitSelectSchema,
+    keluargaJantung: SejarahPenyakitSelectSchema,
+    sendiriAsma: SejarahPenyakitSelectSchema,
+    keluargaAsma: SejarahPenyakitSelectSchema,
+    sendiriSakitBuahPinggang: SejarahPenyakitSelectSchema,
+    keluargaSakitBuahPinggang: SejarahPenyakitSelectSchema,
+    sendiriBarah: SejarahPenyakitSelectSchema,
+    keluargaBarah: SejarahPenyakitSelectSchema,
+    sendiriBatukKering: SejarahPenyakitSelectSchema,
+    keluargaBatukKering: SejarahPenyakitSelectSchema,
+    sendiriKetagihanDadah: SejarahPenyakitSelectSchema,
+    keluargaKetagihanDadah: SejarahPenyakitSelectSchema,
+    sendiriAIDS: SejarahPenyakitSelectSchema,
+    keluargaAIDS: SejarahPenyakitSelectSchema,
+    sendiriHepatitisB: SejarahPenyakitSelectSchema,
+    keluargaHepatitisB: SejarahPenyakitSelectSchema,
+    sendiriSejarahPembedahan: SejarahPenyakitSelectSchema,
+    keluargaSejarahPembedahan: SejarahPenyakitSelectSchema,
+    sendiriKecacatan: SejarahPenyakitSelectSchema,
+    keluargaKecacatan: SejarahPenyakitSelectSchema,
+    sendiriMerokok: SejarahPenyakitSelectSchema,
+    keluargaMerokok: SejarahPenyakitSelectSchema,
+    sendiriPenyakitSeriusLain: SejarahPenyakitSelectSchema,
+    keluargaPenyakitSeriusLain: SejarahPenyakitSelectSchema,
+    sendiriSedangMenerimaRawatan: SejarahPenyakitSelectSchema,
+    keluargaSedangMenerimaRawatan: SejarahPenyakitSelectSchema,
 
-        sendiriPenyakitSejakLahir: SejarahPenyakitSelectSchema,
-        keluargaPenyakitSejakLahir: SejarahPenyakitSelectSchema,
-        sendiriAlahan: SejarahPenyakitSelectSchema,
-        keluargaAlahan: SejarahPenyakitSelectSchema,
-        sendiriSakitJiwa: SejarahPenyakitSelectSchema,
-        keluargaSakitJiwa: SejarahPenyakitSelectSchema,
-        sendiriEpilepsi: SejarahPenyakitSelectSchema,
-        keluargaEpilepsi: SejarahPenyakitSelectSchema,
-        sendiriDarahTinggi: SejarahPenyakitSelectSchema,
-        keluargaDarahTinggi: SejarahPenyakitSelectSchema,
-        sendiriKencingManis: SejarahPenyakitSelectSchema,
-        keluargaKencingManis: SejarahPenyakitSelectSchema,
-        sendiriJantung: SejarahPenyakitSelectSchema,
-        keluargaJantung: SejarahPenyakitSelectSchema,
-        sendiriAsma: SejarahPenyakitSelectSchema,
-        keluargaAsma: SejarahPenyakitSelectSchema,
-        sendiriSakitBuahPinggang: SejarahPenyakitSelectSchema,
-        keluargaSakitBuahPinggang: SejarahPenyakitSelectSchema,
-        sendiriBarah: SejarahPenyakitSelectSchema,
-        keluargaBarah: SejarahPenyakitSelectSchema,
-        sendiriBatukKering: SejarahPenyakitSelectSchema,
-        keluargaBatukKering: SejarahPenyakitSelectSchema,
-        sendiriKetagihanDadah: SejarahPenyakitSelectSchema,
-        keluargaKetagihanDadah: SejarahPenyakitSelectSchema,
-        sendiriAIDS: SejarahPenyakitSelectSchema,
-        keluargaAIDS: SejarahPenyakitSelectSchema,
-        sendiriHepatitisB: SejarahPenyakitSelectSchema,
-        keluargaHepatitisB: SejarahPenyakitSelectSchema,
-        sendiriSejarahPembedahan: SejarahPenyakitSelectSchema,
-        keluargaSejarahPembedahan: SejarahPenyakitSelectSchema,
-        sendiriKecacatan: SejarahPenyakitSelectSchema,
-        keluargaKecacatan: SejarahPenyakitSelectSchema,
-        sendiriMerokok: SejarahPenyakitSelectSchema,
-        keluargaMerokok: SejarahPenyakitSelectSchema,
-        sendiriPenyakitSeriusLain: SejarahPenyakitSelectSchema,
-        keluargaPenyakitSeriusLain: SejarahPenyakitSelectSchema,
-        sendiriSedangMenerimaRawatan: SejarahPenyakitSelectSchema,
-        keluargaSedangMenerimaRawatan: SejarahPenyakitSelectSchema,
-
-        penyakitSejakLahir: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah diisi .',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        alahan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        sakitJiwa: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        epilepsi: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        darahTinggi: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        kencingManis: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        jantungAtatuSalurDarah: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        asma: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        sakitBuahPinggang: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        barah: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        batukKering: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        ketagihanDadah: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        AIDS: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        hepatitisB: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        sejarahPembedahan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        kecacatan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        merokok: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        penyakitSeriusLain: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        sedangMenerimaRawatan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        });
+    penyakitSejakLahir: shortTextSchema.nullable(),
+    alahan: shortTextSchema.nullable(),
+    sakitJiwa: shortTextSchema.nullable(),
+    epilepsi: shortTextSchema.nullable(),
+    darahTinggi: shortTextSchema.nullable(),
+    kencingManis: shortTextSchema.nullable(),
+    jantungAtatuSalurDarah: shortTextSchema.nullable(),
+    asma: shortTextSchema.nullable(),
+    sakitBuahPinggang: shortTextSchema.nullable(),
+    barah: shortTextSchema.nullable(),
+    batukKering: shortTextSchema.nullable(),
+    ketagihanDadah: shortTextSchema.nullable(),
+    AIDS: shortTextSchema.nullable(),
+    hepatitisB: shortTextSchema.nullable(),
+    sejarahPembedahan: shortTextSchema.nullable(),
+    kecacatan: shortTextSchema.nullable(),
+    merokok: shortTextSchema.nullable(),
+    penyakitSeriusLain: shortTextSchema.nullable(),
+    sedangMenerimaRawatan: shortTextSchema.nullable(),
+});
 
 //==========================================================
 //============== stepper Pemeriksaan Doktor ================
 //==========================================================
 
-
-    const pemeriksaanDoktorSelectSchema = z
+const pemeriksaanDoktorSelectSchema = z
     .string()
     .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
-    export const _stepperPemeriksaanDoktor = z.object({
+export const _stepperPemeriksaanDoktor = z.object({
+    sistemMuskuloskeletalRadio: pemeriksaanDoktorSelectSchema,
+    kulitPucat: pemeriksaanDoktorSelectSchema,
+    sianosis: pemeriksaanDoktorSelectSchema,
+    edama: pemeriksaanDoktorSelectSchema,
+    penyakitKuning: pemeriksaanDoktorSelectSchema,
+    kelenjarLimfa: pemeriksaanDoktorSelectSchema,
+    penyakitKulit: pemeriksaanDoktorSelectSchema,
+    penglihatanWarnaRadio: pemeriksaanDoktorSelectSchema,
+    funduskopiRadio: pemeriksaanDoktorSelectSchema,
+    telingaRadio: pemeriksaanDoktorSelectSchema,
+    ronggaGigiMulutRadio: pemeriksaanDoktorSelectSchema,
+    leherRadio: pemeriksaanDoktorSelectSchema,
+    kardiovaskularRadio: pemeriksaanDoktorSelectSchema,
+    pemeriksaanRadio: pemeriksaanDoktorSelectSchema,
+    xrayRadio: pemeriksaanDoktorSelectSchema,
+    abdomenHerniaRadio: pemeriksaanDoktorSelectSchema,
+    sistemSarafRadio: pemeriksaanDoktorSelectSchema,
+    gula: pemeriksaanDoktorSelectSchema,
+    albumin: pemeriksaanDoktorSelectSchema,
 
-        sistemMuskuloskeletalRadio: pemeriksaanDoktorSelectSchema,
-        kulitPucat: pemeriksaanDoktorSelectSchema,
-        sianosis: pemeriksaanDoktorSelectSchema,
-        edama: pemeriksaanDoktorSelectSchema,
-        penyakitKuning: pemeriksaanDoktorSelectSchema,
-        kelenjarLimfa: pemeriksaanDoktorSelectSchema,
-        penyakitKulit: pemeriksaanDoktorSelectSchema,
-        penglihatanWarnaRadio: pemeriksaanDoktorSelectSchema,
-        funduskopiRadio: pemeriksaanDoktorSelectSchema,
-        telingaRadio: pemeriksaanDoktorSelectSchema,
-        ronggaGigiMulutRadio: pemeriksaanDoktorSelectSchema,
-        leherRadio: pemeriksaanDoktorSelectSchema,
-        kardiovaskularRadio: pemeriksaanDoktorSelectSchema,
-        pemeriksaanRadio: pemeriksaanDoktorSelectSchema,
-        xrayRadio: pemeriksaanDoktorSelectSchema,
-        abdomenHerniaRadio: pemeriksaanDoktorSelectSchema,
-        sistemSarafRadio: pemeriksaanDoktorSelectSchema,
-        gula: pemeriksaanDoktorSelectSchema,
-        albumin: pemeriksaanDoktorSelectSchema,
+    tinggi: shortTextSchema,
+    berat: shortTextSchema,
+    bmi: shortTextSchema,
+    denyutanNadi: shortTextSchema,
+    bp: shortTextSchema,
+    penglihatanTanpaBantuan: shortTextSchema,
+    penglihatanTanpaBantuan2: shortTextSchema.nullable(),
+    penglihatanTanpaBantuan3: shortTextSchema.nullable(),
+    penglihatanTanpaBantuan4: shortTextSchema.nullable(),
+    penglihatanTanpaBantuan5: shortTextSchema.nullable(),
+    penglihatanTanpaBantuan6: shortTextSchema.nullable(),
+    penglihatanDenganBantuan: shortTextSchema,
+    penglihatanDenganBantuan2: shortTextSchema.nullable(),
+    penglihatanDenganBantuan3: shortTextSchema.nullable(),
+    funduskopi: shortTextSchema.nullable(),
+    penglihatanWarna: shortTextSchema.nullable(),
+    telinga: shortTextSchema.nullable(),
+    ronggaGigiMulut: shortTextSchema.nullable(),
+    leher: shortTextSchema.nullable(),
+    kardiovaskular: shortTextSchema.nullable(),
+    pemeriksaan: shortTextSchema.nullable(),
+    xray: shortTextSchema.nullable(),
+    tarikhPengambilanXray: shortTextSchema,
+    lokasiPengambilanXray: shortTextSchema,
+    nomborRujukanXray: shortTextSchema,
+    abdomenHernia: shortTextSchema.nullable(),
+    sistemSaraf: shortTextSchema.nullable(),
+    sistemMuskuloskeletal: shortTextSchema.nullable(),
+    mikroskopi: shortTextSchema,
 
-        tinggi: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(2, {
-                message: 'Medan ini hendaklah lebih daripada 2 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        berat: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(1, {
-                message: 'Medan ini hendaklah lebih daripada 1 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        bmi: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(1, {
-                message: 'Medan ini hendaklah lebih daripada 1 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        denyutanNadi: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(1, {
-                message: 'Medan ini hendaklah lebih daripada 1 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        bp: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(1, {
-                message: 'Medan ini hendaklah lebih daripada 1 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        penglihatanTanpaBantuan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-            penglihatanTanpaBantuan2: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-            penglihatanTanpaBantuan3: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-            penglihatanTanpaBantuan4: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-            penglihatanTanpaBantuan5: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-            penglihatanTanpaBantuan6: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        penglihatanDenganBantuan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-            penglihatanDenganBantuan2: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-            penglihatanDenganBantuan3: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        penglihatanWarna: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        funduskopi: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        telinga: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        ronggaGigiMulut: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        leher: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        kardiovaskular: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        pemeriksaan: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        xray: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        tarikhPengambilanXray: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        lokasiPengambilanXray: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        nomborRujukanXray: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        abdomenHernia: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        sistemSaraf: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-            sistemMuskuloskeletal: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(0, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-            mikroskopi: z
-            .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah diisi.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-        });
+});
+//==========================================================
+//================== Maklumat Pengalaman Modal ===================
+//==========================================================
 
+// New employment - add academic section
+export const _addAcademicInfoSchema = z.object({
+    title: shortTextSchema,
+    institution: shortTextSchema,
+    year: shortTextSchema,
+    achievement: shortTextSchema,
+    remarks: longTextSchema,
+});
 
 // =========================================================================
 // =========================Maklumat Kontrak================================
@@ -1115,60 +437,13 @@ const dateKontrakMax = z.coerce
     });
 
 export const _stepperkontrak = z.object({
-    ID: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(1, {
-            message: 'Medan ini hendaklah lebih daripada 1 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    emel: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(4, {
-            message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    tempohKontrak: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(1, {
-            message: 'Medan ini hendaklah diisi.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    kadarUpah: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(0, {
-            message: 'Medan ini hendaklah diisi.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    penempatan: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(1, {
-            message: 'Medan ini hendaklah diisi.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
-    gelaranTugas: z
-        .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-        .min(1, {
-            message: 'Medan ini hendaklah diisi.',
-        })
-        .max(124, {
-            message: 'Medan ini tidak boleh melebihi 124 karakter.',
-        })
-        .trim(),
+    ID: shortTextSchema,
+    emel: shortTextSchema,
+    penglihatanDenganBantuan: shortTextSchema,
+    tempohKontrak: shortTextSchema,
+    kadarUpah: shortTextSchema,
+    penempatan: shortTextSchema,
+    gelaranTugas: shortTextSchema,
 
     tarikhMulaKontrak: dateKontrakMax.refine((date) =>
         date.toLocaleDateString(),
@@ -1180,7 +455,6 @@ export const _stepperkontrak = z.object({
 // New Employment - Approver Result section
 export const _approverResultSchema = z.object({
     halo: longTextSchema,
-
 });
 
 //=====================================================
@@ -1206,9 +480,10 @@ export const load = async () => {
 
     const stepperSejarahPenyakit = await superValidate(_stepperSejarahPenyakit);
 
-    const stepperPemeriksaanDoktor = await superValidate(_stepperPemeriksaanDoktor);
-
-
+    const stepperPemeriksaanDoktor = await superValidate(
+        _stepperPemeriksaanDoktor,
+    );
+    const addAcademicModal = await superValidate(_addAcademicInfoSchema);
 
     return {
         form,
@@ -1219,38 +494,39 @@ export const load = async () => {
         stepperMaklumatWaris,
         stepperSejarahPenyakit,
         stepperPemeriksaanDoktor,
+        addAcademicModal,
     };
 };
-
 
 //==================================================
 //=============== Maklumat Kontrak =================
 //==================================================
-
 
 export const _submitFormstepperkontrak = async (formData: Object) => {
     const form = await superValidate(formData, _stepperkontrak);
 
     if (!form.valid) {
         getErrorToast();
-        console.log (form);
+        console.log(form);
         return fail(400, form);
     }
 
-
-    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
-        body: JSON.stringify(form),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
+            method: 'POST',
+            body: JSON.stringify(form),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
         },
-    })
+    )
         .then((response) => response.json())
         .then((json) => {
             console.log('Response Returned: ', json);
         });
 
-    getPromiseToast(responsePromise)
+    getPromiseToast(responsePromise);
 
     return { form };
 };
@@ -1266,20 +542,22 @@ export const _submitFormStepperMaklumatPeribadi = async (formData: Object) => {
         return fail(400, form);
     }
 
-
-    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
-        body: JSON.stringify(form),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
+            method: 'POST',
+            body: JSON.stringify(form),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
         },
-    })
+    )
         .then((response) => response.json())
         .then((json) => {
             console.log('Response Returned: ', json);
         });
 
-    getPromiseToast(responsePromise)
+    getPromiseToast(responsePromise);
 
     return { form };
 };
@@ -1288,28 +566,35 @@ export const _submitFormStepperMaklumatPeribadi = async (formData: Object) => {
 //=============== Maklumat Perkhidmatan ============
 //==================================================
 
-export const _submitFormStepperMaklumatPerkhidmatan = async (formData: Object) => {
-    const stepperMaklumatPerkhidmatan = await superValidate(formData, _stepperMaklumatPerkhidmatan);
+export const _submitFormStepperMaklumatPerkhidmatan = async (
+    formData: Object,
+) => {
+    const stepperMaklumatPerkhidmatan = await superValidate(
+        formData,
+        _stepperMaklumatPerkhidmatan,
+    );
 
     if (!stepperMaklumatPerkhidmatan.valid) {
         getErrorToast();
         return fail(400, stepperMaklumatPerkhidmatan);
     }
 
-
-    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
-        body: JSON.stringify(stepperMaklumatPerkhidmatan),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
+            method: 'POST',
+            body: JSON.stringify(stepperMaklumatPerkhidmatan),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
         },
-    })
+    )
         .then((response) => response.json())
         .then((json) => {
             console.log('Response Returned: ', json);
         });
 
-    getPromiseToast(responsePromise)
+    getPromiseToast(responsePromise);
 
     return { stepperMaklumatPerkhidmatan };
 };
@@ -1319,58 +604,69 @@ export const _submitFormStepperMaklumatPerkhidmatan = async (formData: Object) =
 //==================================================
 
 export const _submitFormStepperMaklumatAkademik = async (formData: Object) => {
-    const stepperMaklumatAkademik = await superValidate(formData, _stepperMaklumatAkademik);
+    const stepperMaklumatAkademik = await superValidate(
+        formData,
+        _stepperMaklumatAkademik,
+    );
 
     if (!stepperMaklumatAkademik.valid) {
         getErrorToast();
         return fail(400, stepperMaklumatAkademik);
     }
 
-
-    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
-        body: JSON.stringify(stepperMaklumatAkademik),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
+            method: 'POST',
+            body: JSON.stringify(stepperMaklumatAkademik),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
         },
-    })
+    )
         .then((response) => response.json())
         .then((json) => {
             console.log('Response Returned: ', json);
         });
 
-    getPromiseToast(responsePromise)
+    getPromiseToast(responsePromise);
 
     return { stepperMaklumatAkademik };
 };
-
 
 //==================================================
 //============= Maklumat Pengalaman ================
 //==================================================
 
-export const _submitFormStepperMaklumatPengalaman = async (formData: Object) => {
-    const stepperMaklumatPengalaman = await superValidate(formData, _stepperMaklumatPengalaman);
+export const _submitFormStepperMaklumatPengalaman = async (
+    formData: Object,
+) => {
+    const stepperMaklumatPengalaman = await superValidate(
+        formData,
+        _stepperMaklumatPengalaman,
+    );
 
     if (!stepperMaklumatPengalaman.valid) {
         getErrorToast();
         return fail(400, stepperMaklumatPengalaman);
     }
 
-
-    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
-        body: JSON.stringify(stepperMaklumatPengalaman),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
+            method: 'POST',
+            body: JSON.stringify(stepperMaklumatPengalaman),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
         },
-    })
+    )
         .then((response) => response.json())
         .then((json) => {
             console.log('Response Returned: ', json);
         });
 
-    getPromiseToast(responsePromise)
+    getPromiseToast(responsePromise);
 
     return { stepperMaklumatPengalaman };
 };
@@ -1380,63 +676,71 @@ export const _submitFormStepperMaklumatPengalaman = async (formData: Object) => 
 //==================================================
 
 export const _submitFormStepperMaklumatWaris = async (formData: Object) => {
-    const stepperMaklumatWaris = await superValidate(formData, _stepperMaklumatWaris);
+    const stepperMaklumatWaris = await superValidate(
+        formData,
+        _stepperMaklumatWaris,
+    );
 
     if (!stepperMaklumatWaris.valid) {
         getErrorToast();
         return fail(400, stepperMaklumatWaris);
     }
 
-
-    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
-        body: JSON.stringify(stepperMaklumatWaris),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
+            method: 'POST',
+            body: JSON.stringify(stepperMaklumatWaris),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
         },
-    })
+    )
         .then((response) => response.json())
         .then((json) => {
             console.log('Response Returned: ', json);
         });
 
-    getPromiseToast(responsePromise)
+    getPromiseToast(responsePromise);
 
     return { stepperMaklumatWaris };
 };
 
-
 //==================================================
 //=============== Rekod Kesihatan ==================
 //==================================================
-
 
 //==================================================
 //=============== Sejarah Penyakit =================
 //==================================================
 
 export const _submitFormStepperSejarahPenyakit = async (formData: Object) => {
-    const stepperSejarahPenyakit = await superValidate(formData, _stepperSejarahPenyakit);
+    const stepperSejarahPenyakit = await superValidate(
+        formData,
+        _stepperSejarahPenyakit,
+    );
 
     if (!stepperSejarahPenyakit.valid) {
         getErrorToast();
         return fail(400, stepperSejarahPenyakit);
     }
 
-
-    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
-        body: JSON.stringify(stepperSejarahPenyakit),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
+            method: 'POST',
+            body: JSON.stringify(stepperSejarahPenyakit),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
         },
-    })
+    )
         .then((response) => response.json())
         .then((json) => {
             console.log('Response Returned: ', json);
         });
 
-    getPromiseToast(responsePromise)
+    getPromiseToast(responsePromise);
 
     return { stepperSejarahPenyakit };
 };
@@ -1446,7 +750,6 @@ export const _submitFormStepperSejarahPenyakit = async (formData: Object) => {
 //==================================================
 
 export const _submitFormStepperPemeriksaanDoktor = async (formData: object) => {
-
     const stepperPemeriksaanDoktor = await superValidate(
         formData,
         _stepperPemeriksaanDoktor,
@@ -1476,4 +779,42 @@ export const _submitFormStepperPemeriksaanDoktor = async (formData: object) => {
             });
     }
     return { stepperPemeriksaanDoktor };
+};
+
+export const _submitAddMoreAcademicForm = async (formData: object) => {
+    const form = await superValidate(formData, _addAcademicInfoSchema);
+
+    console.log('Request: ', form.data);
+    if (!form.valid) {
+        getErrorToast();
+        return fail(400, form);
+    }
+
+    // const responsePromise = api
+    //     .post('https://jsonplaceholder.typicode.com/posts', {
+    //         body: JSON.stringify(form),
+    //         prefixUrl: '',
+    //     })
+    //     .json();
+
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
+            method: 'POST',
+            body: JSON.stringify(form),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        },
+    )
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+
+    getPromiseToast(responsePromise);
+
+    const response = await responsePromise;
+
+    return { response };
 };
