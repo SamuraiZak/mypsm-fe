@@ -14,12 +14,9 @@
     import RichTextEditor from '$lib/components/rich-text-ediitor/RichTextEditor.svelte';
     import { mockLetterTemplates } from '$lib/mocks/letters/mockLetterTemplates';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import DateSelector from '$lib/components/input/DateSelector.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
-    import SvgMinusCircle from '$lib/assets/svg/SvgMinusCircle.svelte';
     import IncrementButton from '$lib/components/buttons/IncrementButton.svelte';
-    import { list } from 'postcss';
 
     export let referenceNumber = '123456789';
     export let dateOfLetter = '12 Disember 2021';
@@ -29,8 +26,6 @@
     let letterTemplate = mockLetterTemplates;
 
     //TO BE REVIEWED : any :
-    let sendToBE: object;
-    let preview: string;
     let previewReceiverReference: string | undefined;
     let previewSenderReference: string | undefined;
     let previewLetterDate: string;
@@ -173,6 +168,7 @@
                 </div>
                 <input
                     type="date"
+                    bind:value={time}
                     class="border-1 active:border-1 flex h-8 w-[200px] flex-row items-center rounded-[3px]
                     border-bdr-primary text-sm text-txt-primary hover:border-system-primary
                     focus:border-system-primary"

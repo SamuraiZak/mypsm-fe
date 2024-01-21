@@ -25,7 +25,7 @@
     export let dateOfLetter = '12 Disember 2021';
 
     let modalOpened = true;
-
+    let previewLetter: boolean = false;
     let letterTemplate = mockLetterTemplates;
 
     //TO BE REVIEWED : any :
@@ -47,12 +47,12 @@
 
     //Binding for the letter editor
     receiverReference.set(referenceNumber);
-    senderReference.set(letterTemplate[0].senderReference);
+    senderReference.set(letterTemplate[1].senderReference);
     letterDate.set(dateOfLetter);
-    receiverTitle.set(letterTemplate[0].receiverTitle);
-    letterSubject.set(letterTemplate[0].letterSubject);
-    letterBody.set(letterTemplate[0].letterBody);
-    letterFooter.set(letterTemplate[0].letterFooter);
+    receiverTitle.set(letterTemplate[1].receiverTitle);
+    letterSubject.set(letterTemplate[1].letterSubject);
+    letterBody.set(letterTemplate[1].letterBody);
+    letterFooter.set(letterTemplate[1].letterFooter);
 
     const updateLetter = () => {
         docName = document.getElementById('letter-subject')?.innerText;
@@ -90,26 +90,27 @@
             '<br>' +
             previewReceiverTitle +
             previewSubject +
-            previewBody ;
+            previewBody;
 
-        previewFooter = 
-        '<br>' +
-            previewFooter;
+        previewFooter = '<br>' + previewFooter;
 
-            const sentLetter = [{
+        
+
+        const sentLetter = [
+            {
                 receiver: listOfReceiver,
                 letterHeader: previewHeader,
             },
             {
-                letterBody: previewBody
+                letterBody: previewBody,
             },
             {
-                letterFooter: previewFooter
-            }
-        ]
+                letterFooter: previewFooter,
+            },
+        ];
 
         // ============================= TODO: post sentLetter to api =============================
-        console.log(sentLetter)
+        console.log(sentLetter);
     };
     const updateReceiver = () => {
         if (previewReceiverInfo !== '') {
@@ -140,7 +141,7 @@
                 <TextIconButton
                     label="Selesai"
                     primary
-                    onClick={() => updateLetter()}
+                    onClick={() => {updateLetter(); previewLetter = !previewLetter; console.log(previewLetter)}}
                 >
                     <SvgArrowRight />
                 </TextIconButton>
@@ -173,10 +174,11 @@
                 </div>
                 <input
                     type="date"
+                    bind:value={time}
                     class="border-1 active:border-1 flex h-8 w-[200px] flex-row items-center rounded-[3px]
                     border-bdr-primary text-sm text-txt-primary hover:border-system-primary
                     focus:border-system-primary"
-                >
+                />
             </div>
         </div>
         <div class="flex flex-col gap-2">
@@ -254,5 +256,17 @@
                 bind:value={$letterFooter}
             ></RichTextEditor>
         </div>
+        {#if previewLetter}
+            <div id="letterPreview" class="p-7">
+                <div
+                    class="flex flex-col justify-end"
+                    style="align-items: end; text-align: right;"
+                >
+                    {@html previewHeader}
+                </div>
+                {@html previewBody}
+                {@html previewFooter}
+            </div>
+        {/if}
     </form>
 </Modal>
