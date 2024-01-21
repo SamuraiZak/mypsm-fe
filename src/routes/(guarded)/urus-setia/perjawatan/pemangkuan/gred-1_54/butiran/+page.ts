@@ -1,8 +1,7 @@
-import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 import { getPromiseToast, getErrorToast } from '$lib/toast/toast-service';
-import { error, fail } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 
 
 const GeneralTextSchema = z
@@ -14,17 +13,6 @@ const GeneralTextSchema = z
         message: 'Medan ini tidak boleh melebihi 124 karakter.',
     })
     .trim();
-
-    const GeneralTextSchemaDay = z
-    .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-    .min(1, {
-        message: 'Medan ini hendaklah lebih daripada 1 karakter.',
-    })
-    .max(124, {
-        message: 'Medan ini tidak boleh melebihi 124 karakter.',
-    })
-    .trim();
-
 
 const dateScheme = z.coerce
     .date({
@@ -43,12 +31,9 @@ const dateScheme = z.coerce
 const generalSelectSchema = z.string().min(1, { message: "Sila tetapkan pilihan anda. " });
 
 
-export const _updateResultsMeetingInterview = z.object({
+export const _meetingResultCandidateSelectionSchema = z.object({
     secretaryName: generalSelectSchema,
     directorName: generalSelectSchema,
-
-
-
 });
 
 export const _updateInterviewDetails = z.object({
@@ -58,40 +43,42 @@ export const _updateInterviewDetails = z.object({
     interviewTime: GeneralTextSchema,
     state: GeneralTextSchema,
     interviewVenue: GeneralTextSchema,
-    meetingDate: dateScheme,
-    interviewDate: dateScheme,
-
-
+    meetingDate: GeneralTextSchema,
+    interviewDate: GeneralTextSchema,
 });
+
 export const _updateInterviewResult = z.object({
     totalInterviewScore: GeneralTextSchema,
-
 });
-export const _promotionResult = z.object({
+
+export const _promotionMeetingResultSchema = z.object({
     meetingName: GeneralTextSchema,
     meetingDate: GeneralTextSchema,
     meetingResult: GeneralTextSchema,
     actingPosition: GeneralTextSchema,
     actingGred: GeneralTextSchema,
-    meetingResultDropdown: generalSelectSchema,
-
 });
+
+export const _promotionMeetingResultDetailSchema = z.object({
+    meetingResultDropdown: generalSelectSchema,
+})
 
 export const _staffPlacement = z.object({
     meetingName: GeneralTextSchema,
     meetingDate: GeneralTextSchema,
-    keputusanMesyuaratDropdown: GeneralTextSchema,
+});
+
+export const _staffPlacementDetailSchema = z.object({
+    meetingResultDropdown: GeneralTextSchema,
     newPlacement: GeneralTextSchema,
     newDirector: generalSelectSchema,
     reportingDate: dateScheme,
-
-});
+})
 
 export const _staffPlacementAmendmentForm = z.object({
     placementAmendmentResult: generalSelectSchema,
     approvedNewReportingDate: dateScheme,
     placementAmendmentApproval: generalSelectSchema,
-
 });
 
 export const _updateActing = z.object({
@@ -103,72 +90,74 @@ export const _updateActing = z.object({
     actingGred: GeneralTextSchema,
     newPlacement: GeneralTextSchema,
     reportingDate: GeneralTextSchema,
-
-
 });
 
+export const _placementMeetingResultSchema = z.object({
+    newPlacement: generalSelectSchema,
+    newDirector: generalSelectSchema,
+    reportingDate: generalSelectSchema,
+})
 
+export const load = async () => {
 
-export const load = async ({fetch}) => {
-    const request = await fetch(`https://jsonplaceholder.typicode.com/users/`);
-    if (request.status >= 400) error;
-
-    const userData = await request.json();
-
-    const updateResultMeetingInterviewFormData = await superValidate(
-        _updateResultsMeetingInterview
+    const meetingResultCandidateSelectionForm = await superValidate(
+        _meetingResultCandidateSelectionSchema
     )
-    const updateInterviewFormData = await superValidate( userData,
+    const updateInterviewFormData = await superValidate(
         _updateInterviewDetails
     )
 
-    const updateInterviewResult = await superValidate( userData,
+    const updateInterviewResult = await superValidate(
         _updateInterviewResult
     )
 
-    const promotionResult = await superValidate( userData,
-        _promotionResult
+    const promotionMeetingResultForm = await superValidate(
+        _promotionMeetingResultSchema
     )
 
-    const staffPlacement = await superValidate( userData,
+    const promotionMeetingResultDetailForm = await superValidate(
+        _promotionMeetingResultDetailSchema
+    )
+
+    const staffPlacementForm = await superValidate(
         _staffPlacement
     )
 
-    const staffPlacementAmendmentForm = await superValidate( userData,
+    const staffPlacementAmendmentForm = await superValidate(
         _staffPlacementAmendmentForm
     )
 
-    const updateActing = await superValidate( userData,
+    const updateActing = await superValidate(
         _updateActing
     )
 
+    const placementMeetingResultForm = await superValidate(_placementMeetingResultSchema)
+
     return {
+        meetingResultCandidateSelectionForm,
         updateInterviewFormData,
-        updateResultMeetingInterviewFormData,
         updateInterviewResult,
-        promotionResult,
-        staffPlacement,
+        promotionMeetingResultForm,
+        promotionMeetingResultDetailForm,
+        staffPlacementForm,
         staffPlacementAmendmentForm,
         updateActing,
-
+        placementMeetingResultForm
 
     };
-
-
 };
 
-export const _submitUpdateResultMeetingInterviewForm = async (formData: Object) => {
-    const updateResultsMeetingInterviewForm = await superValidate(formData, _updateResultsMeetingInterview);
+export const _submitMeetingResultCandidateSelectionForm = async (formData: Object) => {
+    const meetingResultCandidateSelectionForm = await superValidate(formData, _meetingResultCandidateSelectionSchema);
 
-    if (!updateResultsMeetingInterviewForm.valid) {
+    if (!meetingResultCandidateSelectionForm.valid) {
         getErrorToast();
-        return fail(400, updateResultsMeetingInterviewForm);
+        return fail(400, meetingResultCandidateSelectionForm);
     }
-
 
     const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
         method: 'POST',
-        body: JSON.stringify(updateResultsMeetingInterviewForm),
+        body: JSON.stringify(meetingResultCandidateSelectionForm),
         headers: {
             'Content-type': 'application/json; charset=UTF-8',
         },
@@ -179,16 +168,8 @@ export const _submitUpdateResultMeetingInterviewForm = async (formData: Object) 
         });
 
     getPromiseToast(responsePromise)
-
-
-
-    return { updateResultsMeetingInterviewForm };
+    return { meetingResultCandidateSelectionForm };
 };
-
-
-
-
-
 
 export const _submitUpdateInterviewDetailsForm = async (formData: Object) => {
     const updateInterviewDetailsForm = await superValidate(formData, _updateInterviewDetails);
@@ -212,9 +193,6 @@ export const _submitUpdateInterviewDetailsForm = async (formData: Object) => {
         });
 
     getPromiseToast(responsePromise)
-
-
-
     return { updateInterviewDetailsForm };
 };
 
@@ -226,8 +204,6 @@ export const _submitUpdateInterviewResult = async (formData: Object) => {
         getErrorToast();
         return fail(400, updateInterviewResultForm);
     }
-
-
     const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
         method: 'POST',
         body: JSON.stringify(updateInterviewResultForm),
@@ -241,24 +217,19 @@ export const _submitUpdateInterviewResult = async (formData: Object) => {
         });
 
     getPromiseToast(responsePromise)
-
-
-
     return { updateInterviewResultForm };
 };
 
-export const _submitPromotionResult = async (formData: Object) => {
-    const promotionForm = await superValidate(formData, _promotionResult);
+export const _submitPromotionMeetingResultForm = async (formData: Object) => {
+    const promotionMeetingResultForm = await superValidate(formData, _promotionMeetingResultSchema);
 
-    if (!promotionForm.valid) {
+    if (!promotionMeetingResultForm.valid) {
         getErrorToast();
-        return fail(400, promotionForm);
+        return fail(400, promotionMeetingResultForm);
     }
-
-
     const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
         method: 'POST',
-        body: JSON.stringify(promotionForm),
+        body: JSON.stringify(promotionMeetingResultForm),
         headers: {
             'Content-type': 'application/json; charset=UTF-8',
         },
@@ -269,12 +240,31 @@ export const _submitPromotionResult = async (formData: Object) => {
         });
 
     getPromiseToast(responsePromise)
-
-
-
-    return { promotionForm };
+    return { promotionMeetingResultForm };
 };
 
+export const _submitPromotionMeetingResultDetailForm = async (formData: Object) => {
+    const promotionMeetingResultDetailForm = await superValidate(formData, _promotionMeetingResultDetailSchema);
+
+    if (!promotionMeetingResultDetailForm.valid) {
+        getErrorToast();
+        return fail(400, promotionMeetingResultDetailForm);
+    }
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(promotionMeetingResultDetailForm),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+
+    getPromiseToast(responsePromise)
+    return { promotionMeetingResultDetailForm };
+};
 
 export const _submitStaffPlacement = async (formData: Object) => {
     const staffPlacementForm = await superValidate(formData, _staffPlacement);
@@ -283,8 +273,6 @@ export const _submitStaffPlacement = async (formData: Object) => {
         getErrorToast();
         return fail(400, staffPlacementForm);
     }
-
-
     const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
         method: 'POST',
         body: JSON.stringify(staffPlacementForm),
@@ -298,9 +286,6 @@ export const _submitStaffPlacement = async (formData: Object) => {
         });
 
     getPromiseToast(responsePromise)
-
-
-
     return { staffPlacementForm };
 };
 
@@ -311,8 +296,6 @@ export const _submitStaffPlacementAmendmentForm = async (formData: Object) => {
         getErrorToast();
         return fail(400, staffPlacementAmendmentForm);
     }
-
-
     const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
         method: 'POST',
         body: JSON.stringify(staffPlacementAmendmentForm),
@@ -326,9 +309,6 @@ export const _submitStaffPlacementAmendmentForm = async (formData: Object) => {
         });
 
     getPromiseToast(responsePromise)
-
-
-
     return { staffPlacementAmendmentForm };
 };
 
@@ -339,8 +319,6 @@ export const _submitUpdateActingForm = async (formData: Object) => {
         getErrorToast();
         return fail(400, updateActingForm);
     }
-
-
     const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
         method: 'POST',
         body: JSON.stringify(updateActingForm),
@@ -354,11 +332,29 @@ export const _submitUpdateActingForm = async (formData: Object) => {
         });
 
     getPromiseToast(responsePromise)
-
-
-
     return { updateActingForm };
 };
 
+export const _submitPlacementMeetingResultForm = async (formData: Object) => {
+    const placementMeetingResultForm = await superValidate(formData, _placementMeetingResultSchema);
+
+    if (!placementMeetingResultForm.valid) {
+        getErrorToast();
+        return fail(400, placementMeetingResultForm);
+    }
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(placementMeetingResultForm),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise)
+    return { placementMeetingResultForm };
+};
 
 
