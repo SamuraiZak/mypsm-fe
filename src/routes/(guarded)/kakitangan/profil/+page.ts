@@ -44,6 +44,44 @@ const longTextSchema = z
         invalid_type_error: 'Medan ini haruslah jenis boolean.',
     });
 
+
+    const codeSchema = z
+    .string({ required_error: 'Medan ini tidak boleh kosong.' })
+    .min(1, {
+        message: 'Medan ini hendaklah lebih daripada 1 karakter.',
+    })
+    .max(124, {
+        message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    })
+    .trim();
+
+    const maxDateSchema = z.coerce
+    .date({
+        errorMap: (issue, { defaultError }) => ({
+            message:
+                issue.code === 'invalid_date'
+                    ? 'Tarikh tidak boleh dibiar kosong.'
+                    : defaultError,
+        }),
+    })
+    .max(new Date(), {
+        message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
+    });
+
+    const numberIdSchema = z.coerce
+    .number({
+        required_error: 'Tidak tepat.',
+        invalid_type_error: 'Sila pastikan ID ditaip dengan angka',
+    })
+    .min(12, { message: 'Kurang daripada 12 angka mengikut ID Malaysia' });
+
+    const generalSelectSchema = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+
+
+
 // =========================================================================
 // =========================Maklumat Peribadi===============================
 // =========================================================================
@@ -225,6 +263,17 @@ export const _stepperMaklumatPengalaman = z.object({
 });
 
 //==========================================================
+//================== Maklumat Aktiviti Modal ===============
+//==========================================================
+
+export const _addActivityModalSchema = z.object({
+    addName: shortTextSchema,
+    addJoinDate: maxDateSchema,
+    addPosition: shortTextSchema,
+    addDescription: shortTextSchema,
+});
+
+//==========================================================
 //================== Maklumat Waris ========================
 //==========================================================
 
@@ -395,7 +444,7 @@ export const _stepperPemeriksaanDoktor = z.object({
 
 });
 //==========================================================
-//================== Maklumat Pengalaman Modal ===================
+//================== Makluma tAkademik Modal ===================
 //==========================================================
 
 // New employment - add academic section
@@ -405,6 +454,64 @@ export const _addAcademicInfoSchema = z.object({
     year: shortTextSchema,
     achievement: shortTextSchema,
     remarks: longTextSchema,
+});
+
+//==========================================================
+//================== Maklumat Pengalaman Modal ===================
+//==========================================================
+
+export const _addExperienceModalSchema = z.object({
+    addCompany: shortTextSchema,
+    addAddress: shortTextSchema,
+    addPosition: shortTextSchema,
+    addPositionCode: codeSchema.nullish(),
+    addStartDate: maxDateSchema,
+    addEndDate: maxDateSchema,
+    addSalary: z.coerce.number({
+        invalid_type_error: 'Medan ini hendaklah ditetapkan dengan angka',
+    }),
+});
+
+//==========================================================
+//================== Maklumat Keluarga Modal ===================
+//==========================================================
+
+export const _addFamilyModalSchema = z.object({
+    addName: shortTextSchema,
+    addIdentityDocumentNumber: numberIdSchema,
+    addGender: generalSelectSchema,
+    addRelationship: generalSelectSchema,
+    addOccupation: shortTextSchema.nullish(),
+    addIsInSchool: booleanSchema,
+});
+
+//==========================================================
+//================== Maklumat Bukan Keluarga Modal ===================
+//==========================================================
+
+export const _addNonFamilyModalSchema = z.object({
+    addNonFamilyName: shortTextSchema,
+    addNonFamilyIdentityDocumentNumber: numberIdSchema,
+    addNonFamilyGender: generalSelectSchema,
+    addNonFamilyRelationship: generalSelectSchema,
+    addNonFamilyOccupation: shortTextSchema.nullish(),
+    addNonFamilyIsInSchool: booleanSchema,
+});
+//==========================================================
+//================== Add Maklumat Waris ========================
+//==========================================================
+export const _addNextOfKinInfoSchema = z.object({
+    addNextOfKinName: shortTextSchema,
+    addNextOfKinIdentityDocumentNumber: numberIdSchema,
+    addNextOfKinBirthDate: maxDateSchema,
+    addNextOfKinRelationship: generalSelectSchema,
+    addNextOfKinMarriageDate: maxDateSchema,
+    addNextOfKinIdentityDocumentType: generalSelectSchema,
+    addNextOfKinHomeNumber: shortTextSchema.nullish(),
+    addNextOfKinMobileNumber: shortTextSchema,
+    addNextOfKinPosition: shortTextSchema,
+    addNextOfKinCompany: shortTextSchema.nullish(),
+    addNextOfKinCompanyAddress: shortTextSchema.nullish(),
 });
 
 // =========================================================================
@@ -484,6 +591,11 @@ export const load = async () => {
         _stepperPemeriksaanDoktor,
     );
     const addAcademicModal = await superValidate(_addAcademicInfoSchema);
+    const addExperienceModal = await superValidate(_addExperienceModalSchema);
+    const addActivityModal = await superValidate(_addActivityModalSchema);
+    const addFamilyModal = await superValidate(_addFamilyModalSchema);
+    const addNonFamilyModal = await superValidate(_addNonFamilyModalSchema);
+    const addNextOfKinModal = await superValidate(_addNextOfKinInfoSchema);
 
     return {
         form,
@@ -495,6 +607,11 @@ export const load = async () => {
         stepperSejarahPenyakit,
         stepperPemeriksaanDoktor,
         addAcademicModal,
+        addExperienceModal,
+        addActivityModal,
+        addFamilyModal,
+        addNonFamilyModal,
+        addNextOfKinModal,
     };
 };
 
@@ -797,6 +914,36 @@ export const _submitAddMoreAcademicForm = async (formData: object) => {
     //     })
     //     .json();
 
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
+            method: 'POST',
+            body: JSON.stringify(form),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        },
+    )
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+
+    getPromiseToast(responsePromise);
+
+    const response = await responsePromise;
+
+    return { response };
+};
+
+export const _submitAddExperienceModal = async (formData: object) => {
+    const form = await superValidate(formData, _addAcademicInfoSchema);
+
+    console.log('Request: ', form.data);
+    if (!form.valid) {
+        getErrorToast();
+        return fail(400, form);
+    }
     const responsePromise = fetch(
         'https://jsonplaceholder.typicode.com/posts',
         {

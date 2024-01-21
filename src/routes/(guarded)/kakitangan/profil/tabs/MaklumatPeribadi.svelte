@@ -28,12 +28,19 @@
     import toast, { Toaster } from 'svelte-french-toast';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import { superForm } from 'sveltekit-superforms/client';
+    import { superForm ,superValidate} from 'sveltekit-superforms/client';
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import type { PageData } from './$types';
+    import { getErrorToast, getSuccessToast } from '$lib/toast/toast-service';
     import {
         _submitAddMoreAcademicForm,
         _addAcademicInfoSchema,
+        _addExperienceModalSchema,
+        _addActivityModalSchema,
+        _addFamilyModalSchema,
+        _addNonFamilyModalSchema,
+        _addNextOfKinInfoSchema,
         _stepperMaklumatPeribadi,
         _submitFormStepperMaklumatPeribadi,
         _stepperMaklumatPerkhidmatan,
@@ -44,10 +51,23 @@
         _submitFormStepperMaklumatPengalaman,
         _stepperMaklumatWaris,
         _submitFormStepperMaklumatWaris,
+        _submitAddExperienceModal,
+
+
     } from '../+page';
 
     export let disabled: boolean = true;
     export let data: PageData;
+    export let openExperienceInfoModal: boolean = false;
+    export let openMembershipInfoModal: boolean = false;
+    export let openFamilyInfoModal: boolean = false;
+    export let openNextOfKinInfoModal: boolean = false;
+    export let openNonFamilyInfoModal: boolean = false;
+    let tempExperienceRecord: any[] = [];
+    let tempActivityRecord: any[] = [];
+    let tempFamilyRecord: any[] = [];
+    let tempNextOfKinRecord: any[] = [];
+    let tempNonFamilyRecord: any[] = [];
 
     export let openAcademicInfoModal: boolean = false;
 
@@ -132,6 +152,124 @@
                 },
             );
             // .then(() => (openAcademicInfoModal = false));
+        },
+    });
+
+    const {
+        form: addExperienceModalForm,
+        errors: addExperienceModalErrors,
+        enhance: addExperienceModalEnhance,
+    } = superForm(data.addExperienceModal, {
+        SPA: true,
+        validators: _addExperienceModalSchema,
+        async onSubmit() {
+            await superValidate(
+                $addExperienceModalForm,
+                _addExperienceModalSchema,
+            ).then((response) => {
+                if (!response.valid) {
+                    getErrorToast();
+                } else {
+                    tempExperienceRecord = [
+                        ...tempExperienceRecord,
+                        response.data,
+                    ];
+                    openExperienceInfoModal = false;
+                }
+            });
+        },
+    });
+
+    const {
+        form: addActivityModal,
+        errors: addActivityModalErrors,
+        enhance: addActivityModalEnhance,
+    } = superForm(data.addActivityModal, {
+        SPA: true,
+        validators: _addActivityModalSchema,
+        async onSubmit() {
+            await superValidate(
+                $addActivityModal,
+                _addActivityModalSchema,
+            ).then((response) => {
+                if (!response.valid) {
+                    getErrorToast();
+                } else {
+                    tempActivityRecord = [...tempActivityRecord, response.data];
+                    openMembershipInfoModal = false;
+                }
+            });
+        },
+    });
+
+    const {
+        form: addNonFamilyModal,
+        errors: addNonFamilyErrors,
+        enhance: addNonFamilyEnhance,
+    } = superForm(data.addNonFamilyModal, {
+        SPA: true,
+        validators: _addNonFamilyModalSchema,
+        async onSubmit() {
+            await superValidate(
+                $addNonFamilyModal,
+                _addNonFamilyModalSchema,
+            ).then((response) => {
+                if (!response.valid) {
+                    getErrorToast();
+                } else {
+                    tempNonFamilyRecord = [
+                        ...tempNonFamilyRecord,
+                        response.data,
+                    ];
+                    openNonFamilyInfoModal = false;
+                }
+            });
+        },
+    });
+
+
+    const {
+        form: addFamilyModal,
+        errors: addFamilyErrors,
+        enhance: addFamilyEnhance,
+    } = superForm(data.addFamilyModal, {
+        SPA: true,
+        validators: _addFamilyModalSchema,
+        async onSubmit() {
+            await superValidate($addFamilyModal, _addFamilyModalSchema).then(
+                (response) => {
+                    if (!response.valid) {
+                        getErrorToast();
+                    } else {
+                        tempFamilyRecord = [...tempFamilyRecord, response.data];
+                        openFamilyInfoModal = false;
+                    }
+                },
+            );
+        },
+    });
+    const {
+        form: addNextOfKinModal,
+        errors: addNextOfKinErrors,
+        enhance: addNextOfKinEnhance,
+    } = superForm(data.addNextOfKinModal, {
+        SPA: true,
+        validators: _addNextOfKinInfoSchema,
+        async onSubmit() {
+            await superValidate(
+                $addNextOfKinModal,
+                _addNextOfKinInfoSchema,
+            ).then((response) => {
+                if (!response.valid) {
+                    getErrorToast();
+                } else {
+                    tempNextOfKinRecord = [
+                        ...tempNextOfKinRecord,
+                        response.data,
+                    ];
+                    openNextOfKinInfoModal = false;
+                }
+            });
         },
     });
 
@@ -641,6 +779,7 @@
                         >{$errors.bekasPolisTentera}</span
                     >
                 {/if}
+
 
                 <div class="flex w-full flex-col gap-2">
                     <p class={stepperFormTitleClass}>
@@ -1798,6 +1937,17 @@
                         {/if}
                     {/each}
                 </form>
+                <div class="w-full rounded-[3px] border-b border-t p-2.5">
+                    <TextIconButton
+                        primary
+                        label="Tambah Pengalaman"
+                        onClick={() => {
+                            openExperienceInfoModal = true;
+                        }}
+                    >
+                        <SvgPlus></SvgPlus>
+                    </TextIconButton>
+                </div>
             </div></StepperContentBody
         >
     </StepperContent>
@@ -1814,28 +1964,196 @@
                 <DynamicTable tableItems={maklumatKegiatanTable}></DynamicTable>
             </div></StepperContentBody
         >
+        <div class="w-full rounded-[3px] border-b border-t p-2.5">
+            <TextIconButton
+                primary
+                label="Tambah Kegiatan/Keahlian"
+                onClick={() => {
+                    openMembershipInfoModal = true;
+                }}
+            >
+                <SvgPlus></SvgPlus>
+            </TextIconButton>
+        </div>
     </StepperContent>
 
     <!------------------------------------------------------->
     <!-----------------Maklumat Keluarga--------------------->
     <!------------------------------------------------------->
     <StepperContent>
-        <StepperContentHeader title="Maklumat Keluarga"></StepperContentHeader>
+        <StepperContentHeader title="Maklumat Keluarga">
+            <TextIconButton
+                primary
+                label="Simpan"
+                onClick={() => {
+                    getSuccessToast();
+                }}
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton>
+        </StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
+                {#if tempFamilyRecord.length > 0}
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                    >
+                        <div class="mb-2.5 text-sm font-medium">
+                            <p>Preview Rekod Untuk Disimpan</p>
+                        </div>
+                        {#each tempFamilyRecord as family, i}
+                            <div class="text-sm text-system-primary">
+                                <p>
+                                    {i + 1}. Maklumat Keluarga - {family.addName}
+                                </p>
+                            </div>
+                            <ul
+                                class="list-inside list-disc rounded-[3px] border p-2.5 text-sm text-system-primary"
+                            >
+                                <li>
+                                    <span class="italic text-black">
+                                        Nama:
+                                    </span>
+                                    {family.addName}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        No. Kad Pengenalan:
+                                    </span>
+                                    {family.addIdentityDocumentNumber}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Jantina:
+                                    </span>
+                                    {family.addGender}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Hubungan:
+                                    </span>
+                                    {family.addRelationship}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Pekerjaan (Jika Ada):
+                                    </span>
+                                    {family.addOccupation ?? ''}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Bersekolah:
+                                    </span>
+                                    {family.addIsInSchool ? 'Ya' : 'Tidak'}
+                                </li>
+                            </ul>
+                        {/each}
+                    </div>
+                {/if}
                 <DynamicTable tableItems={maklumatKeluargaTable}></DynamicTable>
+            </div>
+            <div class="w-full rounded-[3px] border-b border-t p-2.5">
+                <TextIconButton
+                    primary
+                    label="Tambah Maklumat Keluarga"
+                    onClick={() => {
+                        openFamilyInfoModal = true;
+                    }}
+                >
+                    <SvgPlus></SvgPlus>
+                </TextIconButton>
             </div></StepperContentBody
         >
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Maklumat Tanggungan Selain Isteri dan Anak"
-        ></StepperContentHeader>
+        >
+        <TextIconButton
+        primary
+        label="Simpan"
+        onClick={() => {
+            getSuccessToast();
+        }}
+    >
+        <SvgCheck></SvgCheck>
+    </TextIconButton></StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
+                {#if tempNonFamilyRecord.length > 0}
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                    >
+                        <div class="mb-2.5 text-sm font-medium">
+                            <p>Preview Rekod Untuk Disimpan</p>
+                        </div>
+                        {#each tempNonFamilyRecord as nonFamily, i}
+                            <div class="text-sm text-system-primary">
+                                <p>
+                                    {i + 1}. Maklumat Selain Suami/Isteri dan
+                                    Anak - {nonFamily.addNonFamilyName}
+                                </p>
+                            </div>
+                            <ul
+                                class="list-inside list-disc rounded-[3px] border p-2.5 text-sm text-system-primary"
+                            >
+                                <li>
+                                    <span class="italic text-black">
+                                        Nama:
+                                    </span>
+                                    {nonFamily.addNonFamilyName}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        No. Kad Pengenalan:
+                                    </span>
+                                    {nonFamily.addNonFamilyIdentityDocumentNumber}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Jantina:
+                                    </span>
+                                    {nonFamily.addNonFamilyGender}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Hubungan:
+                                    </span>
+                                    {nonFamily.addNonFamilyRelationship}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Pekerjaan (Jika Ada):
+                                    </span>
+                                    {nonFamily.addNonFamilyOccupation ?? ''}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Bersekolah:
+                                    </span>
+                                    {nonFamily.addNonFamilyIsInSchool
+                                        ? 'Ya'
+                                        : 'Tidak'}
+                                </li>
+                            </ul>
+                        {/each}
+                    </div>
+                {/if}
                 <DynamicTable tableItems={maklumatTanggunganLain}
                 ></DynamicTable>
+            </div>
+            <div class="w-full rounded-[3px] border-b border-t p-2.5">
+                <TextIconButton
+                    primary
+                    label="Tambah Tanggungan Selain Isteri dan Anak"
+                    onClick={() => {
+                        openNonFamilyInfoModal = true;
+                    }}
+                >
+                    <SvgPlus></SvgPlus>
+                </TextIconButton>
             </div></StepperContentBody
         >
+
     </StepperContent>
 
     <!------------------------------------------------------->
@@ -1854,8 +2172,8 @@
         </StepperContentHeader>
 
         <StepperContentBody
-            ><div class="flex w-full flex-col gap-2.5">
-                <form
+           ><div class="flex w-full flex-col gap-2.5">
+               <!-- <form
                     id="FormStepperWaris"
                     class="flex w-full flex-col gap-2"
                     use:maklumatWarisEnhance
@@ -1960,6 +2278,7 @@
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$maklumatWarisErrors.warnaKP[0]}</span
                         >
+
                     {/if}
 
                     <TextField
@@ -2042,7 +2361,193 @@
                             >{$maklumatWarisErrors.alamatMajikanWaris[0]}</span
                         >
                     {/if}
-                </form>
+                </form> -->
+                {#if tempNextOfKinRecord.length > 0}
+                <div
+                    class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                >
+                    <div class="mb-2.5 text-sm font-medium">
+                        <p>Preview Rekod Untuk Disimpan</p>
+                    </div>
+                    {#each tempNextOfKinRecord as nextOfKin, i}
+                        <div class="text-sm text-system-primary">
+                            <p>
+                                {i + 1}. Maklumat Waris - {nextOfKin.addNextOfKinName}
+                            </p>
+                        </div>
+                        <ul
+                            class="list-inside list-disc rounded-[3px] border p-2.5 text-sm text-system-primary"
+                        >
+                            <li>
+                                <span class="italic text-black">
+                                    Nama Waris:
+                                </span>
+                                {nextOfKin.addNextOfKinName}
+                            </li>
+                            <li>
+                                <span class="italic text-black">
+                                    No. Kad Pengenalan:
+                                </span>
+                                {nextOfKin.addNextOfKinIdentityDocumentNumber}
+                            </li>
+                            <li>
+                                <span class="italic text-black">
+                                    Tarikh Lahir:
+                                </span>
+                                {nextOfKin.addNextOfKinBirthDate}
+                            </li>
+                            <li>
+                                <span class="italic text-black">
+                                    Hubungan Dengan Waris:
+                                </span>
+                                {nextOfKin.addNextOfKinRelationship}
+                            </li>
+                            <li>
+                                <span class="italic text-black">
+                                    Tarikh Kahwin (Jika berkenaan):
+                                </span>
+                                {nextOfKin.addNextOfKinMarriageDate}
+                            </li>
+                            <li>
+                                <span class="italic text-black">
+                                    Warna Kad Pengenalan:
+                                </span>
+                                {nextOfKin.addNextOfKinIdentityDocumentType}
+                            </li>
+                            <li>
+                                <span class="italic text-black">
+                                    Telefon (R):
+                                </span>
+                                {nextOfKin.addNextOfKinHomeNumber ?? ''}
+                            </li>
+                            <li>
+                                <span class="italic text-black">
+                                    Telefon (P):
+                                </span>
+                                {nextOfKin.addNextOfKinMobileNumber}
+                            </li>
+                            <li>
+                                <span class="italic text-black">
+                                    Pekerjaan:
+                                </span>
+                                {nextOfKin.addNextOfKinPosition}
+                            </li>
+                            <li>
+                                <span class="italic text-black">
+                                    Nama Majikan:
+                                </span>
+                                {nextOfKin.addNextOfKinCompany ?? ''}
+                            </li>
+                            <li>
+                                <span class="italic text-black">
+                                    Alamat Majikan:
+                                </span>
+                                {nextOfKin.addNextOfKinCompanyAddress ?? ''}
+                            </li>
+                        </ul>
+                    {/each}
+                </div>
+            {/if}
+ <form
+                id="nextOfKinForm"
+                class="flex w-full flex-col gap-2 rounded-[3px] border p-2.5"
+                use:maklumatWarisEnhance
+                method="POST"
+            >
+                <p class={stepperFormTitleClass}>
+                    Maklumat Waris #{1}
+                </p>
+                <TextField
+                    disabled
+                    id="name"
+                    name="name"
+                    label={'Nama Waris'}
+                    value={$maklumatWarisForm.namaWaris}
+                ></TextField>
+                <TextField
+                    disabled
+                    id="identityDocumentNumber"
+                    name="identityDocumentNumber"
+                    label={'No. Kad Pengenalan'}
+                    value={$maklumatWarisForm.noKP}
+                ></TextField>
+                <DateSelector
+                    {handleDateChange}
+                    disabled
+                    name="birthDate"
+                    label="Tarikh Lahir"
+                    selectedDate={$maklumatWarisForm.tarikhLahirWaris}
+                ></DateSelector>
+                <TextField
+                    disabled
+                    id="relationship"
+                    name="relationship"
+                    label={'Hubungan Dengan Waris'}
+                    value={$maklumatWarisForm.hubunganWaris}
+                ></TextField>
+                <DateSelector
+                    {handleDateChange}
+                    disabled
+                    name="marriageDate"
+                    label={'Tarikh Kahwin (Jika berkenaan)'}
+                    selectedDate={$maklumatWarisForm.tarikhKahwin}
+                ></DateSelector>
+                <TextField
+                    disabled
+                    id="identityDocumentType"
+                    name="identityDocumentType"
+                    label={'Warna Kad Pengenalan'}
+                    value={$maklumatWarisForm.warnaKP}
+                ></TextField>
+                <TextField
+                    disabled
+                    id="homeNumber"
+                    name="homeNumber"
+                    label={'Telefon (R)'}
+                    value={$maklumatWarisForm.telefonPeribadi}
+                ></TextField>
+                <TextField
+                    disabled
+                    id="mobileNumber"
+                    name="mobileNumber"
+                    label={'Telefon (P)'}
+                    value={$maklumatWarisForm.telefonPeribadi}
+                ></TextField>
+                <TextField
+                    disabled
+                    id="position"
+                    name="position"
+                    label={'Pekerjaan'}
+                    value={$maklumatWarisForm.pekerjaanWaris}
+                ></TextField>
+                <TextField
+                    disabled
+                    id="company"
+                    name="company"
+                    label={'Nama Majikan'}
+                    value={$maklumatWarisForm.namaMajikanWaris}
+                ></TextField>
+                <LongTextField
+                    disabled
+                    id="companyAddress"
+                    name="companyAddress"
+                    label={'Alamat Majikan'}
+                    value={$maklumatWarisForm.alamatMajikanWaris}
+                ></LongTextField>
+            </form>
+
+
+            </div>
+            <div class="w-full rounded-[3px] border-b border-t p-2.5">
+                <TextIconButton
+                    primary
+                    label="Tambah Waris"
+                    onClick={() => {
+                        openNextOfKinInfoModal = true;
+                    }}
+                >
+                    <SvgPlus></SvgPlus>
+                </TextIconButton>
             </div></StepperContentBody
         >
     </StepperContent>
@@ -2142,5 +2647,447 @@
             >
         {/if}
         <TextIconButton primary label={'Simpan'} form="addAcademicInfoModal" />
+    </form>
+</Modal>
+
+
+<!-- Experience Info Modal -->
+<Modal title={'Tambah Maklumat Pengalaman'} bind:open={openExperienceInfoModal}>
+    <form
+        id="addExperienceInfoModal"
+        method="POST"
+        use:addExperienceModalEnhance
+        class="flex w-full flex-col gap-2"
+    >
+        <TextField
+            {disabled}
+            hasError={!!$addExperienceModalErrors.addCompany}
+            name="addCompany"
+            label={'Nama Majikan'}
+            type="text"
+            bind:value={$addExperienceModalForm.addCompany}
+        ></TextField>
+        {#if $addExperienceModalErrors.addCompany}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addExperienceModalErrors.addCompany}</span
+            >
+        {/if}
+
+        <TextField
+            {disabled}
+            hasError={!!$addExperienceModalErrors.addAddress}
+            name="addAddress"
+            label={'Alamat Majikan'}
+            type="text"
+            bind:value={$addExperienceModalForm.addAddress}
+        ></TextField>
+        {#if $addExperienceModalErrors.addAddress}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addExperienceModalErrors.addAddress}</span
+            >
+        {/if}
+
+        <TextField
+            {disabled}
+            hasError={!!$addExperienceModalErrors.addPosition}
+            name="addPosition"
+            label={'Jawatan'}
+            type="text"
+            bind:value={$addExperienceModalForm.addPosition}
+        ></TextField>
+        {#if $addExperienceModalErrors.addPosition}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addExperienceModalErrors.addPosition}</span
+            >
+        {/if}
+
+        <TextField
+            {disabled}
+            hasError={!!$addExperienceModalErrors.addPositionCode}
+            name="addPositionCode"
+            label={'Kod Jawatan (jika ada)'}
+            type="text"
+            bind:value={$addExperienceModalForm.addPositionCode}
+        ></TextField>
+
+        <DateSelector
+            {disabled}
+            hasError={!!$addExperienceModalErrors.addStartDate}
+            name="addStartDate"
+            label={'Dari (tahun)'}
+            bind:selectedDate={$addExperienceModalForm.addStartDate}
+        ></DateSelector>
+        {#if $addExperienceModalErrors.addStartDate}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addExperienceModalErrors.addStartDate}</span
+            >
+        {/if}
+        <DateSelector
+            {disabled}
+            hasError={!!$addExperienceModalErrors.addEndDate}
+            name="addEndDate"
+            label={'Hingga (tahun)'}
+            bind:selectedDate={$addExperienceModalForm.addEndDate}
+        ></DateSelector>
+        {#if $addExperienceModalErrors.addEndDate}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addExperienceModalErrors.addEndDate}</span
+            >
+        {/if}
+
+        <TextField
+            {disabled}
+            hasError={!!$addExperienceModalErrors.addSalary}
+            name="addSalary"
+            label={'Gaji'}
+            type="text"
+            bind:value={$addExperienceModalForm.addSalary}
+        ></TextField>
+        {#if $addExperienceModalErrors.addSalary}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addExperienceModalErrors.addSalary}</span
+            >
+        {/if}
+        <TextIconButton
+            primary
+            label={'Simpan'}
+            form="addExperienceInfoModal"
+        />
+    </form>
+</Modal>
+
+<!-- Membership Info Modal -->
+<Modal title={'Tambah Kegiatan/Keahlian'} bind:open={openMembershipInfoModal}>
+    <form
+        id="addMembershipInfoModal"
+        class="flex w-full flex-col gap-2"
+        use:addActivityModalEnhance
+        method="POST"
+    >
+        <TextField
+            {disabled}
+            hasError={!!$addActivityModalErrors.addName}
+            name="addName"
+            label={'Nama Kegiatan'}
+            type="text"
+            bind:value={$addActivityModal.addName}
+        ></TextField>
+        {#if $addActivityModalErrors.addName}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addActivityModalErrors.addName}</span
+            >
+        {/if}
+
+        <DateSelector
+            {disabled}
+            hasError={!!$addActivityModalErrors.addJoinDate}
+            name="addJoinDate"
+            label={'Tarikh Keahlian'}
+            bind:selectedDate={$addActivityModal.addJoinDate}
+        ></DateSelector>
+        {#if $addActivityModalErrors.addJoinDate}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addActivityModalErrors.addJoinDate}</span
+            >
+        {/if}
+
+        <TextField
+            {disabled}
+            hasError={!!$addActivityModalErrors.addPosition}
+            name="addPosition"
+            label={'Jawatan'}
+            type="text"
+            bind:value={$addActivityModal.addPosition}
+        ></TextField>
+        {#if $addActivityModalErrors.addPosition}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addActivityModalErrors.addPosition}</span
+            >
+        {/if}
+
+        <TextField
+            {disabled}
+            hasError={!!$addActivityModalErrors.addDescription}
+            name="addDescription"
+            label={'Catatan'}
+            type="text"
+            bind:value={$addActivityModal.addDescription}
+        ></TextField>
+        {#if $addActivityModalErrors.addDescription}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addActivityModalErrors.addDescription}</span
+            >
+        {/if}
+
+        <TextIconButton
+            primary
+            label={'Simpan'}
+            form="addMembershipInfoModal"
+        />
+    </form>
+</Modal>
+
+<!-- Non Family Info Modal -->
+<Modal
+    title={'Tambah Maklumat Suami/Isteri & Anak'}
+    bind:open={openNonFamilyInfoModal}
+>
+    <form
+        id="addNonFamilyInfoModal"
+        class="flex w-full flex-col gap-2"
+        use:addNonFamilyEnhance
+        method="POST"
+    >
+        <TextField
+            {disabled}
+            hasError={!!$addNonFamilyErrors.addNonFamilyName}
+            name="addNonFamilyName"
+            label={'Nama'}
+            type="text"
+            bind:value={$addNonFamilyModal.addNonFamilyName}
+        ></TextField>
+        {#if $addNonFamilyErrors.addNonFamilyName}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addNonFamilyErrors.addNonFamilyName}</span
+            >
+        {/if}
+
+        <TextField
+            {disabled}
+            hasError={!!$addNonFamilyErrors.addNonFamilyIdentityDocumentNumber}
+            name="addIdentityDocumentNumber"
+            label={'No. Kad Pengenalan'}
+            type="text"
+            bind:value={$addNonFamilyModal.addNonFamilyIdentityDocumentNumber}
+        ></TextField>
+        {#if $addNonFamilyErrors.addNonFamilyIdentityDocumentNumber}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addNonFamilyErrors.addNonFamilyIdentityDocumentNumber}</span
+            >
+        {/if}
+
+        <DropdownSelect
+            {disabled}
+            hasError={!!$addNonFamilyErrors.addNonFamilyGender}
+            name="addGender"
+            label={'Jantina'}
+            dropdownType="label-left-full"
+            options={[
+                { value: 'male', name: 'Lelaki' },
+                { value: 'female', name: 'Perempuan' },
+            ]}
+            bind:value={$addNonFamilyModal.addNonFamilyGender}
+        ></DropdownSelect>
+        {#if $addNonFamilyErrors.addNonFamilyGender}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addNonFamilyErrors.addNonFamilyGender}</span
+            >
+        {/if}
+
+        <DropdownSelect
+            {disabled}
+            hasError={!!$addNonFamilyErrors.addNonFamilyRelationship}
+            name="addRelationship"
+            label={'Hubungan'}
+            dropdownType="label-left-full"
+            options={[
+                { value: 'husband', name: 'Suami' },
+                { value: 'wife', name: 'Isteri' },
+            ]}
+            bind:value={$addNonFamilyModal.addNonFamilyRelationship}
+        ></DropdownSelect>
+        {#if $addNonFamilyErrors.addNonFamilyRelationship}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addNonFamilyErrors.addNonFamilyRelationship}</span
+            >
+        {/if}
+
+        <TextField
+            {disabled}
+            hasError={!!$addNonFamilyErrors.addNonFamilyOccupation}
+            name="addOccupation"
+            label={'Pekerjaan (Jika Ada)'}
+            type="text"
+            bind:value={$addNonFamilyModal.addNonFamilyOccupation}
+        ></TextField>
+        {#if $addNonFamilyErrors.addNonFamilyOccupation}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addNonFamilyErrors.addNonFamilyOccupation}</span
+            >
+        {/if}
+
+        <div class="flex flex-row">
+            <label for="addIsInSchool" class="w-[220px] text-sm text-black"
+                >Bersekolah</label
+            >
+            <Checkbox
+                name="addIsInSchool"
+                bind:checked={$addNonFamilyModal.addNonFamilyIsInSchool}
+            />
+        </div>
+        {#if $addNonFamilyErrors.addNonFamilyIsInSchool}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addNonFamilyErrors.addNonFamilyIsInSchool}</span
+            >
+        {/if}
+        <br />
+
+        <TextIconButton primary label={'Simpan'} form="addNonFamilyInfoModal" />
+    </form>
+</Modal>
+
+<!-- Next Of Kin Info Modal -->
+<Modal title={'Tambah Maklumat Waris'} bind:open={openNextOfKinInfoModal}>
+    <form
+        id="addNextOfKinInfoModal"
+        use:addNextOfKinEnhance
+        method="POST"
+        class="flex w-full flex-col gap-2"
+    >
+        <TextField
+            hasError={!!$addNextOfKinErrors.addNextOfKinName}
+            {disabled}
+            id="name"
+            name="name"
+            label={'Nama Waris'}
+            bind:value={$addNextOfKinModal.addNextOfKinName}
+        ></TextField>
+        {#if $addNextOfKinErrors.addNextOfKinName}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addNextOfKinErrors.addNextOfKinName}</span
+            >
+        {/if}
+        <TextField
+            hasError={!!$addNextOfKinErrors.addNextOfKinIdentityDocumentNumber}
+            {disabled}
+            id="identityDocumentNumber"
+            name="identityDocumentNumber"
+            label={'No. Kad Pengenalan'}
+            bind:value={$addNextOfKinModal.addNextOfKinIdentityDocumentNumber}
+        ></TextField>
+        {#if $addNextOfKinErrors.addNextOfKinIdentityDocumentNumber}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addNextOfKinErrors.addNextOfKinIdentityDocumentNumber}</span
+            >
+        {/if}
+        <DateSelector
+            hasError={!!$addNextOfKinErrors.addNextOfKinBirthDate}
+            {handleDateChange}
+            {disabled}
+            name="birthDate"
+            label="Tarikh Lahir"
+            bind:selectedDate={$addNextOfKinModal.addNextOfKinBirthDate}
+        ></DateSelector>
+        {#if $addNextOfKinErrors.addNextOfKinBirthDate}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addNextOfKinErrors.addNextOfKinBirthDate}</span
+            >
+        {/if}
+        <TextField
+            hasError={!!$addNextOfKinErrors.addNextOfKinRelationship}
+            {disabled}
+            id="relationship"
+            name="relationship"
+            label={'Hubungan Dengan Waris'}
+            bind:value={$addNextOfKinModal.addNextOfKinRelationship}
+        ></TextField>
+        {#if $addNextOfKinErrors.addNextOfKinRelationship}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addNextOfKinErrors.addNextOfKinRelationship}</span
+            >
+        {/if}
+        <DateSelector
+            hasError={!!$addNextOfKinErrors.addNextOfKinMarriageDate}
+            {handleDateChange}
+            {disabled}
+            name="marriageDate"
+            label={'Tarikh Kahwin (Jika berkenaan)'}
+            bind:selectedDate={$addNextOfKinModal.addNextOfKinMarriageDate}
+        ></DateSelector>
+        {#if $addNextOfKinErrors.addNextOfKinMarriageDate}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addNextOfKinErrors.addNextOfKinMarriageDate}</span
+            >
+        {/if}
+        <TextField
+            hasError={!!$addNextOfKinErrors.addNextOfKinIdentityDocumentType}
+            {disabled}
+            id="identityDocumentType"
+            name="identityDocumentType"
+            label={'Warna Kad Pengenalan'}
+            bind:value={$addNextOfKinModal.addNextOfKinIdentityDocumentType}
+        ></TextField>
+        {#if $addNextOfKinErrors.addNextOfKinIdentityDocumentType}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addNextOfKinErrors.addNextOfKinIdentityDocumentType}</span
+            >
+        {/if}
+        <TextField
+            hasError={!!$addNextOfKinErrors.addNextOfKinHomeNumber}
+            {disabled}
+            id="homeNumber"
+            name="homeNumber"
+            label={'Telefon (R)'}
+            bind:value={$addNextOfKinModal.addNextOfKinHomeNumber}
+        ></TextField>
+        {#if $addNextOfKinErrors.addNextOfKinHomeNumber}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addNextOfKinErrors.addNextOfKinHomeNumber}</span
+            >
+        {/if}
+        <TextField
+            hasError={!!$addNextOfKinErrors.addNextOfKinMobileNumber}
+            {disabled}
+            id="mobileNumber"
+            name="mobileNumber"
+            label={'Telefon (P)'}
+            bind:value={$addNextOfKinModal.addNextOfKinMobileNumber}
+        ></TextField>
+        {#if $addNextOfKinErrors.addNextOfKinMobileNumber}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addNextOfKinErrors.addNextOfKinMobileNumber}</span
+            >
+        {/if}
+        <TextField
+            hasError={!!$addNextOfKinErrors.addNextOfKinPosition}
+            {disabled}
+            id="position"
+            name="position"
+            label={'Pekerjaan'}
+            bind:value={$addNextOfKinModal.addNextOfKinPosition}
+        ></TextField>
+        {#if $addNextOfKinErrors.addNextOfKinPosition}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addNextOfKinErrors.addNextOfKinPosition}</span
+            >
+        {/if}
+        <TextField
+            hasError={!!$addNextOfKinErrors.addNextOfKinCompany}
+            {disabled}
+            id="company"
+            name="company"
+            label={'Nama Majikan'}
+            bind:value={$addNextOfKinModal.addNextOfKinCompany}
+        ></TextField>
+        {#if $addNextOfKinErrors.addNextOfKinCompany}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addNextOfKinErrors.addNextOfKinCompany}</span
+            >
+        {/if}
+        <LongTextField
+            hasError={!!$addNextOfKinErrors.addNextOfKinCompanyAddress}
+            {disabled}
+            id="companyAddress"
+            name="companyAddress"
+            label={'Alamat Majikan'}
+            bind:value={$addNextOfKinModal.addNextOfKinCompanyAddress}
+        ></LongTextField>
+        {#if $addNextOfKinErrors.addNextOfKinCompanyAddress}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addNextOfKinErrors.addNextOfKinCompanyAddress}</span
+            >
+        {/if}
+
+        <TextIconButton primary label={'Simpan'} form="addNextOfKinInfoModal" />
     </form>
 </Modal>
