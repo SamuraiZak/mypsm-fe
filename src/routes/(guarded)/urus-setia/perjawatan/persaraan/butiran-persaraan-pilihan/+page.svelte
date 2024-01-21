@@ -12,31 +12,35 @@
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import { goto } from '$app/navigation';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
-    import { z, ZodError } from 'zod';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import { superForm } from 'sveltekit-superforms/client';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import type { PageData } from './$types';
     import { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
     import {
-        _stepperPermohonanPersaraan,
-        _submitFormStepperPermohonanPersaraan,
+        _stepperVerificationRetirementApplication,
+        _submitFormStepperVerificationRetirementApplication,
+    } from './+page';
+    import {
+        _stepperSupporterApprover,
+        _submitFormStepperSupporterApprover,
+    } from './+page';
+    import {
+        _stepperRetirementApplicationApproval,
+        _submitFormStepperRetirementApplicationApproval,
+    } from './+page';
+    import {
+        _stepperVerificationRetirementDocuments,
+        _submitFormStepperVerificationRetirementDocuments,
+    } from './+page';
+    import {
+        _stepperUpdateApplicationDeliveryInformation,
+        _submitFormStepperUpdateApplicationDeliveryInformation,
     } from './+page';
 
     export let data: PageData;
 
     export let disabled = true;
-
-    let applicationConfirmationReview: string;
-    let applicationConfirmationResult: any;
-    let applicationApprovalReview: string;
-    let applicationApprovalResult: any;
-    let validateDocumentReview: string;
-    let validateDocumentResult: any;
-    let updateApplicationReview: string;
-    let updateApplicationResult: any;
-    let supporter1Option: any;
-    let supporter2Option: any;
-    let approverOption: any;
 
     const options: RadioOption[] = [
         {
@@ -49,16 +53,99 @@
         },
     ];
 
-    const supportOptions: RadioOption[] = [
+    const approveOptions: RadioOption[] = [
         {
-            value: 'lulus',
+            value: 'true',
             label: 'Lulus',
         },
         {
-            value: 'tidakLulus',
+            value: 'false',
             label: 'Tidak Lulus',
         },
     ];
+
+    //Verification Retirement Application
+    const {
+        form: verificationRetirementApplicationForm,
+        errors: verificationRetirementApplicationErrors,
+        enhance: verificationRetirementApplicationEnhance,
+    } = superForm(data.stepperVerificationRetirementApplication, {
+        SPA: true,
+        validators: _stepperVerificationRetirementApplication,
+        onSubmit() {
+            _submitFormStepperVerificationRetirementApplication(
+                $verificationRetirementApplicationForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+
+    //Supporter Approver
+    const {
+        form: supporterApproverForm,
+        errors: supporterApproverErrors,
+        enhance: supporterApproverEnhance,
+    } = superForm(data.stepperSupporterApprover, {
+        SPA: true,
+        validators: _stepperSupporterApprover,
+        onSubmit() {
+            _submitFormStepperSupporterApprover($supporterApproverForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+
+    //Retirement Application Approval
+    const {
+        form: retirementApplicationApprovalForm,
+        errors: retirementApplicationApprovalErrors,
+        enhance: retirementApplicationApprovalEnhance,
+    } = superForm(data.stepperRetirementApplicationApproval, {
+        SPA: true,
+        validators: _stepperRetirementApplicationApproval,
+        onSubmit() {
+            _submitFormStepperRetirementApplicationApproval(
+                $retirementApplicationApprovalForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+
+    //Verification Retirement Documents
+    const {
+        form: verificationRetirementDocumentsForm,
+        errors: verificationRetirementDocumentsErrors,
+        enhance: verificationRetirementDocumentsEnhance,
+    } = superForm(data.stepperVerificationRetirementDocuments, {
+        SPA: true,
+        validators: _stepperVerificationRetirementDocuments,
+        onSubmit() {
+            _submitFormStepperVerificationRetirementDocuments(
+                $verificationRetirementDocumentsForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+
+    //Update Application Delivery Information
+    const {
+        form: updateApplicationDeliveryInformationForm,
+        errors: updateApplicationDeliveryInformationErrors,
+        enhance: updateApplicationDeliveryInformationEnhance,
+    } = superForm(data.stepperUpdateApplicationDeliveryInformation, {
+        SPA: true,
+        validators: _stepperUpdateApplicationDeliveryInformation,
+        onSubmit() {
+            _submitFormStepperUpdateApplicationDeliveryInformation(
+                $updateApplicationDeliveryInformationForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -109,9 +196,11 @@
         <StepperContentHeader title="Pengesahan Permohonan Persaraan"
             ><TextIconButton
                 primary
-                label="Hantar"
-                form="applicationConfirmationFormValidation"
-            /></StepperContentHeader
+                label="Simpan"
+                form="FormStepperVerificationRetirementApplication"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
         >
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
@@ -119,36 +208,39 @@
                     class="flex h-fit w-full flex-col items-center justify-start"
                 >
                     <form
-                        id="applicationConfirmationFormValidation"
-                        on:submit|preventDefault={applicationConfirmationForm}
+                        id="FormStepperVerificationRetirementApplication"
                         class="flex w-full flex-col gap-2"
+                        use:verificationRetirementApplicationEnhance
+                        method="POST"
                     >
                         <LongTextField
-                            hasError={errorData?.applicationConfirmationReview}
-                            name="applicationConfirmationReview"
-                            label="Ulasan/Tindakan"
-                            bind:value={applicationConfirmationReview}
+                            hasError={$verificationRetirementApplicationErrors.actionRemark
+                                ? true
+                                : false}
+                            name="actionRemark"
+                            label="Tindakan / Ulasan"
+                            bind:value={$verificationRetirementApplicationForm.actionRemark}
                         />
-                        {#if errorData?.applicationConfirmationReview}
+                        {#if $verificationRetirementApplicationErrors.actionRemark}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData
-                                    ?.applicationConfirmationReview[0]}</span
+                                >{$verificationRetirementApplicationErrors
+                                    .actionRemark[0]}</span
                             >
                         {/if}
-
                         <RadioSingle
-                            disabled={false}
                             {options}
-                            name="applicationConfirmationResult"
-                            legend={''}
-                            bind:userSelected={applicationConfirmationResult}
+                            hasError={$verificationRetirementApplicationErrors.resultOption
+                                ? true
+                                : false}
+                            name="resultOption"
+                            bind:userSelected={$verificationRetirementApplicationForm.resultOption}
                         ></RadioSingle>
-                        {#if errorData?.applicationConfirmationResult}
+                        {#if $verificationRetirementApplicationErrors.resultOption}
                             <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData
-                                    ?.applicationConfirmationResult[0]}</span
+                                class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                >{$verificationRetirementApplicationErrors
+                                    .resultOption[0]}</span
                             >
                         {/if}
                     </form>
@@ -160,74 +252,86 @@
         <StepperContentHeader title="Penyokong & Pelulus"
             ><TextIconButton
                 primary
-                label="Hantar"
-                form="supporterApproverFormValidation"
-            /></StepperContentHeader
+                label="Simpan"
+                form="FormStepperSupporterApprover"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
         >
         <StepperContentBody
             ><form
-                id="supporterApproverFormValidation"
-                on:submit|preventDefault={supporterApproverForm}
+                id="FormStepperSupporterApprover"
                 class="flex w-full flex-col gap-2"
+                use:supporterApproverEnhance
+                method="POST"
             >
                 <div class="flex w-full flex-col gap-2">
                     <div>
                         <DropdownSelect
-                            hasError={errorData?.supporter1Option}
+                            hasError={$supporterApproverErrors.supporter1Option
+                                ? true
+                                : false}
                             dropdownType="label-left-full"
                             id="supporter1Option"
                             label="Nama Penyokong #1"
-                            bind:value={supporter1Option}
+                            bind:value={$supporterApproverForm.supporter1Option}
                             options={[
                                 { value: '1', name: 'Ali Bin Abu' },
                                 { value: '2', name: 'Abu Bin Ahmad' },
                                 { value: '3', name: 'Ahmad Bin Ali' },
                             ]}
                         ></DropdownSelect>
-                        {#if errorData?.supporter1Option}
+                        {#if $supporterApproverErrors.supporter1Option}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.supporter1Option[0]}</span
+                                >{$supporterApproverErrors
+                                    .supporter1Option[0]}</span
                             >
                         {/if}
                     </div>
                     <div>
                         <DropdownSelect
-                            hasError={errorData?.supporter2Option}
+                            hasError={$supporterApproverErrors.supporter2Option
+                                ? true
+                                : false}
                             dropdownType="label-left-full"
                             id="supporter2Option"
-                            label="Nama Penyokong #2"
-                            bind:value={supporter2Option}
+                            label="Nama Penyokong #1"
+                            bind:value={$supporterApproverForm.supporter2Option}
                             options={[
                                 { value: '1', name: 'Ali Bin Abu' },
                                 { value: '2', name: 'Abu Bin Ahmad' },
                                 { value: '3', name: 'Ahmad Bin Ali' },
                             ]}
                         ></DropdownSelect>
-                        {#if errorData?.supporter2Option}
+                        {#if $supporterApproverErrors.supporter2Option}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.supporter2Option[0]}</span
+                                >{$supporterApproverErrors
+                                    .supporter2Option[0]}</span
                             >
                         {/if}
                     </div>
                     <div>
                         <DropdownSelect
-                            hasError={errorData?.approverOption}
+                            hasError={$supporterApproverErrors.approverOption
+                                ? true
+                                : false}
                             dropdownType="label-left-full"
                             id="approverOption"
                             label="Nama Pelulus"
-                            bind:value={approverOption}
+                            bind:value={$supporterApproverForm.approverOption}
                             options={[
                                 { value: '1', name: 'Ali Bin Abu' },
                                 { value: '2', name: 'Abu Bin Ahmad' },
                                 { value: '3', name: 'Ahmad Bin Ali' },
                             ]}
                         ></DropdownSelect>
-                        {#if errorData?.approverOption}
+                        {#if $supporterApproverErrors.approverOption}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.approverOption[0]}</span
+                                >{$supporterApproverErrors
+                                    .approverOption[0]}</span
                             >
                         {/if}
                     </div>
@@ -317,42 +421,49 @@
         <StepperContentHeader title="Kelulusan Permohonan Persaraan"
             ><TextIconButton
                 primary
-                label="Hantar"
-                form="applicationApprovalFormValidation"
-            /></StepperContentHeader
+                label="Simpan"
+                form="FormStepperRetirementApplicationApproval"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
         >
         <StepperContentBody
             ><form
-                id="applicationApprovalFormValidation"
-                on:submit|preventDefault={applicationApprovalForm}
+                id="FormStepperRetirementApplicationApproval"
                 class="flex w-full flex-col gap-2"
+                use:retirementApplicationApprovalEnhance
+                method="POST"
             >
                 <div class="flex w-full flex-col gap-2">
                     <div>
                         <LongTextField
-                            hasError={errorData?.applicationApprovalReview}
-                            name="applicationApprovalReview"
-                            label="Ulasan/Tindakan"
-                            bind:value={applicationApprovalReview}
+                            hasError={$retirementApplicationApprovalErrors.actionRemarkRAA
+                                ? true
+                                : false}
+                            name="actionRemarkRAA"
+                            label="Tindakan / Ulasan"
+                            bind:value={$retirementApplicationApprovalForm.actionRemarkRAA}
                         />
-                        {#if errorData?.applicationApprovalReview}
+                        {#if $retirementApplicationApprovalErrors.actionRemarkRAA}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.applicationApprovalReview[0]}</span
+                                >{$retirementApplicationApprovalErrors
+                                    .actionRemarkRAA[0]}</span
                             >
                         {/if}
-
                         <RadioSingle
-                            disabled={false}
-                            options={supportOptions}
-                            name="applicationApprovalResult"
-                            legend={''}
-                            bind:userSelected={applicationApprovalResult}
+                        options={approveOptions}
+                            hasError={$retirementApplicationApprovalErrors.resultOptionRAA
+                                ? true
+                                : false}
+                            name="resultOptionRAA"
+                            bind:userSelected={$retirementApplicationApprovalForm.resultOptionRAA}
                         ></RadioSingle>
-                        {#if errorData?.applicationApprovalResult}
+                        {#if $retirementApplicationApprovalErrors.resultOptionRAA}
                             <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.applicationApprovalResult[0]}</span
+                                class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                >{$retirementApplicationApprovalErrors
+                                    .resultOptionRAA[0]}</span
                             >
                         {/if}
 
@@ -369,15 +480,18 @@
         <StepperContentHeader title="Pengesahan Dokumen Persaraan"
             ><TextIconButton
                 primary
-                label="Hantar"
-                form="validateDocumentFormValidation"
-            /></StepperContentHeader
+                label="Simpan"
+                form="FormStepperVerificationRetirementDocuments"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
         >
         <StepperContentBody
             ><form
-                id="validateDocumentFormValidation"
-                on:submit|preventDefault={validateDocumentForm}
+                id="FormStepperVerificationRetirementDocuments"
                 class="flex w-full flex-col gap-2"
+                use:verificationRetirementDocumentsEnhance
+                method="POST"
             >
                 <div
                     class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
@@ -412,29 +526,33 @@
                     <p class="text-sm font-bold">Pengesahan Urus Setia</p>
                     <div>
                         <LongTextField
-                            hasError={errorData?.validateDocumentReview}
-                            name="validateDocumentReview"
-                            label="Ulasan/Tindakan"
-                            bind:value={validateDocumentReview}
+                            hasError={$verificationRetirementDocumentsErrors.actionRemarkVRD
+                                ? true
+                                : false}
+                            name="actionRemarkVRD"
+                            label="Tindakan / Ulasan"
+                            bind:value={$verificationRetirementDocumentsForm.actionRemarkVRD}
                         />
-                        {#if errorData?.validateDocumentReview}
+                        {#if $verificationRetirementDocumentsErrors.actionRemarkVRD}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.validateDocumentReview[0]}</span
+                                >{$verificationRetirementDocumentsErrors
+                                    .actionRemarkVRD[0]}</span
                             >
                         {/if}
-
                         <RadioSingle
-                            disabled={false}
                             {options}
-                            name="validateDocumentResult"
-                            legend={''}
-                            bind:userSelected={validateDocumentResult}
+                            hasError={$verificationRetirementDocumentsErrors.resultOptionVRD
+                                ? true
+                                : false}
+                            name="resultOptionVRD"
+                            bind:userSelected={$verificationRetirementDocumentsForm.resultOptionVRD}
                         ></RadioSingle>
-                        {#if errorData?.validateDocumentResult}
+                        {#if $verificationRetirementDocumentsErrors.resultOptionVRD}
                             <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.validateDocumentResult[0]}</span
+                                class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                >{$verificationRetirementDocumentsErrors
+                                    .resultOptionVRD[0]}</span
                             >
                         {/if}
                     </div>
@@ -446,15 +564,18 @@
         <StepperContentHeader title="Kemaskini Maklumat Penghantaran Permohonan"
             ><TextIconButton
                 primary
-                label="Hantar"
-                form="updateApplicationFormValidation"
-            /></StepperContentHeader
+                label="Simpan"
+                form="FormStepperUpdateApplicationDeliveryInformation"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
         >
         <StepperContentBody
             ><form
-                id="updateApplicationFormValidation"
-                on:submit|preventDefault={updateApplicationForm}
+                id="FormStepperUpdateApplicationDeliveryInformation"
                 class="flex w-full flex-col gap-2"
+                use:updateApplicationDeliveryInformationEnhance
+                method="POST"
             >
                 <div
                     class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
@@ -476,29 +597,33 @@
                     </p>
                     <div>
                         <LongTextField
-                            hasError={errorData?.updateApplicationReview}
-                            name="updateApplicationReview"
-                            label="Ulasan/Tindakan"
-                            bind:value={updateApplicationReview}
+                            hasError={$updateApplicationDeliveryInformationErrors.actionRemarkUADI
+                                ? true
+                                : false}
+                            name="actionRemarkUADI"
+                            label="Tindakan / Ulasan"
+                            bind:value={$updateApplicationDeliveryInformationForm.actionRemarkUADI}
                         />
-                        {#if errorData?.updateApplicationReview}
+                        {#if $updateApplicationDeliveryInformationErrors.actionRemarkUADI}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.updateApplicationReview[0]}</span
+                                >{$updateApplicationDeliveryInformationErrors
+                                    .actionRemarkUADI[0]}</span
                             >
                         {/if}
-
                         <RadioSingle
-                            disabled={false}
                             {options}
-                            name="updateApplicationResult"
-                            legend={''}
-                            bind:userSelected={updateApplicationResult}
+                            hasError={$updateApplicationDeliveryInformationErrors.resultOptionUADI
+                                ? true
+                                : false}
+                            name="resultOptionUADI"
+                            bind:userSelected={$updateApplicationDeliveryInformationForm.resultOptionUADI}
                         ></RadioSingle>
-                        {#if errorData?.updateApplicationResult}
+                        {#if $updateApplicationDeliveryInformationErrors.resultOptionUADI}
                             <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.updateApplicationResult[0]}</span
+                                class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                >{$updateApplicationDeliveryInformationErrors
+                                    .resultOptionUADI[0]}</span
                             >
                         {/if}
                     </div>
