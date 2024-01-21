@@ -3,362 +3,44 @@ import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
-const applicationConfirmationForm = async (event: Event) => {
-    const formData = new FormData(event.target as HTMLFormElement);
+// Verification Retirement Application
+const longTextFieldVRA = z
+    .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+    .min(4, {
+        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+    })
+    .max(124, {
+        message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    })
+    .trim();
 
-    const exampleFormData = {
-        applicationConfirmationResult: String(
-            formData.get('applicationConfirmationResult'),
-        ),
-        applicationConfirmationReview: String(
-            formData.get('applicationConfirmationReview'),
-        ),
-    };
+const resultOptionVRA = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
-    const exampleFormSchema = z.object({
-        // checkbox schema
-        applicationConfirmationResult: z.enum(['sah', 'tidakSah'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        // dateSelectorExample: dateScheme,
-        applicationConfirmationReview: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-    });
+export const _stepperVerificationRetirementApplication = z.object({
+    actionRemark: longTextFieldVRA,
+    resultOption: resultOptionVRA,
+});
 
-    try {
-        const result = exampleFormSchema.parse(exampleFormData);
-        if (result) {
-            errorData = [];
-            toast.success('Berjaya disimpan!', {
-                style: 'background: #333; color: #fff;',
-            });
-
-            const id = crypto.randomUUID().toString();
-            const validatedExamFormData = { ...exampleFormData, id };
-            console.log(
-                'REQUEST BODY: ',
-                JSON.stringify(validatedExamFormData),
-            );
-        }
-    } catch (err: unknown) {
-        if (err instanceof ZodError) {
-            const { fieldErrors: errors } = err.flatten();
-            errorData = errors;
-            console.log('ERROR!', err.flatten());
-            toast.error(
-                'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                {
-                    style: 'background: #333; color: #fff;',
-                },
-            );
-        }
-    }
-};
-
-const supporterApproverForm = async (event: Event) => {
-    const supporter1OptionSelector = document.getElementById(
-        'supporter1Option',
-    ) as HTMLSelectElement;
-    const supporter2OptionSelector = document.getElementById(
-        'supporter2Option',
-    ) as HTMLSelectElement;
-    const approverOptionSelector = document.getElementById(
-        'approverOption',
-    ) as HTMLSelectElement;
-
-    const exampleFormData = {
-        supporter1Option: String(supporter1OptionSelector.value),
-        supporter2Option: String(supporter2OptionSelector.value),
-        approverOption: String(approverOptionSelector.value),
-    };
-
-    const exampleFormSchema = z.object({
-        // checkbox schema
-        supporter1Option: z.enum(['1', '2', '3', '4'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Pilihan perlu dipilih.'
-                        : defaultError,
-            }),
-        }),
-        supporter2Option: z.enum(['1', '2', '3', '4'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Pilihan perlu dipilih.'
-                        : defaultError,
-            }),
-        }),
-        approverOption: z.enum(['1', '2', '3', '4'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Pilihan perlu dipilih.'
-                        : defaultError,
-            }),
-        }),
-    });
-
-    try {
-        const result = exampleFormSchema.parse(exampleFormData);
-        if (result) {
-            errorData = [];
-            toast.success('Berjaya disimpan!', {
-                style: 'background: #333; color: #fff;',
-            });
-
-            const id = crypto.randomUUID().toString();
-            const validatedExamFormData = { ...exampleFormData, id };
-            console.log(
-                'REQUEST BODY: ',
-                JSON.stringify(validatedExamFormData),
-            );
-        }
-    } catch (err: unknown) {
-        if (err instanceof ZodError) {
-            const { fieldErrors: errors } = err.flatten();
-            errorData = errors;
-            console.log('ERROR!', err.flatten());
-            toast.error(
-                'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                {
-                    style: 'background: #333; color: #fff;',
-                },
-            );
-        }
-    }
-};
-const applicationApprovalForm = async (event: Event) => {
-    const formData = new FormData(event.target as HTMLFormElement);
-
-    const exampleFormData = {
-        applicationApprovalResult: String(
-            formData.get('applicationApprovalResult'),
-        ),
-        applicationApprovalReview: String(
-            formData.get('applicationApprovalReview'),
-        ),
-    };
-
-    const exampleFormSchema = z.object({
-        // checkbox schema
-        applicationApprovalResult: z.enum(['lulus', 'tidakLulus'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        // dateSelectorExample: dateScheme,
-        applicationApprovalReview: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-    });
-
-    try {
-        const result = exampleFormSchema.parse(exampleFormData);
-        if (result) {
-            errorData = [];
-            toast.success('Berjaya disimpan!', {
-                style: 'background: #333; color: #fff;',
-            });
-
-            const id = crypto.randomUUID().toString();
-            const validatedExamFormData = { ...exampleFormData, id };
-            console.log(
-                'REQUEST BODY: ',
-                JSON.stringify(validatedExamFormData),
-            );
-        }
-    } catch (err: unknown) {
-        if (err instanceof ZodError) {
-            const { fieldErrors: errors } = err.flatten();
-            errorData = errors;
-            console.log('ERROR!', err.flatten());
-            toast.error(
-                'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                {
-                    style: 'background: #333; color: #fff;',
-                },
-            );
-        }
-    }
-};
-const validateDocumentForm = async (event: Event) => {
-    const formData = new FormData(event.target as HTMLFormElement);
-
-    const exampleFormData = {
-        validateDocumentResult: String(
-            formData.get('validateDocumentResult'),
-        ),
-        validateDocumentReview: String(
-            formData.get('validateDocumentReview'),
-        ),
-    };
-
-    const exampleFormSchema = z.object({
-        // checkbox schema
-        validateDocumentResult: z.enum(['sah', 'tidakSah'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        // dateSelectorExample: dateScheme,
-        validateDocumentReview: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-    });
-
-    try {
-        const result = exampleFormSchema.parse(exampleFormData);
-        if (result) {
-            errorData = [];
-            toast.success('Berjaya disimpan!', {
-                style: 'background: #333; color: #fff;',
-            });
-
-            const id = crypto.randomUUID().toString();
-            const validatedExamFormData = { ...exampleFormData, id };
-            console.log(
-                'REQUEST BODY: ',
-                JSON.stringify(validatedExamFormData),
-            );
-        }
-    } catch (err: unknown) {
-        if (err instanceof ZodError) {
-            const { fieldErrors: errors } = err.flatten();
-            errorData = errors;
-            console.log('ERROR!', err.flatten());
-            toast.error(
-                'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                {
-                    style: 'background: #333; color: #fff;',
-                },
-            );
-        }
-    }
-};
-const updateApplicationForm = async (event: Event) => {
-    const formData = new FormData(event.target as HTMLFormElement);
-
-    const exampleFormData = {
-        updateApplicationResult: String(
-            formData.get('updateApplicationResult'),
-        ),
-        updateApplicationReview: String(
-            formData.get('updateApplicationReview'),
-        ),
-    };
-
-    const exampleFormSchema = z.object({
-        // checkbox schema
-        updateApplicationResult: z.enum(['sah', 'tidakSah'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Sila tetapkan pilihan anda.'
-                        : defaultError,
-            }),
-        }),
-        // dateSelectorExample: dateScheme,
-        updateApplicationReview: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-    });
-
-    try {
-        const result = exampleFormSchema.parse(exampleFormData);
-        if (result) {
-            errorData = [];
-            toast.success('Berjaya disimpan!', {
-                style: 'background: #333; color: #fff;',
-            });
-
-            const id = crypto.randomUUID().toString();
-            const validatedExamFormData = { ...exampleFormData, id };
-            console.log(
-                'REQUEST BODY: ',
-                JSON.stringify(validatedExamFormData),
-            );
-        }
-    } catch (err: unknown) {
-        if (err instanceof ZodError) {
-            const { fieldErrors: errors } = err.flatten();
-            errorData = errors;
-            console.log('ERROR!', err.flatten());
-            toast.error(
-                'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                {
-                    style: 'background: #333; color: #fff;',
-                },
-            );
-        }
-    }
-};
-
-export const load = async () => {
-    const stepperPermohonanPersaraan = await superValidate(
-        _stepperPermohonanPersaraan,
-    );
-
-    return {
-        stepperPermohonanPersaraan,
-    };
-};
-
-export const _submitFormStepperPermohonanPersaraan = async (
+export const _submitFormStepperVerificationRetirementApplication = async (
     formData: object,
 ) => {
-    const stepperPermohonanPersaraan = await superValidate(
+    const stepperVerificationRetirementApplication = await superValidate(
         formData,
-        _stepperPermohonanPersaraan,
+        _stepperVerificationRetirementApplication,
     );
 
-    if (!stepperPermohonanPersaraan.valid) {
+    if (!stepperVerificationRetirementApplication.valid) {
         toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
             style: 'background: #333; color: #fff;',
         });
-        return fail(400, stepperPermohonanPersaraan);
+        return fail(400, stepperVerificationRetirementApplication);
     } else {
         console.log('Request Body: ', formData);
         fetch('https://jsonplaceholder.typicode.com/posts', {
             method: 'POST',
-            body: JSON.stringify(stepperPermohonanPersaraan),
+            body: JSON.stringify(stepperVerificationRetirementApplication),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
@@ -368,8 +50,253 @@ export const _submitFormStepperPermohonanPersaraan = async (
                 toast.success('Berjaya disimpan!', {
                     style: 'background: #333; color: #fff;',
                 });
-                console.log('Response Returned: PermohonanPersaraan-54', json);
+                console.log(
+                    'Response Returned: VerificationRetirementApplication-54',
+                    json,
+                );
             });
     }
-    return { stepperPermohonanPersaraan };
+    return { stepperVerificationRetirementApplication };
+};
+
+// Supporter Approver
+const dropdownSA = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+export const _stepperSupporterApprover = z.object({
+    supporter1Option: dropdownSA,
+    supporter2Option: dropdownSA,
+    approverOption: dropdownSA,
+});
+
+export const _submitFormStepperSupporterApprover = async (
+    formData: object,
+) => {
+    const stepperSupporterApprover = await superValidate(
+        formData,
+        _stepperSupporterApprover,
+    );
+
+    if (!stepperSupporterApprover.valid) {
+        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+            style: 'background: #333; color: #fff;',
+        });
+        return fail(400, stepperSupporterApprover);
+    } else {
+        console.log('Request Body: ', formData);
+        fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify(stepperSupporterApprover),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                console.log(
+                    'Response Returned: SupporterApprover-54',
+                    json,
+                );
+            });
+    }
+    return { stepperSupporterApprover };
+};
+
+// Retirement Application Approval
+const longTextFieldRAA = z
+    .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+    .min(4, {
+        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+    })
+    .max(124, {
+        message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    })
+    .trim();
+
+const resultOptionRAA = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+export const _stepperRetirementApplicationApproval = z.object({
+    actionRemarkRAA: longTextFieldRAA,
+    resultOptionRAA: resultOptionRAA,
+});
+
+export const _submitFormStepperRetirementApplicationApproval = async (
+    formData: object,
+) => {
+    const stepperRetirementApplicationApproval = await superValidate(
+        formData,
+        _stepperRetirementApplicationApproval,
+    );
+
+    if (!stepperRetirementApplicationApproval.valid) {
+        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+            style: 'background: #333; color: #fff;',
+        });
+        return fail(400, stepperRetirementApplicationApproval);
+    } else {
+        console.log('Request Body: ', formData);
+        fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify(stepperRetirementApplicationApproval),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                console.log(
+                    'Response Returned: RetirementApplicationApproval-54',
+                    json,
+                );
+            });
+    }
+    return { stepperRetirementApplicationApproval };
+};
+
+// Verification Retirement Documents
+const longTextFieldVRD = z
+    .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+    .min(4, {
+        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+    })
+    .max(124, {
+        message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    })
+    .trim();
+
+const resultOptionVRD = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+export const _stepperVerificationRetirementDocuments = z.object({
+    actionRemarkVRD: longTextFieldVRD,
+    resultOptionVRD: resultOptionVRD,
+});
+
+export const _submitFormStepperVerificationRetirementDocuments = async (
+    formData: object,
+) => {
+    const stepperVerificationRetirementDocuments = await superValidate(
+        formData,
+        _stepperVerificationRetirementDocuments,
+    );
+
+    if (!stepperVerificationRetirementDocuments.valid) {
+        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+            style: 'background: #333; color: #fff;',
+        });
+        return fail(400, stepperVerificationRetirementDocuments);
+    } else {
+        console.log('Request Body: ', formData);
+        fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify(stepperVerificationRetirementDocuments),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                console.log(
+                    'Response Returned: VerificationRetirementDocuments-54',
+                    json,
+                );
+            });
+    }
+    return { stepperVerificationRetirementDocuments };
+};
+
+// Update Application Delivery Information
+const longTextFieldUADI = z
+    .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+    .min(4, {
+        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+    })
+    .max(124, {
+        message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    })
+    .trim();
+
+const resultOptionUADI = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+export const _stepperUpdateApplicationDeliveryInformation = z.object({
+    actionRemarkUADI: longTextFieldUADI,
+    resultOptionUADI: resultOptionUADI,
+});
+
+export const _submitFormStepperUpdateApplicationDeliveryInformation = async (
+    formData: object,
+) => {
+    const stepperUpdateApplicationDeliveryInformation = await superValidate(
+        formData,
+        _stepperUpdateApplicationDeliveryInformation,
+    );
+
+    if (!stepperUpdateApplicationDeliveryInformation.valid) {
+        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+            style: 'background: #333; color: #fff;',
+        });
+        return fail(400, stepperUpdateApplicationDeliveryInformation);
+    } else {
+        console.log('Request Body: ', formData);
+        fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify(stepperUpdateApplicationDeliveryInformation),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+                console.log(
+                    'Response Returned: UpdateApplicationDeliveryInformation-54',
+                    json,
+                );
+            });
+    }
+    return { stepperUpdateApplicationDeliveryInformation };
+};
+
+//Async
+export const load = async () => {
+    const stepperVerificationRetirementApplication = await superValidate(
+        _stepperVerificationRetirementApplication,
+    );
+    const stepperSupporterApprover = await superValidate(
+        _stepperSupporterApprover,
+    );
+    const stepperRetirementApplicationApproval = await superValidate(
+        _stepperRetirementApplicationApproval,
+    );
+    const stepperVerificationRetirementDocuments = await superValidate(
+        _stepperVerificationRetirementDocuments,
+    );
+    const stepperUpdateApplicationDeliveryInformation = await superValidate(
+        _stepperUpdateApplicationDeliveryInformation,
+    );
+
+    return {
+        stepperVerificationRetirementApplication,
+        stepperSupporterApprover,
+        stepperRetirementApplicationApproval,
+        stepperVerificationRetirementDocuments,
+        stepperUpdateApplicationDeliveryInformation,
+    };
 };
