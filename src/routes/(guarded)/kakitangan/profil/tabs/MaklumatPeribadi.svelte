@@ -32,6 +32,7 @@
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import type { PageData } from './$types';
+    import { Checkbox } from 'flowbite-svelte';
     import { getErrorToast, getSuccessToast } from '$lib/toast/toast-service';
     import {
         _submitAddMoreAcademicForm,
@@ -140,18 +141,21 @@
         form: addAcademicInfoModal,
         errors: addAcademicInfoErrors,
         enhance: addAcademicInfoEnhance,
-        delayed,
     } = superForm(data.addAcademicModal, {
         SPA: true,
         validators: _addAcademicInfoSchema,
-        onSubmit() {
-            _submitAddMoreAcademicForm($addAcademicInfoModal).then(
-                (response) => {
-                    tempAcademicRecord.push(response);
-                    console.log('RESPONSE MODAL: ', tempAcademicRecord);
-                },
-            );
-            // .then(() => (openAcademicInfoModal = false));
+        async onSubmit() {
+            await superValidate(
+                $addAcademicInfoModal,
+                _addAcademicInfoSchema,
+            ).then((response) => {
+                if (!response.valid) {
+                    getErrorToast();
+                } else {
+                    tempAcademicRecord = [...tempAcademicRecord, response.data];
+                    openAcademicInfoModal = false;
+                }
+            });
         },
     });
 
@@ -1506,6 +1510,62 @@
         </StepperContentHeader>
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2.5">
+                {#if tempAcademicRecord.length > 0}
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                    >
+                        <div class="mb-2.5 text-sm font-medium">
+                            <p>Preview Rekod Untuk Disimpan</p>
+                        </div>
+                        {#each tempAcademicRecord as academic, i}
+                            <div class="text-sm text-system-primary">
+                                <p>
+                                    {i + 1}. Maklumat Akademik - {academic.type}
+                                </p>
+                            </div>
+                            <ul
+                                class="list-inside list-disc rounded-[3px] border p-2.5 text-sm text-system-primary"
+                            >
+                                <li>
+                                    <span class="italic text-black">
+                                        Jenis Akademik:
+                                    </span>
+                                    {academic.type}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Nama Kelulusan/Sijil:
+                                    </span>
+                                    {academic.name}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Tahun Kelulusan/Sijil:
+                                    </span>
+                                    {academic.completionYear}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Gred:
+                                    </span>
+                                    {academic.finalGrade}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Bidang:
+                                    </span>
+                                    {academic.field}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Catatan:
+                                    </span>
+                                    {academic.remark}
+                                </li>
+                            </ul>
+                        {/each}
+                    </div>
+                {/if}
                 <form
                     id="FormStepperAkademik"
                     class="flex w-full flex-col gap-2"
@@ -1727,6 +1787,68 @@
         </StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2.5">
+                {#if tempExperienceRecord.length > 0}
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                    >
+                        <div class="mb-2.5 text-sm font-medium">
+                            <p>Preview Rekod Untuk Disimpan</p>
+                        </div>
+                        {#each tempExperienceRecord as experience, i}
+                            <div class="text-sm text-system-primary">
+                                <p>
+                                    {i + 1}. Maklumat Pengalaman - {experience.addCompany}
+                                </p>
+                            </div>
+                            <ul
+                                class="list-inside list-disc rounded-[3px] border p-2.5 text-sm text-system-primary"
+                            >
+                                <li>
+                                    <span class="italic text-black">
+                                        Nama Majikan:
+                                    </span>
+                                    {experience.addCompany}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Alamat Majikan:
+                                    </span>
+                                    {experience.addAddress}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Jawatan:
+                                    </span>
+                                    {experience.addPosition}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Kod Jawatan (jika ada):
+                                    </span>
+                                    {experience.addPositionCode}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Dari (tahun):
+                                    </span>
+                                    {experience.addStartDate}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Hingga (tahun):
+                                    </span>
+                                    {experience.addEndDate}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Gaji:
+                                    </span>
+                                    {experience.addSalary}
+                                </li>
+                            </ul>
+                        {/each}
+                    </div>
+                {/if}
                 <form
                     id="FormStepperPengalaman"
                     class="flex w-full flex-col gap-2"
@@ -1961,20 +2083,65 @@
         ></StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
-                <DynamicTable tableItems={maklumatKegiatanTable}></DynamicTable>
+                {#if tempActivityRecord.length > 0}
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                    >
+                        <div class="mb-2.5 text-sm font-medium">
+                            <p>Preview Rekod Untuk Disimpan</p>
+                        </div>
+                        {#each tempActivityRecord as activity, i}
+                            <div class="text-sm text-system-primary">
+                                <p>
+                                    {i + 1}. Maklumat Kegiatan/Keahlian - {activity.addName}
+                                </p>
+                            </div>
+                            <ul
+                                class="list-inside list-disc rounded-[3px] border p-2.5 text-sm text-system-primary"
+                            >
+                                <li>
+                                    <span class="italic text-black">
+                                        Nama Majikan:
+                                    </span>
+                                    {activity.addName}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Alamat Majikan:
+                                    </span>
+                                    {activity.addJoinDate}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Jawatan:
+                                    </span>
+                                    {activity.addPosition}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Kod Jawatan (jika ada):
+                                    </span>
+                                    {activity.addDescription}
+                                </li>
+                            </ul>
+                        {/each}
+                    </div>
+                {/if}
+                <DynamicTable tableItems={maklumatKegiatanTable}
+                ></DynamicTable>
+            </div>
+            <div class="w-full rounded-[3px] border-b border-t p-2.5">
+                <TextIconButton
+                    primary
+                    label="Tambah Kegiatan/Keahlian"
+                    onClick={() => {
+                        openMembershipInfoModal = true;
+                    }}
+                >
+                    <SvgPlus></SvgPlus>
+                </TextIconButton>
             </div></StepperContentBody
-        >
-        <div class="w-full rounded-[3px] border-b border-t p-2.5">
-            <TextIconButton
-                primary
-                label="Tambah Kegiatan/Keahlian"
-                onClick={() => {
-                    openMembershipInfoModal = true;
-                }}
             >
-                <SvgPlus></SvgPlus>
-            </TextIconButton>
-        </div>
     </StepperContent>
 
     <!------------------------------------------------------->
@@ -2824,6 +2991,114 @@
             label={'Simpan'}
             form="addMembershipInfoModal"
         />
+    </form>
+</Modal>
+<!-- Family Info Modal -->
+<Modal
+    title={'Tambah Maklumat Suami/Isteri & Anak'}
+    bind:open={openFamilyInfoModal}
+>
+    <form
+        id="addFamilyInfoModal"
+        class="flex w-full flex-col gap-2"
+        use:addFamilyEnhance
+        method="POST"
+    >
+        <TextField
+            {disabled}
+            hasError={!!$addFamilyErrors.addName}
+            name="addName"
+            label={'Nama'}
+            type="text"
+            bind:value={$addFamilyModal.addName}
+        ></TextField>
+        {#if $addFamilyErrors.addName}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addFamilyErrors.addName}</span
+            >
+        {/if}
+
+        <TextField
+            {disabled}
+            hasError={!!$addFamilyErrors.addIdentityDocumentNumber}
+            name="addIdentityDocumentNumber"
+            label={'No. Kad Pengenalan'}
+            type="text"
+            bind:value={$addFamilyModal.addIdentityDocumentNumber}
+        ></TextField>
+        {#if $addFamilyErrors.addIdentityDocumentNumber}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addFamilyErrors.addIdentityDocumentNumber}</span
+            >
+        {/if}
+
+        <DropdownSelect
+            {disabled}
+            hasError={!!$addFamilyErrors.addGender}
+            name="addGender"
+            label={'Jantina'}
+            dropdownType="label-left-full"
+            options={[
+                { value: 'male', name: 'Lelaki' },
+                { value: 'female', name: 'Perempuan' },
+            ]}
+            bind:value={$addFamilyModal.addGender}
+        ></DropdownSelect>
+        {#if $addFamilyErrors.addGender}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addFamilyErrors.addGender}</span
+            >
+        {/if}
+
+        <DropdownSelect
+            {disabled}
+            hasError={!!$addFamilyErrors.addRelationship}
+            name="addRelationship"
+            label={'Hubungan'}
+            dropdownType="label-left-full"
+            options={[
+                { value: 'husband', name: 'Suami' },
+                { value: 'wife', name: 'Isteri' },
+            ]}
+            bind:value={$addFamilyModal.addRelationship}
+        ></DropdownSelect>
+        {#if $addFamilyErrors.addRelationship}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addFamilyErrors.addRelationship}</span
+            >
+        {/if}
+
+        <TextField
+            {disabled}
+            hasError={!!$addFamilyErrors.addOccupation}
+            name="addOccupation"
+            label={'Pekerjaan (Jika Ada)'}
+            type="text"
+            bind:value={$addFamilyModal.addOccupation}
+        ></TextField>
+        {#if $addFamilyErrors.addOccupation}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addFamilyErrors.addOccupation}</span
+            >
+        {/if}
+
+        <div class="flex flex-row">
+            <label for="addIsInSchool" class="w-[220px] text-sm text-black"
+                >Bersekolah</label
+            >
+            <Checkbox
+                name="addIsInSchool"
+                bind:checked={$addFamilyModal.addIsInSchool}
+            />
+        </div>
+        {#if $addFamilyErrors.addIsInSchool}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addFamilyErrors.addIsInSchool}</span
+            >
+        {/if}
+        <br />
+
+        <TextIconButton primary label={'Simpan'} form="addFamilyInfoModal" />
     </form>
 </Modal>
 
