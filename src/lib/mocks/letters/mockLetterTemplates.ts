@@ -4,7 +4,7 @@ const tabIndentBig = '&emsp;&emsp;&emsp;&emsp;';
 
 export const mockLetterTemplates: IntLetterTemplate[] = [
     {
-        id: 'suratTawaranPemangkuan',
+        id: 'Surat Tawaran Pemangkuan',
         receiverReference: tabIndentSmall + '-',
         senderReference: 'LKIM:PSM(S)406/533/3',
         letterDate: tabIndentSmall + '3 Februari 2022',
@@ -50,7 +50,7 @@ export const mockLetterTemplates: IntLetterTemplate[] = [
             's.k.<br>' + 'TKP (M)<br>' + 'P (KP)<br>' + 'KS (PSM)<br>' + 'PPEE (PSM) 1<br>' + 'PmEE (PSM) 2<br>' + 'Fail Peribadi',
     },
     {
-        id: 'suratPenangguhanRayuan',
+        id: 'Surat Penangguhan Rayuan',
         receiverReference: tabIndentSmall + '-',
         senderReference: 'LKIM:PSM.406/776/1 Jld.',
         letterDate: tabIndentSmall + '3 Februari 2022',
@@ -89,5 +89,40 @@ export const mockLetterTemplates: IntLetterTemplate[] = [
             '5.' + tabIndentSmall + 'KPT (PSM) 3<br>'+
             '6.' + tabIndentSmall + 'PmEE (PSM) 2<br>' +
             '7.' + tabIndentSmall + 'Fail Peribadi<br>'
+    },
+    {
+        id: 'Surat Arahan Tanggung Kerja',
+        receiverReference: tabIndentSmall + '-',
+        senderReference: 'LKIM:PSM.406/969',
+        letterDate: tabIndentSmall + '3 Februari 2022',
+        receiverNameAddress:
+            'Encik Mohamad Rizal Bin Sahari (01755)<br>Pegawai Ehwal Ekonomi Gred E52 <br>Pejabat LKIM Negeri Perak <br>LKIM Negeri Perak<br><b>32040 SERI MANJUNG, PERAK</b><br><br>',
+        receiverTitle: 'Tuan/Puan,<br>',
+        letterSubject:
+            '<br><b>ARAHAN PENANGGUNGAN KERJA JAWATAN ............... DI ...............</b><br><br>',
+        letterBody:
+            'Dengan hormatnya saya merujuk kepada perkara tersebut di atas.<br><br>' +
+            '2.' +
+            tabIndentDefault +
+            'Dimaklumkan bahawa tuan/puan dengan ini diarah menanggung kerja: <br><br>' +
+            tabIndentBig +
+            '(a)' + tabIndentDefault + 'Jawatan:.................<br>' +
+            tabIndentBig +
+            '(b)' + tabIndentDefault + 'Bermula:......<b>tarikh</b>.......sehingga.......<b>tarikh</b>........<br><br>' +
+            '3.' + tabIndentDefault +
+            'Sehubungan itu, tuan/puan adalah diminta mengambil perhatian akan Peraturan 13 dalam <b>Pekeliling Perkhidmatan Bil. 17 Tahun 2007</b> iaitu:-<br><br>'+
+            
+            'Sekian, terima kasih.<br><br><br>' +
+            '<b>"WAWASAN KEMAKMURAN BERSAMA 2030"</b><br><br>' +
+            '<b>"BERKHIDMAT UNTUK NEGARA"<br><br></b>',
+        letterFooter:
+            'Saya yang menjalankan amanah,<br><br><br>' +
+            '<b>(FARAH SHAHADA BINTI ZAKARIA)</b><br>' +
+            'Pengarah<br>' +
+            'Bahagian Khidmat Pengurusan<br>' +
+            'b.p Ketua Pengarah LKIM<br><br>' +
+            's.k:<br><br>' +
+            'P(PP)<br><br>' +
+            'Fail Peribadi'
     },
 ];
