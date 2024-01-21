@@ -34,16 +34,6 @@ export const _stepperPermohonanPersaraan = z.object({
     applicationPurpose: stepperPermohonanPersaraan,
 });
 
-export const load = async () => {
-    const stepperPermohonanPersaraan = await superValidate(
-        _stepperPermohonanPersaraan,
-    );
-
-    return {
-        stepperPermohonanPersaraan,
-    };
-};
-
 export const _submitFormStepperPermohonanPersaraan = async (
     formData: object,
 ) => {
@@ -75,4 +65,14 @@ export const _submitFormStepperPermohonanPersaraan = async (
             });
     }
     return { stepperPermohonanPersaraan };
+};
+
+export const load = async () => {
+    const stepperPermohonanPersaraan = await superValidate(
+        _stepperPermohonanPersaraan,
+    );
+
+    return {
+        stepperPermohonanPersaraan,
+    };
 };
