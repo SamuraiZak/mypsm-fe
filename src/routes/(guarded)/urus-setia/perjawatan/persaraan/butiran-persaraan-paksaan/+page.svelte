@@ -18,20 +18,28 @@
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { tahun } from '$lib/mocks/ketua-seksyen/cuti/tahun';
     import { status } from '$lib/mocks/urus-setia/persaraan/status';
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { z, ZodError } from 'zod';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+    import type { PageData } from './$types';
+    import { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _stepperVerificationRetirementApplication,
+        _submitFormStepperVerificationRetirementApplication,
+    } from './+page';
+    import {
+        _stepperVerificationRetirementDocuments,
+        _submitFormStepperVerificationRetirementDocuments,
+    } from './+page';
+    import {
+        _stepperUpdateApplicationDeliveryInformation,
+        _submitFormStepperUpdateApplicationDeliveryInformation,
+    } from './+page';
 
-    export let disabled: boolean = true;
+    export let data: PageData;
+    export let disabled = true;
 
     let selectedTahun = tahun[0].value;
     let selectedStatus = status[0].value;
-    let errorData: any;
-    let validateApplicationReview: string;
-    let validateApplicationResult: any;
-    let validateDocumentReview: string;
-    let validateDocumentResult: any;
-    let updateApplicationReview: string;
-    let updateApplicationResult: any;
 
     const options: RadioOption[] = [
         {
@@ -44,195 +52,56 @@
         },
     ];
 
-    const validateApplicationForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
+    //Verification Retirement Application
+    const {
+        form: verificationRetirementApplicationForm,
+        errors: verificationRetirementApplicationErrors,
+        enhance: verificationRetirementApplicationEnhance,
+    } = superForm(data.stepperVerificationRetirementApplication, {
+        SPA: true,
+        validators: _stepperVerificationRetirementApplication,
+        onSubmit() {
+            _submitFormStepperVerificationRetirementApplication(
+                $verificationRetirementApplicationForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 
-        const exampleFormData = {
-            validateApplicationResult: String(
-                formData.get('validateApplicationResult'),
-            ),
-            validateApplicationReview: String(
-                formData.get('validateApplicationReview'),
-            ),
-        };
+    //Verification Retirement Documents
+    const {
+        form: verificationRetirementDocumentsForm,
+        errors: verificationRetirementDocumentsErrors,
+        enhance: verificationRetirementDocumentsEnhance,
+    } = superForm(data.stepperVerificationRetirementDocuments, {
+        SPA: true,
+        validators: _stepperVerificationRetirementDocuments,
+        onSubmit() {
+            _submitFormStepperVerificationRetirementDocuments(
+                $verificationRetirementDocumentsForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 
-        const exampleFormSchema = z.object({
-            // checkbox schema
-            validateApplicationResult: z.enum(['sah', 'tidakSah'], {
-                errorMap: (issue, { defaultError }) => ({
-                    message:
-                        issue.code === 'invalid_enum_value'
-                            ? 'Sila tetapkan pilihan anda.'
-                            : defaultError,
-                }),
-            }),
-            // dateSelectorExample: dateScheme,
-            validateApplicationReview: z
-                .string({ required_error: 'Medan ini tidak boleh kosong.' })
-                .min(4, {
-                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-                })
-                .max(124, {
-                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
-                })
-                .trim(),
-        });
-
-        try {
-            const result = exampleFormSchema.parse(exampleFormData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedExamFormData = { ...exampleFormData, id };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedExamFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
-    const validateDocumentForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-
-        const exampleFormData = {
-            validateDocumentResult: String(
-                formData.get('validateDocumentResult'),
-            ),
-            validateDocumentReview: String(
-                formData.get('validateDocumentReview'),
-            ),
-        };
-
-        const exampleFormSchema = z.object({
-            // checkbox schema
-            validateDocumentResult: z.enum(['sah', 'tidakSah'], {
-                errorMap: (issue, { defaultError }) => ({
-                    message:
-                        issue.code === 'invalid_enum_value'
-                            ? 'Sila tetapkan pilihan anda.'
-                            : defaultError,
-                }),
-            }),
-            // dateSelectorExample: dateScheme,
-            validateDocumentReview: z
-                .string({ required_error: 'Medan ini tidak boleh kosong.' })
-                .min(4, {
-                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-                })
-                .max(124, {
-                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
-                })
-                .trim(),
-        });
-
-        try {
-            const result = exampleFormSchema.parse(exampleFormData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedExamFormData = { ...exampleFormData, id };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedExamFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
-    const updateApplicationForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-
-        const exampleFormData = {
-            updateApplicationResult: String(
-                formData.get('updateApplicationResult'),
-            ),
-            updateApplicationReview: String(
-                formData.get('updateApplicationReview'),
-            ),
-        };
-
-        const exampleFormSchema = z.object({
-            // checkbox schema
-            updateApplicationResult: z.enum(['sah', 'tidakSah'], {
-                errorMap: (issue, { defaultError }) => ({
-                    message:
-                        issue.code === 'invalid_enum_value'
-                            ? 'Sila tetapkan pilihan anda.'
-                            : defaultError,
-                }),
-            }),
-            // dateSelectorExample: dateScheme,
-            updateApplicationReview: z
-                .string({ required_error: 'Medan ini tidak boleh kosong.' })
-                .min(4, {
-                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-                })
-                .max(124, {
-                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
-                })
-                .trim(),
-        });
-
-        try {
-            const result = exampleFormSchema.parse(exampleFormData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedExamFormData = { ...exampleFormData, id };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedExamFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
+    //Update Application Delivery Information
+    const {
+        form: updateApplicationDeliveryInformationForm,
+        errors: updateApplicationDeliveryInformationErrors,
+        enhance: updateApplicationDeliveryInformationEnhance,
+    } = superForm(data.stepperUpdateApplicationDeliveryInformation, {
+        SPA: true,
+        validators: _stepperUpdateApplicationDeliveryInformation,
+        onSubmit() {
+            _submitFormStepperUpdateApplicationDeliveryInformation(
+                $updateApplicationDeliveryInformationForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -319,44 +188,51 @@
         <StepperContentHeader title="Pengesahan Permohonan Persaraan"
             ><TextIconButton
                 primary
-                label="Hantar"
-                form="validateApplicationFormValidation"
-            /></StepperContentHeader
+                label="Simpan"
+                form="FormStepperVerificationRetirementApplication"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
         >
         <StepperContentBody
             ><form
-                id="validateApplicationFormValidation"
-                on:submit|preventDefault={validateApplicationForm}
+                id="FormStepperVerificationRetirementApplication"
                 class="flex w-full flex-col gap-2"
+                use:verificationRetirementApplicationEnhance
+                method="POST"
             >
                 <div
                     class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
                 >
                     <div>
                         <LongTextField
-                            hasError={errorData?.validateApplicationReview}
-                            name="validateApplicationReview"
-                            label="Ulasan/Tindakan"
-                            bind:value={validateApplicationReview}
+                            hasError={$verificationRetirementApplicationErrors.actionRemark
+                                ? true
+                                : false}
+                            name="actionRemark"
+                            label="Tindakan / Ulasan"
+                            bind:value={$verificationRetirementApplicationForm.actionRemark}
                         />
-                        {#if errorData?.validateApplicationReview}
+                        {#if $verificationRetirementApplicationErrors.actionRemark}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.validateApplicationReview[0]}</span
+                                >{$verificationRetirementApplicationErrors
+                                    .actionRemark[0]}</span
                             >
                         {/if}
-
                         <RadioSingle
-                            disabled={false}
                             {options}
-                            name="validateApplicationResult"
-                            legend={''}
-                            bind:userSelected={validateApplicationResult}
+                            hasError={$verificationRetirementApplicationErrors.resultOption
+                                ? true
+                                : false}
+                            name="resultOption"
+                            bind:userSelected={$verificationRetirementApplicationForm.resultOption}
                         ></RadioSingle>
-                        {#if errorData?.validateApplicationResult}
+                        {#if $verificationRetirementApplicationErrors.resultOption}
                             <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.validateApplicationResult[0]}</span
+                                class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                >{$verificationRetirementApplicationErrors
+                                    .resultOption[0]}</span
                             >
                         {/if}
                     </div>
@@ -368,15 +244,18 @@
         <StepperContentHeader title="Pengesahan Dokumen Persaraan"
             ><TextIconButton
                 primary
-                label="Hantar"
-                form="validateDocumentFormValidation"
-            /></StepperContentHeader
+                label="Simpan"
+                form="FormStepperVerificationRetirementDocuments"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
         >
         <StepperContentBody
             ><form
-                id="validateDocumentFormValidation"
-                on:submit|preventDefault={validateDocumentForm}
+                id="FormStepperVerificationRetirementDocuments"
                 class="flex w-full flex-col gap-2"
+                use:verificationRetirementDocumentsEnhance
+                method="POST"
             >
                 <div
                     class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
@@ -411,29 +290,33 @@
                     <p class="text-sm font-bold">Pengesahan Urus Setia</p>
                     <div>
                         <LongTextField
-                            hasError={errorData?.validateDocumentReview}
-                            name="validateDocumentReview"
-                            label="Ulasan/Tindakan"
-                            bind:value={validateDocumentReview}
+                            hasError={$verificationRetirementDocumentsErrors.actionRemarkVRD
+                                ? true
+                                : false}
+                            name="actionRemarkVRD"
+                            label="Tindakan / Ulasan"
+                            bind:value={$verificationRetirementDocumentsForm.actionRemarkVRD}
                         />
-                        {#if errorData?.validateDocumentReview}
+                        {#if $verificationRetirementDocumentsErrors.actionRemarkVRD}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.validateDocumentReview[0]}</span
+                                >{$verificationRetirementDocumentsErrors
+                                    .actionRemarkVRD[0]}</span
                             >
                         {/if}
-
                         <RadioSingle
-                            disabled={false}
                             {options}
-                            name="validateDocumentResult"
-                            legend={''}
-                            bind:userSelected={validateDocumentResult}
+                            hasError={$verificationRetirementDocumentsErrors.resultOptionVRD
+                                ? true
+                                : false}
+                            name="resultOptionVRD"
+                            bind:userSelected={$verificationRetirementDocumentsForm.resultOptionVRD}
                         ></RadioSingle>
-                        {#if errorData?.validateDocumentResult}
+                        {#if $verificationRetirementDocumentsErrors.resultOptionVRD}
                             <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.validateDocumentResult[0]}</span
+                                class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                >{$verificationRetirementDocumentsErrors
+                                    .resultOptionVRD[0]}</span
                             >
                         {/if}
                     </div>
@@ -444,17 +327,20 @@
     <StepperContent>
         <StepperContentHeader title="Kemaskini Maklumat Penghantaran Permohonan"
             ><TextIconButton
-                primary
-                label="Hantar"
-                form="updateApplicationFormValidation"
-            /></StepperContentHeader
+            primary
+            label="Simpan"
+            form="FormStepperUpdateApplicationDeliveryInformation"
+        >
+            <SvgCheck></SvgCheck>
+        </TextIconButton></StepperContentHeader
         >
         <StepperContentBody
             ><form
-                id="updateApplicationFormValidation"
-                on:submit|preventDefault={updateApplicationForm}
-                class="flex w-full flex-col gap-2"
-            >
+            id="FormStepperUpdateApplicationDeliveryInformation"
+            class="flex w-full flex-col gap-2"
+            use:updateApplicationDeliveryInformationEnhance
+            method="POST"
+        >
                 <div
                     class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
                 >
@@ -475,29 +361,33 @@
                     </p>
                     <div>
                         <LongTextField
-                            hasError={errorData?.updateApplicationReview}
-                            name="updateApplicationReview"
-                            label="Ulasan/Tindakan"
-                            bind:value={updateApplicationReview}
+                            hasError={$updateApplicationDeliveryInformationErrors.actionRemarkUADI
+                                ? true
+                                : false}
+                            name="actionRemarkUADI"
+                            label="Tindakan / Ulasan"
+                            bind:value={$updateApplicationDeliveryInformationForm.actionRemarkUADI}
                         />
-                        {#if errorData?.updateApplicationReview}
+                        {#if $updateApplicationDeliveryInformationErrors.actionRemarkUADI}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.updateApplicationReview[0]}</span
+                                >{$updateApplicationDeliveryInformationErrors
+                                    .actionRemarkUADI[0]}</span
                             >
                         {/if}
-
                         <RadioSingle
-                            disabled={false}
                             {options}
-                            name="updateApplicationResult"
-                            legend={''}
-                            bind:userSelected={updateApplicationResult}
+                            hasError={$updateApplicationDeliveryInformationErrors.resultOptionUADI
+                                ? true
+                                : false}
+                            name="resultOptionUADI"
+                            bind:userSelected={$updateApplicationDeliveryInformationForm.resultOptionUADI}
                         ></RadioSingle>
-                        {#if errorData?.updateApplicationResult}
+                        {#if $updateApplicationDeliveryInformationErrors.resultOptionUADI}
                             <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.updateApplicationResult[0]}</span
+                                class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                >{$updateApplicationDeliveryInformationErrors
+                                    .resultOptionUADI[0]}</span
                             >
                         {/if}
                     </div>
