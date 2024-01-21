@@ -15,13 +15,25 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import FileInputField from '$lib/components/input/FileInputField.svelte';
-    import toast, { Toaster } from 'svelte-french-toast';
     import { z, ZodError } from 'zod';
     import { fileSelectionList } from '$lib/stores/globalState';
     import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
+    import type { PageData } from './$types';
+    import { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+    import {
+        _stepperRetirementVerification,
+        _submitFormStepperRetirementVerification,
+    } from './+page';
+    import {
+        _stepperUpdateApplicationDeliveryInformation,
+        _submitFormStepperUpdateApplicationDeliveryInformation,
+    } from './+page';
 
     export let selectedFiles: any = [];
+    export let data: PageData;
 
     let target: any;
     let errorData: any;
@@ -71,7 +83,6 @@
         };
 
         const exampleFormSchema = z.object({
-            
             uploadedFiles: z.any().array().nonempty({
                 message:
                     'Sila muat naik dokumen sokongan pada ruangan disediakan.',
@@ -170,6 +181,39 @@
             }
         }
     };
+    //Retirement Verification
+    const {
+        form: retirementVerificationForm,
+        errors: retirementVerificationErrors,
+        enhance: retirementVerificationEnhance,
+    } = superForm(data.stepperRetirementVerification, {
+        SPA: true,
+        validators: _stepperRetirementVerification,
+        onSubmit() {
+            _submitFormStepperRetirementVerification(
+                $retirementVerificationForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+
+    //Update Application Delivery Information
+    const {
+        form: updateApplicationDeliveryInformationForm,
+        errors: updateApplicationDeliveryInformationErrors,
+        enhance: updateApplicationDeliveryInformationEnhance,
+    } = superForm(data.stepperUpdateApplicationDeliveryInformation, {
+        SPA: true,
+        validators: _stepperUpdateApplicationDeliveryInformation,
+        onSubmit() {
+            _submitFormStepperUpdateApplicationDeliveryInformation(
+                $updateApplicationDeliveryInformationForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -258,15 +302,18 @@
         <StepperContentHeader title="Pengesahan Persaraan"
             ><TextIconButton
                 primary
-                label="Hantar"
-                form="retirementConfirmationFormValidation"
-            /></StepperContentHeader
+                label="Simpan"
+                form="FormStepperRetirementVerification"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
         >
         <StepperContentBody
             ><form
-                id="retirementConfirmationFormValidation"
-                on:submit|preventDefault={retirementConfirmationForm}
+                id="FormStepperRetirementVerification"
                 class="flex w-full flex-col gap-2"
+                use:retirementVerificationEnhance
+                method="POST"
             >
                 <div
                     class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
@@ -389,31 +436,33 @@
 
                     <div>
                         <LongTextField
-                            hasError={errorData?.Review}
-                            name="retirementConfirmationReview"
-                            label="Ulasan/Tindakan"
-                            bind:value={retirementConfirmationReview}
+                            hasError={$retirementVerificationErrors.actionRemark
+                                ? true
+                                : false}
+                            name="actionRemark"
+                            label="Tindakan / Ulasan"
+                            bind:value={$retirementVerificationForm.actionRemark}
                         />
-                        {#if errorData?.retirementConfirmationReview}
+                        {#if $retirementVerificationErrors.actionRemark}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData
-                                    ?.retirementConfirmationReview[0]}</span
+                                >{$retirementVerificationErrors
+                                    .actionRemark[0]}</span
                             >
                         {/if}
-
                         <RadioSingle
-                            disabled={false}
                             {options}
-                            name="retirementConfirmationResult"
-                            legend={''}
-                            bind:userSelected={retirementConfirmationResult}
+                            hasError={$retirementVerificationErrors.resultOption
+                                ? true
+                                : false}
+                            name="resultOption"
+                            bind:userSelected={$retirementVerificationForm.resultOption}
                         ></RadioSingle>
-                        {#if errorData?.retirementConfirmationResult}
+                        {#if $retirementVerificationErrors.resultOption}
                             <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData
-                                    ?.retirementConfirmationResult[0]}</span
+                                class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                >{$retirementVerificationErrors
+                                    .resultOption[0]}</span
                             >
                         {/if}
                     </div>
@@ -425,15 +474,18 @@
         <StepperContentHeader title="Kemaskini Maklumat Penghantaran Permohonan"
             ><TextIconButton
                 primary
-                label="Hantar"
-                form="updateApplicationFormValidation"
-            /></StepperContentHeader
+                label="Simpan"
+                form="FormStepperUpdateApplicationDeliveryInformation"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
         >
         <StepperContentBody
             ><form
-                id="updateApplicationFormValidation"
-                on:submit|preventDefault={updateApplicationForm}
+                id="FormStepperUpdateApplicationDeliveryInformation"
                 class="flex w-full flex-col gap-2"
+                use:updateApplicationDeliveryInformationEnhance
+                method="POST"
             >
                 <div
                     class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
@@ -453,29 +505,33 @@
                     </p>
                     <div>
                         <LongTextField
-                            hasError={errorData?.updateApplicationReview}
-                            name="updateApplicationReview"
-                            label="Ulasan/Tindakan"
-                            bind:value={updateApplicationReview}
+                            hasError={$updateApplicationDeliveryInformationErrors.actionRemarkUADI
+                                ? true
+                                : false}
+                            name="actionRemarkUADI"
+                            label="Tindakan / Ulasan"
+                            bind:value={$updateApplicationDeliveryInformationForm.actionRemarkUADI}
                         />
-                        {#if errorData?.updateApplicationReview}
+                        {#if $updateApplicationDeliveryInformationErrors.actionRemarkUADI}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.updateApplicationReview[0]}</span
+                                >{$updateApplicationDeliveryInformationErrors
+                                    .actionRemarkUADI[0]}</span
                             >
                         {/if}
-
                         <RadioSingle
-                            disabled={false}
                             {options}
-                            name="updateApplicationResult"
-                            legend={''}
-                            bind:userSelected={updateApplicationResult}
+                            hasError={$updateApplicationDeliveryInformationErrors.resultOptionUADI
+                                ? true
+                                : false}
+                            name="resultOptionUADI"
+                            bind:userSelected={$updateApplicationDeliveryInformationForm.resultOptionUADI}
                         ></RadioSingle>
-                        {#if errorData?.updateApplicationResult}
+                        {#if $updateApplicationDeliveryInformationErrors.resultOptionUADI}
                             <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.updateApplicationResult[0]}</span
+                                class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                >{$updateApplicationDeliveryInformationErrors
+                                    .resultOptionUADI[0]}</span
                             >
                         {/if}
                     </div>
