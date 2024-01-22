@@ -11,14 +11,17 @@
     import { goto } from '$app/navigation';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { z, ZodError } from 'zod';
+    import type { PageData } from './$types';
+    import { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+    import {
+        _stepperRetirementApplicationApproval,
+        _submitFormStepperRetirementApplicationApproval,
+    } from './+page';
 
-    export let disabled: boolean = true;
-
-    let errorData: any;
-    let ulasan: string;
-    let keputusan: any;
+    export let disabled = true;
+    export let data: PageData;
 
     const options: RadioOption[] = [
         {
@@ -31,65 +34,21 @@
         },
     ];
 
-    const submitForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-
-        const exampleFormData = {
-            keputusan: String(formData.get('keputusan')),
-            ulasan: String(formData.get('ulasan')),
-        };
-
-        const exampleFormSchema = z.object({
-            // checkbox schema
-            keputusan: z.enum(['lulus', 'tidakLulus'], {
-                errorMap: (issue, { defaultError }) => ({
-                    message:
-                        issue.code === 'invalid_enum_value'
-                            ? 'Sila tetapkan pilihan anda.'
-                            : defaultError,
-                }),
-            }),
-            // dateSelectorExample: dateScheme,
-            ulasan: z
-                .string({ required_error: 'Medan ini tidak boleh kosong.' })
-                .min(4, {
-                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-                })
-                .max(124, {
-                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
-                })
-                .trim(),
-        });
-
-        try {
-            const result = exampleFormSchema.parse(exampleFormData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedExamFormData = { ...exampleFormData, id };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedExamFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
+    const {
+        form: retirementApplicationApprovalForm,
+        errors: retirementApplicationApprovalErrors,
+        enhance: retirementApplicationApprovalEnhance,
+    } = superForm(data.stepperRetirementApplicationApproval, {
+        SPA: true,
+        validators: _stepperRetirementApplicationApproval,
+        onSubmit() {
+            _submitFormStepperRetirementApplicationApproval(
+                $retirementApplicationApprovalForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -223,47 +182,54 @@
         <StepperContentHeader title="Kelulusan Permohonan Persaraan"
             ><TextIconButton
                 primary
-                label="Hantar"
-                form="formValidation"
-            /></StepperContentHeader
+                label="Simpan"
+                form="FormStepperRetirementApplicationApproval"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
         >
         <StepperContentBody
             ><form
-                id="formValidation"
-                on:submit|preventDefault={submitForm}
+                id="FormStepperRetirementApplicationApproval"
                 class="flex w-full flex-col gap-2"
+                use:retirementApplicationApprovalEnhance
+                method="POST"
             >
                 <div
                     class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
                 >
                     <p class="text-sm font-bold">Pelulus</p>
-                    <div
-                        class="flex h-fit w-full flex-col justify-start"
-                    >
+                    <div class="flex h-fit w-full flex-col justify-start">
                         <LongTextField
-                            hasError={errorData?.ulasan}
-                            name="ulasan"
-                            label="Ulasan/Tindakan"
-                            bind:value={ulasan}
+                            hasError={$retirementApplicationApprovalErrors.actionRemark
+                                ? true
+                                : false}
+                            name="actionRemark"
+                            label="Tindakan / Ulasan"
+                            bind:value={$retirementApplicationApprovalForm.actionRemark}
                         />
-                        {#if errorData?.ulasan}
+                        {#if $retirementApplicationApprovalErrors.actionRemark}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.ulasan[0]}</span
+                                >{$retirementApplicationApprovalErrors
+                                    .actionRemark[0]}</span
                             >
                         {/if}
 
                         <RadioSingle
-                            disabled={false}
                             {options}
-                            name="keputusan"
-                            legend={'Keputusan'}
-                            bind:userSelected={keputusan}
+                            hasError={$retirementApplicationApprovalErrors.resultOption
+                                ? true
+                                : false}
+                            name="resultOption"
+                            legend="Keputusan"
+                            bind:userSelected={$retirementApplicationApprovalForm.resultOption}
                         ></RadioSingle>
-                        {#if errorData?.keputusan}
+                        {#if $retirementApplicationApprovalErrors.resultOption}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.keputusan[0]}</span
+                                >{$retirementApplicationApprovalErrors
+                                    .resultOption[0]}</span
                             >
                         {/if}
                     </div>
