@@ -37,10 +37,6 @@
 
     let target: any;
     let errorData: any;
-    let retirementConfirmationReview: any;
-    let retirementConfirmationResult: any;
-    let updateApplicationReview: any;
-    let updateApplicationResult: any;
     let texthidden = false;
     onMount(() => {
         target = document.getElementById('fileInput');
@@ -118,69 +114,7 @@
             }
         }
     };
-    const updateApplicationForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
 
-        const exampleFormData = {
-            updateApplicationResult: String(
-                formData.get('updateApplicationResult'),
-            ),
-            updateApplicationReview: String(
-                formData.get('updateApplicationReview'),
-            ),
-        };
-
-        const exampleFormSchema = z.object({
-            // checkbox schema
-            updateApplicationResult: z.enum(['sah', 'tidakSah'], {
-                errorMap: (issue, { defaultError }) => ({
-                    message:
-                        issue.code === 'invalid_enum_value'
-                            ? 'Sila tetapkan pilihan anda.'
-                            : defaultError,
-                }),
-            }),
-            // dateSelectorExample: dateScheme,
-            updateApplicationReview: z
-                .string({ required_error: 'Medan ini tidak boleh kosong.' })
-                .min(4, {
-                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-                })
-                .max(124, {
-                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
-                })
-                .trim(),
-        });
-
-        try {
-            const result = exampleFormSchema.parse(exampleFormData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedExamFormData = { ...exampleFormData, id };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedExamFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
     //Retirement Verification
     const {
         form: retirementVerificationForm,
