@@ -81,7 +81,7 @@
             actionOptions={['edit']}
             editActions={() => {
                 const url =
-                    './lantikan-baru/butiran-calon-' + tempStaff.temporaryId;
+                    './lantikan-baru/butiran-calon-' + tempStaff.candidateId;
                 goto(url);
             }}
             tableItems={data.getThisStaffRecord}

@@ -1,5 +1,5 @@
 import { goto } from '$app/navigation';
-import http from '$lib/services/core/ky.service.js';
+import http from '$lib/services/provider/service-provider.service';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
@@ -19,12 +19,8 @@ export const load = async () => {
 
 export const _submit = async (formData: object) => {
     const response: Response = await http
-        .post('/api/v1/authentication/login', {
+        .post('authentication/candidate-login', {
             body: JSON.stringify(formData),
-            headers: {
-                Accept: 'application/json',
-                'Content-type': 'application/json',
-            },
         })
         .json();
 

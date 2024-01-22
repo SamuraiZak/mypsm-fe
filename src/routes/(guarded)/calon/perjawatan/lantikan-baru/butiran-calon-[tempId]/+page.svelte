@@ -992,13 +992,54 @@
                     use:academicInfoEnhance
                     class="flex w-full flex-col gap-2.5"
                 >
-                    {#each data.academicDetails.AcademicList as academic, i}
+                    {#each data.academicDetails.academicList as academic, i}
                         <div class="space-y-2.5 rounded-[3px] border p-2.5">
                             <div
                                 class="mb-5 mt-2.5 text-sm text-system-primary"
                             >
                                 <p>Maklumat Akademik #{i + 1}</p>
                             </div>
+
+                            <TextField
+                                disabled
+                                name="type"
+                                label={'Jenis Pendidikan'}
+                                type="text"
+                                bind:value={academic.majorMinorId}
+                            ></TextField>
+
+                            <TextField
+                                disabled
+                                name="type"
+                                label={'Negara'}
+                                type="text"
+                                bind:value={academic.countryId}
+                            ></TextField>
+
+                            <TextField
+                                disabled
+                                name="type"
+                                label={'Institusi/Sekolah'}
+                                type="text"
+                                bind:value={academic.institutionId}
+                            ></TextField>
+
+                            <TextField
+                                disabled
+                                name="type"
+                                label={'Taraf Pendidikan'}
+                                type="text"
+                                bind:value={academic.educationLevelId}
+                            ></TextField>
+
+                            <TextField
+                                disabled
+                                name="type"
+                                label={'Penajaan'}
+                                type="text"
+                                bind:value={academic.sponsorshipId}
+                            ></TextField>
+
                             <TextField
                                 disabled
                                 name="name"
@@ -1007,30 +1048,18 @@
                                 bind:value={academic.name}
                             ></TextField>
 
-                            <!-- <TextField
+                            <TextField
                                 disabled
-                                hasError={!!$academicInfoErrors.academicList
-                                    .type}
-                                name="type"
-                                label={'Jenis Kelulusan'}
+                                name="completionDate"
+                                label={'Tahun Kelulusan'}
                                 type="text"
-                                bind:value={academic.type}
+                                bind:value={academic.completionDate}
                             ></TextField>
 
                             <TextField
                                 disabled
-                                hasError={$academicInfoErrors.academicList[i]
-                                    .completionYear}
-                                name="completionYear"
-                                label={'Tahun Kelulusan'}
-                                type="text"
-                                bind:value={academic.completionYear}
-                            ></TextField> -->
-
-                            <TextField
-                                disabled
                                 name="finalGrade"
-                                label={'Gred'}
+                                label={'Gred Akhir'}
                                 type="text"
                                 bind:value={academic.finalGrade}
                             ></TextField>
@@ -1042,13 +1071,6 @@
                                 type="text"
                                 bind:value={academic.field}
                             ></TextField>
-
-                            <LongTextField
-                                disabled
-                                name="remark"
-                                label={'Catatan'}
-                                bind:value={academic.remark}
-                            ></LongTextField>
                         </div>
                     {/each}
                 </form>
@@ -1807,18 +1829,18 @@
         use:addAcademicInfoEnhance
         class="flex h-fit w-full flex-col gap-y-2"
     >
-        <TextField
-            hasError={!!$addAcademicInfoErrors.type}
+        <!-- <DropdownSelect
+            hasError={!!$addAcademicInfoErrors.sponsorshipId}
             {disabled}
-            name="type"
+            name="sponsorshipId"
             label={'Taraf'}
-            bind:value={$addAcademicInfoModal.type}
-        ></TextField>
-        {#if $addAcademicInfoErrors.type}
+            bind:value={$addAcademicInfoModal.sponsorshipId}
+        ></DropdownSelect>
+        {#if $addAcademicInfoErrors.sponsorshipId}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$addAcademicInfoErrors.type}</span
+                >{$addAcademicInfoErrors.sponsorshipId}</span
             >
-        {/if}
+        {/if} -->
         <TextField
             hasError={!!$addAcademicInfoErrors.name}
             {disabled}
@@ -1831,16 +1853,16 @@
                 >{$addAcademicInfoErrors.name}</span
             >
         {/if}
-        <TextField
-            hasError={!!$addAcademicInfoErrors.completionYear}
+        <DateSelector
+            hasError={!!$addAcademicInfoErrors.completionDate}
             {disabled}
-            name="Tahun Kelulusan"
-            label={'Institusi'}
-            bind:value={$addAcademicInfoModal.completionYear}
-        ></TextField>
-        {#if $addAcademicInfoErrors.completionYear}
+            name="completionDate"
+            label={'Tarikh Kelulusan'}
+            bind:selectedDate={$addAcademicInfoModal.completionDate}
+        ></DateSelector>
+        {#if $addAcademicInfoErrors.completionDate}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$addAcademicInfoErrors.completionYear}</span
+                >{$addAcademicInfoErrors.completionDate}</span
             >
         {/if}
         <TextField
@@ -1865,18 +1887,6 @@
         {#if $addAcademicInfoErrors.field}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
                 >{$addAcademicInfoErrors.field}</span
-            >
-        {/if}
-        <LongTextField
-            hasError={!!$addAcademicInfoErrors.remark}
-            {disabled}
-            name="remark"
-            label={'Catatan'}
-            bind:value={$addAcademicInfoModal.remark}
-        ></LongTextField>
-        {#if $addAcademicInfoErrors.remark}
-            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$addAcademicInfoErrors.remark}</span
             >
         {/if}
         <TextIconButton primary label={'Simpan'} form="addAcademicModalForm" />

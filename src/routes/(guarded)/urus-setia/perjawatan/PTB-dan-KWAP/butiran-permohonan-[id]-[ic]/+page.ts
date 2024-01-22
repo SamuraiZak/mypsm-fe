@@ -45,7 +45,7 @@ export const _ptbInfoSchema = z.object({
 
 export const load = async ({ params }) => {
     const record = await http
-        .get(`api/v1/employments/pension-detail/${params.id}`, {
+        .get(`employments/pension-detail/${params.id}`, {
             prefixUrl: '',
         })
         .json();

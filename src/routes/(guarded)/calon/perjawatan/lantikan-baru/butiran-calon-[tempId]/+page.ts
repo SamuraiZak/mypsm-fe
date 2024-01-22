@@ -1,5 +1,13 @@
 import api from '$lib/services/core/ky.service.js';
+import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
 import { getErrorToast, getPromiseToast } from '$lib/toast/toast-service';
+import type {
+    ActivityResponseData,
+    NewHireActivity,
+} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-activity-response.view-model';
+import type { AcademicResponseData } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-academic-details-response.model.js';
+import type { ExperienceResponseData } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-experience-details-respone.model.js';
+import type { CandidatePersonalDetailsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-respone.model.js';
 import { fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
@@ -139,12 +147,15 @@ export const _academicInfoSchema = z.object({
 
 // New employment - add academic section
 export const _addAcademicInfoSchema = z.object({
-    type: shortTextSchema,
-    name: codeSchema,
-    completionYear: shortTextSchema,
+    majorMinorId: generalSelectSchema.nullish(),
+    countryId: generalSelectSchema,
+    institutionId: generalSelectSchema,
+    educationLevelId: generalSelectSchema,
+    sponsorshipId: generalSelectSchema,
+    name: shortTextSchema,
+    completionDate: maxDateSchema,
     finalGrade: codeSchema,
-    field: shortTextSchema,
-    remark: longTextSchema,
+    field: z.string(),
 });
 // New employment - add activity section
 export const _addActivitiesInfoSchema = z.object({
@@ -293,73 +304,41 @@ export const _addNextOfKinInfoSchema = z.object({
     addNextOfKinCompanyAddress: shortTextSchema.nullish(),
 });
 
-interface IAcademicResponse {
-    academicList: [
-        {
-            type: string;
-            name: string;
-            completionYear: string;
-            finalGrade: string;
-            field: string;
-            remark: string;
-        },
-    ];
-    isReadonly: boolean;
-}
-interface IExperienceResponse {
-    experienceList: [
-        {
-            company: string;
-            address: string;
-            position: string;
-            positionCode: string;
-            startDate: Date;
-            endDate: Date;
-            salary: number;
-        },
-    ];
-    isReadonly: boolean;
-}
-interface IActivityResponse {
-    activityList: [
-        {
-            name: string;
-            joinDate: Date;
-            position: string;
-            description: string;
-        },
-    ];
-    isReadonly: boolean;
-}
-
 export const load = async ({ params }) => {
-    // const candidateId = parseInt(params.tempId);
-    const personalInfoResponse = await api
-        .get(`api/v1/employments/new-hire-personal-detail/${params.tempId}`)
-        .json();
+    const candidateIdForm = new FormData();
+    candidateIdForm.append('candidateId', String(params));
 
-    const academicInfoResponse = await api
-        .get(`api/v1/employments/new-hire-academic/${params.tempId}`)
-        .json();
+    const personalDetailResponse: CandidatePersonalDetailsResponse =
+        await EmployeeService.getCurrentCandidatePersonalDetails(
+            candidateIdForm,
+        );
 
-    const academicDetails: IAcademicResponse = academicInfoResponse.data;
-
-    const experienceInfoResponse = await api
-        .get(`api/v1/employments/new-hire-experience/${params.tempId}`)
-        .json();
-    const experienceDetails: IExperienceResponse = experienceInfoResponse.data;
-
-    const activityInfoResponse = await api
-        .get(`api/v1/employments/new-hire-activity/${params.tempId}`)
-        .json();
-    const activityDetails: IActivityResponse = activityInfoResponse.data;
-
-    const personalInfoForm = await superValidate(
-        personalInfoResponse.data,
-        _personalInfoForm,
+    console.log(
+        'Response',
+        JSON.stringify(candidateIdForm),
+        personalDetailResponse.data,
     );
+
+    const academicInfoResponse =
+        await EmployeeService.getCurrentCandidateAcademic(candidateIdForm);
+
+    const academicDetails: AcademicResponseData = academicInfoResponse.data;
+
+    const experienceInfoResponse =
+        await EmployeeService.getCurrentCandidateExperience(candidateIdForm);
+    const experienceDetails: ExperienceResponseData =
+        experienceInfoResponse.data;
+
+    const activityInfoResponse: NewHireActivity =
+        await EmployeeService.getCurrentCandidateActivities(candidateIdForm);
+    const activityDetails: ActivityResponseData = activityInfoResponse.data;
+
+    console.log('activityInfoResponse', activityDetails);
+
+    const personalInfoForm = await superValidate(_personalInfoForm);
+
     const academicInfoForm = await superValidate(
-        academicInfoResponse.data,
+        // academicInfoResponse.data,
         _academicInfoSchema,
     );
     const serviceInfoForm = await superValidate(_serviceInfoSchema);

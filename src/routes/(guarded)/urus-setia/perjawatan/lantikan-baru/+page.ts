@@ -1,12 +1,9 @@
-import api from '$lib/services/core/ky.service';
 import http from '$lib/services/provider/service-provider.service';
 import { showLoadingOverlay } from '$lib/stores/globalState';
-import {
-    NewHireListRequestConvert,
-    type NewHireListRequest,
-} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-list-request.view-model';
+import { type NewHireListRequest } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-list-request.view-model';
 import {
     NewHireListResponseConvert,
+    type NewHireData,
     type NewHireListResponse,
 } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-list-response.view-model';
 
@@ -28,21 +25,48 @@ export async function load() {
             status: null,
         },
     };
-    const response: Response = await api
-        .post('api/v1/employments/new-hires', {
+
+    const newAddedHireResponse: NewHireListResponse = await http
+        .post('employments/new-hires', {
             body: JSON.stringify(request),
         })
         .json();
 
-    const newHireListsResponse: NewHireListResponse =
-        NewHireListResponseConvert.fromJson(JSON.stringify(response));
+    const submittedRequest: NewHireListRequest = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: '',
+        orderType: '',
+        filter: {
+            dataType: 'Submitted',
+            identityCard: null,
+            staffNo: null,
+            staffName: null,
+            dateRequest: null,
+            dateHire: null,
+            status: null,
+        },
+    };
 
-    const newHireLists = newHireListsResponse.data.newHires;
+    const submittedFormResponse: NewHireListResponse = await http
+        .post('employments/new-hires', {
+            body: JSON.stringify(submittedRequest),
+        })
+        .json();
 
-    const registeredListsResponse: NewHireListResponse =
-        NewHireListResponseConvert.fromJson(JSON.stringify(response));
+    const newHireLists: NewHireData[] = submittedFormResponse.data.newHires;
 
-    const registeredLists = registeredListsResponse.data.newHires;
+    const submittedFormLists: NewHireData[] =
+        newAddedHireResponse.data.newHires;
+
+    // const newHireListsResponse: NewHireListResponse =
+    // NewHireListResponseConvert.fromJson(JSON.stringify(response));
+    // const newHireLists = newHireListsResponse.data.newHires;
+
+    // const registeredListsResponse: NewHireListResponse =
+    //     NewHireListResponseConvert.fromJson(JSON.stringify(response));
+
+    // const registeredLists = registeredListsResponse.data.newHires;
 
     // const newHireLists: NewHireListResponse = response.data.newHires.filter(
     //     (record) => record.candidateId === '13457',
@@ -51,10 +75,8 @@ export async function load() {
 
     setTimeout(() => showLoadingOverlay.set(false), 2500);
     return {
-        props: {
-            registeredLists,
-            newHireLists,
-        },
+        submittedFormLists,
+        newHireLists,
     };
 }
 
@@ -78,7 +100,7 @@ export async function _sort() {
     };
     const response: Response = await http
         .post('http://127.0.0.1:3333/api/v1/employments/new-hires', {
-            body: NewHireListRequestConvert.toJson(request),
+            body: JSON.stringify(request),
             headers: {
                 Accept: 'application/json',
                 'Content-type': 'application/json',

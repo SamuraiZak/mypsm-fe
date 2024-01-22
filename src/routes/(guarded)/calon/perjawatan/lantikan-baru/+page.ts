@@ -1,4 +1,8 @@
-import api from '$lib/services/core/ky.service';
+import http from '$lib/services/provider/service-provider.service';
+import type {
+    NewHireData,
+    NewHireListResponse,
+} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-list-response.view-model';
 
 export const load = async () => {
     const getAllLists = {
@@ -17,16 +21,13 @@ export const load = async () => {
         },
     };
 
-    const response = await api
-        .post('api/v1/employments/new-hires', {
+    const response: NewHireListResponse = await http
+        .post('employments/new-hires', {
             body: JSON.stringify(getAllLists),
         })
         .json();
 
-    const getThisStaffRecord = response.data.newHires.filter(
-        (list) => list.temporaryId === 'C1234',
-    );
-
+    const getThisStaffRecord: NewHireData[] = response.data.newHires;
 
     return {
         getThisStaffRecord,

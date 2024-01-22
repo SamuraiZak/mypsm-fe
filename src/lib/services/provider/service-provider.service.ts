@@ -11,6 +11,7 @@ const http = ky.create({
         Accept: 'application/json',
         'Content-type': 'application/json',
     },
+    credentials: 'include',
     hooks: {},
 });
 

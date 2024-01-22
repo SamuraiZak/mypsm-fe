@@ -11,14 +11,9 @@
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import type { NewHireListResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-list-response.view-model';
     import { _sort } from './+page';
+    import type { PageData } from './$types';
 
-    export let data;
-
-    // mock data
-    // const newStaffUrl = data.props.candidateLists;
-    const lantikanBaru = data.props.newHireLists
-
-    const newHireListsResult: NewHireListResponse = data.props.registeredLists;
+    export let data: PageData;
 
     const base64String = `JVBERi0xLjcKCjEgMCBvYmogICUgZW50cnkgcG9pbnQKPDwKICAvVHlwZSAvQ2F0YWxvZwog
                             IC9QYWdlcyAyIDAgUgo+PgplbmRvYmoKCjIgMCBvYmoKPDwKICAvVHlwZSAvUGFnZXMKICAv
@@ -69,15 +64,13 @@
 
 <!-- content body starts here -->
 <!-- notes: you may change the flex directions but do not change the height and max height of this section -->
-<section
-    class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
->
+<section class="flex h-full w-full flex-col overflow-y-auto">
     <Tabs>
         <TabContent title="Senarai Rekod Selesai Diisi">
-            <SenaraiTelahDiisi listData={lantikanBaru} />
+            <SenaraiTelahDiisi listData={data.submittedFormLists} />
         </TabContent>
         <TabContent title="Senarai Rekod Penambahan Calon Lantikan Baru">
-            <SenaraiBelumDiisi listData={newHireListsResult} />
+            <SenaraiBelumDiisi listData={data.newHireLists} />
         </TabContent>
     </Tabs>
 
