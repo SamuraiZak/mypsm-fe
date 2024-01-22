@@ -16,28 +16,27 @@
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { mockSalaryMovementSchedule } from '$lib/mocks/gaji/salaryMovementSchedule/mockSalaryMovementSchedule.js';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { z, ZodError } from 'zod';
     import { Checkbox } from 'flowbite-svelte';
+    import type { PageData } from './$types';
+    import { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _stepperMeetingResult,
+        _submitFormStepperMeetingResult,
+    } from './+page';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
 
-    export let data;
+    export let data: PageData;
     export let noPekerja = data.currentEmployee?.employeeNumber;
 
     let activeStepper = 0;
     let salaryMovementData = data.currentEmployee;
     let disabled = true;
     let labelBlack = !disabled;
-    let errorData: any;
-    let meetingTypeOption: any;
-    let meetingDate: any;
-    let salaryMovementMonthType: any;
     let radioValue: any = 'sah';
     let isGredChecked: boolean = false;
     let isSpecialIncrementTextChecked: boolean = false;
-    let gred: any;
     let isSpecialFiAidTextChecked: boolean = false;
-    let specialFiAidText: any;
-    let specialIncrementText: any;
 
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
@@ -55,156 +54,20 @@
         },
     ];
 
-    const dateScheme = z.coerce
-        .date({
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_date'
-                        ? 'Tarikh tidak boleh dibiar kosong.'
-                        : defaultError,
-            }),
-        })
-        .min(new Date(), {
-            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
-        });
-
-    const exampleFormSchema = z.object({
-        meetingTypeOption: z.enum(['1', '2', '3', '4'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Pilihan perlu dipilih.'
-                        : defaultError,
-            }),
-        }),
-        meetingDate: dateScheme,
-        salaryMovementMonthType: z.enum(['1', '2', '3', '4'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Pilihan perlu dipilih.'
-                        : defaultError,
-            }),
-        }),
-        gred: z.optional(
-            z.enum(['All', 'N19', 'N21', 'N29', 'N32', 'N49', 'N52'], {
-                errorMap: (issue, { defaultError }) => ({
-                    message:
-                        issue.code === 'invalid_enum_value'
-                            ? 'Pilihan perlu dipilih.'
-                            : defaultError,
-                }),
-            }),
-        ),
-        specialFiAidTexts: z.optional(
-            z
-                .string({ required_error: 'Medan ini tidak boleh kosong.' })
-                .min(1, {
-                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-                })
-                .max(124, {
-                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
-                })
-                .trim(),
-        ),
-        specialIncrementTexts: z.optional(
-            z
-                .string({ required_error: 'Medan ini tidak boleh kosong.' })
-                .min(1, {
-                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-                })
-                .max(124, {
-                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
-                })
-                .trim(),
-        ),
+    //Verification Retirement Application
+    const {
+        form: meetingResultForm,
+        errors: meetingResultErrors,
+        enhance: meetingResultEnhance,
+    } = superForm(data.stepperMeetingResult, {
+        SPA: true,
+        validators: _stepperMeetingResult,
+        onSubmit() {
+            _submitFormStepperMeetingResult($meetingResultForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
-
-    const retirementConfirmationForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-
-        const meetingTypeOptionSelector = document.getElementById(
-            'meetingTypeOption',
-        ) as HTMLSelectElement;
-        const salaryMovementMonthType = document.getElementById(
-            'salaryMovementMonthType',
-        ) as HTMLSelectElement;
-        const getGred = document.getElementById('gred') as HTMLSelectElement;
-
-        const exampleFormData = {
-            meetingTypeOption: String(meetingTypeOptionSelector.value),
-            meetingDate: String(formData.get('meetingDate')),
-            salaryMovementMonthType: String(salaryMovementMonthType.value),
-        };
-
-        try {
-            let validatedData;
-            let result;
-
-            if (isGredChecked) {
-                const gred = String(getGred.value);
-
-                const validatedFormData = {
-                    ...exampleFormData,
-                    gred,
-                };
-                validatedData = validatedFormData;
-                result = exampleFormSchema.parse(validatedFormData);
-            } else if (isSpecialFiAidTextChecked) {
-                const specialFiAidTexts = String(
-                    formData.get('specialFiAidTexts'),
-                );
-                const validatedFormData = {
-                    ...exampleFormData,
-                    specialFiAidTexts,
-                };
-                validatedData = validatedFormData;
-                result = exampleFormSchema.parse(validatedFormData);
-            } else if (isSpecialIncrementTextChecked) {
-                const specialIncrementTexts = String(
-                    formData.get('specialIncrementTexts'),
-                );
-                const validatedFormData = {
-                    ...exampleFormData,
-                    specialIncrementTexts,
-                };
-                validatedData = validatedFormData;
-                result = exampleFormSchema.parse(validatedFormData);
-            } else {
-                validatedData = exampleFormData;
-                result = exampleFormSchema.parse(exampleFormData);
-            }
-
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedFormData = {
-                    ...validatedData,
-                    id,
-                };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -230,15 +93,18 @@
                 }}
             /><TextIconButton
                 primary
-                label="Hantar"
-                form="retirementConfirmationFormValidation"
-            />
+                label="Simpan"
+                form="FormStepperMeetingResult"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton>
         </StepperContentHeader>
         <StepperContentBody>
             <form
-                id="retirementConfirmationFormValidation"
-                on:submit|preventDefault={retirementConfirmationForm}
+                id="FormStepperMeetingResult"
                 class="flex w-full flex-col gap-2"
+                use:meetingResultEnhance
+                method="POST"
             >
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
@@ -288,11 +154,13 @@
                 >
                     <SectionHeader title="Pergerakan Gaji Baru"></SectionHeader>
                     <DropdownSelect
-                        hasError={errorData?.meetingTypeOption}
+                        hasError={$meetingResultErrors.meetingNameNum
+                            ? true
+                            : false}
                         dropdownType="label-left-full"
-                        id="meetingTypeOption"
+                        id="meetingNameNum"
                         label="Nama dan Bilangan Mesyuarat"
-                        bind:value={meetingTypeOption}
+                        bind:value={$meetingResultForm.meetingNameNum}
                         options={[
                             { value: '1', name: 'Semua' },
                             { value: '2', name: '1/12' },
@@ -300,31 +168,35 @@
                             { value: '4', name: '2/101' },
                         ]}
                     ></DropdownSelect>
-                    {#if errorData?.meetingTypeOption}
+                    {#if $meetingResultErrors.meetingNameNum}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.meetingTypeOption[0]}</span
+                            >{$meetingResultErrors.meetingNameNum[0]}</span
                         >
                     {/if}
                     <DateSelector
-                        hasError={errorData?.meetingDate}
+                        hasError={$meetingResultErrors.meetingDate
+                            ? true
+                            : false}
                         name="meetingDate"
                         handleDateChange
                         label="Tarikh Mesyuarat"
-                        bind:selectedDate={meetingDate}
+                        bind:selectedDate={$meetingResultForm.meetingDate}
                     ></DateSelector>
-                    {#if errorData?.meetingDate}
+                    {#if $meetingResultErrors.meetingDate}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.meetingDate[0]}</span
+                            >{$meetingResultErrors.meetingDate[0]}</span
                         >
                     {/if}
                     <DropdownSelect
-                        hasError={errorData?.salaryMovementMonthType}
+                        hasError={$meetingResultErrors.salaryMovementMonth
+                            ? true
+                            : false}
                         dropdownType="label-left-full"
-                        id="salaryMovementMonthType"
+                        id="salaryMovementMonth"
                         label="Bulan Pergerakan Gaji"
-                        bind:value={salaryMovementMonthType}
+                        bind:value={$meetingResultForm.salaryMovementMonth}
                         options={[
                             { value: '1', name: 'Januari' },
                             { value: '2', name: 'April' },
@@ -332,10 +204,10 @@
                             { value: '4', name: 'Oktober' },
                         ]}
                     ></DropdownSelect>
-                    {#if errorData?.salaryMovementMonthType}
+                    {#if $meetingResultErrors.salaryMovementMonth}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.salaryMovementMonthType[0]}</span
+                            >{$meetingResultErrors.salaryMovementMonth[0]}</span
                         >
                     {/if}
                     <div class="flex w-full flex-row items-center">
@@ -352,12 +224,14 @@
                                 </div>
                                 <div>
                                     <DropdownSelect
-                                        hasError={errorData?.gred}
                                         disabled={!isGredChecked}
+                                        hasError={$meetingResultErrors.gred
+                                            ? true
+                                            : false}
+                                        dropdownType="label-left-full"
                                         id="gred"
                                         label="Gred"
-                                        dropdownType="label-left-full"
-                                        bind:value={gred}
+                                        bind:value={$meetingResultForm.gred}
                                         options={[
                                             { value: 'All', name: 'Semua' },
                                             { value: 'N19', name: 'N19' },
@@ -367,13 +241,7 @@
                                             { value: 'N49', name: 'N49' },
                                             { value: 'N52', name: 'N52' },
                                         ]}
-                                    />
-                                    {#if errorData?.gred}
-                                        <span
-                                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                            >{errorData?.gred[0]}</span
-                                        >
-                                    {/if}
+                                    ></DropdownSelect>
                                 </div>
                             </div>
 
@@ -385,28 +253,24 @@
                                     ></Checkbox>
                                 </div>
                                 <div>
-                                    <TextField
+                                    <LongTextField
                                         disabled={!isSpecialFiAidTextChecked}
+                                        hasError={$meetingResultErrors.specialFiAid
+                                            ? true
+                                            : false}
+                                        name="specialFiAid"
                                         label="Bantuan Khas Kewangan (RM)"
-                                        hasError={errorData?.specialFiAidTexts}
-                                        name="specialFiAidTexts"
                                         type="number"
-                                        bind:value={specialFiAidText}
+                                        bind:value={$meetingResultForm.specialFiAid}
                                     />
-                                    {#if errorData?.specialFiAidTexts}
+                                    {#if $meetingResultErrors.specialFiAid}
                                         <span
                                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.specialFiAidTexts[0]}</span
+                                            >{$meetingResultErrors
+                                                .specialFiAid[0]}</span
                                         >
                                     {/if}
                                 </div>
-                                {#if errorData?.specialFiAidText}
-                                    <span
-                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.specialFiAidText[0]}</span
-                                    >
-                                {/if}
                             </div>
 
                             <div class="flex flex-row items-center">
@@ -417,28 +281,24 @@
                                     ></Checkbox>
                                 </div>
                                 <div>
-                                    <TextField
+                                    <LongTextField
                                         disabled={!isSpecialIncrementTextChecked}
+                                        hasError={$meetingResultErrors.specialIncrement
+                                            ? true
+                                            : false}
+                                        name="specialIncrement"
                                         label="Kenaikan Khas (RM)"
-                                        hasError={errorData?.specialIncrementTexts}
-                                        name="specialIncrementTexts"
                                         type="number"
-                                        bind:value={specialIncrementText}
+                                        bind:value={$meetingResultForm.specialIncrement}
                                     />
-                                    {#if errorData?.specialIncrementTexts}
+                                    {#if $meetingResultErrors.specialIncrement}
                                         <span
                                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                            >{errorData
-                                                ?.specialIncrementTexts[0]}</span
+                                            >{$meetingResultErrors
+                                                .specialIncrement[0]}</span
                                         >
                                     {/if}
                                 </div>
-                                {#if errorData?.specialIncrementText}
-                                    <span
-                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.specialIncrementText[0]}</span
-                                    >
-                                {/if}
                             </div>
                         </div>
                     </div>
