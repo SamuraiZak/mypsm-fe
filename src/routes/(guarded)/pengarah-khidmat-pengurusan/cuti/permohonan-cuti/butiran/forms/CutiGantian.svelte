@@ -1,7 +1,5 @@
 <script lang="ts">
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import { fileSelectionList } from '$lib/stores/globalState';
-    import { onMount } from 'svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
@@ -12,137 +10,51 @@
     import TugasTugasRasmiYangJatuhPadaHariCuti from './TugasTugasRasmiYangJatuhPadaHariCuti.svelte';
     import { jenisGantian } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/jenis-gantian';
     import { setengahHari } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/setengah-hari';
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { ZodError } from 'zod';
-    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import { Checkbox } from 'flowbite-svelte';
-    import { maklumatGantian } from '../form-schema';
+    import type { PageData } from './$types';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _replacementLeaveSchema1,
+        _replacementLeaveSchema2,
+        _replacementLeaveSchema3,
+        _replacementLeaveSchema4,
+        _submitReplacementLeaveForm,
+    } from '../+page';
 
-    export let selectedFiles: any = [];
-    export let disabled: boolean = true;
+    export let data: PageData;
     let selectedJenisGantian = '';
     let hasHalfDayStartDate: boolean = false;
     let hasHalfDayEndDate: boolean = false;
 
-    let target: any;
-    let texthidden = false;
-    let selectedNamaPengganti = namaPengganti[0].value;
-    let selectedSetengahHari = setengahHari[0].value;
+    // ==================================
+    // Form Validation ==================
+    // ==================================
+    const { form, errors, enhance, options } = superForm(
+        data.replacementLeaveForm,
+        {
+            SPA: true,
+            onSubmit() {
+                _submitReplacementLeaveForm(
+                    $form,
+                    hasHalfDayStartDate,
+                    hasHalfDayEndDate,
+                );
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+        },
+    );
 
-    onMount(() => {
-        target = document.getElementById('fileInput');
-    });
-
-    // Function to handle the file changes
-    function handleOnChange() {
-        texthidden = true;
-        const files = target.files;
-        if (files) {
-            for (let i = 0; i < files.length; i++) {
-                selectedFiles.push(files[i]);
-            }
-        }
-
-        fileSelectionList.set(selectedFiles);
+    $: if (hasHalfDayStartDate && !hasHalfDayEndDate) {
+        options.validators = _replacementLeaveSchema2;
+    } else if (hasHalfDayEndDate && !hasHalfDayStartDate) {
+        options.validators = _replacementLeaveSchema3;
+    } else if (hasHalfDayEndDate && hasHalfDayStartDate) {
+        options.validators = _replacementLeaveSchema4;
+    } else if (!hasHalfDayStartDate && !hasHalfDayEndDate) {
+        options.validators = _replacementLeaveSchema1;
     }
 
-    // Function to handle the file deletion
-    function handleDelete(index: number) {
-        selectedFiles.splice(index, 1);
-        fileSelectionList.set(selectedFiles);
-    }
-    // ================ Form Validation ================
-    let errorData: any;
-    export const submitForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-        const namaPengganti = document.getElementById(
-            'namaPengganti',
-        ) as HTMLSelectElement;
-        const getTarikhMulaSetengah = document.getElementById(
-            'tarikhMulaSetengah',
-        ) as HTMLSelectElement;
-        const getTarikhTamatSetengah = document.getElementById(
-            'tarikhTamatSetengah',
-        ) as HTMLSelectElement;
-
-        const maklumatGantianFormData = {
-            namaPengganti: String(namaPengganti.value),
-            tarikhMula: String(formData.get('tarikhMula')),
-            tarikhTamat: String(formData.get('tarikhTamat')),
-            cutiGantianTerakhir: String(formData.get('cutiGantianTerakhir')),
-        };
-
-        try {
-            let validatedData;
-            let result;
-            if (hasHalfDayStartDate && !hasHalfDayEndDate) {
-                const tarikhMulaSetengah = String(getTarikhMulaSetengah.value);
-
-                const validatedFormData = {
-                    ...maklumatGantianFormData,
-                    tarikhMulaSetengah,
-                };
-                validatedData = validatedFormData;
-                result = maklumatGantian.parse(validatedFormData);
-            } else if (hasHalfDayEndDate && !hasHalfDayStartDate) {
-                const tarikhTamatSetengah = String(
-                    getTarikhTamatSetengah.value,
-                );
-
-                const validatedFormData = {
-                    ...maklumatGantianFormData,
-                    tarikhTamatSetengah,
-                };
-                validatedData = validatedFormData;
-                result = maklumatGantian.parse(validatedFormData);
-            } else if (hasHalfDayStartDate && hasHalfDayEndDate) {
-                const tarikhMulaSetengah = String(getTarikhMulaSetengah.value);
-                const tarikhTamatSetengah = String(
-                    getTarikhTamatSetengah.value,
-                );
-
-                const validatedFormData = {
-                    ...maklumatGantianFormData,
-                    tarikhMulaSetengah,
-                    tarikhTamatSetengah,
-                };
-                validatedData = validatedFormData;
-                result = maklumatGantian.parse(validatedFormData);
-            } else {
-                validatedData = maklumatGantianFormData;
-                result = maklumatGantian.parse(maklumatGantianFormData);
-            }
-
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedFormData = {
-                    ...validatedData,
-                    id,
-                };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
 </script>
 
 <section
@@ -153,25 +65,26 @@
         <CustomTabContent title="Maklumat Gantian">
             <SectionHeader title="Cuti Gantian"></SectionHeader>
             <div
-                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 pb-5"
             >
                 <form
                     id="formValidation"
-                    on:submit|preventDefault={submitForm}
+                    method="POST"
+                    use:enhance
                     class="flex w-full flex-col gap-2"
                 >
                     <DropdownSelect
-                        hasError={errorData?.namaPengganti}
-                        id="namaPengganti"
+                        hasError={$errors.substituteName ? true : false}
+                        id="substituteName"
                         options={namaPengganti}
-                        bind:index={selectedNamaPengganti}
+                        bind:value={$form.substituteName}
                         dropdownType="label-left-full"
                         label="Nama Pengganti / Gred"
                     ></DropdownSelect>
-                    {#if errorData?.namaPengganti}
+                    {#if $errors.substituteName}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.namaPengganti[0]}</span
+                            >{$errors.substituteName}</span
                         >
                     {/if}
                     <div
@@ -179,15 +92,16 @@
                     >
                         <div class="flex w-full flex-col">
                             <DateSelector
-                                hasError={errorData?.tarikhMula}
-                                name="tarikhMula"
+                                hasError={$errors.startDate ? true : false}
+                                name="startDate"
                                 handleDateChange
+                                bind:selectedDate={$form.startDate}
                                 label="Tarikh Mula"
                             ></DateSelector>
-                            {#if errorData?.tarikhMula}
+                            {#if $errors.startDate}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.tarikhMula[0]}</span
+                                    >{$errors.startDate}</span
                                 >
                             {/if}
                         </div>
@@ -203,18 +117,20 @@
                         >
                         <div class="flex w-full flex-col">
                             <DropdownSelect
-                                hasError={errorData?.tarikhMulaSetengah}
+                                hasError={$errors.halfDayStartDate
+                                    ? true
+                                    : false}
+                                id="halfDayStartDate"
                                 disabled={!hasHalfDayStartDate}
-                                id="tarikhMulaSetengah"
                                 options={setengahHari}
-                                bind:index={selectedSetengahHari}
+                                bind:value={$form.halfDayStartDate}
                                 dropdownType="noLabel"
                                 label=""
                             ></DropdownSelect>
-                            {#if errorData?.tarikhMulaSetengah}
+                            {#if $errors.halfDayStartDate}
                                 <span
                                     class="font-sans text-sm italic text-system-danger"
-                                    >{errorData?.tarikhMulaSetengah[0]}</span
+                                    >{$errors.halfDayStartDate}</span
                                 >
                             {/if}
                         </div>
@@ -224,18 +140,20 @@
                     >
                         <div class="flex w-full flex-col">
                             <DateSelector
-                                hasError={errorData?.tarikhTamat}
-                                name="tarikhTamat"
+                                hasError={$errors.endDate ? true : false}
+                                name="endDate"
                                 handleDateChange
                                 label="Tarikh Tamat"
+                                bind:selectedDate={$form.endDate}
                             ></DateSelector>
-                            {#if errorData?.tarikhTamat}
+                            {#if $errors.endDate}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.tarikhTamat[0]}</span
+                                    >{$errors.endDate}</span
                                 >
                             {/if}
                         </div>
+
                         <Checkbox
                             name="hasHalfDayEndDate"
                             bind:checked={hasHalfDayEndDate}
@@ -248,18 +166,18 @@
                         >
                         <div class="flex w-full flex-col">
                             <DropdownSelect
-                                hasError={errorData?.tarikhTamatSetengah}
+                                hasError={$errors.halfDayEndDate ? true : false}
+                                id="halfDayEndDate"
                                 disabled={!hasHalfDayEndDate}
-                                id="tarikhTamatSetengah"
                                 options={setengahHari}
-                                bind:index={selectedSetengahHari}
+                                bind:value={$form.halfDayEndDate}
                                 dropdownType="noLabel"
                                 label=""
                             ></DropdownSelect>
-                            {#if errorData?.tarikhTamatSetengah}
+                            {#if $errors.halfDayEndDate}
                                 <span
                                     class="font-sans text-sm italic text-system-danger"
-                                    >{errorData?.tarikhTamatSetengah[0]}</span
+                                    >{$errors.halfDayEndDate}</span
                                 >
                             {/if}
                         </div>
@@ -270,15 +188,16 @@
                         value="2"
                     ></TextField>
                     <DateSelector
-                        hasError={errorData?.cutiGantianTerakhir}
-                        name="cutiGantianTerakhir"
+                        hasError={$errors.latestReplacementLeave ? true : false}
+                        name="latestReplacementLeave"
                         handleDateChange
                         label="Cuti Gantian Terakhir Diambil Pada"
+                        bind:selectedDate={$form.latestReplacementLeave}
                     ></DateSelector>
-                    {#if errorData?.cutiGantianTerakhir}
+                    {#if $errors.latestReplacementLeave}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.cutiGantianTerakhir[0]}</span
+                            >{$errors.latestReplacementLeave}</span
                         >
                     {/if}
                 </form>
@@ -298,9 +217,9 @@
                 ></DropdownSelect>
 
                 {#if selectedJenisGantian === 'Bekerja Lebih Masa'}
-                    <BekerjaLebihMasa></BekerjaLebihMasa>
+                    <BekerjaLebihMasa {data}></BekerjaLebihMasa>
                 {:else if selectedJenisGantian === 'Tugas-tugas Rasmi Yang Jatuh Pada Hari Cuti'}
-                    <TugasTugasRasmiYangJatuhPadaHariCuti
+                    <TugasTugasRasmiYangJatuhPadaHariCuti {data}
                     ></TugasTugasRasmiYangJatuhPadaHariCuti>
                 {/if}
             </div>

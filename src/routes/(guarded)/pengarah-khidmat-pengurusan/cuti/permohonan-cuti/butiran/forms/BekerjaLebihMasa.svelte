@@ -1,87 +1,27 @@
 <script lang="ts">
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import { fileSelectionList } from '$lib/stores/globalState';
-    import { onMount } from 'svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { z, ZodError } from 'zod';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import { _submitLeaveTypeForm, _leaveTypeSchema } from '../+page';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
-    import { overtimeSchema } from '../form-schema';
 
-    export let selectedFiles: any = [];
+    export let data: PageData;
 
-    let target: any;
-    let texthidden = false;
-
-    onMount(() => {
-        target = document.getElementById('fileInput');
+    // ==================================
+    // Form Validation ==================
+    // ==================================
+    const { form, errors, enhance } = superForm(data.leaveTypeForm, {
+        SPA: true,
+        validators: _leaveTypeSchema,
+        onSubmit() {
+            _submitLeaveTypeForm($form);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
     });
-
-    // Function to handle the file changes
-    function handleOnChange() {
-        texthidden = true;
-        const files = target.files;
-        if (files) {
-            for (let i = 0; i < files.length; i++) {
-                selectedFiles.push(files[i]);
-            }
-        }
-
-        fileSelectionList.set(selectedFiles);
-    }
-
-    // Function to handle the file deletion
-    function handleDelete(index: number) {
-        selectedFiles.splice(index, 1);
-        fileSelectionList.set(selectedFiles);
-    }
-
-    //  ===================== Form Validation ===========================
-    let errorData: any;
-
-    export const submitForm = async (event: Event) => {
-        const formDetail = new FormData(event.target as HTMLFormElement);
-
-        const formData = {
-            officialTask: String(formDetail.get('officialTask')),
-            placement: String(formDetail.get('placement')),
-            startTime: String(formDetail.get('startTime')),
-            endTime: String(formDetail.get('endTime')),
-            totalTime: String(formDetail.get('totalTime')),
-            date: String(formDetail.get('date')),
-        };
-
-        try {
-            const result = overtimeSchema.parse(formData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedFormData = { ...formData, id };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
 </script>
 
 <section
@@ -89,82 +29,83 @@
 >
     <SectionHeader title="Bekerja Lebih Masa"></SectionHeader>
     <form
-        id="formValidation"
-        on:submit|preventDefault={submitForm}
+        id="validateForm"
+        method="POST"
+        use:enhance
         class="flex w-full flex-col gap-2"
     >
         <LongTextField
-            hasError={errorData?.officialTask}
+            hasError={$errors.officialTask ? true : false}
             name="officialTask"
             label="Tugas-Tugas Rasmi Yang Dijalankan"
             placeholder="Sila taip jawapan anda dalam ruangan ini"
+            bind:value={$form.officialTask}
         ></LongTextField>
-        {#if errorData?.officialTask}
+        {#if $errors.officialTask}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{errorData?.officialTask[0]}</span
+                >{$errors.officialTask}</span
             >
         {/if}
         <DateSelector
-            hasError={errorData?.date}
+            hasError={$errors.date ? true : false}
             name="date"
             handleDateChange
             label="Tarikh"
+            bind:selectedDate={$form.date}
         ></DateSelector>
-        {#if errorData?.date}
+        {#if $errors.date}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{errorData?.date[0]}</span
+                >{$errors.date}</span
             >
         {/if}
         <TextField
-            hasError={errorData?.placement}
+            hasError={$errors.placement ? true : false}
             name="placement"
             label="Tempat Bekerja"
-            value=""
+            bind:value={$form.placement}
         ></TextField>
-        {#if errorData?.placement}
+        {#if $errors.placement}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{errorData?.placement[0]}</span
+                >{$errors.placement}</span
             >
         {/if}
         <div class="flex w-full flex-row items-center justify-start">
-            <label class="w-[220px] min-w-[220px] text-sm" for="appt"
-                >Waktu Mula</label
-            >
-            <input
+            <TextField
+                hasError={$errors.startTime ? true : false}
+                label="Waktu Mula"
+                type="time"
                 name="startTime"
-                class="border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm text-sm placeholder:text-txt-tertiary"
-                type="time"
+                bind:value={$form.startTime}
             />
         </div>
-        {#if errorData?.startTime}
+        {#if $errors.startTime}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{errorData?.startTime[0]}</span
+                >{$errors.startTime}</span
             >
         {/if}
         <div class="flex w-full flex-row items-center justify-start">
-            <label class="w-[220px] min-w-[220px] text-sm" for="appt"
-                >Waktu Tamat</label
-            >
-            <input
-                name="endTime"
-                class="border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm text-sm placeholder:text-txt-tertiary"
+            <TextField
+                hasError={$errors.endTime ? true : false}
+                label="Waktu Tamat"
                 type="time"
+                name="endTime"
+                bind:value={$form.endTime}
             />
         </div>
-        {#if errorData?.endTime}
+        {#if $errors.endTime}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{errorData?.endTime[0]}</span
+                >{$errors.endTime}</span
             >
         {/if}
         <TextField
-            hasError={errorData?.totalTime}
+            hasError={$errors.totalTime ? true : false}
             name="totalTime"
             label="Jumlah Jam"
-            value=""
+            bind:value={$form.totalTime}
         ></TextField>
-        {#if errorData?.totalTime}
+        {#if $errors.totalTime}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{errorData?.totalTime[0]}</span
+                >{$errors.totalTime}</span
             >
         {/if}
     </form>

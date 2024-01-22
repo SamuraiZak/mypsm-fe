@@ -26,6 +26,13 @@
     import SvgPdf from '$lib/assets/svg/SvgPDF.svelte';
     import { Badge, Tooltip } from 'flowbite-svelte';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
+    import { superForm } from 'sveltekit-superforms/client';
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { _keputusanPengesahan, _submitKeputusanPengesahan } from './+page';
+    import type { PageData } from './$types';
+
+    export let data: PageData;
+
 
     export let disabled: boolean = true;
     export let selectedFiles: any = [];
@@ -118,6 +125,15 @@
             }
         }
     }
+    const { form, errors, enhance } = superForm(data.keputusanPengesahan, {
+        SPA: true,
+        validators: _keputusanPengesahan,
+        onSubmit() {
+            _submitKeputusanPengesahan($form);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -526,11 +542,7 @@
             ><TextIconButton
                 primary
                 label="Hantar"
-                onClick={() => {
-                    goto(
-                        '/urus-setia/perjawatan/pengesahan-dalam-perkhidmatan',
-                    );
-                }}><SvgPaperAirplane /></TextIconButton
+                form="FormKeputusanPengesahan"><SvgPaperAirplane /></TextIconButton
             ></StepperContentHeader
         >
         <StepperContentBody
@@ -541,17 +553,41 @@
                     Sila Tetapkan Keputusan Pengesahan Dalam Perkhidmatan
                     (Pengarah Audit)
                 </p>
+                <form
+                id="FormKeputusanPengesahan"
+                class="flex w-full flex-col gap-2"
+                use:enhance
+                method="POST"
+            >
                 <p
                     class="mt-2 h-fit w-full bg-bgr-primary text-sm italic text-system-accent"
                 >
                     ● Keputusan akan dihantar ke peranan-peranan berkaitan
                 </p>
                 <LongTextField
-                    id="tindakanUlasan"
-                    label={'Tindakan/Ulasan'}
-                    value={'Memenuhi kriteria'}
-                ></LongTextField>
-                <RadioSingle options={perakuanOptions} />
+                hasError={$errors.tindakanUlasan ? true : false}
+                name="tindakanUlasan"
+                label={'Tindakan/Ulasan'}
+                bind:value={$form.tindakanUlasan}
+            ></LongTextField>
+            {#if $errors.tindakanUlasan}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.tindakanUlasan[0]}</span
+                >
+            {/if}
+            <RadioSingle
+            name="perakuan"
+            options={perakuanOptions}
+            bind:userSelected={$form.perakuan}
+        />
+        {#if $errors.perakuan}
+            <span
+                class="ml-[0px] font-sans text-sm italic text-system-danger"
+                >{$errors.perakuan[0]}</span
+            >
+        {/if}
+    </form>
             </div>
             <div class="flex w-full flex-col gap-2">
                 <p class="text-sm font-bold">
@@ -625,3 +661,4 @@
         >
     </StepperContent>
 </Stepper>
+<Toaster/>
