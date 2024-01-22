@@ -1,9 +1,6 @@
 <script lang="ts">
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import { fileSelectionList } from '$lib/stores/globalState';
-    import { onMount } from 'svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import { namaPengganti } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/nama-pengganti';
     import TextField from '$lib/components/input/TextField.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import { jenisCtr } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/jenis-ctr';
@@ -11,137 +8,50 @@
     import { ctr } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/ctr';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import { setengahHari } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/setengah-hari';
-    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import { Checkbox } from 'flowbite-svelte';
-    import { z, ZodError } from 'zod';
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { cutiTanpaRecord } from '../form-schema';
+    import type { PageData } from './$types';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _leaveWithoutRecordSchema1,
+        _leaveWithoutRecordSchema2,
+        _leaveWithoutRecordSchema3,
+        _leaveWithoutRecordSchema4,
+        _submitLeaveWithoutRecordForm,
+    } from '../+page';
 
-    export let selectedFiles: any = [];
-    export let disabled: boolean = true;
-    let selectedJenisCtr = '';
+    export let data: PageData;
+
     let hasHalfDayStartDate: boolean = false;
     let hasHalfDayEndDate: boolean = false;
 
-    let target: any;
-    let texthidden = false;
-    let selectedSetengahHari = setengahHari[0].value;
+    // ==================================
+    // Form Validation ==================
+    // ==================================
+    const { form, errors, enhance, options } = superForm(
+        data.leaveWithoutRecordForm,
+        {
+            SPA: true,
+            onSubmit() {
+                _submitLeaveWithoutRecordForm(
+                    $form,
+                    hasHalfDayStartDate,
+                    hasHalfDayEndDate,
+                );
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+        },
+    );
 
-    onMount(() => {
-        target = document.getElementById('fileInput');
-    });
-
-    // Function to handle the file changes
-    function handleOnChange() {
-        texthidden = true;
-        const files = target.files;
-        if (files) {
-            for (let i = 0; i < files.length; i++) {
-                selectedFiles.push(files[i]);
-            }
-        }
-
-        fileSelectionList.set(selectedFiles);
+    $: if (hasHalfDayStartDate && !hasHalfDayEndDate) {
+        options.validators = _leaveWithoutRecordSchema2;
+    } else if (hasHalfDayEndDate && !hasHalfDayStartDate) {
+        options.validators = _leaveWithoutRecordSchema3;
+    } else if (hasHalfDayEndDate && hasHalfDayStartDate) {
+        options.validators = _leaveWithoutRecordSchema4;
+    } else if (!hasHalfDayStartDate && !hasHalfDayEndDate) {
+        options.validators = _leaveWithoutRecordSchema1;
     }
-
-    // Function to handle the file deletion
-    function handleDelete(index: number) {
-        selectedFiles.splice(index, 1);
-        fileSelectionList.set(selectedFiles);
-    }
-    // ================ Form Validation ================
-    let errorData: any;
-    export const submitForm = async (event: Event) => {
-        const formDetail = new FormData(event.target as HTMLFormElement);
-        const ctrCategory = document.getElementById(
-            'ctrCategory',
-        ) as HTMLSelectElement;
-        const getTarikhMulaSetengah = document.getElementById(
-            'tarikhMulaSetengah',
-        ) as HTMLSelectElement;
-        const getTarikhTamatSetengah = document.getElementById(
-            'tarikhTamatSetengah',
-        ) as HTMLSelectElement;
-
-        const formData = {
-            ctrCategory: String(ctrCategory.value),
-            tujuanPermohonan: String(formDetail.get('tujuanPermohonan')),
-            tarikhMula: String(formDetail.get('tarikhMula')),
-            tarikhTamat: String(formDetail.get('tarikhTamat')),
-            totalDay: String(formDetail.get('totalDay')),
-        };
-
-        try {
-            let validatedData;
-            let result;
-            if (hasHalfDayStartDate && !hasHalfDayEndDate) {
-                const tarikhMulaSetengah = String(getTarikhMulaSetengah.value);
-
-                const validatedFormData = {
-                    ...formData,
-                    tarikhMulaSetengah,
-                };
-                validatedData = validatedFormData;
-                result = cutiTanpaRecord.parse(validatedFormData);
-            } else if (hasHalfDayEndDate && !hasHalfDayStartDate) {
-                const tarikhTamatSetengah = String(
-                    getTarikhTamatSetengah.value,
-                );
-
-                const validatedFormData = {
-                    ...formData,
-                    tarikhTamatSetengah,
-                };
-                validatedData = validatedFormData;
-                result = cutiTanpaRecord.parse(validatedFormData);
-            } else if (hasHalfDayStartDate && hasHalfDayEndDate) {
-                const tarikhMulaSetengah = String(getTarikhMulaSetengah.value);
-                const tarikhTamatSetengah = String(
-                    getTarikhTamatSetengah.value,
-                );
-
-                const validatedFormData = {
-                    ...formData,
-                    tarikhMulaSetengah,
-                    tarikhTamatSetengah,
-                };
-                validatedData = validatedFormData;
-                result = cutiTanpaRecord.parse(validatedFormData);
-            } else {
-                validatedData = formData;
-                result = cutiTanpaRecord.parse(formData);
-            }
-
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedFormData = {
-                    ...validatedData,
-                    id,
-                };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
 </script>
 
 <section>
@@ -151,49 +61,52 @@
         <SectionHeader title="Cuti Tanpa Rekod"></SectionHeader>
         <form
             id="formValidation"
-            on:submit|preventDefault={submitForm}
+            method="POST"
+            use:enhance
             class="flex w-full flex-col gap-2"
         >
             <DropdownSelect
-                hasError={errorData?.ctrCategory}
+                hasError={$errors.ctrCategory ? true : false}
                 id="ctrCategory"
                 label="Jenis CTR"
                 dropdownType="label-left-full"
-                bind:index={selectedJenisCtr}
+                bind:value={$form.ctrCategory}
                 options={jenisCtr}
             ></DropdownSelect>
-            {#if errorData?.ctrCategory}
+            {#if $errors.ctrCategory}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{errorData?.ctrCategory[0]}</span
+                    >{$errors.ctrCategory}</span
                 >
             {/if}
             <LongTextField
-                hasError={errorData?.tujuanPermohonan}
-                name="tujuanPermohonan"
+                hasError={$errors.applicationReason ? true : false}
+                name="applicationReason"
                 label="Tujuan Permohonan"
+                bind:value={$form.applicationReason}
                 placeholder="Sila taip jawapan anda dalam ruangan ini"
             ></LongTextField>
-            {#if errorData?.tujuanPermohonan}
+            {#if $errors.applicationReason}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{errorData?.tujuanPermohonan[0]}</span
+                    >{$errors.applicationReason}</span
                 >
             {/if}
             <div
-                class="flex w-full flex-row items-center justify-start gap-2.5"
+                class="flex  w-full  flex-row items-center justify-start gap-2.5"
             >
                 <div class="flex w-full flex-col">
                     <DateSelector
-                        hasError={errorData?.tarikhMula}
-                        name="tarikhMula"
+                        hasError={$errors.startDate ? true : false}
+                        name="startDate"
                         handleDateChange
+                        bind:selectedDate={$form.startDate}
                         label="Tarikh Mula"
                     ></DateSelector>
-                    {#if errorData?.tarikhMula}
+                    {#if $errors.startDate}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.tarikhMula[0]}</span
+                            >{$errors.startDate}</span
                         >
                     {/if}
                 </div>
@@ -209,77 +122,80 @@
                 >
                 <div class="flex w-full flex-col">
                     <DropdownSelect
-                        hasError={errorData?.tarikhMulaSetengah}
+                        hasError={$errors.halfDayStartDate ? true : false}
+                        id="halfDayStartDate"
                         disabled={!hasHalfDayStartDate}
-                        id="tarikhMulaSetengah"
                         options={setengahHari}
-                        bind:index={selectedSetengahHari}
+                        bind:value={$form.halfDayStartDate}
                         dropdownType="noLabel"
                         label=""
                     ></DropdownSelect>
-                    {#if errorData?.tarikhMulaSetengah}
+                    {#if $errors.halfDayStartDate}
                         <span
                             class="font-sans text-sm italic text-system-danger"
-                            >{errorData?.tarikhMulaSetengah[0]}</span
+                            >{$errors.halfDayStartDate}</span
                         >
                     {/if}
                 </div>
             </div>
             <div
-                class="flex w-full flex-row items-center justify-start gap-2.5"
+                class="flex  w-full  flex-row items-center justify-start gap-2.5"
             >
                 <div class="flex w-full flex-col">
                     <DateSelector
-                        hasError={errorData?.tarikhTamat}
-                        name="tarikhTamat"
+                        hasError={$errors.endDate ? true : false}
+                        name="endDate"
                         handleDateChange
                         label="Tarikh Tamat"
+                        bind:selectedDate={$form.endDate}
                     ></DateSelector>
-                    {#if errorData?.tarikhTamat}
+                    {#if $errors.endDate}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.tarikhTamat[0]}</span
+                            >{$errors.endDate}</span
                         >
                     {/if}
                 </div>
+
                 <Checkbox
                     name="hasHalfDayEndDate"
                     bind:checked={hasHalfDayEndDate}
                     class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
                 />
                 <label
-                    for="hasHalfDayEndDate"
+                    for="default-checkbox"
                     class="w-[100px] text-sm font-medium text-gray-900 dark:text-gray-300"
                     >Setengah Hari</label
                 >
                 <div class="flex w-full flex-col">
                     <DropdownSelect
-                        hasError={errorData?.tarikhTamatSetengah}
+                        hasError={$errors.halfDayEndDate ? true : false}
+                        id="halfDayEndDate"
                         disabled={!hasHalfDayEndDate}
-                        id="tarikhTamatSetengah"
                         options={setengahHari}
-                        bind:index={selectedSetengahHari}
+                        bind:value={$form.halfDayEndDate}
                         dropdownType="noLabel"
                         label=""
                     ></DropdownSelect>
-                    {#if errorData?.tarikhTamatSetengah}
+                    {#if $errors.halfDayEndDate}
                         <span
                             class="font-sans text-sm italic text-system-danger"
-                            >{errorData?.tarikhTamatSetengah[0]}</span
+                            >{$errors.halfDayEndDate}</span
                         >
                     {/if}
                 </div>
             </div>
+
             <TextField
-                hasError={errorData?.totalDay}
+                hasError={$errors.totalDay ? true : false}
                 name="totalDay"
                 label="Bilangan Hari"
-                value="2"
+                bind:value={$form.totalDay}
             ></TextField>
-            {#if errorData?.totalDay}
+            {#if $errors.totalDay}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{errorData?.totalDay[0]}</span
+                    >{$errors.totalDay}</span
                 >
             {/if}
         </form>

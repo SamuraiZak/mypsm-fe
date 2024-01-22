@@ -36,8 +36,11 @@
     import { onMount } from 'svelte';
     import { fileSelectionList } from '$lib/stores/globalState';
     import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
-    import { uploadedFileSchema } from './form-schema';
     import { ZodError } from 'zod';
+    // import { data } from '../../../../urus-setia/integriti/prosiding/butiran-prosiding-[prosidingId]-[ic]/+page.svelte';
+    import type { PageData } from './$types';
+
+    export let data: PageData;
 
     let selectedCuti = '';
 
@@ -88,33 +91,7 @@
         fileSelectionList.set(selectedFiles);
     }
 
-    // ============== Form Validation ================
-    let errorData: any;
-    //File uploaded validation
-    const submitFilesForm = async () => {
-        let uploadedFiles = selectedFiles;
-        const uploadedFileData = {
-            uploadedFiles: uploadedFiles,
-        };
 
-        try {
-            const result = uploadedFileSchema.parse(uploadedFileData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-            }
-        } catch (error: unknown) {
-            if (error instanceof ZodError) {
-                const { fieldErrors: errors } = error.flatten();
-                errorData = errors;
-                toast.error('Sila pastikan dokumen telah dimuat naik.', {
-                    style: 'background: #333; color: #fff;',
-                });
-            }
-        }
-    };
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -208,39 +185,39 @@
                     ></DropdownSelect>
 
                     {#if selectedCuti === 'Cuti Gantian'}
-                        <CutiGantian></CutiGantian>
+                        <CutiGantian {data}></CutiGantian>
                     {:else if selectedCuti === 'Cuti Tanpa Rekod'}
-                        <CutiTanpaRekod></CutiTanpaRekod>
+                        <CutiTanpaRekod {data}></CutiTanpaRekod>
                     {:else if selectedCuti === 'Cuti Separuh Gaji'}
-                        <CutiSeparuhGaji></CutiSeparuhGaji>
+                        <CutiSeparuhGaji {data}></CutiSeparuhGaji>
                     {:else if selectedCuti === 'Cuti Tanpa Gaji'}
-                        <CutiTanpaGaji></CutiTanpaGaji>
+                        <CutiTanpaGaji {data}></CutiTanpaGaji>
                     {:else if selectedCuti === 'Cuti Bersalin Awal'}
-                        <CutiBersalinAwal></CutiBersalinAwal>
+                        <CutiBersalinAwal {data}></CutiBersalinAwal>
                     {:else if selectedCuti === 'Cuti Bersalin Pegawai'}
-                        <CutiBersalinPegawai></CutiBersalinPegawai>
+                        <CutiBersalinPegawai {data}></CutiBersalinPegawai>
                     {:else if selectedCuti === 'Cuti Isteri Bersalin'}
-                        <CutiIsteriBersalin></CutiIsteriBersalin>
+                        <CutiIsteriBersalin {data}></CutiIsteriBersalin>
                     {:else if selectedCuti === 'Cuti Haji'}
-                        <CutiHaji></CutiHaji>
+                        <CutiHaji {data}></CutiHaji>
                     {:else if selectedCuti === 'Cuti Kuarantin'}
-                        <CutiKuarantin></CutiKuarantin>
+                        <CutiKuarantin {data}></CutiKuarantin>
                     {:else if selectedCuti === 'Cuti Menjaga Anak Tanpa Gaji'}
-                        <CutiMenjagaAnakTanpaGaji></CutiMenjagaAnakTanpaGaji>
+                        <CutiMenjagaAnakTanpaGaji {data}></CutiMenjagaAnakTanpaGaji>
                     {:else if selectedCuti === 'Cuti Kursus Sambilan'}
-                        <CutiKursusSambilan></CutiKursusSambilan>
+                        <CutiKursusSambilan {data}></CutiKursusSambilan>
                     {:else if selectedCuti === 'Cuti Perakuan Tidak Hadir Ke Pejabat'}
-                        <CutiPerakuanTidakHadirKePejabat
+                        <CutiPerakuanTidakHadirKePejabat {data}
                         ></CutiPerakuanTidakHadirKePejabat>
                     {:else if selectedCuti === 'Cuti Sakit Lanjutan'}
-                        <CutiSakitLanjutan></CutiSakitLanjutan>
+                        <CutiSakitLanjutan {data}></CutiSakitLanjutan>
                     {:else if selectedCuti === 'Cuti Tanpa Gaji Mengikut Pasangan'}
-                        <CutiTanpaGajiMengikutPasangan
+                        <CutiTanpaGajiMengikutPasangan {data}
                         ></CutiTanpaGajiMengikutPasangan>
                     {:else if selectedCuti === 'Cuti Penyakit Barah Dan Kusta'}
-                        <CutiPenyakitBarahDanKusta></CutiPenyakitBarahDanKusta>
+                        <CutiPenyakitBarahDanKusta {data}></CutiPenyakitBarahDanKusta>
                     {:else if selectedCuti === 'Cuti Penyakit Tibi'}
-                        <CutiPenyakitTibi></CutiPenyakitTibi>
+                        <CutiPenyakitTibi {data}></CutiPenyakitTibi>
                     {/if}
                 </div></StepperContentBody
             >
@@ -250,7 +227,7 @@
             ><TextIconButton
             primary
             label="Hantar"
-            onClick={() => submitFilesForm()}
+            onClick={()=>{}}
         ><SvgPaperAirplane/></TextIconButton></StepperContentHeader>
         <StepperContentBody>
             <div class="flex w-full flex-col"></div>
@@ -261,12 +238,7 @@
                 </div></SectionHeader
             >
             <div class="w-full">
-                {#if errorData?.uploadedFiles}
-                    <span
-                        class="font-sans text-sm italic text-system-danger"
-                        >{errorData?.uploadedFiles[0]}</span
-                    >
-                {/if}
+                
             </div>
             <div
                 class="border-bdr-primaryp-5 flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border p-2.5"
