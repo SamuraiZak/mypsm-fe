@@ -1,3 +1,4 @@
+import { getPromiseToast } from '$lib/toast/toast-service';
 import { fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
@@ -47,23 +48,22 @@ export const _submitFormStepperPermohonanPersaraan = async (
             style: 'background: #333; color: #fff;',
         });
         return fail(400, stepperPermohonanPersaraan);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
+    }
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
             method: 'POST',
-            body: JSON.stringify(stepperPermohonanPersaraan),
+            body: JSON.stringify(_stepperPermohonanPersaraan),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log('Response Returned: PermohonanPersaraan-54', json);
-            });
-    }
+        },
+    )
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise);
     return { stepperPermohonanPersaraan };
 };
 
