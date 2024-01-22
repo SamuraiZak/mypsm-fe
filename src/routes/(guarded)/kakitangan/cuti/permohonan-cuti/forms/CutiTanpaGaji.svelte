@@ -7,104 +7,47 @@
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { setengahHari } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/setengah-hari';
-    import { z, ZodError } from 'zod';
-    import toast from 'svelte-french-toast';
-    import { globalCuti } from '../schema';
     import { Checkbox } from 'flowbite-svelte';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import {
+        _hasApplicationReasonSchema,
+        _halfSalaryLeaveSchema,
+        _halfSalaryLeaveSchema2,
+        _halfSalaryLeaveSchema3,
+        _submitHalfSalaryLeaveForm,
+    } from '../+page';
 
-    let selectedSetengahHari = setengahHari[0].value;
+    export let data: PageData;
     let hasHalfDayStartDate: boolean = false;
     let hasHalfDayEndDate: boolean = false;
 
     // ============== Form Validation
-    let errorData: any;
-    export const submitForm = async (event: Event) => {
-        const formDetail = new FormData(event.target as HTMLFormElement);
-        const getTarikhMulaSetengah = document.getElementById(
-            'tarikhMulaSetengah',
-        ) as HTMLSelectElement;
-        const getTarikhTamatSetengah = document.getElementById(
-            'tarikhTamatSetengah',
-        ) as HTMLSelectElement;
-
-        const formData = {
-            tujuanPermohonan: String(formDetail.get('tujuanPermohonan')),
-            tarikhMula: String(formDetail.get('tarikhMula')),
-            tarikhTamat: String(formDetail.get('tarikhTamat')),
-            totalDay: String(formDetail.get('totalDay')),
-        };
-
-        try {
-            let validatedData;
-            let result;
-            if (hasHalfDayStartDate && !hasHalfDayEndDate) {
-                const tarikhMulaSetengah = String(getTarikhMulaSetengah.value);
-
-                const validatedFormData = {
-                    ...formData,
-                    tarikhMulaSetengah,
-                };
-                validatedData = validatedFormData;
-                result = globalCuti.parse(validatedFormData);
-            } else if (hasHalfDayEndDate && !hasHalfDayStartDate) {
-                const tarikhTamatSetengah = String(
-                    getTarikhTamatSetengah.value,
+    const { form, errors, enhance, options } = superForm(
+        data.leaveWithoutRecordForm,
+        {
+            SPA: true,
+            onSubmit() {
+                _submitHalfSalaryLeaveForm(
+                    $form,
+                    hasHalfDayStartDate,
+                    hasHalfDayEndDate,
                 );
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+        },
+    );
 
-                const validatedFormData = {
-                    ...formData,
-                    tarikhTamatSetengah,
-                };
-                validatedData = validatedFormData;
-                result = globalCuti.parse(validatedFormData);
-            } else if (hasHalfDayStartDate && hasHalfDayEndDate) {
-                const tarikhMulaSetengah = String(getTarikhMulaSetengah.value);
-                const tarikhTamatSetengah = String(
-                    getTarikhTamatSetengah.value,
-                );
-
-                const validatedFormData = {
-                    ...formData,
-                    tarikhMulaSetengah,
-                    tarikhTamatSetengah,
-                };
-                validatedData = validatedFormData;
-                result = globalCuti.parse(validatedFormData);
-            } else {
-                validatedData = formData;
-                result = globalCuti.parse(formData);
-            }
-
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedFormData = {
-                    ...validatedData,
-                    id,
-                };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
+    $: if (hasHalfDayStartDate && !hasHalfDayEndDate) {
+        options.validators = _halfSalaryLeaveSchema;
+    } else if (hasHalfDayEndDate && !hasHalfDayStartDate) {
+        options.validators = _halfSalaryLeaveSchema2;
+    } else if (hasHalfDayEndDate && hasHalfDayStartDate) {
+        options.validators = _halfSalaryLeaveSchema3;
+    } else if (!hasHalfDayStartDate && !hasHalfDayEndDate) {
+        options.validators = _hasApplicationReasonSchema;
+    }
 </script>
 
 <section>
@@ -114,19 +57,21 @@
         <SectionHeader title="Cuti Tanpa Gaji"></SectionHeader>
         <form
             id="formValidation"
-            on:submit|preventDefault={submitForm}
+            method="POST"
+            use:enhance
             class="flex w-full flex-col gap-2"
         >
             <LongTextField
-                hasError={errorData?.tujuanPermohonan}
-                name="tujuanPermohonan"
+                hasError={$errors.applicationReason ? true : false}
+                name="applicationReason"
                 label="Tujuan Permohonan"
+                bind:value={$form.applicationReason}
                 placeholder="Sila taip jawapan anda dalam ruangan ini"
             ></LongTextField>
-            {#if errorData?.tujuanPermohonan}
+            {#if $errors.applicationReason}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{errorData?.tujuanPermohonan[0]}</span
+                    >{$errors.applicationReason}</span
                 >
             {/if}
             <div
@@ -134,15 +79,16 @@
             >
                 <div class="flex w-full flex-col">
                     <DateSelector
-                        hasError={errorData?.tarikhMula}
-                        name="tarikhMula"
+                        hasError={$errors.startDate ? true : false}
+                        name="startDate"
                         handleDateChange
+                        bind:selectedDate={$form.startDate}
                         label="Tarikh Mula"
                     ></DateSelector>
-                    {#if errorData?.tarikhMula}
+                    {#if $errors.startDate}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.tarikhMula[0]}</span
+                            >{$errors.startDate}</span
                         >
                     {/if}
                 </div>
@@ -158,18 +104,18 @@
                 >
                 <div class="flex w-full flex-col">
                     <DropdownSelect
-                        hasError={errorData?.tarikhMulaSetengah}
+                        hasError={$errors.halfDayStartDate ? true : false}
+                        id="halfDayStartDate"
                         disabled={!hasHalfDayStartDate}
-                        id="tarikhMulaSetengah"
                         options={setengahHari}
-                        bind:index={selectedSetengahHari}
+                        bind:value={$form.halfDayStartDate}
                         dropdownType="noLabel"
                         label=""
                     ></DropdownSelect>
-                    {#if errorData?.tarikhMulaSetengah}
+                    {#if $errors.halfDayStartDate}
                         <span
                             class="font-sans text-sm italic text-system-danger"
-                            >{errorData?.tarikhMulaSetengah[0]}</span
+                            >{$errors.halfDayStartDate}</span
                         >
                     {/if}
                 </div>
@@ -179,15 +125,16 @@
             >
                 <div class="flex w-full flex-col">
                     <DateSelector
-                        hasError={errorData?.tarikhTamat}
-                        name="tarikhTamat"
+                        hasError={$errors.endDate ? true : false}
+                        name="endDate"
                         handleDateChange
                         label="Tarikh Tamat"
+                        bind:selectedDate={$form.endDate}
                     ></DateSelector>
-                    {#if errorData?.tarikhTamat}
+                    {#if $errors.endDate}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.tarikhTamat[0]}</span
+                            >{$errors.endDate}</span
                         >
                     {/if}
                 </div>
@@ -203,32 +150,32 @@
                 >
                 <div class="flex w-full flex-col">
                     <DropdownSelect
-                        hasError={errorData?.tarikhTamatSetengah}
+                        hasError={$errors.halfDayEndDate ? true : false}
+                        id="halfDayEndDate"
                         disabled={!hasHalfDayEndDate}
-                        id="tarikhTamatSetengah"
                         options={setengahHari}
-                        bind:index={selectedSetengahHari}
+                        bind:value={$form.halfDayEndDate}
                         dropdownType="noLabel"
                         label=""
                     ></DropdownSelect>
-                    {#if errorData?.tarikhTamatSetengah}
+                    {#if $errors.halfDayEndDate}
                         <span
                             class="font-sans text-sm italic text-system-danger"
-                            >{errorData?.tarikhTamatSetengah[0]}</span
+                            >{$errors.halfDayEndDate}</span
                         >
                     {/if}
                 </div>
             </div>
             <TextField
-                hasError={errorData?.totalDay}
+                hasError={$errors.totalDay ? true : false}
                 name="totalDay"
                 label="Bilangan Hari"
-                value="2"
+                bind:value={$form.totalDay}
             ></TextField>
-            {#if errorData?.totalDay}
+            {#if $errors.totalDay}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{errorData?.totalDay[0]}</span
+                    >{$errors.totalDay}</span
                 >
             {/if}
         </form>
