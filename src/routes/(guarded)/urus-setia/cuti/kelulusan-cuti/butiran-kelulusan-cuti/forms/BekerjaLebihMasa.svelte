@@ -6,7 +6,6 @@
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import { _submitLeaveTypeForm, _leaveTypeSchema } from '../+page';
-    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
 
     export let data: PageData;
 

@@ -37,6 +37,7 @@
     import type { PageData } from './$types';
     import { superForm } from 'sveltekit-superforms/client';
     import { _staffDetailSchema, _submitStaffDetailForm } from './+page';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
 
     export let data: PageData;
     export let disabled: boolean = false;
@@ -126,7 +127,7 @@
     <StepperContent>
         <StepperContentHeader title="Maklumat Kakitangan"
             ><TextIconButton label="Simpan" primary form="staffDetailForm"
-            ></TextIconButton></StepperContentHeader
+            ><SvgCheck/></TextIconButton></StepperContentHeader
         >
 
         <!-- ========== STEPPER 1 ========== -->
