@@ -1,7 +1,9 @@
+import { getErrorToast, getPromiseToast } from '$lib/toast/toast-service';
 import { fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
+import { _updateSupporterAndApproverForm } from '../../pemangkuan/gred-utama/baru/+page';
 
 // RetirementVerification
 const longTextFieldRV = z
@@ -88,30 +90,24 @@ export const _submitFormStepperUpdateApplicationDeliveryInformation = async (
     );
 
     if (!stepperUpdateApplicationDeliveryInformation.valid) {
-        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
-            style: 'background: #333; color: #fff;',
-        });
+        getErrorToast();
         return fail(400, stepperUpdateApplicationDeliveryInformation);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
+    }
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
             method: 'POST',
-            body: JSON.stringify(stepperUpdateApplicationDeliveryInformation),
+            body: JSON.stringify(_stepperUpdateApplicationDeliveryInformation),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log(
-                    'Response Returned: UpdateApplicationDeliveryInformation-54',
-                    json,
-                );
-            });
-    }
+        },
+    )
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise);
     return { stepperUpdateApplicationDeliveryInformation };
 };
 
