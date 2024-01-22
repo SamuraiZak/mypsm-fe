@@ -1,5 +1,5 @@
-import { error, fail } from '@sveltejs/kit';
-import toast from 'svelte-french-toast';
+import { fail } from '@sveltejs/kit';
+import { getErrorToast, getPromiseToast } from '$lib/toast/toast-service';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
@@ -26,12 +26,8 @@ export const _actingDirectorResultSchema = z.object({
     }),
 });
 
-export const load = async ({ fetch }) => {
-    const request = await fetch(`https://jsonplaceholder.typicode.com/users/`);
-    if (request.status >= 400) error;
-
-    const userData = await request.json();
-    const form = await superValidate(userData, _actingDirectorResultSchema);
+export const load = async () => {
+    const form = await superValidate(_actingDirectorResultSchema);
 
     return { form };
 };
@@ -42,26 +38,20 @@ export const _submitActingDirectorResultForm = async (event: Event) => {
     const form = await superValidate(formData, _actingDirectorResultSchema);
 
     if (!form.valid) {
-        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
-            style: 'background: #333; color: #fff;',
-        });
+        getErrorToast();
         return fail(400, form);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(form),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log('Response Returned: 1-54', json);
-            });
     }
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(form),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise)
     return { form };
 };
