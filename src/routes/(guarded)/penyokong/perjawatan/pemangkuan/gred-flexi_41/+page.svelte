@@ -1,7 +1,6 @@
 <script lang="ts">
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
-    import { goto } from '$app/navigation';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
@@ -61,14 +60,11 @@
 
     let selectedMeetingType: string = meetings[0].value;
     let selectedSalaryMonth: string = '1';
-    let selectedGred: string = greds[0].value;
 
     export let selectedFiles: any = [];
     let target: any;
     let texthidden = false;
 
-    let radioChosen: string = '';
-    let textFieldValue: string = 'Butiran Lengkap...';
     const supportOptions: RadioOption[] = [
         {
             value: 'true',
@@ -150,6 +146,9 @@
     const { form, errors, enhance } = superForm(data.form, {
         SPA: true,
         validators: _actingSupporterResultSchema,
+        onSubmit(){
+            _submitActingSupporterResultForm($form)
+        },
         taintedMessage:
             'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
     });
@@ -1558,7 +1557,6 @@
                         method="POST"
                         id="formValidation"
                         use:enhance
-                        on:submit|preventDefault={_submitActingSupporterResultForm}
                         class="flex w-full flex-col gap-2"
                     >
                         <LongTextField
