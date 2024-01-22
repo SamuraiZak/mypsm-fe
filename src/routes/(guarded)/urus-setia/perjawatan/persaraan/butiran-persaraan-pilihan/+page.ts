@@ -1,3 +1,4 @@
+import { getPromiseToast } from '$lib/toast/toast-service';
 import { fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
@@ -36,26 +37,22 @@ export const _submitFormStepperVerificationRetirementApplication = async (
             style: 'background: #333; color: #fff;',
         });
         return fail(400, stepperVerificationRetirementApplication);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
+    }
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
             method: 'POST',
-            body: JSON.stringify(stepperVerificationRetirementApplication),
+            body: JSON.stringify(_stepperVerificationRetirementApplication),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log(
-                    'Response Returned: VerificationRetirementApplication-54',
-                    json,
-                );
-            });
-    }
+        },
+    )
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise);
     return { stepperVerificationRetirementApplication };
 };
 
@@ -70,9 +67,7 @@ export const _stepperSupporterApprover = z.object({
     approverOption: dropdownSA,
 });
 
-export const _submitFormStepperSupporterApprover = async (
-    formData: object,
-) => {
+export const _submitFormStepperSupporterApprover = async (formData: object) => {
     const stepperSupporterApprover = await superValidate(
         formData,
         _stepperSupporterApprover,
@@ -83,26 +78,22 @@ export const _submitFormStepperSupporterApprover = async (
             style: 'background: #333; color: #fff;',
         });
         return fail(400, stepperSupporterApprover);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
+    }
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
             method: 'POST',
-            body: JSON.stringify(stepperSupporterApprover),
+            body: JSON.stringify(_stepperSupporterApprover),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log(
-                    'Response Returned: SupporterApprover-54',
-                    json,
-                );
-            });
-    }
+        },
+    )
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise);
     return { stepperSupporterApprover };
 };
 
@@ -139,26 +130,22 @@ export const _submitFormStepperRetirementApplicationApproval = async (
             style: 'background: #333; color: #fff;',
         });
         return fail(400, stepperRetirementApplicationApproval);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
+    }
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
             method: 'POST',
-            body: JSON.stringify(stepperRetirementApplicationApproval),
+            body: JSON.stringify(_stepperRetirementApplicationApproval),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log(
-                    'Response Returned: RetirementApplicationApproval-54',
-                    json,
-                );
-            });
-    }
+        },
+    )
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise);
     return { stepperRetirementApplicationApproval };
 };
 
@@ -195,26 +182,22 @@ export const _submitFormStepperVerificationRetirementDocuments = async (
             style: 'background: #333; color: #fff;',
         });
         return fail(400, stepperVerificationRetirementDocuments);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
+    }
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
             method: 'POST',
-            body: JSON.stringify(stepperVerificationRetirementDocuments),
+            body: JSON.stringify(_stepperVerificationRetirementDocuments),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log(
-                    'Response Returned: VerificationRetirementDocuments-54',
-                    json,
-                );
-            });
-    }
+        },
+    )
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise);
     return { stepperVerificationRetirementDocuments };
 };
 
@@ -251,26 +234,22 @@ export const _submitFormStepperUpdateApplicationDeliveryInformation = async (
             style: 'background: #333; color: #fff;',
         });
         return fail(400, stepperUpdateApplicationDeliveryInformation);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
+    }
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
             method: 'POST',
-            body: JSON.stringify(stepperUpdateApplicationDeliveryInformation),
+            body: JSON.stringify(_stepperUpdateApplicationDeliveryInformation),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log(
-                    'Response Returned: UpdateApplicationDeliveryInformation-54',
-                    json,
-                );
-            });
-    }
+        },
+    )
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise);
     return { stepperUpdateApplicationDeliveryInformation };
 };
 
