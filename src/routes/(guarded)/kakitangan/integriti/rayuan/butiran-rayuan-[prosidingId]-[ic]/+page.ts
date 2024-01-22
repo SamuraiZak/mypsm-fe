@@ -1,3 +1,8 @@
+import toast from 'svelte-french-toast';
+import { superValidate } from 'sveltekit-superforms/client';
+import { z } from 'zod';
+import { getPromiseToast, getErrorToast } from '$lib/toast/toast-service';
+import { error, fail } from '@sveltejs/kit';
 import { mockEmploymentPositionHistories } from '$lib/mocks/database/employmentPositionHistories';
 import { mockCurrentService } from '$lib/mocks/database/mockCurrentService';
 import { mockEmployeeDocumentLists } from '$lib/mocks/database/mockEmployeeDocumentLists';
@@ -16,6 +21,33 @@ import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
 import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
 import { mockProsiding } from '$lib/mocks/integriti/prosiding/mockProsiding.js';
 import { getEmployees } from '$lib/service/employees/staff-service.js';
+
+const dateScheme = z.coerce
+    .date({
+        errorMap: (issue, { defaultError }) => ({
+            message:
+                issue.code === 'invalid_date'
+                    ? 'Tarikh tidak boleh dibiar kosong.'
+                    : defaultError,
+        }),
+    })
+    .min(new Date(), {
+        message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+    });
+
+
+const generalSelectSchema = z.string().min(1, { message: "Sila tetapkan pilihan anda. " });
+
+export const _stepperMesyuaratKeputusanJawatan = z.object({
+    tarikhMesyuarat: dateScheme,
+    bilMesyuarat: generalSelectSchema,
+    namaMesyuarat: generalSelectSchema,
+
+});
+// appealMeetingResult: generalSelectSchema,
+
+
+
 
 export async function load({ params }) {
     const proceedingData: IntProsiding[] = await mockProsiding;
@@ -102,6 +134,9 @@ export async function load({ params }) {
             return document.employeeId === currentEmployee?.id;
         },
     )!;
+    const mesyuaratKeputusanJawatanForm = await superValidate(
+        _stepperMesyuaratKeputusanJawatan
+    )
 
     if (!currentEmployee) throw new Error('Record not found');
 
@@ -127,5 +162,35 @@ export async function load({ params }) {
             currentEmployeeNextOfKins,
             currentEmployeeUploadedDocuments,
         },
+        mesyuaratKeputusanJawatanForm,
+
     };
 }
+
+export const _submitMesyuaratKeputusanJawatanForm = async (formData: Object) => {
+    const mesyuaratKeputusanJawatanForm = await superValidate(formData, _stepperMesyuaratKeputusanJawatan);
+
+    if (!mesyuaratKeputusanJawatanForm.valid) {
+        getErrorToast();
+        return fail(400, mesyuaratKeputusanJawatanForm);
+    }
+
+
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(mesyuaratKeputusanJawatanForm),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+
+    getPromiseToast(responsePromise)
+
+
+
+    return { mesyuaratKeputusanJawatanForm };
+};

@@ -26,7 +26,16 @@
     import PunishmentFormGroup from '$lib/components/integriti-charges-form-group/PunishmentFormGroup.svelte';
     import AddPunishmentFromGroup from '$lib/components/integriti-charges-form-group/AddPunishmentFromGroup.svelte';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper.js';
-    export let data;
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _stepperMesyuaratKeputusanJawatan,
+        _submitMesyuaratKeputusanJawatanForm,
+    } from './+page';
+    import type { PageData } from './$types';
+
+
+    export let data:PageData;
     let activeStepper = 0;
     let disabled = true;
     let isCompleted: boolean = true;
@@ -191,6 +200,22 @@
             }
         }
     }
+
+    const { form, errors, enhance } = superForm(
+        data.mesyuaratKeputusanJawatanForm,
+        {
+            SPA: true,
+            validators: _stepperMesyuaratKeputusanJawatan,
+            onSubmit() {
+                _submitMesyuaratKeputusanJawatanForm($form);
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+        },
+    );
+    let errorData: any;
+
+
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -922,7 +947,12 @@
         <StepperContent>
             <StepperContentHeader
                 title="Mesyuarat Keputusan Jawatankuasa Rayuan Tatatertib"
-            ></StepperContentHeader>
+            >
+            <TextIconButton
+            primary
+            label="Simpan"
+            form="FormMesyuaratKeputusanJawantanKuasa"
+        /></StepperContentHeader>
             <StepperContentBody>
                 <div class="flex w-full flex-row items-center">
                     <label
@@ -932,36 +962,66 @@
                     </label>
                     <Checkbox bind:checked={appealHasBeenMade} />
                 </div>
+                <form
+                id="FormMesyuaratKeputusanJawantanKuasa"
+                class="flex w-full flex-col gap-2"
+                use:enhance
+                method="POST"
+            >
                 {#if appealHasBeenMade}
                     <SectionHeader
                         color="system-primary"
                         title="Maklumat Mesyuarat"
                     />
+
+
                     <DateSelector
+                    hasError={$errors.tarikhMesyuarat ? true : false}
                         disabled={false}
                         labelBlack={true}
                         label="Tarikh Mesyuarat"
-                        selectedDate={''}
+                       bind:selectedDate={$form.tarikhMesyuarat}
                         handleDateChange={() => {}}
                     />
+                    {#if $errors.tarikhMesyuarat}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.tarikhMesyuarat[0]}</span
+                    >
+                {/if}
                     <DropdownSelect
+                    hasError={$errors.bilMesyuarat ? true : false}
                         disabled={false}
                         labelBlack={true}
                         dropdownType="label-left-full"
-                        name="meeting-number-dropdown"
+                        name="bilMesyuarat"
                         label="Bil Mesyuarat"
-                        value={''}
+                        bind:value={$form.bilMesyuarat}
                         options={meetings}
                     ></DropdownSelect>
+                    {#if $errors.bilMesyuarat}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.bilMesyuarat[0]}</span
+                    >
+                {/if}
+
                     <DropdownSelect
+                    hasError={$errors.namaMesyuarat ? true : false}
                         disabled={false}
                         labelBlack={true}
                         dropdownType="label-left-full"
-                        name="meeting-name-dropdown"
+                        name="namaMesyuarat"
                         label="Nama Mesyuarat"
-                        value={''}
+                        bind:value={$form.namaMesyuarat}
                         options={punishmentMeetingNames}
                     ></DropdownSelect>
+                    {#if $errors.namaMesyuarat}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.namaMesyuarat[0]}</span
+                    >
+                {/if}
 
                     <RadioSingle
                         disabled={false}
@@ -983,6 +1043,7 @@
                             bind:userSelected={appealFollowUpResult}
                         ></RadioSingle>
                     {/if}
+
 
                     <hr />
 
@@ -1012,6 +1073,7 @@
                         </div>
                     {/if}
                 {/if}
+            </form>
             </StepperContentBody>
         </StepperContent>
     {/if}
@@ -1025,6 +1087,7 @@
                     color="system-primary"
                     title="Maklumat Mesyuarat"
                 />
+
                 <DateSelector
                     disabled={true}
                     labelBlack={true}
@@ -1319,3 +1382,4 @@
         </StepperContent>
     {/if}
 </Stepper>
+<Toaster/>
