@@ -6,9 +6,9 @@ const api = ky.create({
     headers: {
         'content-type': 'application/json',
     },
+    credentials: 'include',
     hooks: {},
     timeout: 10000,
-    
 });
 
 export default api;
