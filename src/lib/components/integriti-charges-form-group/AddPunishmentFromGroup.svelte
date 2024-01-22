@@ -9,7 +9,8 @@
     import EmolumentDepriveDay from '$lib/components/integriti-charges-form-group/EmolumentDepriveDay.svelte';
     import { greds } from '$lib/mocks/gred/gred';
     import { Button } from 'flowbite-svelte';
-
+    
+    
     export let disabled: boolean = false;
     export let key: string = 'key';
 
@@ -68,6 +69,13 @@
         };
         delete emolumentDeprivationDaysFormGroup[groupId];
     }
+
+    export let dataObject;
+    let warningDate: Date;
+
+    function updateData() {
+    dataObject = { warningDate: warningDate };
+  }
 </script>
 
 <SectionHeader title="Penentuan Hukuman"
@@ -154,8 +162,8 @@
                         labelBlack={true}
                         name="date-of-effect-warning-{key + groupId}"
                         label="Tarikh Berkuatkuasa"
-                        selectedDate={''}
-                        handleDateChange={() => {}}
+                        bind:selectedDate={warningDate}
+                        handleDateChange={() => {updateData()}}
                     />
                 {/if}
                 {#if selectedPunishment[groupId] === 'punishmentPenalty'}
