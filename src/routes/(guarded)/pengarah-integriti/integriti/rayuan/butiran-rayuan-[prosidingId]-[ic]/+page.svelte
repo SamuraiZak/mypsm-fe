@@ -9,7 +9,7 @@
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
-    import { Badge, Button, Checkbox, Tooltip } from 'flowbite-svelte';
+    import { Badge, Checkbox, Tooltip } from 'flowbite-svelte';
     import AccordianField from '$lib/components/input/AccordianField.svelte';
     import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades.js';
     import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions.js';
@@ -18,22 +18,22 @@
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import ChargesFormGroup from '$lib/components/integriti-charges-form-group/ChargesFormGroup.svelte';
     import { punishmentMeetingNames } from '$lib/mocks/mesyuarat/integrityMeetingName.js';
-    import EmolumentDepriveDay from '$lib/components/integriti-charges-form-group/EmolumentDepriveDay.svelte';
-    import { greds } from '$lib/mocks/gred/gred.js';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
     import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
-    import SvgPower from '$lib/assets/svg/SvgPower.svelte';
     import SvgLawScale from '$lib/assets/svg/SvgLawScale.svelte';
-    import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
-    import SvgArrowDown from '$lib/assets/svg/SvgArrowDown.svelte';
-    import SvgArrowDownTail from '$lib/assets/svg/SvgArrowDownTail.svelte';
-    import SvgArrowDownTray from '$lib/assets/svg/SvgArrowDownTray.svelte';
     import PunishmentFormGroup from '$lib/components/integriti-charges-form-group/PunishmentFormGroup.svelte';
     import AddPunishmentFromGroup from '$lib/components/integriti-charges-form-group/AddPunishmentFromGroup.svelte';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper.js';
-    export let data;
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _disciplinaryAppealCommitteeMeetingResultSchema,
+        _submitDisciplinaryAppealCommitteeMeetingResultForm,
+    } from './+page';
+    export let data: PageData;
     let activeStepper = 0;
     let disabled = true;
     let isCompleted: boolean = true;
@@ -49,8 +49,6 @@
     let crimeOffenceFollowThrough: string = '';
     let crimeOffenceAppealSuspendedFollowThrough: boolean = false;
     let appealHasBeenMade: boolean = true;
-    let appealMeetingResult: string = '';
-    let appealFollowUpResult: string = '';
 
     function calculateTwoMonthsLater(initialDate: string) {
         // Parse the initial date string to create a Date object
@@ -78,11 +76,11 @@
     ];
     const appealMeetingOptions: RadioOption[] = [
         {
-            value: 'pass',
+            value: true,
             label: 'LULUS',
         },
         {
-            value: 'fail',
+            value: false,
             label: 'TIDAK LULUS',
         },
     ];
@@ -197,6 +195,32 @@
                     tooltipContent = 'no tooltip available';
             }
         }
+    }
+
+    //============================ superform ============================
+    let parentData: any;
+
+    const { form, errors, enhance } = superForm(
+        data.disciplinaryAppealCommitteeMeetingResultForm,
+        {
+            SPA: true,
+            validators: _disciplinaryAppealCommitteeMeetingResultSchema,
+            onSubmit() {
+                console.log(parentData),
+                    _submitDisciplinaryAppealCommitteeMeetingResultForm($form);
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+        },
+    );
+
+    // reset the appeal decision if US decided accidentally chose passed meeting result
+    $: if (!$form.appealMeetingResult) {
+        $form.appealFollowUpResult = undefined;
+    }
+
+    $: if ($form.appealFollowUpResult === 'lightenPunishment'){
+        $form.warningDate = parentData;
     }
 </script>
 
@@ -937,7 +961,10 @@
         <StepperContent>
             <StepperContentHeader
                 title="Mesyuarat Keputusan Jawatankuasa Rayuan Tatatertib"
-            ></StepperContentHeader>
+                ><TextIconButton primary label="Simpan" form="formValidation">
+                    <SvgCheck />
+                </TextIconButton></StepperContentHeader
+            >
             <StepperContentBody>
                 <div class="flex w-full flex-row items-center">
                     <label
@@ -952,80 +979,121 @@
                         color="system-primary"
                         title="Maklumat Mesyuarat"
                     />
-                    <DateSelector
-                        disabled={false}
-                        labelBlack={true}
-                        label="Tarikh Mesyuarat"
-                        selectedDate={''}
-                        handleDateChange={() => {}}
-                    />
-                    <DropdownSelect
-                        disabled={false}
-                        labelBlack={true}
-                        dropdownType="label-left-full"
-                        name="meeting-number-dropdown"
-                        label="Bil Mesyuarat"
-                        value={''}
-                        options={meetings}
-                    ></DropdownSelect>
-                    <DropdownSelect
-                        disabled={false}
-                        labelBlack={true}
-                        dropdownType="label-left-full"
-                        name="meeting-name-dropdown"
-                        label="Nama Mesyuarat"
-                        value={''}
-                        options={punishmentMeetingNames}
-                    ></DropdownSelect>
-
-                    <RadioSingle
-                        disabled={false}
-                        options={appealMeetingOptions}
-                        legend={'Keputusan Mesyuarat'}
-                        bind:userSelected={appealMeetingResult}
-                    ></RadioSingle>
-
-                    {#if appealMeetingResult === 'pass'}
-                        <SectionHeader
-                            color="system-primary"
-                            title="Susulan Rayuan"
-                        />
-                        <RadioSingle
-                            isVertical
+                    <form
+                        id="formValidation"
+                        method="POST"
+                        use:enhance
+                        class="flex w-full flex-col gap-2"
+                    >
+                        <DateSelector
+                            hasError={$errors.meetingDate ? true : false}
+                            name="meetingDate"
                             disabled={false}
-                            options={appealFollowUpOptions}
-                            legend={'Keputusan Rayuan'}
-                            bind:userSelected={appealFollowUpResult}
+                            labelBlack={true}
+                            label="Tarikh Mesyuarat"
+                            bind:selectedDate={$form.meetingDate}
+                        />
+                        {#if $errors.meetingDate}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$errors.meetingDate}</span
+                            >
+                        {/if}
+                        <DropdownSelect
+                            hasError={$errors.meetingNumber ? true : false}
+                            disabled={false}
+                            labelBlack={true}
+                            dropdownType="label-left-full"
+                            id="meetingNumber"
+                            label="Bil Mesyuarat"
+                            bind:value={$form.meetingNumber}
+                            options={meetings}
+                        ></DropdownSelect>
+                        {#if $errors.meetingNumber}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$errors.meetingNumber}</span
+                            >
+                        {/if}
+                        <DropdownSelect
+                            hasError={$errors.meetingName ? true : false}
+                            disabled={false}
+                            labelBlack={true}
+                            dropdownType="label-left-full"
+                            id="meetingName"
+                            label="Nama Mesyuarat"
+                            bind:value={$form.meetingName}
+                            options={punishmentMeetingNames}
+                        ></DropdownSelect>
+                        {#if $errors.meetingName}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$errors.meetingName}</span
+                            >
+                        {/if}
+                        <RadioSingle
+                            disabled={false}
+                            name="appealMeetingResult"
+                            options={appealMeetingOptions}
+                            legend={'Keputusan Mesyuarat'}
+                            bind:userSelected={$form.appealMeetingResult}
                         ></RadioSingle>
-                    {/if}
+                        {#if $errors.appealMeetingResult}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$errors.appealMeetingResult}</span
+                            >
+                        {/if}
 
-                    <hr />
-
-                    {#if appealFollowUpResult === 'lightenPunishment'}
-                        <div
-                            class="mt-5 flex w-full flex-col gap-2.5 border-b border-t"
-                        >
+                        {#if $form.appealMeetingResult}
                             <SectionHeader
-                                title="Sila Pilih Hukuman - Hukuman Yang Dikenakan"
-                            ></SectionHeader>
-                            {#each Object.entries(data.record.currentProceeding.proceedingMeetingResult) as [key, result], index}
-                                <div
-                                    class="rounded-[3px] border border-system-primary p-2.5"
+                                color="system-primary"
+                                title="Susulan Rayuan"
+                            />
+                            <RadioSingle
+                                isVertical
+                                name="appealFollowUpResult"
+                                disabled={false}
+                                options={appealFollowUpOptions}
+                                legend={'Keputusan Rayuan'}
+                                bind:userSelected={$form.appealFollowUpResult}
+                            ></RadioSingle>
+                            {#if $errors.appealFollowUpResult}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$errors.appealFollowUpResult}</span
                                 >
-                                    <SectionHeader
-                                        color="system-primary"
-                                        title="Pertuduhan #{index +
-                                            1}: {result.chargeName}"
-                                    ></SectionHeader>
-                                    <hr />
+                            {/if}
+                        {/if}
 
-                                    <div class="mx-2.5">
-                                        <AddPunishmentFromGroup />
+                        {#if $form.appealFollowUpResult === 'lightenPunishment'}
+                            <div
+                                class="mt-5 flex w-full flex-col gap-2.5 border-b border-t"
+                            >
+                                <SectionHeader
+                                    title="Sila Pilih Hukuman - Hukuman Yang Dikenakan"
+                                ></SectionHeader>
+                                {#each Object.entries(data.record.currentProceeding.proceedingMeetingResult) as [key, result], index}
+                                    <div
+                                        class="rounded-[3px] border border-system-primary p-2.5"
+                                    >
+                                        <SectionHeader
+                                            color="system-primary"
+                                            title="Pertuduhan #{index +
+                                                1}: {result.chargeName}"
+                                        ></SectionHeader>
+                                        <hr />
+
+                                        <div class="mx-2.5">
+                                            <AddPunishmentFromGroup
+                                                bind:dataObject={parentData}
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                            {/each}
-                        </div>
-                    {/if}
+                                {/each}
+                            </div>
+                        {/if}
+                    </form>
                 {/if}
             </StepperContentBody>
         </StepperContent>
@@ -1338,3 +1406,5 @@
         </StepperContent>
     {/if}
 </Stepper>
+
+<Toaster />
