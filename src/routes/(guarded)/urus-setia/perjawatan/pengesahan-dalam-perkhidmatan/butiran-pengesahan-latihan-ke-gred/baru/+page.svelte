@@ -28,6 +28,12 @@
     import DownloadAttachment from '$lib/components/input/DownloadAttachment.svelte';
     import { mockEmployeeDocumentLists } from '$lib/mocks/database/mockEmployeeDocumentLists';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
+    import { superForm } from 'sveltekit-superforms/client';
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { _keputusanPengesahan, _submitKeputusanPengesahan } from './+page';
+    import type { PageData } from './$types';
+
+    export let data: PageData;
 
     export let disabled: boolean = true;
     export let selectedFiles: any = [];
@@ -44,7 +50,6 @@
                 selectedFiles.push(files[i]);
             }
         }
-
     }
     function handleDelete(index: number) {
         selectedFiles.splice(index, 1);
@@ -137,6 +142,15 @@
     }
 
     const currentEmployeeUploadedDocuments = mockEmployeeDocumentLists;
+    const { form, errors, enhance } = superForm(data.keputusanPengesahan, {
+        SPA: true,
+        validators: _keputusanPengesahan,
+        onSubmit() {
+            _submitKeputusanPengesahan($form);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -530,8 +544,7 @@
         >
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Tapisan Tatatertib"
-        ></StepperContentHeader>
+        <StepperContentHeader title="Tapisan Tatatertib"></StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
                 <DynamicTable tableItems={tapisanTatatertib}></DynamicTable>
@@ -548,45 +561,94 @@
                         '/urus-setia/perjawatan/pengesahan-dalam-perkhidmatan',
                     );
                 }}><SvgPaperAirplane /></TextIconButton
-            ></StepperContentHeader
-        >
+            >
+
+            <TextIconButton
+                primary
+                label="simpan"
+                form="FormKeputusanPengesahan"
+            ></TextIconButton>
+        </StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
-                <p class="text-sm font-bold">Maklumat Kumpulan Mesyuarat</p>
-                <p
-                    class="mt-2 h-fit w-full bg-bgr-primary text-sm italic text-system-accent"
+                <form
+                    id="FormKeputusanPengesahan"
+                    class="flex w-full flex-col gap-2"
+                    use:enhance
+                    method="POST"
                 >
-                    Sekiranya kakitangan tidak lulus mesyuarat, proses akan
-                    berakhir untuk kakitangan tersebut.
-                </p>
-                <p class="text-sm">
-                    Borang-borang berkaitan yang akan dijana sekiranya lulus:
-                </p>
-                <ul
-                    class="flex w-full list-decimal flex-col gap-2 pl-4 text-sm"
-                >
-                    <li>
-                        <DownloadAttachment
-                            fileName="Surat Pengesahan.pdf"
-                        />
-                    </li>
-                </ul>
-                <TextField
-                    id="namaBilanganMesyuarat"
-                    label={'Nama dan Bilangan Mesyuarat'}
-                    value={'1/02'}
-                ></TextField>
-                <DateSelector {handleDateChange} label={'Tarikh Mesyuarat'} />
-                <LongTextField
-                    id="tindakanUlasanMesyuarat"
-                    label={'Tindakan/Ulasan Mesyuarat'}
-                    value={'Layak.'}
-                ></LongTextField>
-                <RadioSingle
-                    options={keputusanMesyuaratOptions}
-                    legend="Faedah Persaraan"
-                />
+                    <p class="text-sm font-bold">Maklumat Kumpulan Mesyuarat</p>
+                    <p
+                        class="mt-2 h-fit w-full bg-bgr-primary text-sm italic text-system-accent"
+                    >
+                        Sekiranya kakitangan tidak lulus mesyuarat, proses akan
+                        berakhir untuk kakitangan tersebut.
+                    </p>
+                    <p class="text-sm">
+                        Borang-borang berkaitan yang akan dijana sekiranya
+                        lulus:
+                    </p>
+                    <ul
+                        class="flex w-full list-decimal flex-col gap-2 pl-4 text-sm"
+                    >
+                        <li>
+                            <DownloadAttachment
+                                fileName="Surat Pengesahan.pdf"
+                            />
+                        </li>
+                    </ul>
+                    <TextField
+                        hasError={$errors.namaBilanganMesyuarat ? true : false}
+                        name="namaBilanganMesyuarat"
+                        label={'Nama dan Bilangan Mesyuarat'}
+                        bind:value={$form.namaBilanganMesyuarat}
+                    ></TextField>
+                    {#if $errors.namaBilanganMesyuarat}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.namaBilanganMesyuarat[0]}</span
+                        >
+                    {/if}
+                    <DateSelector
+                        {handleDateChange}
+                        hasError={$errors.tarikhMesyuarat ? true : false}
+                        name="tarikhMesyuarat"
+                        label={'Tarikh Mesyuarat'}
+                        bind:selectedDate={$form.tarikhMesyuarat}
+                    />
+                    {#if $errors.tarikhMesyuarat}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.tarikhMesyuarat[0]}</span
+                        >
+                    {/if}
+                    <LongTextField
+                        hasError={$errors.tindakanUlasan ? true : false}
+                        name="tindakanUlasanMesyuarat"
+                        label={'Tindakan/Ulasan Mesyuarat'}
+                        bind:value={$form.tindakanUlasan}
+                    ></LongTextField>
+                    {#if $errors.tindakanUlasan}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.tindakanUlasan[0]}</span
+                        >
+                    {/if}
+                    <RadioSingle
+                        name="faedahPersaraan"
+                        options={keputusanMesyuaratOptions}
+                        legend="Faedah Persaraan"
+                        bind:userSelected={$form.faedahPersaraan}
+                    />
+                    {#if $errors.faedahPersaraan}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.faedahPersaraan[0]}</span
+                        >
+                    {/if}
+                </form>
             </div></StepperContentBody
         >
     </StepperContent>
 </Stepper>
+<Toaster/>
