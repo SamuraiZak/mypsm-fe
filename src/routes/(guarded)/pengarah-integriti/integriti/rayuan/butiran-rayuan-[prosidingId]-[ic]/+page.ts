@@ -16,6 +16,10 @@ import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
 import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
 import { mockProsiding } from '$lib/mocks/integriti/prosiding/mockProsiding.js';
 import { getEmployees } from '$lib/service/employees/staff-service.js';
+import { fail } from '@sveltejs/kit';
+import { getErrorToast, getPromiseToast } from '$lib/toast/toast-service';
+import { superValidate } from 'sveltekit-superforms/client';
+import { z } from 'zod';
 
 export async function load({ params }) {
     const proceedingData: IntProsiding[] = await mockProsiding;
@@ -105,6 +109,8 @@ export async function load({ params }) {
 
     if (!currentEmployee) throw new Error('Record not found');
 
+    const disciplinaryAppealCommitteeMeetingResultForm = await superValidate(_disciplinaryAppealCommitteeMeetingResultSchema);
+
     return {
         record: {
             data,
@@ -127,5 +133,77 @@ export async function load({ params }) {
             currentEmployeeNextOfKins,
             currentEmployeeUploadedDocuments,
         },
+        disciplinaryAppealCommitteeMeetingResultForm,
     };
 }
+
+const GeneralTextSchema = z
+    .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+    .min(4, {
+        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+    })
+    .max(124, {
+        message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    })
+    .trim();
+
+const dateScheme = z.coerce
+    .date({
+        errorMap: (issue, { defaultError }) => ({
+            message:
+                issue.code === 'invalid_date'
+                    ? 'Tarikh tidak boleh dibiar kosong.'
+                    : defaultError,
+        }),
+    })
+    .min(new Date(), {
+        message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+    });
+
+
+const generalSelectSchema = z.string().min(1, { message: "Sila tetapkan pilihan anda. " });
+
+const disciplinaryAppealCommitteeMeetingResultSchema = z.object({
+    meetingDate: dateScheme,
+    meetingNumber: generalSelectSchema,
+    meetingName: generalSelectSchema,
+    appealMeetingResult: z.boolean().default(false),
+    appealFollowUpResult: generalSelectSchema,
+    warningDate: z.object({
+    }),
+});
+
+export const _disciplinaryAppealCommitteeMeetingResultSchema = disciplinaryAppealCommitteeMeetingResultSchema.partial();
+type _disciplinaryAppealCommitteeMeetingResultSchema = {
+    meetingDate?: Date,
+    meetingNumber?: string,
+    meetingName?: string,
+    appealMeetingResult?: boolean,
+    appealFollowUpResult?: string | undefined,
+    warningDate?: any | undefined,
+}
+
+export const _submitDisciplinaryAppealCommitteeMeetingResultForm = async (formData: Object) => {
+
+    const disciplinaryAppealCommitteeMeetingResultForm = await superValidate(formData, _disciplinaryAppealCommitteeMeetingResultSchema);
+    if (!disciplinaryAppealCommitteeMeetingResultForm.valid) {
+        console.log(disciplinaryAppealCommitteeMeetingResultForm)
+        getErrorToast();
+        return fail(400, disciplinaryAppealCommitteeMeetingResultForm);
+    }
+
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(disciplinaryAppealCommitteeMeetingResultForm),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+
+    getPromiseToast(responsePromise)
+    return { disciplinaryAppealCommitteeMeetingResultForm };
+};

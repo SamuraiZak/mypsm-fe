@@ -28,42 +28,23 @@
     import CutiKursusSambilan from './forms/CutiKursusSambilan.svelte';
     import CutiMenjagaAnakTanpaGaji from './forms/CutiMenjagaAnakTanpaGaji.svelte';
     import FileInputField from '$lib/components/input/FileInputField.svelte';
-    import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
     import toast, { Toaster } from 'svelte-french-toast';
-    import { ZodError } from 'zod';
-    import {
-        permohonanCutiMaklumatKakitangan,
-        uploadedFileSchema,
-    } from './schema';
+    import { z, ZodError } from 'zod';
     import { onMount } from 'svelte';
     import { fileSelectionList } from '$lib/stores/globalState';
     import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
+    import type { PageData } from './$types';
+    import { superForm } from 'sveltekit-superforms/client';
+    import { _staffDetailSchema, _submitStaffDetailForm } from './+page';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
 
+    export let data: PageData;
     export let disabled: boolean = false;
     let selectedCuti = '';
 
-    let selectedDate = new Date();
-    function handleDateChange(event: any) {
-        selectedDate = new Date(event.target.value);
-        const formattedDate = selectedDate.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-        });
-        console.log(formattedDate);
-    }
-
     // ================ Stepper Control ==================
     let stepperIndex = 0;
-
-    function goNext() {
-        stepperIndex += 1;
-    }
-
-    function goPrevious() {
-        stepperIndex -= 1;
-    }
 
     // Function to handle the file changes
     let selectedFiles: File[] = [];
@@ -91,51 +72,14 @@
         fileSelectionList.set(selectedFiles);
     }
 
+    const uploadedFileSchema = z.object({
+        uploadedFiles: z.any().array().nonempty({
+            message: 'Sila muat naik dokumen - dokumen berkaitan.',
+        }),
+    });
+
     // ============== Form Validation ================
     let errorData: any;
-    // ==============    Stepper 1    ================
-    const stepper1Form = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-
-        const stepper1FormData = {
-            noPekerja: String(formData.get('noPekerja')),
-            nama: String(formData.get('nama')),
-            noKadPengenalan: String(formData.get('noKadPengenalan')),
-            gred: String(formData.get('gred')),
-            penempatan: String(formData.get('penempatan')),
-            kumpulan: String(formData.get('kumpulan')),
-        };
-        try {
-            const result =
-                permohonanCutiMaklumatKakitangan.parse(stepper1FormData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedStepper1FormData = { ...stepper1FormData, id };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedStepper1FormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
-
     //File uploaded validation
     const submitFilesForm = async () => {
         let uploadedFiles = selectedFiles;
@@ -150,7 +94,7 @@
                 toast.success('Berjaya disimpan!', {
                     style: 'background: #333; color: #fff;',
                 });
-                console.log(result)
+                console.log(result);
             }
         } catch (error: unknown) {
             if (error instanceof ZodError) {
@@ -162,6 +106,16 @@
             }
         }
     };
+
+    const { form, errors, enhance } = superForm(data.staffDetailForm, {
+        SPA: true,
+        validators: _staffDetailSchema,
+        onSubmit() {
+            _submitStaffDetailForm($form);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
 </script>
 
 <ContentHeader
@@ -172,9 +126,8 @@
 <Stepper bind:activeIndex={stepperIndex}>
     <StepperContent>
         <StepperContentHeader title="Maklumat Kakitangan"
-            ><TextIconButton label="Seterusnya" primary onClick={() => goNext()}
-                ><SvgArrowRight /></TextIconButton
-            ></StepperContentHeader
+            ><TextIconButton label="Simpan" primary form="staffDetailForm"
+            ><SvgCheck/></TextIconButton></StepperContentHeader
         >
 
         <!-- ========== STEPPER 1 ========== -->
@@ -182,86 +135,87 @@
             <div class="flex w-full flex-col gap-2">
                 <p class="text-sm font-bold">Maklumat Kakitangan</p>
                 <form
-                    id="stepper1Validation"
-                    on:submit|preventDefault={stepper1Form}
+                    id="staffDetailForm"
+                    use:enhance
+                    method="POST"
                     class="flex w-full flex-col gap-2"
                 >
                     <TextField
-                        hasError={errorData?.noPekerja}
+                        hasError={$errors.staffNo ? true : false}
                         {disabled}
-                        name="noPekerja"
+                        name="staffNo"
                         label={'No. Pekerja'}
-                        value={'A23412'}
+                        bind:value={$form.staffNo}
                     ></TextField>
-                    {#if errorData?.noPekerja}
+                    {#if $errors.staffNo}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.noPekerja[0]}</span
+                            >{$errors.staffNo[0]}</span
                         >
                     {/if}
                     <TextField
-                        hasError={errorData?.nama}
+                        hasError={$errors.staffName ? true : false}
                         {disabled}
-                        name="nama"
+                        name="staffName"
                         label={'Nama'}
-                        value={'Irfan Bin Abu'}
+                        bind:value={$form.staffName}
                     ></TextField>
-                    {#if errorData?.nama}
+                    {#if $errors.staffName}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.nama[0]}</span
+                            >{$errors.staffName[0]}</span
                         >
                     {/if}
                     <TextField
-                        hasError={errorData?.noKadPengenalan}
+                        hasError={$errors.identificationNo ? true : false}
                         {disabled}
-                        name="noKadPengenalan"
+                        name="identificationNo"
                         label={'No. K/P'}
-                        value={'111111-11-1111'}
+                        bind:value={$form.identificationNo}
                     ></TextField>
-                    {#if errorData?.noKadPengenalan}
+                    {#if $errors.identificationNo}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.noKadPengenalan[0]}</span
+                            >{$errors.identificationNo[0]}</span
                         >
                     {/if}
                     <TextField
-                        hasError={errorData?.gred}
+                        hasError={$errors.grade ? true : false}
                         {disabled}
-                        name="gred"
+                        name="grade"
                         label={'Gred'}
-                        value={'F41 - Pegawai Teknologi Maklumat'}
+                        bind:value={$form.grade}
                     ></TextField>
-                    {#if errorData?.gred}
+                    {#if $errors.grade}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.gred[0]}</span
+                            >{$errors.grade[0]}</span
                         >
                     {/if}
                     <TextField
-                        hasError={errorData?.penempatan}
+                        hasError={$errors.placement ? true : false}
                         {disabled}
-                        name="penempatan"
+                        name="placement"
                         label={'Penempatan'}
-                        value={'5345 - Bhgn. Teknologi Maklumat'}
+                        bind:value={$form.placement}
                     ></TextField>
-                    {#if errorData?.penempatan}
+                    {#if $errors.placement}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.penempatan[0]}</span
+                            >{$errors.placement[0]}</span
                         >
                     {/if}
                     <TextField
-                        hasError={errorData?.kumpulan}
+                        hasError={$errors.group ? true : false}
                         {disabled}
-                        name="kumpulan"
+                        name="group"
                         label={'Kumpulan'}
-                        value={'PP1 - Pengurusan dan Professional - A'}
+                        bind:value={$form.group}
                     ></TextField>
-                    {#if errorData?.kumpulan}
+                    {#if $errors.group}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.kumpulan[0]}</span
+                            >{$errors.group[0]}</span
                         >
                     {/if}
                 </form>
@@ -287,39 +241,40 @@
                 ></DropdownSelect>
 
                 {#if selectedCuti === 'Cuti Gantian'}
-                    <CutiGantian></CutiGantian>
+                    <CutiGantian {data}></CutiGantian>
                 {:else if selectedCuti === 'Cuti Tanpa Rekod'}
-                    <CutiTanpaRekod></CutiTanpaRekod>
+                    <CutiTanpaRekod {data}></CutiTanpaRekod>
                 {:else if selectedCuti === 'Cuti Separuh Gaji'}
-                    <CutiSeparuhGaji></CutiSeparuhGaji>
+                    <CutiSeparuhGaji {data}></CutiSeparuhGaji>
                 {:else if selectedCuti === 'Cuti Tanpa Gaji'}
-                    <CutiTanpaGaji></CutiTanpaGaji>
+                    <CutiTanpaGaji {data}></CutiTanpaGaji>
                 {:else if selectedCuti === 'Cuti Bersalin Awal'}
-                    <CutiBersalinAwal></CutiBersalinAwal>
+                    <CutiBersalinAwal {data}></CutiBersalinAwal>
                 {:else if selectedCuti === 'Cuti Bersalin Pegawai'}
-                    <CutiBersalinPegawai></CutiBersalinPegawai>
+                    <CutiBersalinPegawai {data}></CutiBersalinPegawai>
                 {:else if selectedCuti === 'Cuti Isteri Bersalin'}
-                    <CutiIsteriBersalin></CutiIsteriBersalin>
+                    <CutiIsteriBersalin {data}></CutiIsteriBersalin>
                 {:else if selectedCuti === 'Cuti Haji'}
-                    <CutiHaji></CutiHaji>
+                    <CutiHaji {data}></CutiHaji>
                 {:else if selectedCuti === 'Cuti Kuarantin'}
-                    <CutiKuarantin></CutiKuarantin>
+                    <CutiKuarantin {data}></CutiKuarantin>
                 {:else if selectedCuti === 'Cuti Menjaga Anak Tanpa Gaji'}
-                    <CutiMenjagaAnakTanpaGaji></CutiMenjagaAnakTanpaGaji>
+                    <CutiMenjagaAnakTanpaGaji {data}></CutiMenjagaAnakTanpaGaji>
                 {:else if selectedCuti === 'Cuti Kursus Sambilan'}
-                    <CutiKursusSambilan></CutiKursusSambilan>
+                    <CutiKursusSambilan {data}></CutiKursusSambilan>
                 {:else if selectedCuti === 'Cuti Perakuan Tidak Hadir Ke Pejabat'}
-                    <CutiPerakuanTidakHadirKePejabat
+                    <CutiPerakuanTidakHadirKePejabat {data}
                     ></CutiPerakuanTidakHadirKePejabat>
                 {:else if selectedCuti === 'Cuti Sakit Lanjutan'}
-                    <CutiSakitLanjutan></CutiSakitLanjutan>
+                    <CutiSakitLanjutan {data}></CutiSakitLanjutan>
                 {:else if selectedCuti === 'Cuti Tanpa Gaji Mengikut Pasangan'}
-                    <CutiTanpaGajiMengikutPasangan
+                    <CutiTanpaGajiMengikutPasangan {data}
                     ></CutiTanpaGajiMengikutPasangan>
                 {:else if selectedCuti === 'Cuti Penyakit Barah Dan Kusta'}
-                    <CutiPenyakitBarahDanKusta></CutiPenyakitBarahDanKusta>
+                    <CutiPenyakitBarahDanKusta {data}
+                    ></CutiPenyakitBarahDanKusta>
                 {:else if selectedCuti === 'Cuti Penyakit Tibi'}
-                    <CutiPenyakitTibi></CutiPenyakitTibi>
+                    <CutiPenyakitTibi {data}></CutiPenyakitTibi>
                 {/if}
             </div></StepperContentBody
         >

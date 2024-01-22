@@ -113,12 +113,14 @@
     // ==================================
     // Form Validation ==================
     // ==================================
-    let errorData: any;
     export let data: PageData;
 
     const { form, errors, enhance } = superForm(data.form, {
         SPA: true,
         validators: _actingSupporterResultSchema,
+        onSubmit(){
+            _submitActingSupporterResultForm($form)
+        },
         taintedMessage:
             'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
     });
@@ -1566,7 +1568,6 @@
                     id="formValidation"
                     method="POST"
                     use:enhance
-                    on:submit|preventDefault={_submitActingSupporterResultForm}
                     class="flex w-full flex-col gap-2"
                 >
                     <LongTextField

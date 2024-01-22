@@ -38,6 +38,9 @@
     import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
     import { uploadedFileSchema } from '../form-schema';
     import { ZodError } from 'zod';
+    import type { PageData } from './$types';
+
+    export let data: PageData;
 
     let selectedCuti = '';
 
@@ -207,39 +210,39 @@
                     ></DropdownSelect>
 
                     {#if selectedCuti === 'Cuti Gantian'}
-                        <CutiGantian></CutiGantian>
+                        <CutiGantian {data}></CutiGantian>
                     {:else if selectedCuti === 'Cuti Tanpa Rekod'}
-                        <CutiTanpaRekod></CutiTanpaRekod>
+                        <CutiTanpaRekod {data}></CutiTanpaRekod>
                     {:else if selectedCuti === 'Cuti Separuh Gaji'}
-                        <CutiSeparuhGaji></CutiSeparuhGaji>
+                        <CutiSeparuhGaji {data}></CutiSeparuhGaji>
                     {:else if selectedCuti === 'Cuti Tanpa Gaji'}
-                        <CutiTanpaGaji></CutiTanpaGaji>
+                        <CutiTanpaGaji {data}></CutiTanpaGaji>
                     {:else if selectedCuti === 'Cuti Bersalin Awal'}
-                        <CutiBersalinAwal></CutiBersalinAwal>
+                        <CutiBersalinAwal {data}></CutiBersalinAwal>
                     {:else if selectedCuti === 'Cuti Bersalin Pegawai'}
-                        <CutiBersalinPegawai></CutiBersalinPegawai>
+                        <CutiBersalinPegawai {data}></CutiBersalinPegawai>
                     {:else if selectedCuti === 'Cuti Isteri Bersalin'}
-                        <CutiIsteriBersalin></CutiIsteriBersalin>
+                        <CutiIsteriBersalin {data}></CutiIsteriBersalin>
                     {:else if selectedCuti === 'Cuti Haji'}
-                        <CutiHaji></CutiHaji>
+                        <CutiHaji {data}></CutiHaji>
                     {:else if selectedCuti === 'Cuti Kuarantin'}
-                        <CutiKuarantin></CutiKuarantin>
+                        <CutiKuarantin {data}></CutiKuarantin>
                     {:else if selectedCuti === 'Cuti Menjaga Anak Tanpa Gaji'}
-                        <CutiMenjagaAnakTanpaGaji></CutiMenjagaAnakTanpaGaji>
+                        <CutiMenjagaAnakTanpaGaji {data}></CutiMenjagaAnakTanpaGaji>
                     {:else if selectedCuti === 'Cuti Kursus Sambilan'}
-                        <CutiKursusSambilan></CutiKursusSambilan>
+                        <CutiKursusSambilan {data}></CutiKursusSambilan>
                     {:else if selectedCuti === 'Cuti Perakuan Tidak Hadir Ke Pejabat'}
-                        <CutiPerakuanTidakHadirKePejabat
+                        <CutiPerakuanTidakHadirKePejabat {data}
                         ></CutiPerakuanTidakHadirKePejabat>
                     {:else if selectedCuti === 'Cuti Sakit Lanjutan'}
-                        <CutiSakitLanjutan></CutiSakitLanjutan>
+                        <CutiSakitLanjutan {data}></CutiSakitLanjutan>
                     {:else if selectedCuti === 'Cuti Tanpa Gaji Mengikut Pasangan'}
-                        <CutiTanpaGajiMengikutPasangan
+                        <CutiTanpaGajiMengikutPasangan {data}
                         ></CutiTanpaGajiMengikutPasangan>
                     {:else if selectedCuti === 'Cuti Penyakit Barah Dan Kusta'}
-                        <CutiPenyakitBarahDanKusta></CutiPenyakitBarahDanKusta>
+                        <CutiPenyakitBarahDanKusta {data}></CutiPenyakitBarahDanKusta>
                     {:else if selectedCuti === 'Cuti Penyakit Tibi'}
-                        <CutiPenyakitTibi></CutiPenyakitTibi>
+                        <CutiPenyakitTibi {data}></CutiPenyakitTibi>
                     {/if}
                 </div></StepperContentBody
             >

@@ -5,59 +5,28 @@
     import TextField from '$lib/components/input/TextField.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { kategoriCuti } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/kategori-cuti';
-    import { ZodError } from 'zod';
-    import toast from 'svelte-french-toast';
-    import { publicHolidayTask } from '../schema';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import {
+        _submitOfficialTaskOnHolidayForm,
+        _officialTaskOnHolidaySchema,
+    } from '../+page';
 
-    let selectedKategoriCuti = kategoriCuti[0].value;
+    export let data: PageData;
 
     // ======================= Form Validation
-    let errorData: any;
-    export const submitForm = async (event: Event) => {
-        const formDetail = new FormData(event.target as HTMLFormElement);
-        const holidayCategory = document.getElementById(
-            'holidayCategory',
-        ) as HTMLSelectElement;
-
-        const formData = {
-            officialTask: String(formDetail.get('officialTask')),
-            placement: String(formDetail.get('placement')),
-            startTime: String(formDetail.get('startTime')),
-            holidayCategory: String(holidayCategory.value),
-            endTime: String(formDetail.get('endTime')),
-            totalTime: String(formDetail.get('totalTime')),
-            date: String(formDetail.get('date')),
-        };
-
-        try {
-            const result = publicHolidayTask.parse(formData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedFormData = { ...formData, id };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
+    const { form, errors, enhance } = superForm(
+        data.officialTaskOnHolidayForm,
+        {
+            SPA: true,
+            validators: _officialTaskOnHolidaySchema,
+            onSubmit() {
+                _submitOfficialTaskOnHolidayForm($form);
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+        },
+    );
 </script>
 
 <section
@@ -67,95 +36,96 @@
     ></SectionHeader>
 
     <form
-        id="formValidation"
-        on:submit|preventDefault={submitForm}
+        id="validateForm"
+        method="POST"
+        use:enhance
         class="flex w-full flex-col gap-2"
     >
         <DropdownSelect
-            hasError={errorData?.holidayCategory}
+            hasError={$errors.holidayCategory ? true : false}
             id="holidayCategory"
             label="Kategori Cuti"
             dropdownType="label-left-full"
-            bind:index={selectedKategoriCuti}
+            bind:value={$form.holidayCategory}
             options={kategoriCuti}
         ></DropdownSelect>
-        {#if errorData?.holidayCategory}
+        {#if $errors.holidayCategory}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{errorData?.holidayCategory[0]}</span
+                >{$errors.holidayCategory}</span
             >
         {/if}
         <LongTextField
-            hasError={errorData?.officialTask}
+            hasError={$errors.officialTask ? true : false}
             name="officialTask"
             label="Tugas-Tugas Rasmi Yang Dijalankan"
             placeholder="Sila taip jawapan anda dalam ruangan ini"
+            bind:value={$form.officialTask}
         ></LongTextField>
-        {#if errorData?.officialTask}
+        {#if $errors.officialTask}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{errorData?.officialTask[0]}</span
+                >{$errors.officialTask}</span
             >
         {/if}
         <DateSelector
-            hasError={errorData?.date}
+            hasError={$errors.date ? true : false}
             name="date"
             handleDateChange
             label="Tarikh"
+            bind:selectedDate={$form.date}
         ></DateSelector>
-        {#if errorData?.date}
+        {#if $errors.date}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{errorData?.date[0]}</span
+                >{$errors.date}</span
             >
         {/if}
         <TextField
-            hasError={errorData?.placement}
+            hasError={$errors.placement ? true : false}
             name="placement"
             label="Tempat Bekerja"
-            value=""
+            bind:value={$form.placement}
         ></TextField>
-        {#if errorData?.placement}
+        {#if $errors.placement}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{errorData?.placement[0]}</span
+                >{$errors.placement}</span
             >
         {/if}
         <div class="flex w-full flex-row items-center justify-start">
-            <label class="w-[220px] min-w-[220px] text-sm" for="appt"
-                >Waktu Mula</label
-            >
-            <input
+            <TextField
+                hasError={$errors.startTime ? true : false}
+                type="time"
+                label="Waktu Mula"
+                bind:value={$form.startTime}
                 name="startTime"
-                class="border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm text-sm placeholder:text-txt-tertiary"
-                type="time"
             />
         </div>
-        {#if errorData?.startTime}
+        {#if $errors.startTime}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{errorData?.startTime[0]}</span
+                >{$errors.startTime}</span
             >
         {/if}
         <div class="flex w-full flex-row items-center justify-start">
-            <label class="w-[220px] min-w-[220px] text-sm" for="appt"
-                >Waktu Tamat</label
-            >
-            <input
-                name="endTime"
-                class="border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm text-sm placeholder:text-txt-tertiary"
+            <TextField
+                hasError={$errors.endTime ? true : false}
                 type="time"
+                label="Waktu Tamat"
+                bind:value={$form.endTime}
+                name="endTime"
             />
         </div>
-        {#if errorData?.endTime}
+        {#if $errors.endTime}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{errorData?.endTime[0]}</span
+                >{$errors.endTime}</span
             >
         {/if}
         <TextField
-            hasError={errorData?.totalTime}
+            hasError={$errors.totalTime ? true : false}
             name="totalTime"
             label="Jumlah Jam"
-            value=""
+            bind:value={$form.totalTime}
         ></TextField>
-        {#if errorData?.totalTime}
+        {#if $errors.totalTime}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{errorData?.totalTime[0]}</span
+                >{$errors.totalTime}</span
             >
         {/if}
     </form>

@@ -42,16 +42,6 @@
         },
     ];
 
-    const supportOptions: RadioOption[] = [
-        {
-            value: 'support',
-            label: 'SOKONG',
-        },
-        {
-            value: 'do not support',
-            label: 'TIDAK SOKONG',
-        },
-    ];
     let isApproved: string = 'true';
     const approveOptions: RadioOption[] = [
         {
