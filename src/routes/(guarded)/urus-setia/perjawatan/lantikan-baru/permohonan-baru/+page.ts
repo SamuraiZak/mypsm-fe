@@ -9,13 +9,17 @@ import { getErrorToast, getPromiseToast } from '$lib/toast/toast-service';
 // } from '$lib/view-models/core/common-view-model';
 // import toast from 'svelte-french-toast';
 import { goto } from '$app/navigation';
+import http from '$lib/services/provider/service-provider.service';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
 // creating schema
 export const _addNewHireSchema = z.object({
-    tempId: z
-        .string({ required_error: 'Sila tetapkan ID sementara calon' })
+    tempId: z.coerce
+        .string({
+            required_error: 'Sila tetapkan ID sementara calon',
+            invalid_type_error: 'Id hendaklah terdiri daripada nombor sahaja',
+        })
         .min(1, { message: 'ID hendaklah lebih daripada 1 angka' }),
     email: z
         .string()
@@ -37,38 +41,17 @@ export const _submit = async (formData: object) => {
         return fail(400, form);
     }
 
-    const response: Promise<Response> = api
-        .post('employments/new-hire', {
-            body: JSON.stringify(form),
+    const response = http
+        .post('employments/add-new-hire', {
+            body: JSON.stringify(form.data),
         })
         .json();
 
     getPromiseToast(response).then(() => {
-        goto('../lantikan-baru');
+        setTimeout(() => {
+            goto('../lantikan-baru');
+        }, 2500);
     });
 
-    // const data: CommonViewModel = CommonViewModelConvert.fromJson(
-    //     JSON.stringify(response),
-    // );
-
-    // console.log(data.status);
-
-    // showLoadingOverlay.set(false);
-
-    // toast.success('Berjaya disimpan!', {
-    //     style: 'background: #333; color: #fff;',
-    // });
-
-    // if (data.status == 201) {
-    //     toast.success('Berjaya disimpan!', {
-    //         style: 'background: #333; color: #fff;',
-    //     });
-    // } else {
-    //     toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
-    //         style: 'background: #333; color: #fff;',
-    //     });
-    // }
-
-    // const form = await superValidate(_addNewHireSchema);
     return { form };
 };
