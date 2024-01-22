@@ -3,11 +3,11 @@ import api from '$lib/services/core/ky.service';
 export const load = async () => {
     // console.log('HEY');
     // const hrmisLeavesResponse: Response = await api
-    //     .get('api/v1/leaves/leaves/hrmis')
+    //     .get('leaves/leaves/hrmis')
     //     .json();
 
     try {
-        await api.get('api/v1/leaves/leaves/hrmis').json();
+        await api.get('leaves/leaves/hrmis').json();
     } catch (error) {
         if (error.name === 'HTTPError') {
             const errorJson = await error.response.json();
@@ -16,7 +16,7 @@ export const load = async () => {
     }
 
     const hrmisOutOfOfficeResponse: Response = await api
-        .get('api/v1/leaves/leaves/hrmis-out-of-office')
+        .get('leaves/leaves/hrmis-out-of-office')
         .json();
 
     // else hrmisLeaves = hrmisLeavesResponse.data;

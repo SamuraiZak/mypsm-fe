@@ -38,7 +38,7 @@ export const _submit = async (formData: object) => {
     }
 
     const response: Promise<Response> = api
-        .post('api/v1/employments/new-hire', {
+        .post('employments/new-hire', {
             body: JSON.stringify(form),
         })
         .json();

@@ -11,7 +11,7 @@ export async function load() {
     showLoadingOverlay.set(true);
 
     // const response: Response = await api
-    //     .get('api/v1/salaries/allowance/2', {})
+    //     .get('salaries/allowance/2', {})
     //     .json();
 
     const result: unknown = {
@@ -46,7 +46,7 @@ export const _submitSalaryAllowance = async () => {
     console.log('first');
 
     const salaryAllowancePromise: Promise<Response> = api
-        .get('api/v1/salaries/allowance-approval/1')
+        .get('salaries/allowance-approval/1')
         .json();
 
     toast

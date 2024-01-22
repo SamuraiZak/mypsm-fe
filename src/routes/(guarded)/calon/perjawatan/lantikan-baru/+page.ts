@@ -1,4 +1,4 @@
-import api from '$lib/services/core/ky.service';
+import http from '$lib/services/provider/service-provider.service';
 
 export const load = async () => {
     const getAllLists = {
@@ -17,15 +17,16 @@ export const load = async () => {
         },
     };
 
-    const response = await api
-        .post('api/v1/employments/new-hires', {
+    const response = await http
+        .post('employments/new-hires', {
             body: JSON.stringify(getAllLists),
         })
         .json();
 
-    const getThisStaffRecord = response.data.newHires.filter(
-        (list) => list.temporaryId === 'C1234',
-    );
+    const getThisStaffRecord = response.data.newHires
+    // .filter(
+    //     (list) => list.temporaryId === 'C1234',
+    // );
 
 
     return {

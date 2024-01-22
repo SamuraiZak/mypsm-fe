@@ -17,7 +17,7 @@ export async function load() {
 
     // Gred lookup
     const gredResponse: Response = await api
-        .post('api/v1/lookups/grades', {
+        .post('lookups/grades', {
             body: JSON.stringify(getGredLookup),
         })
         .json();
@@ -27,7 +27,7 @@ export async function load() {
         name: element.code,
     }));
 
-    
+
 
     const salaryMovementRecord: IntSalaryMovementRecord[] =
         await mockSalaryMovementRecord;
