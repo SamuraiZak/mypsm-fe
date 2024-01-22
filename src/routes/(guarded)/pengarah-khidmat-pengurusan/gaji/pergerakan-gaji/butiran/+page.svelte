@@ -17,11 +17,18 @@
     import { mockSalaryMovementSchedule } from '$lib/mocks/gaji/salaryMovementSchedule/mockSalaryMovementSchedule';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { z, ZodError } from 'zod';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import type { PageData } from './$types';
+    import { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _stepperRevisionSalaryMovementSchedule,
+        _submitFormStepperRevisionSalaryMovementSchedule,
+    } from './+page';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
 
     export let noPekerja = '00001';
+    export let data: PageData;
 
     let activeStepper = 0;
     let salaryMovementData = mockSalaryMovementRecord[0];
@@ -30,9 +37,6 @@
     let labelBlack = !disabled;
     let selectedMeeting = '2';
     let selectedMonth = '10';
-    let errorData: any;
-    let salaryMovementScheduleReviewReview: any;
-    let salaryMovementScheduleReviewResult: any;
 
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
@@ -49,69 +53,23 @@
             label: 'Tidak Sah',
         },
     ];
-    const salaryMovementScheduleReviewForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
 
-        const exampleFormData = {
-            salaryMovementScheduleReviewResult: String(
-                formData.get('salaryMovementScheduleReviewResult'),
-            ),
-            salaryMovementScheduleReviewReview: String(
-                formData.get('salaryMovementScheduleReviewReview'),
-            ),
-        };
-
-        const exampleFormSchema = z.object({
-            // checkbox schema
-            salaryMovementScheduleReviewResult: z.enum(['sah', 'tidakSah'], {
-                errorMap: (issue, { defaultError }) => ({
-                    message:
-                        issue.code === 'invalid_enum_value'
-                            ? 'Sila tetapkan pilihan anda.'
-                            : defaultError,
-                }),
-            }),
-            // dateSelectorExample: dateScheme,
-            salaryMovementScheduleReviewReview: z
-                .string({ required_error: 'Medan ini tidak boleh kosong.' })
-                .min(4, {
-                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-                })
-                .max(124, {
-                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
-                })
-                .trim(),
-        });
-
-        try {
-            const result = exampleFormSchema.parse(exampleFormData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedExamFormData = { ...exampleFormData, id };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedExamFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
+    //Verification Retirement Application
+    const {
+        form: revisionSalaryMovementScheduleForm,
+        errors: revisionSalaryMovementScheduleErrors,
+        enhance: revisionSalaryMovementScheduleEnhance,
+    } = superForm(data.stepperRevisionSalaryMovementSchedule, {
+        SPA: true,
+        validators: _stepperRevisionSalaryMovementSchedule,
+        onSubmit() {
+            _submitFormStepperRevisionSalaryMovementSchedule(
+                $revisionSalaryMovementScheduleForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -228,15 +186,18 @@
             />
             <TextIconButton
                 primary
-                label="Hantar"
-                form="salaryMovementScheduleReviewFormValidation"
-            />
+                label="Simpan"
+                form="FormStepperRevisionSalaryMovementSchedule"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton>
         </StepperContentHeader>
         <StepperContentBody>
             <form
-                id="salaryMovementScheduleReviewFormValidation"
-                on:submit|preventDefault={salaryMovementScheduleReviewForm}
+                id="FormStepperRevisionSalaryMovementSchedule"
                 class="flex w-full flex-col gap-2"
+                use:revisionSalaryMovementScheduleEnhance
+                method="POST"
             >
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
@@ -253,29 +214,34 @@
                         Pengarah Khidmat Pengurusan
                     </p>
                     <LongTextField
-                        hasError={errorData?.Review}
-                        name="salaryMovementScheduleReviewReview"
+                        hasError={$revisionSalaryMovementScheduleErrors.meetingActionRemark
+                            ? true
+                            : false}
+                        name="meetingActionRemark"
                         label="Tindakan / Ulasan Mesyuarat"
-                        bind:value={salaryMovementScheduleReviewReview}
+                        bind:value={$revisionSalaryMovementScheduleForm.meetingActionRemark}
                     />
-                    {#if errorData?.salaryMovementScheduleReviewReview}
+                    {#if $revisionSalaryMovementScheduleErrors.meetingActionRemark}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.salaryMovementScheduleReviewReview[0]}</span
+                            >{$revisionSalaryMovementScheduleErrors
+                                .meetingActionRemark[0]}</span
                         >
                     {/if}
-
                     <RadioSingle
-                        disabled={false}
                         {options}
-                        name="salaryMovementScheduleReviewResult"
+                        hasError={$revisionSalaryMovementScheduleErrors.meetingResultOption
+                            ? true
+                            : false}
+                        name="meetingResultOption"
                         legend={'Keputusan Mesyuarat'}
-                        bind:userSelected={salaryMovementScheduleReviewResult}
+                        bind:userSelected={$revisionSalaryMovementScheduleForm.meetingResultOption}
                     ></RadioSingle>
-                    {#if errorData?.salaryMovementScheduleReviewResult}
+                    {#if $revisionSalaryMovementScheduleErrors.meetingResultOption}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.salaryMovementScheduleReviewResult[0]}</span
+                            >{$revisionSalaryMovementScheduleErrors
+                                .meetingResultOption[0]}</span
                         >
                     {/if}
                 </div>
