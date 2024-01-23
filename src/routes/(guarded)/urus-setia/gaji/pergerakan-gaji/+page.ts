@@ -5,7 +5,7 @@ import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
 // Annual Salary Increment
-const annualSalaryIncrement = z
+const textField = z
     .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
     .min(4, {
         message: 'Medan ini hendaklah lebih daripada 4 karakter.',
@@ -15,9 +15,26 @@ const annualSalaryIncrement = z
     })
     .trim();
 
+const option = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+const date = z.coerce.date({
+    errorMap: (issue, { defaultError }) => ({
+        message:
+            issue.code === 'invalid_date'
+                ? 'Tarikh tidak boleh dibiar kosong.'
+                : defaultError,
+    }),
+});
+
 export const _annualSalaryIncrement = z.object({
-    supporterName: annualSalaryIncrement,
-    approverName: annualSalaryIncrement,
+    meetingTypeOption: option,
+    meetingDate: date.refine((data) => data <= new Date(), {
+        message: 'Tidak boleh lebih daripada tarikh semasa',
+    }),
+    salaryMovementMonth: option,
+    gred: option,
+    specialFiAid: textField,
+    specialFiAidText: textField,
 });
 
 export const _submitFormAnnualSalaryIncrement = async (formData: object) => {
@@ -31,7 +48,8 @@ export const _submitFormAnnualSalaryIncrement = async (formData: object) => {
             style: 'background: #333; color: #fff;',
         });
         return fail(400, annualSalaryIncrement);
-    } const responsePromise = fetch(
+    }
+    const responsePromise = fetch(
         'https://jsonplaceholder.typicode.com/posts',
         {
             method: 'POST',
@@ -51,9 +69,7 @@ export const _submitFormAnnualSalaryIncrement = async (formData: object) => {
 
 //Async
 export const load = async () => {
-    const annualSalaryIncrement = await superValidate(
-        _annualSalaryIncrement,
-    );
+    const annualSalaryIncrement = await superValidate(_annualSalaryIncrement);
 
     return {
         annualSalaryIncrement,
