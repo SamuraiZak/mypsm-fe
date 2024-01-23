@@ -230,9 +230,6 @@
                         {/if}
                         <RadioSingle
                             {options}
-                            hasError={$verificationRetirementApplicationErrors.resultOption
-                                ? true
-                                : false}
                             name="resultOption"
                             bind:userSelected={$verificationRetirementApplicationForm.resultOption}
                         ></RadioSingle>
@@ -453,9 +450,6 @@
                         {/if}
                         <RadioSingle
                         options={approveOptions}
-                            hasError={$retirementApplicationApprovalErrors.resultOptionRAA
-                                ? true
-                                : false}
                             name="resultOptionRAA"
                             bind:userSelected={$retirementApplicationApprovalForm.resultOptionRAA}
                         ></RadioSingle>
@@ -542,9 +536,6 @@
                         {/if}
                         <RadioSingle
                             {options}
-                            hasError={$verificationRetirementDocumentsErrors.resultOptionVRD
-                                ? true
-                                : false}
                             name="resultOptionVRD"
                             bind:userSelected={$verificationRetirementDocumentsForm.resultOptionVRD}
                         ></RadioSingle>
@@ -613,9 +604,6 @@
                         {/if}
                         <RadioSingle
                             {options}
-                            hasError={$updateApplicationDeliveryInformationErrors.resultOptionUADI
-                                ? true
-                                : false}
                             name="resultOptionUADI"
                             bind:userSelected={$updateApplicationDeliveryInformationForm.resultOptionUADI}
                         ></RadioSingle>

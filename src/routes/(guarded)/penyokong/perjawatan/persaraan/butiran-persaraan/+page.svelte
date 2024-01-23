@@ -165,9 +165,6 @@
 
                         <RadioSingle
                             {options}
-                            hasError={$retirementApplicationSupporterErrors.resultOption
-                                ? true
-                                : false}
                             name="resultOption"
                             legend="Keputusan"
                             bind:userSelected={$retirementApplicationSupporterForm.resultOption}

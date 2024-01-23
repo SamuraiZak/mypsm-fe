@@ -230,9 +230,6 @@
                     {/if}
                     <RadioSingle
                         {options}
-                        hasError={$revisionSalaryMovementScheduleErrors.meetingResultOption
-                            ? true
-                            : false}
                         name="meetingResultOption"
                         legend={'Keputusan Mesyuarat'}
                         bind:userSelected={$revisionSalaryMovementScheduleForm.meetingResultOption}

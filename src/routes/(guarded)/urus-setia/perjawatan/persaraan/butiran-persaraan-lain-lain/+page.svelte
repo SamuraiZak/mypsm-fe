@@ -386,9 +386,6 @@
                         {/if}
                         <RadioSingle
                             {options}
-                            hasError={$retirementVerificationErrors.resultOption
-                                ? true
-                                : false}
                             name="resultOption"
                             bind:userSelected={$retirementVerificationForm.resultOption}
                         ></RadioSingle>
@@ -455,9 +452,6 @@
                         {/if}
                         <RadioSingle
                             {options}
-                            hasError={$updateApplicationDeliveryInformationErrors.resultOptionUADI
-                                ? true
-                                : false}
                             name="resultOptionUADI"
                             bind:userSelected={$updateApplicationDeliveryInformationForm.resultOptionUADI}
                         ></RadioSingle>

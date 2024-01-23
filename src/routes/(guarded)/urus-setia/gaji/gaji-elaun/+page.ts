@@ -1,4 +1,4 @@
-import http from '$lib/services/core/http.service';
+import http from '$lib/services/provider/service-provider.service';
 import { showLoadingOverlay } from '$lib/stores/globalState';
 import {
     NewHireListRequestConvert,

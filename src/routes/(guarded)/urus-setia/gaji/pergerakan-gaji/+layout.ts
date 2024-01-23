@@ -16,16 +16,17 @@ export async function load() {
     console.log(JSON.stringify(getGredLookup));
 
     // Gred lookup
-    const gredResponse: Response = await api
-        .post('lookups/grades', {
-            body: JSON.stringify(getGredLookup),
-        })
-        .json();
+    // const gredResponse: Response = await api
+    //     .post('lookups/grades', {
+    //         body: JSON.stringify(getGredLookup),
+    //     })
+    //     .json();
 
-    const gredLists = gredResponse.data.map((element) => ({
-        value: element.code,
-        name: element.code,
-    }));
+    const gredLists = undefined
+    //  = gredResponse.data.map((element) => ({
+    //     value: element.code,
+    //     name: element.code,
+    // }));
 
 
 

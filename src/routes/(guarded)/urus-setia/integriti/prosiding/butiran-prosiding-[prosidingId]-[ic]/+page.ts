@@ -116,6 +116,7 @@ export const _submitFormStepperDisciplinaryProceedingsMeetingInfoResult = async 
 };
 
 export async function load({ params }) {
+    const stepperMeetingResult = await superValidate(_stepperMeetingResult);
     const stepperDisciplinaryProceedingsMeetingInfoResult = await superValidate(_stepperDisciplinaryProceedingsMeetingInfoResult);
 
     const proceedingData: IntProsiding[] = await mockProsiding;

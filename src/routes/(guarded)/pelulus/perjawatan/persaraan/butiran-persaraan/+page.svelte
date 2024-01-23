@@ -218,9 +218,6 @@
 
                         <RadioSingle
                             {options}
-                            hasError={$retirementApplicationApprovalErrors.resultOption
-                                ? true
-                                : false}
                             name="resultOption"
                             legend="Keputusan"
                             bind:userSelected={$retirementApplicationApprovalForm.resultOption}

@@ -1001,9 +1001,7 @@
                             title="Maklumat Mesyuarat"
                         />
                         <DateSelector
-                            hasError={$stepperMeetingResultErrors.meetingDate
-                                ? true
-                                : false}
+                            hasError={!!$stepperMeetingResultErrors.meetingDate}
                             name="meetingDate"
                             handleDateChange
                             label="Tarikh Mesyuarat"
@@ -1012,14 +1010,11 @@
                         {#if $stepperMeetingResultErrors.meetingDate}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$stepperMeetingResultErrors
-                                    .meetingDate[0]}</span
+                                >{$stepperMeetingResultErrors.meetingDate}</span
                             >
                         {/if}
                         <DropdownSelect
-                            hasError={$stepperMeetingResultErrors.meetingNumberDropdown
-                                ? true
-                                : false}
+                            hasError={!!$stepperMeetingResultErrors.meetingNumberDropdown}
                             dropdownType="label-left-full"
                             id="meetingNumberDropdown"
                             label="Bil Mesyuarat"
@@ -1038,8 +1033,7 @@
                         {#if $stepperMeetingResultErrors.meetingNumberDropdown}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$stepperMeetingResultErrors
-                                    .meetingNumberDropdown[0]}</span
+                                >{$stepperMeetingResultErrors.meetingNumberDropdown}</span
                             >
                         {/if}
                         <DropdownSelect
@@ -1064,16 +1058,12 @@
                         {#if $stepperMeetingResultErrors.meetingNameDropdown}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$stepperMeetingResultErrors
-                                    .meetingNameDropdown[0]}</span
+                                >{$stepperMeetingResultErrors.meetingNameDropdown}</span
                             >
                         {/if}
 
                         <RadioSingle
                             options={appealMeetingOptions}
-                            hasError={$stepperMeetingResultErrors.meetingResultOption
-                                ? true
-                                : false}
                             name="meetingResultOption"
                             legend="Keputusan Mesyuarat"
                             bind:userSelected={$stepperMeetingResultForm.meetingResultOption}
@@ -1081,8 +1071,7 @@
                         {#if $stepperMeetingResultErrors.meetingResultOption}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$stepperMeetingResultErrors
-                                    .meetingResultOption[0]}</span
+                                >{$stepperMeetingResultErrors.meetingResultOption}</span
                             >
                         {/if}
 
@@ -1306,10 +1295,6 @@
                                     ></RadioSingle>
 
                                     <RadioSingle
-                                        options={meetingOptions}
-                                        hasError={$stepperDisciplinaryProceedingsMeetingInfoResultErrors.meetingResultOption
-                                            ? true
-                                            : false}
                                         name="meetingResultOption"
                                         legend="Susulan Prosiding Tahan Kerja"
                                         options={[
