@@ -1,5 +1,5 @@
 import { mockSalaryMovementRecord } from '$lib/mocks/gaji/salaryMovementRecord/mockSalaryMovementRecord';
-import { getPromiseToast } from '$lib/toast/toast-service';
+import { getPromiseToast } from '$lib/services/core/toast/toast-service';
 import { fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';

@@ -1,4 +1,4 @@
-import { getErrorToast, getPromiseToast } from '$lib/toast/toast-service';
+import { getErrorToast, getPromiseToast } from '$lib/services/core/toast/toast-service';
 import { error, fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';

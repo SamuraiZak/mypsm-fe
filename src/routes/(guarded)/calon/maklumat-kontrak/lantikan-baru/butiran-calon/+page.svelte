@@ -65,7 +65,7 @@
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import toast, { Toaster } from 'svelte-french-toast';
-    import { getErrorToast, getSuccessToast } from '$lib/toast/toast-service';
+    import { getErrorToast, getSuccessToast } from '$lib/services/core/toast/toast-service';
     import { fileSelectionList } from '$lib/stores/globalState';
     import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';

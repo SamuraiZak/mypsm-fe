@@ -2,7 +2,7 @@
 
 import { mockExams } from '$lib/mocks/latihan/mockExams.js';
 import { fail } from '@sveltejs/kit';
-import { getErrorToast, getPromiseToast } from '$lib/toast/toast-service';
+import { getErrorToast, getPromiseToast } from '$lib/services/core/toast/toast-service';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from "zod";
 

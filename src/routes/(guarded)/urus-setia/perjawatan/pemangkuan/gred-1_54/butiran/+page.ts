@@ -1,6 +1,6 @@
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
-import { getPromiseToast, getErrorToast } from '$lib/toast/toast-service';
+import { getPromiseToast, getErrorToast } from '$lib/services/core/toast/toast-service';
 import { fail } from '@sveltejs/kit';
 
 

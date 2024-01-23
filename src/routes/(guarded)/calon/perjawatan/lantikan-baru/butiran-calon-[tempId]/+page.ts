@@ -1,6 +1,6 @@
 import api from '$lib/services/core/ky.service.js';
 import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
-import { getErrorToast, getPromiseToast } from '$lib/toast/toast-service';
+import { getErrorToast, getPromiseToast } from '$lib/services/core/toast/toast-service';
 import type { CandidateIDRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/candidate-id-request.view-model.js';
 import type {
     ActivityResponseData,

@@ -17,7 +17,7 @@ import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
 import { mockProsiding } from '$lib/mocks/integriti/prosiding/mockProsiding.js';
 import { getEmployees } from '$lib/service/employees/staff-service.js';
 import { fail } from '@sveltejs/kit';
-import { getErrorToast, getPromiseToast } from '$lib/toast/toast-service';
+import { getErrorToast, getPromiseToast } from '$lib/services/core/toast/toast-service';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
