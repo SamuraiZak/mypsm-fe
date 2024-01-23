@@ -1,7 +1,7 @@
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
-import { getPromiseToast, getErrorToast } from '$lib/toast/toast-service';
+import { getPromiseToast, getErrorToast } from '$lib/services/core/toast/toast-service';
 import { error, fail } from '@sveltejs/kit';
 
 //=======================================================================

@@ -12,7 +12,7 @@ export interface ExperienceResponseData {
 export interface ExperienceList {
     company: string;
     address: string;
-    position: null;
+    position: string;
     positionCode: string;
     startDate: Date;
     endDate: Date;

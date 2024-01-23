@@ -20,7 +20,7 @@
     import { fileSelectionList } from '$lib/stores/globalState';
     import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
     import toast, { Toaster } from 'svelte-french-toast';
-    import { getSuccessToast } from '$lib/toast/toast-service';
+    import { getSuccessToast } from '$lib/services/core/toast/toast-service';
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import { _submitLeaveReplacementForm, _staffDetailSchema } from './+page';

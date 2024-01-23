@@ -1,33 +1,33 @@
 export interface CandidatePersonalDetailsResponse {
-    status:  number;
+    status: number;
     message: string;
-    data:    CandidatePersonalData;
+    data: CandidatePersonalData;
 }
 
 export interface CandidatePersonalData {
-    id:                       string;
-    genderId:                 null;
-    nationalityId:            null;
-    religionId:               null;
-    raceId:                   number;
-    titleId:                  null;
-    ethnicId:                 null;
-    maritalId:                null;
-    birthCountryId:           null;
-    birthStateId:             null;
-    assetDeclarationStatusId: null;
-    name:                     string;
-    alternativeName:          string;
-    identityDocumentColor:    string;
-    identityDocumentNumber:   string;
-    email:                    string;
-    propertyDeclarationDate:  null;
-    birthDate:                null;
-    isExPoliceOrSoldier:      boolean;
-    isInternalRelationship:   boolean;
-    employeeNumber:           string;
-    employeeName:             string;
-    employeePosition:         string;
-    relationshipId:           null;
-    isReadonly:               boolean;
+    id: number;
+    genderId: number;
+    nationalityId: number;
+    religionId: number;
+    raceId: number;
+    titleId: number;
+    ethnicId: number;
+    maritalId: number;
+    birthCountryId: number;
+    birthStateId: number;
+    assetDeclarationStatusId: number;
+    name: string;
+    alternativeName: string;
+    identityDocumentColor: string;
+    identityDocumentNumber: number;
+    email: string;
+    propertyDeclarationDate: Date;
+    birthDate: Date;
+    isExPoliceOrSoldier: boolean;
+    isInternalRelationship: boolean;
+    employeeNumber: string;
+    employeeName: string;
+    employeePosition: string;
+    relationshipId: number;
+    isReadonly: boolean;
 }

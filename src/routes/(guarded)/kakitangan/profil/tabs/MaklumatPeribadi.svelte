@@ -33,7 +33,7 @@
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import type { PageData } from './$types';
     import { Checkbox } from 'flowbite-svelte';
-    import { getErrorToast, getSuccessToast } from '$lib/toast/toast-service';
+    import { getErrorToast, getSuccessToast } from '$lib/services/core/toast/toast-service';
     import {
         _submitAddMoreAcademicForm,
         _addAcademicInfoSchema,

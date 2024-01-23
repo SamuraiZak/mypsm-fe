@@ -18,7 +18,7 @@ import { mockContStudy } from '$lib/mocks/latihan/mockContStudy.js';
 import { getEmployees } from '$lib/service/employees/staff-service.js';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
-import { getPromiseToast, getErrorToast } from '$lib/toast/toast-service';
+import { getPromiseToast, getErrorToast } from '$lib/services/core/toast/toast-service';
 import { error, fail } from '@sveltejs/kit';
 
 export async function load({ params }) {

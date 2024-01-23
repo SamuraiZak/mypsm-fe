@@ -25,7 +25,7 @@
         _submitAdvancementApplicantsForm,
     } from './+page';
     import SvgPrinter from '$lib/assets/svg/SvgPrinter.svelte';
-    import { getErrorToast } from '$lib/toast/toast-service';
+    import { getErrorToast } from '$lib/services/core/toast/toast-service';
     export let data: PageData;
 
     let selectedGred: string = greds[0].value; // Default selected filter
