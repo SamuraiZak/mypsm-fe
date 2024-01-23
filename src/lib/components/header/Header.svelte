@@ -2,6 +2,9 @@
     import AccountTile from '../account-tile/AccountTile.svelte';
     import IconButton from '../buttons/IconButton.svelte';
     import HeaderProfile from './HeaderProfile.svelte';
+    import group from '$lib/assets/group.png';
+    import logo from '$lib/assets/logo.png';
+    import MyPSM from '$lib/assets/MyPSM.png';
 </script>
 
 <header
@@ -11,9 +14,9 @@
         class="flex h-[50px] w-[200px] min-w-[200px] items-center justify-center border-r"
     >
         <div class="flex items-center justify-between gap-2">
-            <img class="h-10" src="/src/lib/assets/logo.png" alt="" />
-            <img class="h-8" src="/src/lib/assets/Group.png" alt="" />
-            <img class="h-5" src="/src/lib/assets/MyPSM.png" alt="" />
+            <img class="h-10" src={logo} alt="" />
+            <img class="h-8" src={group} alt="" />
+            <img class="h-5" src={MyPSM} alt="" />
         </div>
     </div>
     <div class="flex w-fit flex-row items-center md:justify-end">
