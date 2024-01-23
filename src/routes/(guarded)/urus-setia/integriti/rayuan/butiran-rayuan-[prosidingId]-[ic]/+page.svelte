@@ -1047,9 +1047,6 @@
 
                         <RadioSingle
                             options={appealMeetingOptions}
-                            hasError={$stepperMeetingResultErrors.meetingResultOption
-                                ? true
-                                : false}
                             name="meetingResultOption"
                             legend="Keputusan Mesyuarat"
                             bind:userSelected={$stepperMeetingResultForm.meetingResultOption}
@@ -1062,7 +1059,7 @@
                             >
                         {/if}
 
-                        {#if appealMeetingResult === 'pass'}
+                        {#if $stepperMeetingResultForm.meetingResultOption=== 'pass'}
                             <SectionHeader
                                 color="system-primary"
                                 title="Susulan Rayuan"
