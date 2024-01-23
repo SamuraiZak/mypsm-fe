@@ -1,23 +1,23 @@
 export interface CandidateAcademicDetailsResponse {
-    status:  number;
+    status: number;
     message: string;
-    data:    AcademicResponseData;
+    data: AcademicResponseData;
 }
 
 export interface AcademicResponseData {
     academicList: AcademicList[];
-    isReadonly:   boolean;
+    isReadonly: boolean;
 }
 
 export interface AcademicList {
-    id:               string;
-    majorMinorId:     null;
-    countryId:        string;
-    institutionId:    string;
-    educationLevelId: string;
-    sponsorshipId:    string;
-    name:             string;
-    completionDate:   Date;
-    finalGrade:       string;
-    field:            string;
+    id: number;
+    majorMinorId: number;
+    countryId: number;
+    institutionId: number;
+    educationLevelId: number;
+    sponsorshipId: number;
+    name: string;
+    completionDate: Date;
+    finalGrade: string;
+    field: string;
 }
