@@ -70,11 +70,18 @@
         delete emolumentDeprivationDaysFormGroup[groupId];
     }
 
-    export let dataObject;
+
+    export let dataObject: object;
     let warningDate: Date;
+    let penaltyDate: Date;
+    let fireDate: Date;
 
     function updateData() {
-    dataObject = { warningDate: warningDate };
+    dataObject = { 
+        punishmentWarning: new Date(warningDate),
+        punishmentPenalty: new Date(penaltyDate),
+        punishmentFire: new Date(fireDate),
+    };
   }
 </script>
 
@@ -172,7 +179,7 @@
                         labelBlack={true}
                         name="date-of effect-penalty-{key + groupId}"
                         label="Tarikh Berkuatkuasa"
-                        selectedDate={''}
+                        bind:selectedDate={penaltyDate}
                         handleDateChange={() => {}}
                     />
                     <TextField
@@ -370,7 +377,7 @@
                         labelBlack={true}
                         name="date-of-effect-fire-{key + groupId}"
                         label="Tarikh Berkuatkuasa"
-                        selectedDate={''}
+                        bind:selectedDate={fireDate}
                         handleDateChange={() => {}}
                     />
                 {/if}
