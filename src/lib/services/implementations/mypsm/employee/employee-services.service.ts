@@ -8,7 +8,7 @@ import { type NewHireActivity } from '$lib/view-models/mypsm/perjawatan/new-hire
 import type { CandidateAcademicDetailsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-academic-details-response.model';
 import type { CandidateExperienceDetailsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-experience-details-respone.model';
 import type { CandidatePersonalDetailsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-respone.model';
-
+import type { PensionTableFilter, PensionTableResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/list-Pension-Detail.view-model';
 export class EmployeeService {
     // get list of employee
     static async getEmployeeList(param: EmployeesListRequestViewModel) {
@@ -70,6 +70,19 @@ export class EmployeeService {
     ): Promise<NewHireActivity> {
         const response: NewHireActivity = await http
             .post(`employments/new-hire-academic/`, {
+                body: JSON.stringify(formData),
+            })
+            .json();
+
+        return response;
+    }
+
+    //PTB table
+    static async getPensionRecord(
+        formData: PensionTableFilter,
+    ): Promise<PensionTableResponse> {
+        const response: PensionTableResponse = await http
+            .post(`employments/pension-details`, {
                 body: JSON.stringify(formData),
             })
             .json();

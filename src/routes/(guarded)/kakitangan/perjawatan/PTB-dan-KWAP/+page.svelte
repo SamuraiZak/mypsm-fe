@@ -2,13 +2,12 @@
     import { greds } from '$lib/mocks/gred/gred';
     import { positions } from '$lib/mocks/positions/positions';
     import { status } from '$lib/mocks/status/status';
-    import FilterContainer from '$lib/components/filter-container/FilterContainer.svelte';
+
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import ShortTextField from '$lib/components/input/ShortTextField.svelte';
+
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
 
-    let tempData: PtbAndKwap;
+    let tempData: PensionDetail;
     let selectedStatus = status[0].value; // Default selected filter
     let selectedGred: string = greds[0].value; // Default selected filter
     let selectedPos: string = positions[0].value; // Default selected filter
@@ -21,11 +20,12 @@
     import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
     import FilterSelectInput from '$lib/components/filter/FilterSelectInput.svelte';
     import FilterDateSelector from '$lib/components/filter/FilterDateSelector.svelte';
-    const url =
-        './PTB-dan-KWAP/butiran-permohonan-' +
-        data.props.lists[0].noPekerja +
-        '-' +
-        data.props.lists[0].noKadPengenalan;
+    import type { PensionDetail } from '$lib/view-models/mypsm/perjawatan/new-hire/list-Pension-Detail.view-model.js';
+    // const url =
+    //     './PTB-dan-KWAP/butiran-permohonan-' +
+    //     data.props.lists[0].noPekerja +
+    //     '-' +
+    //     data.props.lists[0].noKadPengenalan;
 </script>
 
 <!-- content header starts here -->
@@ -84,12 +84,10 @@
                 detailActions={() => {
                     const url =
                         './PTB-dan-KWAP/butiran-permohonan-' +
-                        tempData.noPekerja +
-                        '-' +
-                        tempData.noKadPengenalan;
-                    goto(url);
+                        tempData.employeeNo
+
                 }}
-                tableItems={data.props.lists}
+                tableItems={data.record}
                 bind:passData={tempData}
             ></DynamicTable>
         </div>
