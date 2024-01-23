@@ -972,9 +972,6 @@
                     {/if}
                     <RadioSingle
                         options={pengesahan}
-                        hasError={$allowanceApplicationValidationErrors.resultOption
-                            ? true
-                            : false}
                         name="resultOption"
                         bind:userSelected={$allowanceApplicationValidationForm.resultOption}
                     ></RadioSingle>
