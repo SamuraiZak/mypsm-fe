@@ -1,13 +1,20 @@
 import api from '$lib/services/core/ky.service.js';
 import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
 import { getErrorToast, getPromiseToast } from '$lib/toast/toast-service';
+import type { CandidateIDRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/candidate-id-request.view-model.js';
 import type {
     ActivityResponseData,
     NewHireActivity,
 } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-activity-response.view-model';
-import type { AcademicResponseData } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-academic-details-response.model.js';
+import type {
+    AcademicResponseData,
+    CandidateAcademicDetailsResponse,
+} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-academic-details-response.model.js';
 import type { ExperienceResponseData } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-experience-details-respone.model.js';
-import type { CandidatePersonalDetailsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-respone.model.js';
+import type {
+    CandidatePersonalData,
+    CandidatePersonalDetailsResponse,
+} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-respone.model.js';
 import { fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
@@ -78,39 +85,45 @@ const booleanSchema = z.boolean({
     invalid_type_error: 'Medan ini haruslah jenis boolean.',
 });
 
-const numberIdSchema = z.coerce
+const identitySchema = z.coerce
     .number({
         required_error: 'Tidak tepat.',
         invalid_type_error: 'Sila pastikan ID ditaip dengan angka',
     })
     .min(12, { message: 'Kurang daripada 12 angka mengikut ID Malaysia' });
 
+const numberIdSchema = z.coerce.number({
+    required_error: 'Tidak tepat.',
+    invalid_type_error: 'Sila pastikan ID ditaip dengan angka',
+});
+
 export const _personalInfoForm = z
     .object({
-        // statusPekerjaan: generalSelectSchema,
-        candidateNumber: z.string().readonly(),
-        identityDocumentNumber: shortTextSchema,
+        id: numberIdSchema,
+        genderId: numberIdSchema,
+        nationalityId: numberIdSchema,
+        religionId: numberIdSchema,
+        raceId: numberIdSchema,
+        titleId: numberIdSchema,
+        ethnicId: numberIdSchema,
+        maritalId: numberIdSchema,
+        birthCountryId: numberIdSchema,
+        birthStateId: numberIdSchema,
+        assetDeclarationStatusId: numberIdSchema,
         name: shortTextSchema,
-        alternativeName: shortTextSchema.nullable(),
+        alternativeName: shortTextSchema,
         identityDocumentColor: generalSelectSchema,
-        birthDate: maxDateSchema,
-        birthPlace: generalSelectSchema,
-        isMalaysia: generalSelectSchema,
-        raceId: generalSelectSchema,
-        religionId: generalSelectSchema,
-        gender: generalSelectSchema,
-        marital: generalSelectSchema,
+        identityDocumentNumber: identitySchema,
         email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
-        propertyDeclarationStatus: generalSelectSchema,
         propertyDeclarationDate: maxDateSchema,
-        homeAddress: shortTextSchema,
-        mailAddress: shortTextSchema,
+        birthDate: maxDateSchema,
         isExPoliceOrSoldier: booleanSchema,
         isInternalRelationship: booleanSchema,
         employeeNumber: z.string().nullable(),
         employeeName: shortTextSchema.nullable(),
         employeePosition: generalSelectSchema.nullable(),
-        relationship: generalSelectSchema.nullable(),
+        relationshipId: numberIdSchema,
+        isReadonly: z.boolean(),
     })
     .superRefine(({ isInternalRelationship }, ctx) => {
         if (isInternalRelationship) {
@@ -132,26 +145,30 @@ export const _personalInfoForm = z
 //==========================================================
 
 const academicListSchema = z.object({
-    type: z.string(),
+    id: numberIdSchema,
+    majorMinorId: numberIdSchema,
+    countryId: numberIdSchema,
+    institutionId: numberIdSchema,
+    educationLevelId: numberIdSchema,
+    sponsorshipId: numberIdSchema,
     name: codeSchema,
-    completionYear: z.number(),
+    completionDate: maxDateSchema,
     finalGrade: codeSchema,
-    field: z.string(),
-    remark: z.string(),
+    field: shortTextSchema,
 });
 
 export const _academicInfoSchema = z.object({
     academicList: z.array(academicListSchema),
-    isReadonly: z.boolean(),
+    // isReadonly: z.boolean(),
 });
 
 // New employment - add academic section
 export const _addAcademicInfoSchema = z.object({
-    majorMinorId: generalSelectSchema.nullish(),
-    countryId: generalSelectSchema,
-    institutionId: generalSelectSchema,
-    educationLevelId: generalSelectSchema,
-    sponsorshipId: generalSelectSchema,
+    majorMinorId: numberIdSchema.nullish(),
+    countryId: numberIdSchema,
+    institutionId: numberIdSchema,
+    educationLevelId: numberIdSchema,
+    sponsorshipId: numberIdSchema,
     name: shortTextSchema,
     completionDate: maxDateSchema,
     finalGrade: codeSchema,
@@ -214,7 +231,7 @@ export const _addActivityModalSchema = z.object({
 
 export const _addFamilyModalSchema = z.object({
     addName: shortTextSchema,
-    addIdentityDocumentNumber: numberIdSchema,
+    addIdentityDocumentNumber: identitySchema,
     addGender: generalSelectSchema,
     addRelationship: generalSelectSchema,
     addOccupation: shortTextSchema.nullish(),
@@ -227,7 +244,7 @@ export const _addFamilyModalSchema = z.object({
 
 export const _addNonFamilyModalSchema = z.object({
     addNonFamilyName: shortTextSchema,
-    addNonFamilyIdentityDocumentNumber: numberIdSchema,
+    addNonFamilyIdentityDocumentNumber: identitySchema,
     addNonFamilyGender: generalSelectSchema,
     addNonFamilyRelationship: generalSelectSchema,
     addNonFamilyOccupation: shortTextSchema.nullish(),
@@ -292,7 +309,7 @@ export const _nextOfKinInfoSchema = z.object({
 //==========================================================
 export const _addNextOfKinInfoSchema = z.object({
     addNextOfKinName: shortTextSchema,
-    addNextOfKinIdentityDocumentNumber: numberIdSchema,
+    addNextOfKinIdentityDocumentNumber: identitySchema,
     addNextOfKinBirthDate: maxDateSchema,
     addNextOfKinRelationship: generalSelectSchema,
     addNextOfKinMarriageDate: maxDateSchema,
@@ -305,40 +322,45 @@ export const _addNextOfKinInfoSchema = z.object({
 });
 
 export const load = async ({ params }) => {
-    const candidateIdForm = new FormData();
-    candidateIdForm.append('candidateId', String(params));
+    // set request body
+    const candidateIdRequestBody: CandidateIDRequestBody = {
+        candidateId: Number(params.tempId),
+    };
 
     const personalDetailResponse: CandidatePersonalDetailsResponse =
         await EmployeeService.getCurrentCandidatePersonalDetails(
-            candidateIdForm,
+            candidateIdRequestBody,
         );
+    const personalDetails: CandidatePersonalData = personalDetailResponse.data;
 
-    console.log(
-        'Response',
-        JSON.stringify(candidateIdForm),
-        personalDetailResponse.data,
-    );
-
-    const academicInfoResponse =
-        await EmployeeService.getCurrentCandidateAcademic(candidateIdForm);
+    const academicInfoResponse: CandidateAcademicDetailsResponse =
+        await EmployeeService.getCurrentCandidateAcademic(
+            candidateIdRequestBody,
+        );
 
     const academicDetails: AcademicResponseData = academicInfoResponse.data;
 
+    // form data based on schema and response
     const experienceInfoResponse =
-        await EmployeeService.getCurrentCandidateExperience(candidateIdForm);
+        await EmployeeService.getCurrentCandidateExperience(
+            candidateIdRequestBody,
+        );
     const experienceDetails: ExperienceResponseData =
         experienceInfoResponse.data;
 
     const activityInfoResponse: NewHireActivity =
-        await EmployeeService.getCurrentCandidateActivities(candidateIdForm);
+        await EmployeeService.getCurrentCandidateActivities(
+            candidateIdRequestBody,
+        );
     const activityDetails: ActivityResponseData = activityInfoResponse.data;
 
-    console.log('activityInfoResponse', activityDetails);
-
-    const personalInfoForm = await superValidate(_personalInfoForm);
+    const personalInfoForm = await superValidate(
+        personalDetails,
+        _personalInfoForm,
+    );
 
     const academicInfoForm = await superValidate(
-        // academicInfoResponse.data,
+        academicDetails,
         _academicInfoSchema,
     );
     const serviceInfoForm = await superValidate(_serviceInfoSchema);
@@ -350,8 +372,6 @@ export const load = async ({ params }) => {
     const addFamilyModal = await superValidate(_addFamilyModalSchema);
     const addNonFamilyModal = await superValidate(_addNonFamilyModalSchema);
     const addNextOfKinModal = await superValidate(_addNextOfKinInfoSchema);
-
-    personalInfoForm.data.candidateNumber = params.tempId;
 
     return {
         personalInfoForm,
