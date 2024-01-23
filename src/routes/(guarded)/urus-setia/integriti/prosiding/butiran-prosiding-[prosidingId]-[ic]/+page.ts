@@ -16,6 +16,7 @@ import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
 import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
 import { mockProsiding } from '$lib/mocks/integriti/prosiding/mockProsiding.js';
 import { getEmployees } from '$lib/service/employees/staff-service.js';
+import { getPromiseToast } from '$lib/services/core/toast/toast-service';
 import { fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
@@ -76,7 +77,9 @@ export const _submitFormStepperMeetingResult = async (formData: object) => {
 };
 
 //Disciplinary Proceedings Meeting Info Result
-const optionDisciplinaryProceedingsMeetingInfoResult = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
+const optionDisciplinaryProceedingsMeetingInfoResult = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
 export const _stepperDisciplinaryProceedingsMeetingInfoResult = z.object({
     meetingNumberDropdown: option,
@@ -84,40 +87,85 @@ export const _stepperDisciplinaryProceedingsMeetingInfoResult = z.object({
     meetingResultOption: option,
 });
 
-export const _submitFormStepperDisciplinaryProceedingsMeetingInfoResult = async (formData: object) => {
-    const stepperDisciplinaryProceedingsMeetingInfoResult = await superValidate(
+export const _submitFormStepperDisciplinaryProceedingsMeetingInfoResult =
+    async (formData: object) => {
+        const stepperDisciplinaryProceedingsMeetingInfoResult =
+            await superValidate(
+                formData,
+                _stepperDisciplinaryProceedingsMeetingInfoResult,
+            );
+
+        if (!stepperDisciplinaryProceedingsMeetingInfoResult.valid) {
+            toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+                style: 'background: #333; color: #fff;',
+            });
+            return fail(400, stepperDisciplinaryProceedingsMeetingInfoResult);
+        }
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(
+                    _stepperDisciplinaryProceedingsMeetingInfoResult,
+                ),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
+            },
+        )
+            .then((response) => response.json())
+            .then((json) => {
+                console.log('Response Returned: ', json);
+            });
+        getPromiseToast(responsePromise);
+        return { stepperDisciplinaryProceedingsMeetingInfoResult };
+    };
+
+//Update Crime Offence Info
+const optionUpdateCrimeOffenceInfot = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+export const _updateCrimeOffenceInfo = z.object({
+    meetingResultOption: optionUpdateCrimeOffenceInfot,
+});
+
+export const _submitFormUpdateCrimeOffenceInfo = async (formData: object) => {
+    const updateCrimeOffenceInfo = await superValidate(
         formData,
-        _stepperDisciplinaryProceedingsMeetingInfoResult,
+        _updateCrimeOffenceInfo,
     );
 
-    if (!stepperDisciplinaryProceedingsMeetingInfoResult.valid) {
+    if (!updateCrimeOffenceInfo.valid) {
         toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
             style: 'background: #333; color: #fff;',
         });
-        return fail(400, stepperDisciplinaryProceedingsMeetingInfoResult);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
+        return fail(400, updateCrimeOffenceInfo);
+    }
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
             method: 'POST',
-            body: JSON.stringify(stepperDisciplinaryProceedingsMeetingInfoResult),
+            body: JSON.stringify(_updateCrimeOffenceInfo),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log('Response Returned: StepperDisciplinaryProceedingsMeetingInfoResult-54', json);
-            });
-    }
-    return { stepperDisciplinaryProceedingsMeetingInfoResult };
+        },
+    )
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise);
+    return { updateCrimeOffenceInfo };
 };
 
 export async function load({ params }) {
     const stepperMeetingResult = await superValidate(_stepperMeetingResult);
-    const stepperDisciplinaryProceedingsMeetingInfoResult = await superValidate(_stepperDisciplinaryProceedingsMeetingInfoResult);
+    const stepperDisciplinaryProceedingsMeetingInfoResult = await superValidate(
+        _stepperDisciplinaryProceedingsMeetingInfoResult,
+    );
+    const updateCrimeOffenceInfo = await superValidate(_updateCrimeOffenceInfo);
 
     const proceedingData: IntProsiding[] = await mockProsiding;
 
@@ -209,6 +257,7 @@ export async function load({ params }) {
     return {
         stepperMeetingResult,
         stepperDisciplinaryProceedingsMeetingInfoResult,
+        updateCrimeOffenceInfo,
         record: {
             data,
             currentProceeding,
