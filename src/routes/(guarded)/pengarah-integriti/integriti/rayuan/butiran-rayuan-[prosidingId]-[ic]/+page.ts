@@ -163,25 +163,20 @@ const dateScheme = z.coerce
 
 const generalSelectSchema = z.string().min(1, { message: "Sila tetapkan pilihan anda. " });
 
-const disciplinaryAppealCommitteeMeetingResultSchema = z.object({
+export const _disciplinaryAppealCommitteeMeetingResultSchema = z.object({
     meetingDate: dateScheme,
     meetingNumber: generalSelectSchema,
     meetingName: generalSelectSchema,
     appealMeetingResult: z.boolean().default(false),
     appealFollowUpResult: generalSelectSchema,
-    warningDate: z.object({
-    }),
-});
+    chargedPunishment: z.object({
+        punishmentWarning: dateScheme,
+        punishmentPenalty: dateScheme,
+        punishmentFire: dateScheme,
+    }).deepPartial(), 
+}).partial();
 
-export const _disciplinaryAppealCommitteeMeetingResultSchema = disciplinaryAppealCommitteeMeetingResultSchema.partial();
-type _disciplinaryAppealCommitteeMeetingResultSchema = {
-    meetingDate?: Date,
-    meetingNumber?: string,
-    meetingName?: string,
-    appealMeetingResult?: boolean,
-    appealFollowUpResult?: string | undefined,
-    warningDate?: any | undefined,
-}
+// export const _disciplinaryAppealCommitteeMeetingResultSchema = disciplinaryAppealCommitteeMeetingResultSchema.deepPartial();
 
 export const _submitDisciplinaryAppealCommitteeMeetingResultForm = async (formData: Object) => {
 

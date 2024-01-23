@@ -206,8 +206,7 @@
             SPA: true,
             validators: _disciplinaryAppealCommitteeMeetingResultSchema,
             onSubmit() {
-                console.log(parentData),
-                    _submitDisciplinaryAppealCommitteeMeetingResultForm($form);
+                _submitDisciplinaryAppealCommitteeMeetingResultForm($form);
             },
             taintedMessage:
                 'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
@@ -217,10 +216,10 @@
     // reset the appeal decision if US decided accidentally chose passed meeting result
     $: if (!$form.appealMeetingResult) {
         $form.appealFollowUpResult = undefined;
+        $form.chargedPunishment = undefined;
     }
-
-    $: if ($form.appealFollowUpResult === 'lightenPunishment'){
-        $form.warningDate = parentData;
+    $: if ($form.appealFollowUpResult === 'lightenPunishment') {
+        $form.chargedPunishment = parentData;
     }
 </script>
 
@@ -986,7 +985,7 @@
                         class="flex w-full flex-col gap-2"
                     >
                         <DateSelector
-                            hasError={$errors.meetingDate ? true : false}
+                            hasError={!!$errors.meetingDate}
                             name="meetingDate"
                             disabled={false}
                             labelBlack={true}
@@ -1073,16 +1072,21 @@
                                 <SectionHeader
                                     title="Sila Pilih Hukuman - Hukuman Yang Dikenakan"
                                 ></SectionHeader>
+                                {#if $errors.chargedPunishment}
+                                    <span
+                                        class="font-sans text-sm italic text-system-danger"
+                                        >Maklumat hukuman di bawah hendaklah diisi dengan betul dan lengkap.</span
+                                    >
+                                {/if}
                                 {#each Object.entries(data.record.currentProceeding.proceedingMeetingResult) as [key, result], index}
                                     <div
-                                        class="rounded-[3px] border border-system-primary p-2.5"
+                                        class="{!$errors.chargedPunishment ? 'border-system-primary' : 'border-system-danger focus:border-system-danger' } rounded-[3px] border  p-2.5"
                                     >
                                         <SectionHeader
                                             color="system-primary"
                                             title="Pertuduhan #{index +
                                                 1}: {result.chargeName}"
                                         ></SectionHeader>
-                                        <hr />
 
                                         <div class="mx-2.5">
                                             <AddPunishmentFromGroup
