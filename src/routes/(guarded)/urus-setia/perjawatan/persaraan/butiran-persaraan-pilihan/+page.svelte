@@ -265,9 +265,8 @@
                 <div class="flex w-full flex-col gap-2">
                     <div>
                         <DropdownSelect
-                            hasError={$supporterApproverErrors.supporter1Option
-                                ? true
-                                : false}
+                            hasError={!!$supporterApproverErrors.supporter1Option
+                                }
                             dropdownType="label-left-full"
                             id="supporter1Option"
                             label="Nama Penyokong #1"
