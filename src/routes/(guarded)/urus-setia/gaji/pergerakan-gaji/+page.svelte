@@ -15,19 +15,25 @@
     import { Checkbox, Radio, Tooltip } from 'flowbite-svelte';
     import SvgArrowUp from '$lib/assets/svg/SvgArrowUp.svelte';
     import SvgArrowDownTail from '$lib/assets/svg/SvgArrowDownTail.svelte';
-    import toast, { Toaster } from 'svelte-french-toast';
     import { z, ZodError } from 'zod';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
     import FilterSelectInput from '$lib/components/filter/FilterSelectInput.svelte';
     import FilterDateSelector from '$lib/components/filter/FilterDateSelector.svelte';
+    import { superForm } from 'sveltekit-superforms/client';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import {
+        _annualSalaryIncrement,
+        _submitFormAnnualSalaryIncrement,
+    } from './+page';
 
-    export let data;
+    export let data: PageData;
 
     let isGredChecked: boolean = false;
     let isSpecialFiAidTextChecked: boolean = false;
     let isSpecialIncrementChecked: boolean = false;
-    let selectedStatus = status[0].value; // Default selected filter
+    let selectedStatus = status.value; // Default selected filter
     let selectedSalaryMovementMonth = ''; // Default selected filter
     let selectedGred = ''; // Default selected filter
     let errorData: any;
@@ -66,135 +72,149 @@
         }
     }
 
-    const dateScheme = z.coerce
-        .date({
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_date'
-                        ? 'Tarikh tidak boleh dibiar kosong.'
-                        : defaultError,
-            }),
-        })
-        .min(new Date(), {
-            message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
-        });
+    // const dateScheme = z.coerce
+    //     .date({
+    //         errorMap: (issue, { defaultError }) => ({
+    //             message:
+    //                 issue.code === 'invalid_date'
+    //                     ? 'Tarikh tidak boleh dibiar kosong.'
+    //                     : defaultError,
+    //         }),
+    //     })
+    //     .min(new Date(), {
+    //         message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+    //     });
 
-    const exampleFormSchema = z.object({
-        meetingTypeOption: z.enum(['1', '2', '3', '4'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Pilihan perlu dipilih.'
-                        : defaultError,
-            }),
-        }),
-        meetingDate: dateScheme,
-        salaryMovementMonthType: z.enum(['1', '2', '3', '4'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Pilihan perlu dipilih.'
-                        : defaultError,
-            }),
-        }),
-        gred: z.optional(
-            z.enum(['All', 'N19', 'N21', 'N29', 'N32', 'N49', 'N52'], {
-                errorMap: (issue, { defaultError }) => ({
-                    message:
-                        issue.code === 'invalid_enum_value'
-                            ? 'Pilihan perlu dipilih.'
-                            : defaultError,
-                }),
-            }),
-        ),
-        specialFiAidTexts: z.optional(
-            z
-                .string({ required_error: 'Medan ini tidak boleh kosong.' })
-                .min(1, {
-                    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-                })
-                .max(124, {
-                    message: 'Medan ini tidak boleh melebihi 124 karakter.',
-                })
-                .trim(),
-        ),
+    // const exampleFormSchema = z.object({
+    //     meetingTypeOption: z.enum(['1', '2', '3', '4'], {
+    //         errorMap: (issue, { defaultError }) => ({
+    //             message:
+    //                 issue.code === 'invalid_enum_value'
+    //                     ? 'Pilihan perlu dipilih.'
+    //                     : defaultError,
+    //         }),
+    //     }),
+    //     meetingDate: dateScheme,
+    //     salaryMovementMonthType: z.enum(['1', '2', '3', '4'], {
+    //         errorMap: (issue, { defaultError }) => ({
+    //             message:
+    //                 issue.code === 'invalid_enum_value'
+    //                     ? 'Pilihan perlu dipilih.'
+    //                     : defaultError,
+    //         }),
+    //     }),
+    //     gred: z.optional(
+    //         z.enum(['All', 'N19', 'N21', 'N29', 'N32', 'N49', 'N52'], {
+    //             errorMap: (issue, { defaultError }) => ({
+    //                 message:
+    //                     issue.code === 'invalid_enum_value'
+    //                         ? 'Pilihan perlu dipilih.'
+    //                         : defaultError,
+    //             }),
+    //         }),
+    //     ),
+    //     specialFiAidTexts: z.optional(
+    //         z
+    //             .string({ required_error: 'Medan ini tidak boleh kosong.' })
+    //             .min(1, {
+    //                 message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+    //             })
+    //             .max(124, {
+    //                 message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    //             })
+    //             .trim(),
+    //     ),
+    // });
+
+    // const tetapanKGTForm = async (event: Event) => {
+    //     const formData = new FormData(event.target as HTMLFormElement);
+
+    //     const meetingTypeOptionSelector = document.getElementById(
+    //         'meetingTypeOption',
+    //     ) as HTMLSelectElement;
+    //     const salaryMovementMonthType = document.getElementById(
+    //         'salaryMovementMonthType',
+    //     ) as HTMLSelectElement;
+    //     const getGred = document.getElementById('gred') as HTMLSelectElement;
+
+    //     const exampleFormData = {
+    //         meetingTypeOption: String(meetingTypeOptionSelector.value),
+    //         meetingDate: String(formData.get('meetingDate')),
+    //         salaryMovementMonthType: String(salaryMovementMonthType.value),
+    //     };
+
+    //     try {
+    //         let validatedData;
+    //         let result;
+
+    //         if (isGredChecked) {
+    //             const gred = String(getGred.value);
+
+    //             const validatedFormData = {
+    //                 ...exampleFormData,
+    //                 gred,
+    //             };
+    //             validatedData = validatedFormData;
+    //             result = exampleFormSchema.parse(validatedFormData);
+    //         } else if (isSpecialFiAidTextChecked) {
+    //             const specialFiAidTexts = String(
+    //                 formData.get('specialFiAidTexts'),
+    //             );
+    //             const validatedFormData = {
+    //                 ...exampleFormData,
+    //                 specialFiAidTexts,
+    //             };
+    //             validatedData = validatedFormData;
+    //             result = exampleFormSchema.parse(validatedFormData);
+    //         } else {
+    //             validatedData = exampleFormData;
+    //             result = exampleFormSchema.parse(exampleFormData);
+    //         }
+
+    //         if (result) {
+    //             errorData = [];
+    //             toast.success('Berjaya disimpan!', {
+    //                 style: 'background: #333; color: #fff;',
+    //             });
+
+    //             const id = crypto.randomUUID().toString();
+    //             const validatedFormData = {
+    //                 ...validatedData,
+    //                 id,
+    //             };
+    //             console.log(
+    //                 'REQUEST BODY: ',
+    //                 JSON.stringify(validatedFormData),
+    //             );
+    //         }
+    //     } catch (err: unknown) {
+    //         if (err instanceof ZodError) {
+    //             const { fieldErrors: errors } = err.flatten();
+    //             errorData = errors;
+    //             console.log('ERROR!', err.flatten());
+    //             toast.error(
+    //                 'Sila pastikan maklumat adalah lengkap dengan tepat.',
+    //                 {
+    //                     style: 'background: #333; color: #fff;',
+    //                 },
+    //             );
+    //         }
+    //     }
+    // };
+    //Supporter Approver
+    const {
+        form: annualSalaryIncrementForm,
+        errors: annualSalaryIncrementErrors,
+        enhance: annualSalaryIncrementEnhance,
+    } = superForm(data.annualSalaryIncrement, {
+        SPA: true,
+        validators: _annualSalaryIncrement,
+        onSubmit() {
+            _submitFormAnnualSalaryIncrement($annualSalaryIncrementForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
-
-    const tetapanKGTForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-
-        const meetingTypeOptionSelector = document.getElementById(
-            'meetingTypeOption',
-        ) as HTMLSelectElement;
-        const salaryMovementMonthType = document.getElementById(
-            'salaryMovementMonthType',
-        ) as HTMLSelectElement;
-        const getGred = document.getElementById('gred') as HTMLSelectElement;
-
-        const exampleFormData = {
-            meetingTypeOption: String(meetingTypeOptionSelector.value),
-            meetingDate: String(formData.get('meetingDate')),
-            salaryMovementMonthType: String(salaryMovementMonthType.value),
-        };
-
-        try {
-            let validatedData;
-            let result;
-
-            if (isGredChecked) {
-                const gred = String(getGred.value);
-
-                const validatedFormData = {
-                    ...exampleFormData,
-                    gred,
-                };
-                validatedData = validatedFormData;
-                result = exampleFormSchema.parse(validatedFormData);
-            } else if (isSpecialFiAidTextChecked) {
-                const specialFiAidTexts = String(
-                    formData.get('specialFiAidTexts'),
-                );
-                const validatedFormData = {
-                    ...exampleFormData,
-                    specialFiAidTexts,
-                };
-                validatedData = validatedFormData;
-                result = exampleFormSchema.parse(validatedFormData);
-            } else {
-                validatedData = exampleFormData;
-                result = exampleFormSchema.parse(exampleFormData);
-            }
-
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedFormData = {
-                    ...validatedData,
-                    id,
-                };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
 </script>
 
 <!-- content header starts here -->
@@ -280,10 +300,11 @@
     <!-- area for setting for bulk salary movements -->
     <div class="my-2 border-b-8 border-l-2 border-r-2 border-t-8 p-2.5">
         <form
-            id="tetapanKGTFormValidation"
-            on:submit|preventDefault={tetapanKGTForm}
-            class="flex w-full flex-col gap-2"
-        >
+                    id="FormAnnualSalaryIncrement"
+                    class="flex w-full flex-col gap-2"
+                    use:annualSalaryIncrementEnhance
+                    method="POST"
+                >
             <p class="text-lg text-system-primary">
                 Tetapan Kenaikan Gaji Tahunan (KGT) Semua Kakitangan:
             </p>
@@ -306,7 +327,7 @@
                     {#if errorData?.meetingTypeOption}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.meetingTypeOption[0]}</span
+                            >{errorData?.meetingTypeOption}</span
                         >
                     {/if}
                     <DateSelector
@@ -319,7 +340,7 @@
                     {#if errorData?.meetingDate}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.meetingDate[0]}</span
+                            >{errorData?.meetingDate}</span
                         >
                     {/if}
                     <DropdownSelect
@@ -338,7 +359,7 @@
                     {#if errorData?.salaryMovementMonthType}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.salaryMovementMonthType[0]}</span
+                            >{errorData?.salaryMovementMonthType}</span
                         >
                     {/if}
                 </div>
@@ -369,7 +390,7 @@
                             {#if errorData?.gred}
                                 <span
                                     class="ml-8 font-sans text-sm italic text-system-danger"
-                                    >{errorData?.gred[0]}</span
+                                    >{errorData?.gred}</span
                                 >
                             {/if}
                         </div>
@@ -393,7 +414,7 @@
                             {#if errorData?.specialFiAidTexts}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.specialFiAidTexts[0]}</span
+                                    >{errorData?.specialFiAidTexts}</span
                                 >
                             {/if}
                         </div>
@@ -402,7 +423,7 @@
                     {#if errorData?.specialFiAidText}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.specialFiAidText[0]}</span
+                            >{errorData?.specialFiAidText}</span
                         >
                     {/if}
                     <Checkbox
@@ -412,40 +433,49 @@
                         <label for="specialIncrement">Kenaikan Khas (RM)</label>
                         <div class="ml-2.5 flex flex-col gap-2.5">
                             <Radio
+                                disabled={!isSpecialIncrementChecked}
                                 name="specialAid"
                                 legend={'Radio Button'}
-                                bind:value={specialAid}
-                                ><TextField
+                                bind:group={specialAid}
+                                value={'specialByAmount'}
+                            >
+                                <TextField
+                                    disabled={specialAid !== 'specialByAmount'}
                                     labelType="no-label"
                                     hasError={errorData?.specialFiAidText}
                                     name="specialFiAidText"
                                     type="text"
                                     bind:value={specialFiAidText}
                                 />
+
                                 {#if errorData?.specialFiAidText}
                                     <span
                                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.specialFiAidText[0]}</span
+                                        >{errorData?.specialFiAidText}</span
                                     >
                                 {/if}
                                 {#if errorData?.specialFiAidText}
                                     <span
                                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.specialFiAidText[0]}</span
+                                        >{errorData?.specialFiAidText}</span
                                     >
-                                {/if}</Radio
-                            >
+                                {/if}
+                            </Radio>
                             {#if errorData?.specialAid}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.specialAid[0]}</span
+                                    >{errorData?.specialAid}</span
                                 >
                             {/if}
                             <Radio
+                                disabled={!isSpecialIncrementChecked}
                                 name="specialAid"
                                 legend={'Radio Button'}
-                                bind:value={specialAid}
+                                value={'specialByGrossPay'}
+                                bind:group={specialAid}
                                 ><TextField
+                                    disabled={specialAid !==
+                                        'specialByGrossPay'}
                                     hasTooltip={true}
                                     toolTipID="type-from-gross-pay"
                                     labelType="no-label"
@@ -457,27 +487,31 @@
                                 {#if errorData?.specialFiAidText}
                                     <span
                                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.specialFiAidText[0]}</span
+                                        >{errorData?.specialFiAidText}</span
                                     >
                                 {/if}
                                 {#if errorData?.specialFiAidText}
                                     <span
                                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.specialFiAidText[0]}</span
+                                        >{errorData?.specialFiAidText}</span
                                     >
                                 {/if}</Radio
                             >
                             {#if errorData?.specialAid}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.specialAid[0]}</span
+                                    >{errorData?.specialAid}</span
                                 >
                             {/if}
                             <Radio
+                                disabled={!isSpecialIncrementChecked}
                                 name="specialAid"
                                 legend={'Radio Button'}
-                                bind:value={specialAid}
+                                value={'specialByKgtPercent'}
+                                bind:group={specialAid}
                                 ><TextField
+                                    disabled={specialAid !==
+                                        'specialByKgtPercent'}
                                     hasTooltip={true}
                                     toolTipID="type-from-kgt"
                                     labelType="no-label"
@@ -489,20 +523,20 @@
                                 {#if errorData?.specialFiAidText}
                                     <span
                                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.specialFiAidText[0]}</span
+                                        >{errorData?.specialFiAidText}</span
                                     >
                                 {/if}
                                 {#if errorData?.specialFiAidText}
                                     <span
                                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.specialFiAidText[0]}</span
+                                        >{errorData?.specialFiAidText}</span
                                     >
                                 {/if}</Radio
                             >
                             {#if errorData?.specialAid}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.specialAid[0]}</span
+                                    >{errorData?.specialAid}</span
                                 >
                             {/if}
                         </div>
@@ -510,13 +544,13 @@
                         {#if errorData?.specialIncrement}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.specialIncrement[0]}</span
+                                >{errorData?.specialIncrement}</span
                             >
                         {/if}
                         {#if errorData?.specialIncrement}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{errorData?.specialIncrement[0]}</span
+                                >{errorData?.specialIncrement}</span
                             >
                         {/if}</Checkbox
                     >
@@ -524,7 +558,7 @@
                     {#if errorData?.specialIncrement}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{errorData?.specialIncrement[0]}</span
+                            >{errorData?.specialIncrement}</span
                         >
                     {/if}
                 </div>
@@ -534,7 +568,7 @@
             <TextIconButton
                 primary
                 label="Simpan"
-                form="tetapanKGTFormValidation"
+                form="FormAnnualSalaryIncrement"
             >
                 <SvgCheck></SvgCheck>
             </TextIconButton>
