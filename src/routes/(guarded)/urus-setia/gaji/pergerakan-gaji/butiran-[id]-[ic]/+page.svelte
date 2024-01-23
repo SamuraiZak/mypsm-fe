@@ -225,9 +225,7 @@
                                 <div>
                                     <DropdownSelect
                                         disabled={!isGredChecked}
-                                        hasError={$meetingResultErrors.gred
-                                            ? true
-                                            : false}
+                                        hasError={!!$meetingResultErrors.gred}
                                         dropdownType="label-left-full"
                                         id="gred"
                                         label="Gred"
@@ -241,11 +239,17 @@
                                             { value: 'N49', name: 'N49' },
                                             { value: 'N52', name: 'N52' },
                                         ]}
-                                    ></DropdownSelect>
+
+                                    ></DropdownSelect>{#if $meetingResultErrors.gred}
+                                        <span
+                                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                            >{$meetingResultErrors.gred}</span
+                                        >
+                                    {/if}
                                 </div>
                             </div>
 
-                            <div class="flex flex-row items-center">
+                            <div class="flex flex-row">
                                 <div>
                                     <Checkbox
                                         name="specialFiAidText"
@@ -269,7 +273,7 @@
                                 </div>
                             </div>
 
-                            <div class="flex flex-row items-center">
+                            <div class="flex flex-row">
                                 <div>
                                     <Checkbox
                                         name="specialIncrementText"
