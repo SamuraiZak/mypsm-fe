@@ -914,9 +914,6 @@
 
                             <RadioSingle
                                 options={meetingOptions}
-                                hasError={$stepperChargesMeetingInfoDeterminationProceedingPunishmentErrors.meetingResultOption
-                                    ? true
-                                    : false}
                                 name="meetingResultOption"
                                 legend="Keputusan Mesyuarat"
                                 bind:userSelected={$stepperChargesMeetingInfoDeterminationProceedingPunishmentForm.meetingResultOption}
@@ -1080,9 +1077,6 @@
 
                     <RadioSingle
                         options={meetingOptions}
-                        hasError={$stepperSuspensionMeetingInfoErrors.meetingResultOption
-                            ? true
-                            : false}
                         name="meetingResultOption"
                         legend="Keputusan Mesyuarat"
                         bind:userSelected={$stepperSuspensionMeetingInfoForm.meetingResultOption}
