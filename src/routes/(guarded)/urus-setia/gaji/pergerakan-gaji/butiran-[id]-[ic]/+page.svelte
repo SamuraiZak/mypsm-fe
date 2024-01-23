@@ -171,7 +171,7 @@
                     {#if $meetingResultErrors.meetingNameNum}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$meetingResultErrors.meetingNameNum[0]}</span
+                            >{$meetingResultErrors.meetingNameNum}</span
                         >
                     {/if}
                     <DateSelector
@@ -186,7 +186,7 @@
                     {#if $meetingResultErrors.meetingDate}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$meetingResultErrors.meetingDate[0]}</span
+                            >{$meetingResultErrors.meetingDate}</span
                         >
                     {/if}
                     <DropdownSelect
@@ -207,7 +207,7 @@
                     {#if $meetingResultErrors.salaryMovementMonth}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$meetingResultErrors.salaryMovementMonth[0]}</span
+                            >{$meetingResultErrors.salaryMovementMonth}</span
                         >
                     {/if}
                     <div class="flex w-full flex-row items-center">
@@ -255,19 +255,15 @@
                                 <div>
                                     <LongTextField
                                         disabled={!isSpecialFiAidTextChecked}
-                                        hasError={$meetingResultErrors.specialFiAid
-                                            ? true
-                                            : false}
+                                        hasError={!!$meetingResultErrors.specialFiAid}
                                         name="specialFiAid"
                                         label="Bantuan Khas Kewangan (RM)"
-                                        type="number"
                                         bind:value={$meetingResultForm.specialFiAid}
                                     />
                                     {#if $meetingResultErrors.specialFiAid}
                                         <span
                                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                            >{$meetingResultErrors
-                                                .specialFiAid[0]}</span
+                                            >{$meetingResultErrors.specialFiAid}</span
                                         >
                                     {/if}
                                 </div>
@@ -283,19 +279,15 @@
                                 <div>
                                     <LongTextField
                                         disabled={!isSpecialIncrementTextChecked}
-                                        hasError={$meetingResultErrors.specialIncrement
-                                            ? true
-                                            : false}
+                                        hasError={!!$meetingResultErrors.specialIncrement}
                                         name="specialIncrement"
                                         label="Kenaikan Khas (RM)"
-                                        type="number"
                                         bind:value={$meetingResultForm.specialIncrement}
                                     />
                                     {#if $meetingResultErrors.specialIncrement}
                                         <span
                                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                            >{$meetingResultErrors
-                                                .specialIncrement[0]}</span
+                                            >{$meetingResultErrors.specialIncrement}</span
                                         >
                                     {/if}
                                 </div>
