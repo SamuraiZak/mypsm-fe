@@ -1,3 +1,4 @@
+import { getPromiseToast } from '$lib/toast/toast-service';
 import { fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
@@ -46,36 +47,34 @@ export const _submitFormStepperButiranSurcaj = async (formData: object) => {
             style: 'background: #333; color: #fff;',
         });
         return fail(400, stepperButiranSurcaj);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
+    }
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
             method: 'POST',
-            body: JSON.stringify(stepperButiranSurcaj),
+            body: JSON.stringify(_stepperButiranSurcaj),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log('Response Returned: ButiranSurcaj-54', json);
-            });
-    }
+        },
+    )
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise);
     return { stepperButiranSurcaj };
 };
 
 //Butiran Mesyuarat
-const dateStepperButiranMesyuarat = z.coerce
-    .date({
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_date'
-                    ? 'Tarikh tidak boleh dibiar kosong.'
-                    : defaultError,
-        }),
-    })
+const dateStepperButiranMesyuarat = z.coerce.date({
+    errorMap: (issue, { defaultError }) => ({
+        message:
+            issue.code === 'invalid_date'
+                ? 'Tarikh tidak boleh dibiar kosong.'
+                : defaultError,
+    }),
+});
 
 const stepperButiranMesyuarat = z
     .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
@@ -92,8 +91,9 @@ const butiranMesyuaratSelectSchema = z
     .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
 export const _stepperButiranMesyuarat = z.object({
-    meetingDate: dateStepperButiranMesyuarat.refine((data) =>
-        data <= new Date(), {message: 'Tidak boleh lebih daripada tarikh semasa'}
+    meetingDate: dateStepperButiranMesyuarat.refine(
+        (data) => data <= new Date(),
+        { message: 'Tidak boleh lebih daripada tarikh semasa' },
     ),
     effectiveDate: dateStepperButiranMesyuarat.refine((date) =>
         date.toLocaleDateString(),
@@ -115,23 +115,22 @@ export const _submitFormStepperButiranMesyuarat = async (formData: object) => {
             style: 'background: #333; color: #fff;',
         });
         return fail(400, stepperButiranMesyuarat);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
+    }
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
             method: 'POST',
-            body: JSON.stringify(stepperButiranMesyuarat),
+            body: JSON.stringify(_stepperButiranMesyuarat),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log('Response Returned: ButiranSurcaj-54', json);
-            });
-    }
+        },
+    )
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise);
     return { stepperButiranMesyuarat };
 };
 
