@@ -37,6 +37,10 @@
         _stepperDisciplinaryProceedingsMeetingInfoResult,
         _submitFormStepperDisciplinaryProceedingsMeetingInfoResult,
     } from './+page';
+    import {
+        _updateCrimeOffenceInfo,
+        _submitFormUpdateCrimeOffenceInfo,
+    } from './+page';
 
     export let data: PageData;
 
@@ -231,6 +235,23 @@
         onSubmit() {
             _submitFormStepperDisciplinaryProceedingsMeetingInfoResult(
                 $stepperDisciplinaryProceedingsMeetingInfoResultForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+
+    //update Crime Offence Info
+    const {
+        form: updateCrimeOffenceInfoForm,
+        errors: updateCrimeOffenceInfoErrors,
+        enhance: updateCrimeOffenceInfoEnhance,
+    } = superForm(data.updateCrimeOffenceInfo, {
+        SPA: true,
+        validators: _updateCrimeOffenceInfo,
+        onSubmit() {
+            _submitFormUpdateCrimeOffenceInfo(
+                $updateCrimeOffenceInfoForm,
             );
         },
         taintedMessage:
@@ -1190,7 +1211,12 @@
                         ]}
                     ></DropdownSelect>
 
-                    <form action="">
+                    <form
+                        id="FormUpdateCrimeOffenceInfo"
+                        class="flex w-full flex-col gap-2"
+                        use:updateCrimeOffenceInfoEnhance
+                        method="POST"
+                    >
                         <div class="mb-2.5 flex w-full flex-col gap-2.5">
                             {#if selectedSuspensionType === 'suspension-investigation'}
                                 <SectionHeader
@@ -1247,9 +1273,10 @@
                                             <TextIconButton
                                                 primary
                                                 label="Simpan"
-                                                onClick={() => {}}
-                                                ><SvgCheck /></TextIconButton
+                                                form="FormUpdateCrimeOffenceInfo"
                                             >
+                                                <SvgCheck></SvgCheck>
+                                            </TextIconButton>
                                         {/if}
                                     {/if}
                                 </SectionHeader>
@@ -1274,27 +1301,6 @@
                                         disabled={data.record.currentProceeding
                                             .status !== 'Baru' ||
                                             !updateCrimeOffenceInfo}
-                                        options={[
-                                            {
-                                                value: 'end-suspension',
-                                                label: 'Batal Tahan Kerja',
-                                            },
-
-                                            {
-                                                value: 'punishment-proceeding',
-                                                label: 'Prosiding Penentuan Hukuman',
-                                            },
-                                            {
-                                                value: 'appeal',
-                                                label: 'Rayuan Dikemukakan',
-                                            },
-                                        ]}
-                                        legend={'Susulan Prosiding Tahan Kerja'}
-                                        bind:userSelected={crimeOffenceFollowThrough}
-                                        onChange={() => {}}
-                                    ></RadioSingle>
-
-                                    <RadioSingle
                                         name="meetingResultOption"
                                         legend="Susulan Prosiding Tahan Kerja"
                                         options={[
@@ -1312,15 +1318,29 @@
                                                 label: 'Rayuan Dikemukakan',
                                             },
                                         ]}
-                                        bind:userSelected={$stepperDisciplinaryProceedingsMeetingInfoResultForm.meetingResultOption}
+                                        bind:userSelected={crimeOffenceFollowThrough}
+                                        onChange={() => {}}
                                     ></RadioSingle>
-                                    {#if $stepperDisciplinaryProceedingsMeetingInfoResultErrors.meetingResultOption}
+                                    {#if $updateCrimeOffenceInfoErrors.meetingResultOption}
                                         <span
                                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                            >{$stepperDisciplinaryProceedingsMeetingInfoResultErrors
-                                                .meetingResultOption[0]}</span
+                                            >{$updateCrimeOffenceInfoErrors
+                                                .meetingResultOption}</span
                                         >
                                     {/if}
+
+                                    <!-- <RadioSingle
+                                        {options}
+                                        name="resultOption"
+                                        bind:userSelected={$retirementVerificationForm.resultOption}
+                                    ></RadioSingle>
+                                    {#if $retirementVerificationErrors.resultOption}
+                                        <span
+                                            class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                            >{$retirementVerificationErrors
+                                                .resultOption[0]}</span
+                                        >
+                                    {/if} -->
                                 {/if}
                             {/if}
                         </div>
