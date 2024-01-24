@@ -199,7 +199,7 @@ export const _addActivitiesInfoSchema = z.object({
 //================== Maklumat Pengalaman ===================
 //==========================================================
 
-export const _experienceInfoSchema = z.object({
+const experienceInfoSchema = z.object({
     company: shortTextSchema,
     address: shortTextSchema,
     position: shortTextSchema,
@@ -209,6 +209,10 @@ export const _experienceInfoSchema = z.object({
     salary: z.coerce.number({
         invalid_type_error: 'Medan ini hendaklah ditetapkan dengan angka',
     }),
+});
+
+export const _experienceListSchema = z.object({
+    experienceList: z.array(experienceInfoSchema),
 });
 
 //==========================================================
@@ -424,7 +428,10 @@ export const load = async ({ params }) => {
         _academicInfoSchema,
     );
     const serviceInfoForm = await superValidate(_serviceInfoSchema);
-    const experienceInfoForm = await superValidate(_experienceInfoSchema);
+    const experienceInfoForm = await superValidate(
+        experienceDetails,
+        _experienceListSchema,
+    );
     const nextOfKinInfoForm = await superValidate(_nextOfKinInfoSchema);
     const addAcademicModal = await superValidate(_addAcademicInfoSchema);
     const addExperienceModal = await superValidate(_addExperienceModalSchema);
@@ -480,14 +487,16 @@ export const _submitPersonalInfoForm = async (formData: object) => {
 };
 
 export const _submitAcademicInfoForm = async (formData: AcademicList[]) => {
-    if (formData.length < 0) {
-        getErrorToast;
+    if (formData.length < 1) {
+        getErrorToast();
+        return fail(400);
     }
     const requestData: CandidateAcademiceDetailsRequestBody = {
         academics: formData,
     };
+
     // start by rendering loading toast
-    getLoadingToast;
+    getLoadingToast();
 
     const response =
         await EmployeeService.createCurrentCandidateAcademicDetails(
@@ -501,18 +510,22 @@ export const _submitAcademicInfoForm = async (formData: AcademicList[]) => {
     }
 
     // if success toast
-    getSuccessToast;
+    getSuccessToast();
 
     return { requestData };
 };
 
 export const _submitExperienceInfoForm = async (formData: Experience[]) => {
+    if (formData.length < 1) {
+        getErrorToast();
+        return fail(400);
+    }
     const requestData: CandidateExperienceDetailsRequestBody = {
         experiences: formData,
     };
-    console.log(requestData);
+
     // start by rendering loading toast
-    getLoadingToast;
+    getLoadingToast();
 
     const response =
         await EmployeeService.createCurrentCandidateExperienceDetails(
@@ -526,12 +539,12 @@ export const _submitExperienceInfoForm = async (formData: Experience[]) => {
     }
 
     // if success toast
-    getSuccessToast;
+    getSuccessToast();
     return { requestData };
 };
 
 export const _submitNextOfKinForm = async (formData: object) => {
-    const form = await superValidate(formData, _experienceInfoSchema);
+    const form = await superValidate(formData, _experienceListSchema);
 
     if (!form.valid) {
         getErrorToast();
