@@ -16,15 +16,24 @@
     import { fileSelectionList } from '$lib/stores/globalState.js';
     import FileInputField from '$lib/components/input/FileInputField.svelte';
     import { onMount } from 'svelte';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import SvgPdf from '$lib/assets/svg/SvgPDF.svelte';
     import IconButton from '$lib/components/buttons/IconButton.svelte';
-    export let data;
-    let activeStepper = 0;
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import { _stepperLessonInfo, _submitFormStepperLessonInfo } from './+page';
+    import { z, ZodError } from 'zod';
+
+    export let data: PageData;
     export let selectedFiles: any = [];
+
+    let activeStepper = 0;
     let target: any;
     let texthidden = false;
     let selectedExamResult: any = 'pass';
+    let errorData: any;
 
     const results: RadioOption[] = [
         {
@@ -41,11 +50,11 @@
         },
     ];
 
+    // File Upload
     onMount(() => {
         target = document.getElementById('fileInput');
     });
 
-    // Function to handle the file changes
     function handleOnChange() {
         texthidden = true;
         const files = target.files;
@@ -54,14 +63,76 @@
                 selectedFiles.push(files[i]);
             }
         }
+
         fileSelectionList.set(selectedFiles);
     }
 
-    // Function to handle the file deletion
     function handleDelete(index: number) {
         selectedFiles.splice(index, 1);
         fileSelectionList.set(selectedFiles);
     }
+
+    const supportDocuments = async (event: Event) => {
+        let uploadedFiles = selectedFiles;
+        const formData = new FormData(event.target as HTMLFormElement);
+
+        const exampleFormData = {
+            uploadedFiles: uploadedFiles,
+        };
+
+        const exampleFormSchema = z.object({
+            // checkbox schema
+
+            uploadedFiles: z.any().array().nonempty({
+                message:
+                    'Sila muat naik dokumen sokongan pada ruangan disediakan.',
+            }),
+        });
+
+        try {
+            const result = exampleFormSchema.parse(exampleFormData);
+            if (result) {
+                errorData = [];
+                toast.success('Berjaya disimpan!', {
+                    style: 'background: #333; color: #fff;',
+                });
+
+                const id = crypto.randomUUID().toString();
+                const validatedExamFormData = { ...exampleFormData, id };
+                console.log(
+                    'REQUEST BODY: ',
+                    JSON.stringify(validatedExamFormData),
+                );
+            }
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                const { fieldErrors: errors } = err.flatten();
+                errorData = errors;
+                console.log('ERROR!', err.flatten());
+                toast.error(
+                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
+                    {
+                        style: 'background: #333; color: #fff;',
+                    },
+                );
+            }
+        }
+    };
+
+    //Staff Rating Update
+    const {
+        form: lessonInfoForm,
+        errors: lessonInfoErrors,
+        enhance: lessonInfoEnhance,
+    } = superForm(data.stepperLessonInfo, {
+        SPA: true,
+        validators: _stepperLessonInfo,
+        onSubmit() {
+            _submitFormStepperLessonInfo($lessonInfoForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -80,165 +151,271 @@
 <Stepper activeIndex={activeStepper}>
     <StepperContent>
         <StepperContentHeader title="Maklumat Pelajaran Yang Akan Diikuti"
-            ><TextIconButton primary label="Simpan" /></StepperContentHeader
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="FormStepperLessonInfo"
+                onClick={() => console.log('hehehhe')}
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
         >
-        <div class="flex w-full flex-col gap-2">
-            <StepperContentBody>
-                <DropdownSelect
-                    labelBlack={false}
-                    dropdownType="label-left-full"
-                    name="edu-level-dropdown"
-                    label="Peringkat Kursus Pengajian"
-                    bind:value={data.record.newStudyAllowanceApplication
-                        .courseLevel}
-                    options={[
-                        { value: 'diploma', name: 'Diploma' },
-                        {
-                            value: 'degree',
-                            name: 'Ijazah Sarjana Muda',
-                        },
-                        { value: 'master', name: 'Ijazah' },
-                        { value: 'phd', name: 'Doktor Falsafah' },
-                    ]}
-                ></DropdownSelect>
-                <TextField
-                    labelBlack={false}
-                    label="Nama Kursus Pengajian"
-                    bind:value={data.record.newStudyAllowanceApplication
-                        .courseName}
-                />
-                <TextField
-                    labelBlack={false}
-                    label="Nama IPTA"
-                    bind:value={data.record.newStudyAllowanceApplication
-                        .instituteName}
-                />
-                <TextField
-                    labelBlack={false}
-                    label="Institusi/Pusat Pembelajaran"
-                    bind:value={data.record.newStudyAllowanceApplication
-                        .instituteCenter}
-                />
-                <TextField
-                    type="number"
-                    labelBlack={false}
-                    label="Tempoh Pengajian"
-                    bind:value={data.record.newStudyAllowanceApplication
-                        .coursePeriod}
-                />
-                <DateSelector
-                    labelBlack={false}
-                    label="Tarikh Kemasukan Ke IPTA"
-                    bind:selectedDate={data.record.newStudyAllowanceApplication
-                        .courseStartDate}
-                    handleDateChange={() => {}}
-                />
-                <DateSelector
-                    labelBlack={false}
-                    label="Dijangka Tamat Pada"
-                    bind:selectedDate={data.record.newStudyAllowanceApplication
-                        .courseEndDate}
-                    handleDateChange={() => {}}
-                />
-                <TextField
-                    labelBlack={false}
-                    label="Keputusan Akhir (CGPA)"
-                    bind:value={data.record.newStudyAllowanceApplication
-                        .finalResult}
-                />
-                <DropdownSelect
-                    labelBlack={false}
-                    dropdownType="label-left-full"
-                    name="claim-semester-dropdown"
-                    label="Tuntutan Untuk Semester"
-                    bind:value={data.record.newStudyAllowanceApplication
-                        .claimSemester}
-                    options={[
-                        { value: '4', name: '4' },
-                        { value: '5', name: '5' },
-                        { value: '6', name: '6' },
-                    ]}
-                ></DropdownSelect>
-
-                <TextField
-                    type="number"
-                    labelBlack={false}
-                    label="Jumlah Tuntutan (RM)"
-                    bind:value={data.record.newStudyAllowanceApplication
-                        .claimAmount}
-                />
-            </StepperContentBody>
+        <div class="flex w-full flex-col gap-2 overflow-y-auto">
+            <StepperContentBody
+                ><form
+                    id="FormStepperLessonInfo"
+                    class="flex w-full flex-col gap-2"
+                    use:lessonInfoEnhance
+                    method="POST"
+                >
+                    <DropdownSelect
+                        hasError={!!$lessonInfoErrors.eduLevel}
+                        dropdownType="label-left-full"
+                        id="eduLevel"
+                        label="Peringkat Kursus Pengajian"
+                        bind:value={$lessonInfoForm.eduLevel}
+                        options={[
+                            { value: 'diploma', name: 'Diploma' },
+                            {
+                                value: 'degree',
+                                name: 'Ijazah Sarjana Muda',
+                            },
+                            { value: 'master', name: 'Ijazah' },
+                            { value: 'phd', name: 'Doktor Falsafah' },
+                        ]}
+                    ></DropdownSelect>
+                    {#if $lessonInfoErrors.eduLevel}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$lessonInfoErrors.eduLevel}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={!!$lessonInfoErrors.courseName}
+                        name="courseName"
+                        label="Nama Kursus Pengajian"
+                        bind:value={$lessonInfoForm.courseName}
+                    />
+                    {#if $lessonInfoErrors.courseName}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$lessonInfoErrors.courseName[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={!!$lessonInfoErrors.iptaName}
+                        name="iptaName"
+                        label="Nama IPTA"
+                        bind:value={$lessonInfoForm.iptaName}
+                    />
+                    {#if $lessonInfoErrors.iptaName}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$lessonInfoErrors.iptaName[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={!!$lessonInfoErrors.institutions}
+                        name="institutions"
+                        label="Institusi/Pusat Pembelajaran"
+                        bind:value={$lessonInfoForm.institutions}
+                    />
+                    {#if $lessonInfoErrors.institutions}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$lessonInfoErrors.institutions[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={!!$lessonInfoErrors.studyDuration}
+                        name="studyDuration"
+                        label="Tempoh Pengajian"
+                        type="number"
+                        bind:value={$lessonInfoForm.studyDuration}
+                    />
+                    {#if $lessonInfoErrors.studyDuration}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$lessonInfoErrors.studyDuration[0]}</span
+                        >
+                    {/if}
+                    <DateSelector
+                        hasError={!!$lessonInfoErrors.dateAdmission}
+                        name="dateAdmission"
+                        handleDateChange
+                        label="Tarikh Kemasukan Ke IPTA"
+                        bind:selectedDate={$lessonInfoForm.dateAdmission}
+                    ></DateSelector>
+                    {#if $lessonInfoErrors.dateAdmission}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$lessonInfoErrors.dateAdmission[0]}</span
+                        >
+                    {/if}
+                    <DateSelector
+                        hasError={!!$lessonInfoErrors.expectedEndDate}
+                        name="expectedEndDate"
+                        handleDateChange
+                        label="Dijangka Tamat Pada"
+                        bind:selectedDate={$lessonInfoForm.expectedEndDate}
+                    ></DateSelector>
+                    {#if $lessonInfoErrors.expectedEndDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$lessonInfoErrors.expectedEndDate[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={!!$lessonInfoErrors.finalResult}
+                        name="finalResult"
+                        label="Keputusan Akhir (CGPA)"
+                        bind:value={$lessonInfoForm.finalResult}
+                    />
+                    {#if $lessonInfoErrors.finalResult}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$lessonInfoErrors.finalResult[0]}</span
+                        >
+                    {/if}
+                    <DropdownSelect
+                        hasError={!!$lessonInfoErrors.claimSemester}
+                        dropdownType="label-left-full"
+                        id="claimSemester"
+                        label="Tuntutan Untuk Semester"
+                        bind:value={$lessonInfoForm.claimSemester}
+                        options={[
+                            { value: '4', name: '4' },
+                            { value: '5', name: '5' },
+                            { value: '6', name: '6' },
+                        ]}
+                    ></DropdownSelect>
+                    {#if $lessonInfoErrors.claimSemester}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$lessonInfoErrors.claimSemester}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={!!$lessonInfoErrors.totalClaim}
+                        type="number"
+                        name="totalClaim"
+                        label="Jumlah Tuntutan (RM)"
+                        bind:value={$lessonInfoForm.totalClaim}
+                    />
+                    {#if $lessonInfoErrors.totalClaim}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$lessonInfoErrors.totalClaim[0]}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={!!$lessonInfoErrors.finalResult}
+                        name="finalResult"
+                        label="Keputusan Akhir (CGPA)"
+                        bind:value={$lessonInfoForm.finalResult}
+                    />
+                    {#if $lessonInfoErrors.finalResult}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$lessonInfoErrors.finalResult[0]}</span
+                        >
+                    {/if}
+                </form></StepperContentBody
+            >
         </div>
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Dokumen Sokongan"
-            ><TextIconButton primary label="Simpan" /></StepperContentHeader
-        >
-        <StepperContentBody>
-            <!-- Document Upload -->
-            <div
-                class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 pb-5"
+            ><TextIconButton
+                primary
+                label="Hantar"
+                form="supportDocumentsValidation"
             >
-                <SectionHeader
-                    title="Muat naik dokumen sokongan yang berkaitan:"
-                    ><div hidden={$fileSelectionList.length == 0}>
-                        <FileInputField id="fileInput" {handleOnChange}
-                        ></FileInputField>
-                    </div></SectionHeader
-                >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
+        >
+        <StepperContentBody
+            ><form
+                id="supportDocumentsValidation"
+                on:submit|preventDefault={supportDocuments}
+                class="flex w-full flex-col gap-2"
+            >
+                <!-- Document Upload -->
                 <div
-                    class="border-bdr-primaryp-5 flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border p-2.5"
+                    class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 pb-5"
                 >
-                    <div class="flex flex-wrap gap-3">
-                        {#each $fileSelectionList as item, index}
-                            <FileInputFieldChildren
-                                childrenType="grid"
-                                handleDelete={() => handleDelete(index)}
-                                fileName={item.name}
-                            />
-                        {/each}
-                    </div>
-                    <div
-                        class="flex flex-col items-center justify-center gap-2.5"
-                    >
-                        <p
-                            class=" text-sm text-txt-tertiary"
-                            hidden={$fileSelectionList.length > 0}
-                        >
-                            Pilih fail dari peranti anda.
-                        </p>
-                        <!-- svelte-ignore a11y-click-events-have-key-events -->
-                        <div
-                            class="text-txt-tertiary"
-                            hidden={$fileSelectionList.length > 0}
-                        >
-                            <svg
-                                width={40}
-                                height={40}
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                                />
-                            </svg>
-                        </div>
-                        <div hidden={$fileSelectionList.length > 0}>
+                    <SectionHeader
+                        title="Muat naik dokumen sokongan yang berkaitan:"
+                        ><div hidden={$fileSelectionList.length == 0}>
                             <FileInputField id="fileInput" {handleOnChange}
                             ></FileInputField>
+                        </div></SectionHeader
+                    >
+                    <div
+                        class="border-bdr-primaryp-5 flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border p-2.5"
+                    >
+                        <div class="w-full">
+                            {#if errorData?.uploadedFiles}
+                                <span
+                                    class="font-sans text-sm italic text-system-danger"
+                                    >{errorData?.uploadedFiles[0]}</span
+                                >
+                            {/if}
+                        </div>
+                        <div
+                            class="flex h-fit w-full flex-col items-center justify-center gap-2.5"
+                        >
+                            <div class="flex flex-wrap gap-3">
+                                {#each $fileSelectionList as item, index}
+                                    <FileInputFieldChildren
+                                        childrenType="grid"
+                                        handleDelete={() => handleDelete(index)}
+                                        fileName={item.name}
+                                    />
+                                {/each}
+                            </div>
+                            <div
+                                class="flex flex-col items-center justify-center gap-2.5"
+                            >
+                                <p
+                                    class=" text-sm text-txt-tertiary"
+                                    hidden={$fileSelectionList.length > 0}
+                                >
+                                    Pilih fail dari peranti anda.
+                                </p>
+                                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                                <div
+                                    class="text-txt-tertiary"
+                                    hidden={$fileSelectionList.length > 0}
+                                >
+                                    <svg
+                                        width={40}
+                                        height={40}
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.5"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                                        />
+                                    </svg>
+                                </div>
+                                <div hidden={$fileSelectionList.length > 0}>
+                                    <FileInputField
+                                        id="fileInput"
+                                        {handleOnChange}
+                                    ></FileInputField>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <p class="pb-5 text-sm text-system-danger">
-                Sila muat naik dokumen sokongan anda pada ruangan yang
-                disediakan di atas.
-            </p>
-        </StepperContentBody>
+            </form></StepperContentBody
+        >
     </StepperContent>
 </Stepper>
+<Toaster />
