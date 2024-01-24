@@ -1,4 +1,4 @@
-export interface NewHireSecretaryUpdateRequestBody {
+export interface NewHireSecretaryAddUpdateRequestBody {
     candidateId: number;
     gradeId: number;
     positionId: number;
