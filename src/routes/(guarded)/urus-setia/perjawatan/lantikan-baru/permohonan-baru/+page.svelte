@@ -74,10 +74,10 @@ overflow-y-auto bg-bgr-primary p-3"
     >
         <TextField
             hasError={$errors.tempId ? true : false}
-            type="number"
+            type="text"
             name="tempId"
-            label="ID Sementara"
-            placeholder="contoh: 12345"
+            label="Nama Calon Kontrak"
+            placeholder="contoh: Nur Haszmidah"
             bind:value={$form.tempId}
         />
         {#if $errors.tempId}

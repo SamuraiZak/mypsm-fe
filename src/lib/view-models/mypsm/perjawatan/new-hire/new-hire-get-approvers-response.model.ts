@@ -1,4 +1,4 @@
-export interface NewHireApproversResponse {
+export interface NewHireGetApproversResponse {
     status: number;
     message: string;
     data: SupporterApprovalData;

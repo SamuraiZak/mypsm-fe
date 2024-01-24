@@ -42,7 +42,7 @@
         _addFamilyModalSchema,
         _addNextOfKinInfoSchema,
         _addNonFamilyModalSchema,
-        _experienceInfoSchema,
+        _experienceListSchema,
         _nextOfKinInfoSchema,
         _personalInfoForm,
         _submitAcademicInfoForm,
@@ -56,12 +56,38 @@
     import type { PageData } from './$types';
     import toast, { Toaster } from 'svelte-french-toast';
     import AccordianField from '$lib/components/input/AccordianField.svelte';
-    import { getErrorToast, getSuccessToast } from '$lib/services/core/toast/toast-service';
+    import {
+        getErrorToast,
+        getSuccessToast,
+    } from '$lib/services/core/toast/toast-service';
     import { fileSelectionList } from '$lib/stores/globalState';
     import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
+    import type { AcademicList } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-academic-details-response.model';
+    import type { DropdownOptionsInterface } from '$lib/interfaces/common/dropdown-option';
     let employeeLists: SelectOptionType<any>[] = [];
+    export let data: PageData;
+    export let openAcademicInfoModal: boolean = false;
+    export let openExperienceInfoModal: boolean = false;
+    export let openMembershipInfoModal: boolean = false;
+    export let openFamilyInfoModal: boolean = false;
+    export let openNonFamilyInfoModal: boolean = false;
+    export let openNextOfKinInfoModal: boolean = false;
+    let tempExperienceRecord: any[] = [];
+    let tempAcademicRecord: AcademicList[] = [];
+    let tempActivityRecord: any[] = [];
+    let tempFamilyRecord: any[] = [];
+    let tempNonFamilyRecord: any[] = [];
+    let tempNextOfKinRecord: any[] = [];
 
+    const countryList: DropdownOptionsInterface[] = data.countryOptions;
+    const educationLevelList: DropdownOptionsInterface[] =
+        data.educationOptions;
+    const institutionList: DropdownOptionsInterface[] = data.institutionOptions;
+    const majorMinorList: DropdownOptionsInterface[] = data.majorMinorOptions;
+    const sponsorshipList: DropdownOptionsInterface[] = data.sponsorshipOptions;
+
+    const List = data.countryOptions;
     let editable: boolean = true;
 
     const approveOptions: RadioOption[] = [
@@ -159,16 +185,6 @@
         const [year, month, day] = date.split('/');
         return day + '-' + month + '-' + year;
     }
-    function getDurationYear(startDate: string, endDate: string) {
-        let start = new Date(dateConvertor(startDate));
-        let end = new Date(dateConvertor(endDate));
-        let duration = end.getTime() - start.getTime();
-        let year = duration / (1000 * 3600 * 24 * 365);
-        return Math.ceil(year);
-    }
-    function isBlueOrRedIC(isMalaysian: boolean) {
-        return isMalaysian ? 'Biru' : 'Merah';
-    }
 
     // Stepper Classes
 
@@ -226,19 +242,6 @@
         const [year, month, day] = date.split('/');
         return day + '-' + month + '-' + year;
     }
-    export let data: PageData;
-    export let openAcademicInfoModal: boolean = false;
-    export let openExperienceInfoModal: boolean = false;
-    export let openMembershipInfoModal: boolean = false;
-    export let openFamilyInfoModal: boolean = false;
-    export let openNonFamilyInfoModal: boolean = false;
-    export let openNextOfKinInfoModal: boolean = false;
-    let tempExperienceRecord: any[] = [];
-    let tempAcademicRecord: any[] = [];
-    let tempActivityRecord: any[] = [];
-    let tempFamilyRecord: any[] = [];
-    let tempNonFamilyRecord: any[] = [];
-    let tempNextOfKinRecord: any[] = [];
 
     export const { form, errors, enhance } = superForm(data.personalInfoForm, {
         SPA: true,
@@ -258,10 +261,11 @@
         errors: academicInfoErrors,
         enhance: academicInfoEnhance,
     } = superForm(data.academicInfoForm, {
+        dataType: 'json',
         SPA: true,
         validators: _academicInfoSchema,
         onSubmit() {
-            _submitAcademicInfoForm($academicInfoForm);
+            _submitAcademicInfoForm(tempAcademicRecord);
         },
     });
 
@@ -270,10 +274,12 @@
         errors: experienceInfoErrors,
         enhance: experienceInfoEnhance,
     } = superForm(data.experienceInfoForm, {
+        dataType: 'json',
         SPA: true,
-        validators: _experienceInfoSchema,
+        validators: _experienceListSchema,
         onSubmit() {
-            _submitExperienceInfoForm($experienceInfoForm);
+            window.alert('hjbsja');
+            // _submitExperienceInfoForm(tempExperienceRecord);
         },
     });
 
@@ -993,7 +999,7 @@
                         {#each tempAcademicRecord as academic, i}
                             <div class="text-sm text-system-primary">
                                 <p>
-                                    {i + 1}. Maklumat Akademik - {academic.type}
+                                    {i + 1}. Maklumat Akademik - {academic.name}
                                 </p>
                             </div>
                             <ul
@@ -1001,9 +1007,33 @@
                             >
                                 <li>
                                     <span class="italic text-black">
-                                        Jenis Akademik:
+                                        Jenis Pendidikan:
                                     </span>
-                                    {academic.type}
+                                    {academic.majorMinorId}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Negara:
+                                    </span>
+                                    {academic.countryId}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Institusi/Sekolah:
+                                    </span>
+                                    {academic.institutionId}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Taraf Pendidikan:
+                                    </span>
+                                    {academic.educationLevelId}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        Penajaan:
+                                    </span>
+                                    {academic.sponsorshipId}
                                 </li>
                                 <li>
                                     <span class="italic text-black">
@@ -1013,9 +1043,9 @@
                                 </li>
                                 <li>
                                     <span class="italic text-black">
-                                        Tahun Kelulusan/Sijil:
+                                        Tarikh Kelulusan/Sijil:
                                     </span>
-                                    {academic.completionYear}
+                                    {academic.completionDate}
                                 </li>
                                 <li>
                                     <span class="italic text-black">
@@ -1028,12 +1058,6 @@
                                         Bidang:
                                     </span>
                                     {academic.field}
-                                </li>
-                                <li>
-                                    <span class="italic text-black">
-                                        Catatan:
-                                    </span>
-                                    {academic.remark}
                                 </li>
                             </ul>
                         {/each}
@@ -1052,46 +1076,46 @@
                             >
                                 <p>Maklumat Akademik #{i + 1}</p>
                             </div>
-
-                            <TextField
+                            <DropdownSelect
                                 disabled
-                                name="type"
-                                label={'Jenis Pendidikan'}
-                                type="text"
+                                name="majorMinorId"
+                                dropdownType="label-left-full"
+                                label={'Jenis Jurusan'}
+                                options={majorMinorList}
                                 bind:value={academic.majorMinorId}
-                            ></TextField>
-
-                            <TextField
+                            ></DropdownSelect>
+                            <DropdownSelect
                                 disabled
-                                name="type"
+                                name="countryId"
+                                dropdownType="label-left-full"
                                 label={'Negara'}
-                                type="text"
+                                options={countryList}
                                 bind:value={academic.countryId}
-                            ></TextField>
-
-                            <TextField
+                            ></DropdownSelect>
+                            <DropdownSelect
                                 disabled
-                                name="type"
-                                label={'Institusi/Sekolah'}
-                                type="text"
+                                name="institutionId"
+                                dropdownType="label-left-full"
+                                label={'Institusi'}
+                                options={institutionList}
                                 bind:value={academic.institutionId}
-                            ></TextField>
-
-                            <TextField
+                            ></DropdownSelect>
+                            <DropdownSelect
                                 disabled
-                                name="type"
-                                label={'Taraf Pendidikan'}
-                                type="text"
+                                name="educationLevelId"
+                                dropdownType="label-left-full"
+                                label={'Taraf Pembelajaran'}
+                                options={educationLevelList}
                                 bind:value={academic.educationLevelId}
-                            ></TextField>
-
-                            <TextField
+                            ></DropdownSelect>
+                            <DropdownSelect
                                 disabled
-                                name="type"
+                                name="sponsorshipId"
+                                dropdownType="label-left-full"
                                 label={'Penajaan'}
-                                type="text"
+                                options={sponsorshipList}
                                 bind:value={academic.sponsorshipId}
-                            ></TextField>
+                            ></DropdownSelect>
 
                             <TextField
                                 disabled
@@ -1120,7 +1144,7 @@
                             <TextField
                                 disabled
                                 name="field"
-                                label={'Bidang'}
+                                label={'Catatan'}
                                 type="text"
                                 bind:value={academic.field}
                             ></TextField>
@@ -1213,14 +1237,14 @@
                         {/each}
                     </div>
                 {/if}
-                <form
-                    id="formStepperPengalaman"
-                    class="flex w-full flex-col gap-2 rounded-[3px] border p-2.5"
-                    use:experienceInfoEnhance
-                    method="POST"
-                >
-                    {#if data.experienceDetails.experienceList.length > 0}
-                        {#each data.experienceDetails.experienceList as record, i}
+                {#if data.experienceDetails.experienceList.length > 0}
+                    <form
+                        id="formStepperPengalaman"
+                        class="flex w-full flex-col gap-2 rounded-[3px] border p-2.5"
+                        use:experienceInfoEnhance
+                        method="POST"
+                    >
+                        {#each $experienceInfoForm.experienceList as record, i}
                             <p class={stepperFormTitleClass}>
                                 Maklumat Pengalaman #{i + 1}
                             </p>
@@ -1280,8 +1304,8 @@
                                 bind:value={record.salary}
                             ></TextField>
                         {/each}
-                    {/if}
-                </form>
+                    </form>
+                {/if}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
                         primary
@@ -1882,18 +1906,106 @@
         use:addAcademicInfoEnhance
         class="flex h-fit w-full flex-col gap-y-2"
     >
-        <!-- <DropdownSelect
+        <!-- <select>
+            {#each majorMinorList as majorMinor}
+                <option value={majorMinor.value}>{majorMinor.name}</option>
+            {/each}
+        </select>
+        <select>
+            {#each countryList as country}
+                <option value={country.value}>{country.name}</option>
+            {/each}
+        </select>
+        <select>
+            {#each institutionList as institution}
+                <option value={institution.value}>{institution.name}</option>
+            {/each}
+        </select>
+        <select>
+            {#each educationLevelList as education}
+                <option value={education.value}>{education.name}</option>
+            {/each}
+        </select>
+        <select>
+            {#each sponsorshipList as sponsor}
+                <option value={sponsor.value}>{sponsor.name}</option>
+            {/each}
+        </select> -->
+        <DropdownSelect
+            hasError={!!$addAcademicInfoErrors.majorMinorId}
+            {disabled}
+            name="majorMinorId"
+            dropdownType="label-left-full"
+            label={'Jenis Jurusan'}
+            options={majorMinorList}
+            bind:value={$addAcademicInfoModal.majorMinorId}
+        ></DropdownSelect>
+        {#if $addAcademicInfoErrors.majorMinorId}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addAcademicInfoErrors.majorMinorId}</span
+            >
+        {/if}
+
+        <DropdownSelect
+            hasError={!!$addAcademicInfoErrors.countryId}
+            {disabled}
+            name="countryId"
+            dropdownType="label-left-full"
+            label={'Negara'}
+            options={countryList}
+            bind:value={$addAcademicInfoModal.countryId}
+        ></DropdownSelect>
+        {#if $addAcademicInfoErrors.countryId}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addAcademicInfoErrors.countryId}</span
+            >
+        {/if}
+
+        <DropdownSelect
+            hasError={!!$addAcademicInfoErrors.institutionId}
+            {disabled}
+            name="institutionId"
+            dropdownType="label-left-full"
+            label={'Institusi'}
+            options={institutionList}
+            bind:value={$addAcademicInfoModal.institutionId}
+        ></DropdownSelect>
+        {#if $addAcademicInfoErrors.institutionId}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addAcademicInfoErrors.institutionId}</span
+            >
+        {/if}
+
+        <DropdownSelect
+            hasError={!!$addAcademicInfoErrors.educationLevelId}
+            {disabled}
+            name="educationLevelId"
+            dropdownType="label-left-full"
+            label={'Taraf Pembelajaran'}
+            options={educationLevelList}
+            bind:value={$addAcademicInfoModal.educationLevelId}
+        ></DropdownSelect>
+        {#if $addAcademicInfoErrors.educationLevelId}
+            <span class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$addAcademicInfoErrors.educationLevelId}</span
+            >
+        {/if}
+
+        <DropdownSelect
             hasError={!!$addAcademicInfoErrors.sponsorshipId}
             {disabled}
             name="sponsorshipId"
-            label={'Taraf'}
+            dropdownType="label-left-full"
+            label={'Penajaan'}
+            options={sponsorshipList}
             bind:value={$addAcademicInfoModal.sponsorshipId}
         ></DropdownSelect>
         {#if $addAcademicInfoErrors.sponsorshipId}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
                 >{$addAcademicInfoErrors.sponsorshipId}</span
             >
-        {/if} -->
+        {/if}
+
         <TextField
             hasError={!!$addAcademicInfoErrors.name}
             {disabled}
@@ -1934,7 +2046,7 @@
             hasError={!!$addAcademicInfoErrors.field}
             {disabled}
             name="field"
-            label={'Bidang'}
+            label={'Catatan'}
             bind:value={$addAcademicInfoModal.field}
         ></TextField>
         {#if $addAcademicInfoErrors.field}
@@ -2035,7 +2147,7 @@
             hasError={!!$addExperienceModalErrors.addSalary}
             name="addSalary"
             label={'Gaji'}
-            type="text"
+            type="number"
             bind:value={$addExperienceModalForm.addSalary}
         ></TextField>
         {#if $addExperienceModalErrors.addSalary}

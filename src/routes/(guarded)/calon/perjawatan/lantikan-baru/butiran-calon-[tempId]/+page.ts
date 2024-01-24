@@ -1,21 +1,34 @@
+import type { DropdownOptionsInterface } from '$lib/interfaces/common/dropdown-option.js';
 import api from '$lib/services/core/ky.service.js';
+import {
+    getErrorToast,
+    getLoadingToast,
+    getPromiseToast,
+    getSuccessToast,
+} from '$lib/services/core/toast/toast-service';
+import { LookupService } from '$lib/services/implementations/core/lookup/lookup.services.js';
 import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
-import { getErrorToast, getPromiseToast } from '$lib/services/core/toast/toast-service';
-import type { CandidateIDRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/candidate-id-request.view-model.js';
+import type { CandidateIDRequestBody } from '$lib/view-models/mypsm/common/candidate-id-request.view-model.js';
 import type {
     ActivityResponseData,
     NewHireActivity,
 } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-activity-response.view-model';
+import type { CandidateAcademiceDetailsRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-academic-details-request.model';
 import type {
+    AcademicList,
     AcademicResponseData,
     CandidateAcademicDetailsResponse,
 } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-academic-details-response.model.js';
+import type {
+    CandidateExperienceDetailsRequestBody,
+    Experience,
+} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-experience-details-request.model.js';
 import type { ExperienceResponseData } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-experience-details-respone.model.js';
 import type {
     CandidatePersonalData,
     CandidatePersonalDetailsResponse,
 } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-respone.model.js';
-import { fail } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
@@ -145,7 +158,7 @@ export const _personalInfoForm = z
 //==========================================================
 
 const academicListSchema = z.object({
-    id: numberIdSchema,
+    // id: numberIdSchema,
     majorMinorId: numberIdSchema,
     countryId: numberIdSchema,
     institutionId: numberIdSchema,
@@ -164,7 +177,7 @@ export const _academicInfoSchema = z.object({
 
 // New employment - add academic section
 export const _addAcademicInfoSchema = z.object({
-    majorMinorId: numberIdSchema.nullish(),
+    majorMinorId: numberIdSchema,
     countryId: numberIdSchema,
     institutionId: numberIdSchema,
     educationLevelId: numberIdSchema,
@@ -172,7 +185,7 @@ export const _addAcademicInfoSchema = z.object({
     name: shortTextSchema,
     completionDate: maxDateSchema,
     finalGrade: codeSchema,
-    field: z.string(),
+    field: longTextSchema,
 });
 // New employment - add activity section
 export const _addActivitiesInfoSchema = z.object({
@@ -186,7 +199,7 @@ export const _addActivitiesInfoSchema = z.object({
 //================== Maklumat Pengalaman ===================
 //==========================================================
 
-export const _experienceInfoSchema = z.object({
+const experienceInfoSchema = z.object({
     company: shortTextSchema,
     address: shortTextSchema,
     position: shortTextSchema,
@@ -196,6 +209,10 @@ export const _experienceInfoSchema = z.object({
     salary: z.coerce.number({
         invalid_type_error: 'Medan ini hendaklah ditetapkan dengan angka',
     }),
+});
+
+export const _experienceListSchema = z.object({
+    experienceList: z.array(experienceInfoSchema),
 });
 
 //==========================================================
@@ -340,6 +357,53 @@ export const load = async ({ params }) => {
 
     const academicDetails: AcademicResponseData = academicInfoResponse.data;
 
+    // sponsorship list
+    const sponsorshipListResponse =
+        await LookupService.getEnumSponsorshipList();
+
+    const sponsorshipOptions: DropdownOptionsInterface[] =
+        sponsorshipListResponse.data.sponsorships.map((sponsor) => ({
+            value: Number(sponsor.id),
+            name: sponsor.description,
+        }));
+
+    // education list
+    const educationListResponse = await LookupService.getEnumEducationList();
+
+    const educationOptions: DropdownOptionsInterface[] =
+        educationListResponse.data.highestEducationLevels.map((education) => ({
+            value: Number(education.id),
+            name: education.description,
+        }));
+
+    // institution list
+    const institutionListResponse =
+        await LookupService.getEnumInstitutionList();
+
+    const institutionOptions: DropdownOptionsInterface[] =
+        institutionListResponse.data.institutions.map((institution) => ({
+            value: Number(institution.id),
+            name: institution.description,
+        }));
+
+    // country list
+    const countryListResponse = await LookupService.getEnumCountryList();
+
+    const countryOptions: DropdownOptionsInterface[] =
+        countryListResponse.data.countries.map((country) => ({
+            value: Number(country.id),
+            name: country.description,
+        }));
+
+    // major minor list
+    const majorMinorListResponse = await LookupService.getEnumMajorMinorList();
+
+    const majorMinorOptions: DropdownOptionsInterface[] =
+        majorMinorListResponse.data.majorMinors.map((majorMinor) => ({
+            value: Number(majorMinor.id),
+            name: majorMinor.description,
+        }));
+
     // form data based on schema and response
     const experienceInfoResponse =
         await EmployeeService.getCurrentCandidateExperience(
@@ -364,7 +428,10 @@ export const load = async ({ params }) => {
         _academicInfoSchema,
     );
     const serviceInfoForm = await superValidate(_serviceInfoSchema);
-    const experienceInfoForm = await superValidate(_experienceInfoSchema);
+    const experienceInfoForm = await superValidate(
+        experienceDetails,
+        _experienceListSchema,
+    );
     const nextOfKinInfoForm = await superValidate(_nextOfKinInfoSchema);
     const addAcademicModal = await superValidate(_addAcademicInfoSchema);
     const addExperienceModal = await superValidate(_addExperienceModalSchema);
@@ -388,6 +455,11 @@ export const load = async ({ params }) => {
         addFamilyModal,
         addNonFamilyModal,
         addNextOfKinModal,
+        sponsorshipOptions,
+        educationOptions,
+        institutionOptions,
+        countryOptions,
+        majorMinorOptions,
     };
 };
 
@@ -414,51 +486,65 @@ export const _submitPersonalInfoForm = async (formData: object) => {
     return { form };
 };
 
-export const _submitAcademicInfoForm = async (formData: object) => {
-    const form = await superValidate(formData, _academicInfoSchema);
-
-    console.log('Request: ', form.data);
-
-    if (!form.valid) {
+export const _submitAcademicInfoForm = async (formData: AcademicList[]) => {
+    if (formData.length < 1) {
         getErrorToast();
-        return fail(400, form);
+        return fail(400);
+    }
+    const requestData: CandidateAcademiceDetailsRequestBody = {
+        academics: formData,
+    };
+
+    // start by rendering loading toast
+    getLoadingToast();
+
+    const response =
+        await EmployeeService.createCurrentCandidateAcademicDetails(
+            requestData,
+        );
+
+    if (response.status !== 201) {
+        // if error toast
+        getErrorToast();
+        return error(400, { message: response.message });
     }
 
-    const responsePromise = api
-        .post('https://jsonplaceholder.typicode.com/posts', {
-            body: JSON.stringify(form),
-            prefixUrl: '',
-        })
-        .json()
-        .then((json) => console.log('Response: ', json));
+    // if success toast
+    getSuccessToast();
 
-    getPromiseToast(responsePromise);
-
-    return { form };
+    return { requestData };
 };
 
-export const _submitExperienceInfoForm = async (formData: object) => {
-    const form = await superValidate(formData, _experienceInfoSchema);
-
-    if (!form.valid) {
+export const _submitExperienceInfoForm = async (formData: Experience[]) => {
+    if (formData.length < 1) {
         getErrorToast();
-        return fail(400, form);
+        return fail(400);
+    }
+    const requestData: CandidateExperienceDetailsRequestBody = {
+        experiences: formData,
+    };
+
+    // start by rendering loading toast
+    getLoadingToast();
+
+    const response =
+        await EmployeeService.createCurrentCandidateExperienceDetails(
+            requestData,
+        );
+
+    if (response.status !== 201) {
+        // if error toast
+        getErrorToast();
+        return error(400, { message: response.message });
     }
 
-    const responsePromise = api
-        .post('https://jsonplaceholder.typicode.com/posts', {
-            body: JSON.stringify(form),
-            prefixUrl: '',
-        })
-        .json()
-        .then((json) => console.log('Response: ', json));
-
-    getPromiseToast(responsePromise);
-    return { form };
+    // if success toast
+    getSuccessToast();
+    return { requestData };
 };
 
 export const _submitNextOfKinForm = async (formData: object) => {
-    const form = await superValidate(formData, _experienceInfoSchema);
+    const form = await superValidate(formData, _experienceListSchema);
 
     if (!form.valid) {
         getErrorToast();

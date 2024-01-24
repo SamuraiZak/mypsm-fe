@@ -10,7 +10,7 @@ export interface AcademicResponseData {
 }
 
 export interface AcademicList {
-    id: number;
+    // id: number;
     majorMinorId: number;
     countryId: number;
     institutionId: number;

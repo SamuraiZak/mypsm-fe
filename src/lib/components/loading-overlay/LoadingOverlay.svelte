@@ -1,5 +1,8 @@
 <script lang="ts">
     import mypsmLogoAlt from '$lib/assets/MyPSM_alt.png';
+    import { onMount } from 'svelte';
+
+    onMount(async () => setTimeout(() => {}, 2000));
 </script>
 
 <div
