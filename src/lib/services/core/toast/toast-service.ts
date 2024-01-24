@@ -12,6 +12,12 @@ export const getErrorToast = async () => {
     });
 };
 
+export const getLoadingToast = async () => {
+    toast.error('Sedang diproses', {
+        style: 'background: #333; color: #fff;',
+    });
+};
+
 export const getPromiseToast = async (promise: Promise<unknown>) => {
     return toast.promise(
         promise,
