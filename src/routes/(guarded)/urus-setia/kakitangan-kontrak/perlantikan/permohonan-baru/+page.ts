@@ -1,3 +1,4 @@
+import { getPromiseToast } from '$lib/services/core/toast/toast-service';
 import { fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
@@ -38,13 +39,8 @@ const date = z.coerce
                     : defaultError,
         }),
     })
-    .max(new Date(), {
-        message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
-    });
 
-const option = z
-    .string()
-    .min(1, { message: 'Sila tetapkan pilihan anda.' });
+const option = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
 
 export const _newAppointments = z.object({
     name: newAppointments,
@@ -53,8 +49,12 @@ export const _newAppointments = z.object({
     contractDuration: number,
     wageRates: number,
     jobTitle: newAppointments,
-    contractStartDate: date.refine((date) => date.toLocaleDateString()),
-    contractEndDate: date.refine((date) => date.toLocaleDateString()),
+    contractStartDate: date.refine((data) => data >= new Date(), {
+        message: 'Tidak boleh kurang atau pada tarikh semasa',
+    }),
+    contractEndDate: date.refine((data) => data >= new Date(), {
+        message: 'Tidak boleh kurang atau pada tarikh semasa',
+    }),
     reportDate: date.refine((date) => date.toLocaleDateString()),
     contractPlacementDropdown: option,
     generatedLink: newAppointments,
@@ -68,23 +68,22 @@ export const _submitFormNewAppointments = async (formData: object) => {
             style: 'background: #333; color: #fff;',
         });
         return fail(400, newAppointments);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
+    }
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
             method: 'POST',
-            body: JSON.stringify(newAppointments),
+            body: JSON.stringify(_newAppointments),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log('Response Returned: AllowanceApplication-54', json);
-            });
-    }
+        },
+    )
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise);
     return { newAppointments };
 };
 
