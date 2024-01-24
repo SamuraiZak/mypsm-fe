@@ -21,7 +21,17 @@
     import AccordianField from '$lib/components/input/AccordianField.svelte';
     import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades.js';
     import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions.js';
-    export let data;
+    import { superForm } from 'sveltekit-superforms/client';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import {
+        _stepperSupportSettings,
+        _submitFormStepperSupportSettings,
+    } from './+page';
+
+    export let data: PageData;
+
     let activeStepper = 0;
     let target: any;
     let selectedSupportResult: any = '-';
@@ -131,6 +141,21 @@
 
     onMount(() => {
         target = document.getElementById('fileInput');
+    });
+
+    //Evaluate Confirmation
+    const {
+        form: supportSettingsForm,
+        errors: supportSettingsErrors,
+        enhance: supportSettingsEnhance,
+    } = superForm(data.stepperSupportSettings, {
+        SPA: true,
+        validators: _stepperSupportSettings,
+        onSubmit() {
+            _submitFormStepperSupportSettings($supportSettingsForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
 </script>
 
@@ -812,78 +837,103 @@
     <StepperContent>
         <StepperContentHeader
             title="Tetapan Sokongan (Pengarah Negeri/Bahagian)"
-            ><TextIconButton primary label="Simpan" /></StepperContentHeader
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="FormStepperSupportSettings"
+                onClick={() => console.log('hehehhe')}
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
         >
         <div class="flex w-full flex-col gap-2">
-            <StepperContentBody>
-                {#if data.record.currentApplication.status !== 'Baru'}
-                    <div
-                        class="mb-2.5 flex w-full flex-row items-center text-sm italic text-system-primary"
-                    >
-                        <label for="file-download" class="w-[220px]"
-                            >Menunggu keputusan mesyuarat...</label
+            <StepperContentBody
+                ><form
+                    id="FormStepperSupportSettings"
+                    class="flex w-full flex-col gap-2"
+                    use:supportSettingsEnhance
+                    method="POST"
+                >
+                    {#if data.record.currentApplication.status !== 'Baru'}
+                        <div
+                            class="mb-2.5 flex w-full flex-row items-center text-sm italic text-system-primary"
                         >
-                    </div>
-                {:else}
-                    <SectionHeader
-                        color="system-primary"
-                        title="Maklumat Kumpulan Mesyuarat"
-                    />
-                    <div
-                        class="mb-2.5 flex w-full flex-row items-center text-sm italic"
-                    >
-                        <label for="file-download" class="w-[220px]"
-                            >Borang - borang berkaitan yang akan dijana
-                            sekiranya lulus:</label
-                        >
-                        <span>
-                            <ul
-                                class="list-inside list-decimal text-txt-secondary"
-                            >
-                                <li>Surat Lulus Permohonan.</li>
-                            </ul>
-                        </span>
-                    </div>
-                    <LongTextField
-                        disabled={false}
-                        labelBlack={false}
-                        name="state-director-remark"
-                        label="Tindakan/Ulasan"
-                        value={'layak'}
-                    />
-                    <RadioSingle
-                        disabled={false}
-                        labelBlack={false}
-                        options={results}
-                        legend="Keputusan"
-                        bind:userSelected={selectedSupportResult}
-                    />
-                    <div
-                        class="h-fit w-full space-y-2.5 rounded-[3px] border p-2.5"
-                    >
-                        <div class="mb-5">
-                            <b class="text-sm text-system-primary"
-                                >Pengarah Integriti</b
+                            <label for="file-download" class="w-[220px]"
+                                >Menunggu keputusan mesyuarat...</label
                             >
                         </div>
-                        <TextField
-                            disabled
-                            type="text"
-                            id="passer-name"
-                            label="Nama"
-                            value={'Azim Bin Karim'}
-                        ></TextField>
-                        <div class="text-sm text-system-primary">
-                            <i class=""
-                                ><li>
-                                    ● Menunggu keputusan daripada Pengarah
-                                    Bahagian/Negeri.
-                                </li></i
+                    {:else}
+                        <SectionHeader
+                            color="system-primary"
+                            title="Maklumat Kumpulan Mesyuarat"
+                        />
+                        <div
+                            class="mb-2.5 flex w-full flex-row items-center text-sm italic"
+                        >
+                            <label for="file-download" class="w-[220px]"
+                                >Borang - borang berkaitan yang akan dijana
+                                sekiranya lulus:</label
                             >
+                            <span>
+                                <ul
+                                    class="list-inside list-decimal text-txt-secondary"
+                                >
+                                    <li>Surat Lulus Permohonan.</li>
+                                </ul>
+                            </span>
                         </div>
-                    </div>
-                {/if}
-            </StepperContentBody>
+                        <LongTextField
+                            hasError={!!$supportSettingsErrors.actionRemark}
+                            name="actionRemark"
+                            label="Tindakan / Ulasan"
+                            bind:value={$supportSettingsForm.actionRemark}
+                        />
+                        {#if $supportSettingsErrors.actionRemark}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$supportSettingsErrors.actionRemark}</span
+                            >
+                        {/if}
+                        <RadioSingle
+                            options={results}
+                            name="resultOption"
+                            legend="Keputusan"
+                            bind:userSelected={$supportSettingsForm.resultOption}
+                        ></RadioSingle>
+                        {#if $supportSettingsErrors.resultOption}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$supportSettingsErrors.resultOption}</span
+                            >
+                        {/if}
+                        <div
+                            class="h-fit w-full space-y-2.5 rounded-[3px] border p-2.5"
+                        >
+                            <div class="mb-5">
+                                <b class="text-sm text-system-primary"
+                                    >Pengarah Integriti</b
+                                >
+                            </div>
+                            <TextField
+                                disabled
+                                type="text"
+                                id="passer-name"
+                                label="Nama"
+                                value={'Azim Bin Karim'}
+                            ></TextField>
+                            <div class="text-sm text-system-primary">
+                                <i class=""
+                                    ><li>
+                                        ● Menunggu keputusan daripada Pengarah
+                                        Bahagian/Negeri.
+                                    </li></i
+                                >
+                            </div>
+                        </div>
+                    {/if}
+                </form></StepperContentBody
+            >
         </div>
     </StepperContent>
 </Stepper>
+<Toaster />
