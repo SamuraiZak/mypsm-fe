@@ -9,7 +9,7 @@ export interface EnumRoleResponseViewModel {
 }
 
 export interface EnumRoleResponseData {
-    roles: EnumRole[];
+    rolesList: EnumRole[];
 }
 
 export interface EnumRole {

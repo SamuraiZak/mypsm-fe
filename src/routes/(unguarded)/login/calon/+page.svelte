@@ -9,32 +9,8 @@
 
     export let data: PageData;
 
-    // idType options
-    let idTypeOptions = [
-        {
-            value: 'username',
-            text: 'Nama Pengguna',
-            placeholder: '(Contoh: aliBinAbu)',
-        },
-        {
-            value: 'employeeNumber',
-            text: 'No. Pekerja',
-            placeholder: '(Contoh: 00005)',
-        },
-        {
-            value: 'identityCard',
-            text: 'No. Kad Pengenalan',
-            placeholder: '(Contoh: 890305115716)',
-        },
-        {
-            value: 'candidateNumber',
-            text: 'No. Calon',
-            placeholder: '(Contoh: 00005)',
-        },
-    ];
-
     // preset form data
-    data.form.data.idType = idTypeOptions[0].value;
+    data.form.data.idType = "candidateNumber";
     data.form.data.userGroup = 'candidate';
     data.form.data.currentRole = 'calon';
 
@@ -79,38 +55,7 @@
         </div>
 
         <form id="loginForm" method="POST" use:enhance class="space-y-2">
-            <!-- id type field starts -->
-
-            <div>
-                <label
-                    for="idType"
-                    class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                    >Jenis Identiti</label
-                >
-                <select
-                    name="idType"
-                    bind:value={$form.idType}
-                    class=" block h-9 w-full rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
-                >
-                    {#each idTypeOptions as option}
-                        <option value={option.value}>
-                            {option.text}
-                        </option>
-                    {/each}
-                </select>
-
-                <div class="h-5 w-full items-end justify-end">
-                    {#if $errors.idType}
-                        <p
-                            class="text-end text-sm italic text-ios-basic-destructiveRed"
-                        >
-                            {$errors.idType}
-                        </p>
-                    {/if}
-                </div>
-            </div>
-
-            <!-- id type field ends -->
+            
 
             <!-- user name field starts -->
 
@@ -125,17 +70,14 @@
                         ID Pengguna
                     {/if} -->
 
-                    {idTypeOptions.find((item) => item.value == $form.idType)
-                        ?.text}
+                    No. Calon
                 </label>
                 <input
                     bind:value={$form.username}
                     type="text"
                     name="username"
                     id="username"
-                    placeholder={idTypeOptions.find(
-                        (item) => item.value == $form.idType,
-                    )?.placeholder}
+                    placeholder="(Contoh: 00005)"
                     class=" autofill:hide-default-inner-shadow block h-9 w-full rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light p-2.5 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
                 />
 
@@ -205,7 +147,7 @@
                     </div>
                 </div>
                 <a
-                    href="/login"
+                    href="/forgot-password/form"
                     class=" text-sm font-medium text-ios-labelColors-link-light hover:underline"
                     >Terlupa Kata Laluan</a
                 >

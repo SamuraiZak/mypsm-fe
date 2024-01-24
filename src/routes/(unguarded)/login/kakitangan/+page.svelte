@@ -6,114 +6,13 @@
 
     import { _kakitanganLoginSchema, _submit } from './+page';
     import { showLoadingOverlay } from '$lib/stores/globalState';
+    import type { EnumRole, EnumRoleResponseData } from '$lib/view-models/core/lookup/role/role-enum-reponse.view-model';
 
     export let data: PageData;
 
     let isLoading = false;
 
-    // currentRole options
-    let currentRoleOptions = [
-        {
-            value: 'admin',
-            text: 'Admin',
-        },
-        {
-            value: 'super admin',
-            text: 'Super Admin',
-        },
-        {
-            value: 'kakitangan',
-            text: 'Kakitangan',
-        },
-        {
-            value: 'urus setia perjawatan',
-            text: 'Urus setia Perjawatan',
-        },
-        {
-            value: 'urus setia cuti',
-            text: 'Urus Setia Cuti',
-        },
-        {
-            value: 'urus setia gaji',
-            text: 'Urus Setia Gaji',
-        },
-        {
-            value: 'urus setia integriti',
-            text: 'Urus Setia Integriti',
-        },
-        {
-            value: 'urus setia lnpt',
-            text: 'Urus Setia LNPT',
-        },
-        {
-            value: 'urus setia latihan',
-            text: 'Urus Setia Latihan',
-        },
-        {
-            value: 'urus setia kakitangan kontrak',
-            text: 'Urus Setia Kakitangan Kontrak',
-        },
-        {
-            value: 'urus setia pinjaman & kuarters',
-            text: 'Urus Setia Pinjaman & Kuarters',
-        },
-        {
-            value: 'urus setia perubatan',
-            text: 'Urus Setia Perubatan',
-        },
-        {
-            value: 'urus setia elaun-elaun perkhidmatan',
-            text: 'Urus Setia Elaun-elaun Perkhidmatan',
-        },
-        {
-            value: 'urus setia persaraan',
-            text: 'Urus Setia Persaraan',
-        },
-        {
-            value: 'penyokong',
-            text: 'Penyokong',
-        },
-        {
-            value: 'pelulus',
-            text: 'Pelulus',
-        },
-        {
-            value: 'pengarah bahagian/negeri',
-            text: 'Pengarah Bahagian/Negeri',
-        },
-        {
-            value: 'pengarah khidmat pengurusan',
-            text: 'Pengarah Khidmat Pengurusan',
-        },
-        {
-            value: 'ketua seksyen',
-            text: 'Ketua Seksyen',
-        },
-        {
-            value: 'ketua pengarah',
-            text: 'Ketua Pengarah',
-        },
-        {
-            value: 'audit',
-            text: 'Audit',
-        },
-        {
-            value: 'unit bahagian/negeri',
-            text: 'Unit Bahagian/Negeri',
-        },
-        {
-            value: 'unit pengurusan fasiliti',
-            text: 'Unit Pengurusan Fasiliti',
-        },
-        {
-            value: 'pengarah integriti/audit',
-            text: 'Pengarah Integriti/Audit',
-        },
-        {
-            value: 'timbalan ketua seksyen',
-            text: 'Timbalan Ketua Seksyen',
-        },
-    ];
+    let currentRoleOptions: EnumRole[] = data.roleResponse.data.rolesList;
 
     // idType options
     let idTypeOptions = [
@@ -132,17 +31,12 @@
             text: 'No. Kad Pengenalan',
             placeholder: '(Contoh: 890305115716)',
         },
-        {
-            value: 'candidateNumber',
-            text: 'No. Calon',
-            placeholder: '(Contoh: 00005)',
-        },
     ];
 
     // preset form data
     data.form.data.idType = idTypeOptions[0].value;
     data.form.data.userGroup = 'employee';
-    data.form.data.currentRole = currentRoleOptions[0].value;
+    data.form.data.currentRole = currentRoleOptions[0].name;
 
     const { form, errors, message, constraints, enhance } = superForm(
         data.form,
@@ -187,6 +81,11 @@
         <form id="loginForm" method="POST" use:enhance class="space-y-2">
             <!-- current role field starts -->
 
+            <!-- {#each currentRoleOptions as option}
+            <p>{option}</p>
+                
+            {/each} -->
+
             <div>
                 <label
                     for="idType"
@@ -199,8 +98,8 @@
                     class=" block h-9 w-full rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
                 >
                     {#each currentRoleOptions as option}
-                        <option value={option.value}>
-                            {option.text}
+                        <option value={option.name}>
+                            {option.name}
                         </option>
                     {/each}
                 </select>
@@ -344,7 +243,7 @@
                     </div>
                 </div>
                 <a
-                    href="/login"
+                href="/forgot-password/form"
                     class=" text-sm font-medium text-ios-labelColors-link-light hover:underline"
                     >Terlupa Kata Laluan</a
                 >
