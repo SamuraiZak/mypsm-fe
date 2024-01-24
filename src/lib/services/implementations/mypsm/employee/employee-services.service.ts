@@ -3,14 +3,18 @@
 // ===============================================================
 
 import http from '$lib/services/provider/service-provider.service';
+import type { AddApprovalResultRequestBody } from '$lib/view-models/mypsm/common/add-approval-results-request.model';
+import type { DocumentData } from '$lib/view-models/mypsm/common/add-documents-request.model';
+import type { CandidateIDRequestBody } from '$lib/view-models/mypsm/common/candidate-id-request.view-model';
 import { EmployeesListResponseConvert } from '$lib/view-models/mypsm/employee/employee-list-response';
-import type { CandidateIDRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/candidate-id-request.view-model';
 import type {
     PensionTableFilter,
     PensionTableResponse,
 } from '$lib/view-models/mypsm/perjawatan/new-hire/list-Pension-Detail.view-model';
 import type { CandidateActivityRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-activity-request.view-model';
 import { type NewHireActivity } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-activity-response.view-model';
+import type { NewHireApproverTableListRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-approver-table-list-request.model';
+import type { NewHireApproverTableListResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-approver-table-list-response.model';
 import type { CandidateAcademiceDetailsRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-academic-details-request.model';
 import type { CandidateAcademicDetailsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-academic-details-response.model';
 import type { CandidateDependenciesDetailResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-dependencies-details-response.model';
@@ -22,6 +26,16 @@ import type { CandidateNextOfKinDetailsRequestBody } from '$lib/view-models/myps
 import type { CandidateNextOfKinDetailsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-next-of-kin-details-response.model';
 import type { CandidatePersonalDetailsRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-request.model';
 import type { CandidatePersonalDetailsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-respone.model';
+import type { NewHireApproverResultResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-approver-result-response.model';
+import type { NewHireGetApproversResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-approvers-response.model';
+import type { NewHireDocumentsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-document-response.view-model';
+import type { NewHireSupporterResultResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-supporter-result-response.model';
+import type { NewHireSecretaryAddUpdateRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-secretary-add-update-request.model';
+import type { NewHireSecretaryApprovalResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-secretary-approval-response.model';
+import type { NewHireSecretaryUpdateResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-secretary-update-response.model';
+import type { NewHireSetApproversRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-set-approvers-request.model';
+import type { NewHireSupporterTableListRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-supporter-table-list-request.model';
+import type { NewHireSupporterTableListResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-supporter-table-list-response.model';
 import type { RequestSuccessBody } from '$lib/view-models/mypsm/request-success.view-model';
 
 export class EmployeeService {
@@ -215,6 +229,188 @@ export class EmployeeService {
     ): Promise<RequestSuccessBody> {
         const response: RequestSuccessBody = await http
             .post(`employments/add-new-hire-next-of-kin`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    // get employee documents
+    static async getCurrentCandidateDocuments(
+        param: CandidateIDRequestBody,
+    ): Promise<NewHireDocumentsResponse> {
+        const response: NewHireDocumentsResponse = await http
+            .post(`employments/get-new-hire-document`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    // create employee documents
+    static async createCurrentCandidateDocuments(
+        param: DocumentData,
+    ): Promise<RequestSuccessBody> {
+        const response: RequestSuccessBody = await http
+            .post(`employments/add-new-hire-document`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    // get new hire get secretary update
+    static async getCurrentCandidateSecretaryUpdate(
+        param: CandidateIDRequestBody,
+    ): Promise<NewHireSecretaryUpdateResponse> {
+        const response: NewHireSecretaryUpdateResponse = await http
+            .post(`employments/get-new-hire-secretary-update`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    // create new hire secretary update
+    static async createCurrentCandidateSecretaryUpdate(
+        param: NewHireSecretaryAddUpdateRequestBody,
+    ): Promise<RequestSuccessBody> {
+        const response: RequestSuccessBody = await http
+            .post(`employments/add-new-hire-secretary-update`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    // get new hire approvers
+    static async getCurrentCandidateApprovers(
+        param: CandidateIDRequestBody,
+    ): Promise<NewHireGetApproversResponse> {
+        const response: NewHireGetApproversResponse = await http
+            .post(`employments/get-new-hire-set-supporter-approver`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    // create new hire approvers
+    static async createCurrentCandidateApprovers(
+        param: AddApprovalResultRequestBody,
+    ): Promise<RequestSuccessBody> {
+        const response: RequestSuccessBody = await http
+            .post(`employments/add-new-hire-secretary-approval`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    //  get chosen approvers
+    static async getCurrentCandidateSecretaryApproval(
+        param: CandidateIDRequestBody,
+    ): Promise<NewHireSecretaryApprovalResponse> {
+        const response: NewHireSecretaryApprovalResponse = await http
+            .post(`employments/get-new-hire-secretary-approval`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    // create employee set approvers
+    static async createCurrentCandidateSecretaryApproval(
+        param: NewHireSetApproversRequestBody,
+    ): Promise<RequestSuccessBody> {
+        const response: RequestSuccessBody = await http
+            .post(`employments/add-new-hire-set-supporter-approver`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    //  get supporter list of candidates
+    static async getSupporterListOfCandidates(
+        param: NewHireSupporterTableListRequestBody,
+    ): Promise<NewHireSupporterTableListResponse> {
+        const response: NewHireSupporterTableListResponse = await http
+            .post(`employments/new-hire-supporter-approvals`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    //  get chosen supporter
+    static async getCurrentCandidateSupporter(
+        param: CandidateIDRequestBody,
+    ): Promise<NewHireSupporterResultResponse> {
+        const response: NewHireSupporterResultResponse = await http
+            .post(`employments/get-new-hire-secretary-approval`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    // create supporter approval
+    static async createCurrentCandidateSupporterApproval(
+        param: AddApprovalResultRequestBody,
+    ): Promise<RequestSuccessBody> {
+        const response: RequestSuccessBody = await http
+            .post(`employments/add-new-hire-secretary-approval`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    //  get approver list of candidates
+    static async getApproverListOfCandidates(
+        param: NewHireApproverTableListRequestBody,
+    ): Promise<NewHireApproverTableListResponse> {
+        const response: NewHireApproverTableListResponse = await http
+            .post(`employments/new-hire-approver-approvals`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    //  get chosen approver
+    static async getCurrentCandidateApprover(
+        param: CandidateIDRequestBody,
+    ): Promise<NewHireApproverResultResponse> {
+        const response: NewHireApproverResultResponse = await http
+            .post(`employments/get-new-hire-approver-approval`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    // create approver approval
+    static async createCurrentCandidateApproverApproval(
+        param: AddApprovalResultRequestBody,
+    ): Promise<RequestSuccessBody> {
+        const response: RequestSuccessBody = await http
+            .post(`employments/add-new-hire-secretary-approval`, {
                 body: JSON.stringify(param),
             })
             .json();
