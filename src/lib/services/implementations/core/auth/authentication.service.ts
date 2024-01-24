@@ -12,7 +12,7 @@ export class AuthService {
     // login service for employee
     static async loginEmployee(param: AuthenticationRequestViewModel){
         const response: Response = await http
-        .post('/authentication/login-employee', {
+        .post('authentication/employee-login', {
             body: JSON.stringify(param),
             headers: {
                 Accept: 'application/json',
@@ -27,7 +27,7 @@ export class AuthService {
     // login service for candidate
     static async loginCandidate(param: AuthenticationRequestViewModel){
         const response: Response = await http
-        .post('/authentication/login-candidate', {
+        .post('authentication/login-candidate', {
             body: JSON.stringify(param),
             headers: {
                 Accept: 'application/json',
@@ -42,7 +42,7 @@ export class AuthService {
     // login service for panel clinic
     static async loginClinic(param: AuthenticationRequestViewModel){
         const response: Response = await http
-        .post('/authentication/login-candidate', {
+        .post('authentication/login-candidate', {
             body: JSON.stringify(param),
             headers: {
                 Accept: 'application/json',
@@ -56,8 +56,7 @@ export class AuthService {
 
     // get all roles available
     static async getRoleOptions(){
-        const response: Response = await http.get('/lookups/roles').json();
-
+        const response: Response = await http.get('lookups/roles').json();
         return EnumRoleResponseConvert.fromResponse(response);
     }
 }
