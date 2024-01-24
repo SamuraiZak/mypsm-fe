@@ -206,6 +206,7 @@
             SPA: true,
             validators: _disciplinaryAppealCommitteeMeetingResultSchema,
             onSubmit() {
+                $form.chargedPunishment = [{...$form.chargedPunishment, charges: parentData}],
                 _submitDisciplinaryAppealCommitteeMeetingResultForm($form);
             },
             taintedMessage:
@@ -219,7 +220,7 @@
         $form.chargedPunishment = undefined;
     }
     $: if ($form.appealFollowUpResult === 'lightenPunishment') {
-        $form.chargedPunishment = parentData;
+        ;
     }
 </script>
 
@@ -960,7 +961,7 @@
         <StepperContent>
             <StepperContentHeader
                 title="Mesyuarat Keputusan Jawatankuasa Rayuan Tatatertib"
-                ><TextIconButton primary label="Simpan" form="formValidation">
+                ><TextIconButton primary label="Simpan" form="formValidation" onClick={() => {}}>
                     <SvgCheck />
                 </TextIconButton></StepperContentHeader
             >
@@ -1090,7 +1091,7 @@
 
                                         <div class="mx-2.5">
                                             <AddPunishmentFromGroup
-                                                bind:dataObject={parentData}
+                                                bind:objectData={parentData}
                                             />
                                         </div>
                                     </div>
