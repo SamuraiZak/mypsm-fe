@@ -20,6 +20,7 @@ import { fail } from '@sveltejs/kit';
 import { getErrorToast, getPromiseToast } from '$lib/services/core/toast/toast-service';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
+import errorMap from 'zod/locales/en.js';
 
 export async function load({ params }) {
     const proceedingData: IntProsiding[] = await mockProsiding;
@@ -155,13 +156,24 @@ const dateScheme = z.coerce
                     ? 'Tarikh tidak boleh dibiar kosong.'
                     : defaultError,
         }),
-    })
-    .min(new Date(), {
-        message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
     });
 
 
 const generalSelectSchema = z.string().min(1, { message: "Sila tetapkan pilihan anda. " });
+
+
+
+const chargesSchema = z.array(z.object({
+    punishmentWarning: dateScheme,
+    punishmentPenalty: dateScheme,
+    punishmentFire: dateScheme,
+    emolumentDay: z.coerce.number({
+        required_error: "Sila lengkapkan maklumat hukuman.",
+        invalid_type_error: "Hanya nombor sahaja dibenarkan.",
+      }).gte(0, { message: "Sila nyatakan format hari yang betul."}).lte(7, { message: "Hari yang diberi tidak boleh lebih dari 7 hari."})
+}).partial());
+
+const chargedPunishmentSchema = z.array(z.object({charges: chargesSchema}).partial())
 
 export const _disciplinaryAppealCommitteeMeetingResultSchema = z.object({
     meetingDate: dateScheme,
@@ -169,11 +181,7 @@ export const _disciplinaryAppealCommitteeMeetingResultSchema = z.object({
     meetingName: generalSelectSchema,
     appealMeetingResult: z.boolean().default(false),
     appealFollowUpResult: generalSelectSchema,
-    chargedPunishment: z.object({
-        punishmentWarning: dateScheme,
-        punishmentPenalty: dateScheme,
-        punishmentFire: dateScheme,
-    }).deepPartial(), 
+    chargedPunishment: chargedPunishmentSchema,
 }).partial();
 
 // export const _disciplinaryAppealCommitteeMeetingResultSchema = disciplinaryAppealCommitteeMeetingResultSchema.deepPartial();

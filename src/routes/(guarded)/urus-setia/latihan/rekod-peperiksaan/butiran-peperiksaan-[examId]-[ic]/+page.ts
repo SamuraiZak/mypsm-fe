@@ -21,7 +21,7 @@ import { getErrorToast, getPromiseToast } from '$lib/services/core/toast/toast-s
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from "zod";
 
-export async function load({ params }) {
+export const load = async ({params}) => {
     const data: IntExamAppl[] = await mockExamAppls;
 
     const currentExam: IntExamAppl | undefined = data.find(
@@ -111,6 +111,10 @@ export async function load({ params }) {
 
     if (!currentExam) throw new Error('Record not found');
 
+    const secretaryValidationForm = await superValidate(
+        _secretaryValidationSchema
+    )
+
     const secretaryExaminationResultForm = await superValidate(
         _secretaryExaminationResultSchema
     )
@@ -137,6 +141,7 @@ export async function load({ params }) {
             currentEmployeeNextOfKins,
             currentEmployeeUploadedDocuments,
         },
+        secretaryValidationForm,
         secretaryExaminationResultForm,
     };
 }
@@ -146,15 +151,40 @@ export async function load({ params }) {
 //========================================
 const generalSchema = z.string().min(1, { message: "Sila tetapkan pilihan anda." })
 
-export const _secretaryExaminationResultSchema = z.object({
+export const _secretaryValidationSchema = z.object({
     secretaryRemark: generalSchema,
-    secretaryResult: generalSchema,
+    secretaryResult: z.boolean().default(false),
+})
+
+export const _secretaryExaminationResultSchema = z.object({
     secretaryExaminationResult: generalSchema,
 })
 
 //========================================
 // Form Validation Function ==============
 //========================================
+export const _submitSecretaryValidationForm = async (formData: Object) => {
+    const secretaryValidationForm = await superValidate(formData, _secretaryValidationSchema);
+    if (!secretaryValidationForm.valid) {
+        getErrorToast();
+        return fail(400, secretaryValidationForm);
+    }
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(secretaryValidationForm),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+
+    getPromiseToast(responsePromise)
+    return { secretaryValidationForm }
+}
+
 export const _submitSecretaryExaminationResultForm = async (formData: Object) => {
     const secretaryExaminationResultForm = await superValidate(formData, _secretaryExaminationResultSchema);
     if (!secretaryExaminationResultForm.valid) {
@@ -176,3 +206,4 @@ export const _submitSecretaryExaminationResultForm = async (formData: Object) =>
     getPromiseToast(responsePromise)
     return { secretaryExaminationResultForm }
 }
+
