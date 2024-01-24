@@ -15,8 +15,68 @@ import { mockLookupServiceTypes } from '$lib/mocks/database/mockLookupServiceTyp
 import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
 import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
 import { mockContStudy } from '$lib/mocks/latihan/mockContStudy.js';
+import { getPromiseToast } from '$lib/services/core/toast/toast-service';
+import { fail } from '@sveltejs/kit';
+import toast from 'svelte-french-toast';
+import { superValidate } from 'sveltekit-superforms/client';
+import { z } from 'zod';
+
+// Stepper Support Settings
+const option = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+const textField = z
+    .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+    .min(4, {
+        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+    })
+    .max(124, {
+        message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    })
+    .trim();
+
+export const _stepperSupportSettings = z.object({
+    actionRemark: textField,
+    resultOption: option,
+});
+
+export const _submitFormStepperSupportSettings =
+    async (formData: object) => {
+        const stepperSupportSettings =
+            await superValidate(
+                formData,
+                _stepperSupportSettings,
+            );
+
+        if (!stepperSupportSettings.valid) {
+            toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+                style: 'background: #333; color: #fff;',
+            });
+            return fail(400, stepperSupportSettings);
+        }
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(
+                    _stepperSupportSettings,
+                ),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
+            },
+        )
+            .then((response) => response.json())
+            .then((json) => {
+                console.log('Response Returned: ', json);
+            });
+        getPromiseToast(responsePromise);
+        return { stepperSupportSettings };
+    };
 
 export async function load({ params }) {
+    const stepperSupportSettings = await superValidate(
+        _stepperSupportSettings,
+    );
     const data: IntContStudy[] = await mockContStudy;
 
     const currentApplication: IntContStudy | undefined = data.find(
@@ -107,6 +167,7 @@ export async function load({ params }) {
     if (!currentApplication) throw new Error('Record not found');
 
     return {
+        stepperSupportSettings,
         record: {
             data,
             currentApplication,
