@@ -54,24 +54,10 @@ export async function load() {
         })
         .json();
 
-    const newHireLists: NewHireData[] = submittedFormResponse.data.newHires;
+    const newHireLists: NewHireData[] = newAddedHireResponse.data.newHires;
 
     const submittedFormLists: NewHireData[] =
-        newAddedHireResponse.data.newHires;
-
-    // const newHireListsResponse: NewHireListResponse =
-    // NewHireListResponseConvert.fromJson(JSON.stringify(response));
-    // const newHireLists = newHireListsResponse.data.newHires;
-
-    // const registeredListsResponse: NewHireListResponse =
-    //     NewHireListResponseConvert.fromJson(JSON.stringify(response));
-
-    // const registeredLists = registeredListsResponse.data.newHires;
-
-    // const newHireLists: NewHireListResponse = response.data.newHires.filter(
-    //     (record) => record.candidateId === '13457',
-    // );
-    // const registeredLists: NewHireListResponse = response.data.newHires;
+        submittedFormResponse.data.newHires;
 
     setTimeout(() => showLoadingOverlay.set(false), 2500);
     return {
