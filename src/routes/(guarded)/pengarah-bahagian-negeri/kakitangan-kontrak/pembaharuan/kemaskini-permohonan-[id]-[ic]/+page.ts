@@ -15,12 +15,56 @@ import { mockLookupServiceTypes } from '$lib/mocks/database/mockLookupServiceTyp
 import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
 import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
 import { getEmployees } from '$lib/service/employees/staff-service.js';
+import {
+    getErrorToast,
+    getPromiseToast,
+} from '$lib/services/core/toast/toast-service';
+import { error, fail } from '@sveltejs/kit';
+import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
-import { getPromiseToast, getErrorToast } from '$lib/services/core/toast/toast-service';
-import { error, fail } from '@sveltejs/kit';
+
+// Stepper Staff Rating Update
+const option = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+export const _stepperStaffRatingUpdate = z.object({
+    year: option,
+});
+
+export const _submitFormStepperStaffRatingUpdate = async (formData: object) => {
+    const stepperStaffRatingUpdate = await superValidate(
+        formData,
+        _stepperStaffRatingUpdate,
+    );
+
+    if (!stepperStaffRatingUpdate.valid) {
+        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+            style: 'background: #333; color: #fff;',
+        });
+        return fail(400, stepperStaffRatingUpdate);
+    }
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
+            method: 'POST',
+            body: JSON.stringify(_stepperStaffRatingUpdate),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        },
+    )
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise);
+    return { stepperStaffRatingUpdate };
+};
 
 export async function load({ params }) {
+    const stepperStaffRatingUpdate = await superValidate(
+        _stepperStaffRatingUpdate,
+    );
     const data: IntEmployees[] = await getEmployees();
 
     const currentEmployee: IntEmployees | undefined = data.find(
@@ -100,12 +144,11 @@ export async function load({ params }) {
 
     if (!currentEmployee) throw new Error('Record not found');
     const pengesahanUntukDinilaiForm = await superValidate(
-        _stepperPengesahanUntukDinilai
-
-    )
-
+        _stepperPengesahanUntukDinilai,
+    );
 
     return {
+        stepperStaffRatingUpdate,
         record: {
             data,
             currentEmployee,
@@ -128,7 +171,6 @@ export async function load({ params }) {
         },
         pengesahanUntukDinilaiForm,
     };
-
 }
 
 const GeneralTextSchema = z
@@ -141,43 +183,46 @@ const GeneralTextSchema = z
     })
     .trim();
 
-    const generalSelectSchema = z.string().min(1, { message: "Sila tetapkan pilihan anda. " });
+const generalSelectSchema = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda. ' });
 
-    export const _stepperPengesahanUntukDinilai = z.object({
-        supporterRemark:GeneralTextSchema,
-        isCertified:generalSelectSchema,
-
-
-    });
+export const _stepperPengesahanUntukDinilai = z.object({
+    supporterRemark: GeneralTextSchema,
+    isCertified: generalSelectSchema,
+});
 
 //===========================================================
 
 //===========================================================
 
 export const _submitPengesahanUntukDinilaiForm = async (formData: Object) => {
-    const pengesahanUntukDinilaiForm = await superValidate(formData, _stepperPengesahanUntukDinilai);
+    const pengesahanUntukDinilaiForm = await superValidate(
+        formData,
+        _stepperPengesahanUntukDinilai,
+    );
 
     if (!pengesahanUntukDinilaiForm.valid) {
         getErrorToast();
         return fail(400, pengesahanUntukDinilaiForm);
     }
 
-
-    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
-        body: JSON.stringify(pengesahanUntukDinilaiForm),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
+            method: 'POST',
+            body: JSON.stringify(pengesahanUntukDinilaiForm),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
         },
-    })
+    )
         .then((response) => response.json())
         .then((json) => {
             console.log('Response Returned: ', json);
         });
 
-    getPromiseToast(responsePromise)
-
-
+    getPromiseToast(responsePromise);
 
     return { pengesahanUntukDinilaiForm };
 };
