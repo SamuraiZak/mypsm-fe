@@ -5,10 +5,6 @@
 import http from '$lib/services/provider/service-provider.service';
 import { EmployeesListResponseConvert } from '$lib/view-models/mypsm/employee/employee-list-response';
 import type { CandidateIDRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/candidate-id-request.view-model';
-import type {
-    PensionTableFilter,
-    PensionTableResponse,
-} from '$lib/view-models/mypsm/perjawatan/new-hire/list-Pension-Detail.view-model';
 import type { CandidateActivityRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-activity-request.view-model';
 import { type NewHireActivity } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-activity-response.view-model';
 import type { CandidateAcademiceDetailsRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-academic-details-request.model';
@@ -22,7 +18,35 @@ import type { CandidateNextOfKinDetailsRequestBody } from '$lib/view-models/myps
 import type { CandidateNextOfKinDetailsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-next-of-kin-details-response.model';
 import type { CandidatePersonalDetailsRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-request.model';
 import type { CandidatePersonalDetailsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-respone.model';
+import type { PensionTableFilter } from '$lib/view-models/mypsm/perjawatan/pension/pension-list-details-request.view-model';
+import type { PensionTableResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-list-details-response.view-model';
 import type { RequestSuccessBody } from '$lib/view-models/mypsm/request-success.view-model';
+
+import type { AddPensionDetailRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-add-pension-detail-request.view-model';
+import type { AddPensionDetailResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-add-pension-detail-response.view-model';
+import type { DetailPensionDetailRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-detail-pension-detail-request.view-model';
+import type { DetailPensionDetailResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-detail-pension-detail-response.view-model';
+import type { PensionDetailRolesRelatedRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-detail-role-related-request.model';
+import type { PensionDetailRolesRelatedResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-detail-role-related-response.model';
+import type { PensionDetailSalaryRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-detail-salary-request.view-model';
+import type { PensionDetailSalaryResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-detail-salary-response.view-model';
+import type { PensionDetailServiceRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-detail-service-request.view-model';
+import type { PensionDetailServiceResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-detail-service-response.view-model';
+import type { PensionEditApproveRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-edit-approve-request.model';
+import type { PensionEditApproveResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-edit-approve-response.model';
+import type { PensionEditRolesRelatedRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-edit-detail-role-related-request.model';
+import type { PensionEditRolesRelatedResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-edit-detail-role-related-response.model';
+import type { EditPensionDetailRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-edit-pension-detail-request.view-model';
+import type { EditPensionDetailResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-edit-pension-detail-response.view-model';
+import type { PensionListApproveRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-list-approve-request.model';
+import type { PensionListApproveResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-list-approve-response.model';
+import type { PensionListSupportRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-list-support-request.model';
+import type { PensionListSupportResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-list-support-response.model';
+import type { PensionPersonalDetailRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-personal-detail-request.view-model';
+import type { PensionPersonalDetailResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-personal-detail-response.view-model';
+import type { PensionEditSupportRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-edit-support-request.model';
+import type { PensionEditSupportResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-edit-support-response.model';
+
 
 export class EmployeeService {
     // get list of employee
@@ -229,6 +253,166 @@ export class EmployeeService {
         const response: PensionTableResponse = await http
             .post(`employments/pension-details`, {
                 body: JSON.stringify(formData),
+            })
+            .json();
+
+        return response;
+    }
+
+    // ===== //
+    // Pension//
+    // ===== //
+
+    // Detail Personal Detail
+    static async PensionPersonalDetail(
+        param: PensionPersonalDetailRequest,
+    ): Promise<PensionPersonalDetailResponse> {
+        const response: PensionPersonalDetailResponse = await http
+            .post(`employments/get-pension-detail-personal-detail`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    // Detail Service
+    static async PensionDetailService(
+        param: PensionDetailServiceRequest,
+    ): Promise<PensionDetailServiceResponse> {
+        const response: PensionDetailServiceResponse = await http
+            .post(`employments/get-pension-detail-service`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    // Detail Salary
+    static async PensionDetailSalary(
+        param: PensionDetailSalaryRequest,
+    ): Promise<PensionDetailSalaryResponse> {
+        const response: PensionDetailSalaryResponse = await http
+            .post(`employments/get-pension-detail-salary`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    // detail Pension Detail
+    static async DetailPensionDetail(
+        param: DetailPensionDetailRequest,
+    ): Promise<DetailPensionDetailResponse> {
+        const response: DetailPensionDetailResponse = await http
+            .post(`employments/get-pension-detail`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    // add Pension Detail
+    static async AddPensionDetail(
+        param: AddPensionDetailRequest,
+    ): Promise<AddPensionDetailResponse> {
+        const response: AddPensionDetailResponse = await http
+            .post(`employments/add-pension-detail`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    // edit Pension Detail
+    static async EditPensionDetail(
+        param: EditPensionDetailRequest,
+    ): Promise<EditPensionDetailResponse> {
+        const response: EditPensionDetailResponse = await http
+            .post(`employments/edit-pension-detail`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    // Details Roles Related
+    static async PensionDetailRolesRelated(
+        param: PensionDetailRolesRelatedRequest,
+    ): Promise<PensionDetailRolesRelatedResponse> {
+        const response: PensionDetailRolesRelatedResponse = await http
+            .post(`employments/get-pension-detail-roles-related`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    // Edit Roles Related
+    static async PensionEditRolesRelated(
+        param: PensionEditRolesRelatedRequest,
+    ): Promise<PensionEditRolesRelatedResponse> {
+        const response: PensionEditRolesRelatedResponse = await http
+            .post(`employments/edit-pension-detail-roles-related`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    // List Approve
+    static async PensionListApprove(
+        param: PensionListApproveRequest,
+    ): Promise<PensionListApproveResponse> {
+        const response: PensionListApproveResponse = await http
+            .post(`employments/pension-detail-approves`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    // Edit Approve
+    static async PensionEditApprove(
+        param: PensionEditApproveRequest,
+    ): Promise<PensionEditApproveResponse> {
+        const response: PensionEditApproveResponse = await http
+            .post(`employments/edit-pension-detail-approve`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    // List Support
+    static async PensionListSupport(
+        param: PensionListSupportRequest,
+    ): Promise<PensionListSupportResponse> {
+        const response: PensionListSupportResponse = await http
+            .post(`employments/pension-detail-supports`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    // edit Support
+    static async PensionEditSupport(
+        param: PensionEditSupportRequest,
+    ): Promise<PensionEditSupportResponse> {
+        const response: PensionEditSupportResponse = await http
+            .post(`employments/edit-pension-detail-support`, {
+                body: JSON.stringify(param),
             })
             .json();
 
