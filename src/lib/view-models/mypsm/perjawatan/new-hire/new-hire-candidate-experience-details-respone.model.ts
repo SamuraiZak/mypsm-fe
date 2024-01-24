@@ -16,5 +16,5 @@ export interface ExperienceList {
     positionCode: string;
     startDate: Date;
     endDate: Date;
-    salary: string;
+    salary: number;
 }
