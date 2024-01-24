@@ -65,16 +65,18 @@
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import toast, { Toaster } from 'svelte-french-toast';
-    import { getErrorToast, getSuccessToast } from '$lib/services/core/toast/toast-service';
+    import {
+        getErrorToast,
+        getSuccessToast,
+    } from '$lib/services/core/toast/toast-service';
     import { fileSelectionList } from '$lib/stores/globalState';
     import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import { z,ZodError } from 'zod';
+    import { z, ZodError } from 'zod';
 
     let employeeLists: SelectOptionType<any>[] = [];
     let selectedSupporter: string;
     let selectedApprover: string;
-
 
     onMount(async () => {
         const staffs: IntEmployees[] = await getEmployees();
@@ -316,10 +318,10 @@
     let tempExperienceRecord: any[] = [];
 
     const uploadedFileSchema = z.object({
-    uploadedFiles: z.any().array().nonempty({
-        message: 'Sila muat naik dokumen - dokumen berkaitan.',
-    }),
-});
+        uploadedFiles: z.any().array().nonempty({
+            message: 'Sila muat naik dokumen - dokumen berkaitan.',
+        }),
+    });
     // Function to handle the file changes
     let selectedFiles: File[] = [];
     let target: any;
@@ -361,7 +363,7 @@
                 toast.success('Berjaya disimpan!', {
                     style: 'background: #333; color: #fff;',
                 });
-                console.log(result)
+                console.log(result);
             }
         } catch (error: unknown) {
             if (error instanceof ZodError) {
@@ -395,7 +397,7 @@
         SPA: true,
         validators: _academicInfoSchema,
         onSubmit() {
-                _submitAcademicInfoForm($academicInfoForm);
+            _submitAcademicInfoForm($academicInfoForm);
         },
     });
 
@@ -417,7 +419,7 @@
         formId: kinInfoId,
     } = superForm(data.kinInfoForm, {
         SPA: true,
-        id: "formStepperWaris",
+        id: 'formStepperWaris',
         validators: _kinInfoSchema,
         onSubmit() {
             _submitKinInfoForm($kinInfoForm);
@@ -1385,13 +1387,12 @@
                         bind:value={$kinInfoForm.noKP}
                     ></TextField>
                     {#if $kinInfoErrors.noKP}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$kinInfoErrors.noKP}</span
-                    >
-                {/if}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$kinInfoErrors.noKP}</span
+                        >
+                    {/if}
                     <DateSelector
-
                         {disabled}
                         hasError={!!$kinInfoErrors.kinBirthDate}
                         name="kinBirthDate"
@@ -1400,11 +1401,11 @@
                         bind:selectedDate={$kinInfoForm.kinBirthDate}
                     ></DateSelector>
                     {#if $kinInfoErrors.kinBirthDate}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$kinInfoErrors.kinBirthDate}</span
-                    >
-                {/if}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$kinInfoErrors.kinBirthDate}</span
+                        >
+                    {/if}
                     <TextField
                         {disabled}
                         hasError={$kinInfoErrors.hubunganWaris ? true : false}
@@ -1413,11 +1414,11 @@
                         bind:value={$kinInfoForm.hubunganWaris}
                     ></TextField>
                     {#if $kinInfoErrors.hubunganWaris}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$kinInfoErrors.hubunganWaris}</span
-                    >
-                {/if}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$kinInfoErrors.hubunganWaris}</span
+                        >
+                    {/if}
                     <DateSelector
                         {handleDateChange}
                         {disabled}
@@ -1427,11 +1428,11 @@
                         bind:selectedDate={$kinInfoForm.marriageDate}
                     ></DateSelector>
                     {#if $kinInfoErrors.marriageDate}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$kinInfoErrors.marriageDate}</span
-                    >
-                {/if}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$kinInfoErrors.marriageDate}</span
+                        >
+                    {/if}
                     <TextField
                         {disabled}
                         hasError={$kinInfoErrors.warnaKP ? true : false}
@@ -1440,11 +1441,11 @@
                         bind:value={$kinInfoForm.warnaKP}
                     ></TextField>
                     {#if $kinInfoErrors.warnaKP}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$kinInfoErrors.warnaKP}</span
-                    >
-                {/if}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$kinInfoErrors.warnaKP}</span
+                        >
+                    {/if}
                     <TextField
                         {disabled}
                         hasError={$kinInfoErrors.telephoneH ? true : false}
@@ -1453,70 +1454,80 @@
                         bind:value={$kinInfoForm.telephoneH}
                     ></TextField>
                     {#if $kinInfoErrors.telephoneH}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$kinInfoErrors.telephoneH}</span
-                    >
-                {/if}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$kinInfoErrors.telephoneH}</span
+                        >
+                    {/if}
                     <TextField
-                    hasError={$kinInfoErrors.telephoneP ? true : false}
+                        hasError={$kinInfoErrors.telephoneP ? true : false}
                         {disabled}
                         name="telephoneP"
                         label={'Telefon (P)'}
                         bind:value={$kinInfoForm.telephoneP}
                     ></TextField>
                     {#if $kinInfoErrors.telephoneP}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$kinInfoErrors.telephoneP}</span
-                    >
-                {/if}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$kinInfoErrors.telephoneP}</span
+                        >
+                    {/if}
                     <TextField
-                    hasError={$kinInfoErrors.pekerjaanWaris ? true : false}
+                        hasError={$kinInfoErrors.pekerjaanWaris ? true : false}
                         {disabled}
                         id="pekerjaanWaris"
                         label={'Pekerjaan'}
                         bind:value={$kinInfoForm.pekerjaanWaris}
                     ></TextField>
                     {#if $kinInfoErrors.pekerjaanWaris}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$kinInfoErrors.pekerjaanWaris}</span
-                    >
-                {/if}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$kinInfoErrors.pekerjaanWaris}</span
+                        >
+                    {/if}
                     <TextField
-                    hasError={$kinInfoErrors.namaMajikanWaris ? true : false}
+                        hasError={$kinInfoErrors.namaMajikanWaris
+                            ? true
+                            : false}
                         {disabled}
                         id="namaMajikanWaris"
                         label={'Nama Majikan'}
                         bind:value={$kinInfoForm.namaMajikanWaris}
                     ></TextField>
                     {#if $kinInfoErrors.namaMajikanWaris}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$kinInfoErrors.namaMajikanWaris}</span
-                    >
-                {/if}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$kinInfoErrors.namaMajikanWaris}</span
+                        >
+                    {/if}
                     <LongTextField
-                    hasError={$kinInfoErrors.alamatMajikanWaris ? true : false}
+                        hasError={$kinInfoErrors.alamatMajikanWaris
+                            ? true
+                            : false}
                         {disabled}
                         id="alamatMajikanWaris"
                         label={'Alamat Majikan'}
                         bind:value={$kinInfoForm.alamatMajikanWaris}
                     ></LongTextField>
                     {#if $kinInfoErrors.alamatMajikanWaris}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$kinInfoErrors.alamatMajikanWaris}</span
-                    >
-                {/if}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$kinInfoErrors.alamatMajikanWaris}</span
+                        >
+                    {/if}
                 </form>
             </div></StepperContentBody
         >
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Dokumen - Dokumen Sokongan yang Berkaitan"
-            ><TextIconButton primary label="Simpan" onClick={() => {submitFilesForm()}}>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                onClick={() => {
+                    submitFilesForm();
+                }}
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
@@ -1542,66 +1553,69 @@
                 </ul>
                 <!-- Seret dan lepas fail anda ke dalam ruangan ini atau
                         pilih fail dari peranti anda -->
-                        <div class="flex w-full flex-col"></div>
-                        <SectionHeader
-                            ><div hidden={$fileSelectionList.length == 0}>
-                                <FileInputField id="fileInput" {handleOnChange}
-                                ></FileInputField>
-                            </div></SectionHeader
+                <div class="flex w-full flex-col"></div>
+                <SectionHeader
+                    ><div hidden={$fileSelectionList.length == 0}>
+                        <FileInputField id="fileInput" {handleOnChange}
+                        ></FileInputField>
+                    </div></SectionHeader
+                >
+                <div class="w-full">
+                    {#if errorData?.uploadedFiles}
+                        <span
+                            class="font-sans text-sm italic text-system-danger"
+                            >{errorData?.uploadedFiles[0]}</span
                         >
-                        <div class="w-full">
-                            {#if errorData?.uploadedFiles}
-                                <span class="font-sans text-sm italic text-system-danger"
-                                    >{errorData?.uploadedFiles[0]}</span
-                                >
-                            {/if}
-                        </div>
+                    {/if}
+                </div>
+                <div
+                    class="border-bdr-primaryp-5 flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border p-2.5"
+                >
+                    <div class="flex flex-wrap gap-3">
+                        {#each $fileSelectionList as item, index}
+                            <FileInputFieldChildren
+                                childrenType="grid"
+                                handleDelete={() => handleDelete(index)}
+                                fileName={item.name}
+                            />
+                        {/each}
+                    </div>
+                    <div
+                        class="flex flex-col items-center justify-center gap-2.5"
+                    >
+                        <p
+                            class=" text-sm text-txt-tertiary"
+                            hidden={$fileSelectionList.length > 0}
+                        >
+                            Pilih fail dari peranti anda.
+                        </p>
+                        <!-- svelte-ignore a11y-click-events-have-key-events -->
                         <div
-                            class="border-bdr-primaryp-5 flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border p-2.5"
+                            class="text-txt-tertiary"
+                            hidden={$fileSelectionList.length > 0}
                         >
-                            <div class="flex flex-wrap gap-3">
-                                {#each $fileSelectionList as item, index}
-                                    <FileInputFieldChildren
-                                        childrenType="grid"
-                                        handleDelete={() => handleDelete(index)}
-                                        fileName={item.name}
-                                    />
-                                {/each}
-                            </div>
-                            <div class="flex flex-col items-center justify-center gap-2.5">
-                                <p
-                                    class=" text-sm text-txt-tertiary"
-                                    hidden={$fileSelectionList.length > 0}
-                                >
-                                    Pilih fail dari peranti anda.
-                                </p>
-                                <!-- svelte-ignore a11y-click-events-have-key-events -->
-                                <div
-                                    class="text-txt-tertiary"
-                                    hidden={$fileSelectionList.length > 0}
-                                >
-                                    <svg
-                                        width={40}
-                                        height={40}
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke-width="1.5"
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                                        />
-                                    </svg>
-                                </div>
-                                <div hidden={$fileSelectionList.length > 0}>
-                                    <FileInputField id="fileInput" {handleOnChange}
-                                    ></FileInputField>
-                                </div>
-                            </div>
+                            <svg
+                                width={40}
+                                height={40}
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                                />
+                            </svg>
                         </div>
+                        <div hidden={$fileSelectionList.length > 0}>
+                            <FileInputField id="fileInput" {handleOnChange}
+                            ></FileInputField>
+                        </div>
+                    </div>
+                </div>
                 <p class={stepperFormTitleClass}>Fail-fail yang dimuat naik:</p>
                 {#each currentEmployeeUploadedDocuments as item, i}
                     <div
