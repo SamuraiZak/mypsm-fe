@@ -42,7 +42,7 @@
         _addFamilyModalSchema,
         _addNextOfKinInfoSchema,
         _addNonFamilyModalSchema,
-        _experienceInfoSchema,
+        _experienceListSchema,
         _nextOfKinInfoSchema,
         _personalInfoForm,
         _submitAcademicInfoForm,
@@ -185,16 +185,6 @@
         const [year, month, day] = date.split('/');
         return day + '-' + month + '-' + year;
     }
-    function getDurationYear(startDate: string, endDate: string) {
-        let start = new Date(dateConvertor(startDate));
-        let end = new Date(dateConvertor(endDate));
-        let duration = end.getTime() - start.getTime();
-        let year = duration / (1000 * 3600 * 24 * 365);
-        return Math.ceil(year);
-    }
-    function isBlueOrRedIC(isMalaysian: boolean) {
-        return isMalaysian ? 'Biru' : 'Merah';
-    }
 
     // Stepper Classes
 
@@ -286,9 +276,10 @@
     } = superForm(data.experienceInfoForm, {
         dataType: 'json',
         SPA: true,
-        validators: _experienceInfoSchema,
+        validators: _experienceListSchema,
         onSubmit() {
-            _submitExperienceInfoForm(tempExperienceRecord);
+            window.alert('hjbsja');
+            // _submitExperienceInfoForm(tempExperienceRecord);
         },
     });
 
@@ -1253,7 +1244,7 @@
                         use:experienceInfoEnhance
                         method="POST"
                     >
-                        {#each data.experienceDetails.experienceList as record, i}
+                        {#each $experienceInfoForm.experienceList as record, i}
                             <p class={stepperFormTitleClass}>
                                 Maklumat Pengalaman #{i + 1}
                             </p>
