@@ -22,8 +22,18 @@
     import IconButton from '$lib/components/buttons/IconButton.svelte';
     import SvgPdf from '$lib/assets/svg/SvgPDF.svelte';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper.js';
-    export let data;
+    import { superForm } from 'sveltekit-superforms/client';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import {
+        _stepperTuitionFeeFundingClaimApplicationResults,
+        _submitFormStepperTuitionFeeFundingClaimApplicationResults,
+    } from './+page';
     let activeStepper = 0;
+
+    export let data: PageData;
+
     let courseSecretaryResult: string = 'certified';
     let isCompleted: boolean =
         data.record.currentStudyAllowanceApplication.status ===
@@ -131,6 +141,23 @@
             return document.id === 1;
         },
     )!;
+
+    //Evaluate Confirmation
+    const {
+        form: tuitionFeeFundingClaimApplicationResultsForm,
+        errors: tuitionFeeFundingClaimApplicationResultsErrors,
+        enhance: tuitionFeeFundingClaimApplicationResultsEnhance,
+    } = superForm(data.stepperTuitionFeeFundingClaimApplicationResults, {
+        SPA: true,
+        validators: _stepperTuitionFeeFundingClaimApplicationResults,
+        onSubmit() {
+            _submitFormStepperTuitionFeeFundingClaimApplicationResults(
+                $tuitionFeeFundingClaimApplicationResultsForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -732,58 +759,102 @@
         </StepperContentBody>
     </StepperContent><StepperContent>
         <StepperContentHeader
-            title="Keputusan Permohonan Tuntutan pembiayaan Yuran Pengajian"
+            title="Keputusan Permohonan Tuntutan Pembiayaan Yuran Pengajian"
         >
             {#if !isCompleted}
-                <TextIconButton primary label="Simpan" />
+                <TextIconButton
+                    primary
+                    label="Simpan"
+                    form="FormStepperTuitionFeeFundingClaimApplicationResults"
+                    onClick={() => console.log('hehehhe')}
+                >
+                    <SvgCheck></SvgCheck>
+                </TextIconButton>
             {/if}</StepperContentHeader
         >
         <div class="flex w-full flex-col gap-2">
-            <StepperContentBody>
-                <SectionHeader
-                    color="system-primary"
-                    title="Pengesahan Urus Setia Latihan"
-                />
-                <div
-                    class="mb-2.5 flex w-full flex-row items-center text-sm italic"
+            <StepperContentBody
+                ><form
+                    id="FormStepperTuitionFeeFundingClaimApplicationResults"
+                    class="flex w-full flex-col gap-2"
+                    use:tuitionFeeFundingClaimApplicationResultsEnhance
+                    method="POST"
                 >
-                    <label for="file-download" class="w-[220px]"
-                        >Borang - borang berkaitan yang akan dijana sekiranya
-                        lulus:</label
+                    <SectionHeader
+                        color="system-primary"
+                        title="Pengesahan Urus Setia Latihan"
+                    />
+                    <div
+                        class="mb-2.5 flex w-full flex-row items-center text-sm italic"
                     >
-                    <span>
-                        <ul class="list-inside list-decimal text-txt-secondary">
-                            <li>Surat Surat Arahan Bayaran.</li>
-                        </ul>
-                    </span>
-                </div>
-                <LongTextField
-                    disabled={isCompleted}
-                    labelBlack={false}
-                    name="meeting-remark"
-                    label="Tindakan/Ulasan"
-                    value={'layak'}
-                />
-                <RadioSingle
-                    disabled={isCompleted}
-                    labelBlack={false}
-                    options={courseSecretaryOptions}
-                    legend="Keputusan"
-                    bind:userSelected={courseSecretaryResult}
-                />
-                {#if isCompleted}
-                    <div class="flex w-full flex-row items-center">
-                        <hr />
-                        <label
-                            for="file-download"
-                            class="w-[220px] text-base text-system-primary"
-                            >Cetak Surat Permohonan:</label
+                        <label for="file-download" class="w-[220px]"
+                            >Borang - borang berkaitan yang akan dijana
+                            sekiranya lulus:</label
                         >
-                        <IconButton><SvgPdf size="24" /></IconButton>
-                        <hr />
+                        <span>
+                            <ul
+                                class="list-inside list-decimal text-txt-secondary"
+                            >
+                                <li>Surat Surat Arahan Bayaran.</li>
+                            </ul>
+                        </span>
                     </div>
-                {/if}
-            </StepperContentBody>
+                    <!-- <LongTextField
+                        disabled={isCompleted}
+                        labelBlack={false}
+                        name="meeting-remark"
+                        label="Tindakan/Ulasan"
+                        value={'layak'}
+                    />
+                    <RadioSingle
+                        disabled={isCompleted}
+                        labelBlack={false}
+                        options={courseSecretaryOptions}
+                        legend="Keputusan"
+                        bind:userSelected={courseSecretaryResult}
+                    /> -->
+                    <LongTextField
+                        disabled={isCompleted}
+                        hasError={!!$tuitionFeeFundingClaimApplicationResultsErrors.actionRemark}
+                        name="actionRemark"
+                        label="Tindakan / Ulasan"
+                        bind:value={$tuitionFeeFundingClaimApplicationResultsForm.actionRemark}
+                    />
+                    {#if $tuitionFeeFundingClaimApplicationResultsErrors.actionRemark}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$tuitionFeeFundingClaimApplicationResultsErrors.actionRemark}</span
+                        >
+                    {/if}
+                    <RadioSingle
+                        disabled={isCompleted}
+                        options={courseSecretaryOptions}
+                        name="resultOption"
+                        legend="Keputusan"
+                        bind:userSelected={$tuitionFeeFundingClaimApplicationResultsForm.resultOption}
+                    ></RadioSingle>
+                    {#if $tuitionFeeFundingClaimApplicationResultsErrors.resultOption}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$tuitionFeeFundingClaimApplicationResultsErrors
+                                .resultOption}</span
+                        >
+                    {/if}
+                    {#if isCompleted}
+                        <div class="flex w-full flex-row items-center">
+                            <hr />
+                            <label
+                                for="file-download"
+                                class="w-[220px] text-base text-system-primary"
+                                >Cetak Surat Permohonan:</label
+                            >
+                            <IconButton><SvgPdf size="24" /></IconButton>
+                            <hr />
+                        </div>
+                    {/if}
+                </form></StepperContentBody
+            >
         </div>
     </StepperContent>
 </Stepper>
+<Toaster />
