@@ -20,7 +20,7 @@
     import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
     import FilterSelectInput from '$lib/components/filter/FilterSelectInput.svelte';
     import FilterDateSelector from '$lib/components/filter/FilterDateSelector.svelte';
-    import type { PensionDetail } from '$lib/view-models/mypsm/perjawatan/new-hire/list-Pension-Detail.view-model.js';
+    import type { PensionDetail } from '$lib/view-models/mypsm/perjawatan/pension/pension-list-details-response.view-model';
     // const url =
     //     './PTB-dan-KWAP/butiran-permohonan-' +
     //     data.props.lists[0].noPekerja +

@@ -1,10 +1,13 @@
 import { mockPTBdanKWAP } from '$lib/mocks/perjawatan/PTB-dan-KWAP/ptb-dan-kwap.js';
 import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service.js';
 import type {
-    PensionDetail,
     PensionTableFilter,
+} from '$lib/view-models/mypsm/perjawatan/pension/pension-list-details-request.view-model';
+
+import type {
+    PensionDetail,
     PensionTableResponse,
-} from '$lib/view-models/mypsm/perjawatan/new-hire/list-Pension-Detail.view-model';
+} from '$lib/view-models/mypsm/perjawatan/pension/pension-list-details-response.view-model';
 
 export async function load({ params }) {
     const data: PtbAndKwap[] = mockPTBdanKWAP;
