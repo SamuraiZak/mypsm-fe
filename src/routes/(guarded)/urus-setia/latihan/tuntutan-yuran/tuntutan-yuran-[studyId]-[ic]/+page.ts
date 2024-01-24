@@ -16,8 +16,68 @@ import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
 import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
 import { mockStudyAllowance } from '$lib/mocks/latihan/mockStudyAllowance';
 import { getEmployees } from '$lib/service/employees/staff-service.js';
+import { getPromiseToast } from '$lib/services/core/toast/toast-service';
+import { fail } from '@sveltejs/kit';
+import toast from 'svelte-french-toast';
+import { superValidate } from 'sveltekit-superforms/client';
+import { z } from 'zod';
+
+// Stepper Tuition Fee Funding Claim Application Results
+const option = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+const textField = z
+    .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+    .min(4, {
+        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+    })
+    .max(124, {
+        message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    })
+    .trim();
+
+export const _stepperTuitionFeeFundingClaimApplicationResults = z.object({
+    actionRemark: textField,
+    resultOption: option,
+});
+
+export const _submitFormStepperTuitionFeeFundingClaimApplicationResults = async (
+    formData: object,
+) => {
+    const stepperTuitionFeeFundingClaimApplicationResults = await superValidate(
+        formData,
+        _stepperTuitionFeeFundingClaimApplicationResults,
+    );
+
+    if (!stepperTuitionFeeFundingClaimApplicationResults.valid) {
+        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+            style: 'background: #333; color: #fff;',
+        });
+        return fail(400, stepperTuitionFeeFundingClaimApplicationResults);
+    }
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
+            method: 'POST',
+            body: JSON.stringify(_stepperTuitionFeeFundingClaimApplicationResults),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        },
+    )
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise);
+    return { stepperTuitionFeeFundingClaimApplicationResults };
+};
 
 export async function load({ params }) {
+    const stepperTuitionFeeFundingClaimApplicationResults = await superValidate(
+        _stepperTuitionFeeFundingClaimApplicationResults,
+    );
     const data: IntStudyAllowance[] = await mockStudyAllowance;
 
     const currentStudyAllowanceApplication: IntStudyAllowance | undefined =
@@ -110,6 +170,7 @@ export async function load({ params }) {
     if (!currentStudyAllowanceApplication) throw new Error('Record not found');
 
     return {
+        stepperTuitionFeeFundingClaimApplicationResults,
         record: {
             data,
             currentStudyAllowanceApplication,
