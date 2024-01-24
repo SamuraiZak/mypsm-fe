@@ -23,7 +23,9 @@
     import { Toaster } from 'svelte-french-toast';
     import { superForm } from 'sveltekit-superforms/client';
     import {
+        _secretaryValidationSchema,
         _secretaryExaminationResultSchema,
+        _submitSecretaryValidationForm,
         _submitSecretaryExaminationResultForm,
     } from './+page';
     import type { PageData } from './$types';
@@ -35,11 +37,11 @@
 
     const options: RadioOption[] = [
         {
-            value: 'sah',
+            value: true,
             label: 'SAH',
         },
         {
-            value: 'tidak sah',
+            value: false,
             label: 'TIDAK SAH',
         },
     ];
@@ -132,19 +134,35 @@
             }
         }
     }
-    const { form, errors, enhance } = superForm(
-        data.secretaryExaminationResultForm,
-        {
-            SPA: true,
-            validators: _secretaryExaminationResultSchema,
-            onSubmit() {
-                _submitSecretaryExaminationResultForm($form);
-                console.log("HANCURKANLAH INGATAN KU")
-            },
-            taintedMessage:
-                'Terdapat maklumat yang belum disimpan. Adakah anda henda keluar dari laman ini?',
+    const {
+        form: secretaryValidationForm,
+        errors: secretaryValidationErrors,
+        enhance: secretaryValidationEnhance,
+    } = superForm(data.secretaryValidationForm, {
+        SPA: true,
+        id: "secretaryValidateForm",
+        validators: _secretaryValidationSchema,
+        onSubmit() {
+            _submitSecretaryValidationForm($secretaryValidationForm);
         },
-    );
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda henda keluar dari laman ini?',
+    });
+
+    const {
+        form: secretaryExaminationForm,
+        errors: secretaryExaminationErrors,
+        enhance: secretaryExaminationEnhance,
+    } = superForm(data.secretaryExaminationResultForm, {
+        SPA: true,
+        id: "examinationResultForm",
+        validators: _secretaryExaminationResultSchema,
+        onSubmit() {
+            _submitSecretaryExaminationResultForm($secretaryExaminationForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda henda keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -668,7 +686,14 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Pengesahan Urus Setia Latihan"
-        ></StepperContentHeader>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="secretaryValidateForm"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
+        >
 
         <StepperContentBody>
             <SectionHeader
@@ -676,35 +701,35 @@
                 title="Sistem akan menjana surat panggilan peperiksaan serta maklumat berkaitan lokasi, tarikh bagi peperiksaan dan menghantar surat ke email kakitangan."
             ></SectionHeader>
             <form
-                action="examinationResultForm"
-                use:enhance
+                id="secretaryValidateForm"
+                use:secretaryValidationEnhance
                 method="POST"
                 class="flex w-full flex-col gap-2"
             >
                 <LongTextField
-                    hasError={$errors.secretaryRemark ? true : false}
+                    hasError={!!$secretaryValidationErrors.secretaryRemark}
                     name="secretaryRemark"
                     label="Tindakan / Ulasan"
                     labelBlack
                     placeholder="Boleh diteruskan"
-                    bind:value={$form.secretaryRemark}
+                    bind:value={$secretaryValidationForm.secretaryRemark}
                 ></LongTextField>
-                {#if $errors.secretaryRemark}
+                {#if $secretaryValidationErrors.secretaryRemark}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.secretaryRemark}</span
+                        >{$secretaryValidationErrors.secretaryRemark}</span
                     >
                 {/if}
                 <RadioSingle
                     {options}
                     name="secretaryResult"
                     legend="Keputusan"
-                    bind:userSelected={$form.secretaryResult}
+                    bind:userSelected={$secretaryValidationForm.secretaryResult}
                 />
-                {#if $errors.secretaryResult}
+                {#if $secretaryValidationErrors.secretaryResult}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.secretaryResult}</span
+                        >{$secretaryValidationErrors.secretaryResult}</span
                     >
                 {/if}
             </form>
@@ -716,61 +741,60 @@
                 primary
                 label="Simpan"
                 form="examinationResultForm"
-                
             >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
 
         <StepperContentBody>
+            <SectionHeader
+                color="system-primary"
+                title="Tetapan keputusan Panel Pemeriksa:"
+            ></SectionHeader>
+            <TextField
+                {disabled}
+                name="candidate-name-title"
+                label="Nama Kakitangan"
+                type="text"
+                bind:value={data.record.currentExam.candidate}
+            />
+            <TextField
+                {disabled}
+                name="candidate-number-title"
+                label="No. Pekerja"
+                type="text"
+                bind:value={data.record.currentExam.candidateEmpNumber}
+            />
+            <TextField
+                {disabled}
+                name="exam-title"
+                label="Tajuk Peperiksaan"
+                type="text"
+                bind:value={data.record.currentExam.exam.examTitle}
+            />
+            <TextField
+                {disabled}
+                name="exam-title"
+                label="Tajuk Peperiksaan"
+                type="text"
+                bind:value={data.record.currentExam.exam.examDate}
+            />
             <form
-                action="examinationResultForm"
-                use:enhance
+                id="examinationResultForm"
+                use:secretaryExaminationEnhance
                 method="POST"
                 class="flex w-full flex-col gap-2"
             >
-                <SectionHeader
-                    color="system-primary"
-                    title="Tetapan keputusan Panel Pemeriksa:"
-                ></SectionHeader>
-                <TextField
-                    {disabled}
-                    name="candidate-name-title"
-                    label="Nama Kakitangan"
-                    type="text"
-                    bind:value={data.record.currentExam.candidate}
-                />
-                <TextField
-                    {disabled}
-                    name="candidate-number-title"
-                    label="No. Pekerja"
-                    type="text"
-                    bind:value={data.record.currentExam.candidateEmpNumber}
-                />
-                <TextField
-                    {disabled}
-                    name="exam-title"
-                    label="Tajuk Peperiksaan"
-                    type="text"
-                    bind:value={data.record.currentExam.exam.examTitle}
-                />
-                <TextField
-                    {disabled}
-                    name="exam-title"
-                    label="Tajuk Peperiksaan"
-                    type="text"
-                    bind:value={data.record.currentExam.exam.examDate}
-                />
                 <RadioSingle
                     name="secretaryExaminationResult"
                     options={results}
                     legend="Keputusan Peperiksaan"
-                    bind:userSelected={$form.secretaryExaminationResult}
+                    bind:userSelected={$secretaryExaminationForm.secretaryExaminationResult}
                 />
-                {#if $errors.secretaryExaminationResult}
+                {#if $secretaryExaminationErrors.secretaryExaminationResult}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.secretaryExaminationResult}</span
+                        >{$secretaryExaminationErrors.secretaryExaminationResult}</span
                     >
                 {/if}
             </form>
