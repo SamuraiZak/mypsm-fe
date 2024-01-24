@@ -9,8 +9,7 @@
     import EmolumentDepriveDay from '$lib/components/integriti-charges-form-group/EmolumentDepriveDay.svelte';
     import { greds } from '$lib/mocks/gred/gred';
     import { Button } from 'flowbite-svelte';
-    
-    
+
     export let disabled: boolean = false;
     export let key: string = 'key';
 
@@ -70,19 +69,68 @@
         delete emolumentDeprivationDaysFormGroup[groupId];
     }
 
-
-    export let dataObject: object;
+    // export let dataObject: Record<string, any>[];
+    export let objectData: Record<string, any>[];
     let warningDate: Date;
     let penaltyDate: Date;
     let fireDate: Date;
+    let penaltyEmolumentDate: number;
 
-    function updateData() {
-    dataObject = { 
-        punishmentWarning: new Date(warningDate),
-        punishmentPenalty: new Date(penaltyDate),
-        punishmentFire: new Date(fireDate),
-    };
-  }
+    // TODO : EXECUTE THE PASS OBJECT IN PARENT PAGE.
+    function updateData(data: number) {
+        switch (data) {
+            case 1: {
+                const tempDate = new Date(warningDate);
+
+                if (objectData !== undefined) {
+                    objectData = [
+                        ...objectData,
+                        { punishmentWarning: tempDate },
+                    ];
+                } else {
+                    objectData = [{ punishmentWarning: tempDate }];
+                }
+                warningDate = new Date();
+                break;
+            }
+            case 2: {
+                const tempDate = new Date(penaltyDate);
+
+                
+                if (objectData !== undefined) {
+                    objectData = [
+                        ...objectData,
+                        {
+                            punishmentPenalty: tempDate,
+                            emolumentDay: penaltyEmolumentDate,
+                        },
+                    ];
+                    console.log(objectData)
+                } else {
+                    objectData = [
+                        {
+                            punishmentPenalty: tempDate,
+                            emolumentDay: penaltyEmolumentDate,
+                        },
+                    ];
+                    console.log(objectData)
+                }
+                penaltyDate = new Date();
+                break;
+            }
+            case 3: {
+                const tempDate = new Date(fireDate);
+
+                if (objectData !== undefined) {
+                    objectData = [...objectData, { punishmentFire: tempDate }];
+                } else {
+                    objectData = [{ punishmentFire: tempDate }];
+                }
+                fireDate = new Date();
+                break;
+            }
+        }
+    }
 </script>
 
 <SectionHeader title="Penentuan Hukuman"
@@ -170,7 +218,9 @@
                         name="date-of-effect-warning-{key + groupId}"
                         label="Tarikh Berkuatkuasa"
                         bind:selectedDate={warningDate}
-                        handleDateChange={() => {updateData()}}
+                        handleDateChange={() => {
+                            updateData(1);
+                        }}
                     />
                 {/if}
                 {#if selectedPunishment[groupId] === 'punishmentPenalty'}
@@ -180,7 +230,9 @@
                         name="date-of effect-penalty-{key + groupId}"
                         label="Tarikh Berkuatkuasa"
                         bind:selectedDate={penaltyDate}
-                        handleDateChange={() => {}}
+                        handleDateChange={() => {
+                            updateData(2);
+                        }}
                     />
                     <TextField
                         {disabled}
@@ -188,7 +240,7 @@
                         id="emolument-deprived-days-name-{key + groupId}"
                         label="Hari Emolumen"
                         placeholder="1 - 7 Hari"
-                        value={''}
+                        bind:value={penaltyEmolumentDate}
                     ></TextField>
                 {/if}
                 {#if selectedPunishment[groupId] === 'punishmentEmolumentDeprivation'}
@@ -378,7 +430,9 @@
                         name="date-of-effect-fire-{key + groupId}"
                         label="Tarikh Berkuatkuasa"
                         bind:selectedDate={fireDate}
-                        handleDateChange={() => {}}
+                        handleDateChange={() => {
+                            updateData(3);
+                        }}
                     />
                 {/if}
             </div>
