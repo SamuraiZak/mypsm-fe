@@ -39,6 +39,10 @@
         _submitFormStepperAssessmentCertificationPBN,
     } from './+page';
     import {
+        _stepperContractStaffEmploymentMeetingResultsInformation,
+        _submitFormStepperContractStaffEmploymentMeetingResultsInformation,
+    } from './+page';
+    import {
         _stepperSetSupporterApprover,
         _submitFormStepperSetSupporterApprover,
     } from './+page';
@@ -214,10 +218,10 @@
         enhance: assessmentCertificationPBNEnhance,
     } = superForm(data.stepperAssessmentCertificationPBN, {
         SPA: true,
-        id: "FormStepperAssessmentCertificationPBN",
+        id: 'FormStepperAssessmentCertificationPBN',
         validators: _stepperAssessmentCertificationPBN,
         onSubmit() {
-            console.log ('ihiihi')
+            console.log('ihiihi');
             _submitFormStepperAssessmentCertificationPBN(
                 $assessmentCertificationPBNForm,
             );
@@ -225,6 +229,29 @@
         taintedMessage:
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
+
+    //Contract Staff Employment Meeting Results Information
+    const {
+        form: contractStaffEmploymentMeetingResultsInformationForm,
+        errors: contractStaffEmploymentMeetingResultsInformationErrors,
+        enhance: contractStaffEmploymentMeetingResultsInformationEnhance,
+    } = superForm(
+        data.stepperContractStaffEmploymentMeetingResultsInformation,
+        {
+            SPA: true,
+            id: 'FormStepperContractStaffEmploymentMeetingResultsInformation',
+            validators:
+                _stepperContractStaffEmploymentMeetingResultsInformation,
+            onSubmit() {
+                console.log('ihiihi');
+                _submitFormStepperContractStaffEmploymentMeetingResultsInformation(
+                    $contractStaffEmploymentMeetingResultsInformationForm,
+                );
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+        },
+    );
 
     //Set Supporter Approver
     const {
@@ -890,9 +917,6 @@
                     {/if}
                     <RadioSingle
                         options={certifyOptions}
-                        hasError={$evaluateConfirmationErrors.resultOption
-                            ? true
-                            : false}
                         name="resultOption"
                         legend="Keputusan"
                         bind:userSelected={$evaluateConfirmationForm.resultOption}
@@ -915,10 +939,9 @@
                 primary
                 label="Simpan"
                 form="FormStepperAssessmentCertificationPBN"
-                onClick ={()=>console.log('hehehhe')  }
+                onClick={() => console.log('hehehhe')}
             >
                 <SvgCheck></SvgCheck>
-                
             </TextIconButton></StepperContentHeader
         >
         <ContentHeader
@@ -985,9 +1008,6 @@
                 {/if}
                 <RadioSingle
                     options={certifyOptions}
-                    hasError={$assessmentCertificationPBNErrors.resultOption
-                        ? true
-                        : false}
                     name="resultOption"
                     legend="Keputusan"
                     bind:userSelected={$assessmentCertificationPBNForm.resultOption}
@@ -1005,7 +1025,12 @@
     <StepperContent>
         <StepperContentHeader
             title="Maklumat Keputusan Mesyuarat Perjawatan Kakitangan Kontrak"
-            ><TextIconButton primary label="Simpan" onClick={() => {}}>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="FormStepperContractStaffEmploymentMeetingResultsInformation"
+                onClick={() => console.log('hehehhe')}
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
@@ -1013,55 +1038,87 @@
             title="Penilaian dan Perakuan Kakitangan"
             description=""
         />
-        <StepperContentBody>
-            <div class="flex w-full flex-col gap-2">
-                <span class="text-sm italic text-system-primary">
-                    Sekiranya keputusan mesyuarat tidak diluluskan, sistem MyPSM
-                    akan menjana surat penamatan kontrak dan email surat
-                    berkenaan ke email kakitangan.
-                </span>
-                <DropdownSelect
-                    disabled={false}
-                    labelBlack={true}
-                    dropdownType="label-left-full"
-                    name="meetings-dropdown"
-                    label="Nama dan Bil Mesyuarat"
-                    value={''}
-                    options={meetings}
-                ></DropdownSelect>
-                <DateSelector
-                    disabled={false}
-                    labelBlack={true}
-                    label="Tarikh Mesyuarat"
-                    selectedDate={''}
-                    handleDateChange={() => {}}
-                />
-                <LongTextField
-                    disabled={false}
-                    id="secretary-remark"
-                    label="Tindakan/Ulasan"
-                    value="Layak"
-                ></LongTextField>
-                <RadioSingle
-                    disabled={false}
-                    options={[
-                        { value: 'passed', label: 'LULUS' },
-                        { value: 'notPassed', label: 'TIDAK LULUS' },
-                    ]}
-                    legend={'Keputusan'}
-                    userSelected={'passed'}
-                ></RadioSingle>
-                <div class="flex w-full flex-row text-sm">
-                    <label for="supporter-result" class="w-[220px]"
-                        >Keputusan</label
-                    ><Badge
-                        border
-                        color={passerResult == 'passed' ? 'green' : 'red'}
-                        >{results[1].name}</Badge
-                    >
+        <StepperContentBody
+            ><form
+                id="FormStepperContractStaffEmploymentMeetingResultsInformation"
+                class="flex w-full flex-col gap-2"
+                use:contractStaffEmploymentMeetingResultsInformationEnhance
+                method="POST"
+            >
+                <div class="flex w-full flex-col gap-2">
+                    <span class="text-sm italic text-system-primary">
+                        Sekiranya keputusan mesyuarat tidak diluluskan, sistem
+                        MyPSM akan menjana surat penamatan kontrak dan email
+                        surat berkenaan ke email kakitangan.
+                    </span>
+                    <DropdownSelect
+                        hasError={!!$contractStaffEmploymentMeetingResultsInformationErrors.meetingsDropdown}
+                        dropdownType="label-left-full"
+                        id="meetingsDropdown"
+                        label="Nama dan Bil Mesyuarat"
+                        bind:value={$contractStaffEmploymentMeetingResultsInformationForm.meetingsDropdown}
+                        options={meetings}
+                    ></DropdownSelect>
+                    {#if $contractStaffEmploymentMeetingResultsInformationErrors.meetingsDropdown}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$contractStaffEmploymentMeetingResultsInformationErrors.meetingsDropdown}</span
+                        >
+                    {/if}
+                    <DateSelector
+                        hasError={!!$contractStaffEmploymentMeetingResultsInformationErrors.meetingDate}
+                        name="meetingDate"
+                        handleDateChange
+                        label="Tarikh Mesyuarat"
+                        bind:selectedDate={$contractStaffEmploymentMeetingResultsInformationForm.meetingDate}
+                    ></DateSelector>
+                    {#if $contractStaffEmploymentMeetingResultsInformationErrors.meetingDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$contractStaffEmploymentMeetingResultsInformationErrors.meetingDate}</span
+                        >
+                    {/if}
+                    <LongTextField
+                        hasError={!!$contractStaffEmploymentMeetingResultsInformationErrors.actionRemarkCSEMRI}
+                        name="actionRemarkCSEMRI"
+                        label="Tindakan / Ulasan"
+                        bind:value={$contractStaffEmploymentMeetingResultsInformationForm.actionRemarkCSEMRI}
+                    />
+                    {#if $contractStaffEmploymentMeetingResultsInformationErrors.actionRemarkCSEMRI}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$contractStaffEmploymentMeetingResultsInformationErrors
+                                .actionRemarkCSEMRI[0]}</span
+                        >
+                    {/if}
+                    <RadioSingle
+                        options={[
+                            { value: 'passed', label: 'LULUS' },
+                            { value: 'notPassed', label: 'TIDAK LULUS' },
+                        ]}
+                        name="resultOption"
+                        legend="Keputusan"
+                        bind:userSelected={$contractStaffEmploymentMeetingResultsInformationForm.resultOptionCSEMRI}
+                    ></RadioSingle>
+                    {#if $contractStaffEmploymentMeetingResultsInformationErrors.resultOptionCSEMRI}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$contractStaffEmploymentMeetingResultsInformationErrors
+                                .resultOptionCSEMRI[0]}</span
+                        >
+                    {/if}
+                    <div class="flex w-full flex-row text-sm">
+                        <label for="supporter-result" class="w-[220px]"
+                            >Keputusan</label
+                        ><Badge
+                            border
+                            color={passerResult == 'passed' ? 'green' : 'red'}
+                            >{results[1].name}</Badge
+                        >
+                    </div>
                 </div>
-            </div>
-        </StepperContentBody>
+            </form></StepperContentBody
+        >
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Tetapkan Penyokong dan Pelulus (Jika Sah)"
@@ -1292,34 +1349,29 @@
                     </ul>
                 </span>
                 <LongTextField
-                    hasError={$confirmationNewContractAgreementErrors.actionRemark
-                        ? true
-                        : false}
+                    hasError={!!$confirmationNewContractAgreementErrors.actionRemarkCNCA}
                     name="actionRemark"
                     label="Tindakan / Ulasan"
-                    bind:value={$confirmationNewContractAgreementForm.actionRemark}
+                    bind:value={$confirmationNewContractAgreementForm.actionRemarkCNCA}
                 />
-                {#if $confirmationNewContractAgreementErrors.actionRemark}
+                {#if $confirmationNewContractAgreementErrors.actionRemarkCNCA}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
                         >{$confirmationNewContractAgreementErrors
-                            .actionRemark[0]}</span
+                            .actionRemarkCNCA[0]}</span
                     >
                 {/if}
                 <RadioSingle
                     options={certifyOptions}
-                    hasError={$confirmationNewContractAgreementErrors.resultOption
-                        ? true
-                        : false}
                     name="resultOption"
                     legend="Keputusan"
-                    bind:userSelected={$confirmationNewContractAgreementForm.resultOption}
+                    bind:userSelected={$confirmationNewContractAgreementForm.resultOptionCNCA}
                 ></RadioSingle>
-                {#if $confirmationNewContractAgreementErrors.resultOption}
+                {#if $confirmationNewContractAgreementErrors.resultOptionCNCA}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
                         >{$confirmationNewContractAgreementErrors
-                            .resultOption[0]}</span
+                            .resultOptionCNCA[0]}</span
                     >
                 {/if}
             </form>
