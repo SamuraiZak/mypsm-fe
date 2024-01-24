@@ -15,13 +15,16 @@ import { mockLookupServiceTypes } from '$lib/mocks/database/mockLookupServiceTyp
 import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
 import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
 import { getEmployees } from '$lib/service/employees/staff-service.js';
+import { getPromiseToast } from '$lib/services/core/toast/toast-service';
 import { fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
 // Stepper Evaluate Confirmation
-const optionEvaluateConfirmation = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
+const optionEvaluateConfirmation = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
 const textFieldEvaluateConfirmation = z
     .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
@@ -51,31 +54,29 @@ export const _submitFormStepperEvaluateConfirmation = async (
             style: 'background: #333; color: #fff;',
         });
         return fail(400, stepperEvaluateConfirmation);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
+    }
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
             method: 'POST',
-            body: JSON.stringify(stepperEvaluateConfirmation),
+            body: JSON.stringify(_stepperEvaluateConfirmation),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log(
-                    'Response Returned: EvaluateConfirmation-54',
-                    json,
-                );
-            });
-    }
+        },
+    )
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise);
     return { stepperEvaluateConfirmation };
 };
 
 // Stepper Assessment Certification PBN
-const optionAssessmentCertificationPBN = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
+const optionAssessmentCertificationPBN = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
 const textFieldAssessmentCertificationPBN = z
     .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
@@ -105,28 +106,95 @@ export const _submitFormStepperAssessmentCertificationPBN = async (
             style: 'background: #333; color: #fff;',
         });
         return fail(400, stepperAssessmentCertificationPBN);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
+    }
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
             method: 'POST',
-            body: JSON.stringify(stepperAssessmentCertificationPBN),
+            body: JSON.stringify(_stepperAssessmentCertificationPBN),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log(
-                    'Response Returned: EvaluateConfirmation-54',
-                    json,
-                );
-            });
-    }
+        },
+    )
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise);
     return { stepperAssessmentCertificationPBN };
 };
+
+// Stepper Contract Staff Employment Meeting Results Information
+const optionCSEMRI = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda.' });
+
+const date = z.coerce.date({
+    errorMap: (issue, { defaultError }) => ({
+        message:
+            issue.code === 'invalid_date'
+                ? 'Tarikh tidak boleh dibiar kosong.'
+                : defaultError,
+    }),
+});
+
+const textFieldCSEMRI = z
+    .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+    .min(4, {
+        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+    })
+    .max(124, {
+        message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    })
+    .trim();
+
+export const _stepperContractStaffEmploymentMeetingResultsInformation =
+    z.object({
+        actionRemarkCSEMRI: textFieldCSEMRI,
+        meetingsDropdown: textFieldCSEMRI,
+        meetingDate: date.refine((data) => data <= new Date(), {
+            message: 'Tidak boleh lebih daripada tarikh semasa',
+        }),
+        resultOptionCSEMRI: optionCSEMRI,
+    });
+
+export const _submitFormStepperContractStaffEmploymentMeetingResultsInformation =
+    async (formData: object) => {
+        const stepperContractStaffEmploymentMeetingResultsInformation =
+            await superValidate(
+                formData,
+                _stepperContractStaffEmploymentMeetingResultsInformation,
+            );
+
+        if (!stepperContractStaffEmploymentMeetingResultsInformation.valid) {
+            toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+                style: 'background: #333; color: #fff;',
+            });
+            return fail(
+                400,
+                stepperContractStaffEmploymentMeetingResultsInformation,
+            );
+        }
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(
+                    _stepperContractStaffEmploymentMeetingResultsInformation,
+                ),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
+            },
+        )
+            .then((response) => response.json())
+            .then((json) => {
+                console.log('Response Returned: ', json);
+            });
+        getPromiseToast(responsePromise);
+        return { stepperContractStaffEmploymentMeetingResultsInformation };
+    };
 
 // Stepper Set Supporter Approver
 const resultOption = z
@@ -151,30 +219,31 @@ export const _submitFormStepperSetSupporterApprover = async (
             style: 'background: #333; color: #fff;',
         });
         return fail(400, stepperSetSupporterApprover);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
+    }
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
             method: 'POST',
-            body: JSON.stringify(stepperSetSupporterApprover),
+            body: JSON.stringify(_stepperSetSupporterApprover),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log('Response Returned: SetSupporterApprover-54', json);
-            });
-    }
+        },
+    )
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise);
     return { stepperSetSupporterApprover };
 };
 
 // Stepper Confirmation New Contract
-const option = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
+const optionCNCA = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
-const textField = z
+const textFieldCNCA = z
     .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
     .min(4, {
         message: 'Medan ini hendaklah lebih daripada 4 karakter.',
@@ -185,8 +254,8 @@ const textField = z
     .trim();
 
 export const _stepperConfirmationNewContractAgreement = z.object({
-    actionRemark: textField,
-    resultOption: option,
+    actionRemarkCNCA: textFieldCNCA,
+    resultOptionCNCA: optionCNCA,
 });
 
 export const _submitFormStepperConfirmationNewContractAgreement = async (
@@ -202,26 +271,22 @@ export const _submitFormStepperConfirmationNewContractAgreement = async (
             style: 'background: #333; color: #fff;',
         });
         return fail(400, stepperConfirmationNewContractAgreement);
-    } else {
-        console.log('Request Body: ', formData);
-        fetch('https://jsonplaceholder.typicode.com/posts', {
+    }
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
             method: 'POST',
-            body: JSON.stringify(stepperConfirmationNewContractAgreement),
+            body: JSON.stringify(_stepperConfirmationNewContractAgreement),
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-                console.log(
-                    'Response Returned: ConfirmationNewContractAgreement-54',
-                    json,
-                );
-            });
-    }
+        },
+    )
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise);
     return { stepperConfirmationNewContractAgreement };
 };
 
@@ -229,11 +294,15 @@ export async function load({ params }) {
     const stepperEvaluateConfirmation = await superValidate(
         _stepperEvaluateConfirmation,
     );
-    
+
     const stepperAssessmentCertificationPBN = await superValidate(
-        
         _stepperAssessmentCertificationPBN,
     );
+
+    const stepperContractStaffEmploymentMeetingResultsInformation =
+        await superValidate(
+            _stepperContractStaffEmploymentMeetingResultsInformation,
+        );
 
     const stepperSetSupporterApprover = await superValidate(
         _stepperSetSupporterApprover,
@@ -325,6 +394,7 @@ export async function load({ params }) {
     return {
         stepperEvaluateConfirmation,
         stepperAssessmentCertificationPBN,
+        stepperContractStaffEmploymentMeetingResultsInformation,
         stepperSetSupporterApprover,
         stepperConfirmationNewContractAgreement,
         record: {
