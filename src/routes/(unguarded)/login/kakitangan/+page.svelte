@@ -344,7 +344,7 @@
                     </div>
                 </div>
                 <a
-                    href="/login"
+                href="/forgot-password/form"
                     class=" text-sm font-medium text-ios-labelColors-link-light hover:underline"
                     >Terlupa Kata Laluan</a
                 >
