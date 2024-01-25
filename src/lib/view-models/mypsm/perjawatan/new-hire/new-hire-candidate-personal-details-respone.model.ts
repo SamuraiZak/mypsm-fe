@@ -19,7 +19,7 @@ export interface CandidatePersonalData {
     name: string;
     alternativeName: string;
     identityDocumentColor: string;
-    identityDocumentNumber: number;
+    identityDocumentNumber: string;
     email: string;
     propertyDeclarationDate: Date;
     birthDate: Date;
