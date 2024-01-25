@@ -24,18 +24,33 @@ import type {
     Dependency,
 } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-dependencies-details-request.model.js';
 import type {
+    CandidateDependenciesDetailResponse,
+    DependenciesData,
+} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-dependencies-details-response.model.js';
+import type {
     CandidateExperienceDetailsRequestBody,
     Experience,
 } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-experience-details-request.model.js';
-import type { ExperienceResponseData } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-experience-details-respone.model.js';
+import type {
+    CandidateExperienceDetailsResponse,
+    ExperienceResponseData,
+} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-experience-details-respone.model.js';
 import type {
     CandidateFamilyDetailsRequestBody,
     Family,
 } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-family-details-request.model.js';
 import type {
+    CandidateFamilyDetailsResponse,
+    FamilyData,
+} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-family-details-response.model.js';
+import type {
     CandidateNextOfKinDetailsRequestBody,
     NextOfKin,
 } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-next-of-kin-details-request.model.js';
+import type {
+    CandidateNextOfKinDetailsResponse,
+    NextOfKinData,
+} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-next-of-kin-details-response.model.js';
 import type {
     CandidatePersonalData,
     CandidatePersonalDetailsResponse,
@@ -110,13 +125,6 @@ const booleanSchema = z.boolean({
     invalid_type_error: 'Medan ini haruslah jenis boolean.',
 });
 
-const identitySchema = z.coerce
-    .number({
-        required_error: 'Tidak tepat.',
-        invalid_type_error: 'Sila pastikan ID ditaip dengan angka',
-    })
-    .min(12, { message: 'Kurang daripada 12 angka mengikut ID Malaysia' });
-
 const numberIdSchema = z.coerce.number({
     required_error: 'Tidak tepat.',
     invalid_type_error: 'Sila pastikan ID ditaip dengan angka',
@@ -124,6 +132,15 @@ const numberIdSchema = z.coerce.number({
 
 export const _personalInfoForm = z
     .object({
+        name: shortTextSchema,
+        alternativeName: shortTextSchema.default(' '),
+        identityDocumentNumber: shortTextSchema,
+        identityDocumentColor: generalSelectSchema,
+        email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
+        propertyDeclarationDate: maxDateSchema,
+        birthDate: maxDateSchema,
+        birthStateId: numberIdSchema,
+        birthCountryId: numberIdSchema,
         genderId: numberIdSchema,
         nationalityId: numberIdSchema,
         religionId: numberIdSchema,
@@ -131,16 +148,7 @@ export const _personalInfoForm = z
         titleId: numberIdSchema,
         ethnicId: numberIdSchema,
         maritalId: numberIdSchema,
-        birthCountryId: numberIdSchema,
-        birthStateId: numberIdSchema,
         assetDeclarationStatusId: numberIdSchema,
-        name: shortTextSchema,
-        alternativeName: shortTextSchema,
-        identityDocumentColor: generalSelectSchema,
-        identityDocumentNumber: identitySchema,
-        email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
-        propertyDeclarationDate: maxDateSchema,
-        birthDate: maxDateSchema,
         isExPoliceOrSoldier: booleanSchema,
         isInternalRelationship: booleanSchema,
         employeeNumber: z.string().nullable(),
@@ -226,9 +234,9 @@ const familyInfoSchema = z.object({
     maritalId: numberIdSchema,
     genderId: numberIdSchema,
     name: shortTextSchema,
-    alternativeName: shortTextSchema,
+    alternativeName: shortTextSchema.default(' '),
     identityDocumentColor: shortTextSchema,
-    identityDocumentNumber: numberIdSchema,
+    identityDocumentNumber: shortTextSchema,
     address: shortTextSchema,
     postcode: shortTextSchema,
     birthDate: maxDateSchema,
@@ -240,7 +248,7 @@ const familyInfoSchema = z.object({
 });
 
 export const _familyListSchema = z.object({
-    dependeciesList: z.array(familyInfoSchema),
+    dependenciesList: z.array(familyInfoSchema),
 });
 
 const dependencyInfoSchema = z.object({
@@ -253,9 +261,9 @@ const dependencyInfoSchema = z.object({
     maritalId: numberIdSchema,
     genderId: numberIdSchema,
     name: shortTextSchema,
-    alternativeName: shortTextSchema,
+    alternativeName: shortTextSchema.default(' '),
     identityDocumentColor: shortTextSchema,
-    identityDocumentNumber: numberIdSchema,
+    identityDocumentNumber: shortTextSchema,
     address: shortTextSchema,
     postcode: shortTextSchema,
     birthDate: maxDateSchema,
@@ -280,9 +288,9 @@ const nextOfKinInfoSchema = z.object({
     maritalId: numberIdSchema,
     genderId: numberIdSchema,
     name: shortTextSchema,
-    alternativeName: shortTextSchema,
+    alternativeName: shortTextSchema.default(' '),
     identityDocumentColor: shortTextSchema,
-    identityDocumentNumber: numberIdSchema,
+    identityDocumentNumber: shortTextSchema,
     address: shortTextSchema,
     postcode: shortTextSchema,
     birthDate: maxDateSchema,
@@ -294,24 +302,7 @@ const nextOfKinInfoSchema = z.object({
 });
 
 export const _nextOfKinListSchema = z.object({
-    dependenciesList: z.array(nextOfKinInfoSchema),
-});
-
-//==========================================================
-//================== Maklumat Waris ========================
-//==========================================================
-export const _nextOfKinInfoSchema = z.object({
-    name: shortTextSchema,
-    identityDocumentNumber: shortTextSchema,
-    birthDate: maxDateSchema,
-    relationship: generalSelectSchema,
-    marriageDate: maxDateSchema,
-    identityDocumentType: generalSelectSchema,
-    homeNumber: shortTextSchema,
-    mobileNumber: shortTextSchema,
-    position: shortTextSchema,
-    company: shortTextSchema,
-    companyAddress: shortTextSchema,
+    nextOfKinList: z.array(nextOfKinInfoSchema),
 });
 
 //==========================================================
@@ -395,6 +386,13 @@ export const _addActivityModalSchema = z.object({
 //==========================================================
 
 export const _addFamilyModalSchema = z.object({
+    addName: shortTextSchema,
+    addAlternativeName: shortTextSchema.default(' '),
+    addIdentityDocumentColor: shortTextSchema,
+    addIdentityDocumentNumber: shortTextSchema,
+    addAddress: shortTextSchema,
+    addPostcode: shortTextSchema,
+    addBirthDate: maxDateSchema,
     addBirthCountryId: numberIdSchema,
     addBirthStateId: numberIdSchema,
     addRelationshipId: numberIdSchema,
@@ -403,13 +401,6 @@ export const _addFamilyModalSchema = z.object({
     addNationalityId: numberIdSchema,
     addMaritalId: numberIdSchema,
     addGenderId: numberIdSchema,
-    addName: shortTextSchema,
-    addAlternativeName: shortTextSchema,
-    addIdentityDocumentColor: shortTextSchema,
-    addIdentityDocumentNumber: numberIdSchema,
-    addAddress: shortTextSchema,
-    addPostcode: shortTextSchema,
-    addBirthDate: maxDateSchema,
     addWorkAddress: shortTextSchema,
     addWorkPostcode: shortTextSchema,
     addPhoneNumber: shortTextSchema,
@@ -422,52 +413,52 @@ export const _addFamilyModalSchema = z.object({
 //==========================================================
 
 export const _addNonFamilyModalSchema = z.object({
-    addBirthCountryId: numberIdSchema,
-    addBirthStateId: numberIdSchema,
-    addRelationshipId: numberIdSchema,
-    addEducationLevelId: numberIdSchema,
-    addRaceId: numberIdSchema,
-    addNationalityId: numberIdSchema,
-    addMaritalId: numberIdSchema,
-    addGenderId: numberIdSchema,
-    addName: shortTextSchema,
-    addAlternativeName: shortTextSchema,
-    addIdentityDocumentColor: shortTextSchema,
-    addIdentityDocumentNumber: numberIdSchema,
-    addAddress: shortTextSchema,
-    addPostcode: shortTextSchema,
-    addBirthDate: maxDateSchema,
-    addWorkAddress: shortTextSchema,
-    addWorkPostcode: shortTextSchema,
-    addPhoneNumber: shortTextSchema,
-    addMarriageDate: maxDateSchema,
-    addInSchool: booleanSchema,
+    addNonFamilyName: shortTextSchema,
+    addNonFamilyAlternativeName: shortTextSchema.default(' '),
+    addNonFamilyIdentityDocumentColor: shortTextSchema,
+    addNonFamilyIdentityDocumentNumber: shortTextSchema,
+    addNonFamilyAddress: shortTextSchema,
+    addNonFamilyPostcode: shortTextSchema,
+    addNonFamilyBirthDate: maxDateSchema,
+    addNonFamilyBirthCountryId: numberIdSchema,
+    addNonFamilyBirthStateId: numberIdSchema,
+    addNonFamilyRelationshipId: numberIdSchema,
+    addNonFamilyEducationLevelId: numberIdSchema,
+    addNonFamilyRaceId: numberIdSchema,
+    addNonFamilyNationalityId: numberIdSchema,
+    addNonFamilyMaritalId: numberIdSchema,
+    addNonFamilyGenderId: numberIdSchema,
+    addNonFamilyWorkAddress: shortTextSchema,
+    addNonFamilyWorkPostcode: shortTextSchema,
+    addNonFamilyPhoneNumber: shortTextSchema,
+    addNonFamilyMarriageDate: maxDateSchema,
+    addNonFamilyInSchool: booleanSchema,
 });
 
 //==========================================================
 //================== Add Maklumat Waris ========================
 //==========================================================
 export const _addNextOfKinInfoSchema = z.object({
-    addBirthCountryId: numberIdSchema,
-    addBirthStateId: numberIdSchema,
-    addRelationshipId: numberIdSchema,
-    addEducationLevelId: numberIdSchema,
-    addRaceId: numberIdSchema,
-    addNationalityId: numberIdSchema,
-    addMaritalId: numberIdSchema,
-    addGenderId: numberIdSchema,
-    addName: shortTextSchema,
-    addAlternativeName: shortTextSchema,
-    addIdentityDocumentColor: shortTextSchema,
-    addIdentityDocumentNumber: numberIdSchema,
-    addAddress: shortTextSchema,
-    addPostcode: shortTextSchema,
-    addBirthDate: maxDateSchema,
-    addWorkAddress: shortTextSchema,
-    addWorkPostcode: shortTextSchema,
-    addPhoneNumber: shortTextSchema,
-    addMarriageDate: maxDateSchema,
-    addInSchool: booleanSchema,
+    addNextOfKinName: shortTextSchema,
+    addNextOfKinAlternativeName: shortTextSchema.default(' '),
+    addNextOfKinIdentityDocumentColor: shortTextSchema,
+    addNextOfKinIdentityDocumentNumber: shortTextSchema,
+    addNextOfKinAddress: shortTextSchema,
+    addNextOfKinPostcode: shortTextSchema,
+    addNextOfKinBirthDate: maxDateSchema,
+    addNextOfKinBirthCountryId: numberIdSchema,
+    addNextOfKinBirthStateId: numberIdSchema,
+    addNextOfKinRelationshipId: numberIdSchema,
+    addNextOfKinEducationLevelId: numberIdSchema,
+    addNextOfKinRaceId: numberIdSchema,
+    addNextOfKinNationalityId: numberIdSchema,
+    addNextOfKinMaritalId: numberIdSchema,
+    addNextOfKinGenderId: numberIdSchema,
+    addNextOfKinWorkAddress: shortTextSchema,
+    addNextOfKinWorkPostcode: shortTextSchema,
+    addNextOfKinPhoneNumber: shortTextSchema,
+    addNextOfKinMarriageDate: maxDateSchema,
+    addNextOfKinInSchool: booleanSchema,
 });
 
 export const load = async ({ params }) => {
@@ -489,11 +480,11 @@ export const load = async ({ params }) => {
 
     const academicDetails: AcademicResponseData = academicInfoResponse.data;
 
-    // form data based on schema and response
-    const experienceInfoResponse =
+    const experienceInfoResponse: CandidateExperienceDetailsResponse =
         await EmployeeService.getCurrentCandidateExperience(
             candidateIdRequestBody,
         );
+
     const experienceDetails: ExperienceResponseData =
         experienceInfoResponse.data;
 
@@ -503,6 +494,23 @@ export const load = async ({ params }) => {
         );
     const activityDetails: ActivityResponseData = activityInfoResponse.data;
 
+    const familyInfoResponse: CandidateFamilyDetailsResponse =
+        await EmployeeService.getCurrentCandidateFamily(candidateIdRequestBody);
+    const familyDetails: FamilyData = familyInfoResponse.data;
+
+    const dependencyInfoResponse: CandidateDependenciesDetailResponse =
+        await EmployeeService.getCurrentCandidateDependencies(
+            candidateIdRequestBody,
+        );
+    const dependencyDetails: DependenciesData = dependencyInfoResponse.data;
+
+    const nextOfKinInfoResponse: CandidateNextOfKinDetailsResponse =
+        await EmployeeService.getCurrentCandidateNextOfKin(
+            candidateIdRequestBody,
+        );
+    const nextOfKinDetails: NextOfKinData = nextOfKinInfoResponse.data;
+
+    // form data based on schema and response
     const personalInfoForm = await superValidate(
         personalDetails,
         _personalInfoForm,
@@ -522,10 +530,19 @@ export const load = async ({ params }) => {
         _activityListSchema,
     );
 
-    const familyInfoForm = await superValidate(_familyListSchema);
+    const familyInfoForm = await superValidate(
+        familyDetails,
+        _familyListSchema,
+    );
 
-    const dependencyInfoForm = await superValidate(_dependencyListSchema);
-    const nextOfKinInfoForm = await superValidate(_nextOfKinInfoSchema);
+    const dependencyInfoForm = await superValidate(
+        dependencyDetails,
+        _dependencyListSchema,
+    );
+    const nextOfKinInfoForm = await superValidate(
+        nextOfKinDetails,
+        _nextOfKinListSchema,
+    );
     const addAcademicModal = await superValidate(_addAcademicInfoSchema);
     const addExperienceModal = await superValidate(_addExperienceModalSchema);
     const addActivityModal = await superValidate(_addActivityModalSchema);
@@ -542,9 +559,12 @@ export const load = async ({ params }) => {
         experienceInfoForm,
         activityDetails,
         activityInfoForm,
-        nextOfKinInfoForm,
+        familyDetails,
         familyInfoForm,
+        dependencyDetails,
         dependencyInfoForm,
+        nextOfKinDetails,
+        nextOfKinInfoForm,
         addAcademicModal,
         addExperienceModal,
         addActivityModal,
