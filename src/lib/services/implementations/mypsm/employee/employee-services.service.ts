@@ -60,6 +60,7 @@ import type { PensionPersonalDetailRequest } from '$lib/view-models/mypsm/perjaw
 import type { PensionPersonalDetailResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-personal-detail-response.view-model';
 import type { PensionEditSupportRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-edit-support-request.model';
 import type { PensionEditSupportResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-edit-support-response.model';
+import type { CandidateDependenciesDetailRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-dependencies-details-request.model';
 
 
 export class EmployeeService {
@@ -223,7 +224,7 @@ export class EmployeeService {
 
     // create employee dependencies details
     static async createCurrentCandidateDependenciesDetails(
-        param: CandidateDependenciesDetailResponse,
+        param: CandidateDependenciesDetailRequestBody,
     ): Promise<RequestSuccessBody> {
         const response: RequestSuccessBody = await http
             .post(`employments/add-new-hire-dependent`, {
