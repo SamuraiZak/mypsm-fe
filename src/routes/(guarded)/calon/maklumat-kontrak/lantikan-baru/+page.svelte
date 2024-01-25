@@ -41,13 +41,13 @@
         title="Rekod Lantikan Baru (Kontrak)"
         description="Hal-hal berkaitan Lantikan Kontrak Dalam Perkhidmatan"
     >
-        <FormButton
+        <!-- <FormButton
             type="new"
             addLabel="Lengkapkan Butiran Kakitangan Kontrak"
             onClick={() => {
                 goto('./lantikan-baru/butiran-calon');
             }}
-        />
+        /> -->
     </ContentHeader>
 </section>
 
@@ -78,7 +78,8 @@
             withActions
             actionOptions={['edit']}
             editActions={() => {
-                const url = './lantikan-baru/kemaskini-permohonan';
+                const url = './lantikan-baru/butiran-calon';
+                // const url = './lantikan-baru/kemaskini-permohonan';
                 goto(url);
             }}
             tableItems={lantikanBaru}
