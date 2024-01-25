@@ -3,6 +3,7 @@
 // ===============================================================
 
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key-constant";
+import { AuthenticationHelper } from "$lib/helper/core/authentication-helper/authentication-helper";
 import http from "$lib/services/provider/service-provider.service";
 import type { AuthenticationRequestViewModel } from "$lib/view-models/core/auth/auth-request.view-model";
 import { AuthenticationResponseConvert } from "$lib/view-models/core/auth/auth-response.view-model";
@@ -71,5 +72,9 @@ export class AuthService {
     static async getRoleOptions(){
         const response: Response = await http.get('lookups/roles').json();
         return EnumRoleResponseConvert.fromResponse(response);
+    }
+    // get all roles available
+    static async logout(){
+        AuthenticationHelper.clearLocalStorage();
     }
 }
