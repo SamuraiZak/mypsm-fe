@@ -5,20 +5,9 @@
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import { Modal } from 'flowbite-svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
-    import { maklumatKegiatanTable } from '$lib/mocks/profil/maklumat-kegiatan-keahlian';
     import { maklumatKeluargaTable } from '$lib/mocks/profil/maklumat-keluarga';
     import { maklumatTanggunganLain } from '$lib/mocks/profil/maklumat-tanggungan-lain';
-    import DownloadAttachment from '$lib/components/input/DownloadAttachment.svelte';
-    import { mockCurrentService } from '$lib/mocks/database/mockCurrentService';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
-    import { mockLookupRaces } from '$lib/mocks/database/mockLookupRaces';
-    import { mockLookupReligions } from '$lib/mocks/database/mockLookupReligions';
-    import { mockEmployeePartners } from '$lib/mocks/database/mockEmployeePartners';
-    import { mockEmploymentPensions } from '$lib/mocks/database/mockEmploymentPensions';
-    import { mockEmployeeEducations } from '$lib/mocks/database/mockEmployeeEducations';
-    import { mockEmployeeExperience } from '$lib/mocks/database/mockEmployeeExperience';
-    import { mockEmployeeNextOfKins } from '$lib/mocks/database/mockEmployeeNextOfKins';
-    import { mockEmployeeDocumentLists } from '$lib/mocks/database/mockEmployeeDocumentLists';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
@@ -36,26 +25,25 @@
     import FileInputField from '$lib/components/input/FileInputField.svelte';
     import {
         _academicInfoSchema,
+        _activityListSchema,
         _addAcademicInfoSchema,
         _addActivityModalSchema,
         _addExperienceModalSchema,
         _addFamilyModalSchema,
         _addNextOfKinInfoSchema,
         _addNonFamilyModalSchema,
+        _dependencyListSchema,
         _experienceListSchema,
+        _familyListSchema,
         _nextOfKinInfoSchema,
         _personalInfoForm,
         _submitAcademicInfoForm,
-        _submitAddExperienceModal,
-        _submitAddMoreAcademicForm,
+        _submitActivityInfoForm,
         _submitExperienceInfoForm,
-        _submitNextOfKinForm,
         _submitPersonalInfoForm,
     } from './+page';
     import { superForm, superValidate } from 'sveltekit-superforms/client';
-    import type { PageData } from './$types';
     import toast, { Toaster } from 'svelte-french-toast';
-    import AccordianField from '$lib/components/input/AccordianField.svelte';
     import {
         getErrorToast,
         getSuccessToast,
@@ -65,7 +53,7 @@
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import type { AcademicList } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-academic-details-response.model';
     import type { DropdownOptionsInterface } from '$lib/interfaces/common/dropdown-option';
-    let employeeLists: SelectOptionType<any>[] = [];
+    import type { PageData } from './$types';
     export let data: PageData;
     export let openAcademicInfoModal: boolean = false;
     export let openExperienceInfoModal: boolean = false;
@@ -80,14 +68,12 @@
     let tempNonFamilyRecord: any[] = [];
     let tempNextOfKinRecord: any[] = [];
 
-    const countryList: DropdownOptionsInterface[] = data.countryOptions;
-    const educationLevelList: DropdownOptionsInterface[] =
-        data.educationOptions;
-    const institutionList: DropdownOptionsInterface[] = data.institutionOptions;
-    const majorMinorList: DropdownOptionsInterface[] = data.majorMinorOptions;
-    const sponsorshipList: DropdownOptionsInterface[] = data.sponsorshipOptions;
+    const countryList: DropdownOptionsInterface[] = data.countryLookup;
+    const educationLevelList: DropdownOptionsInterface[] = data.educationLookup;
+    const institutionList: DropdownOptionsInterface[] = data.institutionLookup;
+    const majorMinorList: DropdownOptionsInterface[] = data.majorMinorLookup;
+    const sponsorshipList: DropdownOptionsInterface[] = data.sponsorshipLookup;
 
-    const List = data.countryOptions;
     let editable: boolean = true;
 
     const approveOptions: RadioOption[] = [
@@ -127,89 +113,14 @@
     onMount(async () => {
         target = document.getElementById('fileInput');
         const staffs: IntEmployees[] = mockEmployees;
-
-        employeeLists = staffs.map((staff) => ({
-            value: staff.id.toString(),
-            name: staff.name,
-        }));
     });
 
-    export let employeeNumber: string = '00001';
-    // export let activeStepper = 0;
-    // export let isEditing: boolean = false;
     export let disabled: boolean = false;
-
-    let currentEmployee = mockEmployees.find((employee) => {
-        return employee.employeeNumber === employeeNumber;
-    })!;
-    let currentEmployeeRace = mockLookupRaces.find((race) => {
-        return race.id === currentEmployee.raceId;
-    })!;
-    let currentEmployeeReligion = mockLookupReligions.find((religion) => {
-        return religion.id === currentEmployee.religionId;
-    })!;
-
-    let currentEmployeeSpouse = mockEmployeePartners.find((spouse) => {
-        return spouse.employeeId === currentEmployee.id;
-    })!;
-    let currentEmployeeSpouseEmployeeInfo = mockEmployees.find((employee) => {
-        return employee.name === currentEmployeeSpouse.name;
-    });
-    let currentEmployeeService = mockCurrentService.find((service) => {
-        return service.employeeId === currentEmployee.id;
-    })!;
-    let currentEmployeePensions = mockEmploymentPensions.find((pension) => {
-        return pension.currentServiceId === currentEmployeeService.id;
-    })!;
-    let currentEmployeeEducations = mockEmployeeEducations.filter(
-        (eudcation) => {
-            return eudcation.employeeId === currentEmployee.id;
-        },
-    )!;
-    let currentEmployeeExperience = mockEmployeeExperience.filter(
-        (experience) => {
-            return experience.employeeId === currentEmployee.id;
-        },
-    )!;
-    let currentEmployeeNextOfKins = mockEmployeeNextOfKins.find((nextOfKin) => {
-        return nextOfKin.employeeId === currentEmployee.id;
-    })!;
-
-    let currentEmployeeUploadedDocuments = mockEmployeeDocumentLists.filter(
-        (document) => {
-            return document.employeeId === currentEmployee.id;
-        },
-    )!;
-
-    function dateConvertor(date: string) {
-        const [year, month, day] = date.split('/');
-        return day + '-' + month + '-' + year;
-    }
 
     // Stepper Classes
 
     let stepperFormTitleClass =
         'w-full h-fit mt-2 bg-bgr-primary text-system-primary text-sm font-medium';
-
-    let steppers: string[] = [
-        'Maklumat Peribadi',
-
-        'Maklumat Perkhidmatan',
-
-        'Maklumat Akademik / Kelayakan / Latihan yang Lalu',
-
-        'Maklumat Pengalaman',
-
-        'Maklumat Kegiatan / Keahlian',
-
-        'Maklumat Keluarga',
-
-        'Maklumat Tanggungan Selain Isteri dan Anak',
-
-        'Maklumat Waris',
-
-        'Dokumen - Dokumen Sokongan yang Berkaitan',
-    ];
 
     // Radio Functions
 
@@ -223,25 +134,6 @@
             label: 'Tidak',
         },
     ];
-
-    const selectOptions: SelectOptionType<any>[] = [
-        {
-            value: true,
-            name: 'Ya',
-        },
-        {
-            value: false,
-            name: 'Tidak',
-        },
-    ];
-    let selectedDate = new Date();
-    function handleDateChange(event: any) {
-        selectedDate = new Date(event.target.value);
-    }
-    function dateFormatter(date: string) {
-        const [year, month, day] = date.split('/');
-        return day + '-' + month + '-' + year;
-    }
 
     export const { form, errors, enhance } = superForm(data.personalInfoForm, {
         SPA: true,
@@ -278,8 +170,50 @@
         SPA: true,
         validators: _experienceListSchema,
         onSubmit() {
-            window.alert('hjbsja');
+            window.alert('test');
             // _submitExperienceInfoForm(tempExperienceRecord);
+        },
+    });
+
+    const {
+        form: activityInfoForm,
+        errors: activityInfoErrors,
+        enhance: activityInfoEnhance,
+    } = superForm(data.activityInfoForm, {
+        dataType: 'json',
+        SPA: true,
+        validators: _activityListSchema,
+        onSubmit() {
+            window.alert('test');
+            // _submitActivityInfoForm(tempActivityRecord);
+        },
+    });
+
+    const {
+        form: familyInfoForm,
+        errors: familyInfoErrors,
+        enhance: familyInfoEnhance,
+    } = superForm(data.familyInfoForm, {
+        dataType: 'json',
+        SPA: true,
+        validators: _familyListSchema,
+        onSubmit() {
+            window.alert('test');
+            // _submitActivityInfoForm(tempActivityRecord);
+        },
+    });
+
+    const {
+        form: dependencyInfoForm,
+        errors: dependencyInfoErrors,
+        enhance: dependencyInfoEnhance,
+    } = superForm(data.dependencyInfoForm, {
+        dataType: 'json',
+        SPA: true,
+        validators: _dependencyListSchema,
+        onSubmit() {
+            window.alert('test');
+            // _submitActivityInfoForm(tempActivityRecord);
         },
     });
 
@@ -291,7 +225,7 @@
         SPA: true,
         validators: _nextOfKinInfoSchema,
         onSubmit() {
-            _submitNextOfKinForm($nextOfKinForm);
+            // _submitNextOfKinForm($nextOfKinForm);
         },
     });
 
@@ -436,9 +370,7 @@
     });
 </script>
 
-<ContentHeader
-    title="Maklumat Lantikan Baru {currentEmployee.name}"
-    description=""
+<ContentHeader title="Maklumat Lantikan Baru {$form.name}" description=""
     ><FormButton
         type="close"
         onClick={() => {
@@ -850,30 +782,6 @@
                     >
                 {/if}
 
-                <TextField
-                    {disabled}
-                    name="perumahan"
-                    label={'Perumahan'}
-                    type="text"
-                    value="-"
-                ></TextField>
-
-                <TextField
-                    {disabled}
-                    name="pinjPerumahan"
-                    label={'Pinjaman Perumahan'}
-                    type="text"
-                    value="-"
-                ></TextField>
-
-                <TextField
-                    {disabled}
-                    name="pinjKenderaan"
-                    label={'Pinjaman Kenderaan'}
-                    type="text"
-                    value="-"
-                ></TextField>
-
                 <RadioSingle
                     name="isExPoliceOrSoldier"
                     disabled={!editable}
@@ -1168,7 +1076,7 @@
             ><TextIconButton
                 primary
                 label="Simpan"
-                form="formStepperPengalaman"
+                form="newHireExperienceForm"
             >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
@@ -1239,10 +1147,10 @@
                 {/if}
                 {#if data.experienceDetails.experienceList.length > 0}
                     <form
-                        id="formStepperPengalaman"
-                        class="flex w-full flex-col gap-2 rounded-[3px] border p-2.5"
-                        use:experienceInfoEnhance
+                        id="newHireExperienceForm"
                         method="POST"
+                        use:experienceInfoEnhance
+                        class="flex w-full flex-col gap-2 rounded-[3px] border p-2.5"
                     >
                         {#each $experienceInfoForm.experienceList as record, i}
                             <p class={stepperFormTitleClass}>
@@ -1322,13 +1230,7 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Maklumat Kegiatan / Keahlian"
-            ><TextIconButton
-                primary
-                label="Simpan"
-                onClick={() => {
-                    getSuccessToast();
-                }}
-            >
+            ><TextIconButton primary label="Simpan" form="newHireActivityForm">
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
@@ -1378,8 +1280,16 @@
                         {/each}
                     </div>
                 {/if}
-                <DynamicTable tableItems={data.activityDetails.activityList}
-                ></DynamicTable>
+
+                <form
+                    id="newHireActivityForm"
+                    method="POST"
+                    use:activityInfoEnhance
+                    class="flex w-full flex-col gap-2 rounded-[3px] border p-2.5"
+                >
+                    <DynamicTable tableItems={data.activityDetails.activityList}
+                    ></DynamicTable>
+                </form>
             </div>
             <div class="w-full rounded-[3px] border-b border-t p-2.5">
                 <TextIconButton
@@ -1686,7 +1596,6 @@
                     value={$nextOfKinForm.identityDocumentNumber}
                 ></TextField>
                 <DateSelector
-                    {handleDateChange}
                     disabled
                     name="birthDate"
                     label="Tarikh Lahir"
@@ -1700,7 +1609,6 @@
                     value={$nextOfKinForm.relationship}
                 ></TextField>
                 <DateSelector
-                    {handleDateChange}
                     disabled
                     name="marriageDate"
                     label={'Tarikh Kahwin (Jika berkenaan)'}
@@ -2488,7 +2396,6 @@
         {/if}
         <DateSelector
             hasError={!!$addNextOfKinErrors.addNextOfKinBirthDate}
-            {handleDateChange}
             {disabled}
             name="birthDate"
             label="Tarikh Lahir"
@@ -2514,7 +2421,6 @@
         {/if}
         <DateSelector
             hasError={!!$addNextOfKinErrors.addNextOfKinMarriageDate}
-            {handleDateChange}
             {disabled}
             name="marriageDate"
             label={'Tarikh Kahwin (Jika berkenaan)'}
