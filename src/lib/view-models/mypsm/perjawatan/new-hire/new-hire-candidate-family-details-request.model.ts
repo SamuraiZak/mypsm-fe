@@ -1,5 +1,5 @@
 export interface CandidateFamilyDetailsRequestBody {
-    dependencies: Family[];
+    families: Family[];
 }
 
 export interface Family {
