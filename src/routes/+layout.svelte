@@ -7,12 +7,14 @@
     let showLoadingOverlay: boolean = false;
 
     afterUpdate(() => {
-        // Set a timeout to show the LoadingOverlay if still navigating after 300ms
+        // Set a timeout to show the LoadingOverlay if still navigating after 200ms
         const timeoutId = setTimeout(() => {
             if ($navigating) {
                 showLoadingOverlay = true;
             }
-        }, 300);
+        }, 200);
+
+        if ($navigating === null) showLoadingOverlay = false;
 
         // Clear the timeout when loaded
         return () => clearTimeout(timeoutId);
