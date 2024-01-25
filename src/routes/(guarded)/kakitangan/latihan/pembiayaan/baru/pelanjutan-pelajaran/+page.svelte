@@ -54,6 +54,21 @@
         },
     ];
 
+    const options: RadioOption[] = [
+        {
+            value: 'pass',
+            label: 'LULUS',
+        },
+        {
+            value: 'fail',
+            label: 'GAGAL',
+        },
+        {
+            value: 'absent',
+            label: 'TIDAK HADIR',
+        },
+    ];
+
     onMount(() => {
         target = document.getElementById('fileInput');
     });
@@ -272,75 +287,76 @@
                     <div
                         class="my-2.5 flex w-full flex-row items-start text-sm text-txt-tertiary"
                     >
-                        <label for="study-type" class="w-[220px]"
-                            >Jenis Pengajian</label
-                        >
                         <span>
-                            <ul
-                                class="list-inside space-y-2.5 text-txt-secondary"
-                            >
-                                <li>
-                                    <Checkbox value={'studyType'}
-                                        >Pengajian Jarak Jauh</Checkbox
-                                    >
-                                </li>
-                                <li>
-                                    <Checkbox value={'studyType'}
-                                        >Pengajian Luar Kampus</Checkbox
-                                    >
-                                </li>
-                                <li>
-                                    <Checkbox value={'studyType'}
-                                        >Pengajian Separuh Masa</Checkbox
-                                    >
-                                </li>
-                                <li>
-                                    <Checkbox value={'studyType'}
-                                        >Pengajian Sepenuh Masa</Checkbox
-                                    >
-                                </li>
-                            </ul></span
-                        >
+                            <RadioSingle
+                                options={[
+                                    {
+                                        value: 'longDistanceLearning',
+                                        label: 'Pengajian Jarak Jauh',
+                                    },
+                                    {
+                                        value: 'offCampus',
+                                        label: 'Pengajian Luar Kampus',
+                                    },
+                                    {
+                                        value: 'partTime',
+                                        label: 'Pengajian Separuh Masa',
+                                    },
+                                    {
+                                        value: 'fullTime',
+                                        label: 'Pengajian Sepenuh Masa',
+                                    },
+                                ]}
+                                legend="Jenis Pengajian"
+                                name="studyType"
+                                bind:userSelected={$lessonInfoForm.studyType}
+                            ></RadioSingle>
+                            {#if $lessonInfoErrors.studyType}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$lessonInfoErrors.studyType}</span
+                                >
+                            {/if}
+                        </span>
                     </div>
                     <div
                         class="my-2.5 flex w-full flex-row items-start text-sm text-txt-tertiary"
                     >
-                        <label for="study-type" class="w-[220px]"
-                            >Jenis Permohonan</label
-                        >
                         <span>
-                            <ul
-                                class="list-inside space-y-2.5 text-txt-secondary"
-                            >
-                                <li>
-                                    <Checkbox value={'value'}
-                                        >Kebenaran Mengikuti Pengajian</Checkbox
-                                    >
-                                </li>
-                                <li>
-                                    <Checkbox value={'value'}
-                                        >Pelepasan Lembaga/Cuti Tanpa Rekod</Checkbox
-                                    >
-                                </li>
-                                <li>
-                                    <Checkbox value={'value'}
-                                        >Pembiayaan Pelajaran Sahaja</Checkbox
-                                    >
-                                </li>
-                                <li>
-                                    <Checkbox value={'value'}
-                                        >Cuti Belajar Bergaji Penuh Dengan
-                                        Pembiayaan</Checkbox
-                                    >
-                                </li>
-                                <li>
-                                    <Checkbox
-                                        >Cuti Belajar Separuh Gaji Dengan
-                                        Pembiayaan</Checkbox
-                                    >
-                                </li>
-                            </ul></span
-                        >
+                            <RadioSingle
+                                options={[
+                                    {
+                                        value: 'KebenaranMengikutiPengajian',
+                                        label: 'Kebenaran Mengikuti Pengajian',
+                                    },
+                                    {
+                                        value: 'PelepasanLembagaCutiTanpaRekod',
+                                        label: 'Pelepasan Lembaga/Cuti Tanpa Rekod',
+                                    },
+                                    {
+                                        value: 'PembiayaanPelajaranSahaja',
+                                        label: 'Pembiayaan Pelajaran Sahaja',
+                                    },
+                                    {
+                                        value: 'CutiBelajarBergajiPenuhDenganPembiayaan',
+                                        label: 'Cuti Belajar Bergaji Penuh Dengan Pembiayaan',
+                                    },
+                                    {
+                                        value: 'CutiBelajarSeparuhGajiDenganPembiayaan',
+                                        label: 'Cuti Belajar Separuh Gaji Dengan Pembiayaan',
+                                    },
+                                ]}
+                                legend="Jenis Permohonan"
+                                name="applicationType"
+                                bind:userSelected={$lessonInfoForm.applicationType}
+                            ></RadioSingle>
+                            {#if $lessonInfoErrors.applicationType}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$lessonInfoErrors.applicationType}</span
+                                >
+                            {/if}
+                        </span>
                     </div>
                 </form></StepperContentBody
             >
