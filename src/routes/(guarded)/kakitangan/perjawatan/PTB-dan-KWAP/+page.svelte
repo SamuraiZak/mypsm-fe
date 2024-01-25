@@ -84,8 +84,8 @@
                 detailActions={() => {
                     const url =
                         './PTB-dan-KWAP/butiran-permohonan-' +
-                        tempData.employeeNo
-
+                        tempData.employeeNo 
+                    goto(url)
                 }}
                 tableItems={data.record}
                 bind:passData={tempData}
