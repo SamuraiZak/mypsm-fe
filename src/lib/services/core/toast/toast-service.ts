@@ -12,8 +12,14 @@ export const getErrorToast = async () => {
     });
 };
 
+export const getServerErrorToast = async () => {
+    toast.error('Tidak dapat disimpan.', {
+        style: 'background: #333; color: #fff;',
+    });
+};
+
 export const getLoadingToast = async () => {
-    toast.error('Sedang diproses', {
+    toast.loading('Sedang diproses', {
         style: 'background: #333; color: #fff;',
     });
 };
