@@ -1,10 +1,7 @@
 import { goto } from '$app/navigation';
-import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key-constant';
 import { AuthService } from '$lib/services/implementations/core/auth/authentication.service';
-import { LookupService } from '$lib/services/implementations/core/lookup/lookup.services';
 import type { AuthenticationRequestViewModel } from '$lib/view-models/core/auth/auth-request.view-model';
 import type { AuthenticationResponseViewModel } from '$lib/view-models/core/auth/auth-response.view-model';
-import type { EnumLoginIDTypeResponseViewModel } from '$lib/view-models/core/lookup/id-type/id-type-enum-response.view-model';
 import type { EnumRoleResponseViewModel } from '$lib/view-models/core/lookup/role/role-enum-reponse.view-model';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
@@ -30,7 +27,6 @@ export const load = async () => {
 export const _submit = async (formData: AuthenticationRequestViewModel) => {
     const response: AuthenticationResponseViewModel = await AuthService.loginEmployee(formData);
     if (response.status == 200) {
-        
 
         goto('/kakitangan/halaman-utama');
     }
