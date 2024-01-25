@@ -1,14 +1,14 @@
-import type { DropdownOptionsInterface } from '$lib/interfaces/common/dropdown-option.js';
-import api from '$lib/services/core/ky.service.js';
 import {
     getErrorToast,
     getLoadingToast,
-    getPromiseToast,
     getSuccessToast,
 } from '$lib/services/core/toast/toast-service';
-import { LookupService } from '$lib/services/implementations/core/lookup/lookup.services.js';
 import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
 import type { CandidateIDRequestBody } from '$lib/view-models/mypsm/common/candidate-id-request.view-model.js';
+import type {
+    Activity,
+    CandidateActivityRequestBody,
+} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-activity-request.view-model.js';
 import type {
     ActivityResponseData,
     NewHireActivity,
@@ -20,10 +20,22 @@ import type {
     CandidateAcademicDetailsResponse,
 } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-academic-details-response.model.js';
 import type {
+    CandidateDependenciesDetailRequestBody,
+    Dependency,
+} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-dependencies-details-request.model.js';
+import type {
     CandidateExperienceDetailsRequestBody,
     Experience,
 } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-experience-details-request.model.js';
 import type { ExperienceResponseData } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-experience-details-respone.model.js';
+import type {
+    CandidateFamilyDetailsRequestBody,
+    Family,
+} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-family-details-request.model.js';
+import type {
+    CandidateNextOfKinDetailsRequestBody,
+    NextOfKin,
+} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-next-of-kin-details-request.model.js';
 import type {
     CandidatePersonalData,
     CandidatePersonalDetailsResponse,
@@ -112,7 +124,6 @@ const numberIdSchema = z.coerce.number({
 
 export const _personalInfoForm = z
     .object({
-        id: numberIdSchema,
         genderId: numberIdSchema,
         nationalityId: numberIdSchema,
         religionId: numberIdSchema,
@@ -136,7 +147,6 @@ export const _personalInfoForm = z
         employeeName: shortTextSchema.nullable(),
         employeePosition: generalSelectSchema.nullable(),
         relationshipId: numberIdSchema,
-        isReadonly: z.boolean(),
     })
     .superRefine(({ isInternalRelationship }, ctx) => {
         if (isInternalRelationship) {
@@ -175,26 +185,6 @@ export const _academicInfoSchema = z.object({
     // isReadonly: z.boolean(),
 });
 
-// New employment - add academic section
-export const _addAcademicInfoSchema = z.object({
-    majorMinorId: numberIdSchema,
-    countryId: numberIdSchema,
-    institutionId: numberIdSchema,
-    educationLevelId: numberIdSchema,
-    sponsorshipId: numberIdSchema,
-    name: shortTextSchema,
-    completionDate: maxDateSchema,
-    finalGrade: codeSchema,
-    field: longTextSchema,
-});
-// New employment - add activity section
-export const _addActivitiesInfoSchema = z.object({
-    name: shortTextSchema,
-    joinDate: maxDateSchema,
-    position: shortTextSchema,
-    description: longTextSchema,
-});
-
 //==========================================================
 //================== Maklumat Pengalaman ===================
 //==========================================================
@@ -215,57 +205,113 @@ export const _experienceListSchema = z.object({
     experienceList: z.array(experienceInfoSchema),
 });
 
-//==========================================================
-//================== Maklumat Pengalaman Modal ===================
-//==========================================================
+const activityInfoSchema = z.object({
+    name: shortTextSchema,
+    joinDate: maxDateSchema,
+    position: shortTextSchema,
+    description: longTextSchema,
+});
 
-export const _addExperienceModalSchema = z.object({
-    addCompany: shortTextSchema,
-    addAddress: shortTextSchema,
-    addPosition: shortTextSchema,
-    addPositionCode: codeSchema.nullish(),
-    addStartDate: maxDateSchema,
-    addEndDate: maxDateSchema,
-    addSalary: z.coerce.number({
-        invalid_type_error: 'Medan ini hendaklah ditetapkan dengan angka',
-    }),
+export const _activityListSchema = z.object({
+    activityList: z.array(activityInfoSchema),
+});
+
+const familyInfoSchema = z.object({
+    birthCountryId: numberIdSchema,
+    birthStateId: numberIdSchema,
+    relationshipId: numberIdSchema,
+    educationLevelId: numberIdSchema,
+    raceId: numberIdSchema,
+    nationalityId: numberIdSchema,
+    maritalId: numberIdSchema,
+    genderId: numberIdSchema,
+    name: shortTextSchema,
+    alternativeName: shortTextSchema,
+    identityDocumentColor: shortTextSchema,
+    identityDocumentNumber: numberIdSchema,
+    address: shortTextSchema,
+    postcode: shortTextSchema,
+    birthDate: maxDateSchema,
+    workAddress: shortTextSchema,
+    workPostcode: shortTextSchema,
+    phoneNumber: shortTextSchema,
+    marriageDate: maxDateSchema,
+    inSchool: booleanSchema,
+});
+
+export const _familyListSchema = z.object({
+    dependeciesList: z.array(familyInfoSchema),
+});
+
+const dependencyInfoSchema = z.object({
+    birthCountryId: numberIdSchema,
+    birthStateId: numberIdSchema,
+    relationshipId: numberIdSchema,
+    educationLevelId: numberIdSchema,
+    raceId: numberIdSchema,
+    nationalityId: numberIdSchema,
+    maritalId: numberIdSchema,
+    genderId: numberIdSchema,
+    name: shortTextSchema,
+    alternativeName: shortTextSchema,
+    identityDocumentColor: shortTextSchema,
+    identityDocumentNumber: numberIdSchema,
+    address: shortTextSchema,
+    postcode: shortTextSchema,
+    birthDate: maxDateSchema,
+    workAddress: shortTextSchema,
+    workPostcode: shortTextSchema,
+    phoneNumber: shortTextSchema,
+    marriageDate: maxDateSchema,
+    inSchool: booleanSchema,
+});
+
+export const _dependencyListSchema = z.object({
+    dependenciesList: z.array(dependencyInfoSchema),
+});
+
+const nextOfKinInfoSchema = z.object({
+    birthCountryId: numberIdSchema,
+    birthStateId: numberIdSchema,
+    relationshipId: numberIdSchema,
+    educationLevelId: numberIdSchema,
+    raceId: numberIdSchema,
+    nationalityId: numberIdSchema,
+    maritalId: numberIdSchema,
+    genderId: numberIdSchema,
+    name: shortTextSchema,
+    alternativeName: shortTextSchema,
+    identityDocumentColor: shortTextSchema,
+    identityDocumentNumber: numberIdSchema,
+    address: shortTextSchema,
+    postcode: shortTextSchema,
+    birthDate: maxDateSchema,
+    workAddress: shortTextSchema,
+    workPostcode: shortTextSchema,
+    phoneNumber: shortTextSchema,
+    marriageDate: maxDateSchema,
+    inSchool: booleanSchema,
+});
+
+export const _nextOfKinListSchema = z.object({
+    dependenciesList: z.array(nextOfKinInfoSchema),
 });
 
 //==========================================================
-//================== Maklumat Aktiviti Modal ===================
+//================== Maklumat Waris ========================
 //==========================================================
-
-export const _addActivityModalSchema = z.object({
-    addName: shortTextSchema,
-    addJoinDate: maxDateSchema,
-    addPosition: shortTextSchema,
-    addDescription: shortTextSchema,
-});
-
-//==========================================================
-//================== Maklumat Keluarga Modal ===================
-//==========================================================
-
-export const _addFamilyModalSchema = z.object({
-    addName: shortTextSchema,
-    addIdentityDocumentNumber: identitySchema,
-    addGender: generalSelectSchema,
-    addRelationship: generalSelectSchema,
-    addOccupation: shortTextSchema.nullish(),
-    addIsInSchool: booleanSchema,
-});
-
-//==========================================================
-//================== Maklumat Bukan Keluarga Modal ===================
-//==========================================================
-
-export const _addNonFamilyModalSchema = z.object({
-    addNonFamilyName: shortTextSchema,
-    addNonFamilyIdentityDocumentNumber: identitySchema,
-    addNonFamilyGender: generalSelectSchema,
-    addNonFamilyRelationship: generalSelectSchema,
-    addNonFamilyOccupation: shortTextSchema.nullish(),
-    addNonFamilyIsInSchool: booleanSchema,
+export const _nextOfKinInfoSchema = z.object({
+    name: shortTextSchema,
+    identityDocumentNumber: shortTextSchema,
+    birthDate: maxDateSchema,
+    relationship: generalSelectSchema,
+    marriageDate: maxDateSchema,
+    identityDocumentType: generalSelectSchema,
+    homeNumber: shortTextSchema,
+    mobileNumber: shortTextSchema,
+    position: shortTextSchema,
+    company: shortTextSchema,
+    companyAddress: shortTextSchema,
 });
 
 //==========================================================
@@ -305,37 +351,123 @@ export const _serviceInfoSchema = z.object({
 });
 
 //==========================================================
-//================== Maklumat Waris ========================
+//================== Maklumat Pengalaman Modal ===================
 //==========================================================
-export const _nextOfKinInfoSchema = z.object({
+
+// New employment - add academic section
+export const _addAcademicInfoSchema = z.object({
+    majorMinorId: numberIdSchema,
+    countryId: numberIdSchema,
+    institutionId: numberIdSchema,
+    educationLevelId: numberIdSchema,
+    sponsorshipId: numberIdSchema,
     name: shortTextSchema,
-    identityDocumentNumber: shortTextSchema,
-    birthDate: maxDateSchema,
-    relationship: generalSelectSchema,
-    marriageDate: maxDateSchema,
-    identityDocumentType: generalSelectSchema,
-    homeNumber: shortTextSchema,
-    mobileNumber: shortTextSchema,
-    position: shortTextSchema,
-    company: shortTextSchema,
-    companyAddress: shortTextSchema,
+    completionDate: maxDateSchema,
+    finalGrade: codeSchema,
+    field: longTextSchema,
+});
+
+export const _addExperienceModalSchema = z.object({
+    addCompany: shortTextSchema,
+    addAddress: shortTextSchema,
+    addPosition: shortTextSchema,
+    addPositionCode: codeSchema.nullish(),
+    addStartDate: maxDateSchema,
+    addEndDate: maxDateSchema,
+    addSalary: z.coerce.number({
+        invalid_type_error: 'Medan ini hendaklah ditetapkan dengan angka',
+    }),
+});
+
+//==========================================================
+//================== Maklumat Aktiviti Modal ===================
+//==========================================================
+
+export const _addActivityModalSchema = z.object({
+    addName: shortTextSchema,
+    addJoinDate: maxDateSchema,
+    addPosition: shortTextSchema,
+    addDescription: shortTextSchema,
+});
+
+//==========================================================
+//================== Maklumat Keluarga Modal ===================
+//==========================================================
+
+export const _addFamilyModalSchema = z.object({
+    addBirthCountryId: numberIdSchema,
+    addBirthStateId: numberIdSchema,
+    addRelationshipId: numberIdSchema,
+    addEducationLevelId: numberIdSchema,
+    addRaceId: numberIdSchema,
+    addNationalityId: numberIdSchema,
+    addMaritalId: numberIdSchema,
+    addGenderId: numberIdSchema,
+    addName: shortTextSchema,
+    addAlternativeName: shortTextSchema,
+    addIdentityDocumentColor: shortTextSchema,
+    addIdentityDocumentNumber: numberIdSchema,
+    addAddress: shortTextSchema,
+    addPostcode: shortTextSchema,
+    addBirthDate: maxDateSchema,
+    addWorkAddress: shortTextSchema,
+    addWorkPostcode: shortTextSchema,
+    addPhoneNumber: shortTextSchema,
+    addMarriageDate: maxDateSchema,
+    addInSchool: booleanSchema,
+});
+
+//==========================================================
+//================== Maklumat Bukan Keluarga Modal ===================
+//==========================================================
+
+export const _addNonFamilyModalSchema = z.object({
+    addBirthCountryId: numberIdSchema,
+    addBirthStateId: numberIdSchema,
+    addRelationshipId: numberIdSchema,
+    addEducationLevelId: numberIdSchema,
+    addRaceId: numberIdSchema,
+    addNationalityId: numberIdSchema,
+    addMaritalId: numberIdSchema,
+    addGenderId: numberIdSchema,
+    addName: shortTextSchema,
+    addAlternativeName: shortTextSchema,
+    addIdentityDocumentColor: shortTextSchema,
+    addIdentityDocumentNumber: numberIdSchema,
+    addAddress: shortTextSchema,
+    addPostcode: shortTextSchema,
+    addBirthDate: maxDateSchema,
+    addWorkAddress: shortTextSchema,
+    addWorkPostcode: shortTextSchema,
+    addPhoneNumber: shortTextSchema,
+    addMarriageDate: maxDateSchema,
+    addInSchool: booleanSchema,
 });
 
 //==========================================================
 //================== Add Maklumat Waris ========================
 //==========================================================
 export const _addNextOfKinInfoSchema = z.object({
-    addNextOfKinName: shortTextSchema,
-    addNextOfKinIdentityDocumentNumber: identitySchema,
-    addNextOfKinBirthDate: maxDateSchema,
-    addNextOfKinRelationship: generalSelectSchema,
-    addNextOfKinMarriageDate: maxDateSchema,
-    addNextOfKinIdentityDocumentType: generalSelectSchema,
-    addNextOfKinHomeNumber: shortTextSchema.nullish(),
-    addNextOfKinMobileNumber: shortTextSchema,
-    addNextOfKinPosition: shortTextSchema,
-    addNextOfKinCompany: shortTextSchema.nullish(),
-    addNextOfKinCompanyAddress: shortTextSchema.nullish(),
+    addBirthCountryId: numberIdSchema,
+    addBirthStateId: numberIdSchema,
+    addRelationshipId: numberIdSchema,
+    addEducationLevelId: numberIdSchema,
+    addRaceId: numberIdSchema,
+    addNationalityId: numberIdSchema,
+    addMaritalId: numberIdSchema,
+    addGenderId: numberIdSchema,
+    addName: shortTextSchema,
+    addAlternativeName: shortTextSchema,
+    addIdentityDocumentColor: shortTextSchema,
+    addIdentityDocumentNumber: numberIdSchema,
+    addAddress: shortTextSchema,
+    addPostcode: shortTextSchema,
+    addBirthDate: maxDateSchema,
+    addWorkAddress: shortTextSchema,
+    addWorkPostcode: shortTextSchema,
+    addPhoneNumber: shortTextSchema,
+    addMarriageDate: maxDateSchema,
+    addInSchool: booleanSchema,
 });
 
 export const load = async ({ params }) => {
@@ -356,53 +488,6 @@ export const load = async ({ params }) => {
         );
 
     const academicDetails: AcademicResponseData = academicInfoResponse.data;
-
-    // sponsorship list
-    const sponsorshipListResponse =
-        await LookupService.getEnumSponsorshipList();
-
-    const sponsorshipOptions: DropdownOptionsInterface[] =
-        sponsorshipListResponse.data.sponsorships.map((sponsor) => ({
-            value: Number(sponsor.id),
-            name: sponsor.description,
-        }));
-
-    // education list
-    const educationListResponse = await LookupService.getEnumEducationList();
-
-    const educationOptions: DropdownOptionsInterface[] =
-        educationListResponse.data.highestEducationLevels.map((education) => ({
-            value: Number(education.id),
-            name: education.description,
-        }));
-
-    // institution list
-    const institutionListResponse =
-        await LookupService.getEnumInstitutionList();
-
-    const institutionOptions: DropdownOptionsInterface[] =
-        institutionListResponse.data.institutions.map((institution) => ({
-            value: Number(institution.id),
-            name: institution.description,
-        }));
-
-    // country list
-    const countryListResponse = await LookupService.getEnumCountryList();
-
-    const countryOptions: DropdownOptionsInterface[] =
-        countryListResponse.data.countries.map((country) => ({
-            value: Number(country.id),
-            name: country.description,
-        }));
-
-    // major minor list
-    const majorMinorListResponse = await LookupService.getEnumMajorMinorList();
-
-    const majorMinorOptions: DropdownOptionsInterface[] =
-        majorMinorListResponse.data.majorMinors.map((majorMinor) => ({
-            value: Number(majorMinor.id),
-            name: majorMinor.description,
-        }));
 
     // form data based on schema and response
     const experienceInfoResponse =
@@ -432,6 +517,14 @@ export const load = async ({ params }) => {
         experienceDetails,
         _experienceListSchema,
     );
+    const activityInfoForm = await superValidate(
+        activityDetails,
+        _activityListSchema,
+    );
+
+    const familyInfoForm = await superValidate(_familyListSchema);
+
+    const dependencyInfoForm = await superValidate(_dependencyListSchema);
     const nextOfKinInfoForm = await superValidate(_nextOfKinInfoSchema);
     const addAcademicModal = await superValidate(_addAcademicInfoSchema);
     const addExperienceModal = await superValidate(_addExperienceModalSchema);
@@ -448,25 +541,21 @@ export const load = async ({ params }) => {
         experienceDetails,
         experienceInfoForm,
         activityDetails,
+        activityInfoForm,
         nextOfKinInfoForm,
+        familyInfoForm,
+        dependencyInfoForm,
         addAcademicModal,
         addExperienceModal,
         addActivityModal,
         addFamilyModal,
         addNonFamilyModal,
         addNextOfKinModal,
-        sponsorshipOptions,
-        educationOptions,
-        institutionOptions,
-        countryOptions,
-        majorMinorOptions,
     };
 };
 
 // personal detail submit function
 export const _submitPersonalInfoForm = async (formData: object) => {
-    console.log('HERE: ', formData);
-
     const form = await superValidate(formData, _personalInfoForm);
 
     if (!form.valid) {
@@ -474,15 +563,22 @@ export const _submitPersonalInfoForm = async (formData: object) => {
         return fail(400, form);
     }
 
-    const responsePromise = api
-        .post('https://jsonplaceholder.typicode.com/posts', {
-            body: JSON.stringify(form),
-            prefixUrl: '',
-        })
-        .json()
-        .then((json) => console.log('Response: ', json));
+    // const requestBody: CandidatePersonalDetailsRequestBody = form
 
-    getPromiseToast(responsePromise);
+    // const response: RequestSuccessBody =
+    //     await EmployeeService.createCurrentCandidatePersonalDetails(
+    //         requestBody,
+    //     );
+
+    // if (response.status !== 201) {
+    //     // if error toast
+    //     getErrorToast();
+    //     return error(400, { message: response.message });
+    // }
+
+    // if success toast
+    getSuccessToast();
+
     return { form };
 };
 
@@ -512,7 +608,7 @@ export const _submitAcademicInfoForm = async (formData: AcademicList[]) => {
     // if success toast
     getSuccessToast();
 
-    return { requestData };
+    return { response };
 };
 
 export const _submitExperienceInfoForm = async (formData: Experience[]) => {
@@ -540,73 +636,115 @@ export const _submitExperienceInfoForm = async (formData: Experience[]) => {
 
     // if success toast
     getSuccessToast();
-    return { requestData };
-};
-
-export const _submitNextOfKinForm = async (formData: object) => {
-    const form = await superValidate(formData, _experienceListSchema);
-
-    if (!form.valid) {
-        getErrorToast();
-        return fail(400, form);
-    }
-
-    const responsePromise = api
-        .post('https://jsonplaceholder.typicode.com/posts', {
-            body: JSON.stringify(form),
-            prefixUrl: '',
-        })
-        .json()
-        .then((json) => console.log('Response: ', json));
-
-    getPromiseToast(responsePromise);
-    return { form };
-};
-
-// export const _moreAcedemicInfo: unknown[] = [];
-
-export const _submitAddMoreAcademicForm = async (formData: object) => {
-    const form = await superValidate(formData, _addAcademicInfoSchema);
-
-    console.log('Request: ', form.data);
-    if (!form.valid) {
-        getErrorToast();
-        return fail(400, form);
-    }
-
-    const responsePromise = api
-        .post('https://jsonplaceholder.typicode.com/posts', {
-            body: JSON.stringify(form),
-            prefixUrl: '',
-        })
-        .json();
-
-    getPromiseToast(responsePromise);
-
-    const response = await responsePromise;
-
     return { response };
 };
 
-export const _submitAddExperienceModal = async (formData: object) => {
-    const form = await superValidate(formData, _addAcademicInfoSchema);
-
-    console.log('Request: ', form.data);
-    if (!form.valid) {
+export const _submitActivityInfoForm = async (formData: Activity[]) => {
+    if (formData.length < 1) {
         getErrorToast();
-        return fail(400, form);
+        return fail(400);
+    }
+    const requestData: CandidateActivityRequestBody = {
+        activities: formData,
+    };
+
+    // start by rendering loading toast
+    getLoadingToast();
+
+    const response =
+        await EmployeeService.createCurrentCandidateActivityDetails(
+            requestData,
+        );
+
+    if (response.status !== 201) {
+        // if error toast
+        getErrorToast();
+        return error(400, { message: response.message });
     }
 
-    const responsePromise: Promise<Response> = api
-        .post('https://jsonplaceholder.typicode.com/posts', {
-            body: JSON.stringify(form),
-            prefixUrl: '',
-        })
-        .json();
+    // if success toast
+    getSuccessToast();
+    return { response };
+};
 
-    getPromiseToast(responsePromise);
+export const _submitFamilyInfoForm = async (formData: Family[]) => {
+    if (formData.length < 1) {
+        getErrorToast();
+        return fail(400);
+    }
+    const requestData: CandidateFamilyDetailsRequestBody = {
+        families: formData,
+    };
 
-    const response: Response = await responsePromise;
+    // start by rendering loading toast
+    getLoadingToast();
 
+    const response =
+        await EmployeeService.createCurrentCandidateFamilyDetails(requestData);
+
+    if (response.status !== 201) {
+        // if error toast
+        getErrorToast();
+        return error(400, { message: response.message });
+    }
+
+    // if success toast
+    getSuccessToast();
+    return { response };
+};
+
+export const _submitDependencyInfoForm = async (formData: Dependency[]) => {
+    if (formData.length < 1) {
+        getErrorToast();
+        return fail(400);
+    }
+    const requestData: CandidateDependenciesDetailRequestBody = {
+        dependencies: formData,
+    };
+
+    // start by rendering loading toast
+    getLoadingToast();
+
+    const response =
+        await EmployeeService.createCurrentCandidateDependenciesDetails(
+            requestData,
+        );
+
+    if (response.status !== 201) {
+        // if error toast
+        getErrorToast();
+        return error(400, { message: response.message });
+    }
+
+    // if success toast
+    getSuccessToast();
+    return { response };
+};
+
+export const _submitNextOfKinInfoForm = async (formData: NextOfKin[]) => {
+    if (formData.length < 1) {
+        getErrorToast();
+        return fail(400);
+    }
+    const requestData: CandidateNextOfKinDetailsRequestBody = {
+        nextOfKins: formData,
+    };
+
+    // start by rendering loading toast
+    getLoadingToast();
+
+    const response =
+        await EmployeeService.createCurrentCandidateNextOfKinDetails(
+            requestData,
+        );
+
+    if (response.status !== 201) {
+        // if error toast
+        getErrorToast();
+        return error(400, { message: response.message });
+    }
+
+    // if success toast
+    getSuccessToast();
     return { response };
 };
