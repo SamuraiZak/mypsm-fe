@@ -29,19 +29,31 @@
         fileSelectionList,
         selectedRecordId,
     } from '$lib/stores/globalState';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import { onMount } from 'svelte';
-
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _supporterAndApproverSchema,
+        _submitSupporterAndApproverForm,
+        _qualificationDetailSchema,
+        _submitUpdateLoanDetailQualificationForm,
+    } from './+page';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
 
-        let currEmpLoanRec = mockRekodPinjaman.filter(
-            (rec) => rec.id == $selectedRecordId,
-        );
+    export let data: PageData;
 
-        let disabled = true;
-        let deductionVal = 0;
-        let salaryAndAllowanceDeductionVal = 0;
-        let newDeductionVal = 0;
+    let currEmpLoanRec = mockRekodPinjaman.filter(
+        (rec) => rec.id == $selectedRecordId,
+    );
+
+    let disabled = true;
+    let deductionVal = 0;
+    let salaryAndAllowanceDeductionVal = 0;
+    let newDeductionVal = 0;
     let labelBlack = false;
     let upfront = 2000;
     let amount = 500;
@@ -106,7 +118,7 @@
         },
     ];
 
-    let allEmp: any[] = mockEmployees.filter((employee) => employee.name);
+    // let allEmp: any[] = mockEmployees.filter((employee) => employee.name);
     let selectedApprover = '';
     let selectedSupporter = '';
 
@@ -176,6 +188,35 @@
         var res = total / month;
         return res;
     }
+
+    // ====================== Form Validation
+    const {
+        form: supporterAndApproverForm,
+        errors: supporterAndApproverErrors,
+        enhance: supporterAndApproverEnhance,
+    } = superForm(data.supporterAndApproverForm, {
+        SPA: true,
+        validators: _supporterAndApproverSchema,
+        onSubmit() {
+            _submitSupporterAndApproverForm($supporterAndApproverForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
+
+    const {
+        form: qualificationDetailForm,
+        errors: qualificationDetailError,
+        enhance: qualificationDetailEnhance,
+    } = superForm(data.updateLoanDetailQualificationForm, {
+        SPA: true,
+        validators: _qualificationDetailSchema,
+        onSubmit() {
+            _submitUpdateLoanDetailQualificationForm($qualificationDetailForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -293,7 +334,9 @@
                 {disabled}
                 {labelBlack}
                 label={'Jumlah Potongan'}
-                value={CurrencyHelper.formatCurrency(currEmpSalary.salaryDeduction)}
+                value={CurrencyHelper.formatCurrency(
+                    currEmpSalary.salaryDeduction,
+                )}
             ></TextField>
         </StepperContentBody>
     </StepperContent>
@@ -384,31 +427,73 @@
                 onClick={() => {
                     activeStepper = 2;
                 }}
-            ></FormButton><FormButton
+            />
+            <!-- ></FormButton><FormButton
                 type="save"
                 onClick={() => {
                     activeStepper = 4;
                 }}
-            ></FormButton></StepperContentHeader
-        >
+            ></FormButton> -->
+            <TextIconButton
+                primary
+                label="Simpan"
+                form="supporterAndApproverFormValidation"
+            >
+                <SvgCheck />
+            </TextIconButton>
+        </StepperContentHeader>
         <StepperContentBody>
             <div
                 class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 pb-5"
             >
                 <SectionHeader title="Masukkan Nama Penyokong dan Pelulus"
                 ></SectionHeader>
-                <DropdownSelect
-                    dropdownType="label-left-full"
-                    label={'Nama Penyokong'}
-                    options={allEmp}
-                    value={selectedSupporter}
-                ></DropdownSelect>
-                <DropdownSelect
-                    dropdownType="label-left-full"
-                    label={'Nama Pelulus'}
-                    options={allEmp}
-                    value={selectedApprover}
-                ></DropdownSelect>
+
+                <form
+                    id="supporterAndApproverFormValidation"
+                    use:supporterAndApproverEnhance
+                    method="POST"
+                    class="flex w-full flex-col gap-2"
+                >
+                    <DropdownSelect
+                        id="supporterName"
+                        hasError={!!$supporterAndApproverErrors.supporterName}
+                        dropdownType="label-left-full"
+                        label={'Nama Penyokong'}
+                        options={[
+                            { value: '0001', name: 'Mohd Irfan bin Abu' },
+                            { value: '0002', name: 'Nur Afifah Farhan' },
+                            { value: '0003', name: 'Teressa Teng' },
+                            { value: '0004', name: 'Sumar Amariti' },
+                        ]}
+                        bind:value={$supporterAndApproverForm.supporterName}
+                    ></DropdownSelect>
+                    {#if $supporterAndApproverErrors.supporterName}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$supporterAndApproverErrors.supporterName}</span
+                        >
+                    {/if}
+                    <DropdownSelect
+                        id="approverName"
+                        hasError={!!$supporterAndApproverErrors.approverName}
+                        dropdownType="label-left-full"
+                        label={'Nama Pelulus'}
+                        options={[
+                            { value: '0001', name: 'Mohd Irfan bin Abu' },
+                            { value: '0002', name: 'Nur Afifah Farhan' },
+                            { value: '0003', name: 'Teressa Teng' },
+                            { value: '0004', name: 'Sumar Amariti' },
+                        ]}
+                        bind:value={$supporterAndApproverForm.approverName}
+                    ></DropdownSelect>
+                    {#if $supporterAndApproverErrors.approverName}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$supporterAndApproverErrors.approverName}</span
+                        >
+                    {/if}
+                </form>
             </div>
         </StepperContentBody>
     </StepperContent>
@@ -419,13 +504,15 @@
                 onClick={() => {
                     activeStepper = 3;
                 }}
-            ></FormButton><FormButton
-                type="save"
-                onClick={() => {
-                    activeStepper = 5;
-                }}
-            ></FormButton></StepperContentHeader
-        >
+            />
+            <TextIconButton
+                primary
+                label="Simpan"
+                form="qualificationDetailForm"
+            >
+                <SvgCheck />
+            </TextIconButton>
+        </StepperContentHeader>
         <StepperContentBody>
             <CustomTab>
                 <CustomTabContent title="Maklumat Kelayakan">
@@ -436,91 +523,124 @@
                         <p class="text-sm text-system-primary">
                             Gaji Pokok Sahaja
                         </p>
-                        <TextField
-                            {disabled}
-                            labelType="auto-calculate-percentage"
-                            hasTooltip
-                            percentageVal={'100.00' + '%'}
-                            label={'Gaji Pokok (RM)'}
-                            value={currEmpSalary.grossSalary}
-                        ></TextField>
-                        <TextField
-                            type="number"
-                            labelType="auto-calculate-percentage"
-                            hasTooltip
-                            percentageVal={percentage(
-                                deductionVal,
-                                currEmpSalary.grossSalary,
-                            ) + '%'}
-                            label={'Potongan (RM)'}
-                            bind:value={deductionVal}
-                        ></TextField>
-                        <TextField
-                            {disabled}
-                            type="number"
-                            labelType="auto-calculate-percentage"
-                            hasTooltip
-                            percentageVal={percentage(
-                                currEmpSalary.grossSalary - deductionVal,
-                                currEmpSalary.grossSalary,
-                            ) + '%'}
-                            label={'Baki (RM)'}
-                            value={+(
-                                currEmpSalary.grossSalary - deductionVal
-                            ).toFixed(2)}
-                        ></TextField>
-                        <p class="text-sm text-system-primary">
-                            Gaji Pokok dan Elaun
-                        </p>
-                        <TextField
-                            {disabled}
-                            labelType="auto-calculate-percentage"
-                            hasTooltip
-                            percentageVal={'100.00' + '%'}
-                            label={'Gaji Pokok dan Elaun (RM)'}
-                            value={currEmpSalary.grossSalary +
-                                currEmpSalary.allowances}
-                        ></TextField>
-                        <TextField
-                            type="number"
-                            labelType="auto-calculate-percentage"
-                            hasTooltip
-                            percentageVal={percentage(
-                                salaryAndAllowanceDeductionVal,
-                                currEmpSalary.grossSalary,
-                            ) + '%'}
-                            label={'Potongan (RM)'}
-                            bind:value={salaryAndAllowanceDeductionVal}
-                        ></TextField>
-                        <TextField
-                            type="number"
-                            labelType="auto-calculate-percentage"
-                            hasTooltip
-                            percentageVal={percentage(
-                                newDeductionVal,
-                                currEmpSalary.grossSalary,
-                            ) + '%'}
-                            label={'Potongan Baru (RM)'}
-                            bind:value={newDeductionVal}
-                        ></TextField>
-                        <TextField
-                            {disabled}
-                            type="number"
-                            labelType="auto-calculate-percentage"
-                            hasTooltip
-                            percentageVal={percentage(
-                                currEmpSalary.grossSalary -
+                        <form
+                            id="qualificationDetailForm"
+                            method="POST"
+                            use:qualificationDetailEnhance
+                            class="flex w-full flex-col gap-2"
+                        >
+                            <TextField
+                                {disabled}
+                                labelType="auto-calculate-percentage"
+                                hasTooltip
+                                percentageVal={'100.00' + '%'}
+                                label={'Gaji Pokok (RM)'}
+                                value={currEmpSalary.grossSalary}
+                            ></TextField>
+                            <TextField
+                                type="number"
+                                labelType="auto-calculate-percentage"
+                                hasTooltip
+                                percentageVal={percentage(
+                                    $qualificationDetailForm.baseSalaryOnlyDeduction,
+
+                                    currEmpSalary.grossSalary,
+                                ) + '%'}
+                                name="baseSalaryOnlyDeduction"
+                                label={'Potongan (RM)'}
+                                bind:value={$qualificationDetailForm.baseSalaryOnlyDeduction}
+                            ></TextField>
+                            {#if $qualificationDetailError.baseSalaryOnlyDeduction}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$qualificationDetailError
+                                        .baseSalaryOnlyDeduction[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                {disabled}
+                                type="number"
+                                labelType="auto-calculate-percentage"
+                                hasTooltip
+                                percentageVal={percentage(
+                                    currEmpSalary.grossSalary - deductionVal,
+                                    currEmpSalary.grossSalary,
+                                ) + '%'}
+                                label={'Baki (RM)'}
+                                value={+(
+                                    currEmpSalary.grossSalary - deductionVal
+                                ).toFixed(2)}
+                            ></TextField>
+                            <p class="text-sm text-system-primary">
+                                Gaji Pokok dan Elaun
+                            </p>
+                            <TextField
+                                {disabled}
+                                labelType="auto-calculate-percentage"
+                                hasTooltip
+                                percentageVal={'100.00' + '%'}
+                                label={'Gaji Pokok dan Elaun (RM)'}
+                                value={currEmpSalary.grossSalary +
+                                    currEmpSalary.allowances}
+                            ></TextField>
+
+                            <TextField
+                                type="number"
+                                labelType="auto-calculate-percentage"
+                                hasTooltip
+                                name=""
+                                percentageVal={percentage(
+                                    $qualificationDetailForm.baseSalaryAndAllowanceDeduction,
+                                    currEmpSalary.grossSalary,
+                                ) + '%'}
+                                label={'Potongan (RM)'}
+                                bind:value={$qualificationDetailForm.baseSalaryAndAllowanceDeduction}
+                            ></TextField>
+                            {#if $qualificationDetailError.baseSalaryAndAllowanceDeduction}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$qualificationDetailError
+                                        .baseSalaryAndAllowanceDeduction[0]}</span
+                                >
+                            {/if}
+
+                            <TextField
+                                type="number"
+                                labelType="auto-calculate-percentage"
+                                hasTooltip
+                                percentageVal={percentage(
+                                    $qualificationDetailForm.baseSalaryAndAllowanceNewDeduction,
+                                    currEmpSalary.grossSalary,
+                                ) + '%'}
+                                label={'Potongan Baru (RM)'}
+                                bind:value={$qualificationDetailForm.baseSalaryAndAllowanceNewDeduction}
+                            ></TextField>
+                            {#if $qualificationDetailError.baseSalaryAndAllowanceNewDeduction}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$qualificationDetailError
+                                        .baseSalaryAndAllowanceNewDeduction[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                {disabled}
+                                type="number"
+                                labelType="auto-calculate-percentage"
+                                hasTooltip
+                                percentageVal={percentage(
+                                    currEmpSalary.grossSalary -
+                                        salaryAndAllowanceDeductionVal -
+                                        newDeductionVal,
+                                    currEmpSalary.grossSalary,
+                                ) + '%'}
+                                label={'Baki (RM)'}
+                                value={+(
+                                    currEmpSalary.grossSalary -
                                     salaryAndAllowanceDeductionVal -
-                                    newDeductionVal,
-                                currEmpSalary.grossSalary,
-                            ) + '%'}
-                            label={'Baki (RM)'}
-                            value={+(
-                                currEmpSalary.grossSalary -
-                                salaryAndAllowanceDeductionVal -
-                                newDeductionVal
-                            ).toFixed(2)}
-                        ></TextField>
+                                    newDeductionVal
+                                ).toFixed(2)}
+                            ></TextField>
+                        </form>
                     </div>
                 </CustomTabContent>
                 <CustomTabContent title="Maklumat Kelulusan dan Tawaran">
@@ -842,3 +962,4 @@
         >
     </StepperContent>
 </Stepper>
+<Toaster />
