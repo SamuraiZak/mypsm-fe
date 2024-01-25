@@ -39,7 +39,10 @@
         _personalInfoForm,
         _submitAcademicInfoForm,
         _submitActivityInfoForm,
+        _submitDependencyInfoForm,
         _submitExperienceInfoForm,
+        _submitFamilyInfoForm,
+        _submitNextOfKinInfoForm,
         _submitPersonalInfoForm,
     } from './+page';
     import { superForm, superValidate } from 'sveltekit-superforms/client';
@@ -138,26 +141,11 @@
     export const { form, errors, enhance } = superForm(data.personalInfoForm, {
         SPA: true,
         validators: _personalInfoForm,
-        delayMs: 500,
-        timeoutMs: 2000,
         taintedMessage:
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
 
         onSubmit() {
             _submitPersonalInfoForm($form);
-        },
-    });
-
-    const {
-        form: academicInfoForm,
-        errors: academicInfoErrors,
-        enhance: academicInfoEnhance,
-    } = superForm(data.academicInfoForm, {
-        dataType: 'json',
-        SPA: true,
-        validators: _academicInfoSchema,
-        onSubmit() {
-            _submitAcademicInfoForm(tempAcademicRecord);
         },
     });
 
@@ -175,59 +163,26 @@
         },
     });
 
-    const {
-        form: activityInfoForm,
-        errors: activityInfoErrors,
-        enhance: activityInfoEnhance,
-    } = superForm(data.activityInfoForm, {
-        dataType: 'json',
-        SPA: true,
-        validators: _activityListSchema,
-        onSubmit() {
-            window.alert('test');
-            // _submitActivityInfoForm(tempActivityRecord);
-        },
-    });
+    const triggerSubmitAcademicTempData = () => {
+        _submitAcademicInfoForm(tempAcademicRecord);
+    };
 
-    const {
-        form: familyInfoForm,
-        errors: familyInfoErrors,
-        enhance: familyInfoEnhance,
-    } = superForm(data.familyInfoForm, {
-        dataType: 'json',
-        SPA: true,
-        validators: _familyListSchema,
-        onSubmit() {
-            window.alert('test');
-            // _submitActivityInfoForm(tempActivityRecord);
-        },
-    });
+    const triggerSubmitExperienceTempData = () => {
+        _submitExperienceInfoForm(tempExperienceRecord);
+    };
 
-    const {
-        form: dependencyInfoForm,
-        errors: dependencyInfoErrors,
-        enhance: dependencyInfoEnhance,
-    } = superForm(data.dependencyInfoForm, {
-        dataType: 'json',
-        SPA: true,
-        validators: _dependencyListSchema,
-        onSubmit() {
-            window.alert('test');
-            // _submitActivityInfoForm(tempActivityRecord);
-        },
-    });
-
-    const {
-        form: nextOfKinForm,
-        errors: nextOfKinErrors,
-        enhance: nextOfKinEnhance,
-    } = superForm(data.nextOfKinInfoForm, {
-        SPA: true,
-        validators: _nextOfKinListSchema,
-        onSubmit() {
-            // _submitNextOfKinForm($nextOfKinForm);
-        },
-    });
+    const triggerSubmitActivityTempData = () => {
+        _submitActivityInfoForm(tempActivityRecord);
+    };
+    const triggerSubmitFamilyTempData = () => {
+        _submitFamilyInfoForm(tempFamilyRecord);
+    };
+    const triggerSubmitDependencyTempData = () => {
+        _submitDependencyInfoForm(tempNonFamilyRecord);
+    };
+    const triggerSubmitNextOfKinTempData = () => {
+        _submitNextOfKinInfoForm(tempNextOfKinRecord);
+    };
 
     const {
         form: addAcademicInfoModal,
@@ -885,7 +840,11 @@
     <StepperContent>
         <StepperContentHeader
             title="Maklumat Akademik / Kelayakan / Latihan yang Lalu"
-            ><TextIconButton primary label="Simpan" form="academicInfoForm">
+            ><TextIconButton
+                primary
+                label="Simpan"
+                onClick={() => triggerSubmitAcademicTempData()}
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
@@ -966,94 +925,85 @@
                         {/each}
                     </div>
                 {/if}
-                <form
-                    id="academicInfoForm"
-                    method="POST"
-                    use:academicInfoEnhance
-                    class="flex w-full flex-col gap-2.5"
-                >
-                    {#each data.academicDetails.academicList as academic, i}
-                        <div class="space-y-2.5 rounded-[3px] border p-2.5">
-                            <div
-                                class="mb-5 mt-2.5 text-sm text-system-primary"
-                            >
-                                <p>Maklumat Akademik #{i + 1}</p>
-                            </div>
-                            <DropdownSelect
-                                disabled
-                                name="majorMinorId"
-                                dropdownType="label-left-full"
-                                label={'Jenis Jurusan'}
-                                options={majorMinorList}
-                                bind:value={academic.majorMinorId}
-                            ></DropdownSelect>
-                            <DropdownSelect
-                                disabled
-                                name="countryId"
-                                dropdownType="label-left-full"
-                                label={'Negara'}
-                                options={countryList}
-                                bind:value={academic.countryId}
-                            ></DropdownSelect>
-                            <DropdownSelect
-                                disabled
-                                name="institutionId"
-                                dropdownType="label-left-full"
-                                label={'Institusi'}
-                                options={institutionList}
-                                bind:value={academic.institutionId}
-                            ></DropdownSelect>
-                            <DropdownSelect
-                                disabled
-                                name="educationLevelId"
-                                dropdownType="label-left-full"
-                                label={'Taraf Pembelajaran'}
-                                options={educationLevelList}
-                                bind:value={academic.educationLevelId}
-                            ></DropdownSelect>
-                            <DropdownSelect
-                                disabled
-                                name="sponsorshipId"
-                                dropdownType="label-left-full"
-                                label={'Penajaan'}
-                                options={sponsorshipList}
-                                bind:value={academic.sponsorshipId}
-                            ></DropdownSelect>
-
-                            <TextField
-                                disabled
-                                name="name"
-                                label={'Nama Kelulusan/Sijil'}
-                                type="text"
-                                bind:value={academic.name}
-                            ></TextField>
-
-                            <TextField
-                                disabled
-                                name="completionDate"
-                                label={'Tahun Kelulusan'}
-                                type="text"
-                                bind:value={academic.completionDate}
-                            ></TextField>
-
-                            <TextField
-                                disabled
-                                name="finalGrade"
-                                label={'Gred Akhir'}
-                                type="text"
-                                bind:value={academic.finalGrade}
-                            ></TextField>
-
-                            <TextField
-                                disabled
-                                name="field"
-                                label={'Catatan'}
-                                type="text"
-                                bind:value={academic.field}
-                            ></TextField>
+                {#each data.academicDetails.academicList as academic, i}
+                    <div class="space-y-2.5 rounded-[3px] border p-2.5">
+                        <div class="mb-5 mt-2.5 text-sm text-system-primary">
+                            <p>Maklumat Akademik #{i + 1}</p>
                         </div>
-                    {/each}
-                </form>
+                        <DropdownSelect
+                            disabled
+                            name="majorMinorId"
+                            dropdownType="label-left-full"
+                            label={'Jenis Jurusan'}
+                            options={majorMinorList}
+                            bind:value={academic.majorMinorId}
+                        ></DropdownSelect>
+                        <DropdownSelect
+                            disabled
+                            name="countryId"
+                            dropdownType="label-left-full"
+                            label={'Negara'}
+                            options={countryList}
+                            bind:value={academic.countryId}
+                        ></DropdownSelect>
+                        <DropdownSelect
+                            disabled
+                            name="institutionId"
+                            dropdownType="label-left-full"
+                            label={'Institusi'}
+                            options={institutionList}
+                            bind:value={academic.institutionId}
+                        ></DropdownSelect>
+                        <DropdownSelect
+                            disabled
+                            name="educationLevelId"
+                            dropdownType="label-left-full"
+                            label={'Taraf Pembelajaran'}
+                            options={educationLevelList}
+                            bind:value={academic.educationLevelId}
+                        ></DropdownSelect>
+                        <DropdownSelect
+                            disabled
+                            name="sponsorshipId"
+                            dropdownType="label-left-full"
+                            label={'Penajaan'}
+                            options={sponsorshipList}
+                            bind:value={academic.sponsorshipId}
+                        ></DropdownSelect>
+
+                        <TextField
+                            disabled
+                            name="name"
+                            label={'Nama Kelulusan/Sijil'}
+                            type="text"
+                            bind:value={academic.name}
+                        ></TextField>
+
+                        <TextField
+                            disabled
+                            name="completionDate"
+                            label={'Tahun Kelulusan'}
+                            type="text"
+                            bind:value={academic.completionDate}
+                        ></TextField>
+
+                        <TextField
+                            disabled
+                            name="finalGrade"
+                            label={'Gred Akhir'}
+                            type="text"
+                            bind:value={academic.finalGrade}
+                        ></TextField>
+
+                        <TextField
+                            disabled
+                            name="field"
+                            label={'Catatan'}
+                            type="text"
+                            bind:value={academic.field}
+                        ></TextField>
+                    </div>
+                {/each}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
                         primary
@@ -1071,7 +1021,7 @@
             ><TextIconButton
                 primary
                 label="Simpan"
-                form="newHireExperienceForm"
+                onClick={() => triggerSubmitExperienceTempData()}
             >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
@@ -1225,7 +1175,11 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Maklumat Kegiatan / Keahlian"
-            ><TextIconButton primary label="Simpan" form="newHireActivityForm">
+            ><TextIconButton
+                primary
+                label="Simpan"
+                onClick={() => triggerSubmitActivityTempData()}
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
@@ -1276,15 +1230,8 @@
                     </div>
                 {/if}
 
-                <form
-                    id="newHireActivityForm"
-                    method="POST"
-                    use:activityInfoEnhance
-                    class="flex w-full flex-col gap-2 rounded-[3px] border p-2.5"
-                >
-                    <DynamicTable tableItems={data.activityDetails.activityList}
-                    ></DynamicTable>
-                </form>
+                <DynamicTable tableItems={data.activityDetails.activityList}
+                ></DynamicTable>
             </div>
             <div class="w-full rounded-[3px] border-b border-t p-2.5">
                 <TextIconButton
@@ -1305,7 +1252,7 @@
                 primary
                 label="Simpan"
                 onClick={() => {
-                    getSuccessToast();
+                    triggerSubmitFamilyTempData();
                 }}
             >
                 <SvgCheck></SvgCheck>
@@ -1369,7 +1316,8 @@
                         {/each}
                     </div>
                 {/if}
-                <DynamicTable tableItems={maklumatKeluargaTable}></DynamicTable>
+                <DynamicTable tableItems={data.familyDetails.dependenciesList}
+                ></DynamicTable>
             </div>
             <div class="w-full rounded-[3px] border-b border-t p-2.5">
                 <TextIconButton
@@ -1391,7 +1339,7 @@
                 primary
                 label="Simpan"
                 onClick={() => {
-                    getSuccessToast();
+                    triggerSubmitDependencyTempData();
                 }}
             >
                 <SvgCheck></SvgCheck>
@@ -1458,7 +1406,8 @@
                         {/each}
                     </div>
                 {/if}
-                <DynamicTable tableItems={maklumatTanggunganLain}
+                <DynamicTable
+                    tableItems={data.dependencyDetails.dependenciesList}
                 ></DynamicTable>
             </div>
             <div class="w-full rounded-[3px] border-b border-t p-2.5">
@@ -1476,54 +1425,54 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Maklumat Waris"
-            ><TextIconButton primary label="Simpan" form="nextOfKinForm">
+            ><TextIconButton
+                primary
+                label="Simpan"
+                onClick={() => triggerSubmitNextOfKinTempData()}
+            >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
         <StepperContentBody>
-            {#if tempNextOfKinRecord.length > 0}
-                <div
-                    class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
-                >
-                    <div class="mb-2.5 text-sm font-medium">
-                        <p>Preview Rekod Untuk Disimpan</p>
-                    </div>
-                    {#each tempNextOfKinRecord as nextOfKin, i}
-                        <div class="text-sm text-system-primary">
-                            <p>
-                                {i + 1}. Maklumat Waris - {nextOfKin.addNextOfKinName}
-                            </p>
+            <div class="flex w-full flex-col gap-2">
+                {#if tempNextOfKinRecord.length > 0}
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                    >
+                        <div class="mb-2.5 text-sm font-medium">
+                            <p>Preview Rekod Untuk Disimpan</p>
                         </div>
-                        <ul
-                            class="list-inside list-disc rounded-[3px] border p-2.5 text-sm text-system-primary"
-                        >
-                            <li>
-                                <span class="italic text-black">
-                                    Nama Waris:
-                                </span>
-                                {nextOfKin.addNextOfKinName}
-                            </li>
-                            <li>
-                                <span class="italic text-black">
-                                    No. Kad Pengenalan:
-                                </span>
-                                {nextOfKin.addNextOfKinIdentityDocumentNumber}
-                            </li>
-                        </ul>
-                    {/each}
-                </div>
-            {/if}
-            <form
-                id="nextOfKinForm"
-                class="flex w-full flex-col gap-2 rounded-[3px] border p-2.5"
-                use:nextOfKinEnhance
-                method="POST"
-            >
+                        {#each tempNextOfKinRecord as nextOfKin, i}
+                            <div class="text-sm text-system-primary">
+                                <p>
+                                    {i + 1}. Maklumat Waris - {nextOfKin.addNextOfKinName}
+                                </p>
+                            </div>
+                            <ul
+                                class="list-inside list-disc rounded-[3px] border p-2.5 text-sm text-system-primary"
+                            >
+                                <li>
+                                    <span class="italic text-black">
+                                        Nama Waris:
+                                    </span>
+                                    {nextOfKin.addNextOfKinName}
+                                </li>
+                                <li>
+                                    <span class="italic text-black">
+                                        No. Kad Pengenalan:
+                                    </span>
+                                    {nextOfKin.addNextOfKinIdentityDocumentNumber}
+                                </li>
+                            </ul>
+                        {/each}
+                    </div>
+                {/if}
                 <DynamicTable
                     hasCheckbox
                     tableItems={data.nextOfKinDetails.nextOfKinList}
                 ></DynamicTable>
-                <!-- {#each $experienceInfoForm.experienceList as record, i}
+            </div>
+            <!-- {#each $experienceInfoForm.experienceList as record, i}
                     <p class={stepperFormTitleClass}>
                         Maklumat Waris #{1}
                     </p>
@@ -1603,7 +1552,6 @@
                         value={$nextOfKinForm.companyAddress}
                     ></LongTextField>
                 {/each} -->
-            </form>
             <div class="w-full rounded-[3px] border-b border-t p-2.5">
                 <TextIconButton
                     primary
