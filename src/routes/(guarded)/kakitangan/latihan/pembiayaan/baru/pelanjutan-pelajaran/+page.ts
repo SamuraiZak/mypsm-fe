@@ -53,6 +53,8 @@ export const _stepperLessonInfo = z.object({
     expectedEndDate: date.refine((data) => data >= new Date(), {
         message: 'Tidak boleh kurang atau pada tarikh semasa',
     }),
+    studyType: option,
+    applicationType: option,
 });
 
 export const _submitFormStepperLessonInfo = async (formData: object) => {
