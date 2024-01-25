@@ -3,6 +3,8 @@
 // ===============================================================
 
 import { env } from '$env/dynamic/public';
+import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key-constant';
+import { AuthenticationHelper } from '$lib/helper/core/authentication-helper/authentication-helper';
 import ky from 'ky';
 
 const http = ky.create({
@@ -12,7 +14,18 @@ const http = ky.create({
         'Content-type': 'application/json',
     },
     credentials: 'include',
-    hooks: {},
+    hooks: {
+        beforeRequest:[
+            request => {
+                const token = localStorage.getItem(LocalStorageKeyConstant.accessToken);
+
+                if (token != null) {
+                    
+                    request.headers.set('Authorization', `${token}`);
+                }
+			}
+        ]
+    },
 });
 
 export default http;

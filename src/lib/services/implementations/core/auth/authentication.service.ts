@@ -2,6 +2,7 @@
 // Authentication Services
 // ===============================================================
 
+import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key-constant";
 import http from "$lib/services/provider/service-provider.service";
 import type { AuthenticationRequestViewModel } from "$lib/view-models/core/auth/auth-request.view-model";
 import { AuthenticationResponseConvert } from "$lib/view-models/core/auth/auth-response.view-model";
@@ -21,7 +22,11 @@ export class AuthService {
         })
         .json();
 
-        return AuthenticationResponseConvert.fromResponse(response);
+        const loginResponse = AuthenticationResponseConvert.fromResponse(response);
+
+        localStorage.setItem(LocalStorageKeyConstant.accessToken, loginResponse.data.token);
+
+        return loginResponse;
     }
 
     // login service for candidate
@@ -36,7 +41,11 @@ export class AuthService {
         })
         .json();
 
-        return AuthenticationResponseConvert.fromResponse(response);
+        const loginResponse = AuthenticationResponseConvert.fromResponse(response);
+
+        localStorage.setItem(LocalStorageKeyConstant.accessToken, loginResponse.data.token);
+
+        return loginResponse;
     }
 
     // login service for panel clinic
@@ -51,7 +60,11 @@ export class AuthService {
         })
         .json();
 
-        return AuthenticationResponseConvert.fromResponse(response);
+        const loginResponse = AuthenticationResponseConvert.fromResponse(response);
+
+        localStorage.setItem(LocalStorageKeyConstant.accessToken, loginResponse.data.token);
+
+        return loginResponse;
     }
 
     // get all roles available

@@ -9,10 +9,12 @@ export interface AuthenticationResponseViewModel {
 }
 
 export interface AuthenticationResponseData {
+    token: string;
 }
 
 // Converts JSON strings to/from your types
 export class AuthenticationResponseConvert {
+
     // to model from response
     public static fromResponse(response: Response): AuthenticationResponseViewModel {
         return JSON.parse(JSON.stringify(response));
@@ -23,7 +25,7 @@ export class AuthenticationResponseConvert {
         return JSON.parse(json);
     }
 
-    // to json string from model
+    // to json string form model
     public static toJson(value: AuthenticationResponseViewModel): string {
         return JSON.stringify(value);
     }
