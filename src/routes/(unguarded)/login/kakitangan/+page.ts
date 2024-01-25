@@ -30,8 +30,8 @@ export const load = async () => {
 export const _submit = async (formData: AuthenticationRequestViewModel) => {
     const response: AuthenticationResponseViewModel = await AuthService.loginEmployee(formData);
     if (response.status == 200) {
-        localStorage.setItem(LocalStorageKeyConstant.accessToken, response.data.token);
         
+
         goto('/kakitangan/halaman-utama');
     }
 };
