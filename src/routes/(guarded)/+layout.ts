@@ -49,11 +49,71 @@ export const load = async () => {
             name: majorMinor.description,
         }));
 
+    // state list
+    const stateListResponse = await LookupService.getEnumStateList();
+
+    const stateLookup: DropdownOptionsInterface[] =
+        stateListResponse.data.states.map((state) => ({
+            value: Number(state.id),
+            name: state.description,
+        }));
+    // relationship list
+    const relationshipListResponse =
+        await LookupService.getEnumRelationshipList();
+
+    const relationshipLookup: DropdownOptionsInterface[] =
+        relationshipListResponse.data.relationships.map((relationship) => ({
+            value: Number(relationship.id),
+            name: relationship.description,
+        }));
+
+    // race list
+    const raceListResponse = await LookupService.getEnumRaceList();
+
+    const raceLookup: DropdownOptionsInterface[] =
+        raceListResponse.data.races.map((race) => ({
+            value: Number(race.id),
+            name: race.description,
+        }));
+
+    // nationality list
+    const nationalityListResponse =
+        await LookupService.getEnumNationalityList();
+
+    const nationalityLookup: DropdownOptionsInterface[] =
+        nationalityListResponse.data.nationalities.map((nationality) => ({
+            value: Number(nationality.id),
+            name: nationality.description,
+        }));
+    // marital list
+    const maritalListResponse = await LookupService.getEnumMaritalList();
+
+    const maritalLookup: DropdownOptionsInterface[] =
+        maritalListResponse.data.maritalStatus.map((marital) => ({
+            value: Number(marital.id),
+            name: marital.description,
+        }));
+
+    // gender list
+    const genderListResponse = await LookupService.getEnumGenderList();
+
+    const genderLookup: DropdownOptionsInterface[] =
+        genderListResponse.data.genders.map((gender) => ({
+            value: Number(gender.id),
+            name: gender.description,
+        }));
+
     return {
         sponsorshipLookup,
         educationLookup,
         institutionLookup,
         countryLookup,
         majorMinorLookup,
+        stateLookup,
+        relationshipLookup,
+        raceLookup,
+        nationalityLookup,
+        maritalLookup,
+        genderLookup,
     };
 };
