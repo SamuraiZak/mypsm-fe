@@ -1,6 +1,7 @@
 import {
     getErrorToast,
     getLoadingToast,
+    getServerErrorToast,
     getSuccessToast,
 } from '$lib/services/core/toast/toast-service';
 import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
@@ -51,11 +52,14 @@ import type {
     CandidateNextOfKinDetailsResponse,
     NextOfKinData,
 } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-next-of-kin-details-response.model.js';
+import type { CandidatePersonalDetailsRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-request.model';
 import type {
     CandidatePersonalData,
     CandidatePersonalDetailsResponse,
 } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-respone.model.js';
+import type { RequestSuccessBody } from '$lib/view-models/mypsm/request-success.view-model';
 import { error, fail } from '@sveltejs/kit';
+import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
@@ -135,7 +139,7 @@ export const _personalInfoForm = z
         name: shortTextSchema,
         alternativeName: shortTextSchema.default(' '),
         identityDocumentNumber: shortTextSchema,
-        identityDocumentColor: generalSelectSchema,
+        identityDocumentColor: shortTextSchema,
         email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
         propertyDeclarationDate: maxDateSchema,
         birthDate: maxDateSchema,
@@ -151,10 +155,10 @@ export const _personalInfoForm = z
         assetDeclarationStatusId: numberIdSchema,
         isExPoliceOrSoldier: booleanSchema,
         isInternalRelationship: booleanSchema,
-        employeeNumber: z.string().nullable(),
+        employeeNumber: shortTextSchema.nullable(),
         employeeName: shortTextSchema.nullable(),
         employeePosition: generalSelectSchema.nullable(),
-        relationshipId: numberIdSchema,
+        relationshipId: numberIdSchema.nullable(),
     })
     .superRefine(({ isInternalRelationship }, ctx) => {
         if (isInternalRelationship) {
@@ -583,18 +587,19 @@ export const _submitPersonalInfoForm = async (formData: object) => {
         return fail(400, form);
     }
 
-    // const requestBody: CandidatePersonalDetailsRequestBody = form
+    // const requestBody: CandidatePersonalDetailsRequestBody = form;
 
-    // const response: RequestSuccessBody =
-    //     await EmployeeService.createCurrentCandidatePersonalDetails(
-    //         requestBody,
-    //     );
+    const response: RequestSuccessBody =
+        await EmployeeService.createCurrentCandidatePersonalDetails(
+            form as CandidatePersonalDetailsRequestBody,
+        );
 
-    // if (response.status !== 201) {
-    //     // if error toast
-    //     getErrorToast();
-    //     return error(400, { message: response.message });
-    // }
+    if (response.status !== 201) {
+        // if error toast
+        toast.dismiss();
+        getErrorToast();
+        return error(400, { message: response.message });
+    }
 
     // if success toast
     getSuccessToast();
@@ -621,7 +626,8 @@ export const _submitAcademicInfoForm = async (formData: AcademicList[]) => {
 
     if (response.status !== 201) {
         // if error toast
-        getErrorToast();
+        toast.dismiss();
+        getServerErrorToast();
         return error(400, { message: response.message });
     }
 
@@ -650,12 +656,14 @@ export const _submitExperienceInfoForm = async (formData: Experience[]) => {
 
     if (response.status !== 201) {
         // if error toast
-        getErrorToast();
+        toast.dismiss();
+        getServerErrorToast();
         return error(400, { message: response.message });
     }
 
     // if success toast
     getSuccessToast();
+
     return { response };
 };
 
@@ -678,7 +686,8 @@ export const _submitActivityInfoForm = async (formData: Activity[]) => {
 
     if (response.status !== 201) {
         // if error toast
-        getErrorToast();
+        toast.dismiss();
+        getServerErrorToast();
         return error(400, { message: response.message });
     }
 
@@ -704,7 +713,8 @@ export const _submitFamilyInfoForm = async (formData: Family[]) => {
 
     if (response.status !== 201) {
         // if error toast
-        getErrorToast();
+        toast.dismiss();
+        getServerErrorToast();
         return error(400, { message: response.message });
     }
 
@@ -732,7 +742,8 @@ export const _submitDependencyInfoForm = async (formData: Dependency[]) => {
 
     if (response.status !== 201) {
         // if error toast
-        getErrorToast();
+        toast.dismiss();
+        getServerErrorToast();
         return error(400, { message: response.message });
     }
 
@@ -760,7 +771,8 @@ export const _submitNextOfKinInfoForm = async (formData: NextOfKin[]) => {
 
     if (response.status !== 201) {
         // if error toast
-        getErrorToast();
+        toast.dismiss();
+        getServerErrorToast();
         return error(400, { message: response.message });
     }
 
