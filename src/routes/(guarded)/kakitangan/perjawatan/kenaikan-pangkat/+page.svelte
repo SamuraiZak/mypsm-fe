@@ -24,7 +24,7 @@
     <div
         class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
     >
-        <SectionHeader title="Section Title"></SectionHeader>
+        <SectionHeader title="Senarai Rekod Kenaikan Pangkat"></SectionHeader>
         <div class="flex max-h-full w-full flex-col items-start justify-start">
             <DynamicTable tableItems={mockPemangkuanList}></DynamicTable>
         </div>
