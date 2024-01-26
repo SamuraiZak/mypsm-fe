@@ -39,6 +39,14 @@
         _submitSupporterAndApproverForm,
         _qualificationDetailSchema,
         _submitUpdateLoanDetailQualificationForm,
+        _submitApprovalAndOfferForm,
+        _approvalAndOfferDetailSchema,
+        _firstScheduleSchema,
+        _submitVehicleDetailAndDescriptionForm,
+        _submitSecondScheduleForm,
+        _secondScheduleSchema,
+        _letterOfAgreementSchema,
+        _submitLetterOfAgreementForm,
     } from './+page';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
@@ -109,11 +117,11 @@
     }
     const options: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'Ya',
         },
         {
-            value: 'false',
+            value: false,
             label: 'Tidak',
         },
     ];
@@ -196,6 +204,7 @@
         enhance: supporterAndApproverEnhance,
     } = superForm(data.supporterAndApproverForm, {
         SPA: true,
+        id: 'supporterAndApproverFormValidation',
         validators: _supporterAndApproverSchema,
         onSubmit() {
             _submitSupporterAndApproverForm($supporterAndApproverForm);
@@ -210,9 +219,72 @@
         enhance: qualificationDetailEnhance,
     } = superForm(data.updateLoanDetailQualificationForm, {
         SPA: true,
+        id: 'qualificationDetailForm',
         validators: _qualificationDetailSchema,
         onSubmit() {
             _submitUpdateLoanDetailQualificationForm($qualificationDetailForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
+
+    const {
+        form: approvalAndOfferDetailForm,
+        errors: approvalAndOfferDetailError,
+        enhance: approvalAndOfferDetailEnhance,
+    } = superForm(data.approvalAndOfferForm, {
+        SPA: true,
+        validators: _approvalAndOfferDetailSchema,
+        id: 'approvalAndOfferForm',
+        onSubmit() {
+            _submitApprovalAndOfferForm($approvalAndOfferDetailForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
+
+    const {
+        form: vehicleDetailAndDescriptionForm,
+        errors: vehicleDetailAndDescriptionError,
+        enhance: vehicleDetailAndDescriptionEnhance,
+    } = superForm(data.vehicleDetailAndDescriptionForm, {
+        SPA: true,
+        validators: _firstScheduleSchema,
+        id: 'vehicleDetailAndDescriptionForm',
+        onSubmit() {
+            _submitVehicleDetailAndDescriptionForm(
+                $vehicleDetailAndDescriptionForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
+
+    const {
+        form: secondScheduleForm,
+        errors: secondScheduleError,
+        enhance: secondScheduleEnhance,
+    } = superForm(data.secondScheduleForm, {
+        SPA: true,
+        validators: _secondScheduleSchema,
+        id: 'secondScheduleFormValidation',
+        onSubmit() {
+            _submitSecondScheduleForm($secondScheduleForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
+
+    const {
+        form: letterOfAgreementForm,
+        errors: letterOfAgreementError,
+        enhance: letterOfAgreementEnhance,
+    } = superForm(data.letterOfAgreementForm, {
+        SPA: true,
+        validators: _letterOfAgreementSchema,
+        id: 'letterOfAgreementFormValidation',
+        onSubmit() {
+            _submitLetterOfAgreementForm($letterOfAgreementForm);
         },
         taintedMessage:
             'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
@@ -505,18 +577,17 @@
                     activeStepper = 3;
                 }}
             />
-            <TextIconButton
-                primary
-                label="Simpan"
-                form="qualificationDetailForm"
-            >
-                <SvgCheck />
-            </TextIconButton>
         </StepperContentHeader>
         <StepperContentBody>
             <CustomTab>
                 <CustomTabContent title="Maklumat Kelayakan">
-                    <SectionHeader title="Maklumat Kelayakan"></SectionHeader>
+                    <SectionHeader title="Maklumat Kelayakan"
+                        ><TextIconButton
+                            primary
+                            label="Simpan"
+                            form="qualificationDetailForm"
+                        /></SectionHeader
+                    >
                     <div
                         class="flex w-full flex-col items-start justify-start gap-2.5"
                     >
@@ -645,105 +716,371 @@
                 </CustomTabContent>
                 <CustomTabContent title="Maklumat Kelulusan dan Tawaran">
                     <SectionHeader
-                        title="Maskkan Maklumat Kelulusan dan Tawaran"
-                    ></SectionHeader>
+                        title="Masukkan Maklumat Kelulusan dan Tawaran"
+                        ><TextIconButton
+                            primary
+                            label="Simpan"
+                            form="approvalAndOfferForm"
+                        /></SectionHeader
+                    >
                     <div
                         class="flex w-full flex-col items-start justify-start gap-2.5"
                     >
-                        <DropdownSelect
-                            dropdownType="label-left-full"
-                            label="Jenis Belian"
-                            options={loanOptions}
-                            bind:value={currEmpLoanRec[0].typeOfLoan}
-                        ></DropdownSelect>
-                        <TextField
-                            type="number"
-                            label="Harga Belian Dengan Kerajaan (RM)"
-                            value={currEmpLoanRec[0].total}
-                        ></TextField>
-                        <TextField
-                            type="number"
-                            label="Bayaran Muka (RM)"
-                            value={upfront}
-                        ></TextField>
-                        <TextField
-                            type="number"
-                            label="Bayaran Amaun Pembiayaan Dan Keuntungan Kerajaan (RM)"
-                            value={amount}
-                        ></TextField>
-                        <TextField
-                            type="number"
-                            label="Amoaun Pembiayaan Kerajaan (RM)"
-                            value={amount2}
-                        ></TextField>
-                        <TextField
-                            type="number"
-                            label="Harga Jualan Kepada Pegawai (RM)"
-                            value={currEmpLoanRec[0].total - saleValue}
-                        ></TextField>
-                        <TextField
-                            type="number"
-                            label="Ansuran Bulanan (RM)"
-                            value={monthly(
+                        <form
+                            id="approvalAndOfferForm"
+                            method="POST"
+                            use:approvalAndOfferDetailEnhance
+                            class="flex w-full flex-col gap-2"
+                        >
+                            <DropdownSelect
+                                hasError={!!$approvalAndOfferDetailError.typeOfPurchase}
+                                dropdownType="label-left-full"
+                                label="Jenis Belian"
+                                options={loanOptions}
+                                bind:value={$approvalAndOfferDetailForm.typeOfPurchase}
+                            ></DropdownSelect>
+                            {#if $approvalAndOfferDetailError.typeOfPurchase}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$approvalAndOfferDetailError
+                                        .typeOfPurchase[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                hasError={!!$approvalAndOfferDetailError.purchasePrice}
+                                type="number"
+                                label="Harga Belian Dengan Kerajaan (RM)"
+                                bind:value={$approvalAndOfferDetailForm.purchasePrice}
+                            ></TextField>
+                            <!-- value={currEmpLoanRec[0].total} -->
+                            {#if $approvalAndOfferDetailError.purchasePrice}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$approvalAndOfferDetailError
+                                        .purchasePrice[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                hasError={!!$approvalAndOfferDetailError.downpayment}
+                                type="number"
+                                label="Bayaran Muka (RM)"
+                                bind:value={$approvalAndOfferDetailForm.downpayment}
+                            ></TextField>
+                            <!-- value={upfront} -->
+                            {#if $approvalAndOfferDetailError.downpayment}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$approvalAndOfferDetailError
+                                        .downpayment[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                hasError={!!$approvalAndOfferDetailError.governmentFinancingAmountPaymentAndProfit}
+                                type="number"
+                                label="Bayaran Amaun Pembiayaan Dan Keuntungan Kerajaan (RM)"
+                                bind:value={$approvalAndOfferDetailForm.governmentFinancingAmountPaymentAndProfit}
+                            ></TextField>
+                            <!-- value={amount} -->
+                            {#if $approvalAndOfferDetailError.governmentFinancingAmountPaymentAndProfit}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$approvalAndOfferDetailError
+                                        .governmentFinancingAmountPaymentAndProfit[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                hasError={!!$approvalAndOfferDetailError.amountOfGovernmentFunding}
+                                type="number"
+                                label="Amaun Pembiayaan Kerajaan (RM)"
+                                bind:value={$approvalAndOfferDetailForm.amountOfGovernmentFunding}
+                            ></TextField>
+                            <!-- value={amount2} -->
+                            {#if $approvalAndOfferDetailError.amountOfGovernmentFunding}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$approvalAndOfferDetailError
+                                        .amountOfGovernmentFunding[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                hasError={!!$approvalAndOfferDetailError.sellingPrices}
+                                type="number"
+                                label="Harga Jualan Kepada Pegawai (RM)"
+                                bind:value={$approvalAndOfferDetailForm.sellingPrices}
+                            ></TextField>
+                            <!-- value={currEmpLoanRec[0].total - saleValue} -->
+                            {#if $approvalAndOfferDetailError.sellingPrices}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$approvalAndOfferDetailError
+                                        .sellingPrices[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                hasError={!!$approvalAndOfferDetailError.monthlyInstallment}
+                                type="number"
+                                label="Ansuran Bulanan (RM)"
+                                bind:value={$approvalAndOfferDetailForm.monthlyInstallment}
+                            ></TextField>
+                            <!-- value={monthly(
                                 currEmpLoanRec[0].total - saleValue,
                                 getMonthsNumber(
                                     currEmpLoanRec[0].loanStartDate,
                                     currEmpLoanRec[0].loanEndDate,
                                 ),
-                            )}
-                        ></TextField>
-                        <DateSelector handleDateChange selectedDate="2023-08-03"
-                        ></DateSelector>
-                        <TextField
-                            label="Tempoh"
-                            value={getMonths(
+                            )} -->
+                            {#if $approvalAndOfferDetailError.monthlyInstallment}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$approvalAndOfferDetailError
+                                        .monthlyInstallment[0]}</span
+                                >
+                            {/if}
+                            <DateSelector
+                                hasError={!!$approvalAndOfferDetailError.startDate}
+                                label="Tarikh Mula"
+                                handleDateChange
+                                bind:selectedDate={$approvalAndOfferDetailForm.startDate}
+                            ></DateSelector>
+                            <!-- selectedDate="2023-08-03" -->
+                            {#if $approvalAndOfferDetailError.startDate}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$approvalAndOfferDetailError
+                                        .startDate[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                hasError={!!$approvalAndOfferDetailError.duration}
+                                label="Tempoh"
+                                bind:value={$approvalAndOfferDetailForm.duration}
+                            ></TextField>
+                            <!-- value={getMonths(
                                 currEmpLoanRec[0].loanStartDate,
                                 currEmpLoanRec[0].loanEndDate,
-                            )}
-                        ></TextField>
+                            )} -->
+                            {#if $approvalAndOfferDetailError.duration}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$approvalAndOfferDetailError
+                                        .duration[0]}</span
+                                >
+                            {/if}
+                        </form>
                     </div>
                 </CustomTabContent>
                 <CustomTabContent title="Jadual Pertama">
                     {#if currEmpLoanRec[0].typeOfLoan == 'Kenderaan'}
                         <SectionHeader
                             title="Masukkan Maklumat dan Perihal Kenderaan"
-                        ></SectionHeader>
-                        <TextField label="No. Enjin" value="-"></TextField>
-                        <TextField label="No. Casis" value="-"></TextField>
-                        <TextField label="Buatan" value="-"></TextField>
-                        <TextField label="Nama Model" value="-"></TextField>
-                        <TextField label="Kuasa Enjin" value="-"></TextField>
-                        <TextField label="Bahan Bakar" value="-"></TextField>
-                        <TextField label="Kelas Kegunaan" value="-"></TextField>
-                        <TextField label="Jenis Badan" value="-"></TextField>
-                        <TextField label="Tahun Dibuat" value="-"></TextField>
-                        <SectionHeader
-                            title="Masukkan Butiran Penjualan/Tuan Asal"
-                        ></SectionHeader>
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2.5"
                         >
-                            <TextField label="Nama" value="-"></TextField>
-                            <TextField label="No. K/P" value="-"></TextField>
-                            <LongTextField label="Alamat" value="-"
-                            ></LongTextField>
-                        </div>
-                        <SectionHeader title="Masukkan Harga Belian Kenderaan"
-                        ></SectionHeader>
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2.5"
+                            <TextIconButton
+                                primary
+                                label="Simpan"
+                                form="vehicleDetailAndDescriptionForm"
+                            />
+                        </SectionHeader>
+                        <form
+                            id="vehicleDetailAndDescriptionForm"
+                            method="POST"
+                            use:vehicleDetailAndDescriptionEnhance
+                            class="flex w-full flex-col gap-2"
                         >
                             <TextField
-                                label="Jumlah Harga Belian (RM)"
-                                value="4000.00"
-                            ></TextField>
-                            <TextField label="Bayaran Baki (RM)" value="-"
-                            ></TextField>
+                                hasError={!!$vehicleDetailAndDescriptionError.engineNo}
+                                name="engineNo"
+                                label="No. Enjin"
+                                bind:value={$vehicleDetailAndDescriptionForm.engineNo}
+                            />{#if $vehicleDetailAndDescriptionError.engineNo}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$vehicleDetailAndDescriptionError
+                                        .engineNo[0]}</span
+                                >
+                            {/if}
                             <TextField
-                                label="Amaun Pembiayaan Kerajaan (RM)"
-                                value="-"
-                            ></TextField>
-                        </div>
+                                hasError={!!$vehicleDetailAndDescriptionError.chasisNo}
+                                name="chasisNo"
+                                label="No. Casis"
+                                bind:value={$vehicleDetailAndDescriptionForm.chasisNo}
+                            />{#if $vehicleDetailAndDescriptionError.chasisNo}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$vehicleDetailAndDescriptionError
+                                        .chasisNo[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                hasError={!!$vehicleDetailAndDescriptionError.brand}
+                                name="brand"
+                                label="Buatan"
+                                bind:value={$vehicleDetailAndDescriptionForm.brand}
+                            />{#if $vehicleDetailAndDescriptionError.brand}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$vehicleDetailAndDescriptionError
+                                        .brand[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                hasError={!!$vehicleDetailAndDescriptionError.modelName}
+                                name="modelName"
+                                label="Nama Model"
+                                bind:value={$vehicleDetailAndDescriptionForm.modelName}
+                            />{#if $vehicleDetailAndDescriptionError.modelName}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$vehicleDetailAndDescriptionError
+                                        .modelName[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                hasError={!!$vehicleDetailAndDescriptionError.enginePower}
+                                name="enginePower"
+                                label="Kuasa Enjin"
+                                bind:value={$vehicleDetailAndDescriptionForm.enginePower}
+                            />{#if $vehicleDetailAndDescriptionError.enginePower}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$vehicleDetailAndDescriptionError
+                                        .enginePower[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                hasError={!!$vehicleDetailAndDescriptionError.fuel}
+                                name="fuel"
+                                label="Bahan Bakar"
+                                bind:value={$vehicleDetailAndDescriptionForm.fuel}
+                            />{#if $vehicleDetailAndDescriptionError.fuel}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$vehicleDetailAndDescriptionError
+                                        .fuel[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                hasError={!!$vehicleDetailAndDescriptionError.utilityClass}
+                                name="utilityClass"
+                                label="Kelas Kegunaan"
+                                bind:value={$vehicleDetailAndDescriptionForm.utilityClass}
+                            />{#if $vehicleDetailAndDescriptionError.utilityClass}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$vehicleDetailAndDescriptionError
+                                        .utilityClass[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                hasError={!!$vehicleDetailAndDescriptionError.bodyType}
+                                name="bodyType"
+                                label="Jenis Badan"
+                                bind:value={$vehicleDetailAndDescriptionForm.bodyType}
+                            />{#if $vehicleDetailAndDescriptionError.bodyType}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$vehicleDetailAndDescriptionError
+                                        .bodyType[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                hasError={!!$vehicleDetailAndDescriptionError.yearMade}
+                                name="yearMade"
+                                label="Tahun Dibuat"
+                                bind:value={$vehicleDetailAndDescriptionForm.yearMade}
+                            />{#if $vehicleDetailAndDescriptionError.yearMade}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$vehicleDetailAndDescriptionError
+                                        .yearMade[0]}</span
+                                >
+                            {/if}
+                            <SectionHeader
+                                title="Masukkan Butiran Penjualan/Tuan Asal"
+                            ></SectionHeader>
+                            <div
+                                class="flex w-full flex-col items-start justify-start gap-2.5"
+                            >
+                                <TextField
+                                    hasError={!!$vehicleDetailAndDescriptionError.previousOwnerName}
+                                    name="previousOwnerName"
+                                    label="Nama"
+                                    bind:value={$vehicleDetailAndDescriptionForm.previousOwnerName}
+                                />{#if $vehicleDetailAndDescriptionError.previousOwnerName}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$vehicleDetailAndDescriptionError
+                                            .previousOwnerName[0]}</span
+                                    >
+                                {/if}
+                                <TextField
+                                    hasError={!!$vehicleDetailAndDescriptionError.identificationNo}
+                                    name="identificationNo"
+                                    label="No. K/P"
+                                    bind:value={$vehicleDetailAndDescriptionForm.identificationNo}
+                                />{#if $vehicleDetailAndDescriptionError.identificationNo}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$vehicleDetailAndDescriptionError
+                                            .identificationNo[0]}</span
+                                    >
+                                {/if}
+                                <LongTextField
+                                    hasError={!!$vehicleDetailAndDescriptionError.address}
+                                    name="address"
+                                    label="Alamat"
+                                    bind:value={$vehicleDetailAndDescriptionForm.address}
+                                />{#if $vehicleDetailAndDescriptionError.address}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$vehicleDetailAndDescriptionError
+                                            .address[0]}</span
+                                    >
+                                {/if}
+                            </div>
+                            <SectionHeader
+                                title="Masukkan Harga Belian Kenderaan"
+                            ></SectionHeader>
+                            <div
+                                class="flex w-full flex-col items-start justify-start gap-2.5"
+                            >
+                                <TextField
+                                    hasError={!!$vehicleDetailAndDescriptionError.totalPurchasePrice}
+                                    name="totalPurchasePrice"
+                                    label="Jumlah Harga Belian (RM)"
+                                    bind:value={$vehicleDetailAndDescriptionForm.totalPurchasePrice}
+                                />{#if $vehicleDetailAndDescriptionError.totalPurchasePrice}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$vehicleDetailAndDescriptionError
+                                            .totalPurchasePrice[0]}</span
+                                    >
+                                {/if}
+                                <TextField
+                                    hasError={!!$vehicleDetailAndDescriptionError.balancePayment}
+                                    name="balancePayment"
+                                    label="Bayaran Baki (RM)"
+                                    bind:value={$vehicleDetailAndDescriptionForm.balancePayment}
+                                />{#if $vehicleDetailAndDescriptionError.balancePayment}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$vehicleDetailAndDescriptionError
+                                            .balancePayment[0]}</span
+                                    >
+                                {/if}
+                                <TextField
+                                    hasError={!!$vehicleDetailAndDescriptionError.govermentFundingAmount}
+                                    name="govermentFundingAmount"
+                                    label="Amaun Pembiayaan Kerajaan (RM)"
+                                    bind:value={$vehicleDetailAndDescriptionForm.govermentFundingAmount}
+                                />{#if $vehicleDetailAndDescriptionError.govermentFundingAmount}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$vehicleDetailAndDescriptionError
+                                            .govermentFundingAmount[0]}</span
+                                    >
+                                {/if}
+                            </div>
+                        </form>
                     {:else}
                         <SectionHeader title="Masukkan Maklumat Pembekal">
                             <FormButton
@@ -813,38 +1150,102 @@
                     {#if currEmpLoanRec[0].typeOfLoan == 'Kenderaan'}
                         <SectionHeader
                             title="Masukkan Maklumat Harga Jualan (RM)"
-                        ></SectionHeader>
+                        >
+                            <TextIconButton
+                                primary
+                                label="Simpan"
+                                form="secondScheduleFormValidation"
+                            />
+                        </SectionHeader>
                         <div
                             class="flex w-full flex-col items-start justify-start gap-2.5"
                         >
-                            <TextField
-                                label="Jumlah Harga Belian (RM)"
-                                value="4000.00"
-                            ></TextField>
-                            <TextField label="Bayaran Baki (RM)" value="-"
-                            ></TextField>
-                            <TextField
-                                label="Amaun Pembiayaan dan Keuntungan Kerajaan (RM)"
-                                value="-"
-                            ></TextField>
-                        </div>
-                        <SectionHeader
-                            title="Masukkan Amaun dan Tempoh Bayaran Balik Harga Jualan"
-                        ></SectionHeader>
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2.5"
-                        >
-                            <TextField label="Amaun Bulanan (RM)" value={'-'}
-                            ></TextField>
-                            <DropdownSelect
-                                dropdownType="label-left-full"
-                                label={'Tempoh Pembayaran'}
-                                options={loanPaybackMonthsOptions}
-                                value={getMonths(
-                                    currEmpLoanRec[0].loanStartDate,
-                                    currEmpLoanRec[0].loanEndDate,
-                                )}
-                            ></DropdownSelect>
+                            <form
+                                id="secondScheduleFormValidation"
+                                method="POST"
+                                use:secondScheduleEnhance
+                                class="flex w-full flex-col gap-2"
+                            >
+                                <TextField
+                                    hasError={!!$secondScheduleError.purchasePrice}
+                                    name="purchasePrice"
+                                    label="Jumlah Harga Belian (RM)"
+                                    bind:value={$secondScheduleForm.purchasePrice}
+                                ></TextField>
+                                {#if $secondScheduleError.purchasePrice}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$secondScheduleError
+                                            .purchasePrice[0]}</span
+                                    >
+                                {/if}
+                                <TextField
+                                    hasError={!!$secondScheduleError.balancePayment}
+                                    name="balancePayment"
+                                    label="Bayaran Baki (RM)"
+                                    bind:value={$secondScheduleForm.balancePayment}
+                                ></TextField>
+                                {#if $secondScheduleError.balancePayment}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$secondScheduleError
+                                            .balancePayment[0]}</span
+                                    >
+                                {/if}
+                                <TextField
+                                    hasError={!!$secondScheduleError.govermentFundingAndProfitAmount}
+                                    name="govermentFundingAndProfitAmount"
+                                    label="Amaun Pembiayaan dan Keuntungan Kerajaan (RM)"
+                                    bind:value={$secondScheduleForm.govermentFundingAndProfitAmount}
+                                ></TextField>
+                                {#if $secondScheduleError.govermentFundingAndProfitAmount}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$secondScheduleError
+                                            .govermentFundingAndProfitAmount[0]}</span
+                                    >
+                                {/if}
+
+                                <SectionHeader
+                                    title="Masukkan Amaun dan Tempoh Bayaran Balik Harga Jualan"
+                                ></SectionHeader>
+                                <div
+                                    class="flex w-full flex-col items-start justify-start gap-2.5"
+                                >
+                                    <TextField
+                                        hasError={!!$secondScheduleError.monthlyAmount}
+                                        name="monthlyAmount"
+                                        label="Amaun Bulanan (RM)"
+                                        bind:value={$secondScheduleForm.monthlyAmount}
+                                    ></TextField>
+                                    {#if $secondScheduleError.monthlyAmount}
+                                        <span
+                                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                            >{$secondScheduleError
+                                                .monthlyAmount[0]}</span
+                                        >
+                                    {/if}
+                                    <DropdownSelect
+                                        hasError={!!$secondScheduleError.paymentDuration}
+                                        id="paymentDuration"
+                                        dropdownType="label-left-full"
+                                        label={'Tempoh Pembayaran'}
+                                        options={loanPaybackMonthsOptions}
+                                        bind:value={$secondScheduleForm.paymentDuration}
+                                    ></DropdownSelect>
+                                    <!-- value={getMonths(
+                                        currEmpLoanRec[0].loanStartDate,
+                                        currEmpLoanRec[0].loanEndDate,
+                                    )} -->
+                                    {#if $secondScheduleError.paymentDuration}
+                                        <span
+                                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                            >{$secondScheduleError
+                                                .paymentDuration[0]}</span
+                                        >
+                                    {/if}
+                                </div>
+                            </form>
                         </div>
                     {:else}
                         <SectionHeader
@@ -898,13 +1299,13 @@
                 onClick={() => {
                     activeStepper = 4;
                 }}
-            ></FormButton><FormButton
-                type="save"
-                onClick={() => {
-                    activeStepper = 6;
-                }}
-            ></FormButton></StepperContentHeader
-        >
+            ></FormButton>
+            <TextIconButton
+                primary
+                label="Simpan"
+                form="letterOfAgreementFormValidation"
+            />
+        </StepperContentHeader>
         <StepperContentBody>
             <SectionHeader
                 title="Masukkan Maklumat Senarai Semak Surat Perjanjian"
@@ -912,16 +1313,37 @@
             <div
                 class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 pb-5"
             >
-                <RadioSingle
-                    legend="Diterima"
-                    {options}
-                    bind:userSelected={selectedAccepted}
-                ></RadioSingle>
-                <RadioSingle
-                    legend="Disemak"
-                    {options}
-                    bind:userSelected={selectedChecked}
-                ></RadioSingle>
+                <form
+                    id="letterOfAgreementFormValidation"
+                    use:letterOfAgreementEnhance
+                    method="POST"
+                    class="flex w-full flex-col gap-2"
+                >
+                    <RadioSingle
+                        name="received"
+                        legend="Diterima"
+                        {options}
+                        bind:userSelected={$letterOfAgreementForm.received}
+                    ></RadioSingle>
+                    {#if $letterOfAgreementError.received}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$letterOfAgreementError.received[0]}</span
+                        >
+                    {/if}
+                    <RadioSingle
+                        name="checked"
+                        legend="Disemak"
+                        {options}
+                        bind:userSelected={$letterOfAgreementForm.checked}
+                    ></RadioSingle>
+                    {#if $letterOfAgreementError.checked}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$letterOfAgreementError.checked[0]}</span
+                        >
+                    {/if}
+                </form>
             </div>
         </StepperContentBody>
     </StepperContent>

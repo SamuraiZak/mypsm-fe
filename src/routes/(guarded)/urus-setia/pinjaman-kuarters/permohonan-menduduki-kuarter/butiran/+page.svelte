@@ -21,13 +21,24 @@
     import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions';
     import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
     import { mockRekodKuarters } from '$lib/mocks/pinjaman-kuarters/mockRekodKuarters.js';
-
     import {
         fileSelectionList,
         selectedRecordId,
     } from '$lib/stores/globalState';
     import { Checkbox, Radio } from 'flowbite-svelte';
     import { onMount } from 'svelte';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _approvalRemarkFormSchema,
+        _submitApprovalRemarkForm,
+        _approvalAndOfferSchema,
+        _submitApprovalAndOfferForm,
+    } from './+page';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+
+    export let data: PageData;
 
     // Initialize Variables
     let activeStepper = 0;
@@ -135,6 +146,37 @@
         selectedFiles.splice(index, 1);
         fileSelectionList.set(selectedFiles);
     }
+
+    // ====================== Form Validation
+    const {
+        form: approvalRemarkForm,
+        errors: approvalRemarkError,
+        enhance: approvalRemarkEnhance,
+    } = superForm(data.approvalRemarkForm, {
+        SPA: true,
+        id: 'approvalRemarkForm',
+        validators: _approvalRemarkFormSchema,
+        onSubmit() {
+            _submitApprovalRemarkForm($approvalRemarkForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
+
+    const {
+        form: approvalAndOfferForm,
+        errors: approvalAndOfferError,
+        enhance: approvalAndOfferEnhance,
+    } = superForm(data.approvalAndOfferForm, {
+        SPA: true,
+        id: 'approvalAndOfferForm',
+        validators: _approvalAndOfferSchema,
+        onSubmit() {
+            _submitApprovalAndOfferForm($approvalAndOfferForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -441,22 +483,40 @@
                 onClick={() => {
                     activeStepper = 5;
                 }}
-            ></FormButton><FormButton
-                onClick={() => {
-                    activeStepper = 7;
-                }}
-            ></FormButton></StepperContentHeader
-        >
+            />
+            <TextIconButton primary label="Simpan" form="approvalRemarkForm" />
+        </StepperContentHeader>
         <StepperContentBody>
-            <LongTextField
-                label="Tindakan / Ulasan"
-                value={'Pemohon layak menduduki kuarters.'}
-            ></LongTextField>
-            <RadioSingle
-                options={approvalOptions}
-                userSelected={selectedApproval}
-                legend="Perkhidmatan"
-            ></RadioSingle>
+            <form
+                id="approvalRemarkForm"
+                method="POST"
+                use:approvalRemarkEnhance
+                class="flex w-full flex-col gap-2"
+            >
+                <LongTextField
+                    hasError={!!$approvalRemarkError.secretaryRemark}
+                    name="secretaryRemark"
+                    label="Tindakan / Ulasan"
+                    bind:value={$approvalRemarkForm.secretaryRemark}
+                ></LongTextField>
+                {#if $approvalRemarkError.secretaryRemark}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$approvalRemarkError.secretaryRemark[0]}</span
+                    >
+                {/if}
+                <RadioSingle
+                    options={approvalOptions}
+                    name="approvalResult"
+                    bind:userSelected={$approvalRemarkForm.approvalResult}
+                    legend=""
+                ></RadioSingle>
+                {#if $approvalRemarkError.approvalResult}
+                    <span class=" font-sans text-sm italic text-system-danger"
+                        >{$approvalRemarkError.approvalResult[0]}</span
+                    >
+                {/if}
+            </form>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -466,11 +526,12 @@
                 onClick={() => {
                     activeStepper = 6;
                 }}
-            ></FormButton><FormButton
-                onClick={() => {
-                    activeStepper = 8;
-                }}
-            ></FormButton></StepperContentHeader
+            ></FormButton>
+            <TextIconButton
+                primary
+                label="Simpan"
+                form="approvalAndOfferForm"
+            /></StepperContentHeader
         >
         <StepperContentBody>
             <CustomTab>
@@ -488,128 +549,173 @@
                     </div>
                 </CustomTabContent>
                 <CustomTabContent title="Maklumat Kelulusan dan Tawaran">
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b pb-5"
+                    <form
+                        id="approvalAndOfferForm"
+                        method="POST"
+                        use:approvalAndOfferEnhance
+                        class="flex w-full flex-col gap-2"
                     >
-                        <SectionHeader title="Nama Pelulus"></SectionHeader>
-                        <DropdownSelect
-                            dropdownType="label-left-full"
-                            label="Nama Pelulus"
-                            options={allEmp}
-                            value={selectedApprover}
-                        ></DropdownSelect>
-                    </div>
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b pb-5"
-                    >
-                        <SectionHeader title="Butiran Penempatan Kuarter"
-                        ></SectionHeader>
-                        <TextField
-                            label="Emel Pemohon"
-                            value={currentEmployee.email}
-                        ></TextField>
-                        <DateSelector
-                            handleDateChange
-                            label="Tarikh Masuk Kuarter"
-                            selectedDate="2023-08-06"
-                        ></DateSelector>
-                        <TextField
-                            label="Unit Dan Kuarter"
-                            value={'Unit 5 Kuarter 10'}
-                        ></TextField>
-                    </div>
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b pb-5"
-                    >
-                        <!-- WIP -->
-                        <SectionHeader
-                            title="Kadar Bayaran Sewa Kuarters (Unit Pengurusan Fasiliti)"
-                        ></SectionHeader>
-                        <div class="flex flex-col gap-5">
-                            <ul
-                                class="bg-white dark:divide-gray-600 dark:border-gray-600 dark:bg-gray-800"
-                            >
-                                <li>
-                                    <Radio
-                                        class="p-3"
-                                        bind:group={rentRate}
-                                        value="under25km"
-                                    >
-                                        <div
-                                            class="flex flex-col pl-10 text-sm italic {rentRate ==
-                                            'under25km'
-                                                ? 'text-txt-primary'
-                                                : 'text-txt-tertiary'}"
-                                        >
-                                            <p>Dalam Jarak 25 KM:</p>
-                                            <ul
-                                                class="list-inside list-disc pl-2"
-                                            >
-                                                <li>Potongan ITP 75%</li>
-                                                <li>Potongan COLA 50%</li>
-                                            </ul>
-                                        </div></Radio
-                                    >
-                                </li>
-                                <li>
-                                    <Radio
-                                        class="p-3"
-                                        bind:group={rentRate}
-                                        value="more25km"
-                                        ><div
-                                            class="flex flex-col pl-10 text-sm italic {rentRate ==
-                                            'more25km'
-                                                ? 'text-txt-primary'
-                                                : 'text-txt-tertiary'}"
-                                        >
-                                            <p>Jarak Melebihi 25 KM:</p>
-                                            <ul
-                                                class="list-inside list-disc pl-2"
-                                            >
-                                                <li>Potongan COLA 50%</li>
-                                            </ul>
-                                        </div></Radio
-                                    >
-                                </li>
-                                <li>
-                                    <Radio
-                                        class="p-3"
-                                        bind:group={rentRate}
-                                        value="gredExceed"
-                                        ><div
-                                            class="flex flex-col pl-10 text-sm italic {rentRate ==
-                                            'gredExceed'
-                                                ? 'text-txt-primary'
-                                                : 'text-txt-tertiary'}"
-                                        >
-                                            <p>
-                                                Gred Jawatan Melebihi Kategori
-                                                Kuarters:
-                                            </p>
-                                            <ul
-                                                class="list-inside list-disc pl-2"
-                                            >
-                                                <li>
-                                                    Potongan ITP Mengikut Nilar
-                                                    Sewaan Gred Tertinggi
-                                                    Kuarters yang Diperuntukkan
-                                                    (RM)
-                                                </li>
-                                                <TextField
-                                                    labelBlack
-                                                    disabled={rentRate !=
-                                                        'gredExceed'}
-                                                    label=""
-                                                    value={CurrencyHelper.formatCurrency(0)}
-                                                ></TextField>
-                                            </ul>
-                                        </div></Radio
-                                    >
-                                </li>
-                            </ul>
+                        <div
+                            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b pb-5"
+                        >
+                            <SectionHeader title="Nama Pelulus"></SectionHeader>
+                            <DropdownSelect
+                                hasError={!!$approvalAndOfferError.approvalName}
+                                dropdownType="label-left-full"
+                                id="approvalName"
+                                label="Nama Pelulus"
+                                options={allEmp}
+                                bind:value={$approvalAndOfferForm.approvalName}
+                            ></DropdownSelect>
+                            {#if $approvalAndOfferError.approvalName}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$approvalAndOfferError
+                                        .approvalName[0]}</span
+                                >
+                            {/if}
                         </div>
-                    </div></CustomTabContent
-                >
+                        <div
+                            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b pb-5"
+                        >
+                            <SectionHeader title="Butiran Penempatan Kuarter"
+                            ></SectionHeader>
+                            <TextField
+                                hasError={!!$approvalAndOfferError.applicantEmail}
+                                name="applicantEmail"
+                                label="Emel Pemohon"
+                                bind:value={$approvalAndOfferForm.applicantEmail}
+                            ></TextField>
+                            {#if $approvalAndOfferError.applicantEmail}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$approvalAndOfferError
+                                        .applicantEmail[0]}</span
+                                >
+                            {/if}
+                            <DateSelector
+                                hasError={!!$approvalAndOfferError.quarterEntryDate}
+                                name="quarterEntryDate"
+                                handleDateChange
+                                label="Tarikh Masuk Kuarter"
+                                bind:selectedDate={$approvalAndOfferForm.quarterEntryDate}
+                            ></DateSelector>
+                            {#if $approvalAndOfferError.quarterEntryDate}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$approvalAndOfferError
+                                        .quarterEntryDate[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                hasError={!!$approvalAndOfferError.unitAndQuarter}
+                                name="unitAndQuarter"
+                                label="Unit Dan Kuarter"
+                                bind:value={$approvalAndOfferForm.unitAndQuarter}
+                            ></TextField>
+                            {#if $approvalAndOfferError.unitAndQuarter}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$approvalAndOfferError
+                                        .unitAndQuarter[0]}</span
+                                >
+                            {/if}
+                        </div>
+                        <div
+                            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b pb-5"
+                        >
+                            <!-- WIP -->
+                            <SectionHeader
+                                title="Kadar Bayaran Sewa Kuarters (Unit Pengurusan Fasiliti)"
+                            ></SectionHeader>
+                            <div class="flex flex-col gap-5">
+                                <ul
+                                    class="bg-white dark:divide-gray-600 dark:border-gray-600 dark:bg-gray-800"
+                                >
+                                    <li>
+                                        <Radio
+                                            class="p-3"
+                                            bind:group={$approvalAndOfferForm.rentalPaymentRates}
+                                            value="under25km"
+                                        >
+                                            <div
+                                                class="flex flex-col pl-10 text-sm italic {$approvalAndOfferForm.rentalPaymentRates ==
+                                                'under25km'
+                                                    ? 'text-txt-primary'
+                                                    : 'text-txt-tertiary'}"
+                                            >
+                                                <p>Dalam Jarak 25 KM:</p>
+                                                <ul
+                                                    class="list-inside list-disc pl-2"
+                                                >
+                                                    <li>Potongan ITP 75%</li>
+                                                    <li>Potongan COLA 50%</li>
+                                                </ul>
+                                            </div></Radio
+                                        >
+                                    </li>
+                                    <li>
+                                        <Radio
+                                            class="p-3"
+                                            bind:group={$approvalAndOfferForm.rentalPaymentRates}
+                                            value="more25km"
+                                            ><div
+                                                class="flex flex-col pl-10 text-sm italic {$approvalAndOfferForm.rentalPaymentRates ==
+                                                'more25km'
+                                                    ? 'text-txt-primary'
+                                                    : 'text-txt-tertiary'}"
+                                            >
+                                                <p>Jarak Melebihi 25 KM:</p>
+                                                <ul
+                                                    class="list-inside list-disc pl-2"
+                                                >
+                                                    <li>Potongan COLA 50%</li>
+                                                </ul>
+                                            </div></Radio
+                                        >
+                                    </li>
+                                    <li>
+                                        <Radio
+                                            class="p-3"
+                                            bind:group={$approvalAndOfferForm.rentalPaymentRates}
+                                            value="gredExceed"
+                                            ><div
+                                                class="flex flex-col pl-10 text-sm italic {$approvalAndOfferForm.rentalPaymentRates ==
+                                                'gredExceed'
+                                                    ? 'text-txt-primary'
+                                                    : 'text-txt-tertiary'}"
+                                            >
+                                                <p>
+                                                    Gred Jawatan Melebihi
+                                                    Kategori Kuarters:
+                                                </p>
+                                                <ul
+                                                    class="list-inside list-disc pl-2"
+                                                >
+                                                    <li>
+                                                        Potongan ITP Mengikut
+                                                        Nilar Sewaan Gred
+                                                        Tertinggi Kuarters yang
+                                                        Diperuntukkan (RM)
+                                                    </li>
+                                                    <TextField
+                                                        labelBlack
+                                                        disabled={ $approvalAndOfferForm.rentalPaymentRates !=
+                                                            'gredExceed'}
+                                                        label=""
+                                                        value={CurrencyHelper.formatCurrency(
+                                                            0,
+                                                        )}
+                                                    ></TextField>
+                                                </ul>
+                                            </div></Radio
+                                        >
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </form>
+                </CustomTabContent>
             </CustomTab>
         </StepperContentBody>
     </StepperContent>
@@ -638,3 +744,5 @@
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+
+<Toaster />
