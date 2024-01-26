@@ -29,8 +29,7 @@
 
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader
-        title="Maklumat Permohonan Pemberian Taraf Berpencen {data.record
-            .namaPekerja} ({data.record.noPekerja})"
+        title="Maklumat Permohonan Pemberian Taraf Berpencen"
         description="Kemaskini maklumat PTB dan KWAP berikut"
         ><FormButton
             type="close"
@@ -53,7 +52,7 @@
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
                     <MaklumatKakitangan
-                        ptbData={data.record}
+                        bind:ptbData={data.employeelist}
                         editable={false}
                     />
                 </div>

@@ -12,3 +12,10 @@ export interface PensionTableFilter {
 export interface Filter {
 }
 
+const requestBody: PensionTableFilter = {
+    pageNum: 1,
+    pageSize: 10,
+    orderBy: 'createdAt',
+    orderType: 'asc',
+    filter: {},
+};
