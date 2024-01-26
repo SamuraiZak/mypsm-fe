@@ -3,12 +3,13 @@
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import { Alert } from 'flowbite-svelte';
-    import type { ActionData } from '../$types';
     // import * as ptbService from '$lib/service/ptbAndKwap/services';
     import { onMount } from 'svelte';
     import type { Cookies } from '@sveltejs/kit';
+    import type { Employee } from '$lib/view-models/mypsm/perjawatan/pension/pension-personal-detail-response.view-model';
 
-    export let ptbData: PtbAndKwap;
+
+    export let ptbData: Employee;
     let currentPtb: {
         ptbDate: 'string';
         letterRefNumber: 'string';
@@ -28,7 +29,7 @@
 <form
     class="flex w-full flex-col gap-2.5"
     method="POST"
-    action="./butiran-permohonan-{ptbData.noPekerja}-{ptbData.noKadPengenalan}?/create"
+    action="./butiran-permohonan-{ptbData.employeeNo}-{ptbData.name}?/create"
     use:enhance={() => {
         creating = true;
 

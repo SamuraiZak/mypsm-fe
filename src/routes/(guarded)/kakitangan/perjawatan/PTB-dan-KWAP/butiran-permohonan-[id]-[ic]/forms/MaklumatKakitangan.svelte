@@ -5,12 +5,14 @@
     // import { getEmployees } from '$lib/service/employees/staff-service';
     import { onMount } from 'svelte';
     import { mockEmployees } from '$lib/mocks/database/mockEmployees';
+    import type { Employee } from '$lib/view-models/mypsm/perjawatan/pension/pension-personal-detail-response.view-model';
     let radioValueExSoldier: string | undefined = 'tidak';
     let radioValueRelationToStaff: string | undefined = 'ya';
-    let staffData: IntEmployees | undefined;
-    export let ptbData: PtbAndKwap;
+    let staffData: Employee | undefined;
+
     export let editable: boolean = false;
 
+    export let ptbData: Employee;
     const options: RadioOption[] = [
         {
             value: 'ya',
@@ -23,16 +25,16 @@
     ];
 
     // fetch data on mount.
-    onMount(async () => {
-        const data: IntEmployees[] = mockEmployees;
+    // onMount(async () => {
+    //     const data: IntEmployees[] = mockEmployees;
 
-        staffData = data.find((staff) => {
-            return (
-                staff.employeeNumber === ptbData.noPekerja &&
-                staff.identityDocumentNumber === ptbData.noKadPengenalan
-            );
-        });
-    });
+    //     staffData = data.find((staff) => {
+    //         return (
+    //             staff.employeeNumber === ptbData.employeeNo &&
+    //             staff.identityDocumentNumber === ptbData.name
+    //         );
+    //     });
+    // });
 </script>
 
 <form class="flex w-full flex-col gap-2.5">
@@ -40,198 +42,198 @@
     <TextField
         type="text"
         disabled={!editable}
-        id="staff-number-{staffData?.employeeNumber}"
+        id="staff-number-{ptbData.employeeNo}"
         label="No. Pekerja"
-        value={staffData?.employeeNumber}
+        value={ptbData.employeeNo}
     ></TextField>
-    <TextField
+    <!-- <TextField
         type="date"
         disabled={!editable}
-        id="service-status-{staffData?.employeeNumber}"
+        id="service-status-{ptbData.employeeNumber}"
         label="Status Pekerjaan"
         value=""
-    ></TextField>
-    <TextField
+    ></TextField> -->
+    <!-- <TextField
         type="date"
         disabled={!editable}
-        id="inactive-date-{staffData?.employeeNumber}"
+        id="inactive-date-{ptbData.employeeNumber}"
         label="Tarikh Kuatkuasa Tidak Aktif"
         value=""
-    ></TextField>
+    ></TextField> -->
     <TextField
         type="text"
         disabled={!editable}
-        id="nama-penuh-{staffData?.employeeNumber}"
+        id="nama-penuh-{ptbData.name}"
         label="Nama Penuh"
-        value={staffData?.name}
+        value={ptbData.name}
     ></TextField>
     <TextField
         type="text"
         disabled={!editable}
-        id="nama-lain-{staffData?.alternativeName}"
+        id="nama-lain-{ptbData.otherName}"
         label="Nama Lain"
         value=""
     ></TextField>
     <TextField
         type="text"
         disabled={!editable}
-        id="ic-number-{staffData?.employeeNumber}"
+        id="ic-number-{ptbData.identityCard}"
         label="No. K/P"
-        value={staffData?.identityDocumentNumber}
+        value={ptbData.identityCard}
     ></TextField>
     <TextField
         type="text"
         disabled={!editable}
-        id="ic-color-{staffData?.employeeNumber}"
+        id="ic-color-{ptbData.identityCardColor}"
         label="Warna K/P"
-        value={staffData?.identityDocumentType}
+        value={ptbData.identityCardColor}
     ></TextField>
     <TextField
         type="date"
         disabled={!editable}
-        id="dob-{staffData?.employeeNumber}"
+        id="dob-{ptbData.dateOfBirth}"
         label="Tarikh Lahir"
-        value={staffData?.birthDate}
+        value={ptbData.dateOfBirth}
     ></TextField>
     <TextField
         type="text"
         disabled={!editable}
-        id="place-of-birth-{staffData?.employeeNumber}"
+        id="place-of-birth-{ptbData.placeOfBirth}"
         label="Tempat Lahir"
-        value={staffData?.birthPlace}
+        value={ptbData.placeOfBirth}
     ></TextField>
     <TextField
         type="text"
         disabled={!editable}
-        id="citizenship-{staffData?.employeeNumber}"
+        id="citizenship-{ptbData.nationality}"
         label="Warganegara"
-        value={staffData?.isMalaysian}
+        value={ptbData.nationality}
     ></TextField>
     <TextField
         type="text"
         disabled={!editable}
-        id="race-{staffData?.employeeNumber}"
+        id="race-{ptbData.race}"
         label="Bangsa"
-        value={staffData?.raceId}
+        value={ptbData.race}
     ></TextField>
     <TextField
         type="text"
         disabled={!editable}
-        id="religion-{staffData?.employeeNumber}"
+        id="religion-{ptbData.religion}"
         label="Agama"
-        value={staffData?.religionId}
+        value={ptbData.religion}
     ></TextField>
     <TextField
         type="text"
         disabled={!editable}
-        id="gender-{staffData?.employeeNumber}"
+        id="gender-{ptbData.gender}"
         label="Jantina"
-        value={staffData?.gender}
+        value={ptbData.gender}
     ></TextField>
     <TextField
         type="text"
         disabled={!editable}
-        id="status-{staffData?.employeeNumber}"
+        id="status-{ptbData.status}"
         label="Status"
-        value=""
+        value={ptbData.status}
     ></TextField>
     <TextField
         type="email"
         disabled={!editable}
-        id="email-{staffData?.employeeNumber}"
+        id="email-{ptbData.mailAddress}"
         label="Emel"
-        value={staffData?.email}
+        value={ptbData.mailAddress}
     ></TextField>
     <LongTextField
         disabled={!editable}
-        id="address-{staffData?.employeeNumber}"
+        id="address-{ptbData.homeAddress}"
         label="Alamat Rumah"
-        value={staffData?.homeAddress}
+        value={ptbData.homeAddress}
     ></LongTextField>
     <LongTextField
         disabled={!editable}
-        id="posting-address-{staffData?.employeeNumber}"
+        id="posting-address-{ptbData.mailAddress}"
         label="Alamat Surat Menyurat (jika berlainan dari alamat rumah)"
-        value={staffData?.mailAddress}
+        value={ptbData.mailAddress}
     ></LongTextField>
     <TextField
         type="text"
         disabled={!editable}
-        id="home-phone-{staffData?.employeeNumber}"
+        id="home-phone-{ptbData.homeNo}"
         label="No. Telefon Rumah"
-        value=""
+        value={ptbData.homeNo}
     ></TextField>
     <TextField
         type="text"
         disabled={!editable}
-        id="mobile-phone-{staffData?.employeeNumber}"
+        id="mobile-phone-{ptbData.mobileNo}"
         label="No. Telefon Bimbit"
-        value=""
+        value={ptbData.mobileNo}
     ></TextField>
     <TextField
         type="text"
         disabled={!editable}
-        id="home-{staffData?.employeeNumber}"
+        id="home-{ptbData.housing}"
         label="Perumahan"
-        value=""
+        value={ptbData.housing}
     ></TextField>
     <TextField
         type="text"
         disabled={!editable}
-        id="loaned-home-{staffData?.employeeNumber}"
+        id="loaned-home-{ptbData.houseLoan}"
         label="Pinjaman Perumahan"
-        value=""
+        value={ptbData.houseLoan}
     ></TextField>
-    <TextField
+    <!-- <TextField
         type="text"
         disabled={!editable}
-        id="loaned-vehicle-{staffData?.employeeNumber}"
+        id="loaned-vehicle-{ptbData.employeeNumber}"
         label="Pinjaman Kenderaam"
         value=""
-    ></TextField>
-    <RadioSingle
+    ></TextField> -->
+    <!-- <RadioSingle
         disabled={!editable}
         {options}
         legend="Bekas Polis/Tentera"
-        bind:userSelected={radioValueExSoldier}
-    />
+        bind:userSelected={stffData?.isExPolice}
+    /> -->
     <div class="pt-5">
         <b class="text-sm text-system-primary"
             >Maklumat Pertalian Dengan Kakitangan LKIM
         </b>
     </div>
-    <RadioSingle
+    <!-- <RadioSingle
         disabled={!editable}
         {options}
         legend="Pertalian Dengan Kakitangan LKIM"
         bind:userSelected={radioValueRelationToStaff}
-    />
-    <TextField
+    /> -->
+    <!-- <TextField
         type="text"
         disabled={!editable}
-        id="related-staff-number-{staffData?.employeeNumber}"
+        id="related-staff-number-{ptbData.employeeNumber}"
         label="No. Pekerja Kakitangan LKIM"
         value=""
     ></TextField>
     <TextField
         type="text"
         disabled={!editable}
-        id="related-staff-name-{staffData?.employeeNumber}"
+        id="related-staff-name-{ptbData.employeeNumber}"
         label="Nama Kakitangan LKIM"
         value=""
     ></TextField>
     <TextField
         type="text"
         disabled={!editable}
-        id="related-staff-position-{staffData?.employeeNumber}"
+        id="related-staff-position-{ptbData.employeeNumber}"
         label="Jawatan Kakitangan LKIM"
         value=""
     ></TextField>
     <TextField
         type="text"
         disabled={!editable}
-        id="related-staff-relations-{staffData?.employeeNumber}"
+        id="related-staff-relations-{ptbData.employeeNumber}"
         label="Hubungan dengan Kakitangan LKIM"
         value="Ayah"
-    ></TextField>
+    ></TextField> -->
 </form>
