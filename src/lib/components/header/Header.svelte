@@ -5,6 +5,14 @@
     import group from '$lib/assets/group.png';
     import logo from '$lib/assets/logo.png';
     import MyPSM from '$lib/assets/MyPSM.png';
+    import { AuthService } from '$lib/services/implementations/core/auth/authentication.service';
+    import { goto } from '$app/navigation';
+
+    const logOutUser = async () => {
+        await AuthService.logout().finally(() => {
+            goto('/login');
+        });
+    };
 </script>
 
 <header
@@ -23,8 +31,8 @@
         <!-- <HeaderProfile /> -->
         <AccountTile></AccountTile>
         <div class="flex w-[50px] flex-col items-center justify-center p-0">
-            <form method="POST" action="/logout">
-                <button>
+            <form method="POST">
+                <button on:click={logOutUser}>
                     <IconButton>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
