@@ -1,6 +1,7 @@
 <!-- WIP -->
 <script lang="ts">
     import FormButton from '$lib/components/buttons/FormButton.svelte';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
@@ -28,6 +29,15 @@
     } from '$lib/stores/globalState';
     import { Checkbox, Radio } from 'flowbite-svelte';
     import { onMount } from 'svelte';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _approvalRemarkFormSchema,
+        _submitApprovalRemarkForm,
+    } from './+page';
+
+    export let data: PageData;
 
     // Initialize Variables
     let activeStepper = 0;
@@ -82,12 +92,12 @@
 
     const approvalOptions: RadioOption[] = [
         {
-            value: 'true',
-            label: 'LULUS',
+            value: true,
+            label: 'SAH',
         },
         {
-            value: 'false',
-            label: 'TIDAK LULUS',
+            value: false,
+            label: 'TIDAK SAH',
         },
     ];
     const serviceOptions: RadioOption[] = [
@@ -135,6 +145,22 @@
         selectedFiles.splice(index, 1);
         fileSelectionList.set(selectedFiles);
     }
+
+    // ====================== Form Validation
+    const {
+        form: approvalRemarkForm,
+        errors: approvalRemarkError,
+        enhance: approvalRemarkEnhance,
+    } = superForm(data.approvalRemarkForm, {
+        SPA: true,
+        id: 'secretaryApprovalRemarkForm',
+        validators: _approvalRemarkFormSchema,
+        onSubmit() {
+            _submitApprovalRemarkForm($approvalRemarkForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -241,7 +267,7 @@
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Maklumat Pasangan (Jika Berkhawin)"
+        <StepperContentHeader title="Maklumat Penempatan Kuarters"
             ><FormButton
                 type="back"
                 onClick={() => {
@@ -254,40 +280,31 @@
             ></FormButton>
         </StepperContentHeader>
         <StepperContentBody>
+            <SectionHeader title="Butiran Penempatan Kuarter"/>
+            <div class="w-full flex flex-col gap-2.5 border-b py-5">
             <TextField
                 {disabled}
                 {labelBlack}
-                label="Nama Penuh"
+                label="Email Pemohon"
                 value={'Nur Afifah Farhan'}
             ></TextField>
             <TextField
                 {disabled}
                 {labelBlack}
-                label="No. Telefon"
+                label="Tarikh Masuk Kuarter"
                 value={'014-843557'}
             ></TextField>
             <TextField
                 {disabled}
                 {labelBlack}
-                label="Jabatan / Jawatan"
+                label="Unit Dan Kuarter"
                 value={'Pengurus'}
             ></TextField>
-            <TextField
-                {disabled}
-                {labelBlack}
-                label="Gaji Sekarang yang Diterima (Gaji Pokok / Hakiki) (RM)"
-                value={CurrencyHelper.formatCurrency(4123.22)}
-            ></TextField>
-            <TextField
-                {disabled}
-                {labelBlack}
-                label="Bilangan anak yang tinggal bersama pemohon yang berumur kurang 21 tahun"
-                value={'2'}
-            ></TextField>
+        </div>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Maklumat Perkhidmatan (Agensi/Jabatan)"
+        <StepperContentHeader title="Maklumat Keluar Kuarters"
             ><FormButton
                 type="back"
                 onClick={() => {
@@ -441,22 +458,41 @@
                 onClick={() => {
                     activeStepper = 5;
                 }}
-            ></FormButton><FormButton
-                onClick={() => {
-                    activeStepper = 7;
-                }}
-            ></FormButton></StepperContentHeader
+            ></FormButton>
+            <TextIconButton primary label="Simpan" form="secretaryApprovalRemarkForm"/>
+            </StepperContentHeader
         >
         <StepperContentBody>
+            <form
+                id="secretaryApprovalRemarkForm"
+                method="POST"
+                use:approvalRemarkEnhance
+                class="flex w-full flex-col gap-2"
+            >
             <LongTextField
+            hasError={!!$approvalRemarkError.secretaryRemark}
+                    name="secretaryRemark"
                 label="Tindakan / Ulasan"
-                value={'Pemohon layak menduduki kuarters.'}
+                bind:value={$approvalRemarkForm.secretaryRemark}
             ></LongTextField>
+            {#if $approvalRemarkError.secretaryRemark}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$approvalRemarkError.secretaryRemark[0]}</span
+                    >
+                {/if}
             <RadioSingle
                 options={approvalOptions}
-                userSelected={selectedApproval}
-                legend="Perkhidmatan"
+                name="approvalResult"
+                bind:userSelected={$approvalRemarkForm.approvalResult}
+                legend=""
             ></RadioSingle>
+            {#if $approvalRemarkError.approvalResult}
+                    <span class=" font-sans text-sm italic text-system-danger"
+                        >{$approvalRemarkError.approvalResult[0]}</span
+                    >
+                {/if}
+            </form>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -613,28 +649,6 @@
             </CustomTab>
         </StepperContentBody>
     </StepperContent>
-    <StepperContent>
-        <StepperContentHeader title="Surat Tawaran Kuarters"
-            ><FormButton
-                type="back"
-                onClick={() => {
-                    activeStepper = 7;
-                }}
-            ></FormButton><FormButton
-                type="done"
-                onClick={() => {
-                    window.history.back();
-                }}
-            ></FormButton></StepperContentHeader
-        >
-        <StepperContentBody>
-            <div
-                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b pb-5"
-            >
-                <DownloadAttachment
-                    fileName="SURAT TAWARAN PENEMPATAN KUARTERS.pdf"
-                ></DownloadAttachment>
-            </div>
-        </StepperContentBody>
-    </StepperContent>
 </Stepper>
+
+<Toaster/>
