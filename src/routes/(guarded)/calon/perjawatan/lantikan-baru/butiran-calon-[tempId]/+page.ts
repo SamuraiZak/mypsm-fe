@@ -314,35 +314,39 @@ export const _nextOfKinListSchema = z.object({
 //==========================================================
 
 export const _serviceInfoSchema = z.object({
-    faedahPersaraanPerkhidmatan: generalSelectSchema,
-    gredSemasa: generalSelectSchema,
-    jawatan: generalSelectSchema,
-    penempatan: generalSelectSchema,
-    tarafPerkhidmatan: generalSelectSchema,
-    bulanKGT: generalSelectSchema,
-    noKWSP: shortTextSchema,
-    noSOCSO: shortTextSchema,
-    noCukai: shortTextSchema,
-    bank: shortTextSchema,
-    noAkaun: shortTextSchema,
-    tarikhBerkuatKuasa: shortTextSchema,
-    tanggaGaji: shortTextSchema,
-    gajiPokok: shortTextSchema,
-    itka: shortTextSchema,
-    itp: shortTextSchema,
-    epw: shortTextSchema,
-    cola: shortTextSchema,
-    kelayakanCuti: shortTextSchema,
-    mulaDilantikPerkhidmatanKerajaan: maxDateSchema,
-    mulaDilantikPerkhidmatanLKIM: maxDateSchema,
-    disahkanDalamJawatanSemasaLKIM: maxDateSchema,
-    tarikhKelulusanPercantumanPerkhidmatanLepas: maxDateSchema,
-    tarikhBersara: minDateSchema,
-    tarikhKuatkuasaLantikanSemasa: maxDateSchema,
-    pemangkuanSekarang: minDateSchema,
-    tanggungKerjaSekarang: minDateSchema,
-    kenaikanGajiAkhir: minDateSchema,
-    kenaikanPangkatAkhir: minDateSchema,
+    candidateId: z.number(),
+    gradeId: z.number(),
+    positionId: z.number(),
+    placementId: z.number(),
+    serviceTypeId: z.number(),
+    serviceGroupId: z.number(),
+    unitId: z.number(),
+    employmentStatusId: z.number(),
+    effectiveDate: z.coerce.date(),
+    retirementBenefit: z.string(),
+    epfNumber: z.string(),
+    socsoNumber: z.string(),
+    incomeNumber: z.string(),
+    bankName: z.string(),
+    bankAccount: z.string(),
+    eligibleLeaveCount: z.number(),
+    civilServiceStartDate: z.coerce.date(),
+    newRecruitEffectiveDate: z.coerce.date(),
+    serviceDate: z.coerce.date(),
+    firstServiceDate: z.coerce.date(),
+    firstConfirmServiceDate: z.coerce.date(),
+    firstEffectiveDate: z.coerce.date(),
+    confirmDate: z.coerce.date(),
+    pensionNumber: z.string(),
+    kgt: z.number(),
+    retirementDate: z.coerce.date(),
+    revisionMonth: z.string(),
+    maximumSalary: z.number(),
+    baseSalary: z.number(),
+    itka: z.number(),
+    itp: z.number(),
+    epw: z.number(),
+    cola: z.number(),
 });
 
 //==========================================================
@@ -587,11 +591,9 @@ export const _submitPersonalInfoForm = async (formData: object) => {
         return fail(400, form);
     }
 
-    // const requestBody: CandidatePersonalDetailsRequestBody = form;
-
     const response: RequestSuccessBody =
         await EmployeeService.createCurrentCandidatePersonalDetails(
-            form as CandidatePersonalDetailsRequestBody,
+            form.data as CandidatePersonalDetailsRequestBody,
         );
 
     if (response.status !== 201) {
