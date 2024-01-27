@@ -56,6 +56,7 @@ import type {
     CandidatePersonalData,
     CandidatePersonalDetailsResponse,
 } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-respone.model.js';
+import type { NewHireDocumentsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-document-response.view-model';
 import type { NewHireSecretaryAddUpdateRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-secretary-add-update-request.model';
 import type {
     NewHireSecretaryUpdateResponse,
@@ -155,9 +156,9 @@ const numberIdSchema = z.coerce.number({
 export const _personalInfoForm = z
     .object({
         name: shortTextSchema,
-        alternativeName: shortTextSchema.default(' '),
+        alternativeName: codeSchema.default(' '),
         identityDocumentNumber: shortTextSchema,
-        identityDocumentColor: shortTextSchema,
+        identityDocumentColor: codeSchema,
         email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
         propertyDeclarationDate: maxDateSchema,
         birthDate: maxDateSchema,
@@ -171,6 +172,16 @@ export const _personalInfoForm = z
         ethnicId: numberIdSchema,
         maritalId: numberIdSchema,
         assetDeclarationStatusId: numberIdSchema,
+        homeAddress: shortTextSchema,
+        homeCountryId: numberIdSchema,
+        homeStateId: numberIdSchema,
+        homeCityId: numberIdSchema,
+        homePostcode: shortTextSchema,
+        mailAddress: shortTextSchema,
+        mailCountryId: numberIdSchema,
+        mailStateId: numberIdSchema,
+        mailCityId: numberIdSchema,
+        mailPostcode: shortTextSchema,
         isExPoliceOrSoldier: booleanSchema,
         isInternalRelationship: booleanSchema,
         employeeNumber: shortTextSchema.nullable(),
@@ -223,9 +234,9 @@ export const _experienceInfoSchema = z.object({
     company: shortTextSchema,
     address: shortTextSchema,
     position: shortTextSchema,
-    positionCode: shortTextSchema.nullable(),
-    startDate: minDateSchema,
-    endDate: minDateSchema,
+    positionCode: codeSchema,
+    startDate: maxDateSchema,
+    endDate: maxDateSchema,
     salary: z.coerce.number({
         invalid_type_error: 'Medan ini hendaklah ditetapkan dengan angka',
     }),
@@ -256,8 +267,8 @@ export const _familyInfoSchema = z.object({
     maritalId: numberIdSchema,
     genderId: numberIdSchema,
     name: shortTextSchema,
-    alternativeName: shortTextSchema.default(' '),
-    identityDocumentColor: shortTextSchema,
+    alternativeName: codeSchema.default(' '),
+    identityDocumentColor: codeSchema,
     identityDocumentNumber: shortTextSchema,
     address: shortTextSchema,
     postcode: shortTextSchema,
@@ -283,8 +294,8 @@ export const _dependencyInfoSchema = z.object({
     maritalId: numberIdSchema,
     genderId: numberIdSchema,
     name: shortTextSchema,
-    alternativeName: shortTextSchema.default(' '),
-    identityDocumentColor: shortTextSchema,
+    alternativeName: codeSchema.default(' '),
+    identityDocumentColor: codeSchema,
     identityDocumentNumber: shortTextSchema,
     address: shortTextSchema,
     postcode: shortTextSchema,
@@ -310,8 +321,8 @@ export const _nextOfKinInfoSchema = z.object({
     maritalId: numberIdSchema,
     genderId: numberIdSchema,
     name: shortTextSchema,
-    alternativeName: shortTextSchema.default(' '),
-    identityDocumentColor: shortTextSchema,
+    alternativeName: codeSchema.default(' '),
+    identityDocumentColor: codeSchema,
     identityDocumentNumber: shortTextSchema,
     address: shortTextSchema,
     postcode: shortTextSchema,
@@ -406,6 +417,11 @@ export const load = async ({ params }) => {
             candidateIdRequestBody,
         );
 
+    const documentInfoResponse: NewHireDocumentsResponse =
+        await EmployeeService.getCurrentCandidateDocuments(
+            candidateIdRequestBody,
+        );
+
     const serviceResponse: NewHireSecretaryUpdateResponse =
         await EmployeeService.getCurrentCandidateSecretaryUpdate(
             candidateIdRequestBody,
@@ -458,6 +474,7 @@ export const load = async ({ params }) => {
 
     return {
         candidateIdRequestBody,
+        personalDetailResponse,
         personalInfoForm,
         academicInfoResponse,
         academicInfoForm,
@@ -478,6 +495,7 @@ export const load = async ({ params }) => {
         addFamilyModal,
         addNonFamilyModal,
         addNextOfKinModal,
+        documentInfoResponse,
     };
 };
 
@@ -493,12 +511,11 @@ export const _submitPersonalInfoForm = async (formData: object) => {
     const response: RequestSuccessBody =
         await EmployeeService.createCurrentCandidatePersonalDetails(
             form.data as CandidatePersonalDetailsRequestBody,
-        );
+        ).finally(() => toast.dismiss());
 
     if (response.status !== 201) {
         // if error toast
-        toast.dismiss();
-        getErrorToast();
+        getServerErrorToast();
         return error(400, { message: response.message });
     }
 
@@ -524,12 +541,11 @@ export const _submitServiceInfoForm = async (formData: object) => {
     const response: RequestSuccessBody =
         await EmployeeService.createCurrentCandidateSecretaryUpdate(
             form.data as NewHireSecretaryAddUpdateRequestBody,
-        );
+        ).finally(() => toast.dismiss());
 
     if (response.status !== 201) {
         // if error toast
-        toast.dismiss();
-        getErrorToast();
+        getServerErrorToast();
         return error(400, { message: response.message });
     }
 
@@ -554,11 +570,10 @@ export const _submitAcademicInfoForm = async (formData: AcademicList[]) => {
     const response =
         await EmployeeService.createCurrentCandidateAcademicDetails(
             requestData,
-        );
+        ).finally(() => toast.dismiss());
 
     if (response.status !== 201) {
         // if error toast
-        toast.dismiss();
         getServerErrorToast();
         return error(400, { message: response.message });
     }
@@ -584,11 +599,10 @@ export const _submitExperienceInfoForm = async (formData: Experience[]) => {
     const response =
         await EmployeeService.createCurrentCandidateExperienceDetails(
             requestData,
-        );
+        ).finally(() => toast.dismiss());
 
     if (response.status !== 201) {
         // if error toast
-        toast.dismiss();
         getServerErrorToast();
         return error(400, { message: response.message });
     }
@@ -614,11 +628,10 @@ export const _submitActivityInfoForm = async (formData: Activity[]) => {
     const response =
         await EmployeeService.createCurrentCandidateActivityDetails(
             requestData,
-        );
+        ).finally(() => toast.dismiss());
 
     if (response.status !== 201) {
         // if error toast
-        toast.dismiss();
         getServerErrorToast();
         return error(400, { message: response.message });
     }
@@ -634,18 +647,18 @@ export const _submitFamilyInfoForm = async (formData: Family[]) => {
         return fail(400);
     }
     const requestData: CandidateFamilyDetailsRequestBody = {
-        families: formData,
+        dependencies: formData,
     };
 
     // start by rendering loading toast
     getLoadingToast();
 
-    const response =
-        await EmployeeService.createCurrentCandidateFamilyDetails(requestData);
+    const response = await EmployeeService.createCurrentCandidateFamilyDetails(
+        requestData,
+    ).finally(() => toast.dismiss());
 
     if (response.status !== 201) {
         // if error toast
-        toast.dismiss();
         getServerErrorToast();
         return error(400, { message: response.message });
     }
@@ -670,11 +683,10 @@ export const _submitDependencyInfoForm = async (formData: Dependency[]) => {
     const response =
         await EmployeeService.createCurrentCandidateDependenciesDetails(
             requestData,
-        );
+        ).finally(() => toast.dismiss());
 
     if (response.status !== 201) {
         // if error toast
-        toast.dismiss();
         getServerErrorToast();
         return error(400, { message: response.message });
     }
@@ -699,11 +711,33 @@ export const _submitNextOfKinInfoForm = async (formData: NextOfKin[]) => {
     const response =
         await EmployeeService.createCurrentCandidateNextOfKinDetails(
             requestData,
-        );
+        ).finally(() => toast.dismiss());
 
     if (response.status !== 201) {
         // if error toast
-        toast.dismiss();
+        getServerErrorToast();
+        return error(400, { message: response.message });
+    }
+
+    // if success toast
+    getSuccessToast();
+    return { response };
+};
+
+export const _submitDocumentInfoForm = async () => {
+    const requestData = {
+        documentData: 'test',
+    };
+
+    // start by rendering loading toast
+    getLoadingToast();
+
+    const response = await EmployeeService.createCurrentCandidateDocuments(
+        requestData,
+    ).finally(() => toast.dismiss());
+
+    if (response.status !== 201) {
+        // if error toast
         getServerErrorToast();
         return error(400, { message: response.message });
     }
