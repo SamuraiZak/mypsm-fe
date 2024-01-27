@@ -5,7 +5,6 @@ import {
     getSuccessToast,
 } from '$lib/services/core/toast/toast-service';
 import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
-import type { CandidateIDRequestBody } from '$lib/view-models/mypsm/common/candidate-id-request.view-model.js';
 import type {
     Activity,
     CandidateActivityRequestBody,
@@ -57,6 +56,11 @@ import type {
     CandidatePersonalData,
     CandidatePersonalDetailsResponse,
 } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-respone.model.js';
+import type { NewHireSecretaryAddUpdateRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-secretary-add-update-request.model';
+import type {
+    NewHireSecretaryUpdateResponse,
+    SecretaryUpdateData,
+} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-secretary-update-response.model.js';
 import type { RequestSuccessBody } from '$lib/view-models/mypsm/request-success.view-model';
 import { error, fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
@@ -98,6 +102,15 @@ const generalSelectSchema = z
     .string()
     .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
+const dateSchema = z.coerce.date({
+    errorMap: (issue, { defaultError }) => ({
+        message:
+            issue.code === 'invalid_date'
+                ? 'Tarikh tidak boleh dibiar kosong.'
+                : defaultError,
+    }),
+});
+
 const minDateSchema = z.coerce
     .date({
         errorMap: (issue, { defaultError }) => ({
@@ -127,6 +140,11 @@ const maxDateSchema = z.coerce
 const booleanSchema = z.boolean({
     required_error: 'Sila tetapkan pilihan anda.',
     invalid_type_error: 'Medan ini haruslah jenis boolean.',
+});
+
+const numberSchema = z.coerce.number({
+    required_error: 'Medan ini hendaklah diisi.',
+    invalid_type_error: 'Sila pastikan medan ini ditaip dengan angka',
 });
 
 const numberIdSchema = z.coerce.number({
@@ -179,7 +197,7 @@ export const _personalInfoForm = z
 //================== Maklumat Akademik =====================
 //==========================================================
 
-const academicListSchema = z.object({
+export const _academicInfoSchema = z.object({
     // id: numberIdSchema,
     majorMinorId: numberIdSchema,
     countryId: numberIdSchema,
@@ -192,8 +210,8 @@ const academicListSchema = z.object({
     field: shortTextSchema,
 });
 
-export const _academicInfoSchema = z.object({
-    academicList: z.array(academicListSchema),
+export const _academicListSchema = z.object({
+    academicList: z.array(_academicInfoSchema),
     // isReadonly: z.boolean(),
 });
 
@@ -201,7 +219,7 @@ export const _academicInfoSchema = z.object({
 //================== Maklumat Pengalaman ===================
 //==========================================================
 
-const experienceInfoSchema = z.object({
+export const _experienceInfoSchema = z.object({
     company: shortTextSchema,
     address: shortTextSchema,
     position: shortTextSchema,
@@ -214,10 +232,10 @@ const experienceInfoSchema = z.object({
 });
 
 export const _experienceListSchema = z.object({
-    experienceList: z.array(experienceInfoSchema),
+    experienceList: z.array(_experienceInfoSchema),
 });
 
-const activityInfoSchema = z.object({
+export const _activityInfoSchema = z.object({
     name: shortTextSchema,
     joinDate: maxDateSchema,
     position: shortTextSchema,
@@ -225,10 +243,10 @@ const activityInfoSchema = z.object({
 });
 
 export const _activityListSchema = z.object({
-    activityList: z.array(activityInfoSchema),
+    activityList: z.array(_activityInfoSchema),
 });
 
-const familyInfoSchema = z.object({
+export const _familyInfoSchema = z.object({
     birthCountryId: numberIdSchema,
     birthStateId: numberIdSchema,
     relationshipId: numberIdSchema,
@@ -252,10 +270,10 @@ const familyInfoSchema = z.object({
 });
 
 export const _familyListSchema = z.object({
-    dependenciesList: z.array(familyInfoSchema),
+    dependenciesList: z.array(_familyInfoSchema),
 });
 
-const dependencyInfoSchema = z.object({
+export const _dependencyInfoSchema = z.object({
     birthCountryId: numberIdSchema,
     birthStateId: numberIdSchema,
     relationshipId: numberIdSchema,
@@ -279,10 +297,10 @@ const dependencyInfoSchema = z.object({
 });
 
 export const _dependencyListSchema = z.object({
-    dependenciesList: z.array(dependencyInfoSchema),
+    dependenciesList: z.array(_dependencyInfoSchema),
 });
 
-const nextOfKinInfoSchema = z.object({
+export const _nextOfKinInfoSchema = z.object({
     birthCountryId: numberIdSchema,
     birthStateId: numberIdSchema,
     relationshipId: numberIdSchema,
@@ -306,7 +324,7 @@ const nextOfKinInfoSchema = z.object({
 });
 
 export const _nextOfKinListSchema = z.object({
-    nextOfKinList: z.array(nextOfKinInfoSchema),
+    nextOfKinList: z.array(_nextOfKinInfoSchema),
 });
 
 //==========================================================
@@ -314,167 +332,46 @@ export const _nextOfKinListSchema = z.object({
 //==========================================================
 
 export const _serviceInfoSchema = z.object({
-    candidateId: z.number(),
-    gradeId: z.number(),
-    positionId: z.number(),
-    placementId: z.number(),
-    serviceTypeId: z.number(),
-    serviceGroupId: z.number(),
-    unitId: z.number(),
-    employmentStatusId: z.number(),
-    effectiveDate: z.coerce.date(),
-    retirementBenefit: z.string(),
-    epfNumber: z.string(),
-    socsoNumber: z.string(),
-    incomeNumber: z.string(),
-    bankName: z.string(),
-    bankAccount: z.string(),
-    eligibleLeaveCount: z.number(),
-    civilServiceStartDate: z.coerce.date(),
-    newRecruitEffectiveDate: z.coerce.date(),
-    serviceDate: z.coerce.date(),
-    firstServiceDate: z.coerce.date(),
-    firstConfirmServiceDate: z.coerce.date(),
-    firstEffectiveDate: z.coerce.date(),
-    confirmDate: z.coerce.date(),
-    pensionNumber: z.string(),
-    kgt: z.number(),
-    retirementDate: z.coerce.date(),
-    revisionMonth: z.string(),
-    maximumSalary: z.number(),
-    baseSalary: z.number(),
-    itka: z.number(),
-    itp: z.number(),
-    epw: z.number(),
-    cola: z.number(),
-});
-
-//==========================================================
-//================== Maklumat Pengalaman Modal ===================
-//==========================================================
-
-// New employment - add academic section
-export const _addAcademicInfoSchema = z.object({
-    majorMinorId: numberIdSchema,
-    countryId: numberIdSchema,
-    institutionId: numberIdSchema,
-    educationLevelId: numberIdSchema,
-    sponsorshipId: numberIdSchema,
-    name: shortTextSchema,
-    completionDate: maxDateSchema,
-    finalGrade: codeSchema,
-    field: longTextSchema,
-});
-
-export const _addExperienceModalSchema = z.object({
-    addCompany: shortTextSchema,
-    addAddress: shortTextSchema,
-    addPosition: shortTextSchema,
-    addPositionCode: codeSchema.nullish(),
-    addStartDate: maxDateSchema,
-    addEndDate: maxDateSchema,
-    addSalary: z.coerce.number({
-        invalid_type_error: 'Medan ini hendaklah ditetapkan dengan angka',
-    }),
-});
-
-//==========================================================
-//================== Maklumat Aktiviti Modal ===================
-//==========================================================
-
-export const _addActivityModalSchema = z.object({
-    addName: shortTextSchema,
-    addJoinDate: maxDateSchema,
-    addPosition: shortTextSchema,
-    addDescription: shortTextSchema,
-});
-
-//==========================================================
-//================== Maklumat Keluarga Modal ===================
-//==========================================================
-
-export const _addFamilyModalSchema = z.object({
-    addName: shortTextSchema,
-    addAlternativeName: shortTextSchema.default(' '),
-    addIdentityDocumentColor: shortTextSchema,
-    addIdentityDocumentNumber: shortTextSchema,
-    addAddress: shortTextSchema,
-    addPostcode: shortTextSchema,
-    addBirthDate: maxDateSchema,
-    addBirthCountryId: numberIdSchema,
-    addBirthStateId: numberIdSchema,
-    addRelationshipId: numberIdSchema,
-    addEducationLevelId: numberIdSchema,
-    addRaceId: numberIdSchema,
-    addNationalityId: numberIdSchema,
-    addMaritalId: numberIdSchema,
-    addGenderId: numberIdSchema,
-    addWorkAddress: shortTextSchema,
-    addWorkPostcode: shortTextSchema,
-    addPhoneNumber: shortTextSchema,
-    addMarriageDate: maxDateSchema,
-    addInSchool: booleanSchema,
-});
-
-//==========================================================
-//================== Maklumat Bukan Keluarga Modal ===================
-//==========================================================
-
-export const _addNonFamilyModalSchema = z.object({
-    addNonFamilyName: shortTextSchema,
-    addNonFamilyAlternativeName: shortTextSchema.default(' '),
-    addNonFamilyIdentityDocumentColor: shortTextSchema,
-    addNonFamilyIdentityDocumentNumber: shortTextSchema,
-    addNonFamilyAddress: shortTextSchema,
-    addNonFamilyPostcode: shortTextSchema,
-    addNonFamilyBirthDate: maxDateSchema,
-    addNonFamilyBirthCountryId: numberIdSchema,
-    addNonFamilyBirthStateId: numberIdSchema,
-    addNonFamilyRelationshipId: numberIdSchema,
-    addNonFamilyEducationLevelId: numberIdSchema,
-    addNonFamilyRaceId: numberIdSchema,
-    addNonFamilyNationalityId: numberIdSchema,
-    addNonFamilyMaritalId: numberIdSchema,
-    addNonFamilyGenderId: numberIdSchema,
-    addNonFamilyWorkAddress: shortTextSchema,
-    addNonFamilyWorkPostcode: shortTextSchema,
-    addNonFamilyPhoneNumber: shortTextSchema,
-    addNonFamilyMarriageDate: maxDateSchema,
-    addNonFamilyInSchool: booleanSchema,
-});
-
-//==========================================================
-//================== Add Maklumat Waris ========================
-//==========================================================
-export const _addNextOfKinInfoSchema = z.object({
-    addNextOfKinName: shortTextSchema,
-    addNextOfKinAlternativeName: shortTextSchema.default(' '),
-    addNextOfKinIdentityDocumentColor: shortTextSchema,
-    addNextOfKinIdentityDocumentNumber: shortTextSchema,
-    addNextOfKinAddress: shortTextSchema,
-    addNextOfKinPostcode: shortTextSchema,
-    addNextOfKinBirthDate: maxDateSchema,
-    addNextOfKinBirthCountryId: numberIdSchema,
-    addNextOfKinBirthStateId: numberIdSchema,
-    addNextOfKinRelationshipId: numberIdSchema,
-    addNextOfKinEducationLevelId: numberIdSchema,
-    addNextOfKinRaceId: numberIdSchema,
-    addNextOfKinNationalityId: numberIdSchema,
-    addNextOfKinMaritalId: numberIdSchema,
-    addNextOfKinGenderId: numberIdSchema,
-    addNextOfKinWorkAddress: shortTextSchema,
-    addNextOfKinWorkPostcode: shortTextSchema,
-    addNextOfKinPhoneNumber: shortTextSchema,
-    addNextOfKinMarriageDate: maxDateSchema,
-    addNextOfKinInSchool: booleanSchema,
+    // candidateId: numberIdSchema,
+    gradeId: numberIdSchema,
+    positionId: numberIdSchema,
+    placementId: numberIdSchema,
+    serviceTypeId: numberIdSchema,
+    serviceGroupId: numberIdSchema,
+    unitId: numberIdSchema,
+    employmentStatusId: numberIdSchema,
+    effectiveDate: minDateSchema,
+    retirementBenefit: codeSchema,
+    epfNumber: shortTextSchema,
+    socsoNumber: shortTextSchema,
+    incomeNumber: shortTextSchema,
+    bankName: shortTextSchema,
+    bankAccount: shortTextSchema,
+    eligibleLeaveCount: numberSchema,
+    civilServiceStartDate: dateSchema,
+    newRecruitEffectiveDate: dateSchema,
+    serviceDate: dateSchema,
+    firstServiceDate: dateSchema,
+    firstConfirmServiceDate: dateSchema,
+    firstEffectiveDate: dateSchema,
+    confirmDate: dateSchema,
+    pensionNumber: shortTextSchema,
+    kgt: numberSchema,
+    retirementDate: minDateSchema,
+    revisionMonth: codeSchema,
+    maximumSalary: numberSchema,
+    baseSalary: numberSchema,
+    itka: numberSchema,
+    itp: numberSchema,
+    epw: numberSchema,
+    cola: numberSchema,
 });
 
 export const load = async ({ params }) => {
     // set request body
-    const candidateIdRequestBody: CandidateIDRequestBody = {
+    const candidateIdRequestBody = {
         candidateId: Number(params.tempId),
     };
-
     const personalDetailResponse: CandidatePersonalDetailsResponse =
         await EmployeeService.getCurrentCandidatePersonalDetails(
             candidateIdRequestBody,
@@ -486,37 +383,34 @@ export const load = async ({ params }) => {
             candidateIdRequestBody,
         );
 
-    const academicDetails: AcademicResponseData = academicInfoResponse.data;
-
     const experienceInfoResponse: CandidateExperienceDetailsResponse =
         await EmployeeService.getCurrentCandidateExperience(
             candidateIdRequestBody,
         );
 
-    const experienceDetails: ExperienceResponseData =
-        experienceInfoResponse.data;
-
     const activityInfoResponse: NewHireActivity =
         await EmployeeService.getCurrentCandidateActivities(
             candidateIdRequestBody,
         );
-    const activityDetails: ActivityResponseData = activityInfoResponse.data;
 
     const familyInfoResponse: CandidateFamilyDetailsResponse =
         await EmployeeService.getCurrentCandidateFamily(candidateIdRequestBody);
-    const familyDetails: FamilyData = familyInfoResponse.data;
 
     const dependencyInfoResponse: CandidateDependenciesDetailResponse =
         await EmployeeService.getCurrentCandidateDependencies(
             candidateIdRequestBody,
         );
-    const dependencyDetails: DependenciesData = dependencyInfoResponse.data;
 
     const nextOfKinInfoResponse: CandidateNextOfKinDetailsResponse =
         await EmployeeService.getCurrentCandidateNextOfKin(
             candidateIdRequestBody,
         );
-    const nextOfKinDetails: NextOfKinData = nextOfKinInfoResponse.data;
+
+    const serviceResponse: NewHireSecretaryUpdateResponse =
+        await EmployeeService.getCurrentCandidateSecretaryUpdate(
+            candidateIdRequestBody,
+        );
+    const serviceDetails: SecretaryUpdateData = serviceResponse.data;
 
     // form data based on schema and response
     const personalInfoForm = await superValidate(
@@ -525,54 +419,59 @@ export const load = async ({ params }) => {
     );
 
     const academicInfoForm = await superValidate(
-        academicDetails,
-        _academicInfoSchema,
+        academicInfoResponse.data as AcademicResponseData,
+        _academicListSchema,
     );
-    const serviceInfoForm = await superValidate(_serviceInfoSchema);
+
     const experienceInfoForm = await superValidate(
-        experienceDetails,
+        experienceInfoResponse.data as ExperienceResponseData,
         _experienceListSchema,
     );
     const activityInfoForm = await superValidate(
-        activityDetails,
+        activityInfoResponse.data as ActivityResponseData,
         _activityListSchema,
     );
 
     const familyInfoForm = await superValidate(
-        familyDetails,
+        familyInfoResponse.data as FamilyData,
         _familyListSchema,
     );
 
     const dependencyInfoForm = await superValidate(
-        dependencyDetails,
+        dependencyInfoResponse.data as DependenciesData,
         _dependencyListSchema,
     );
     const nextOfKinInfoForm = await superValidate(
-        nextOfKinDetails,
+        nextOfKinInfoResponse.data as NextOfKinData,
         _nextOfKinListSchema,
     );
-    const addAcademicModal = await superValidate(_addAcademicInfoSchema);
-    const addExperienceModal = await superValidate(_addExperienceModalSchema);
-    const addActivityModal = await superValidate(_addActivityModalSchema);
-    const addFamilyModal = await superValidate(_addFamilyModalSchema);
-    const addNonFamilyModal = await superValidate(_addNonFamilyModalSchema);
-    const addNextOfKinModal = await superValidate(_addNextOfKinInfoSchema);
+    const serviceInfoForm = await superValidate(
+        serviceDetails,
+        _serviceInfoSchema,
+    );
+    const addAcademicModal = await superValidate(_academicInfoSchema);
+    const addExperienceModal = await superValidate(_experienceInfoSchema);
+    const addActivityModal = await superValidate(_activityInfoSchema);
+    const addFamilyModal = await superValidate(_familyInfoSchema);
+    const addNonFamilyModal = await superValidate(_dependencyInfoSchema);
+    const addNextOfKinModal = await superValidate(_nextOfKinInfoSchema);
 
     return {
+        candidateIdRequestBody,
         personalInfoForm,
-        academicDetails,
+        academicInfoResponse,
         academicInfoForm,
-        serviceInfoForm,
-        experienceDetails,
+        experienceInfoResponse,
         experienceInfoForm,
-        activityDetails,
+        activityInfoResponse,
         activityInfoForm,
-        familyDetails,
+        familyInfoResponse,
         familyInfoForm,
-        dependencyDetails,
+        dependencyInfoResponse,
         dependencyInfoForm,
-        nextOfKinDetails,
+        nextOfKinInfoResponse,
         nextOfKinInfoForm,
+        serviceInfoForm,
         addAcademicModal,
         addExperienceModal,
         addActivityModal,
@@ -594,6 +493,37 @@ export const _submitPersonalInfoForm = async (formData: object) => {
     const response: RequestSuccessBody =
         await EmployeeService.createCurrentCandidatePersonalDetails(
             form.data as CandidatePersonalDetailsRequestBody,
+        );
+
+    if (response.status !== 201) {
+        // if error toast
+        toast.dismiss();
+        getErrorToast();
+        return error(400, { message: response.message });
+    }
+
+    // if success toast
+    getSuccessToast();
+
+    return { form };
+};
+
+export const _submitServiceInfoForm = async (formData: object) => {
+    const form = await superValidate(formData, _serviceInfoSchema);
+    console.log(form);
+
+    if (!form.valid) {
+        getErrorToast();
+        return fail(400, form);
+    }
+
+    // form.data.candidateId = candidateIdRequestBody.candidateId;
+
+    console.log(form.data);
+
+    const response: RequestSuccessBody =
+        await EmployeeService.createCurrentCandidateSecretaryUpdate(
+            form.data as NewHireSecretaryAddUpdateRequestBody,
         );
 
     if (response.status !== 201) {
