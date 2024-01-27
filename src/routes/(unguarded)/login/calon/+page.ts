@@ -1,5 +1,11 @@
 import { goto } from '$app/navigation';
-import http from '$lib/services/provider/service-provider.service';
+import {
+    getLoginErrorToast,
+    getLoginSuccessToast,
+} from '$lib/services/core/toast/toast-service';
+import { AuthService } from '$lib/services/implementations/core/auth/authentication.service';
+import type { AuthenticationRequestViewModel } from '$lib/view-models/core/auth/auth-request.view-model';
+import type { AuthenticationResponseViewModel } from '$lib/view-models/core/auth/auth-response.view-model';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
@@ -17,14 +23,14 @@ export const load = async () => {
     return { form };
 };
 
-export const _submit = async (formData: object) => {
-    const response: Response = await http
-        .post('authentication/candidate-login', {
-            body: JSON.stringify(formData),
-        })
-        .json();
-
-    if (response.status == 200) {
-        goto('/calon/halaman-utama');
+export const _submit = async (formData: AuthenticationRequestViewModel) => {
+    const response: AuthenticationResponseViewModel =
+        await AuthService.loginCandidate(formData);
+    if (response.status === 200) {
+        getLoginSuccessToast().finally(() =>
+            setTimeout(() => goto('/calon/halaman-utama'), 2000),
+        );
+    } else {
+        getLoginErrorToast();
     }
 };
