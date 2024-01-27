@@ -103,6 +103,28 @@ export const load = async () => {
             name: gender.description,
         }));
 
+    const identityCardColorLookup: DropdownOptionsInterface[] = [
+        { value: 'blue', name: 'Biru' },
+        { value: 'grey', name: 'Kelabu' },
+        { value: 'red', name: 'Merah' },
+        { value: 'green', name: 'Hijau' },
+    ];
+
+    const monthStringLookup: DropdownOptionsInterface[] = [
+        { value: 'January', name: 'Januari' },
+        { value: 'February', name: 'Februari' },
+        { value: 'March', name: 'Mac' },
+        { value: 'April', name: 'April' },
+        { value: 'May', name: 'Mei' },
+        { value: 'June', name: 'Jun' },
+        { value: 'July', name: 'Julai' },
+        { value: 'August', name: 'Ogos' },
+        { value: 'September', name: 'September' },
+        { value: 'October', name: 'Oktober' },
+        { value: 'November', name: 'November' },
+        { value: 'December', name: 'Disember' },
+    ];
+
     return {
         sponsorshipLookup,
         educationLookup,
@@ -115,5 +137,7 @@ export const load = async () => {
         nationalityLookup,
         maritalLookup,
         genderLookup,
+        identityCardColorLookup,
+        monthStringLookup,
     };
 };
