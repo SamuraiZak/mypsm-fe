@@ -32,12 +32,6 @@
 <div class="flex w-full flex-col items-start justify-center">
     <SectionHeader title="Senarai Rekod Pautan Belum Diisi"></SectionHeader>
     <DynamicTable
-        withActions
-        actionOptions={['detail']}
-        detailActions={() => {
-            const url = './lantikan-baru/permohonan-baru';
-            goto(url);
-        }}
         tableItems={listData}
         bind:passData={tempUrl}
     ></DynamicTable>
