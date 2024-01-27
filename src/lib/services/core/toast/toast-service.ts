@@ -1,5 +1,17 @@
 import toast from 'svelte-french-toast';
 
+export const getLoginSuccessToast = async () => {
+    toast.success('Log Masuk Berjaya!', {
+        style: 'background: #333; color: #fff;',
+    });
+};
+
+export const getLoginErrorToast = async () => {
+    toast.error('Log Masuk Gagal! Sila pastikan maklumat adalah lengkap dengan tepat.', {
+        style: 'background: #333; color: #fff;',
+    });
+};
+
 export const getSuccessToast = async () => {
     toast.success('Berjaya disimpan!', {
         style: 'background: #333; color: #fff;',
