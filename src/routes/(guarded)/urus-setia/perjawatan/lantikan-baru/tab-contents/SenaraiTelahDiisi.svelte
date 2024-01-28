@@ -7,9 +7,10 @@
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import { status } from '$lib/mocks/status/status';
     import { goto } from '$app/navigation';
-    export let listData: any;
+    import type { NewHireData } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-list-response.view-model';
+    export let listData: NewHireData[];
     let selectedStatus = status[0].value; // Default selected filter
-    let tempStaff: NewHire;
+    let tempStaff: NewHireData;
 </script>
 
 <!-- Table filter placeholder -->
@@ -39,9 +40,7 @@
         editActions={() => {
             const url =
                 './lantikan-baru/kemaskini-permohonan-' +
-                tempStaff.idSementara +
-                '-' +
-                tempStaff.noKadPengenalan;
+                tempStaff.candidateId;
             goto(url);
         }}
     ></DynamicTable>
