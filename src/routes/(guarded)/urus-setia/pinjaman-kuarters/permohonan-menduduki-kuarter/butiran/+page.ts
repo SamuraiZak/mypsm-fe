@@ -6,14 +6,6 @@ import { z } from "zod";
 // ===================================================
 // Form Schema
 // ===================================================
-const optionalScheme = z.enum(['1', '2'], {
-    errorMap: (issue) => ({
-        message:
-            issue.code === 'invalid_enum_value'
-                ? 'Pilihan perlu dipilih.'
-                : 'Pilihan perlu dipilih.',
-    }),
-})
 const dateScheme = z.coerce
     .date({
         errorMap: (issue, { defaultError }) => ({
@@ -27,30 +19,39 @@ const dateScheme = z.coerce
         message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
     });
 
-const numberScheme = z.coerce.number({
-    errorMap: (issue, { defaultError }) => ({
-        message:
-            issue.code === 'invalid_date'
-                ? 'Medan ini tidak boleh dibiarkan kosong.'
-                : defaultError,
-    }),
-})
+const numberScheme = z.union([z.string({
+    invalid_type_error: "Medan ini tidak boleh dibiar kosong."
+}), z.number()]).transform((x) => Number(x)).pipe(z.number({
+    required_error: "Medan ini tidak boleh dibiar kosong.",
+    invalid_type_error: "Hanya nombor sahaja dibenarkan. Contoh (500.40)",
+    description: "Hanya nombor sahaja dibenarkan. Contoh (500.40)"
+}))
+
+const generalEmailSchema = z.string({
+    invalid_type_error: "Medan ini tidak boleh dibiar kosong."
+}).email("Sila nyatakan format emel yang sah. ")
 
 const generalSelectSchema = z.string().min(1, { message: "Sila tetapkan pilihan anda. " });
-const generalTextSchema = z.string().min(1, { message: "Medan ini perlu diisi dengan lengkap. " });
+
+const generalTextSchema = z.string({
+    invalid_type_error: "Medan ini tidak boleh dibiar kosong."
+}).min(1, { message: "Medan ini perlu diisi dengan lengkap. " });
 
 export const _approvalRemarkFormSchema = z.object({
     secretaryRemark: generalTextSchema,
-    approvalResult: generalSelectSchema,
+    approvalResult: z.boolean().default(true),
 })
 
 export const _approvalAndOfferSchema = z.object({
-    approvalName: generalTextSchema,
-    applicantEmail: generalSelectSchema,
+    approvalName: generalSelectSchema,
+    applicantEmail: generalEmailSchema,
     quarterEntryDate: dateScheme,
     unitAndQuarter: generalTextSchema,
     rentalPaymentRates: generalSelectSchema,
-})
+    monthlyRentalValue: numberScheme,
+    twoMonthsDeposit: numberScheme,
+    utilityDeposit: numberScheme,
+}).partial()
 
 // =============================================
 // load function
@@ -96,7 +97,7 @@ export const _submitApprovalRemarkForm = async (formData: Object) => {
     return { approvalRemarkForm }
 }
 
-export const _submitApprovalAndOfferForm= async (formData: Object) => {
+export const _submitApprovalAndOfferForm = async (formData: Object) => {
     const approvalAndOfferkForm = await superValidate(formData, _approvalAndOfferSchema);
     if (!approvalAndOfferkForm.valid) {
         getErrorToast();
