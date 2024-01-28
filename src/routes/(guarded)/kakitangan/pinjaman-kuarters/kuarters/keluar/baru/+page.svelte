@@ -25,6 +25,19 @@
     } from '$lib/stores/globalState';
     import { Checkbox, Radio } from 'flowbite-svelte';
     import { onMount } from 'svelte';
+    import { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import {
+        _submitexitQuarterForm,
+        _exitQuartersDetailSchema,
+        _submitValidationForm,
+        _validationSchema,
+    } from './+page';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+
+    export let data: PageData;
 
     let disabled = true;
     let labelBlack = false;
@@ -91,6 +104,36 @@
         selectedFiles.splice(index, 1);
         fileSelectionList.set(selectedFiles);
     }
+
+    // ====================== Form Validation
+    const {
+        form: exitQuarterForm,
+        errors: exitQuarterError,
+        enhance: exitQuarterEnhance,
+    } = superForm(data.exitQuarterForm, {
+        SPA: true,
+        id: 'exitQuarterForm',
+        validators: _exitQuartersDetailSchema,
+        onSubmit() {
+            _submitexitQuarterForm($exitQuarterForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
+
+    const {
+        form: validationForm,
+        errors: validationError,
+        enhance: validationEnhance,
+    } = superForm(data.validationForm, {
+        SPA: true,
+        id: 'validationForm',
+        validators: _validationSchema,
+        onSubmit() {
+            _submitValidationForm($validationForm);
+        },
+        taintedMessage: false,
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -306,7 +349,9 @@
                                             labelBlack
                                             disabled={rentRate != 'gredExceed'}
                                             label=""
-                                            value={CurrencyHelper.formatCurrency(0)}
+                                            value={CurrencyHelper.formatCurrency(
+                                                0,
+                                            )}
                                         ></TextField>
                                     </ul>
                                 </div></Radio
@@ -325,25 +370,40 @@
                     activeStepper = 2;
                 }}
             ></FormButton><FormButton type="reset" onClick={() => {}}
-            ></FormButton><FormButton
-                onClick={() => {
-                    activeStepper = 4;
-                }}
-            ></FormButton></StepperContentHeader
-        >
+            ></FormButton>
+            <TextIconButton primary label="Simpan" form="exitQuarterForm">
+                <SvgCheck />
+            </TextIconButton>
+        </StepperContentHeader>
         <StepperContentBody>
             <SectionHeader title="Butiran Keluar Kuarter"></SectionHeader>
-            <DateSelector
-                handleDateChange
-                label="Tarikh Keluar Kuarter"
-                selectedDate="2023-08-06"
-            ></DateSelector>
-            <TextField
-                {disabled}
-                {labelBlack}
-                label="Unit Dan Kuarter"
-                value={'Unit 5 Kuarter 10'}
-            ></TextField>
+            <form
+                id="exitQuarterForm"
+                method="POST"
+                use:exitQuarterEnhance
+                class="flex w-full flex-col gap-2"
+            >
+                <DateSelector
+                    hasError={!!$exitQuarterError.exitQuarterDate}
+                    name="exitQuarterDate"
+                    handleDateChange
+                    label="Tarikh Keluar Kuarter"
+                    bind:selectedDate={$exitQuarterForm.exitQuarterDate}
+                />
+                {#if $exitQuarterError.exitQuarterDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$exitQuarterError.exitQuarterDate[0]}
+                    </span>
+                {/if}
+                <TextField
+                    {disabled}
+                    {labelBlack}
+                    label="Unit Dan Kuarter"
+                    value={'Unit 5 Kuarter 10'}
+                ></TextField>
+            </form>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -444,24 +504,38 @@
                     activeStepper = 4;
                 }}
             ></FormButton><FormButton type="reset" onClick={() => {}}
-            ></FormButton><FormButton
-                type="done"
-                onClick={() => {
-                    window.history.back();
-                }}
-            ></FormButton></StepperContentHeader
-        >
+            ></FormButton>
+            <TextIconButton primary label="Simpan" form="validationForm">
+                <SvgCheck />
+            </TextIconButton>
+        </StepperContentHeader>
         <StepperContentBody>
             <div
                 class="flex h-fit w-full flex-col items-start justify-start gap-2.5"
             >
-                <Checkbox checked={infoTrue}
-                    ><p>
-                        Saya dengan ini mengesahkan bahawa maklumat sebagaimana
-                        yang dinyatakan berikut adalah benar
-                    </p></Checkbox
+                <form
+                    id="validationForm"
+                    method="POST"
+                    use:validationEnhance
+                    class="flex w-full flex-col gap-2"
                 >
+                    <Checkbox bind:checked={$validationForm.staffValidation}
+                        ><p>
+                            Saya dengan ini mengesahkan bahawa maklumat
+                            sebagaimana yang dinyatakan berikut adalah benar
+                        </p>
+                    </Checkbox>
+                    {#if $validationError.staffValidation}
+                        <span
+                            class="font-sans text-sm italic text-system-danger"
+                        >
+                            {$validationError.staffValidation[0]}
+                        </span>
+                    {/if}
+                </form>
             </div>
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+
+<Toaster />
