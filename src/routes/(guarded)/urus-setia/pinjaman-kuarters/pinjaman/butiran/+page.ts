@@ -27,17 +27,18 @@ const dateScheme = z.coerce
         message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
     });
 
-const numberScheme = z.coerce.number({
-    errorMap: (issue, { defaultError }) => ({
-        message:
-            issue.code === 'invalid_date'
-                ? 'Medan ini tidak boleh dibiarkan kosong.'
-                : defaultError,
-    }),
-})
+const numberScheme = z.union([z.string({
+    invalid_type_error: "Medan ini tidak boleh dibiar kosong."
+}), z.number()]).transform((x) => Number(x)).pipe(z.number({
+    required_error: "Medan ini tidak boleh dibiar kosong.",
+    invalid_type_error: "Hanya nombor sahaja dibenarkan. Contoh (500.40)",
+    description: "Hanya nombor sahaja dibenarkan. Contoh (500.40)"
+}).default(0))
 
 const generalSelectSchema = z.string().min(1, { message: "Sila tetapkan pilihan anda. " });
-const generalTextSchema = z.string().min(1, { message: "Medan ini perlu diisi dengan lengkap. " });
+const generalTextSchema = z.string({
+    invalid_type_error: "Medan ini tidak boleh dibiar kosong."
+}).min(1, { message: "Medan ini perlu diisi dengan lengkap. " });
 
 export const _supporterAndApproverSchema = z.object({
     supporterName: generalSelectSchema,
@@ -75,10 +76,10 @@ export const _firstScheduleSchema = z.object({
     previousOwnerName: generalTextSchema,
     identificationNo: generalTextSchema,
     address: generalTextSchema,
-    totalPurchasePrice: generalTextSchema,
-    balancePayment: generalTextSchema,
-    govermentFundingAmount: generalTextSchema,
-})
+    totalPurchasePrice: numberScheme,
+    balancePayment: numberScheme,
+    govermentFundingAmount: numberScheme,
+}).partial()
 
 export const _secondScheduleSchema = z.object({
     purchasePrice: numberScheme,
@@ -86,7 +87,9 @@ export const _secondScheduleSchema = z.object({
     govermentFundingAndProfitAmount: numberScheme,
     monthlyAmount: numberScheme,
     paymentDuration: generalSelectSchema,
-})
+    govermentFundingAndProfitAmountDetail: numberScheme,
+    govermentBalancePayment: numberScheme,
+}).partial()
 
 export const _letterOfAgreementSchema = z.object({
     received: z.boolean().default(true),

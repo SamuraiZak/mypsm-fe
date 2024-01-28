@@ -224,8 +224,7 @@
         onSubmit() {
             _submitUpdateLoanDetailQualificationForm($qualificationDetailForm);
         },
-        taintedMessage:
-            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+        taintedMessage: false,
     });
 
     const {
@@ -239,8 +238,7 @@
         onSubmit() {
             _submitApprovalAndOfferForm($approvalAndOfferDetailForm);
         },
-        taintedMessage:
-            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+        taintedMessage: false,
     });
 
     const {
@@ -256,8 +254,7 @@
                 $vehicleDetailAndDescriptionForm,
             );
         },
-        taintedMessage:
-            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+        taintedMessage: false,
     });
 
     const {
@@ -271,8 +268,7 @@
         onSubmit() {
             _submitSecondScheduleForm($secondScheduleForm);
         },
-        taintedMessage:
-            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+        taintedMessage: false,
     });
 
     const {
@@ -286,8 +282,7 @@
         onSubmit() {
             _submitLetterOfAgreementForm($letterOfAgreementForm);
         },
-        taintedMessage:
-            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+        taintedMessage: false,
     });
 </script>
 
@@ -500,12 +495,6 @@
                     activeStepper = 2;
                 }}
             />
-            <!-- ></FormButton><FormButton
-                type="save"
-                onClick={() => {
-                    activeStepper = 4;
-                }}
-            ></FormButton> -->
             <TextIconButton
                 primary
                 label="Simpan"
@@ -586,7 +575,8 @@
                             primary
                             label="Simpan"
                             form="qualificationDetailForm"
-                        /></SectionHeader
+                            ><SvgCheck /></TextIconButton
+                        ></SectionHeader
                     >
                     <div
                         class="flex w-full flex-col items-start justify-start gap-2.5"
@@ -721,7 +711,8 @@
                             primary
                             label="Simpan"
                             form="approvalAndOfferForm"
-                        /></SectionHeader
+                            ><SvgCheck /></TextIconButton
+                        ></SectionHeader
                     >
                     <div
                         class="flex w-full flex-col items-start justify-start gap-2.5"
@@ -878,7 +869,7 @@
                                 primary
                                 label="Simpan"
                                 form="vehicleDetailAndDescriptionForm"
-                            />
+                            ><SvgCheck /></TextIconButton>
                         </SectionHeader>
                         <form
                             id="vehicleDetailAndDescriptionForm"
@@ -1086,9 +1077,14 @@
                             <FormButton
                                 type="add-supplier"
                                 onClick={addPembekal}
-                            ></FormButton>
+                            />
+                            <TextIconButton
+                                primary
+                                label="Simpan"
+                                form="vehicleDetailAndDescriptionForm"
+                                ><SvgCheck /></TextIconButton
+                            >
                         </SectionHeader>
-
                         <div
                             class="flex w-full flex-col items-start justify-start gap-2.5"
                         >
@@ -1119,12 +1115,12 @@
                                         placeholder="Nama Pembekal"
                                         label="Nama Pembekal"
                                         bind:value={item.name}
-                                    ></TextField>
+                                    />
                                     <TextField
                                         placeholder="Alamat Pembekal"
                                         label="Alamat"
                                         bind:value={item.address}
-                                    ></TextField>
+                                    />
                                 </div>
                             {/each}
                         </div>
@@ -1133,16 +1129,52 @@
                         <div
                             class="flex w-full flex-col items-start justify-start gap-2.5"
                         >
-                            <TextField
-                                label="Jumlah Harga Belian (RM)"
-                                value="4000.00"
-                            ></TextField>
-                            <TextField label="Bayaran Baki (RM)" value="-"
-                            ></TextField>
-                            <TextField
-                                label="Amaun Pembiayaan Kerajaan (RM)"
-                                value="-"
-                            ></TextField>
+                            <form
+                                id="vehicleDetailAndDescriptionForm"
+                                method="POST"
+                                use:vehicleDetailAndDescriptionEnhance
+                                class="flex w-full flex-col gap-2"
+                            >
+                                <TextField
+                                    hasError={!!$vehicleDetailAndDescriptionError.totalPurchasePrice}
+                                    name="totalPurchasePrice"
+                                    label="Jumlah Harga Belian (RM)"
+                                    bind:value={$vehicleDetailAndDescriptionForm.totalPurchasePrice}
+                                />
+                                {#if $vehicleDetailAndDescriptionError.totalPurchasePrice}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$vehicleDetailAndDescriptionError
+                                            .totalPurchasePrice[0]}</span
+                                    >
+                                {/if}
+                                <TextField
+                                    hasError={!!$vehicleDetailAndDescriptionError.balancePayment}
+                                    name="balancePayment"
+                                    label="Bayaran Baki (RM)"
+                                    bind:value={$vehicleDetailAndDescriptionForm.balancePayment}
+                                />
+                                {#if $vehicleDetailAndDescriptionError.balancePayment}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$vehicleDetailAndDescriptionError
+                                            .balancePayment[0]}</span
+                                    >
+                                {/if}
+                                <TextField
+                                    hasError={!!$vehicleDetailAndDescriptionError.govermentFundingAmount}
+                                    name="govermentFundingAmount"
+                                    label="Amaun Pembiayaan Kerajaan (RM)"
+                                    bind:value={$vehicleDetailAndDescriptionForm.govermentFundingAmount}
+                                />
+                                {#if $vehicleDetailAndDescriptionError.govermentFundingAmount}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$vehicleDetailAndDescriptionError
+                                            .govermentFundingAmount[0]}</span
+                                    >
+                                {/if}
+                            </form>
                         </div>
                     {/if}
                 </CustomTabContent>
@@ -1155,7 +1187,8 @@
                                 primary
                                 label="Simpan"
                                 form="secondScheduleFormValidation"
-                            />
+                                ><SvgCheck /></TextIconButton
+                            >
                         </SectionHeader>
                         <div
                             class="flex w-full flex-col items-start justify-start gap-2.5"
@@ -1250,43 +1283,105 @@
                     {:else}
                         <SectionHeader
                             title="Masukkan Maklumat Harga Jualan (RM)"
-                        ></SectionHeader>
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2.5"
+                        >
+                            <TextIconButton
+                                primary
+                                label="Simpan"
+                                form="secondScheduleFormValidation"
+                                ><SvgCheck /></TextIconButton
+                            >
+                        </SectionHeader>
+                        <form
+                            id="secondScheduleFormValidation"
+                            method="POST"
+                            use:secondScheduleEnhance
+                            class="flex w-full flex-col gap-2"
                         >
                             <TextField
+                                hasError={!!$secondScheduleError.purchasePrice}
+                                name="purchasePrice"
                                 label="Jumlah Harga Belian (RM)"
-                                value="4000.00"
-                            ></TextField>
-                            <TextField label="Bayaran Baki (RM)" value="-"
-                            ></TextField>
+                                bind:value={$secondScheduleForm.purchasePrice}
+                            />
+                            {#if $secondScheduleError.purchasePrice}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$secondScheduleError
+                                        .purchasePrice[0]}</span
+                                >
+                            {/if}
                             <TextField
+                                hasError={!!$secondScheduleError.balancePayment}
+                                name="balancePayment"
+                                label="Bayaran Baki (RM)"
+                                bind:value={$secondScheduleForm.balancePayment}
+                            />
+                            {#if $secondScheduleError.balancePayment}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$secondScheduleError
+                                        .balancePayment[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                hasError={!!$secondScheduleError.govermentFundingAndProfitAmount}
+                                name="govermentFundingAndProfitAmount"
                                 label="Amaun Pembiayaan dan Keuntungan Kerajaan (RM)"
-                                value="-"
-                            ></TextField>
-                        </div>
-                        <SectionHeader
-                            title="Masukkan Maklumat Amaun dan Keuntungan Kerajaan (RM)"
-                        ></SectionHeader>
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2.5"
-                        >
+                                bind:value={$secondScheduleForm.govermentFundingAndProfitAmount}
+                            />
+                            {#if $secondScheduleError.govermentFundingAndProfitAmount}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$secondScheduleError
+                                        .govermentFundingAndProfitAmount[0]}</span
+                                >
+                            {/if}
+                            <SectionHeader
+                                title="Masukkan Maklumat Amaun dan Keuntungan Kerajaan (RM)"
+                            ></SectionHeader>
+
                             <TextField
+                                hasError={!!$secondScheduleError.govermentFundingAndProfitAmountDetail}
+                                name="govermentFundingAndProfitAmountDetail"
                                 label="Amaun Pembiayaan dan Keuntungan Kerajaan"
-                                value="-"
-                            ></TextField>
-                            <TextField label="Bayaran Baki (RM)" value={'-'}
-                            ></TextField>
+                                bind:value={$secondScheduleForm.govermentFundingAndProfitAmountDetail}
+                            />
+                            {#if $secondScheduleError.govermentFundingAndProfitAmountDetail}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$secondScheduleError
+                                        .govermentFundingAndProfitAmountDetail[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                hasError={!!$secondScheduleError.govermentBalancePayment}
+                                name="govermentBalancePayment"
+                                label="Bayaran Baki (RM)"
+                                bind:value={$secondScheduleForm.govermentBalancePayment}
+                            />
+                            {#if $secondScheduleError.govermentBalancePayment}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$secondScheduleError
+                                        .govermentBalancePayment[0]}</span
+                                >
+                            {/if}
                             <DropdownSelect
+                                hasError={!!$secondScheduleError.paymentDuration}
+                                name="paymentDuration"
                                 dropdownType="label-left-full"
                                 label={'Tempoh Pembayaran'}
                                 options={loanPaybackMonthsOptions}
-                                value={getMonths(
-                                    currEmpLoanRec[0].loanStartDate,
-                                    currEmpLoanRec[0].loanEndDate,
-                                )}
-                            ></DropdownSelect>
-                        </div>
+                                bind:value={$secondScheduleForm.paymentDuration}
+                            />
+                            {#if $secondScheduleError.paymentDuration}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$secondScheduleError
+                                        .paymentDuration[0]}</span
+                                >
+                            {/if}
+                        </form>
                     {/if}
                 </CustomTabContent>
             </CustomTab>
@@ -1304,7 +1399,8 @@
                 primary
                 label="Simpan"
                 form="letterOfAgreementFormValidation"
-            />
+                ><SvgCheck /></TextIconButton
+            >
         </StepperContentHeader>
         <StepperContentBody>
             <SectionHeader
