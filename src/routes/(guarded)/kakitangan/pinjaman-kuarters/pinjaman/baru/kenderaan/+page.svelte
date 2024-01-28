@@ -1,5 +1,7 @@
 <script lang="ts">
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
@@ -39,6 +41,22 @@
     } from '$lib/stores/globalState';
     import { Checkbox } from 'flowbite-svelte';
     import { onMount } from 'svelte';
+    import { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import {
+        _submitValidationForm,
+        _validationSchema,
+        _submitLoanDetailForm,
+        _loanDetailSchema,
+        _vehicleDetailSchema,
+        _submitVehicleDetailForm,
+        _submitLoanFinancingForm,
+        _loanFinancingSchema,
+    } from './+page';
+    import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
+
+    export let data: PageData;
 
     let disabled = true;
     let labelBlack = false;
@@ -110,11 +128,11 @@
     }
     const options: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'Pernah',
         },
         {
-            value: 'false',
+            value: false,
             label: 'Tidak Pernah',
         },
     ];
@@ -156,6 +174,73 @@
     function handleDelete(index: number) {
         selectedFiles.splice(index, 1);
         fileSelectionList.set(selectedFiles);
+    }
+
+    // ====================== Form Validation
+    const {
+        form: validationForm,
+        errors: validationError,
+        enhance: validationEnhance,
+    } = superForm(data.validationForm, {
+        SPA: true,
+        id: 'validationForm',
+        validators: _validationSchema,
+        onSubmit() {
+            _submitValidationForm($validationForm);
+        },
+        taintedMessage: false,
+    });
+
+    const {
+        form: loanDetailForm,
+        errors: loanDetailError,
+        enhance: loanDetailEnhance,
+    } = superForm(data.loanDetailForm, {
+        SPA: true,
+        id: 'loanDetailForm',
+        validators: _loanDetailSchema,
+        onSubmit() {
+            _submitLoanDetailForm($loanDetailForm);
+        },
+        taintedMessage: false,
+    });
+
+    const {
+        form: vehicleDetailForm,
+        errors: vehicleDetailError,
+        enhance: vehicleDetailEnhance,
+    } = superForm(data.vehicleDetailForm, {
+        SPA: true,
+        id: 'vehicleDetailForm',
+        validators: _vehicleDetailSchema,
+        onSubmit() {
+            _submitVehicleDetailForm($vehicleDetailForm);
+        },
+        taintedMessage: false,
+    });
+
+    const {
+        form: loanFinancingForm,
+        errors: loanFinancingError,
+        enhance: loanFinancingEnhance,
+    } = superForm(data.loanFinancingForm, {
+        SPA: true,
+        id: 'loanFinancingForm',
+        validators: _loanFinancingSchema,
+        onSubmit() {
+            _submitLoanFinancingForm($loanFinancingForm);
+        },
+        taintedMessage: false,
+    });
+
+    //reset loan financing stepper if previous loan is false
+    $: if (!$loanFinancingForm.hasPreviousLoan){
+        $loanFinancingForm.recentLoanDate = undefined;
+        $loanFinancingForm.totalLoan = undefined;
+        $loanFinancingForm.latestPaidInstallmentDate = undefined;
+        $loanFinancingForm.latestPaidInstallment = undefined;
+        $loanFinancingForm.currentVehicle = undefined;
+        $loanFinancingForm.currentLoanFromGoverment = undefined;
     }
 </script>
 
@@ -270,7 +355,9 @@
                 {disabled}
                 {labelBlack}
                 label={'Jumlah Potongan'}
-                value={CurrencyHelper.formatCurrency(currEmpSalary.salaryDeduction)}
+                value={CurrencyHelper.formatCurrency(
+                    currEmpSalary.salaryDeduction,
+                )}
             ></TextField>
         </StepperContentBody>
     </StepperContent>
@@ -283,33 +370,66 @@
                 }}
             ></FormButton>
             <FormButton type="reset" onClick={() => {}}></FormButton>
-            <FormButton
-                onClick={() => {
-                    activeStepper = 2;
-                }}
-            ></FormButton>
+            <TextIconButton primary label="Simpan" form="loanDetailForm">
+                <SvgCheck />
+            </TextIconButton>
         </StepperContentHeader>
         <StepperContentBody>
-            <TextField
-                {labelBlack}
-                {disabled}
-                label={'Kelayakan Pembiayaan Maksimum'}
-                value={CurrencyHelper.formatCurrency(30000)}
-            ></TextField>
-            <TextField
-                label={'Jumlah yang Dipohon'}
-                value={CurrencyHelper.formatCurrency(0)}
-            ></TextField>
-            <DropdownSelect
-                dropdownType="label-left-full"
-                label={'Tempoh Pembayaran'}
-                options={loanPaybackYearsOptions}
-                value={selectedLoanPayback}
-            ></DropdownSelect>
-            <LongTextField
-                label={'Tugas Jawatan yang menunjukan sebab-sebab keperluan menggunakan kenderaan persendirian'}
-                value={'-'}
-            ></LongTextField>
+            <form
+                id="loanDetailForm"
+                method="POST"
+                use:loanDetailEnhance
+                class="flex w-full flex-col gap-2"
+            >
+                <TextField
+                    name="maxFundingEligibility"
+                    {labelBlack}
+                    {disabled}
+                    label={'Kelayakan Pembiayaan Maksimum'}
+                    value={CurrencyHelper.formatCurrency(30000)}
+                />
+                <TextField
+                    hasError={!!$loanDetailError.requestedAmount}
+                    name="requestedAmount"
+                    label={'Jumlah yang Dipohon (RM)'}
+                    bind:value={$loanDetailForm.requestedAmount}
+                />
+                {#if $loanDetailError.requestedAmount}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$loanDetailError.requestedAmount[0]}
+                    </span>
+                {/if}
+                <DropdownSelect
+                    hasError={!!$loanDetailError.paymentPeriod}
+                    name="paymentPeriod"
+                    dropdownType="label-left-full"
+                    label={'Tempoh Pembayaran'}
+                    options={loanPaybackYearsOptions}
+                    bind:value={$loanDetailForm.paymentPeriod}
+                />
+                {#if $loanDetailError.paymentPeriod}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$loanDetailError.paymentPeriod[0]}
+                    </span>
+                {/if}
+                <LongTextField
+                    hasError={!!$loanDetailError.reasonToLoan}
+                    name="reasonToLoan"
+                    label={'Tugas Jawatan yang menunjukan sebab-sebab keperluan menggunakan kenderaan persendirian'}
+                    bind:value={$loanDetailForm.reasonToLoan}
+                />
+                {#if $loanDetailError.reasonToLoan}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$loanDetailError.reasonToLoan[0]}
+                    </span>
+                {/if}
+            </form>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -321,38 +441,114 @@
                 }}
             ></FormButton>
             <FormButton type="reset" onClick={() => {}}></FormButton>
-            <FormButton
-                onClick={() => {
-                    activeStepper = 3;
-                }}
-            ></FormButton>
+            <TextIconButton primary label="Simpan" form="vehicleDetailForm">
+                <SvgCheck />
+            </TextIconButton>
         </StepperContentHeader>
         <StepperContentBody>
-            <DropdownSelect
-                dropdownType="label-left-full"
-                label={'Kondisi Kenderaan'}
-                options={vehicleCondition}
-                value={selectedVehicleCondition}
-            ></DropdownSelect>
-            <DropdownSelect
-                dropdownType="label-left-full"
-                label={'Jenis Kenderaan'}
-                options={vehicleType}
-                value={selectedVehicleType}
-            ></DropdownSelect>
-            <TextField label={'Jenama dan Model Kenderaan'} value={'-'}
-            ></TextField>
-            <TextField
-                label={'Sukatan Silinder/No. Chasis/No. Enjin'}
-                value={'-'}
-            ></TextField>
-            <TextField label={'Nombor Pendaftaran'} value={'-'}></TextField>
-            <DateSelector handleDateChange label="Tarikh Pendaftaran"
-            ></DateSelector>
-            <TextField
-                label={'Harga Bersih (seperti ditetapkan dalam WP 9.3'}
-                value={CurrencyHelper.formatCurrency(0)}
-            ></TextField>
+            <form
+                id="vehicleDetailForm"
+                method="POST"
+                use:vehicleDetailEnhance
+                class="flex w-full flex-col gap-2"
+            >
+                <DropdownSelect
+                    hasError={!!$vehicleDetailError.vehicleCondition}
+                    name="vehicleCondition"
+                    dropdownType="label-left-full"
+                    label={'Kondisi Kenderaan'}
+                    options={vehicleCondition}
+                    bind:value={$vehicleDetailForm.vehicleCondition}
+                />
+                {#if $vehicleDetailError.vehicleCondition}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$vehicleDetailError.vehicleCondition[0]}
+                    </span>
+                {/if}
+                <DropdownSelect
+                    hasError={!!$vehicleDetailError.vehicleType}
+                    name="vehicleType"
+                    dropdownType="label-left-full"
+                    label={'Jenis Kenderaan'}
+                    options={vehicleType}
+                    bind:value={$vehicleDetailForm.vehicleType}
+                />
+                {#if $vehicleDetailError.vehicleType}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$vehicleDetailError.vehicleType[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$vehicleDetailError.vehicleBrand}
+                    name="vehicleBrand"
+                    label={'Jenama dan Model Kenderaan'}
+                    bind:value={$vehicleDetailForm.vehicleBrand}
+                />
+                {#if $vehicleDetailError.vehicleBrand}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$vehicleDetailError.vehicleBrand[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$vehicleDetailError.engineNo}
+                    name="engineNo"
+                    label={'Sukatan Silinder/No. Chasis/No. Enjin'}
+                    bind:value={$vehicleDetailForm.engineNo}
+                />
+                {#if $vehicleDetailError.engineNo}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$vehicleDetailError.engineNo[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$vehicleDetailError.registrationNo}
+                    name="registrationNo"
+                    label={'Nombor Pendaftaran'}
+                    bind:value={$vehicleDetailForm.registrationNo}
+                />
+                {#if $vehicleDetailError.registrationNo}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$vehicleDetailError.registrationNo[0]}
+                    </span>
+                {/if}
+                <DateSelector
+                    hasError={!!$vehicleDetailError.registratioNDate}
+                    name="registratioNDate"
+                    handleDateChange
+                    label="Tarikh Pendaftaran"
+                    bind:selectedDate={$vehicleDetailForm.registratioNDate}
+                />
+                {#if $vehicleDetailError.registratioNDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$vehicleDetailError.registratioNDate[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$vehicleDetailError.netPrice}
+                    name="netPrice"
+                    label={'Harga Bersih (seperti ditetapkan dalam WP 9.3'}
+                    bind:value={$vehicleDetailForm.netPrice}
+                />
+                {#if $vehicleDetailError.netPrice}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$vehicleDetailError.netPrice[0]}
+                    </span>
+                {/if}
+            </form>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -364,46 +560,116 @@
                 }}
             ></FormButton>
             <FormButton type="reset" onClick={() => {}}></FormButton>
-            <FormButton
-                onClick={() => {
-                    activeStepper = 4;
-                }}
-            ></FormButton>
+            <TextIconButton primary label="Simpan" form="loanFinancingForm">
+                <SvgCheck />
+            </TextIconButton>
         </StepperContentHeader>
         <StepperContentBody>
-            <RadioSingle
-                onChange={change}
-                userSelected={loanBefore}
-                {options}
-                legend={'Pernahkah diberikan pinjaman/pembiayaan sebelum ini'}
-            ></RadioSingle>
-            {#if loanBefore == 'true'}
-                <DateSelector
-                    handleDateChange
-                    label="Tarikh Pinjaman/Pembayaran Terakhir"
-                ></DateSelector>
-                <TextField
-                    label={'Jumlah Pinjaman/Pembiayaan'}
-                    value={CurrencyHelper.formatCurrency(0)}
-                ></TextField>
-                <DateSelector
-                    handleDateChange
-                    label="Tarikh Ansuran Terakhir Dibayar"
-                ></DateSelector>
-                <TextField
-                    label={'Jumlah Ansuran Terakhir Dibayar'}
-                    value={CurrencyHelper.formatCurrency(0)}
-                ></TextField>
+            <form
+                id="loanFinancingForm"
+                method="POST"
+                use:loanFinancingEnhance
+                class="flex w-full flex-col gap-2"
+            >
+                <RadioSingle
+                    name="hasPreviousLoan"
+                    onChange={change}
+                    bind:userSelected={$loanFinancingForm.hasPreviousLoan}
+                    {options}
+                    legend={'Pernahkah diberikan pinjaman/pembiayaan sebelum ini'}
+                />
+                {#if $loanFinancingError.hasPreviousLoan}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$loanFinancingError.hasPreviousLoan[0]}
+                    </span>
+                {/if}
+                {#if $loanFinancingForm.hasPreviousLoan}
+                    <DateSelector
+                        hasError={!!$loanFinancingError.recentLoanDate}
+                        name="recentLoanDate"
+                        handleDateChange
+                        label="Tarikh Pinjaman/Pembayaran Terakhir"
+                        bind:selectedDate={$loanFinancingForm.recentLoanDate}
+                    />
+                    {#if $loanFinancingError.recentLoanDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >
+                            {$loanFinancingError.recentLoanDate[0]}
+                        </span>
+                    {/if}
+                    <TextField
+                        hasError={!!$loanFinancingError.totalLoan}
+                        name="totalLoan"
+                        label={'Jumlah Pinjaman/Pembiayaan'}
+                        bind:value={$loanFinancingForm.totalLoan}
+                    />
+                    {#if $loanFinancingError.totalLoan}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >
+                            {$loanFinancingError.totalLoan[0]}
+                        </span>
+                    {/if}
+                    <DateSelector
+                        hasError={!!$loanFinancingError.latestPaidInstallmentDate}
+                        name="latestPaidInstallmentDate"
+                        handleDateChange
+                        label="Tarikh Ansuran Terakhir Dibayar"
+                        bind:selectedDate={$loanFinancingForm.latestPaidInstallmentDate}
+                    />
+                    {#if $loanFinancingError.latestPaidInstallmentDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >
+                            {$loanFinancingError.latestPaidInstallmentDate[0]}
+                        </span>
+                    {/if}
+                    <TextField
+                        hasError={!!$loanFinancingError.latestPaidInstallment}
+                        name="latestPaidInstallment"
+                        label={'Jumlah Ansuran Terakhir Dibayar'}
+                        bind:value={$loanFinancingForm.latestPaidInstallment}
+                    />
+                    {#if $loanFinancingError.latestPaidInstallment}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >
+                            {$loanFinancingError.latestPaidInstallment[0]}
+                        </span>
+                    {/if}
 
-                <TextField
-                    label={'Jenis Kenderaan yang Digunakan Sekarang Untuk Tugas Rasmi'}
-                    value={'-'}
-                ></TextField>
-                <TextField
-                    label={'Butir-butir Baki Hutang/Tuntutan Lain dengan Kerajaan Bagi Pihak Diri Sendiri, Jika Ada'}
-                    value={'-'}
-                ></TextField>
-            {/if}
+                    <TextField
+                        hasError={!!$loanFinancingError.currentVehicle}
+                        name="currentVehicle"
+                        label={'Jenis Kenderaan yang Digunakan Sekarang Untuk Tugas Rasmi'}
+                        bind:value={$loanFinancingForm.currentVehicle}
+                    />
+                    {#if $loanFinancingError.currentVehicle}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >
+                            {$loanFinancingError.currentVehicle[0]}
+                        </span>
+                    {/if}
+
+                    <TextField
+                        hasError={!!$loanFinancingError.currentLoanFromGoverment}
+                        name="currentLoanFromGoverment"
+                        label={'Butir-butir Baki Hutang/Tuntutan Lain dengan Kerajaan Bagi Pihak Diri Sendiri, Jika Ada'}
+                        bind:value={$loanFinancingForm.currentLoanFromGoverment}
+                    />
+                    {#if $loanFinancingError.currentLoanFromGoverment}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >
+                            {$loanFinancingError.currentLoanFromGoverment[0]}
+                        </span>
+                    {/if}
+                {/if}
+            </form>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -415,13 +681,10 @@
                 }}
             ></FormButton>
             <FormButton type="reset" onClick={() => {}}></FormButton>
-            <FormButton
-                type="send"
-                onClick={() => {
-                    window.history.back();
-                }}
-            ></FormButton></StepperContentHeader
-        >
+            <TextIconButton primary label="Hantar" form="validationForm">
+                <SvgPaperAirplane />
+            </TextIconButton>
+        </StepperContentHeader>
         <StepperContentBody>
             <!-- Document Upload -->
             <div
@@ -502,14 +765,29 @@
             <div
                 class="flex h-fit w-full flex-col items-start justify-start gap-2.5"
             >
-                <Checkbox checked={infoTrue}
-                    ><p>
-                        Saya dengan ini mengesahkan bahawa maklumat sebagaimana
-                        yang dinyatakan berikut adalah benar
-                    </p></Checkbox
+                <form
+                    id="validationForm"
+                    method="POST"
+                    use:validationEnhance
+                    class="flex w-full flex-col gap-2"
                 >
+                    <Checkbox bind:checked={$validationForm.staffValidation}
+                        ><p>
+                            Saya dengan ini mengesahkan bahawa maklumat
+                            sebagaimana yang dinyatakan berikut adalah benar
+                        </p>
+                    </Checkbox>
+                    {#if $validationError.staffValidation}
+                        <span
+                            class="font-sans text-sm italic text-system-danger"
+                        >
+                            {$validationError.staffValidation[0]}
+                        </span>
+                    {/if}
+                </form>
             </div>
         </StepperContentBody>
     </StepperContent>
 </Stepper>
-z
+
+<Toaster />
