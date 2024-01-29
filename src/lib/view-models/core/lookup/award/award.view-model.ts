@@ -2,7 +2,7 @@
 // Award Category Enum View Model
 // ===============================================================
 
-export interface EnumAwardResponse {
+export interface EnumAwardResponseViewModel {
     status:  number;
     message: string;
     data:    Data;
@@ -24,17 +24,17 @@ export interface EnumAward {
 export class EnumAwardResponseConvert {
 
     // to model from response
-    public static fromResponse(response: Response): EnumAwardResponse {
+    public static fromResponse(response: Response): EnumAwardResponseViewModel {
         return JSON.parse(JSON.stringify(response));
     }
 
     // to model from json string
-    public static fromJson(json: string): EnumAwardResponse {
+    public static fromJson(json: string): EnumAwardResponseViewModel {
         return JSON.parse(json);
     }
 
     // to json string form model
-    public static toJson(value: EnumAwardResponse): string {
+    public static toJson(value: EnumAwardResponseViewModel): string {
         return JSON.stringify(value);
     }
 }
