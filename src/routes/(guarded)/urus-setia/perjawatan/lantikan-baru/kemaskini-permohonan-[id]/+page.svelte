@@ -14,13 +14,15 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
-    import type { SelectOptionType } from 'flowbite-svelte';
+    import { Toaster } from 'svelte-french-toast';
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import {
         _secretaryApprovalInfoSchema,
+        _secretarySetApproversSchema,
         _serviceInfoSchema,
         _submitSecretaryApprovalForm,
+        _submitSecretarySetApproverForm,
         _submitServiceInfoForm,
     } from './+page';
     import Stepper204 from '$lib/components/stepper-conditional-rules/Stepper204.svelte';
@@ -79,10 +81,10 @@
     let isReadonlyServiceFormStepper: boolean =
         data.serviceResponse?.data?.isReadonly;
 
-    let isSuccessScretaryApprovalFormResponse: boolean =
-        data.secretaryApprovalResponse.status === 201;
-    // let isReadonlyScretaryApprovalFormStepper: boolean =
-    //     data.secretaryApprovalResponse?.isReadonly;
+    let isSuccessSetApproversResponse: boolean =
+        data.secretarySetApproversResponse.status === 201;
+    let isReadonlySetApproversFormStepper: boolean =
+        data.secretarySetApproversDetails?.isReadonly;
 
     // Stepper Classes
     let stepperFormTitleClass =
@@ -140,19 +142,28 @@
         SPA: true,
         validators: _secretaryApprovalInfoSchema,
         onSubmit() {
-            console.log($secretaryApprovalInfoForm);
-            // _submitSecretaryApprovalForm($secretaryApprovalInfoForm);
+            _submitSecretaryApprovalForm($secretaryApprovalInfoForm);
+        },
+    });
+
+    const {
+        form: secretarySetApproverForm,
+        errors: secretarySetApproverErrors,
+        enhance: secretarySetApproverEnhance,
+    } = superForm(data.secretarySetApproversForm, {
+        SPA: true,
+        validators: _secretarySetApproversSchema,
+        onSubmit() {
+            _submitSecretarySetApproverForm($secretarySetApproverForm);
         },
     });
 </script>
 
-<ContentHeader
-    title="Maklumat Lantikan Baru {data.currentEmployee.name}"
-    description=""
+<ContentHeader title="Maklumat Lantikan Baru" description=""
     ><FormButton
         type="close"
         onClick={() => {
-            goto('../lantikan-baru');
+            // goto('../lantikan-baru');
         }}
     /></ContentHeader
 >
@@ -557,70 +568,66 @@
             ><div class="flex w-full flex-col gap-2.5">
                 {#if isSuccessExperienceFormResponse}
                     {#each data.experienceInfoResponse.data.experienceList as record, i}
-                        <div
-                            class="space-y-2.5 rounded-[3px] border p-2.5"
-                        ></div>
-                        <p class={stepperFormTitleClass}>
-                            Maklumat Pengalaman #{i + 1}
-                        </p>
-                        <TextField
-                            disabled
-                            name="company"
-                            label={'Nama Majikan'}
-                            type="text"
-                            bind:value={record.company}
-                        ></TextField>
+                        <div class="space-y-2.5 rounded-[3px] border p-2.5">
+                            <p class={stepperFormTitleClass}>
+                                Maklumat Pengalaman #{i + 1}
+                            </p>
+                            <TextField
+                                disabled
+                                name="company"
+                                label={'Nama Majikan'}
+                                type="text"
+                                bind:value={record.company}
+                            ></TextField>
 
-                        <TextField
-                            disabled
-                            name="address"
-                            label={'Alamat Majikan'}
-                            type="text"
-                            bind:value={record.address}
-                        ></TextField>
+                            <TextField
+                                disabled
+                                name="address"
+                                label={'Alamat Majikan'}
+                                type="text"
+                                bind:value={record.address}
+                            ></TextField>
 
-                        <TextField
-                            disabled
-                            name="position"
-                            label={'Jawatan'}
-                            type="text"
-                            bind:value={record.position}
-                        ></TextField>
+                            <TextField
+                                disabled
+                                name="position"
+                                label={'Jawatan'}
+                                type="text"
+                                bind:value={record.position}
+                            ></TextField>
 
-                        <TextField
-                            disabled
-                            name="positionCode"
-                            label={'Kod Jawatan (jika ada)'}
-                            type="text"
-                            bind:value={record.positionCode}
-                        ></TextField>
+                            <TextField
+                                disabled
+                                name="positionCode"
+                                label={'Kod Jawatan (jika ada)'}
+                                type="text"
+                                bind:value={record.positionCode}
+                            ></TextField>
 
-                        <TextField
-                            disabled
-                            name="startDate"
-                            label={'Dari (tahun)'}
-                            type="text"
-                            bind:value={record.startDate}
-                        ></TextField>
+                            <TextField
+                                disabled
+                                name="startDate"
+                                label={'Dari (tahun)'}
+                                type="text"
+                                bind:value={record.startDate}
+                            ></TextField>
 
-                        <TextField
-                            disabled
-                            name="endDate"
-                            label={'Hingga (tahun)'}
-                            type="text"
-                            bind:value={record.endDate}
-                        ></TextField>
+                            <TextField
+                                disabled
+                                name="endDate"
+                                label={'Hingga (tahun)'}
+                                type="text"
+                                bind:value={record.endDate}
+                            ></TextField>
 
-                        <TextField
-                            disabled
-                            name="salary"
-                            label={'Gaji'}
-                            type="text"
-                            bind:value={record.salary}
-                        ></TextField>
-                        <div
-                            class="space-y-2.5 rounded-[3px] border p-2.5"
-                        ></div>
+                            <TextField
+                                disabled
+                                name="salary"
+                                label={'Gaji'}
+                                type="text"
+                                bind:value={record.salary}
+                            ></TextField>
+                        </div>
                     {/each}
                 {:else}
                     <Stepper204
@@ -771,6 +778,21 @@
                 {/if}
                 <DropdownSelect
                     disabled={isReadonlyServiceFormStepper}
+                    hasError={!!$serviceInfoErrors.maxGradeId}
+                    dropdownType="label-left-full"
+                    id="maxGradeId"
+                    label="Gred Maksimum"
+                    bind:value={$serviceInfoForm.maxGradeId}
+                    options={data.gradeLookup}
+                ></DropdownSelect>
+                {#if $serviceInfoErrors.maxGradeId}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$serviceInfoErrors.maxGradeId}</span
+                    >
+                {/if}
+                <DropdownSelect
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.positionId}
                     dropdownType="label-left-full"
                     id="positionId"
@@ -785,6 +807,7 @@
                     >
                 {/if}
                 <DropdownSelect
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.placementId}
                     dropdownType="label-left-full"
                     id="placementId"
@@ -1302,52 +1325,61 @@
             <hr />
         </StepperContentBody>
     </StepperContent>
-    <!-- <StepperContent>
-        <StepperContentHeader title="Tetapkan Penyokong dan Pelulus (Jika Sah)"
-            ><TextIconButton
-                primary
-                label="Simpan"
-                form="newEmploymentAssignApproverSupporterForm"
-            >
-                <SvgCheck></SvgCheck>
-            </TextIconButton></StepperContentHeader
-        >
+    <StepperContent>
+        <StepperContentHeader title="Tetapkan Penyokong dan Pelulus (Jika Sah)">
+            {#if !isReadonlySetApproversFormStepper}
+                <TextIconButton
+                    primary
+                    label="Simpan"
+                    form="newEmploymentAssignApproverSupporterForm"
+                >
+                    <SvgCheck></SvgCheck>
+                </TextIconButton>
+            {/if}
+        </StepperContentHeader>
         <StepperContentBody>
             <form
                 id="newEmploymentAssignApproverSupporterForm"
+                method="POST"
+                use:secretarySetApproverEnhance
                 class="flex w-full flex-col gap-2"
             >
+                <input
+                    hidden
+                    bind:value={$secretarySetApproverForm.candidateId}
+                />
                 <DropdownSelect
-                    hasError={errorData?.staffSupporter}
-                    id="staffSupporter"
+                    hasError={!!$secretarySetApproverErrors.supporterId}
+                    id="supporterId"
                     label="Nama Penyokong"
                     dropdownType="label-left-full"
-                    options={employeeLists}
-                    bind:value={selectedSupporter}
+                    options={data.employeeListLookup}
+                    bind:value={$secretarySetApproverForm.supporterId}
                 />
-                {#if errorData?.staffSupporter}
+                {#if $secretarySetApproverErrors.supporterId}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.staffSupporter}</span
+                        >{$secretarySetApproverErrors.supporterId}</span
                     >
                 {/if}
                 <DropdownSelect
-                    hasError={errorData?.staffApprover}
-                    id="staffApprover"
+                    hasError={!!$secretarySetApproverErrors.approverId}
+                    id="approverId"
                     label="Nama Pelulus"
                     dropdownType="label-left-full"
-                    options={employeeLists}
-                    bind:value={selectedApprover}
+                    options={data.employeeListLookup}
+                    bind:value={$secretarySetApproverForm.approverId}
                 />
-                {#if errorData?.staffApprover}
+                {#if $secretarySetApproverErrors.approverId}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{errorData?.staffApprover}</span
+                        >{$secretarySetApproverErrors.approverId}</span
                     >
                 {/if}
             </form>
         </StepperContentBody>
     </StepperContent>
+
     <StepperContent>
         <StepperContentHeader title="Keputusan daripada Peranan - Peranan Lain"
         ></StepperContentHeader>
@@ -1373,11 +1405,12 @@
                     <div class="flex w-full flex-row text-sm">
                         <label for="supporter-result" class="w-[220px]"
                             >Keputusan</label
-                        ><Badge
+                        >
+                        <!-- <Badge
                             border
                             color={passerResult == 'supported'
                                 ? 'green'
-                                : 'red'}>{results[3].name}</Badge
+                                : 'red'}>{results[3].name}</Badge -->
                         >
                     </div>
                 </div>
@@ -1401,11 +1434,12 @@
                     <div class="flex w-full flex-row text-sm">
                         <label for="approver-result" class="w-[220px]"
                             >Keputusan</label
-                        ><Badge
+                        >
+                        <!-- <Badge
                             border
                             color={passerResult == 'passed' ? 'green' : 'red'}
                             >{results.name}</Badge
-                        >
+                        > -->
                     </div>
                 </div>
                 <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
@@ -1430,17 +1464,18 @@
                     <div class="flex w-full flex-row text-sm">
                         <label for="service-secretary-result" class="w-[220px]"
                             >Keputusan</label
-                        ><Badge
+                        >
+                        <!-- <Badge
                             border
                             color={passerResult == 'passed' ? 'green' : 'red'}
                             >{results.name}</Badge
-                        >
+                        > -->
                     </div>
                 </div>
             </div>
         </StepperContentBody>
     </StepperContent>
-    <StepperContent>
+    <!--<StepperContent>
         <StepperContentHeader title="Maklumat ID MyPSM"></StepperContentHeader>
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2">
@@ -1454,3 +1489,5 @@
         </StepperContentBody>
     </StepperContent> -->
 </Stepper>
+
+<Toaster />
