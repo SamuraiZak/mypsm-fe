@@ -1,27 +1,48 @@
-import api from '$lib/services/core/ky.service';
-import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
+
+import { NewHireServices } from '$lib/services/implementations/mypsm/employment/new-hire/new-hire.service';
 import { showLoadingOverlay } from '$lib/stores/globalState';
-import { EmployeesListResponseConvert, type EmployeesListResponseViewModel } from '$lib/view-models/mypsm/employee/employee-list-response';
+import type { NewHireListRequestViewModel } from '$lib/view-models/mypsm/employment/new-hire/default/new-hire-list-request.view-model';
+import type { NewHireListResponseViewModel } from '$lib/view-models/mypsm/employment/new-hire/default/new-hire-list-response.view-model';
+
 
 export async function load() {
     showLoadingOverlay.set(true);
 
-    const request: EmployeesListRequestViewModel = {
+    const param: NewHireListRequestViewModel = {
         pageNum: 1,
-        pageSize: 10,
-        orderBy: 'programme',
-        orderType: 'asc',
+        pageSize: 5,
+        orderBy: '',
+        orderType: '',
         filter: {
+            dataType: "New",
+            identityCard: null,
+            staffNo: null,
+            staffName: null,
+            dateRequest: null,
+            dateHire: null,
+            status: null,
         },
     };
 
-    const employeeList:EmployeesListResponseViewModel = await EmployeeService.getEmployeeList(request);
+    const newHireList: NewHireListResponseViewModel = await NewHireServices.getNewHireList(param);
 
     setTimeout(() => showLoadingOverlay.set(false), 2500);
     return {
         props: {
-            employeeList,
-            request,
+            newHireList,
+            param,
+        },
+    };
+}
+
+export async function _retrieveData(param: NewHireListRequestViewModel){
+    const newHireList: NewHireListResponseViewModel = await NewHireServices.getNewHireList(param);
+
+    setTimeout(() => showLoadingOverlay.set(false), 2500);
+    return {
+        props: {
+            newHireList,
+            param,
         },
     };
 }
