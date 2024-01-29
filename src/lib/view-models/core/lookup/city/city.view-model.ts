@@ -2,7 +2,7 @@
 // City Enum View Model
 // ===============================================================
 
-export interface EnumCityResponse {
+export interface EnumCityResponseViewModel {
     status:  number;
     message: string;
     data:    EnumCityResponseData;
@@ -22,17 +22,17 @@ export interface EnumCity {
 export class EnumCityResponseConvert {
 
     // to model from response
-    public static fromResponse(response: Response): EnumCityResponse {
+    public static fromResponse(response: Response): EnumCityResponseViewModel {
         return JSON.parse(JSON.stringify(response));
     }
 
     // to model from json string
-    public static fromJson(json: string): EnumCityResponse {
+    public static fromJson(json: string): EnumCityResponseViewModel {
         return JSON.parse(json);
     }
     
     // to json string from model
-    public static enumCityResponseToJson(value: EnumCityResponse): string {
+    public static enumCityResponseToJson(value: EnumCityResponseViewModel): string {
         return JSON.stringify(value);
     }
 }
