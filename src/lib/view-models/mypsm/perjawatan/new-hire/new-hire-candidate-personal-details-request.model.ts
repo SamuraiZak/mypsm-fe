@@ -16,6 +16,16 @@ export interface CandidatePersonalDetailsRequestBody {
     email: string;
     propertyDeclarationDate: Date;
     birthDate: Date;
+    homeAddress: string;
+    homeCountryId: number;
+    homeStateId: number;
+    homeCityId: number;
+    homePostcode: string;
+    mailAddress: string;
+    mailCountryId: number;
+    mailStateId: number;
+    mailCityId: number;
+    mailPostcode: string;
     isExPoliceOrSoldier: boolean;
     isInternalRelationship: boolean;
     employeeNumber: string;

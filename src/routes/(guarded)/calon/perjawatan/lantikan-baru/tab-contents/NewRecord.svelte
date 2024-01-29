@@ -7,16 +7,14 @@
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import FilterSelectInput from '$lib/components/filter/FilterSelectInput.svelte';
     import { status } from '$lib/mocks/status/status';
-    export let listData: any;
-    let tempUrl: Candidate;
+    import type { NewHireData } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-list-response.view-model';
+    export let listData: NewHireData[];
+    let tempUrl: NewHireData;
     let selectedStatus = status[0].value; // Default selected filter
 </script>
 
 <!-- Table filter placeholder -->
 <FilterContainer>
-    <FilterTextInput label="Nama Calon"></FilterTextInput>
-    <FilterTextInput label="ID Calon"></FilterTextInput>
-    <FilterTextInput label="No. Kad Pengenalan"></FilterTextInput>
     <FilterDateSelector handleDateChange label="Tarikh Mohon"
     ></FilterDateSelector>
     <FilterDateSelector handleDateChange label="Tarikh Lantikan"
@@ -31,8 +29,24 @@
 <!-- Sample table for testing purposes -->
 <div class="flex w-full flex-col items-start justify-center">
     <SectionHeader title="Senarai Rekod Pautan Belum Diisi"></SectionHeader>
-    <DynamicTable
-        tableItems={listData}
-        bind:passData={tempUrl}
-    ></DynamicTable>
+
+    {#if listData === undefined}
+        <div
+            class="w-full text-center text-sm font-semibold italic text-system-danger"
+        >
+            Ralat! Data gagal ditarik dari sistem.. Sila semak status internet
+            anda.
+        </div>
+    {:else}
+        <DynamicTable
+            withActions
+            actionOptions={['edit']}
+            editActions={() => {
+                const url = './lantikan-baru/butiran-calon-' + tempUrl.candidateId;
+                goto(url);
+            }}
+            tableItems={listData}
+            bind:passData={tempUrl}
+        ></DynamicTable>
+    {/if}
 </div>

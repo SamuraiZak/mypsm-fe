@@ -6,11 +6,12 @@
 
     import { _calonLoginSchema, _submit } from './+page';
     import { showLoadingOverlay } from '$lib/stores/globalState';
+    import { Toaster } from 'svelte-french-toast';
 
     export let data: PageData;
 
     // preset form data
-    data.form.data.idType = "candidateNumber";
+    data.form.data.idType = "username";
     data.form.data.userGroup = 'candidate';
     data.form.data.currentRole = 'calon';
 
@@ -55,7 +56,7 @@
         </div>
 
         <form id="loginForm" method="POST" use:enhance class="space-y-2">
-            
+
 
             <!-- user name field starts -->
 
@@ -174,3 +175,5 @@
         </form>
     </div>
 </div>
+
+<Toaster/>

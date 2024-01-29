@@ -327,7 +327,7 @@ export class EmployeeService {
     }
 
     // create new hire approvers
-    static async createCurrentCandidateApprovers(
+    static async createCurrentCandidateSecretaryApprover(
         param: AddApprovalResultRequestBody,
     ): Promise<RequestSuccessBody> {
         const response: RequestSuccessBody = await http

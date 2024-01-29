@@ -25,7 +25,9 @@ export class AuthService {
 
         const loginResponse = AuthenticationResponseConvert.fromResponse(response);
 
-        localStorage.setItem(LocalStorageKeyConstant.accessToken, loginResponse.data.token);
+        if(loginResponse.status === 200) {
+            localStorage.setItem(LocalStorageKeyConstant.accessToken, loginResponse.data.token);
+        }
 
         return loginResponse;
     }
@@ -33,7 +35,7 @@ export class AuthService {
     // login service for candidate
     static async loginCandidate(param: AuthenticationRequestViewModel){
         const response: Response = await http
-        .post('authentication/login-candidate', {
+        .post('authentication/candidate-login', {
             body: JSON.stringify(param),
             headers: {
                 Accept: 'application/json',
@@ -44,7 +46,9 @@ export class AuthService {
 
         const loginResponse = AuthenticationResponseConvert.fromResponse(response);
 
-        localStorage.setItem(LocalStorageKeyConstant.accessToken, loginResponse.data.token);
+        if(loginResponse.status === 200) {
+            localStorage.setItem(LocalStorageKeyConstant.accessToken, loginResponse.data.token);
+        }
 
         return loginResponse;
     }

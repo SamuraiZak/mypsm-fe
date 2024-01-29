@@ -1,4 +1,8 @@
 import { goto } from '$app/navigation';
+import {
+    getLoginErrorToast,
+    getLoginSuccessToast,
+} from '$lib/services/core/toast/toast-service';
 import { AuthService } from '$lib/services/implementations/core/auth/authentication.service';
 import type { AuthenticationRequestViewModel } from '$lib/view-models/core/auth/auth-request.view-model';
 import type { AuthenticationResponseViewModel } from '$lib/view-models/core/auth/auth-response.view-model';
@@ -19,15 +23,20 @@ export const load = async () => {
     const form = await superValidate(_kakitanganLoginSchema);
 
     // get role list
-    const roleResponse: EnumRoleResponseViewModel = await AuthService.getRoleOptions();
+    const roleResponse: EnumRoleResponseViewModel =
+        await AuthService.getRoleOptions();
 
     return { form, roleResponse };
 };
 
 export const _submit = async (formData: AuthenticationRequestViewModel) => {
-    const response: AuthenticationResponseViewModel = await AuthService.loginEmployee(formData);
-    if (response.status == 200) {
-
-        goto('/kakitangan/halaman-utama');
+    const response: AuthenticationResponseViewModel =
+        await AuthService.loginEmployee(formData);
+    if (response.status === 200) {
+        getLoginSuccessToast().finally(() =>
+            setTimeout(() => goto('/kakitangan/halaman-utama'), 2000),
+        );
+    } else {
+        getLoginErrorToast();
     }
 };

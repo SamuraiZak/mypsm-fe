@@ -8,9 +8,7 @@ import {
 } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-list-response.view-model';
 
 export async function load() {
-    showLoadingOverlay.set(true);
-
-    const request: NewHireListRequest = {
+    const newApplication: NewHireListRequest = {
         pageNum: 1,
         pageSize: 5,
         orderBy: '',
@@ -25,12 +23,6 @@ export async function load() {
             status: null,
         },
     };
-
-    const newAddedHireResponse: NewHireListResponse = await http
-        .post('employments/new-hires', {
-            body: JSON.stringify(request),
-        })
-        .json();
 
     const submittedRequest: NewHireListRequest = {
         pageNum: 1,
@@ -48,18 +40,22 @@ export async function load() {
         },
     };
 
-    const submittedFormResponse: NewHireListResponse = await http
+    const response: NewHireListResponse = await http
+        .post('employments/new-hires', {
+            body: JSON.stringify(newApplication),
+        })
+        .json();
+
+    const submittedResponse: NewHireListResponse = await http
         .post('employments/new-hires', {
             body: JSON.stringify(submittedRequest),
         })
         .json();
 
-    const newHireLists: NewHireData[] = newAddedHireResponse.data.newHires;
+    const newHireLists: NewHireData[] = response.data?.newHires;
 
-    const submittedFormLists: NewHireData[] =
-        submittedFormResponse.data.newHires;
+    const submittedFormLists: NewHireData[] = submittedResponse.data?.newHires;
 
-    setTimeout(() => showLoadingOverlay.set(false), 2500);
     return {
         submittedFormLists,
         newHireLists,
