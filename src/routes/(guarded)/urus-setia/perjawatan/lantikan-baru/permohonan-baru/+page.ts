@@ -14,7 +14,7 @@ import { z } from 'zod';
 
 // creating schema
 export const _addNewHireSchema = z.object({
-    tempId: z.coerce
+    name: z.coerce
         .string({
             required_error: 'Sila tetapkan ID sementara calon',
             invalid_type_error: 'Id hendaklah terdiri daripada nombor sahaja',
