@@ -9,7 +9,10 @@
     import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
     import TransaksiAtasTalian from '../buat-pembayaran/forms/TransaksiAtasTalian.svelte';
     import PenolakanGaji from '../buat-pembayaran/forms/PenolakanGaji.svelte';
+    import FormButton from '$lib/components/buttons/FormButton.svelte';
+    import type { PageData } from './$types';
 
+    export let data: PageData;
     export let disabled: boolean = true;
 
     let selectedKaedahPembayaran = '';
@@ -26,18 +29,18 @@
     class="flex h-full max-h-[100vh-172px] w-full flex-col items-center justify-start gap-2.5 overflow-y-auto p-2.5 p-2.5"
 >
     <SectionHeader title="Maklumat Pembayaran"
-        ><TextIconButton
-            primary
-            label="Hantar"
+        ><FormButton
+            type="close"
             onClick={() => {
-                goto('');
-            }}><SvgPaperAirplane /></TextIconButton
-        ></SectionHeader
+                goto('/kakitangan/perubatan/');
+            }}
+        /></SectionHeader
     >
     <div
         class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
     >
-        <SectionHeader title="Permohonan Penangguhan/Pindaan Penempatan "></SectionHeader>
+        <SectionHeader title="Permohonan Penangguhan/Pindaan Penempatan "
+        ></SectionHeader>
         <DropdownSelect
             dropdownType="label-left-full"
             label="Kaedah Pembayaran"
@@ -49,7 +52,8 @@
         ></DropdownSelect>
 
         {#if selectedKaedahPembayaran === 'Transaksi Atas Talian'}
-            <TransaksiAtasTalian></TransaksiAtasTalian>
+            <TransaksiAtasTalian bind:data={data.stepperOnlineTransaction}
+            ></TransaksiAtasTalian>
         {:else if selectedKaedahPembayaran === 'Penolakan Gaji'}
             <PenolakanGaji></PenolakanGaji>
         {/if}
