@@ -2,7 +2,7 @@
 // Major Minor Enum Response View Model
 // ===============================================================
 
-export interface EnumMajorMinorResponse {
+export interface EnumMajorMinorResponseViewModel {
     status: number;
     message: string;
     data: EnumMajorMinorResponseData;
@@ -21,17 +21,17 @@ export interface MajorMinor {
 // Converts JSON strings to/from your types
 export class EnumCountryResponseConvert {
     // to model from response
-    public static fromResponse(response: Response): EnumMajorMinorResponse {
+    public static fromResponse(response: Response): EnumMajorMinorResponseViewModel {
         return JSON.parse(JSON.stringify(response));
     }
 
     // to model from json string
-    public static fromJson(json: string): EnumMajorMinorResponse {
+    public static fromJson(json: string): EnumMajorMinorResponseViewModel {
         return JSON.parse(json);
     }
 
     // to json string from model
-    public static toJson(value: EnumMajorMinorResponse): string {
+    public static toJson(value: EnumMajorMinorResponseViewModel): string {
         return JSON.stringify(value);
     }
 }
