@@ -1,4 +1,4 @@
-export interface PersonalDetailResponse {
+export interface GetPersonalDetailResponse {
     status:  number;
     message: string;
     data:    Data;

@@ -1,5 +1,4 @@
-export interface PersonalAcademicRequest {
-    educationId:    number;
+export interface PostPersonalAcademicRequest {
     majorMinor:     string;
     country:        string;
     institution:    string;

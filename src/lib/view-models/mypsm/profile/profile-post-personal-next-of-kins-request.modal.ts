@@ -1,15 +1,4 @@
-export interface PersonalDependentResponse {
-    status:  number;
-    message: string;
-    data:    Data;
-}
-
-export interface Data {
-    dependentList: DependentList[];
-}
-
-export interface DependentList {
-    id:                     string;
+export interface PostPersonalNextOfKinsRequest {
     birthCountry:           string;
     birthState:             string;
     relationship:           string;

@@ -1,4 +1,4 @@
-export interface PersonalActivityRequest {
+export interface PostPersonalActivityRequest {
     name:        string;
     joinDate:    Date;
     position:    string;

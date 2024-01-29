@@ -1,4 +1,4 @@
-export interface PersonalDetailRequest {
+export interface PutPersonalDetailRequest {
     employeeNumber:     string;
     identityCardNumber: string;
     fullName:           string;

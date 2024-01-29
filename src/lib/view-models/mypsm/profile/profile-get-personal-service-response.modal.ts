@@ -1,4 +1,10 @@
-export interface PersonalServiceRequest {
+export interface GetPersonalServiceResponse {
+    status:  number;
+    message: string;
+    data:    Data;
+}
+
+export interface Data {
     currentGrade:          string;
     currentPosition:       string;
     placement:             string;
@@ -14,8 +20,9 @@ export interface PersonalServiceRequest {
     eligibleLeaveCount:    number;
     civilServiceStartDate: Date;
     confirmServiceDate:    Date;
+    historyList:           any[];
     firstEffectiveDate:    Date;
-    pastAttachmentDate:    Date;
+    pastAttachmentDate:    null;
     actingDate:            Date;
     interimDate:           Date;
     pensionScheme:         string;

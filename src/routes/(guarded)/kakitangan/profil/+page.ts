@@ -3,8 +3,10 @@ import { error, fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
-import  type { PersonalDetailResponse } from '$lib/view-models/mypsm/profile/proflle-personal-detail-response.modal.js';
-import type { PersonalDetailRequest } from '$lib/view-models/mypsm/profile/proflle-personal-detail-request.modal';
+import  type { PutPersonalDetailResponse } from '$lib/view-models/mypsm/profile/proflle-put-personal-detail-response.modal.js';
+import type { PutPersonalDetailRequest } from '$lib/view-models/mypsm/profile/proflle-put-personal-detail-request.modal';
+import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
+import type { GetPersonalDetailResponse } from '$lib/view-models/mypsm/profile/proflle-get-personal-detail-response.modal';
 
 // =========================================================================
 // z validation schema and submit function for the new employment form fields
@@ -132,6 +134,8 @@ export const _stepperMaklumatPeribadi = z.object({
     namaPasangan: shortTextSchema,
     homeAddress: shortTextSchema,
     mailAddress: shortTextSchema,
+    houseLoan: shortTextSchema,
+    houseLoanType: shortTextSchema,
 
     birthDate: dateStepper1,
 
@@ -203,35 +207,35 @@ const maklumatPerkhidmatanSelectSchema = z
 export const _stepperMaklumatPerkhidmatan = z.object({
     faedahPersaraanPerkhidmatan:booleanSchema,
 
-    gredSemasa: maklumatPerkhidmatanSelectSchema,
-    jawatan: maklumatPerkhidmatanSelectSchema,
-    penempatan: maklumatPerkhidmatanSelectSchema,
-    tarafPerkhidmatan: maklumatPerkhidmatanSelectSchema,
+    currentGrade: maklumatPerkhidmatanSelectSchema,
+    currentPosition: maklumatPerkhidmatanSelectSchema,
+    placement: maklumatPerkhidmatanSelectSchema,
+    serviceType: maklumatPerkhidmatanSelectSchema,
     bulanKGT: maklumatPerkhidmatanSelectSchema,
 
-    noKWSP: shortTextSchema,
-    noSOCSO: shortTextSchema,
-    noCukai: shortTextSchema,
-    bank: shortTextSchema,
-    noAkaun: shortTextSchema,
+    EPFNumber: shortTextSchema,
+    SOCSO: shortTextSchema,
+    taxIncome: shortTextSchema,
+    bankName: shortTextSchema,
+    accountNumber: shortTextSchema,
     tarikhBerkuatKuasa: shortTextSchema,
-    tanggaGaji: shortTextSchema,
-    gajiPokok: shortTextSchema,
-    itka: shortTextSchema,
-    itp: shortTextSchema,
-    epw: shortTextSchema,
-    cola: shortTextSchema,
+    salaryMovementMonth: shortTextSchema,
+    baseSalary: shortTextSchema,
+    ITKA: shortTextSchema,
+    ITP: shortTextSchema,
+    EPW: shortTextSchema,
+    COLA: shortTextSchema,
     kelayakanCuti: shortTextSchema,
 
-    mulaDilantikPerkhidmatanKerajaan: dateStepper2max,
-    mulaDilantikPerkhidmatanLKIM: dateStepper2max,
-    disahkanDalamJawatanSemasaLKIM: dateStepper2max,
+    civilServiceStartDate: dateStepper2max,
+    firstEffectiveDate: dateStepper2max,
+    confirmServiceDate: dateStepper2max,
     tarikhKelulusanPercantumanPerkhidmatanLepas: dateStepper2max,
-    tarikhBersara: dateStepper2,
+    retirementDate: dateStepper2,
     tarikhKuatkuasaLantikanSemasa: dateStepper2max,
-    pemangkuanSekarang: dateStepper2,
-    tanggungKerjaSekarang: dateStepper2,
-    kenaikanGajiAkhir: dateStepper2,
+    actingDate: dateStepper2,
+    interimDate: dateStepper2,
+    lastSalaryRaiseDate: dateStepper2,
     kenaikanPangkatAkhir: dateStepper2,
 });
 
@@ -257,11 +261,12 @@ export const _stepperMaklumatAkademik = z.object({
 //==========================================================
 
 export const _stepperMaklumatPengalaman = z.object({
-    namaMajikan: shortTextSchema,
-    alamatMajikan: shortTextSchema,
-    jawatanPengalaman: shortTextSchema,
-    tempohPerkhidmatan: shortTextSchema,
-    gajiPengalaman: shortTextSchema,
+    company: shortTextSchema,
+    address: shortTextSchema,
+    position: shortTextSchema,
+    positionCode: shortTextSchema,
+    duration: shortTextSchema,
+    salary: shortTextSchema,
 });
 
 //==========================================================
@@ -269,10 +274,10 @@ export const _stepperMaklumatPengalaman = z.object({
 //==========================================================
 
 export const _addActivityModalSchema = z.object({
-    addName: shortTextSchema,
-    addJoinDate: maxDateSchema,
-    addPosition: shortTextSchema,
-    addDescription: shortTextSchema,
+    name: shortTextSchema,
+    joinDate: maxDateSchema,
+    position: shortTextSchema,
+    description: shortTextSchema,
 });
 
 //==========================================================
@@ -571,6 +576,12 @@ export const _approverResultSchema = z.object({
 //=====================================================
 
 export const load = async () => {
+
+
+    // const personalDetailResponse: GetPersonalDetailResponse =
+    // await EmployeeService.ProfileDetail(PutPersonalDetailRequest);
+    // const personalDetailResponse.data.
+
 
     // const id = parseInt(params.id);
     const stepperMaklumatPeribadi = await superValidate(
