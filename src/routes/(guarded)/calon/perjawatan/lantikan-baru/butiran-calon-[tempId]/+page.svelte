@@ -687,7 +687,7 @@
                     >
                 {/if}
 
-                <!-- <LongTextField
+                <LongTextField
                     hasError={!!$errors.homeAddress}
                     disabled={isReadonlyPersonalFormStepper}
                     name="homeAddress"
@@ -700,12 +700,64 @@
                         >{$errors.homeAddress}</span
                     >
                 {/if}
+                <LongTextField
+                    hasError={!!$errors.homeCountryId}
+                    disabled={isReadonlyPersonalFormStepper}
+                    name="homeCountryId"
+                    label="Alamat Rumah"
+                    bind:value={$form.homeCountryId}
+                />
+                {#if $errors.homeCountryId}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.homeCountryId}</span
+                    >
+                {/if}
+                <LongTextField
+                    hasError={!!$errors.homeStateId}
+                    disabled={isReadonlyPersonalFormStepper}
+                    name="homeStateId"
+                    label="Alamat Rumah"
+                    bind:value={$form.homeStateId}
+                />
+                {#if $errors.homeStateId}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.homeStateId}</span
+                    >
+                {/if}
+                <LongTextField
+                    hasError={!!$errors.homeCityId}
+                    disabled={isReadonlyPersonalFormStepper}
+                    name="homeCityId"
+                    label="Alamat Rumah"
+                    bind:value={$form.homeCityId}
+                />
+                {#if $errors.homeCityId}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.homeCityId}</span
+                    >
+                {/if}
+                <LongTextField
+                    hasError={!!$errors.homePostcode}
+                    disabled={isReadonlyPersonalFormStepper}
+                    name="homePostcode"
+                    label="Alamat Rumah"
+                    bind:value={$form.homePostcode}
+                />
+                {#if $errors.homePostcode}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.homePostcode}</span
+                    >
+                {/if}
 
                 <LongTextField
                     hasError={!!$errors.mailAddress}
                     disabled={isReadonlyPersonalFormStepper}
                     name="mailAddress"
-                    label="Alamat Surat Menyurat (jika berlainan dari alamat rumah)"
+                    label="Alamat Surat Menyurat"
                     bind:value={$form.mailAddress}
                 />
                 {#if $errors.mailAddress}
@@ -713,7 +765,59 @@
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
                         >{$errors.mailAddress}</span
                     >
-                {/if} -->
+                {/if}
+                <LongTextField
+                    hasError={!!$errors.mailCountryId}
+                    disabled={isReadonlyPersonalFormStepper}
+                    name="mailCountryId"
+                    label="Alamat Surat Menyurat"
+                    bind:value={$form.mailCountryId}
+                />
+                {#if $errors.mailCountryId}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.mailCountryId}</span
+                    >
+                {/if}
+                <LongTextField
+                    hasError={!!$errors.mailStateId}
+                    disabled={isReadonlyPersonalFormStepper}
+                    name="mailStateId"
+                    label="Alamat Surat Menyurat"
+                    bind:value={$form.mailStateId}
+                />
+                {#if $errors.mailStateId}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.mailStateId}</span
+                    >
+                {/if}
+                <LongTextField
+                    hasError={!!$errors.mailCityId}
+                    disabled={isReadonlyPersonalFormStepper}
+                    name="mailCityId"
+                    label="Alamat Surat Menyurat"
+                    bind:value={$form.mailCityId}
+                />
+                {#if $errors.mailCityId}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.mailCityId}</span
+                    >
+                {/if}
+                <LongTextField
+                    hasError={!!$errors.mailPostcode}
+                    disabled={isReadonlyPersonalFormStepper}
+                    name="mailPostcode"
+                    label="Alamat Surat Menyurat"
+                    bind:value={$form.mailPostcode}
+                />
+                {#if $errors.mailPostcode}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.mailPostcode}</span
+                    >
+                {/if}
 
                 <DropdownSelect
                     disabled={isReadonlyPersonalFormStepper}
