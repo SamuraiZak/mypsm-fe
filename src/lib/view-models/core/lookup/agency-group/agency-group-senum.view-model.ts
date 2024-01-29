@@ -2,13 +2,14 @@
 // Agency Group Enum View Model
 // ===============================================================
 
-export interface EnumAgencyGroup {
+export interface EnumAgencyGroupResponseViewModel {
     status:  number;
     message: string;
     data:    Data;
 }
 
 export interface Data {
+    employmentStatus: any;
     agencyGroups: AgencyGroup[];
 }
 
@@ -22,17 +23,17 @@ export interface AgencyGroup {
 export class EnumAgencyGroupConvert {
 
     // to model from response
-    public static fromResponse(response: Response): EnumAgencyGroup {
+    public static fromResponse(response: Response): EnumAgencyGroupResponseViewModel {
         return JSON.parse(JSON.stringify(response));
     }
 
     // to model from json string
-    public static fromJson(json: string): EnumAgencyGroup {
+    public static fromJson(json: string): EnumAgencyGroupResponseViewModel {
         return JSON.parse(json);
     }
 
     // to json string from model
-    public static toJson(value: EnumAgencyGroup): string {
+    public static toJson(value: EnumAgencyGroupResponseViewModel): string {
         return JSON.stringify(value);
     }
 }
