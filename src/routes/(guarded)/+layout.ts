@@ -1,5 +1,7 @@
 import type { DropdownOptionsInterface } from '$lib/interfaces/common/dropdown-option';
 import { LookupService } from '$lib/services/implementations/core/lookup/lookup.services';
+import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
+import type { EmployeesListResponseViewModel } from '$lib/view-models/mypsm/employee/employee-list-response';
 
 export const load = async () => {
     // agency group list
@@ -261,11 +263,10 @@ export const load = async () => {
         }));
 
     // service group list
-    const serviceGroupResponse =
-        await LookupService.getEnumServiceGroupList();
+    const serviceGroupResponse = await LookupService.getEnumServiceGroupList();
 
     const serviceGroupLookup: DropdownOptionsInterface[] =
-    serviceGroupResponse.data.serviceGroups.map((service) => ({
+        serviceGroupResponse.data.serviceGroups.map((service) => ({
             value: Number(service.id),
             name: service.name,
         }));
@@ -317,11 +318,33 @@ export const load = async () => {
             name: nit.name,
         }));
 
+    const request: EmployeesListRequestViewModel = {
+        pageNum: 1,
+        pageSize: 10,
+        orderBy: 'programme',
+        orderType: 'asc',
+        filter: {},
+    };
+
+    const employeeListResponse: EmployeesListResponseViewModel =
+        await EmployeeService.getEmployeeList(request);
+
+    const employeeListLookup: DropdownOptionsInterface[] =
+        employeeListResponse.data.map((employee) => ({
+            value: String(employee.employeeNumber),
+            name: employee.employeeNumber,
+        }));
+
     const identityCardColorLookup: DropdownOptionsInterface[] = [
         { value: 'blue', name: 'Biru' },
         { value: 'grey', name: 'Kelabu' },
         { value: 'red', name: 'Merah' },
         { value: 'green', name: 'Hijau' },
+    ];
+
+    const retirementBenefitLookup: DropdownOptionsInterface[] = [
+        { value: 'KWSP', name: 'KWSP' },
+        { value: 'PENCEN', name: 'Pencen' },
     ];
 
     const monthStringLookup: DropdownOptionsInterface[] = [
@@ -373,7 +396,10 @@ export const load = async () => {
         placementLookup,
         positionLookup,
         unitLookup,
+        employeeListResponse,
+        employeeListLookup,
         identityCardColorLookup,
         monthStringLookup,
+        retirementBenefitLookup,
     };
 };

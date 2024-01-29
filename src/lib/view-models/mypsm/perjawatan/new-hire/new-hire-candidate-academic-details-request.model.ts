@@ -3,7 +3,8 @@ export interface CandidateAcademiceDetailsRequestBody {
 }
 
 export interface Academic {
-    majorMinorId: number;
+    majorId: number;
+    minorId: number;
     countryId: number;
     institutionId: number;
     educationLevelId: number;

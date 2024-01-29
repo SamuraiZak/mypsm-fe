@@ -99,10 +99,6 @@ const longTextSchema = z
     })
     .trim();
 
-const generalSelectSchema = z
-    .string()
-    .min(1, { message: 'Sila tetapkan pilihan anda.' });
-
 const dateSchema = z.coerce.date({
     errorMap: (issue, { defaultError }) => ({
         message:
@@ -153,56 +149,55 @@ const numberIdSchema = z.coerce.number({
     invalid_type_error: 'Sila pastikan ID ditaip dengan angka',
 });
 
-export const _personalInfoForm = z
-    .object({
-        name: shortTextSchema,
-        alternativeName: codeSchema.default(' '),
-        identityDocumentNumber: shortTextSchema,
-        identityDocumentColor: codeSchema,
-        email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
-        propertyDeclarationDate: maxDateSchema,
-        birthDate: maxDateSchema,
-        birthStateId: numberIdSchema,
-        birthCountryId: numberIdSchema,
-        genderId: numberIdSchema,
-        nationalityId: numberIdSchema,
-        religionId: numberIdSchema,
-        raceId: numberIdSchema,
-        titleId: numberIdSchema,
-        ethnicId: numberIdSchema,
-        maritalId: numberIdSchema,
-        assetDeclarationStatusId: numberIdSchema,
-        homeAddress: shortTextSchema,
-        homeCountryId: numberIdSchema,
-        homeStateId: numberIdSchema,
-        homeCityId: numberIdSchema,
-        homePostcode: shortTextSchema,
-        mailAddress: shortTextSchema,
-        mailCountryId: numberIdSchema,
-        mailStateId: numberIdSchema,
-        mailCityId: numberIdSchema,
-        mailPostcode: shortTextSchema,
-        isExPoliceOrSoldier: booleanSchema,
-        isInternalRelationship: booleanSchema,
-        employeeNumber: shortTextSchema.nullable(),
-        employeeName: shortTextSchema.nullable(),
-        employeePosition: generalSelectSchema.nullable(),
-        relationshipId: numberIdSchema.nullable(),
-    })
-    .superRefine(({ isInternalRelationship }, ctx) => {
-        if (isInternalRelationship) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: 'Sila isi medan ini.',
-                path: [
-                    'employeeNumber',
-                    'employeeName',
-                    'employeePosition',
-                    'relationship',
-                ],
-            });
-        }
-    });
+export const _personalInfoForm = z.object({
+    name: shortTextSchema,
+    alternativeName: codeSchema.default(' '),
+    identityDocumentNumber: shortTextSchema,
+    identityDocumentColor: codeSchema,
+    email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
+    propertyDeclarationDate: maxDateSchema,
+    birthDate: maxDateSchema,
+    birthStateId: numberIdSchema,
+    birthCountryId: numberIdSchema,
+    genderId: numberIdSchema,
+    nationalityId: numberIdSchema,
+    religionId: numberIdSchema,
+    raceId: numberIdSchema,
+    titleId: numberIdSchema,
+    ethnicId: numberIdSchema,
+    maritalId: numberIdSchema,
+    assetDeclarationStatusId: numberIdSchema,
+    homeAddress: shortTextSchema,
+    homeCountryId: numberIdSchema,
+    homeStateId: numberIdSchema,
+    homeCityId: numberIdSchema,
+    homePostcode: shortTextSchema,
+    mailAddress: shortTextSchema,
+    mailCountryId: numberIdSchema,
+    mailStateId: numberIdSchema,
+    mailCityId: numberIdSchema,
+    mailPostcode: shortTextSchema,
+    isExPoliceOrSoldier: booleanSchema,
+    isInternalRelationship: booleanSchema,
+    employeeNumber: z.string().nullish(),
+    employeeName: z.string().nullable(),
+    employeePosition: z.string().nullable(),
+    relationshipId: numberIdSchema.nullish(),
+});
+// .superRefine(({ isInternalRelationship }, ctx) => {
+//     if (isInternalRelationship) {
+//         ctx.addIssue({
+//             code: z.ZodIssueCode.custom,
+//             message: 'Sila isi medan ini.',
+//             path: [
+//                 'employeeNumber',
+//                 'employeeName',
+//                 'employeePosition',
+//                 'relationship',
+//             ],
+//         });
+//     }
+// });
 
 //==========================================================
 //================== Maklumat Akademik =====================
@@ -210,7 +205,8 @@ export const _personalInfoForm = z
 
 export const _academicInfoSchema = z.object({
     // id: numberIdSchema,
-    majorMinorId: numberIdSchema,
+    majorId: numberIdSchema,
+    minorId: numberIdSchema,
     countryId: numberIdSchema,
     institutionId: numberIdSchema,
     educationLevelId: numberIdSchema,
@@ -488,6 +484,7 @@ export const load = async ({ params }) => {
         dependencyInfoForm,
         nextOfKinInfoResponse,
         nextOfKinInfoForm,
+        serviceResponse,
         serviceInfoForm,
         addAcademicModal,
         addExperienceModal,
@@ -508,10 +505,14 @@ export const _submitPersonalInfoForm = async (formData: object) => {
         return fail(400, form);
     }
 
+    // start by rendering loading toast
+    getLoadingToast();
+
     const response: RequestSuccessBody =
         await EmployeeService.createCurrentCandidatePersonalDetails(
             form.data as CandidatePersonalDetailsRequestBody,
         ).finally(() => toast.dismiss());
+    console.log(response);
 
     if (response.status !== 201) {
         // if error toast
@@ -522,7 +523,7 @@ export const _submitPersonalInfoForm = async (formData: object) => {
     // if success toast
     getSuccessToast();
 
-    return { form };
+    return { response };
 };
 
 export const _submitServiceInfoForm = async (formData: object) => {
@@ -534,9 +535,8 @@ export const _submitServiceInfoForm = async (formData: object) => {
         return fail(400, form);
     }
 
-    // form.data.candidateId = candidateIdRequestBody.candidateId;
-
-    console.log(form.data);
+    // start by rendering loading toast
+    getLoadingToast();
 
     const response: RequestSuccessBody =
         await EmployeeService.createCurrentCandidateSecretaryUpdate(
@@ -552,7 +552,7 @@ export const _submitServiceInfoForm = async (formData: object) => {
     // if success toast
     getSuccessToast();
 
-    return { form };
+    return { response };
 };
 
 export const _submitAcademicInfoForm = async (formData: AcademicList[]) => {
