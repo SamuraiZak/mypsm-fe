@@ -1,63 +1,67 @@
 <script lang="ts">
-    import SvgCaretDown from '$lib/assets/svg/SvgCaretDown.svelte';
-    import SvgCaretUp from '$lib/assets/svg/SvgCaretUp.svelte';
     import SvgChevronLeft from '$lib/assets/svg/SvgChevronLeft.svelte';
     import SvgChevronRight from '$lib/assets/svg/SvgChevronRight.svelte';
     import SvgSortDown from '$lib/assets/svg/SvgSortDown.svelte';
     import SvgSortUp from '$lib/assets/svg/SvgSortUp.svelte';
-    import { currentPage } from '$lib/stores/globalState';
-    import { Button, PaginationItem, Select } from 'flowbite-svelte';
+    import { TranslationHelper } from '$lib/helper/core/translator-helper/translator-helper';
+
+    // =====================================================================
+    // Variables
+    // =====================================================================
 
     // param for table data
     export let tableData: any[] = [];
 
-    export let param:any;
+    export let param: any;
     $: request = param;
-
-    export let sortBy: string = Object.keys(tableData[0])[0];
-    export let sortDirection: string = 'ascending';
 
     // =====================================================================
     // Functions
     // =====================================================================
 
+    export let onUpdate : ()=>{};
+
     function handleSort(columnName: string) {
-        // check the current sortBy
-        if (columnName == sortBy) {
-            // check the current sort direction
-            if (sortDirection == 'ascending') {
-                sortDirection = 'descending';
-            } else {
-                sortDirection = 'ascending';
+        if (param.orderBy == columnName) {
+            switch (param.orderType) {
+                case 'Ascending':
+                    param.orderType = 'Descending'
+                    break;
+            
+                case 'Descending':
+                    param.orderType = 'Ascending'
+                    break;
+            
+                default:
+                    param.orderType = 'Ascending'
+                    break;
             }
         } else {
-            sortBy = columnName;
-            sortDirection = 'ascending';
             param.orderBy = columnName;
+            param.orderType = 'Ascending'
         }
 
-        // TODO: Fetch new data with the filter
+        onUpdate;
     }
+
 </script>
 
-<p>in table orderby {param.orderBy}</p>
+<p>orderBy : {param.orderBy}</p>
+<p>orderBy : {param.orderType}</p>
+<p>pageSize : {param.pageSize}</p>
+<p>pageSize : {param.pageNum}</p>
 
-<button on:click={()=>{
-    param.orderBy = "THIS";
-}}>
-    another change
-</button>
-<div>
-    <div class="w-full overflow-x-auto h-[300px]">
+<div class="flex flex-col gap-2">
+    <div class="h-[300px] w-full overflow-x-auto border border-ios-labelColors-separator-light">
         <table
-            class="table w-full table-auto border-collapse border border-ios-labelColors-separator-light"
+            class="table m-1 w-full table-auto border border-collapse  border-ios-labelColors-separator-light relative"
         >
             <!-- table head starts -->
 
             <thead class="sticky top-0">
                 <!-- table head row starts -->
 
-                <tr class="h-10 bg-ios-systemColors-quaternarySystemFill-light">
+                <tr class="h-10 bg-ios-systemColors-quaternarySystemFill-light border">
                     <!-- loop for each of the data key -->
                     {#each Object.keys(tableData[0]) as columnHeading}
                         <!-- return column header -->
@@ -67,6 +71,8 @@
                                 handleSort(
                                     Object.values({ columnHeading }).toString(),
                                 );
+
+                                onUpdate();
                             }}
                             class="h-full cursor-pointer border border-ios-labelColors-separator-light px-2.5"
                         >
@@ -76,20 +82,20 @@
                                 <span
                                     class="text-center align-middle text-sm font-semibold text-ios-labelColors-secondaryLabel-light"
                                 >
-                                    {columnHeading}
+                                    {TranslationHelper.toMalay(columnHeading)}
                                 </span>
                                 <div
                                     class="flex h-full max-h-full w-10 flex-col items-center justify-center gap-0"
                                 >
                                     <div
-                                        class=" {sortBy ==
+                                        class="select-none {param.orderBy ==
                                         Object.values({
-                                            columnHeading,
+                                            columnHeading
                                         }).toString()
                                             ? ' text-ios-labelColors-label-light'
                                             : ' text-ios-labelColors-tertiaryLabel-light'}"
                                     >
-                                        {#if sortDirection == 'ascending' && sortBy == Object.values( { columnHeading }, ).toString()}
+                                        {#if param.orderType == 'Ascending' && param.orderBy == Object.values( { columnHeading }, ).toString()}
                                             <SvgSortUp size="18"></SvgSortUp>
                                         {:else}
                                             <SvgSortDown size="18"
@@ -119,7 +125,7 @@
 
                         {#each Object.values(row) as cell}
                             <td
-                                class="h-full border border-ios-labelColors-separator-light px-2.5"
+                                class="h-full text-center border border-ios-labelColors-separator-light px-2.5"
                             >
                                 <span
                                     class="text-center align-middle text-base font-normal"
@@ -136,29 +142,49 @@
         </table>
     </div>
     <!-- table control -->
-    <div class="flex w-full flex-row justify-between">
-        <p>leading</p>
-        <div class="flex flex-wrap items-center justify-start gap-2.5">
-            <div
-                class=" flex h-[28px] flex-col items-center justify-center rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 focus:outline-none focus:ring-0"
+
+    <div
+        class="flex h-10 min-h-10 w-full flex-row items-center justify-between"
+    >
+        <!-- leading -->
+        <div class="flex flex-row items-center gap-2">
+            <label
+                for="idType"
+                class=" w-full text-sm font-medium text-gray-900 dark:text-white"
             >
-                <span class="text-sm text-txt-secondary">
-                    1
+                Saiz Data
+            </label>
+            <select
+                name="idType"
+                bind:value={param.pageSize}
+                class=" block h-9 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
+            >
+                <option value=5>5</option>
+                <option value=10>10</option>
+                <option value=15>15</option>
+                <option value=20>20</option>
+            </select>
+        </div>
+
+        <!-- trailing -->
+        <div class="flex flex-row items-center gap-2">
+            <button
+                type="button"
+                class=" block h-9 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
+            >
+                <span>
+                    <SvgChevronLeft></SvgChevronLeft>
                 </span>
-            </div>
-            <Button
-                class="h-[28px] rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 text-sm text-txt-secondary hover:bg-bgr-tertiary focus:outline-none focus:ring-0"
-                ><SvgChevronLeft size="14" /></Button
+            </button>
+
+            <button
+                type="button"
+                class=" block h-9 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
             >
-
-                <PaginationItem
-                    normalClass="h-[28px] rounded-[3px] border border-bdr-primary bg-bgr-primary px-2.5 text-sm text-txt-secondary hover:bg-bgr-tertiary"
-                    >1</PaginationItem
-                >
-                ...
-
-            
-
+                <span>
+                    <SvgChevronRight></SvgChevronRight>
+                </span>
+            </button>
         </div>
     </div>
 </div>
