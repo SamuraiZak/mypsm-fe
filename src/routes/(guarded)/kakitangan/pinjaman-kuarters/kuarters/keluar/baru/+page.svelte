@@ -118,7 +118,7 @@
             _submitexitQuarterForm($exitQuarterForm);
         },
         taintedMessage:
-            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+            'Terdapat maklumat yang belum disimpan. Adakah anda henda keluar dari laman ini?',
     });
 
     const {
