@@ -1,7 +1,6 @@
 <script lang="ts">
     import AccountTile from '../account-tile/AccountTile.svelte';
     import IconButton from '../buttons/IconButton.svelte';
-    import HeaderProfile from './HeaderProfile.svelte';
     import group from '$lib/assets/group.png';
     import logo from '$lib/assets/logo.png';
     import MyPSM from '$lib/assets/MyPSM.png';
@@ -10,7 +9,7 @@
 
     const logOutUser = async () => {
         await AuthService.logout().finally(() => {
-            goto('/login');
+            goto('/');
         });
     };
 </script>
@@ -31,7 +30,7 @@
         <!-- <HeaderProfile /> -->
         <AccountTile></AccountTile>
         <div class="flex w-[50px] flex-col items-center justify-center p-0">
-            <form method="POST">
+            
                 <button on:click={logOutUser}>
                     <IconButton>
                         <svg
@@ -50,7 +49,6 @@
                         </svg>
                     </IconButton></button
                 >
-            </form>
         </div>
     </div>
 </header>
