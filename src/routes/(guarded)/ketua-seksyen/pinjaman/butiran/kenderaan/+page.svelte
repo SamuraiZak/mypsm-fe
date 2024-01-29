@@ -18,6 +18,7 @@
     import { loanOptions } from '$lib/mocks/pinjaman-kuarters/loanOptions';
     import type { DtoCalonPemangkuan } from '$lib/interfaces/database/actingApplication';
     import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
+    import SvgArrowLeft from '$lib/assets/svg/SvgArrowLeft.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
@@ -26,28 +27,44 @@
         fileSelectionList,
         selectedRecordId,
     } from '$lib/stores/globalState';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import { onMount } from 'svelte';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _supporterAndApproverSchema,
+        _submitSupporterAndApproverForm,
+        _submitApprovalAndOfferForm,
+        _approvalAndOfferDetailSchema,
+        _submitSecondScheduleForm,
+        _secondScheduleSchema,
+        _submitSectionLeaderForm,
+        _sectionLeaderSchema,
+    } from './+page';
+
+    export let data: PageData;
 
     export let disabled: boolean = true;
 
     const options: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'Ya',
         },
         {
-            value: 'false',
+            value: false,
             label: 'Tidak',
         },
     ];
 
     const supportOptions: RadioOption[] = [
         {
-            value: 'sokong',
+            value: true,
             label: 'Sokong',
         },
         {
-            value: 'tidakSokong',
+            value: false,
             label: 'Tidak Sokong',
         },
     ];
@@ -95,7 +112,6 @@
 
     //===================== Page Init Data =====================
 
-    //Date Selector for Tarikh Lapor Diri
     let selectedDate = new Date();
 
     function handleDateChange(event: any) {
@@ -108,17 +124,63 @@
         console.log(formattedDate);
     }
 
-    let selectedCandidatesList: DtoCalonPemangkuan[] = [];
+    // ====================== Form Validation
+    const {
+        form: supporterAndApproverForm,
+        errors: supporterAndApproverErrors,
+        enhance: supporterAndApproverEnhance,
+    } = superForm(data.supporterAndApproverForm, {
+        SPA: true,
+        id: 'supporterAndApproverFormValidation',
+        validators: _supporterAndApproverSchema,
+        onSubmit() {
+            _submitSupporterAndApproverForm($supporterAndApproverForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
 
-    let tempSelectedCandidatesList: DtoCalonPemangkuan[] = [];
+    const {
+        form: approvalAndOfferDetailForm,
+        errors: approvalAndOfferDetailError,
+        enhance: approvalAndOfferDetailEnhance,
+    } = superForm(data.approvalAndOfferForm, {
+        SPA: true,
+        validators: _approvalAndOfferDetailSchema,
+        id: 'approvalAndOfferForm',
+        onSubmit() {
+            _submitApprovalAndOfferForm($approvalAndOfferDetailForm);
+        },
+        taintedMessage: false,
+    });
 
-    let currentData: any = {};
+    const {
+        form: secondScheduleForm,
+        errors: secondScheduleError,
+        enhance: secondScheduleEnhance,
+    } = superForm(data.secondScheduleForm, {
+        SPA: true,
+        validators: _secondScheduleSchema,
+        id: 'secondScheduleFormValidation',
+        onSubmit() {
+            _submitSecondScheduleForm($secondScheduleForm);
+        },
+        taintedMessage: false,
+    });
 
-    let placeholderData: any = {};
-
-    let editMode: boolean = false;
-
-    //===================== Step 1 =====================
+    const {
+        form: sectionLeaderForm,
+        errors: sectionLeaderError,
+        enhance: sectionLeaderEnhance,
+    } = superForm(data.sectionLeaderForm, {
+        SPA: true,
+        validators: _sectionLeaderSchema,
+        id: 'sectionLeaderForm',
+        onSubmit() {
+            _submitSectionLeaderForm($sectionLeaderForm);
+        },
+        taintedMessage: false,
+    });
 </script>
 
 <!-- header section -->
@@ -266,6 +328,14 @@
         <StepperContent>
             <StepperContentHeader title="Maklumat Pinjaman">
                 <TextIconButton
+                    label="Kembali"
+                    onClick={() => {
+                        goPrevious();
+                    }}
+                >
+                    <SvgArrowLeft />
+                </TextIconButton>
+                <TextIconButton
                     label="Seterusnya"
                     primary
                     onClick={() => {
@@ -311,6 +381,14 @@
         <StepperContent>
             <StepperContentHeader title="Dokumen Sokongan yang Berkaitan">
                 <TextIconButton
+                    label="Kembali"
+                    onClick={() => {
+                        goPrevious();
+                    }}
+                >
+                    <SvgArrowLeft />
+                </TextIconButton>
+                <TextIconButton
                     label="Seterusnya"
                     primary
                     onClick={() => {
@@ -348,13 +426,19 @@
         <StepperContent>
             <StepperContentHeader title="Pengesahan Permohonan Pinjaman">
                 <TextIconButton
-                    label="Seterusnya"
-                    primary
+                    label="Kembali"
                     onClick={() => {
-                        goNext();
+                        goPrevious();
                     }}
                 >
-                    <SvgArrowRight></SvgArrowRight>
+                    <SvgArrowLeft />
+                </TextIconButton>
+                <TextIconButton
+                    primary
+                    label="Simpan"
+                    form="supporterAndApproverFormValidation"
+                >
+                    <SvgCheck />
                 </TextIconButton>
             </StepperContentHeader>
 
@@ -365,18 +449,53 @@
                 <div
                     class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
                 >
-                    <DropdownSelect
-                        dropdownType="label-left-full"
-                        label="Nama Penyokong"
-                        options={meetings}
-                    />
-                    <DropdownSelect
-                        dropdownType="label-left-full"
-                        label="Nama Pelulus"
-                        options={meetings}
-                    />
-                </div></StepperContentBody
-            >
+                    <form
+                        id="supporterAndApproverFormValidation"
+                        use:supporterAndApproverEnhance
+                        method="POST"
+                        class="flex w-full flex-col gap-2"
+                    >
+                        <DropdownSelect
+                            id="supporterName"
+                            hasError={!!$supporterAndApproverErrors.supporterName}
+                            dropdownType="label-left-full"
+                            label={'Nama Penyokong'}
+                            options={[
+                                { value: '0001', name: 'Mohd Irfan bin Abu' },
+                                { value: '0002', name: 'Nur Afifah Farhan' },
+                                { value: '0003', name: 'Teressa Teng' },
+                                { value: '0004', name: 'Sumar Amariti' },
+                            ]}
+                            bind:value={$supporterAndApproverForm.supporterName}
+                        ></DropdownSelect>
+                        {#if $supporterAndApproverErrors.supporterName}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$supporterAndApproverErrors.supporterName}</span
+                            >
+                        {/if}
+                        <DropdownSelect
+                            id="approverName"
+                            hasError={!!$supporterAndApproverErrors.approverName}
+                            dropdownType="label-left-full"
+                            label={'Nama Pelulus'}
+                            options={[
+                                { value: '0001', name: 'Mohd Irfan bin Abu' },
+                                { value: '0002', name: 'Nur Afifah Farhan' },
+                                { value: '0003', name: 'Teressa Teng' },
+                                { value: '0004', name: 'Sumar Amariti' },
+                            ]}
+                            bind:value={$supporterAndApproverForm.approverName}
+                        ></DropdownSelect>
+                        {#if $supporterAndApproverErrors.approverName}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$supporterAndApproverErrors.approverName}</span
+                            >
+                        {/if}
+                    </form>
+                </div>
+            </StepperContentBody>
         </StepperContent>
 
         <!-- =========================================================== -->
@@ -385,13 +504,12 @@
         <StepperContent>
             <StepperContentHeader title="Kemaskini Maklumat Pinjaman">
                 <TextIconButton
-                    label="Seterusnya"
-                    primary
+                    label="Kembali"
                     onClick={() => {
-                        goNext();
+                        goPrevious();
                     }}
                 >
-                    <SvgArrowRight></SvgArrowRight>
+                    <SvgArrowLeft />
                 </TextIconButton>
             </StepperContentHeader>
             <CustomTab>
@@ -475,15 +593,37 @@
                 <!-- Maklumat Kelulusan dan Tawaran -->
                 <CustomTabContent title="Maklumat Kelulusan dan Tawaran">
                     <SectionHeader title="Maklumat Kelulusan dan Tawaran"
-                    ></SectionHeader>
+                        ><TextIconButton
+                            primary
+                            label="Simpan"
+                            form="approvalAndOfferForm"
+                            ><SvgCheck /></TextIconButton
+                        ></SectionHeader
+                    >
                     <div
                         class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
                     >
-                        <DropdownSelect
-                            dropdownType="label-left-full"
-                            label="Jenis Pembelian"
-                            options={loanOptions}
-                        />
+                        <form
+                            id="approvalAndOfferForm"
+                            method="POST"
+                            use:approvalAndOfferDetailEnhance
+                            class="flex w-full flex-col gap-2"
+                        >
+                            <DropdownSelect
+                                hasError={!!$approvalAndOfferDetailError.typeOfPurchase}
+                                dropdownType="label-left-full"
+                                label="Jenis Belian"
+                                options={loanOptions}
+                                bind:value={$approvalAndOfferDetailForm.typeOfPurchase}
+                            />
+                            {#if $approvalAndOfferDetailError.typeOfPurchase}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$approvalAndOfferDetailError
+                                        .typeOfPurchase[0]}</span
+                                >
+                            {/if}
+                        </form>
                         <TextField
                             {disabled}
                             id=""
@@ -647,22 +787,62 @@
                 <!-- Jadual Kedua -->
                 <CustomTabContent title="Jadual Kedua">
                     <SectionHeader title="Masukkan Maklumat harga Jualan"
-                    ></SectionHeader>
+                        ><TextIconButton
+                            primary
+                            label="Simpan"
+                            form="secondScheduleFormValidation"
+                            ><SvgCheck /></TextIconButton
+                        ></SectionHeader
+                    >
                     <div
                         class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
                     >
-                        <TextField
-                            id=""
-                            label={'Jumlah Harga Belian (RM)'}
-                            value={'-'}
-                        ></TextField>
-                        <TextField id="" label={'Bayaran Baki (RM)'} value={'-'}
-                        ></TextField>
-                        <TextField
-                            id=""
-                            label={'Amaun Pembiayaan dan Keuntungan Kerajaan (RM)'}
-                            value={'-'}
-                        ></TextField>
+                        <form
+                            id="secondScheduleFormValidation"
+                            method="POST"
+                            use:secondScheduleEnhance
+                            class="flex w-full flex-col gap-2"
+                        >
+                            <TextField
+                                hasError={!!$secondScheduleError.purchasePrice}
+                                name="purchasePrice"
+                                label="Jumlah Harga Belian (RM)"
+                                bind:value={$secondScheduleForm.purchasePrice}
+                            ></TextField>
+                            {#if $secondScheduleError.purchasePrice}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$secondScheduleError
+                                        .purchasePrice[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                hasError={!!$secondScheduleError.balancePayment}
+                                name="balancePayment"
+                                label="Bayaran Baki (RM)"
+                                bind:value={$secondScheduleForm.balancePayment}
+                            ></TextField>
+                            {#if $secondScheduleError.balancePayment}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$secondScheduleError
+                                        .balancePayment[0]}</span
+                                >
+                            {/if}
+                            <TextField
+                                hasError={!!$secondScheduleError.govermentFundingAndProfitAmount}
+                                name="govermentFundingAndProfitAmount"
+                                label="Amaun Pembiayaan dan Keuntungan Kerajaan (RM)"
+                                bind:value={$secondScheduleForm.govermentFundingAndProfitAmount}
+                            ></TextField>
+                            {#if $secondScheduleError.govermentFundingAndProfitAmount}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$secondScheduleError
+                                        .govermentFundingAndProfitAmount[0]}</span
+                                >
+                            {/if}
+                        </form>
                     </div>
 
                     <SectionHeader title="Masukkan Masukkan Maklumat Pembelian"
@@ -693,6 +873,14 @@
 
         <StepperContent>
             <StepperContentHeader title="Senarai Semak Surat Perjanjian">
+                <TextIconButton
+                    label="Kembali"
+                    onClick={() => {
+                        goPrevious();
+                    }}
+                >
+                    <SvgArrowLeft />
+                </TextIconButton>
                 <TextIconButton
                     label="Seterusnya"
                     primary
@@ -729,6 +917,14 @@
                 title="Kemaskini No. Chasis dan No. Enjin untuk Kenderaan Baru"
             >
                 <TextIconButton
+                    label="Kembali"
+                    onClick={() => {
+                        goPrevious();
+                    }}
+                >
+                    <SvgArrowLeft />
+                </TextIconButton>
+                <TextIconButton
                     label="Seterusnya"
                     primary
                     onClick={() => {
@@ -754,12 +950,26 @@
         </StepperContent>
 
         <!-- =========================================================== -->
-        <!-- Kemaskini Keputusan Pemangkuan -->
+        <!-- Muat Turun Resit dan Invois -->
         <!-- =========================================================== -->
         <StepperContent>
-            <StepperContentHeader
-                title="Kemaskini No. Chasis dan No. Enjin untuk Kenderaan Baru"
-            >
+            <StepperContentHeader title="Muat Turun Resit dan Invois">
+                <TextIconButton
+                    label="Kembali"
+                    onClick={() => {
+                        goPrevious();
+                    }}
+                >
+                    <SvgArrowLeft />
+                </TextIconButton>
+                <TextIconButton
+                    label="Kembali"
+                    onClick={() => {
+                        goPrevious();
+                    }}
+                >
+                    <SvgArrowLeft />
+                </TextIconButton>
                 <TextIconButton
                     label="Seterusnya"
                     primary
@@ -795,12 +1005,21 @@
 
         <StepperContent>
             <StepperContentHeader title="Tetapan Sokongan">
-                <FormButton
-                    type="done"
+                <TextIconButton
+                    label="Kembali"
                     onClick={() => {
-                        window.history.back();
+                        goPrevious();
                     }}
-                ></FormButton>
+                >
+                    <SvgArrowLeft />
+                </TextIconButton>
+                <TextIconButton
+                    primary
+                    label="Selesai"
+                    form="sectionLeaderForm"
+                >
+                    <SvgCheck />
+                </TextIconButton>
             </StepperContentHeader>
 
             <!-- Butiran -->
@@ -811,18 +1030,44 @@
                     <div
                         class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
                     >
-                        <p class={stepperFormTitleClass}>
-                            Keputusan akan dihantar ke peranan - peranan
-                            berkaitan:
-                        </p>
+                        <form
+                            id="sectionLeaderForm"
+                            use:sectionLeaderEnhance
+                            method="POST"
+                            class="flex w-full flex-col gap-2"
+                        >
+                            <p class={stepperFormTitleClass}>
+                                Keputusan akan dihantar ke peranan - peranan
+                                berkaitan:
+                            </p>
 
-                        <LongTextField
-                            id="tindakanUlasan"
-                            label={'Tindakan/ Ulasan'}
-                            value={'Butiran lengkap..'}
-                        ></LongTextField>
+                            <LongTextField
+                                hasError={!!$sectionLeaderError.sectionLeaderRemark}
+                                name="sectionLeaderRemark"
+                                label={'Tindakan/ Ulasan'}
+                                bind:value={$sectionLeaderForm.sectionLeaderRemark}
+                            />
+                            {#if $sectionLeaderError.sectionLeaderRemark}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$sectionLeaderError
+                                        .sectionLeaderRemark[0]}</span
+                                >
+                            {/if}
 
-                        <RadioSingle options={supportOptions} disabled />
+                            <RadioSingle
+                                name="sectionLeaderResult"
+                                options={supportOptions}
+                                bind:userSelected={$sectionLeaderForm.sectionLeaderResult}
+                            />
+                            {#if $sectionLeaderError.sectionLeaderResult}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$sectionLeaderError
+                                        .sectionLeaderResult[0]}</span
+                                >
+                            {/if}
+                        </form>
                     </div>
                 </div>
 
@@ -836,7 +1081,8 @@
                         <p class={stepperFormTitleClass}>Pelulus:</p>
 
                         <TextField
-                            id=""
+                            name="approverName"
+                            disabled
                             label={'Nama'}
                             value={'Mustaqim Bin Ahmad.'}
                         ></TextField>
@@ -852,3 +1098,5 @@
         </StepperContent>
     </Stepper>
 </section>
+
+<Toaster />

@@ -41,6 +41,17 @@
     } from '$lib/stores/globalState';
     import { onMount } from 'svelte';
     import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+    import SvgArrowLeft from '$lib/assets/svg/SvgArrowLeft.svelte';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _submitSectionLeaderForm,
+        _sectionLeaderSchema,
+    } from './+page';
+
+    export let data: PageData;
 
     export let disabled: boolean = true;
 
@@ -60,22 +71,22 @@
 
     const options: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'Ya',
         },
         {
-            value: 'false',
+            value: false,
             label: 'Tidak',
         },
     ];
 
     const supportOptions: RadioOption[] = [
         {
-            value: 'sokong',
+            value: true,
             label: 'Sokong',
         },
         {
-            value: 'tidakSokong',
+            value: false,
             label: 'Tidak Sokong',
         },
     ];
@@ -136,17 +147,19 @@
         console.log(formattedDate);
     }
 
-    let selectedCandidatesList: DtoCalonPemangkuan[] = [];
-
-    let tempSelectedCandidatesList: DtoCalonPemangkuan[] = [];
-
-    let currentData: any = {};
-
-    let placeholderData: any = {};
-
-    let editMode: boolean = false;
-
-    //===================== Step 1 =====================
+    const {
+        form: sectionLeaderForm,
+        errors: sectionLeaderError,
+        enhance: sectionLeaderEnhance,
+    } = superForm(data.sectionLeaderForm, {
+        SPA: true,
+        validators: _sectionLeaderSchema,
+        id: 'sectionLeaderForm',
+        onSubmit() {
+            _submitSectionLeaderForm($sectionLeaderForm);
+        },
+        taintedMessage: false,
+    });
 </script>
 
 <!-- header section -->
@@ -509,6 +522,7 @@
                             class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
                         >
                             <DropdownSelect
+                                disabled
                                 dropdownType="label-left-full"
                                 label="Jenis Pembelian"
                                 options={loanOptions}
@@ -593,11 +607,13 @@
                                     {/if}
                                 </div>
                                 <TextField
+                                    disabled
                                     placeholder="Nama Pembekal"
                                     label="Nama Pembekal"
                                     bind:value={item.name}
                                 ></TextField>
                                 <TextField
+                                    disabled
                                     placeholder="Alamat Pembekal"
                                     label="Alamat"
                                     bind:value={item.address}
@@ -640,14 +656,17 @@
                         class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
                     >
                         <TextField
-                            id=""
+                            disabled
                             label={'Jumlah Harga Belian (RM)'}
                             value={'-'}
                         ></TextField>
-                        <TextField id="" label={'Bayaran Baki (RM)'} value={'-'}
+                        <TextField
+                            disabled
+                            label={'Bayaran Baki (RM)'}
+                            value={'-'}
                         ></TextField>
                         <TextField
-                            id=""
+                            disabled
                             label={'Amaun Pembiayaan dan Keuntungan Kerajaan (RM)'}
                             value={'-'}
                         ></TextField>
@@ -660,20 +679,16 @@
                         class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
                     >
                         <TextField
+                            disabled
                             label="Amaun Pembiayaan dan Keuntungan Kerajaan"
                             value="-"
                         ></TextField>
                         <TextField
-                            {disabled}
-                            id=""
+                            disabled
                             label={'Ansuran Bulanan (RM)'}
                             value={'583.25'}
                         ></TextField>
-                        <TextField
-                            {disabled}
-                            id=""
-                            label={'Tempoh'}
-                            value={'12 bulan'}
+                        <TextField disabled label={'Tempoh'} value={'12 bulan'}
                         ></TextField>
                     </div></CustomTabContent
                 >
@@ -754,12 +769,21 @@
 
         <StepperContent>
             <StepperContentHeader title="Tetapan Sokongan">
-                <FormButton
-                    type="done"
+                <TextIconButton
+                    label="Kembali"
                     onClick={() => {
-                        window.history.back();
+                        goPrevious();
                     }}
-                ></FormButton>
+                >
+                    <SvgArrowLeft />
+                </TextIconButton>
+                <TextIconButton
+                    primary
+                    label="Selesai"
+                    form="sectionLeaderForm"
+                >
+                    <SvgCheck />
+                </TextIconButton>
             </StepperContentHeader>
 
             <!-- Butiran -->
@@ -770,18 +794,44 @@
                     <div
                         class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
                     >
-                        <p class={stepperFormTitleClass}>
-                            Keputusan akan dihantar ke peranan - peranan
-                            berkaitan:
-                        </p>
+                        <form
+                            id="sectionLeaderForm"
+                            use:sectionLeaderEnhance
+                            method="POST"
+                            class="flex w-full flex-col gap-2"
+                        >
+                            <p class={stepperFormTitleClass}>
+                                Keputusan akan dihantar ke peranan - peranan
+                                berkaitan:
+                            </p>
 
-                        <LongTextField
-                            id="tindakanUlasan"
-                            label={'Tindakan/ Ulasan'}
-                            value={'Butiran lengkap..'}
-                        ></LongTextField>
+                            <LongTextField
+                                hasError={!!$sectionLeaderError.sectionLeaderRemark}
+                                name="sectionLeaderRemark"
+                                label={'Tindakan/ Ulasan'}
+                                bind:value={$sectionLeaderForm.sectionLeaderRemark}
+                            />
+                            {#if $sectionLeaderError.sectionLeaderRemark}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$sectionLeaderError
+                                        .sectionLeaderRemark[0]}</span
+                                >
+                            {/if}
 
-                        <RadioSingle options={supportOptions} disabled />
+                            <RadioSingle
+                                name="sectionLeaderResult"
+                                options={supportOptions}
+                                bind:userSelected={$sectionLeaderForm.sectionLeaderResult}
+                            />
+                            {#if $sectionLeaderError.sectionLeaderResult}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$sectionLeaderError
+                                        .sectionLeaderResult[0]}</span
+                                >
+                            {/if}
+                        </form>
                     </div>
                 </div>
 
@@ -795,7 +845,8 @@
                         <p class={stepperFormTitleClass}>Pelulus:</p>
 
                         <TextField
-                            id=""
+                            disabled
+                            name="approverName"
                             label={'Nama'}
                             value={'Mustaqim Bin Ahmad.'}
                         ></TextField>
@@ -811,3 +862,5 @@
         </StepperContent>
     </Stepper>
 </section>
+
+<Toaster />
