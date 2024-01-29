@@ -1,19 +1,3 @@
-import { mockEmploymentPositionHistories } from '$lib/mocks/database/employmentPositionHistories';
-import { mockCurrentService } from '$lib/mocks/database/mockCurrentService';
-import { mockEmployeeDocumentLists } from '$lib/mocks/database/mockEmployeeDocumentLists';
-import { mockEmployeeEducations } from '$lib/mocks/database/mockEmployeeEducations';
-import { mockEmployeeExperience } from '$lib/mocks/database/mockEmployeeExperience';
-import { mockEmployeeNextOfKins } from '$lib/mocks/database/mockEmployeeNextOfKins';
-import { mockEmployeePartners } from '$lib/mocks/database/mockEmployeePartners';
-import { mockEmployees } from '$lib/mocks/database/mockEmployees';
-import { mockEmploymentPensions } from '$lib/mocks/database/mockEmploymentPensions';
-import { mockLookupEmploymentStatus } from '$lib/mocks/database/mockLookupEmploymentStatus';
-import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions';
-import { mockLookupRaces } from '$lib/mocks/database/mockLookupRaces';
-import { mockLookupReligions } from '$lib/mocks/database/mockLookupReligions';
-import { mockLookupServiceTypes } from '$lib/mocks/database/mockLookupServiceTypes';
-import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
-import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
 import {
     getErrorToast,
     getLoadingToast,
@@ -29,7 +13,12 @@ import type { CandidateExperienceDetailsResponse } from '$lib/view-models/mypsm/
 import type { CandidateFamilyDetailsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-family-details-response.model';
 import type { CandidateNextOfKinDetailsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-next-of-kin-details-response.model';
 import type { CandidatePersonalDetailsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-respone.model';
+import type {
+    NewHireGetApproversResponse,
+    SupporterApprovalData,
+} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-approvers-response.model.js';
 import type { NewHireDocumentsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-document-response.view-model';
+import type { NewHireSupporterResultResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-supporter-result-response.model';
 import type { NewHireSecretaryAddUpdateRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-secretary-add-update-request.model';
 import type {
     NewHireSecretaryApprovalResponse,
@@ -119,6 +108,7 @@ const numberIdSchema = z.coerce.number({
 export const _serviceInfoSchema = z.object({
     candidateId: numberIdSchema,
     gradeId: numberIdSchema,
+    maxGradeId: numberIdSchema,
     positionId: numberIdSchema,
     placementId: numberIdSchema,
     serviceTypeId: numberIdSchema,
@@ -156,6 +146,12 @@ export const _secretaryApprovalInfoSchema = z.object({
     id: numberIdSchema,
     remark: longTextSchema,
     isApproved: booleanSchema.default(true),
+});
+
+export const _secretarySetApproversSchema = z.object({
+    candidateId: numberIdSchema,
+    supporterId: numberIdSchema,
+    approverId: numberIdSchema,
 });
 
 export async function load({ params }) {
@@ -215,6 +211,18 @@ export async function load({ params }) {
     const secretaryApprovalDetails: SecretaryApprovalData =
         secretaryApprovalResponse.data;
 
+    const secretarySetApproversResponse: NewHireGetApproversResponse =
+        await EmployeeService.getCurrentCandidateApprovers(
+            candidateIdRequestBody,
+        );
+
+    const secretarySetApproversDetails: SupporterApprovalData =
+        secretarySetApproversResponse.data;
+    const supporterResultResponse: NewHireSupporterResultResponse =
+        await EmployeeService.getCurrentCandidateSupporter(
+            candidateIdRequestBody,
+        );
+
     const serviceInfoForm = await superValidate(
         serviceDetails,
         _serviceInfoSchema,
@@ -226,30 +234,14 @@ export async function load({ params }) {
         _secretaryApprovalInfoSchema,
     );
 
-    // ======================== OLD ======================
+    const secretarySetApproversForm = await superValidate(
+        secretarySetApproversDetails,
+        _secretarySetApproversSchema,
+    );
 
-    const data: IntEmployees[] = mockEmployees;
-
-    const currentEmployee: IntEmployees = data[0]!;
-
-    const currentEmployeeRace = mockLookupRaces[0];
-    const currentEmployeeReligion = mockLookupReligions[0];
-    const currentEmployeeBirthState = mockLookupStates[0];
-    const currentEmployeeServiceType = mockLookupServiceTypes[0];
-    const currentEmployeeSpouse = mockEmployeePartners[0];
-    const currentEmployeeSpouseEmployeeInfo = mockEmployees[0];
-    const currentEmployeeService = mockCurrentService[0];
-    const currentEmployeeGrade = mockLookupGrades[0];
-    const currentEmployeePosition = mockLookupPositions[0];
-    const currentEmployeeStatus = mockLookupEmploymentStatus[0];
-    const currentEmployeePositionHistory = mockEmploymentPositionHistories;
-    const currentEmployeePensions = mockEmploymentPensions[0];
-    const currentEmployeeEducations = mockEmployeeEducations;
-    const currentEmployeeExperience = mockEmployeeExperience;
-    const currentEmployeeNextOfKins = mockEmployeeNextOfKins[0];
-    const currentEmployeeUploadedDocuments = mockEmployeeDocumentLists;
 
     return {
+        supporterResultResponse,
         personalDetailResponse,
         academicInfoResponse,
         experienceInfoResponse,
@@ -262,25 +254,9 @@ export async function load({ params }) {
         documentInfoResponse,
         secretaryApprovalResponse,
         secretaryApprovalInfoForm,
-
-        data,
-        currentEmployee,
-        currentEmployeeRace,
-        currentEmployeeReligion,
-        currentEmployeeBirthState,
-        currentEmployeeServiceType,
-        currentEmployeeSpouse,
-        currentEmployeeSpouseEmployeeInfo,
-        currentEmployeeService,
-        currentEmployeeGrade,
-        currentEmployeePosition,
-        currentEmployeeStatus,
-        currentEmployeePositionHistory,
-        currentEmployeePensions,
-        currentEmployeeEducations,
-        currentEmployeeExperience,
-        currentEmployeeNextOfKins,
-        currentEmployeeUploadedDocuments,
+        secretarySetApproversResponse,
+        secretarySetApproversDetails,
+        secretarySetApproversForm,
     };
 }
 
@@ -321,10 +297,41 @@ export const _submitSecretaryApprovalForm = async (formData: object) => {
     }
 
     console.log(form.data);
+    // start by rendering loading toast
+    getLoadingToast();
 
     const response: RequestSuccessBody =
         await EmployeeService.createCurrentCandidateSecretaryApprover(
             form.data as AddApprovalResultRequestBody,
+        ).finally(() => toast.dismiss());
+
+    if (response.status !== 201) {
+        // if error toast
+        getServerErrorToast();
+        return error(400, { message: response.message });
+    }
+
+    // if success toast
+    getSuccessToast();
+
+    return { form };
+};
+
+export const _submitSecretarySetApproverForm = async (formData: object) => {
+    const form = await superValidate(formData, _secretarySetApproversSchema);
+    console.log(form.data);
+
+    if (!form.valid) {
+        getErrorToast();
+        return fail(400, form);
+    }
+
+    // start by rendering loading toast
+    getLoadingToast();
+
+    const response: RequestSuccessBody =
+        await EmployeeService.createCurrentCandidateSecretaryApprover(
+            form.data as Secretaryset,
         ).finally(() => toast.dismiss());
 
     if (response.status !== 201) {
