@@ -6,6 +6,7 @@ import { z } from "zod";
 // ===================================================
 // Form Schema
 // ===================================================
+
 const dateScheme = z.coerce
     .date({
         errorMap: (issue, { defaultError }) => ({
@@ -33,60 +34,25 @@ const generalTextSchema = z.string({
 }).min(1, { message: "Medan ini perlu diisi dengan lengkap. " });
 
 export const _supporterAndApproverSchema = z.object({
-    approverRemark: generalTextSchema,
-    approverService: z.boolean().default(true),
-})
-
-export const _qualificationDetailSchema = z.object({
-    baseSalaryOnlyDeduction: numberScheme,
-    baseSalaryAndAllowanceDeduction: numberScheme,
-    baseSalaryAndAllowanceNewDeduction: numberScheme,
+    supporterName: generalSelectSchema,
+    approverName: generalSelectSchema,
 })
 
 export const _approvalAndOfferDetailSchema = z.object({
     typeOfPurchase: generalSelectSchema,
-    purchasePrice: numberScheme,
-    downpayment: numberScheme,
-    governmentFinancingAmountPaymentAndProfit: numberScheme,
-    amountOfGovernmentFunding: numberScheme,
-    sellingPrices: numberScheme,
-    monthlyInstallment: numberScheme,
-    startDate: dateScheme,
-    duration: generalTextSchema,
 })
-
-export const _firstScheduleSchema = z.object({
-    engineNo: generalTextSchema,
-    chasisNo: generalTextSchema,
-    brand: generalTextSchema,
-    modelName: generalTextSchema,
-    enginePower: generalTextSchema,
-    fuel: generalTextSchema,
-    utilityClass: generalTextSchema,
-    bodyType: generalTextSchema,
-    yearMade: generalTextSchema,
-    previousOwnerName: generalTextSchema,
-    identificationNo: generalTextSchema,
-    address: generalTextSchema,
-    totalPurchasePrice: numberScheme,
-    balancePayment: numberScheme,
-    govermentFundingAmount: numberScheme,
-}).partial()
 
 export const _secondScheduleSchema = z.object({
     purchasePrice: numberScheme,
     balancePayment: numberScheme,
     govermentFundingAndProfitAmount: numberScheme,
-    monthlyAmount: numberScheme,
-    paymentDuration: generalSelectSchema,
-    govermentFundingAndProfitAmountDetail: numberScheme,
-    govermentBalancePayment: numberScheme,
-}).partial()
-
-export const _letterOfAgreementSchema = z.object({
-    received: z.boolean().default(true),
-    checked: z.boolean().default(true),
 })
+
+export const _sectionLeaderSchema = z.object({
+    sectionLeaderRemark: generalTextSchema,
+    sectionLeaderResult: z.boolean().default(true),
+})
+
 
 // =============================================
 // load function
@@ -97,35 +63,28 @@ export const load = async () => {
         _supporterAndApproverSchema
     );
 
-    const updateLoanDetailQualificationForm = await superValidate(
-        _qualificationDetailSchema
+    const sectionLeaderForm = await superValidate(
+        _sectionLeaderSchema
     );
+
 
     const approvalAndOfferForm = await superValidate(
         _approvalAndOfferDetailSchema
-    )
-
-    const vehicleDetailAndDescriptionForm = await superValidate(
-        _firstScheduleSchema
     )
 
     const secondScheduleForm = await superValidate(
         _secondScheduleSchema
     )
 
-    const letterOfAgreementForm = await superValidate(
-        _letterOfAgreementSchema
-    )
-
+    
     return {
         supporterAndApproverForm,
-        updateLoanDetailQualificationForm,
         approvalAndOfferForm,
-        vehicleDetailAndDescriptionForm,
+        sectionLeaderForm,
         secondScheduleForm,
-        letterOfAgreementForm,
     };
 }
+
 
 // =============================================
 // Submit Form Function
@@ -153,29 +112,6 @@ export const _submitSupporterAndApproverForm = async (formData: Object) => {
     return { submitSupporterAndApproverForm }
 }
 
-export const _submitUpdateLoanDetailQualificationForm = async (formData: Object) => {
-    const updateLoanDetailQualificationForm = await superValidate(formData, _qualificationDetailSchema);
-    if (!updateLoanDetailQualificationForm.valid) {
-        getErrorToast();
-        console.log(updateLoanDetailQualificationForm)
-        return fail(400, updateLoanDetailQualificationForm);
-    }
-    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
-        body: JSON.stringify(updateLoanDetailQualificationForm),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-        },
-    })
-        .then((response) => response.json())
-        .then((json) => {
-            console.log('Response Returned: ', json);
-        });
-
-    getPromiseToast(responsePromise)
-    return { updateLoanDetailQualificationForm }
-}
-
 export const _submitApprovalAndOfferForm = async (formData: Object) => {
     const approvalAndOfferForm = await superValidate(formData, _approvalAndOfferDetailSchema);
     if (!approvalAndOfferForm.valid) {
@@ -199,28 +135,6 @@ export const _submitApprovalAndOfferForm = async (formData: Object) => {
     return { approvalAndOfferForm }
 }
 
-export const _submitVehicleDetailAndDescriptionForm = async (formData: Object) => {
-    const vehicleDetailAndDescriptionForm = await superValidate(formData, _firstScheduleSchema);
-    if (!vehicleDetailAndDescriptionForm.valid) {
-        getErrorToast();
-        console.log(vehicleDetailAndDescriptionForm)
-        return fail(400, vehicleDetailAndDescriptionForm);
-    }
-    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
-        body: JSON.stringify(vehicleDetailAndDescriptionForm),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-        },
-    })
-        .then((response) => response.json())
-        .then((json) => {
-            console.log('Response Returned: ', json);
-        });
-
-    getPromiseToast(responsePromise)
-    return { vehicleDetailAndDescriptionForm }
-}
 export const _submitSecondScheduleForm = async (formData: Object) => {
     const secondScheduleForm = await superValidate(formData, _secondScheduleSchema);
     if (!secondScheduleForm.valid) {
@@ -244,16 +158,16 @@ export const _submitSecondScheduleForm = async (formData: Object) => {
     return { secondScheduleForm }
 }
 
-export const _submitLetterOfAgreementForm = async (formData: Object) => {
-    const letterOfAgreementForm = await superValidate(formData, _letterOfAgreementSchema);
-    if (!letterOfAgreementForm.valid) {
+export const _submitSectionLeaderForm = async (formData: Object) => {
+    const sectionLeaderForm = await superValidate(formData, _sectionLeaderSchema);
+    if (!sectionLeaderForm.valid) {
         getErrorToast();
-        console.log(letterOfAgreementForm)
-        return fail(400, letterOfAgreementForm);
+        console.log(sectionLeaderForm)
+        return fail(400, sectionLeaderForm);
     }
     const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
         method: 'POST',
-        body: JSON.stringify(letterOfAgreementForm),
+        body: JSON.stringify(sectionLeaderForm),
         headers: {
             'Content-type': 'application/json; charset=UTF-8',
         },
@@ -264,5 +178,5 @@ export const _submitLetterOfAgreementForm = async (formData: Object) => {
         });
 
     getPromiseToast(responsePromise)
-    return { letterOfAgreementForm }
+    return { sectionLeaderForm }
 }
