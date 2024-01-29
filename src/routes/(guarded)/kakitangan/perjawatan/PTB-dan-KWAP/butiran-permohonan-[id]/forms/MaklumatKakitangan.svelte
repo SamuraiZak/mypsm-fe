@@ -1,40 +1,12 @@
 <script lang="ts">
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    import RadioSingle from '$lib/components/input/RadioSingle.svelte';
-    // import { getEmployees } from '$lib/service/employees/staff-service';
-    import { onMount } from 'svelte';
-    import { mockEmployees } from '$lib/mocks/database/mockEmployees';
     import type { Employee } from '$lib/view-models/mypsm/perjawatan/pension/pension-personal-detail-response.view-model';
-    let radioValueExSoldier: string | undefined = 'tidak';
-    let radioValueRelationToStaff: string | undefined = 'ya';
-    let staffData: Employee | undefined;
 
     export let editable: boolean = false;
 
     export let ptbData: Employee;
-    const options: RadioOption[] = [
-        {
-            value: 'ya',
-            label: 'YA',
-        },
-        {
-            value: 'tidak',
-            label: 'Tidak',
-        },
-    ];
 
-    // fetch data on mount.
-    // onMount(async () => {
-    //     const data: IntEmployees[] = mockEmployees;
-
-    //     staffData = data.find((staff) => {
-    //         return (
-    //             staff.employeeNumber === ptbData.employeeNo &&
-    //             staff.identityDocumentNumber === ptbData.name
-    //         );
-    //     });
-    // });
 </script>
 
 <form class="flex w-full flex-col gap-2.5">

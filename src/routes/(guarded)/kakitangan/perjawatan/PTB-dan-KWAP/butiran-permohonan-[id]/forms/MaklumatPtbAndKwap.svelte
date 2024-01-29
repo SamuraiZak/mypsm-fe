@@ -1,35 +1,18 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
-    import FormButton from '$lib/components/buttons/FormButton.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
-    import { Alert } from 'flowbite-svelte';
     // import * as ptbService from '$lib/service/ptbAndKwap/services';
-    import { onMount } from 'svelte';
-    import type { Cookies } from '@sveltejs/kit';
-    import type { Employee } from '$lib/view-models/mypsm/perjawatan/pension/pension-personal-detail-response.view-model';
+    import type { DetailPensionDetail } from '$lib/view-models/mypsm/perjawatan/pension/pension-detail-pension-detail-response.view-model';
 
+    export let ptbData: DetailPensionDetail;
 
-    export let ptbData: Employee;
-    let currentPtb: {
-        ptbDate: 'string';
-        letterRefNumber: 'string';
-        letterRefDate: 'string';
-        pensionNumber: 'string';
-        kwapDate: 'string';
-    };
-    export let userId: string | undefined;
     export let editable: boolean = false;
     let creating = false;
-
-    onMount(async () => {
-        // currentPtb = await ptbService.getPtbKwapdetail(userId);
-    });
 </script>
 
 <form
     class="flex w-full flex-col gap-2.5"
     method="POST"
-    action="./butiran-permohonan-{ptbData.employeeNo}-{ptbData.name}?/create"
     use:enhance={() => {
         creating = true;
 
@@ -44,40 +27,69 @@
             <FormButton type="save" />
         </button>
     </div> -->
+
+    <TextField
+        type="date"
+        disabled={!editable}
+        name="applicationDate"
+        label="Tarikh Permohonan"
+        bind:value={ptbData.applicationDate}
+    ></TextField>
     <TextField
         type="date"
         disabled={!editable}
         name="ptb-date"
         label="Tarikh Diberi PTB"
-        value={currentPtb?.ptbDate ?? ''}
+        bind:value={ptbData.PTBDate}
     ></TextField>
     <TextField
         type="text"
         disabled={!editable}
-        name="letter-ref-number"
+        name="referenceNumber"
         label="No. Rujukan Surat JPA"
         placeholder="contoh: 81672178"
-        value={currentPtb?.letterRefNumber ?? ''}
+        bind:value={ptbData.referenceNumber}
     ></TextField>
     <TextField
+        type="date"
+        disabled={!editable}
+        name="referenceDate"
+        label="Tarikh Rujukan"
+        bind:value={ptbData.referenceDate}
+    ></TextField>
+    <!-- <TextField
         type="date"
         disabled={!editable}
         name="letter-ref-date"
         label="&nbsp;"
-        value={currentPtb?.letterRefDate ?? ''}
+        bind:value={ptbData.letterRefDate}
+    ></TextField> -->
+    <TextField
+        type="text"
+        disabled={!editable}
+        name="status"
+        label="Status"
+        bind:value={ptbData.status}
     ></TextField>
     <TextField
-        type="date"
+        type="text"
+        disabled={!editable}
+        name="remark"
+        label="Ulasan"
+        bind:value={ptbData.remark}
+    ></TextField>
+    <TextField
+        type="text"
         disabled={!editable}
         name="pension-number"
         label="No. Pencen"
-        value={currentPtb?.pensionNumber ?? ''}
+        bind:value={ptbData.pensionNumber}
     ></TextField>
     <TextField
         type="date"
         disabled={!editable}
         name="kwap-date"
         label="Tarikh Emel (KWAP)"
-        value={currentPtb?.kwapDate ?? ''}
+        bind:value={ptbData.KWAPEmailDate}
     ></TextField>
 </form>

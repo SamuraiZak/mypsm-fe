@@ -4,9 +4,6 @@
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import { goto } from '$app/navigation';
-    import Form from '$lib/components/form/Form.svelte';
-    import FormHeading from '$lib/components/form/FormHeading.svelte';
-    import FormContents from '$lib/components/form/FormContents.svelte';
     import MaklumatKakitangan from './forms/MaklumatKakitangan.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
@@ -22,9 +19,6 @@
     let stepperIndex = 0;
 
     // Stepper Names
-    onMount(() => {
-        console.log(data.record.status);
-    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -52,7 +46,7 @@
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
                     <MaklumatKakitangan
-                        bind:ptbData={data.employeelist}
+                        bind:ptbData={data.PensionEmployeelistPersonal}
                         editable={false}
                     />
                 </div>
@@ -66,7 +60,10 @@
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
-                    <MaklumatPerkhidmatan ptbData={data.record} />
+                    <MaklumatPerkhidmatan
+                        bind:ptbDataService={data.pensionDetailServiceList}
+                        bind:ptbDataSalary={data.pensionDetailSalaryList}
+                    />
                 </div>
             </StepperContentBody>
         </StepperContent>
@@ -75,34 +72,33 @@
             <StepperContentHeader title="Maklumat PTB dan KWAP"
             ></StepperContentHeader>
             <StepperContentBody>
-                {#if data.record.status === 'Baru'}
-                    <SectionHeader
-                        subTitle="Menunggu Keputusan daripada urus setia perjawatan"
-                    />
-                {/if}
+                <!-- {#if data.record.status === 'Baru'} -->
+                <SectionHeader
+                    subTitle="Menunggu Keputusan daripada urus setia perjawatan"
+                />
+                <!-- {/if} -->
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
                     <MaklumatPtbAndKwap
-                        ptbData={data.record}
-                        userId={data.userId}
+                        bind:ptbData={data.detailPensionDetailList}
                     />
                 </div>
             </StepperContentBody>
         </StepperContent>
-        {#if data.record.status === 'SOKONG' || data.record.status === 'LULUS'}
-            <StepperContent>
-                <StepperContentHeader
-                    title="Keputusan Daripada Peranan - Peranan Berkaitan"
-                ></StepperContentHeader>
-                <StepperContentBody>
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start"
-                    >
-                        <KeputusanPerananLain status={data.record.status} />
-                    </div>
-                </StepperContentBody>
-            </StepperContent>
-        {/if}
+        <!-- {#if data.record.status === 'SOKONG' || data.record.status === 'LULUS'} -->
+        <StepperContent>
+            <StepperContentHeader
+                title="Keputusan Daripada Peranan - Peranan Berkaitan"
+            ></StepperContentHeader>
+            <StepperContentBody>
+                <div
+                    class="flex max-h-full w-full flex-col items-start justify-start"
+                >
+                    <!-- <KeputusanPerananLain status={data.record.status} /> -->
+                </div>
+            </StepperContentBody>
+        </StepperContent>
+        <!-- {/if} -->
     </Stepper>
 </section>

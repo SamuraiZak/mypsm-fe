@@ -9,8 +9,7 @@ import type {
     PensionTableResponse,
 } from '$lib/view-models/mypsm/perjawatan/pension/pension-list-details-response.view-model';
 
-export async function load({ params }) {
-    const data: PtbAndKwap[] = mockPTBdanKWAP;
+export async function load() {
 
     const requestBody: PensionTableFilter = {
         pageNum: 1,
