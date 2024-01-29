@@ -1,27 +1,28 @@
 // respnse
 export interface PensionTableResponse {
-    status:  number;
+    status: number;
     message: string;
-    data:    Data;
+    data: Data;
 }
 
 export interface Data {
-    pageNum:        number;
-    totalData:      number;
-    totalPage:      number;
+    pageNum: number;
+    totalData: number;
+    totalPage: number;
     pensionDetails: PensionDetail[];
 }
 
 export interface PensionDetail {
-    employeeNo:      string;
-    employeeName:    string;
-    identityCardNo:  string;
-    category:        Category;
+    employeeId: number;
+    employeeNo: string;
+    employeeName: string;
+    identityCardNo: string;
+    category: Category;
     applicationDate: Date;
-    status:          string;
-    remark:          string;
+    status: string;
+    remark: string;
 }
 
 export enum Category {
-    Tetap = "tetap",
+    Tetap = 'tetap',
 }

@@ -2,11 +2,16 @@
     import AccordianField from '$lib/components/input/AccordianField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
+    import type { Salary } from '$lib/view-models/mypsm/perjawatan/pension/pension-detail-salary-response.view-model';
+    import type { Service } from '$lib/view-models/mypsm/perjawatan/pension/pension-detail-service-response.view-model';
 
     import { Tooltip } from 'flowbite-svelte';
     import { onMount } from 'svelte';
 
     export let editable: boolean = false;
+
+    export let ptbDataService: Service;
+    export let ptbDataSalary: Salary;
 
     let currentService: PtbService;
     let tooltipContent: string = '';
@@ -75,7 +80,7 @@
         disabled={!editable}
         id="gredSemasa"
         label={'Gred Semasa'}
-        value={currentService?.currentGrade}
+       bind:value={ptbDataService.grade}
     ></TextField>
     <TextField disabled={!editable} id="jawatan" label={'Jawatan'} value=""
     ></TextField>
@@ -83,91 +88,91 @@
         disabled={!editable}
         id="penempatan"
         label={'Penempatan'}
-        value={currentService?.placement}
+        bind:value={ptbDataService.placement}
     ></TextField>
     <TextField
         disabled={!editable}
         id="tarafPerkhidmatan"
         label={'Taraf Perkhidmatan'}
-        value={currentService?.educationLevel}
+        value={ptbDataService.serviceLevel}
     ></TextField>
-    <RadioSingle
+    <!-- <RadioSingle
         disabled={!editable}
         options={faedahPersaraanOptions}
         legend={'Faedah Persaraan'}
-        bind:userSelected={isFaedahKWSP}
-    ></RadioSingle>
+        bind:userSelected={retirementType}
+    ></RadioSingle> -->
     <TextField
         disabled={!editable}
         id="noKWSP"
         label={'No. KWSP'}
-        value={currentService?.pensionBenefit}
+       bind:value={ptbDataService.EPFNumber}
     ></TextField>
     <TextField
         disabled={!editable}
         id="noSOCSO"
         label={'No. SOCSO'}
-        value={currentService?.kwspNumber}
+       bind:value={ptbDataService.SOCSONumber}
     ></TextField>
     <TextField
         disabled={!editable}
         id="noCukai"
         label={'No. Cukai (LHDN)'}
-        value={currentService?.taxNumber}
+        bind:value={ptbDataService.incomeNumber}
     ></TextField>
     <TextField
         disabled={!editable}
         id="bank"
         label={'Bank'}
-        value={currentService?.bankName}
+        bind:value={ptbDataService.bankName}
     ></TextField>
     <TextField
         disabled={!editable}
         id="noAkaun"
         label={'No. Akaun'}
-        value={currentService?.accountNumber}
+       bind:value={ptbDataService.bankAccount}
     ></TextField>
-    <TextField
+    <!-- <TextField
         disabled={!editable}
         id="program"
         label={'Program'}
-        value={currentService?.programme}
-    ></TextField>
+       bind:value={currentService?.programme}
+    ></TextField> -->
     <TextField
         disabled={!editable}
         id="kelayakanCuti"
         label={'Kelayakan Cuti'}
-        value={currentService?.entitledLeaves}
+       bind:value={ptbDataService.leaveEntitlement}
     ></TextField>
     <TextField
         disabled={!editable}
         id="mulaDilantikPerkhidmatanKerajaan"
         label={'Mula Dilantik Perkhidmatan Kerajaan'}
-        value=""
+      bind:value={ptbDataService.hireByGovermentDate}
     ></TextField>
     <TextField
         disabled={!editable}
         id="mulaDilantikPerkhidmatanLKIM"
         label={'Mula Dilantik Perkhidmatan LKIM'}
-        value=""
+        bind:value={ptbDataService.hireByLKIMDate}
     ></TextField>
     <TextField
         disabled={!editable}
         id="mulaDilantikPerkhidmatanSekarang"
         label={'Mula Dilantik Perkhidmatan Sekarang'}
-        value=""
+        bind:value={ptbDataService.currentServiceStartDate}
     ></TextField>
     <TextField
         disabled={!editable}
         id="disahkanDalamJawatanPertamaLKIM"
         label={'Disahkan Dalam Jawatan Pertama LKIM'}
-        value=""
+        bind:value={ptbDataService.firstServiceConfirmedDate}
     ></TextField>
     <TextField
         disabled={!editable}
         id="disahkanDalamJawatanSemasaLKIM"
         label={'Disahkan Dalam Jawatan Semasa LKIM'}
-        value=""
+        bind:value={ptbDataService.currentServiceConfirmedDate}
     ></TextField>
     <AccordianField
         disabled={editable}
@@ -185,49 +190,53 @@
         >
         <!-- {/each} -->
     </AccordianField>
-    <TextField
+    <!-- <TextField
         disabled={!editable}
         id="tarikhKelulusanPercantumanPerkhidmatanLepas"
         label={'Tarikh Kelulusan Percantuman Perkhidmatan Lepas'}
-        value=""
-    ></TextField>
+       bind:value=""
+    ></TextField> -->
     <TextField
         disabled={!editable}
         id="pemangkuanSekarang"
         label={'Pemangkuan Sekarang'}
-        value=""
+        bind:value={ptbDataService.currentActing}
     ></TextField>
     <TextField
         disabled={!editable}
         id="tanggungKerjaSekarang"
         label={'Tanggung Kerja Sekarang'}
-        value=""
+        bind:value={ptbDataService.currentInterim}
     ></TextField>
     <TextField
         disabled={!editable}
         id="skimPencen"
         label={'Skim Pencen'}
-        value=""
+        bind:value={ptbDataService.pensionScheme}
     ></TextField>
     <TextField
         disabled={!editable}
         id="kenaikanGajiAkhir"
         label={'Kenaikan Gaji Akhir'}
-        value=""
+        bind:value={ptbDataService.lastSalary}
     ></TextField>
     <TextField
         disabled={!editable}
         id="kenaikanPangkatAkhir"
         label={'Kenaikan Pangkat Akhir'}
-        value=""
+        bind:value={ptbDataService.lastPromotion}
     ></TextField>
-    <TextField disabled={!editable} id="bulanKGT" label={'Bulan KGT'} value=""
-    ></TextField>
+    <!-- <TextField
+    disabled={!editable}
+    id="bulanKGT"
+    label={'Bulan KGT'}
+    value=""
+    ></TextField> -->
     <TextField
         disabled={!editable}
         id="tarikhBersara"
         label={'Tarikh Bersara'}
-        value=""
+        bind:value={ptbDataService.retirementDate}
     ></TextField>
     <b class="text-sm text-system-primary">Maklumat Gaji dan Elaun - Elaun</b>
     <div class="grid grid-cols-2 gap-10">
@@ -236,19 +245,19 @@
                 disabled={!editable}
                 id="tarikhBerkuatkuasa"
                 label={'Tarikh Berkuatkuasa'}
-                value={'maklumatGajiElaunData.tarikhBerkuatkuasa'}
+                bind:value={ptbDataSalary.effectiveDate}
             ></TextField>
-            <TextField
+            <!-- <TextField
                 disabled={!editable}
                 id="tanggaGaji"
                 label={'Tangga Gaji'}
-                value={3452}
-            ></TextField>
+                bind:value={ptbDataSalary.baseSalary}
+            ></TextField> -->
             <TextField
                 disabled={!editable}
                 id="gajiPokok"
                 label={'Gaji Pokok'}
-                value={3452}
+                bind:value={ptbDataSalary.baseSalary}
             ></TextField>
         </div>
         <div class="space-y-2.5">
@@ -258,7 +267,7 @@
                 disabled={!editable}
                 id="type-itka"
                 label={'ITKA'}
-                value=""
+                bind:value={ptbDataSalary.ITKA}
             ></TextField>
             <TextField
                 hasTooltip={true}
@@ -266,7 +275,7 @@
                 disabled={!editable}
                 id="itp"
                 label={'ITP'}
-                value=""
+                bind:value={ptbDataSalary.ITP}
             ></TextField>
             <TextField
                 hasTooltip={true}
@@ -274,7 +283,7 @@
                 disabled={!editable}
                 id="epw"
                 label={'EPW'}
-                value=""
+                bind:value={ptbDataSalary.EPW}
             ></TextField>
             <TextField
                 hasTooltip={true}
@@ -282,7 +291,7 @@
                 disabled={!editable}
                 id="cola"
                 label={'COLA'}
-                value=""
+                bind:value={ptbDataSalary.COLA}
             ></TextField>
             <!-- Tooltip body -->
             <Tooltip

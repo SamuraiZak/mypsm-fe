@@ -5,10 +5,10 @@ export interface DetailPensionDetailResponse {
 }
 
 export interface Data {
-    pensionDetail: PensionDetail;
+    pensionDetail: DetailPensionDetail;
 }
 
-export interface PensionDetail {
+export interface DetailPensionDetail {
     applicationDate: Date;
     PTBDate:         Date;
     referenceNumber: string;

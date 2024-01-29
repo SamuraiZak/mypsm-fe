@@ -3,6 +3,8 @@ import { error, fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
+import  type { PersonalDetailResponse } from '$lib/view-models/mypsm/profile/proflle-personal-detail-response.modal.js';
+import type { PersonalDetailRequest } from '$lib/view-models/mypsm/profile/proflle-personal-detail-request.modal';
 
 // =========================================================================
 // z validation schema and submit function for the new employment form fields
@@ -110,30 +112,30 @@ const maklumatPeribadiSelectSchema = z
     .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
 export const _stepperMaklumatPeribadi = z.object({
-    bekasPolisTentera: booleanSchema,
+    isExPolice: booleanSchema,
 
     statusPekerjaan: maklumatPeribadiSelectSchema,
-    warnaKadPengenalan: maklumatPeribadiSelectSchema,
-    tempatLahir: maklumatPeribadiSelectSchema,
-    warganegara: maklumatPeribadiSelectSchema,
-    bangsa: maklumatPeribadiSelectSchema,
-    agama: maklumatPeribadiSelectSchema,
-    status: maklumatPeribadiSelectSchema,
-    jantina: maklumatPeribadiSelectSchema,
+    icColour: maklumatPeribadiSelectSchema,
+    birthplace: maklumatPeribadiSelectSchema,
+    nationality: maklumatPeribadiSelectSchema,
+    race: maklumatPeribadiSelectSchema,
+    religion: maklumatPeribadiSelectSchema,
+    marital: maklumatPeribadiSelectSchema,
+    gender: maklumatPeribadiSelectSchema,
 
-    noPekerja: shortTextSchema,
-    noKadPengenalan: shortTextSchema,
-    namaPenuh: shortTextSchema,
-    namaLain: shortTextSchema,
-    emel: shortTextSchema,
+    employeeNumber: shortTextSchema,
+    identityCardNumber: shortTextSchema,
+    fullName: shortTextSchema,
+    alternativeName: shortTextSchema,
+    email: shortTextSchema,
     noPekerjaPasangan: shortTextSchema,
     namaPasangan: shortTextSchema,
-    alamatRumah: shortTextSchema,
-    alamatSuratMenyurat: shortTextSchema,
+    homeAddress: shortTextSchema,
+    mailAddress: shortTextSchema,
 
-    tarikhLahir: dateStepper1,
+    birthDate: dateStepper1,
 
-    isInRelationshipWithLKIMStaff: z.enum(['true', 'false'], {
+    isRelatedToLKIM: z.enum(['true', 'false'], {
         errorMap: (issue, { defaultError }) => ({
             message:
                 issue.code === 'invalid_enum_value'
@@ -569,6 +571,7 @@ export const _approverResultSchema = z.object({
 //=====================================================
 
 export const load = async () => {
+
     // const id = parseInt(params.id);
     const stepperMaklumatPeribadi = await superValidate(
         _stepperMaklumatPeribadi,
