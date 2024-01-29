@@ -1,4 +1,4 @@
-export interface EnumStateResponse {
+export interface EnumStateResponseViewModel {
     status: number;
     message: string;
     data: EnumStateResponseData;
