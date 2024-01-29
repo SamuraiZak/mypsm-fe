@@ -7,6 +7,7 @@ export interface NewHireSecretaryUpdateResponse {
 export interface SecretaryUpdateData {
     isReadonly: boolean;
     gradeId: number;
+    maxGradeId: number;
     positionId: number;
     placementId: number;
     serviceTypeId: number;
