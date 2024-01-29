@@ -6,7 +6,7 @@ import { z } from 'zod';
 // creating schema
 export const _resetPasswordSchema = z.object({
     idType: z.string(),
-    idValue: z.string().min(5),
+    idValue: z.string().min(2),
 });
 
 export const load = async () => {
