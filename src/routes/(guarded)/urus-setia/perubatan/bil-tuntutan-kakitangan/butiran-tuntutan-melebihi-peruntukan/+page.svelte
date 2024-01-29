@@ -13,8 +13,17 @@
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import DownloadAttachment from '$lib/components/input/DownloadAttachment.svelte';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import { Toaster } from 'svelte-french-toast';
+    import {
+        _stepperSecretaryResult,
+        _submitFormStepperSecretaryResult,
+    } from './+page';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
 
     export let disabled: boolean = true;
+    export let data: PageData;
 
     let selectedDate = new Date();
 
@@ -38,6 +47,21 @@
             label: 'Tidak Sah',
         },
     ];
+
+    // Secretary Result
+    const {
+        form: secretaryResultForm,
+        errors: secretaryResultErrors,
+        enhance: secretaryResultEnhance,
+    } = superForm(data.stepperSecretaryResult, {
+        SPA: true,
+        validators: _stepperSecretaryResult,
+        onSubmit() {
+            _submitFormStepperSecretaryResult($secretaryResultForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -135,33 +159,59 @@
         <StepperContentHeader title="Keputusan Urus Setia"
             ><TextIconButton
                 primary
-                label="Hantar"
-                onClick={() => {
-                    goto('');
-                }}><SvgPaperAirplane /></TextIconButton
-            ></StepperContentHeader
+                label="Simpan"
+                form="FormStepperSecretaryResult"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
         >
         <StepperContentBody
-            ><div class="flex w-full flex-col gap-2">
-                <p class="text-sm font-bold">
-                    Sila Tetapkan Keputusan (Urus Setia)
-                </p>
-                <p
-                    class="mt-2 h-fit w-full bg-bgr-primary text-sm italic text-system-accent"
-                >
-                    ● Keputusan akan dihantar ke email klinik dan Urus Setia negeri berkaitan
-                </p>
-                <div
-                    class="flex h-fit w-full flex-col items-center justify-start gap-2"
-                >
-                    <LongTextField
-                        label="Tindakan/Ulasan"
-                        placeholder="-"
-                        value=""
-                    />
-                    <RadioSingle {options} />
+            ><form
+                id="FormStepperSecretaryResult"
+                class="flex w-full flex-col gap-2"
+                use:secretaryResultEnhance
+                method="POST"
+            >
+                <div class="flex w-full flex-col gap-2">
+                    <p class="text-sm font-bold">
+                        Sila Tetapkan Keputusan (Urus Setia)
+                    </p>
+                    <p
+                        class="mt-2 h-fit w-full bg-bgr-primary text-sm italic text-system-accent"
+                    >
+                        ● Keputusan akan dihantar ke email klinik dan Urus Setia
+                        negeri berkaitan
+                    </p>
+                    <div
+                        class="flex h-fit w-full flex-col items-center justify-start gap-2"
+                    >
+                        <LongTextField
+                            hasError={!!$secretaryResultErrors.remark}
+                            name="remark"
+                            label="Tindakan / Ulasan"
+                            bind:value={$secretaryResultForm.remark}
+                        />
+                        {#if $secretaryResultErrors.remark}
+                            <span
+                                class="ml-[-400px] font-sans text-sm italic text-system-danger"
+                                >{$secretaryResultErrors.remark}</span
+                            >
+                        {/if}
+                        <RadioSingle
+                            {options}
+                            name="resultOption"
+                            bind:userSelected={$secretaryResultForm.resultOption}
+                        ></RadioSingle>
+                        {#if $secretaryResultErrors.resultOption}
+                            <span
+                                class="ml-[-940px] font-sans text-sm italic text-system-danger"
+                                >{$secretaryResultErrors.resultOption}</span
+                            >
+                        {/if}
+                    </div>
                 </div>
-            </div></StepperContentBody
+            </form></StepperContentBody
         >
     </StepperContent>
 </Stepper>
+<Toaster />
