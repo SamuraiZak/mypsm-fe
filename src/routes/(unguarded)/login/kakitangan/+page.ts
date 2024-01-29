@@ -32,7 +32,12 @@ export const load = async () => {
 
 export const _submit = async (formData: AuthenticationRequestViewModel) => {
     const response: AuthenticationResponseViewModel = await AuthService.loginEmployee(formData);
-    if (response.status == 200) {
+
+    if (response.status === 200) {
+        getLoginSuccessToast().finally(() =>
+            setTimeout(() => goto('/calon/halaman-utama'), 2000),
+        );
+
         localStorage.setItem(LocalStorageKeyConstant.currentRole, formData.currentRole);
 
         switch (formData.currentRole) {
@@ -139,5 +144,8 @@ export const _submit = async (formData: AuthenticationRequestViewModel) => {
             default:
                 break;
         }
+
+    } else {
+        getLoginErrorToast();
     }
 };
