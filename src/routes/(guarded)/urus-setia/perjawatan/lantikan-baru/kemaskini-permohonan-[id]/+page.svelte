@@ -70,14 +70,19 @@
         data.nextOfKinInfoResponse?.data?.isReadonly;
 
     let isSuccessDocumentFormResponse: boolean =
-        data.nextOfKinInfoResponse.status === 201;
+        data.documentInfoResponse.status === 201;
     let isReadonlyDocumentFormStepper: boolean =
-        data.nextOfKinInfoResponse?.data?.isReadonly;
+        data.documentInfoResponse?.data?.isReadonly;
 
     let isSuccessServiceFormResponse: boolean =
-        data.nextOfKinInfoResponse.status === 201;
+        data.serviceResponse.status === 201;
     let isReadonlyServiceFormStepper: boolean =
-        data.nextOfKinInfoResponse?.data?.isReadonly;
+        data.serviceResponse?.data?.isReadonly;
+
+    let isSuccessScretaryApprovalFormResponse: boolean =
+        data.secretaryApprovalResponse.status === 201;
+    // let isReadonlyScretaryApprovalFormStepper: boolean =
+    //     data.secretaryApprovalResponse?.isReadonly;
 
     // Stepper Classes
     let stepperFormTitleClass =
@@ -190,10 +195,7 @@
                         name="titleId"
                         label="Gelaran"
                         bind:value={personalDetails.titleId}
-                        options={[
-                            { value: 'true', name: 'Biru' },
-                            { value: 'false', name: 'Merah' },
-                        ]}
+                        options={data.titleLookup}
                     ></DropdownSelect>
                     <DropdownSelect
                         disabled={isReadonlyPersonalFormStepper}
@@ -218,10 +220,7 @@
                         name="birthStateId"
                         label="Tempat Lahir"
                         bind:value={personalDetails.birthStateId}
-                        options={[
-                            { value: '1', name: 'Sarawak' },
-                            { value: '2', name: 'Sabah' },
-                        ]}
+                        options={data.stateLookup}
                     ></DropdownSelect>
                     <DropdownSelect
                         disabled={isReadonlyPersonalFormStepper}
@@ -230,10 +229,7 @@
                         name="birthCountryId"
                         label="Negara Dilahirkan"
                         bind:value={personalDetails.birthCountryId}
-                        options={[
-                            { value: '1', name: 'Sarawak' },
-                            { value: '2', name: 'Sabah' },
-                        ]}
+                        options={data.countryLookup}
                     ></DropdownSelect>
                     <DropdownSelect
                         disabled={isReadonlyPersonalFormStepper}
@@ -242,10 +238,7 @@
                         name="nationalityId"
                         label="Warganegara"
                         bind:value={personalDetails.nationalityId}
-                        options={[
-                            { value: '1', name: 'Warganegara' },
-                            { value: '2', name: 'Bukan Warganegara' },
-                        ]}
+                        options={data.nationalityLookup}
                     ></DropdownSelect>
                     <DropdownSelect
                         disabled={isReadonlyPersonalFormStepper}
@@ -254,10 +247,7 @@
                         name="raceId"
                         label="Bangsa"
                         bind:value={personalDetails.raceId}
-                        options={[
-                            { value: '1', name: 'Melayu' },
-                            { value: '2', name: 'Cina' },
-                        ]}
+                        options={data.raceLookup}
                     ></DropdownSelect>
                     <DropdownSelect
                         disabled={isReadonlyPersonalFormStepper}
@@ -266,10 +256,7 @@
                         name="ethnicId"
                         label="Etnik"
                         bind:value={personalDetails.ethnicId}
-                        options={[
-                            { value: '1', name: 'Melayu' },
-                            { value: '2', name: 'Cina' },
-                        ]}
+                        options={data.ethnicityLookup}
                     ></DropdownSelect>
                     <DropdownSelect
                         disabled={isReadonlyPersonalFormStepper}
@@ -278,10 +265,7 @@
                         name="religionId"
                         label="Agama"
                         bind:value={personalDetails.religionId}
-                        options={[
-                            { value: '1', name: 'Islam' },
-                            { value: '2', name: 'Kristen' },
-                        ]}
+                        options={data.religionLookup}
                     ></DropdownSelect>
                     <DropdownSelect
                         disabled={isReadonlyPersonalFormStepper}
@@ -290,21 +274,15 @@
                         name="genderId"
                         label="Jantina"
                         bind:value={personalDetails.genderId}
-                        options={[
-                            { value: 'male', name: 'Lelaki' },
-                            { value: 'female', name: 'Perempuan' },
-                        ]}
+                        options={data.genderLookup}
                     ></DropdownSelect>
                     <DropdownSelect
                         disabled={isReadonlyPersonalFormStepper}
                         dropdownType="label-left-full"
                         id="maritalId"
-                        label="maritalId"
+                        label="Status Perkahwinan"
                         bind:value={personalDetails.maritalId}
-                        options={[
-                            { value: '1', name: 'Bujang' },
-                            { value: '2', name: 'Berkahwin' },
-                        ]}
+                        options={data.maritalLookup}
                     ></DropdownSelect>
                     <TextField
                         disabled={isReadonlyPersonalFormStepper}
@@ -320,58 +298,77 @@
                         label="Alamat Rumah"
                         bind:value={personalDetails.homeAddress}
                     />
-                    <LongTextField
+                    <DropdownSelect
                         disabled={isReadonlyPersonalFormStepper}
+                        dropdownType="label-left-full"
+                        id="homeCountryId"
                         name="homeCountryId"
-                        label="Alamat Rumah"
+                        label="Negara"
+                        options={data.countryLookup}
                         bind:value={personalDetails.homeCountryId}
                     />
-                    <LongTextField
+                    <DropdownSelect
                         disabled={isReadonlyPersonalFormStepper}
+                        dropdownType="label-left-full"
+                        id="homeStateId"
                         name="homeStateId"
-                        label="Alamat Rumah"
+                        label="Negeri"
+                        options={data.stateLookup}
                         bind:value={personalDetails.homeStateId}
                     />
-                    <LongTextField
+                    <DropdownSelect
                         disabled={isReadonlyPersonalFormStepper}
+                        dropdownType="label-left-full"
+                        id="homeStateId"
                         name="homeCityId"
-                        label="Alamat Rumah"
+                        label="Bandar"
+                        options={data.cityLookup}
                         bind:value={personalDetails.homeCityId}
                     />
-                    <LongTextField
+                    <TextField
                         disabled={isReadonlyPersonalFormStepper}
                         name="homePostcode"
-                        label="Alamat Rumah"
+                        label="Poskod Rumah"
                         bind:value={personalDetails.homePostcode}
                     />
+
                     <LongTextField
                         disabled={isReadonlyPersonalFormStepper}
                         name="mailAddress"
                         label="Alamat Surat Menyurat"
                         bind:value={personalDetails.mailAddress}
                     />
-                    <LongTextField
+                    <DropdownSelect
                         disabled={isReadonlyPersonalFormStepper}
+                        dropdownType="label-left-full"
+                        id="mailCountryId"
                         name="mailCountryId"
-                        label="Alamat Surat Menyurat"
+                        label="Negara Surat Menyurat"
+                        options={data.countryLookup}
                         bind:value={personalDetails.mailCountryId}
                     />
-                    <LongTextField
+                    <DropdownSelect
                         disabled={isReadonlyPersonalFormStepper}
+                        dropdownType="label-left-full"
+                        id="mailStateId"
                         name="mailStateId"
-                        label="Alamat Surat Menyurat"
+                        label="Negeri Surat Menyurat"
+                        options={data.stateLookup}
                         bind:value={personalDetails.mailStateId}
                     />
-                    <LongTextField
+                    <DropdownSelect
                         disabled={isReadonlyPersonalFormStepper}
+                        dropdownType="label-left-full"
+                        id="mailStateId"
                         name="mailCityId"
-                        label="Alamat Surat Menyurat"
+                        label="Bandar Surat Menyurat"
+                        options={data.cityLookup}
                         bind:value={personalDetails.mailCityId}
                     />
-                    <LongTextField
+                    <TextField
                         disabled={isReadonlyPersonalFormStepper}
                         name="mailPostcode"
-                        label="Alamat Surat Menyurat"
+                        label="Poskod Surat Menyurat"
                         bind:value={personalDetails.mailPostcode}
                     />
                     <RadioSingle
@@ -430,10 +427,7 @@
                                 id="employeePosition"
                                 label="Jawatan Kakitangan LKIM"
                                 bind:value={personalDetails.employeePosition}
-                                options={[
-                                    { value: '1', name: 'Pegawai IT' },
-                                    { value: '2', name: 'Akauntan' },
-                                ]}
+                                options={data.positionLookup}
                             ></DropdownSelect>
                             <DropdownSelect
                                 disabled={isReadonlyPersonalFormStepper}
@@ -441,10 +435,7 @@
                                 id="relationshipId"
                                 label="Hubungan"
                                 bind:value={personalDetails.relationshipId}
-                                options={[
-                                    { value: 'true', name: 'Suami' },
-                                    { value: 'false', name: 'Isteri' },
-                                ]}
+                                options={data.relationshipLookup}
                             ></DropdownSelect>
                         {/if}
                     </div>
@@ -471,11 +462,19 @@
                             </div>
                             <DropdownSelect
                                 disabled
-                                name="majorMinorId"
+                                name="majorId"
                                 dropdownType="label-left-full"
                                 label={'Jenis Jurusan'}
                                 options={data.majorMinorLookup}
-                                bind:value={academic.majorMinorId}
+                                bind:value={academic.majorId}
+                            ></DropdownSelect>
+                            <DropdownSelect
+                                disabled
+                                name="minorId"
+                                dropdownType="label-left-full"
+                                label={'Jenis Khusus'}
+                                options={data.majorMinorLookup}
+                                bind:value={academic.minorId}
                             ></DropdownSelect>
                             <DropdownSelect
                                 disabled
@@ -558,6 +557,9 @@
             ><div class="flex w-full flex-col gap-2.5">
                 {#if isSuccessExperienceFormResponse}
                     {#each data.experienceInfoResponse.data.experienceList as record, i}
+                        <div
+                            class="space-y-2.5 rounded-[3px] border p-2.5"
+                        ></div>
                         <p class={stepperFormTitleClass}>
                             Maklumat Pengalaman #{i + 1}
                         </p>
@@ -616,6 +618,9 @@
                             type="text"
                             bind:value={record.salary}
                         ></TextField>
+                        <div
+                            class="space-y-2.5 rounded-[3px] border p-2.5"
+                        ></div>
                     {/each}
                 {:else}
                     <Stepper204
@@ -683,7 +688,6 @@
             <div class="flex w-full flex-col gap-2 overflow-y-auto">
                 {#if isSuccessNextOfKinFormResponse}
                     <DynamicTable
-                        hasCheckbox
                         tableItems={data.nextOfKinInfoResponse.data
                             .nextOfKinList}
                     ></DynamicTable>
@@ -730,14 +734,16 @@
     </StepperContent>
     <!-- {#if !isReadonlyDocumentFormStepper} -->
     <StepperContent>
-        <StepperContentHeader title="Kemaskini Lantikan Baru"
-            ><TextIconButton
-                primary
-                label="Simpan"
-                form="newHireEmploymentServiceForm"
-            >
-                <SvgCheck></SvgCheck>
-            </TextIconButton>
+        <StepperContentHeader title="Kemaskini Lantikan Baru">
+            {#if !isReadonlyServiceFormStepper}
+                <TextIconButton
+                    primary
+                    label="Simpan"
+                    form="newHireEmploymentServiceForm"
+                >
+                    <SvgCheck></SvgCheck>
+                </TextIconButton>
+            {/if}
         </StepperContentHeader>
         <StepperContentBody>
             <p class={stepperFormTitleClass}>Maklumat Perkhidmatan</p>
@@ -749,12 +755,13 @@
             >
                 <!-- <input hidden bind:value={$serviceInfoForm.candidateId} /> -->
                 <DropdownSelect
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.gradeId}
                     dropdownType="label-left-full"
                     id="gradeId"
                     label="Gred Semasa"
                     bind:value={$serviceInfoForm.gradeId}
-                    options={data.countryLookup}
+                    options={data.gradeLookup}
                 ></DropdownSelect>
                 {#if $serviceInfoErrors.gradeId}
                     <span
@@ -763,12 +770,13 @@
                     >
                 {/if}
                 <DropdownSelect
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.positionId}
                     dropdownType="label-left-full"
                     id="positionId"
                     label="Jawatan"
                     bind:value={$serviceInfoForm.positionId}
-                    options={data.countryLookup}
+                    options={data.positionLookup}
                 ></DropdownSelect>
                 {#if $serviceInfoErrors.positionId}
                     <span
@@ -782,7 +790,7 @@
                     id="placementId"
                     label="Penempatan"
                     bind:value={$serviceInfoForm.placementId}
-                    options={data.countryLookup}
+                    options={data.placementLookup}
                 ></DropdownSelect>
                 {#if $serviceInfoErrors.placementId}
                     <span
@@ -791,12 +799,13 @@
                     >
                 {/if}
                 <DropdownSelect
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.serviceTypeId}
                     dropdownType="label-left-full"
                     id="serviceTypeId"
                     label="Taraf Perkhidmatan"
                     bind:value={$serviceInfoForm.serviceTypeId}
-                    options={data.countryLookup}
+                    options={data.educationLookup}
                 ></DropdownSelect>
                 {#if $serviceInfoErrors.serviceTypeId}
                     <span
@@ -806,12 +815,13 @@
                 {/if}
 
                 <DropdownSelect
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.serviceGroupId}
                     dropdownType="label-left-full"
                     id="serviceGroupId"
                     label="Kumpulan Perkhidmatan"
                     bind:value={$serviceInfoForm.serviceGroupId}
-                    options={data.countryLookup}
+                    options={data.serviceGroupLookup}
                 ></DropdownSelect>
                 {#if $serviceInfoErrors.serviceGroupId}
                     <span
@@ -821,12 +831,13 @@
                 {/if}
 
                 <DropdownSelect
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.unitId}
                     dropdownType="label-left-full"
                     id="unitId"
                     label="Unit Perkhidmatan"
                     bind:value={$serviceInfoForm.unitId}
-                    options={data.countryLookup}
+                    options={data.unitLookup}
                 ></DropdownSelect>
                 {#if $serviceInfoErrors.unitId}
                     <span
@@ -836,12 +847,13 @@
                 {/if}
 
                 <DropdownSelect
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.employmentStatusId}
                     dropdownType="label-left-full"
                     id="employmentStatusId"
                     label="Status Perkhidmatan"
                     bind:value={$serviceInfoForm.employmentStatusId}
-                    options={data.countryLookup}
+                    options={data.serviceTypeLookup}
                 ></DropdownSelect>
                 {#if $serviceInfoErrors.employmentStatusId}
                     <span
@@ -851,9 +863,9 @@
                 {/if}
 
                 <DateSelector
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.effectiveDate}
                     name="effectiveDate"
-                    disabled={false}
                     label={'Tarikh Kuatkuasa Lantikan Semasa'}
                     bind:selectedDate={$serviceInfoForm.effectiveDate}
                 ></DateSelector>
@@ -865,12 +877,13 @@
                 {/if}
 
                 <DropdownSelect
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.retirementBenefit}
                     dropdownType="label-left-full"
                     id="retirementBenefit"
                     label="Faedah Persaraan"
                     bind:value={$serviceInfoForm.retirementBenefit}
-                    options={[{ value: 'kwsp', name: 'KWSP' }]}
+                    options={data.retirementBenefitLookup}
                 ></DropdownSelect>
                 {#if $serviceInfoErrors.retirementBenefit}
                     <span
@@ -880,7 +893,7 @@
                 {/if}
 
                 <TextField
-                    disabled={false}
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.epfNumber}
                     name="epfNumber"
                     label={'No. KWSP'}
@@ -894,7 +907,7 @@
                 {/if}
 
                 <TextField
-                    disabled={false}
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.socsoNumber}
                     name="socsoNumber"
                     label={'No. SOCSO'}
@@ -907,7 +920,7 @@
                     >
                 {/if}
                 <TextField
-                    disabled={false}
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.incomeNumber}
                     name="incomeNumber"
                     label={'No. Cukai'}
@@ -921,7 +934,7 @@
                 {/if}
 
                 <TextField
-                    disabled={false}
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.bankName}
                     name="bankName"
                     label={'Bank'}
@@ -935,7 +948,7 @@
                 {/if}
 
                 <TextField
-                    disabled={false}
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.bankAccount}
                     name="bankAccount"
                     label={'No. Akaun'}
@@ -949,7 +962,7 @@
                 {/if}
 
                 <TextField
-                    disabled={false}
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.eligibleLeaveCount}
                     name="eligibleLeaveCount"
                     label={'Kelayakan Cuti'}
@@ -963,9 +976,9 @@
                 {/if}
 
                 <DateSelector
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.civilServiceStartDate}
                     name="civilServiceStartDate"
-                    disabled={false}
                     label={'Mula Dilantik Perkhidmatan Kerajaan'}
                     bind:selectedDate={$serviceInfoForm.civilServiceStartDate}
                 ></DateSelector>
@@ -976,9 +989,9 @@
                     >
                 {/if}
                 <DateSelector
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.firstServiceDate}
                     name="firstServiceDate"
-                    disabled={false}
                     label={'Mula Dilantik Perkhidmatan LKIM'}
                     bind:selectedDate={$serviceInfoForm.firstServiceDate}
                 ></DateSelector>
@@ -989,9 +1002,9 @@
                     >
                 {/if}
                 <DateSelector
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.serviceDate}
                     name="serviceDate"
-                    disabled={false}
                     label={'Mula Dilantik Perkhidmatan Sekarang'}
                     bind:selectedDate={$serviceInfoForm.serviceDate}
                 ></DateSelector>
@@ -1002,9 +1015,9 @@
                     >
                 {/if}
                 <DateSelector
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.firstConfirmServiceDate}
                     name="firstConfirmServiceDate"
-                    disabled={false}
                     label={'Disahkan Dalam Jawatan Pertama LKIM'}
                     bind:selectedDate={$serviceInfoForm.firstConfirmServiceDate}
                 ></DateSelector>
@@ -1015,9 +1028,9 @@
                     >
                 {/if}
                 <DateSelector
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.confirmDate}
                     name="confirmDate"
-                    disabled={false}
                     label={'Disahkan Dalam Jawatan Semasa LKIM'}
                     bind:selectedDate={$serviceInfoForm.confirmDate}
                 ></DateSelector>
@@ -1029,9 +1042,9 @@
                 {/if}
 
                 <DateSelector
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.firstEffectiveDate}
                     name="firstEffectiveDate"
-                    disabled={false}
                     label={'Tarikh Berkuatkuasa Lantikan Pertama'}
                     bind:selectedDate={$serviceInfoForm.firstEffectiveDate}
                 ></DateSelector>
@@ -1042,9 +1055,9 @@
                     >
                 {/if}
                 <DateSelector
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.newRecruitEffectiveDate}
                     name="newRecruitEffectiveDate"
-                    disabled={false}
                     label={'Tarikh Lantikan Baru'}
                     bind:selectedDate={$serviceInfoForm.newRecruitEffectiveDate}
                 ></DateSelector>
@@ -1056,7 +1069,7 @@
                 {/if}
 
                 <TextField
-                    disabled={false}
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.pensionNumber}
                     name="pensionNumber"
                     label={'Nombor Pencen'}
@@ -1070,12 +1083,13 @@
                 {/if}
 
                 <DropdownSelect
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.revisionMonth}
                     dropdownType="label-left-full"
                     id="revisionMonth"
                     label="Bulan KGT"
                     bind:value={$serviceInfoForm.revisionMonth}
-                    options={[{ value: 'Januari', name: 'Januari' }]}
+                    options={data.monthStringLookup}
                 ></DropdownSelect>
 
                 {#if $serviceInfoErrors.revisionMonth}
@@ -1086,7 +1100,7 @@
                 {/if}
 
                 <TextField
-                    disabled={false}
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.kgt}
                     name="kgt"
                     type="number"
@@ -1101,9 +1115,9 @@
                 {/if}
 
                 <DateSelector
+                    disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.retirementDate}
                     name="retirementDate"
-                    disabled={false}
                     label={'Tarikh Bersara'}
                     bind:selectedDate={$serviceInfoForm.retirementDate}
                 ></DateSelector>
@@ -1120,7 +1134,6 @@
                 <div class="grid grid-cols-2 gap-10">
                     <div class="space-y-2.5">
                         <!-- <TextField
-                            disabled={false}
                             hasError={!!$serviceInfoErrors.salaryDateOfEffect}
                             name="salaryDateOfEffect"
                             label={'Tarikh Berkuatkuasa'}
@@ -1133,7 +1146,7 @@
                             >
                         {/if} -->
                         <TextField
-                            disabled={false}
+                            disabled={isReadonlyServiceFormStepper}
                             hasError={!!$serviceInfoErrors.maximumSalary}
                             name="maximumSalary"
                             label={'Tangga Gaji'}
@@ -1147,7 +1160,7 @@
                         {/if}
 
                         <TextField
-                            disabled={false}
+                            disabled={isReadonlyServiceFormStepper}
                             hasError={!!$serviceInfoErrors.baseSalary}
                             name="baseSalary"
                             label={'Gaji Pokok'}
@@ -1164,7 +1177,7 @@
                         <TextField
                             hasTooltip={true}
                             toolTipID="type-itka"
-                            disabled={false}
+                            disabled={isReadonlyServiceFormStepper}
                             hasError={!!$serviceInfoErrors.itka}
                             name="itka"
                             label={'ITKA'}
@@ -1179,7 +1192,7 @@
                         <TextField
                             hasTooltip={true}
                             toolTipID="type-itp"
-                            disabled={false}
+                            disabled={isReadonlyServiceFormStepper}
                             hasError={!!$serviceInfoErrors.itp}
                             name="itp"
                             label={'ITP'}
@@ -1194,7 +1207,7 @@
                         <TextField
                             hasTooltip={true}
                             toolTipID="type-epw"
-                            disabled={false}
+                            disabled={isReadonlyServiceFormStepper}
                             hasError={!!$serviceInfoErrors.epw}
                             name="epw"
                             label={'EPW'}
@@ -1209,7 +1222,7 @@
                         <TextField
                             hasTooltip={true}
                             toolTipID="type-cola"
-                            disabled={false}
+                            disabled={isReadonlyServiceFormStepper}
                             hasError={!!$serviceInfoErrors.cola}
                             name="cola"
                             label={'COLA'}
