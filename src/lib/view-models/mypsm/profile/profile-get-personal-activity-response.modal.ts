@@ -1,4 +1,4 @@
-export interface PersonalActivityResponse {
+export interface GetPersonalActivityResponse {
     status:  number;
     message: string;
     data:    Data;

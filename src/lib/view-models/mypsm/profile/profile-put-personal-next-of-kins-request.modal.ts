@@ -1,4 +1,5 @@
-export interface PersonalDependentRequest {
+export interface PutPersonalNextOfKinsRequest {
+    nextOfKinId:            number;
     birthCountry:           string;
     birthState:             string;
     relationship:           string;

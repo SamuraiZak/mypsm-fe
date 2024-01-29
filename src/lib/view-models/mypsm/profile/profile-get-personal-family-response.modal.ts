@@ -1,4 +1,15 @@
-export interface PersonalNextOfKinsRequest {
+export interface GetPersonalFamilyResponse {
+    status:  number;
+    message: string;
+    data:    Data;
+}
+
+export interface Data {
+    familyList: FamilyList[];
+}
+
+export interface FamilyList {
+    id:                     string;
     birthCountry:           string;
     birthState:             string;
     relationship:           string;
@@ -7,10 +18,10 @@ export interface PersonalNextOfKinsRequest {
     nationality:            string;
     marital:                string;
     gender:                 string;
-    name:                   string;
+    name:                   null | string;
     alternativeName:        string;
     identityDocumentColor:  string;
-    identityDocumentNumber: string;
+    identityDocumentNumber: null | string;
     address:                string;
     postcode:               string;
     birthDate:              Date;

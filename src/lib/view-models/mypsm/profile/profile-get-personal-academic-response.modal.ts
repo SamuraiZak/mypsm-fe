@@ -1,4 +1,4 @@
-export interface PersonalAcademicResponse {
+export interface GetPersonalAcademicResponse {
     status:  number;
     message: string;
     data:    Data;

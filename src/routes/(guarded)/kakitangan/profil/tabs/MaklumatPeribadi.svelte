@@ -474,17 +474,17 @@
                 <p class={stepperFormTitleClass}>Maklumat Peribadi</p>
                 <TextField
                     {disabled}
-                    hasError={$errors.noPekerja ? true : false}
-                    name="noPekerja"
+                    hasError={$errors.employeeNumber ? true : false}
+                    name="employeeNumber"
                     label={'No. Pekerja'}
                     type="text"
-                    bind:value={$form.noPekerja}
+                    bind:value={$form.employeeNumber}
                 ></TextField>
 
-                {#if $errors.noPekerja}
+                {#if $errors.employeeNumber}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.noPekerja[0]}</span
+                        >{$errors.employeeNumber[0]}</span
                     >
                 {/if}
 
@@ -509,240 +509,240 @@
 
                 <TextField
                     {disabled}
-                    hasError={$errors.noKadPengenalan ? true : false}
-                    name="noKadPengenalan"
+                    hasError={$errors.identityCardNumber ? true : false}
+                    name="identityCardNumber"
                     label={'No. Kad Pengenalan'}
                     type="text"
-                    bind:value={$form.noKadPengenalan}
+                    bind:value={$form.identityCardNumber}
                 ></TextField>
 
-                {#if $errors.noKadPengenalan}
+                {#if $errors.identityCardNumber}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.noKadPengenalan[0]}</span
+                        >{$errors.identityCardNumber[0]}</span
                     >
                 {/if}
 
                 <TextField
                     {disabled}
-                    hasError={$errors.namaPenuh ? true : false}
-                    name="namaPenuh"
+                    hasError={$errors.fullName ? true : false}
+                    name="fullName"
                     label={'Nama Penuh'}
                     type="text"
-                    bind:value={$form.namaPenuh}
+                    bind:value={$form.fullName}
                 ></TextField>
 
-                {#if $errors.namaPenuh}
+                {#if $errors.fullName}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.namaPenuh[0]}</span
+                        >{$errors.fullName[0]}</span
                     >
                 {/if}
 
                 <TextField
                     {disabled}
-                    hasError={$errors.namaLain ? true : false}
-                    name="namaLain"
+                    hasError={$errors.alternativeName ? true : false}
+                    name="alternativeName"
                     label={'Nama Lain'}
                     type="text"
-                    bind:value={$form.namaLain}
+                    bind:value={$form.alternativeName}
                 ></TextField>
 
-                {#if $errors.namaLain}
+                {#if $errors.alternativeName}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.namaLain[0]}</span
+                        >{$errors.alternativeName[0]}</span
                     >
                 {/if}
 
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.warnaKadPengenalan ? true : false}
+                    hasError={$errors.icColour ? true : false}
                     dropdownType="label-left-full"
-                    id="warnaKadPengenalan"
+                    id="icColour"
                     label="Warna Kad Pengenalan"
-                    bind:value={$form.warnaKadPengenalan}
+                    bind:value={$form.icColour}
                     options={[
                         { value: 'true', name: 'Biru' },
                         { value: 'false', name: 'Merah' },
                     ]}
                 ></DropdownSelect>
-                {#if $errors.warnaKadPengenalan}
+                {#if $errors.icColour}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.warnaKadPengenalan[0]}</span
+                        >{$errors.icColour[0]}</span
                     >
                 {/if}
 
                 <DateSelector
                     {disabled}
-                    hasError={$errors.tarikhLahir ? true : false}
-                    name="tarikhLahir"
+                    hasError={$errors.birthDate ? true : false}
+                    name="birthDate"
                     handleDateChange
                     label="Tarikh Lahir"
-                    bind:selectedDate={$form.tarikhLahir}
+                    bind:selectedDate={$form.birthDate}
                 ></DateSelector>
-                {#if $errors?.tarikhLahir}
+                {#if $errors?.birthDate}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors?.tarikhLahir[0]}</span
+                        >{$errors?.birthDate[0]}</span
                     >
                 {/if}
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.tempatLahir ? true : false}
+                    hasError={$errors.birthplace ? true : false}
                     dropdownType="label-left-full"
                     id="tempatLahir"
                     label="Tempat Lahir"
-                    bind:value={$form.tempatLahir}
+                    bind:value={$form.birthplace}
                     options={[
                         { value: '1', name: 'Sarawak' },
                         { value: '2', name: 'Sabah' },
                     ]}
                 ></DropdownSelect>
-                {#if $errors.tempatLahir}
+                {#if $errors.birthplace}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.tempatLahir[0]}</span
+                        >{$errors.birthplace[0]}</span
                     >
                 {/if}
 
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.warganegara ? true : false}
+                    hasError={$errors.nationality ? true : false}
                     dropdownType="label-left-full"
-                    id="warganegara"
+                    id="nationality"
                     label="Warganegara"
-                    bind:value={$form.warganegara}
+                    bind:value={$form.nationality}
                     options={[
                         { value: '1', name: 'Warganegara' },
                         { value: '2', name: 'Bukan Warganegara' },
                     ]}
                 ></DropdownSelect>
-                {#if $errors.warganegara}
+                {#if $errors.nationality}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.warganegara[0]}</span
+                        >{$errors.nationality[0]}</span
                     >
                 {/if}
 
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.bangsa ? true : false}
+                    hasError={$errors.race ? true : false}
                     dropdownType="label-left-full"
-                    id="bangsa"
+                    id="race"
                     label="Bangsa"
-                    bind:value={$form.bangsa}
+                    bind:value={$form.race}
                     options={[
                         { value: '1', name: 'Melayu' },
                         { value: '2', name: 'Cina' },
                     ]}
                 ></DropdownSelect>
-                {#if $errors.bangsa}
+                {#if $errors.race}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.bangsa[0]}</span
+                        >{$errors.race[0]}</span
                     >
                 {/if}
 
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.agama ? true : false}
+                    hasError={$errors.religion ? true : false}
                     dropdownType="label-left-full"
-                    id="agama"
+                    id="religion"
                     label="Agama"
-                    bind:value={$form.agama}
+                    bind:value={$form.religion}
                     options={[
                         { value: '1', name: 'Islam' },
                         { value: '2', name: 'Kristen' },
                     ]}
                 ></DropdownSelect>
-                {#if $errors.agama}
+                {#if $errors.religion}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.agama[0]}</span
+                        >{$errors.religion[0]}</span
                     >
                 {/if}
 
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.jantina ? true : false}
+                    hasError={$errors.gender ? true : false}
                     dropdownType="label-left-full"
                     id="jantina"
                     label="Jantina"
-                    bind:value={$form.jantina}
+                    bind:value={$form.gender}
                     options={[
                         { value: '1', name: 'Lelaki' },
                         { value: '2', name: 'Perempuan' },
                     ]}
                 ></DropdownSelect>
-                {#if $errors.jantina}
+                {#if $errors.gender}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.jantina[0]}</span
+                        >{$errors.gender[0]}</span
                     >
                 {/if}
 
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.status ? true : false}
+                    hasError={$errors.marital ? true : false}
                     dropdownType="label-left-full"
-                    id="status"
+                    id="marital"
                     label="Status"
-                    bind:value={$form.status}
+                    bind:value={$form.marital}
                     options={[
                         { value: '1', name: 'Bujang' },
                         { value: '2', name: 'Berkahwin' },
                     ]}
                 ></DropdownSelect>
-                {#if $errors.status}
+                {#if $errors.marital}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.status[0]}</span
+                        >{$errors.marital[0]}</span
                     >
                 {/if}
 
                 <TextField
                     {disabled}
-                    hasError={$errors.emel ? true : false}
-                    name="emel"
+                    hasError={$errors.email ? true : false}
+                    name="email"
                     label={'Emel'}
                     type="text"
-                    bind:value={$form.emel}
+                    bind:value={$form.email}
                 ></TextField>
 
-                {#if $errors?.emel}
+                {#if $errors?.email}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors?.emel[0]}</span
+                        >{$errors?.email[0]}</span
                     >
                 {/if}
 
                 <LongTextField
-                    hasError={$errors.alamatRumah ? true : false}
+                    hasError={$errors.homeAddress ? true : false}
                     {disabled}
-                    name="alamatRumah"
+                    name="homeAddress"
                     label="Alamat Rumah"
-                    bind:value={$form.alamatRumah}
+                    bind:value={$form.homeAddress}
                 />
-                {#if $errors.alamatRumah}
+                {#if $errors.homeAddress}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.alamatRumah[0]}</span
+                        >{$errors.homeAddress[0]}</span
                     >
                 {/if}
 
                 <LongTextField
-                    hasError={errorData?.alamatSuratMenyurat}
+                    hasError={errorData?.alamatSumailAddressratMenyurat}
                     {disabled}
-                    name="alamatSuratMenyurat"
+                    name="mailAddress"
                     label="Alamat Surat Menyurat (jika berlainan dari alamat rumah)"
-                    bind:value={$form.alamatSuratMenyurat}
+                    bind:value={$form.mailAddress}
                 />
-                {#if $errors.alamatSuratMenyurat}
+                {#if $errors.mailAddress}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.alamatSuratMenyurat[0]}</span
+                        >{$errors.mailAddress[0]}</span
                     >
                 {/if}
 
@@ -751,7 +751,7 @@
                     name="perumahan"
                     label={'Perumahan'}
                     type="text"
-                    value="-"
+                    bind:value={$form.houseLoanType}
                 ></TextField>
 
                 <TextField
@@ -759,28 +759,28 @@
                     name="pinjPerumahan"
                     label={'Pinjaman Perumahan'}
                     type="text"
-                    value="-"
+                    bind:value={$form.houseLoan}
                 ></TextField>
 
-                <TextField
+                <!-- <TextField
                     {disabled}
                     name="pinjKenderaan"
                     label={'Pinjaman Kenderaan'}
                     type="text"
                     value="-"
-                ></TextField>
+                ></TextField> -->
 
                 <RadioSingle
-                    name="bekasPolisTentera"
+                    name="isExPolice"
                     disabled={!editable}
                     options={approveOptions}
                     legend={'Bekas Polis / Tentera'}
-                    bind:userSelected={$form.bekasPolisTentera}
+                    bind:userSelected={$form.isExPolice}
                 ></RadioSingle>
-                {#if $errors.bekasPolisTentera}
+                {#if $errors.isExPolice}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.bekasPolisTentera}</span
+                        >{$errors.isExPolice}</span
                     >
                 {/if}
 
@@ -791,14 +791,14 @@
                     </p>
 
                     <RadioSingle
-                        name="isInRelationshipWithLKIMStaff"
+                        name="isRelatedToLKIM"
                         {options}
                         {disabled}
                         legend={'Perhubungan Dengan Kakitangan LKIM'}
-                        bind:userSelected={$form.isInRelationshipWithLKIMStaff}
+                        bind:userSelected={$form.isRelatedToLKIM}
                     ></RadioSingle>
 
-                    {#if $form.isInRelationshipWithLKIMStaff}
+                    {#if $form.isRelatedToLKIM}
                         <TextField
                             {disabled}
                             hasError={errorData?.noPekerjaPasangan}
