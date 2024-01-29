@@ -11,7 +11,8 @@ export interface AcademicResponseData {
 
 export interface AcademicList {
     // id: number;
-    majorMinorId: number;
+    majorId: number;
+    minorId: number;
     countryId: number;
     institutionId: number;
     educationLevelId: number;
