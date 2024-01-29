@@ -281,7 +281,7 @@
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
                                 >{$supporterApproverErrors
-                                    .supporter1Option[0]}</span
+                                    .supporter1Option}</span
                             >
                         {/if}
                     </div>
@@ -304,7 +304,7 @@
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
                                 >{$supporterApproverErrors
-                                    .supporter2Option[0]}</span
+                                    .supporter2Option}</span
                             >
                         {/if}
                     </div>
@@ -327,7 +327,7 @@
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
                                 >{$supporterApproverErrors
-                                    .approverOption[0]}</span
+                                    .approverOption}</span
                             >
                         {/if}
                     </div>
@@ -444,7 +444,7 @@
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
                                 >{$retirementApplicationApprovalErrors
-                                    .actionRemarkRAA[0]}</span
+                                    .actionRemarkRAA}</span
                             >
                         {/if}
                         <RadioSingle
@@ -456,7 +456,7 @@
                             <span
                                 class="ml-[0px] font-sans text-sm italic text-system-danger"
                                 >{$retirementApplicationApprovalErrors
-                                    .resultOptionRAA[0]}</span
+                                    .resultOptionRAA}</span
                             >
                         {/if}
 
@@ -530,7 +530,7 @@
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
                                 >{$verificationRetirementDocumentsErrors
-                                    .actionRemarkVRD[0]}</span
+                                    .actionRemarkVRD}</span
                             >
                         {/if}
                         <RadioSingle
@@ -542,7 +542,7 @@
                             <span
                                 class="ml-[0px] font-sans text-sm italic text-system-danger"
                                 >{$verificationRetirementDocumentsErrors
-                                    .resultOptionVRD[0]}</span
+                                    .resultOptionVRD}</span
                             >
                         {/if}
                     </div>
@@ -598,7 +598,7 @@
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
                                 >{$updateApplicationDeliveryInformationErrors
-                                    .actionRemarkUADI[0]}</span
+                                    .actionRemarkUADI}</span
                             >
                         {/if}
                         <RadioSingle
@@ -610,7 +610,7 @@
                             <span
                                 class="ml-[0px] font-sans text-sm italic text-system-danger"
                                 >{$updateApplicationDeliveryInformationErrors
-                                    .resultOptionUADI[0]}</span
+                                    .resultOptionUADI}</span
                             >
                         {/if}
                     </div>
