@@ -16,7 +16,16 @@
     import { Badge } from 'flowbite-svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import { senaraiTuntutan } from '$lib/mocks/urus-setia/perubatan/senarai-tuntutan';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import { Toaster } from 'svelte-french-toast';
+    import {
+        _stepperSupporterApprover,
+        _submitFormStepperSupporterApprover,
+    } from './+page';
 
+    export let data: PageData;
     export let disabled: boolean = true;
 
     let selectedDate = new Date();
@@ -41,6 +50,21 @@
             label: 'Tidak Lulus',
         },
     ];
+
+    // Supporter Approver
+    const {
+        form: supporterApproverForm,
+        errors: supporterApproverErrors,
+        enhance: supporterApproverEnhance,
+    } = superForm(data.stepperSupporterApprover, {
+        SPA: true,
+        validators: _stepperSupporterApprover,
+        onSubmit() {
+            _submitFormStepperSupporterApprover($supporterApproverForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -235,7 +259,6 @@
             </div></StepperContentBody
         >
     </StepperContent>
-
     <StepperContent>
         <StepperContentHeader title="Pengesahan Tuntutan"
         ></StepperContentHeader>
@@ -269,43 +292,74 @@
         <StepperContentHeader title="Penyokong dan Pelulus"
             ><TextIconButton
                 primary
-                label="Hantar"
-                onClick={() => {
-                    goto('');
-                }}><SvgPaperAirplane /></TextIconButton
-            ></StepperContentHeader
+                label="Simpan"
+                form="FormStepperSupporterApprover"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
         >
-        <StepperContentBody>
-            <div
-                class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+        <StepperContentBody
+            ><form
+                id="FormStepperSupporterApprover"
+                class="flex w-full flex-col gap-2"
+                use:supporterApproverEnhance
+                method="POST"
             >
-                <p class="text-sm font-bold">Keputusan daripada Pelulus</p>
+                <div
+                    class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+                >
+                    <p class="text-sm font-bold">Keputusan daripada Pelulus</p>
 
-                <LongTextField
-                    id="tindakan-ulasan"
-                    label={'Tindakan/Ulasan'}
-                    value={'Butiran Lengkap'}
-                ></LongTextField>
-                <RadioSingle {options} />
-            </div>
-            <div
-                class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
-            >
-                <p class="text-sm font-bold">Keputusan daripada Penyokong</p>
-                <TextField {disabled} id="nama" label={'Nama'} value={'Ikhwan'}
-                ></TextField>
-                <LongTextField
-                    {disabled}
-                    id="tindakan-ulasan"
-                    label={'Tindakan/Ulasan'}
-                    value={'Permohonan disokong'}
-                ></LongTextField>
-                <div class="flex w-full flex-row text-sm">
-                    <label for="staffing-sec-result" class="w-[220px]"
-                        >Keputusan</label
-                    ><Badge border color="green">SOKONG</Badge>
+                    <LongTextField
+                        hasError={!!$supporterApproverErrors.remark}
+                        name="remark"
+                        label="Tindakan / Ulasan"
+                        bind:value={$supporterApproverForm.remark}
+                    />
+                    {#if $supporterApproverErrors.remark}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$supporterApproverErrors.remark}</span
+                        >
+                    {/if}
+                    <RadioSingle
+                        {options}
+                        name="resultOption"
+                        bind:userSelected={$supporterApproverForm.resultOption}
+                    ></RadioSingle>
+                    {#if $supporterApproverErrors.resultOption}
+                        <span
+                            class="ml-[0px] font-sans text-sm italic text-system-danger"
+                            >{$supporterApproverErrors.resultOption}</span
+                        >
+                    {/if}
                 </div>
-            </div></StepperContentBody
+                <div
+                    class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+                >
+                    <p class="text-sm font-bold">
+                        Keputusan daripada Penyokong
+                    </p>
+                    <TextField
+                        {disabled}
+                        id="nama"
+                        label={'Nama'}
+                        value={'Ikhwan'}
+                    ></TextField>
+                    <LongTextField
+                        {disabled}
+                        id="tindakan-ulasan"
+                        label={'Tindakan/Ulasan'}
+                        value={'Permohonan disokong'}
+                    ></LongTextField>
+                    <div class="flex w-full flex-row text-sm">
+                        <label for="staffing-sec-result" class="w-[220px]"
+                            >Keputusan</label
+                        ><Badge border color="green">SOKONG</Badge>
+                    </div>
+                </div>
+            </form></StepperContentBody
         >
     </StepperContent>
 </Stepper>
+<Toaster />
