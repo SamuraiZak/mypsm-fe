@@ -14,7 +14,16 @@
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import { senaraiTuntutan } from '$lib/mocks/urus-setia/perubatan/senarai-tuntutan';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import { Toaster } from 'svelte-french-toast';
+    import {
+        _stepperSupporterApprover,
+        _submitFormStepperSupporterApprover,
+    } from './+page';
 
+    export let data: PageData;
     export let disabled: boolean = true;
 
     const options: RadioOption[] = [
@@ -27,6 +36,21 @@
             label: 'Tidak Sokong',
         },
     ];
+
+    // Supporter Approver
+    const {
+        form: supporterApproverForm,
+        errors: supporterApproverErrors,
+        enhance: supporterApproverEnhance,
+    } = superForm(data.stepperSupporterApprover, {
+        SPA: true,
+        validators: _stepperSupporterApprover,
+        onSubmit() {
+            _submitFormStepperSupporterApprover($supporterApproverForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -262,40 +286,71 @@
         <StepperContentHeader title="Penyokong dan Pelulus"
             ><TextIconButton
                 primary
-                label="Hantar"
-                onClick={() => {
-                    goto('');
-                }}><SvgPaperAirplane /></TextIconButton
-            ></StepperContentHeader
-        >
-        <StepperContentBody>
-            <div
-                class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+                label="Simpan"
+                form="FormStepperSupporterApprover"
             >
-                <p class="text-sm font-bold">Keputusan daripada Penyokong</p>
-                <p
-                    class="mt-2 h-fit w-full bg-bgr-primary text-sm italic text-system-accent"
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
+        >
+        <StepperContentBody
+            ><form
+                id="FormStepperSupporterApprover"
+                class="flex w-full flex-col gap-2"
+                use:supporterApproverEnhance
+                method="POST"
+            >
+                <div
+                    class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
                 >
-                    • Keputusan akan dihantar ke email klinik dan Urus Setia
-                    negeri berkaitan
-                </p>
-                <LongTextField
-                    id="tindakan-ulasan"
-                    label={'Tindakan/Ulasan'}
-                    value={'Butiran Lengkap'}
-                ></LongTextField>
-                <RadioSingle {options} />
-            </div>
-            <div class="flex w-full flex-col gap-2">
-                <p class="text-sm font-bold">Keputusan daripada Pelulus</p>
-                <TextField {disabled} id="nama" label={'Nama'} value={'Ahmad'}
-                ></TextField>
-                <p
-                    class="mt-2 h-fit w-full bg-bgr-primary text-sm italic text-system-accent"
-                >
-                    • Menunggu keputusan daripada PENYOKONG
-                </p>
-            </div></StepperContentBody
+                    <p class="text-sm font-bold">
+                        Keputusan daripada Penyokong
+                    </p>
+                    <p
+                        class="mt-2 h-fit w-full bg-bgr-primary text-sm italic text-system-accent"
+                    >
+                        • Keputusan akan dihantar ke email klinik dan Urus Setia
+                        negeri berkaitan
+                    </p>
+                    <LongTextField
+                        hasError={!!$supporterApproverErrors.remark}
+                        name="remark"
+                        label="Tindakan / Ulasan"
+                        bind:value={$supporterApproverForm.remark}
+                    />
+                    {#if $supporterApproverErrors.remark}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$supporterApproverErrors.remark}</span
+                        >
+                    {/if}
+                    <RadioSingle
+                        {options}
+                        name="resultOption"
+                        bind:userSelected={$supporterApproverForm.resultOption}
+                    ></RadioSingle>
+                    {#if $supporterApproverErrors.resultOption}
+                        <span
+                            class="ml-[0px] font-sans text-sm italic text-system-danger"
+                            >{$supporterApproverErrors.resultOption}</span
+                        >
+                    {/if}
+                </div>
+                <div class="flex w-full flex-col gap-2">
+                    <p class="text-sm font-bold">Keputusan daripada Pelulus</p>
+                    <TextField
+                        {disabled}
+                        id="nama"
+                        label={'Nama'}
+                        value={'Ahmad'}
+                    ></TextField>
+                    <p
+                        class="mt-2 h-fit w-full bg-bgr-primary text-sm italic text-system-accent"
+                    >
+                        • Menunggu keputusan daripada PENYOKONG
+                    </p>
+                </div>
+            </form></StepperContentBody
         >
     </StepperContent>
 </Stepper>
+<Toaster />
