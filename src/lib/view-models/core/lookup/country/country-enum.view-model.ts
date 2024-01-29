@@ -3,7 +3,7 @@
 // Country Enum Response View Model
 // ===============================================================
 
-export interface EnumCountryResponse {
+export interface EnumCountryResponseViewModel {
     status:  number;
     message: string;
     data:    EnumCountryResponseData;
@@ -23,17 +23,17 @@ export interface EnumCountry {
 export class EnumCountryResponseConvert {
 
     // to model from response
-    public static fromResponse(response: Response): EnumCountryResponse {
+    public static fromResponse(response: Response): EnumCountryResponseViewModel {
         return JSON.parse(JSON.stringify(response));
     }
 
     // to model from json string
-    public static fromJson(json: string): EnumCountryResponse {
+    public static fromJson(json: string): EnumCountryResponseViewModel {
         return JSON.parse(json);
     }
 
     // to json string from model
-    public static toJson(value: EnumCountryResponse): string {
+    public static toJson(value: EnumCountryResponseViewModel): string {
         return JSON.stringify(value);
     }
 }
