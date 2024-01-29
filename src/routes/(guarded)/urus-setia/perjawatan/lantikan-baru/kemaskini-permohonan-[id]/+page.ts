@@ -20,6 +20,7 @@ import {
     getSuccessToast,
 } from '$lib/services/core/toast/toast-service';
 import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
+import type { AddApprovalResultRequestBody } from '$lib/view-models/mypsm/common/add-approval-results-request.model';
 import type { NewHireActivity } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-activity-response.view-model';
 import type { CandidateAcademicDetailsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-academic-details-response.model';
 import type { CandidateDependenciesDetailResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-dependencies-details-response.model';
@@ -29,6 +30,10 @@ import type { CandidateNextOfKinDetailsResponse } from '$lib/view-models/mypsm/p
 import type { CandidatePersonalDetailsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-respone.model';
 import type { NewHireDocumentsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-document-response.view-model';
 import type { NewHireSecretaryAddUpdateRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-secretary-add-update-request.model';
+import type {
+    NewHireSecretaryApprovalResponse,
+    SecretaryApprovalData,
+} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-secretary-approval-response.model';
 import type {
     NewHireSecretaryUpdateResponse,
     SecretaryUpdateData,
@@ -61,7 +66,10 @@ const codeSchema = z
     })
     .trim();
 const longTextSchema = z
-    .string({ required_error: 'Medan ini tidak boleh kosong.' })
+    .string({
+        required_error: 'Medan ini tidak boleh kosong.',
+        invalid_type_error: 'Medan ini tidak boleh kosong.',
+    })
     .min(4, {
         message: 'Medan ini hendaklah lebih daripada 4 karakter.',
     })
@@ -69,10 +77,6 @@ const longTextSchema = z
         message: 'Medan ini tidak boleh melebihi 124 karakter.',
     })
     .trim();
-
-const generalSelectSchema = z
-    .string()
-    .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
 const dateSchema = z.coerce.date({
     errorMap: (issue, { defaultError }) => ({
@@ -96,19 +100,6 @@ const minDateSchema = z.coerce
         message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
     });
 
-const maxDateSchema = z.coerce
-    .date({
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_date'
-                    ? 'Tarikh tidak boleh dibiar kosong.'
-                    : defaultError,
-        }),
-    })
-    .max(new Date(), {
-        message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
-    });
-
 const booleanSchema = z.boolean({
     required_error: 'Sila tetapkan pilihan anda.',
     invalid_type_error: 'Medan ini haruslah jenis boolean.',
@@ -125,7 +116,7 @@ const numberIdSchema = z.coerce.number({
 });
 
 export const _serviceInfoSchema = z.object({
-    // candidateId: numberIdSchema,
+    candidateId: numberIdSchema,
     gradeId: numberIdSchema,
     positionId: numberIdSchema,
     placementId: numberIdSchema,
@@ -158,6 +149,12 @@ export const _serviceInfoSchema = z.object({
     itp: numberSchema,
     epw: numberSchema,
     cola: numberSchema,
+});
+
+export const _secretaryApprovalInfoSchema = z.object({
+    id: numberIdSchema,
+    remark: longTextSchema,
+    isApproved: booleanSchema.default(true),
 });
 
 export async function load({ params }) {
@@ -207,11 +204,25 @@ export async function load({ params }) {
         await EmployeeService.getCurrentCandidateSecretaryUpdate(
             candidateIdRequestBody,
         );
-    const serviceDetails: SecretaryUpdateData = serviceResponse.data!;
+    const serviceDetails: SecretaryUpdateData = serviceResponse.data;
+
+    const secretaryApprovalResponse: NewHireSecretaryApprovalResponse =
+        await EmployeeService.getCurrentCandidateSecretaryApproval(
+            candidateIdRequestBody,
+        );
+
+    const secretaryApprovalDetails: SecretaryApprovalData =
+        secretaryApprovalResponse.data;
 
     const serviceInfoForm = await superValidate(
         serviceDetails,
         _serviceInfoSchema,
+    );
+    serviceInfoForm.data.candidateId = candidateIdRequestBody.candidateId;
+
+    const secretaryApprovalInfoForm = await superValidate(
+        secretaryApprovalDetails,
+        _secretaryApprovalInfoSchema,
     );
 
     // ======================== OLD ======================
@@ -238,7 +249,6 @@ export async function load({ params }) {
     const currentEmployeeUploadedDocuments = mockEmployeeDocumentLists;
 
     return {
-        candidateIdRequestBody,
         personalDetailResponse,
         academicInfoResponse,
         experienceInfoResponse,
@@ -248,6 +258,7 @@ export async function load({ params }) {
         nextOfKinInfoResponse,
         serviceInfoForm,
         documentInfoResponse,
+        secretaryApprovalInfoForm,
 
         data,
         currentEmployee,
@@ -272,7 +283,6 @@ export async function load({ params }) {
 
 export const _submitServiceInfoForm = async (formData: object) => {
     const form = await superValidate(formData, _serviceInfoSchema);
-    console.log(form);
 
     if (!form.valid) {
         getErrorToast();
@@ -286,6 +296,33 @@ export const _submitServiceInfoForm = async (formData: object) => {
     const response: RequestSuccessBody =
         await EmployeeService.createCurrentCandidateSecretaryUpdate(
             form.data as NewHireSecretaryAddUpdateRequestBody,
+        ).finally(() => toast.dismiss());
+
+    if (response.status !== 201) {
+        // if error toast
+        getServerErrorToast();
+        return error(400, { message: response.message });
+    }
+
+    // if success toast
+    getSuccessToast();
+
+    return { form };
+};
+
+export const _submitSecretaryApprovalForm = async (formData: object) => {
+    const form = await superValidate(formData, _secretaryApprovalInfoSchema);
+
+    if (!form.valid) {
+        getErrorToast();
+        return fail(400, form);
+    }
+
+    console.log(form.data);
+
+    const response: RequestSuccessBody =
+        await EmployeeService.createCurrentCandidateSecretaryApprover(
+            form.data as AddApprovalResultRequestBody,
         ).finally(() => toast.dismiss());
 
     if (response.status !== 201) {
