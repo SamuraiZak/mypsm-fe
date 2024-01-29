@@ -28,6 +28,26 @@
     } from '$lib/stores/globalState';
     import { Checkbox } from 'flowbite-svelte';
     import { onMount } from 'svelte';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import { superForm } from 'sveltekit-superforms/client';
+    import {
+        _personalDetailSchema,
+        _submitPersonalDetailForm,
+        _submitPartnerDetailForm,
+        _partnerDetailSchema,
+        _submitServiceDetailForm,
+        _serviceDetailSchema,
+        _submitValidationForm,
+        _validationSchema,
+        _approvalRemarkFormSchema,
+        _submitApprovalRemarkForm,
+        _submitQuartersDetailForm,
+        _quartersDetailSchema,
+    } from './+page';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+    export let data: PageData;
 
     // Initialize Variables
     let activeStepper = 0;
@@ -76,11 +96,11 @@
 
     const approvalOptions: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'LULUS',
         },
         {
-            value: 'false',
+            value: false,
             label: 'TIDAK LULUS',
         },
     ];
@@ -129,6 +149,93 @@
         selectedFiles.splice(index, 1);
         fileSelectionList.set(selectedFiles);
     }
+
+    // ====================== Form Validation
+    const {
+        form: personalDetailForm,
+        errors: personalDetailError,
+        enhance: personalDetailEnhance,
+    } = superForm(data.personalDetailForm, {
+        SPA: true,
+        id: 'personalDetailForm',
+        validators: _personalDetailSchema,
+        onSubmit() {
+            _submitPersonalDetailForm($personalDetailForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
+
+    const {
+        form: partnerDetailForm,
+        errors: partnerDetailError,
+        enhance: partnerDetailEnhance,
+    } = superForm(data.partnerDetailForm, {
+        SPA: true,
+        id: 'partnerDetailForm',
+        validators: _partnerDetailSchema,
+        onSubmit() {
+            _submitPartnerDetailForm($partnerDetailForm);
+        },
+        taintedMessage: false,
+    });
+
+    const {
+        form: serviceDetailForm,
+        errors: serviceDetailError,
+        enhance: serviceDetailEnhance,
+    } = superForm(data.serviceDetailForm, {
+        SPA: true,
+        id: 'serviceDetailForm',
+        validators: _serviceDetailSchema,
+        onSubmit() {
+            _submitServiceDetailForm($serviceDetailForm);
+        },
+        taintedMessage: false,
+    });
+
+    const {
+        form: validationForm,
+        errors: validationError,
+        enhance: validationEnhance,
+    } = superForm(data.validationForm, {
+        SPA: true,
+        id: 'validationForm',
+        validators: _validationSchema,
+        onSubmit() {
+            _submitValidationForm($validationForm);
+        },
+        taintedMessage: false,
+    });
+
+    const {
+        form: approvalRemarkForm,
+        errors: approvalRemarkError,
+        enhance: approvalRemarkEnhance,
+    } = superForm(data.approvalRemarkForm, {
+        SPA: true,
+        id: 'approvalRemarkForm',
+        validators: _approvalRemarkFormSchema,
+        onSubmit() {
+            _submitApprovalRemarkForm($approvalRemarkForm);
+        },
+        taintedMessage: false,
+    });
+
+    const {
+        form: quartersDetailForm,
+        errors: quartersDetailError,
+        enhance: quartersDetailEnhance,
+    } = superForm(data.quartersDetailForm, {
+        SPA: true,
+        id: 'quartersDetailForm',
+        validators: _quartersDetailSchema,
+        onSubmit() {
+            _submitQuartersDetailForm($quartersDetailForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-row items-start justify-start">
@@ -164,35 +271,131 @@
                 onClick={() => {
                     activeStepper = 0;
                 }}
-            ></FormButton><FormButton
-                onClick={() => {
-                    activeStepper = 2;
-                }}
-            ></FormButton></StepperContentHeader
-        >
+            ></FormButton>
+            <TextIconButton primary label="Simpan" form="personalDetailForm">
+                <SvgCheck />
+            </TextIconButton>
+        </StepperContentHeader>
         <StepperContentBody>
-            <TextField
-                label="No. Pekerja"
-                value={currentEmployee.employeeNumber}
-            ></TextField>
-            <TextField label="Nama" value={currentEmployee.name}></TextField>
-            <TextField
-                label="No. K/P"
-                value={currentEmployee.identityDocumentNumber}
-            ></TextField>
-            <TextField label="Gred" value={currEmpGrade[0].code}></TextField>
-            <TextField
-                label="Penempatan Semasa"
-                value={currEmpService[0].placement}
-            ></TextField>
-            <TextField label="No. Telefon" value={currentEmployee.mobileNumber}
-            ></TextField>
-            <LongTextField
-                label="Alamat Surat Menyurat"
-                value={currentEmployee.mailAddress}
-            ></LongTextField>
-            <TextField label="Status" value={currentEmployee.marital}
-            ></TextField>
+            <form
+                id="personalDetailForm"
+                method="POST"
+                use:personalDetailEnhance
+                class="flex w-full flex-col gap-2"
+            >
+                <TextField
+                    hasError={!!$personalDetailError.employeeNo}
+                    name="employeeNo"
+                    {labelBlack}
+                    label="No. Pekerja"
+                    bind:value={$personalDetailForm.employeeNo}
+                ></TextField>
+                {#if $personalDetailError.employeeNo}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$personalDetailError.employeeNo[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$personalDetailError.employeeName}
+                    name="employeeName"
+                    {labelBlack}
+                    label="Nama"
+                    bind:value={$personalDetailForm.employeeName}
+                />
+                {#if $personalDetailError.employeeName}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$personalDetailError.employeeName[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$personalDetailError.identificationNo}
+                    name="identificationNo"
+                    {labelBlack}
+                    label="No. K/P"
+                    bind:value={$personalDetailForm.identificationNo}
+                />
+                {#if $personalDetailError.identificationNo}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$personalDetailError.identificationNo[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$personalDetailError.grade}
+                    name="grade"
+                    {labelBlack}
+                    label="Gred"
+                    bind:value={$personalDetailForm.grade}
+                />
+                {#if $personalDetailError.grade}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$personalDetailError.grade[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$personalDetailError.currentPlacement}
+                    name="currentPlacement"
+                    {labelBlack}
+                    label="Penempatan Semasa"
+                    bind:value={$personalDetailForm.currentPlacement}
+                />
+                {#if $personalDetailError.currentPlacement}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$personalDetailError.currentPlacement[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$personalDetailError.telephoneNo}
+                    name="telephoneNo"
+                    {labelBlack}
+                    label="No. Telefon"
+                    bind:value={$personalDetailForm.telephoneNo}
+                />
+                {#if $personalDetailError.telephoneNo}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$personalDetailError.telephoneNo[0]}
+                    </span>
+                {/if}
+                <LongTextField
+                    hasError={!!$personalDetailError.mailingAddress}
+                    name="mailingAddress"
+                    {labelBlack}
+                    label="Alamat Surat Menyurat"
+                    bind:value={$personalDetailForm.mailingAddress}
+                />
+                {#if $personalDetailError.mailingAddress}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$personalDetailError.mailingAddress[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$personalDetailError.status}
+                    name="status"
+                    {labelBlack}
+                    label="Status"
+                    bind:value={$personalDetailForm.status}
+                />
+                {#if $personalDetailError.status}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$personalDetailError.status[0]}
+                    </span>
+                {/if}
+            </form>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -202,25 +405,89 @@
                 onClick={() => {
                     activeStepper = 1;
                 }}
-            ></FormButton><FormButton
-                onClick={() => {
-                    activeStepper = 3;
-                }}
             ></FormButton>
+            <TextIconButton primary label="Simpan" form="partnerDetailForm">
+                <SvgCheck />
+            </TextIconButton>
         </StepperContentHeader>
         <StepperContentBody>
-            <TextField label="Nama Penuh" value={'Nur Afifah Farhan'}
-            ></TextField>
-            <TextField label="No. Telefon" value={'014-843557'}></TextField>
-            <TextField label="Jabatan / Jawatan" value={'Pengurus'}></TextField>
-            <TextField
-                label="Gaji Sekarang yang Diterima (Gaji Pokok / Hakiki) (RM)"
-                value={CurrencyHelper.formatCurrency(4123.22)}
-            ></TextField>
-            <TextField
-                label="Bilangan anak yang tinggal bersama pemohon yang berumur kurang 21 tahun"
-                value={'2'}
-            ></TextField>
+            <form
+                id="partnerDetailForm"
+                method="POST"
+                use:partnerDetailEnhance
+                class="flex w-full flex-col gap-2"
+            >
+                <TextField
+                    hasError={!!$partnerDetailError.partnerName}
+                    name="partnerName"
+                    {labelBlack}
+                    label="Nama Penuh"
+                    bind:value={$partnerDetailForm.partnerName}
+                />
+                {#if $partnerDetailError.partnerName}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$partnerDetailError.partnerName[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$partnerDetailError.partnerTelephoneNo}
+                    name="partnerTelephoneNo"
+                    {labelBlack}
+                    label="No. Telefon"
+                    bind:value={$partnerDetailForm.partnerTelephoneNo}
+                />
+                {#if $partnerDetailError.partnerTelephoneNo}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$partnerDetailError.partnerTelephoneNo[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$partnerDetailError.partnerPosition}
+                    name="partnerPosition"
+                    {labelBlack}
+                    label="Jabatan / Jawatan"
+                    bind:value={$partnerDetailForm.partnerPosition}
+                />
+                {#if $partnerDetailError.partnerPosition}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$partnerDetailError.partnerPosition[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$partnerDetailError.partnerSalary}
+                    name="partnerSalary"
+                    {labelBlack}
+                    label="Gaji Sekarang yang Diterima (Gaji Pokok / Hakiki) (RM)"
+                    bind:value={$partnerDetailForm.partnerSalary}
+                />
+                {#if $partnerDetailError.partnerSalary}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$partnerDetailError.partnerSalary[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$partnerDetailError.noOfChildren}
+                    name="noOfChildren"
+                    {labelBlack}
+                    label="Bilangan anak yang tinggal bersama pemohon yang berumur kurang 21 tahun"
+                    bind:value={$partnerDetailForm.noOfChildren}
+                />
+                {#if $partnerDetailError.noOfChildren}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$partnerDetailError.noOfChildren[0]}
+                    </span>
+                {/if}
+            </form>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -230,38 +497,136 @@
                 onClick={() => {
                     activeStepper = 2;
                 }}
-            ></FormButton><FormButton
-                onClick={() => {
-                    activeStepper = 4;
-                }}
-            ></FormButton></StepperContentHeader
-        >
+            ></FormButton>
+            <TextIconButton primary label="Simpan" form="serviceDetailForm">
+                <SvgCheck />
+            </TextIconButton>
+        </StepperContentHeader>
         <StepperContentBody>
-            <TextField label="Nama Jawatan" value={currEmpPosition[0].name}
-            ></TextField>
-            <TextField label="Gred" value={currEmpGrade[0].code}></TextField>
-            <RadioSingle
-                options={serviceOptions}
-                userSelected={selectedService}
-                legend="Perkhidmatan"
-            ></RadioSingle>
-            <LongTextField
-                label="Alamat Penuh Jabatan / Agensi"
-                value={'D/A Lembaga Kemajuan Ikan Malaysia, Lot 329, Seksyen 9, Jalan Satok, Pelabuhan Senari, Sarawak, 93400 Kuching'}
-            ></LongTextField>
-            <LongTextField
-                label="Alamat Penuh Jabatan / Agensi Pembayar Gaji"
-                value={'D/A Lembaga Kemajuan Ikan Malaysia, Lot 329, Seksyen 9, Jalan Satok, Pelabuhan Senari, Sarawak, 93400 Kuching'}
-            ></LongTextField>
-            <TextField label="Bank Pembayar Gaji" value={'Maybank'}></TextField>
-            <TextField
-                label="Gaji Sekarang (Gaji Pokok / Hakiki) (RM)"
-                value={CurrencyHelper.formatCurrency(3532.54)}
-            ></TextField>
-            <TextField label="ITP (RM)" value={CurrencyHelper.formatCurrency(100.0)}
-            ></TextField>
-            <TextField label="COLA (RM)" value={CurrencyHelper.formatCurrency(150.0)}
-            ></TextField>
+            <form
+                id="serviceDetailForm"
+                method="POST"
+                use:serviceDetailEnhance
+                class="flex w-full flex-col gap-2"
+            >
+                <TextField
+                    hasError={!!$serviceDetailError.positionName}
+                    name="positionName"
+                    label="Nama Jawatan"
+                    bind:value={$serviceDetailForm.positionName}
+                />
+                {#if $serviceDetailError.positionName}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$serviceDetailError.positionName[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$serviceDetailError.grade}
+                    name="grade"
+                    label="Gred"
+                    bind:value={$serviceDetailForm.grade}
+                />
+                {#if $serviceDetailError.grade}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$serviceDetailError.grade[0]}
+                    </span>
+                {/if}
+                <RadioSingle
+                    name="services"
+                    options={serviceOptions}
+                    bind:userSelected={$serviceDetailForm.services}
+                    legend="Perkhidmatan"
+                />
+                {#if $serviceDetailError.services}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$serviceDetailError.services[0]}
+                    </span>
+                {/if}
+                <LongTextField
+                    hasError={!!$serviceDetailError.agencyAddress}
+                    name="agencyAddress"
+                    label="Alamat Penuh Jabatan / Agensi"
+                    bind:value={$serviceDetailForm.agencyAddress}
+                />
+                {#if $serviceDetailError.agencyAddress}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$serviceDetailError.agencyAddress[0]}
+                    </span>
+                {/if}
+                <LongTextField
+                    hasError={!!$serviceDetailError.agencyPayerAddress}
+                    name="agencyPayerAddress"
+                    label="Alamat Penuh Jabatan / Agensi Pembayar Gaji"
+                    bind:value={$serviceDetailForm.agencyPayerAddress}
+                />
+                {#if $serviceDetailError.agencyPayerAddress}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$serviceDetailError.agencyPayerAddress[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$serviceDetailError.payrollBank}
+                    name="payrollBank"
+                    label="Bank Pembayar Gaji"
+                    bind:value={$serviceDetailForm.payrollBank}
+                />
+                {#if $serviceDetailError.payrollBank}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$serviceDetailError.payrollBank[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$serviceDetailError.currentSalary}
+                    name="currentSalary"
+                    label="Gaji Sekarang (Gaji Pokok / Hakiki) (RM)"
+                    bind:value={$serviceDetailForm.currentSalary}
+                />
+                {#if $serviceDetailError.currentSalary}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$serviceDetailError.currentSalary[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$serviceDetailError.itp}
+                    name="itp"
+                    label="ITP (RM)"
+                    bind:value={$serviceDetailForm.itp}
+                />
+                {#if $serviceDetailError.itp}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$serviceDetailError.itp[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$serviceDetailError.cola}
+                    name="cola"
+                    label="COLA (RM)"
+                    bind:value={$serviceDetailForm.cola}
+                />
+                {#if $serviceDetailError.cola}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$serviceDetailError.cola[0]}
+                    </span>
+                {/if}
+            </form>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -366,24 +731,35 @@
                 onClick={() => {
                     activeStepper = 4;
                 }}
-            ></FormButton><FormButton type="reset" onClick={() => {}}
-            ></FormButton><FormButton
-                type="done"
-                onClick={() => {
-                    activeStepper = 6;
-                }}
-            ></FormButton></StepperContentHeader
-        >
+            ></FormButton>
+            <TextIconButton primary label="Simpan" form="validationForm">
+                <SvgCheck />
+            </TextIconButton>
+        </StepperContentHeader>
         <StepperContentBody>
             <div
                 class="flex h-fit w-full flex-col items-start justify-start gap-2.5"
             >
-                <Checkbox checked={infoTrue}
-                    ><p>
-                        Saya dengan ini mengesahkan bahawa maklumat sebagaimana
-                        yang dinyatakan berikut adalah benar
-                    </p></Checkbox
+                <form
+                    id="validationForm"
+                    method="POST"
+                    use:validationEnhance
+                    class="flex w-full flex-col gap-2"
                 >
+                    <Checkbox bind:checked={$validationForm.secretaryValidation}
+                        ><p>
+                            Saya dengan ini mengesahkan bahawa maklumat
+                            sebagaimana yang dinyatakan berikut adalah benar
+                        </p>
+                    </Checkbox>
+                    {#if $validationError.secretaryValidation}
+                        <span
+                            class="font-sans text-sm italic text-system-danger"
+                        >
+                            {$validationError.secretaryValidation[0]}
+                        </span>
+                    {/if}
+                </form>
             </div>
         </StepperContentBody>
     </StepperContent>
@@ -394,83 +770,159 @@
                 onClick={() => {
                     activeStepper = 5;
                 }}
-            ></FormButton><FormButton
-                onClick={() => {
-                    activeStepper = 7;
-                }}
-            ></FormButton></StepperContentHeader
-        >
+            ></FormButton>
+            <TextIconButton primary label="Simpan" form="approvalRemarkForm">
+                <SvgCheck />
+            </TextIconButton>
+        </StepperContentHeader>
         <StepperContentBody>
-            <LongTextField
-                label="Tindakan / Ulasan"
-                value={'Pemohon layak menduduki kuarters.'}
-            ></LongTextField>
-            <RadioSingle
-                options={approvalOptions}
-                userSelected={selectedApproval}
-                legend="Perkhidmatan"
-            ></RadioSingle>
+            <form
+                id="approvalRemarkForm"
+                method="POST"
+                use:approvalRemarkEnhance
+                class="flex w-full flex-col gap-2"
+            >
+                <LongTextField
+                    hasError={!!$approvalRemarkError.secretaryRemark}
+                    name="secretaryRemark"
+                    label="Tindakan / Ulasan"
+                    bind:value={$approvalRemarkForm.secretaryRemark}
+                />
+                {#if $approvalRemarkError.secretaryRemark}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$approvalRemarkError.secretaryRemark[0]}</span
+                    >
+                {/if}
+                <RadioSingle
+                    options={approvalOptions}
+                    name="approvalResult"
+                    bind:userSelected={$approvalRemarkForm.approvalResult}
+                    legend=""
+                />
+                {#if $approvalRemarkError.approvalResult}
+                    <span class=" font-sans text-sm italic text-system-danger"
+                        >{$approvalRemarkError.approvalResult[0]}</span
+                    >
+                {/if}
+            </form>
         </StepperContentBody>
-    </StepperContent><StepperContent>
+    </StepperContent>
+    <StepperContent>
         <StepperContentHeader title="Maklumat Kuarters"
             ><FormButton
                 type="back"
                 onClick={() => {
                     activeStepper = 6;
                 }}
-            ></FormButton><FormButton
-                onClick={() => {
-                    activeStepper = 8;
-                }}
-            ></FormButton></StepperContentHeader
-        >
+            ></FormButton>
+            <TextIconButton primary label="Simpan" form="quartersDetailForm">
+                <SvgCheck />
+            </TextIconButton>
+        </StepperContentHeader>
         <StepperContentBody>
-            <div
-                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b pb-5"
+            <form
+                id="quartersDetailForm"
+                method="POST"
+                use:quartersDetailEnhance
+                class="flex w-full flex-col gap-2"
             >
                 <SectionHeader title="Nama Pelulus"></SectionHeader>
                 <DropdownSelect
+                    hasError={!!$quartersDetailError.approverName}
                     dropdownType="label-left-full"
+                    name="approverName"
                     label="Nama Pelulus"
                     options={allEmp}
-                    value={selectedApprover}
-                ></DropdownSelect>
-            </div>
-            <div
-                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b pb-5"
-            >
-                <SectionHeader title="Butiran Penempatan Kuarter"
-                ></SectionHeader>
-                <TextField label="Emel Pemohon" value={currentEmployee.email}
-                ></TextField>
+                    bind:value={$quartersDetailForm.approverName}
+                />
+                {#if $quartersDetailError.approverName}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$quartersDetailError.approverName[0]}</span
+                    >
+                {/if}
+
+                <SectionHeader title="Butiran Penempatan Kuarter" />
+                <TextField
+                    hasError={!!$quartersDetailError.applicantEmail}
+                    name="applicantEmail"
+                    label="Emel Pemohon"
+                    bind:value={$quartersDetailForm.applicantEmail}
+                />
+                {#if $quartersDetailError.applicantEmail}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$quartersDetailError.applicantEmail[0]}</span
+                    >
+                {/if}
                 <DateSelector
+                    hasError={!!$quartersDetailError.quartersEntryDate}
+                    name="quartersEntryDate"
                     handleDateChange
                     label="Tarikh Masuk Kuarter"
-                    selectedDate="2023-08-06"
-                ></DateSelector>
-                <TextField label="Unit Dan Kuarter" value={'Unit 5 Kuarter 10'}
-                ></TextField>
-            </div>
-            <div
-                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b pb-5"
-            >
+                    bind:selectedDate={$quartersDetailForm.quartersEntryDate}
+                />
+                {#if $quartersDetailError.quartersEntryDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$quartersDetailError.quartersEntryDate[0]}</span
+                    >
+                {/if}
+                <TextField
+                    hasError={!!$quartersDetailError.unitAndQuarter}
+                    name="unitAndQuarter"
+                    label="Unit Dan Kuarter"
+                    bind:value={$quartersDetailForm.unitAndQuarter}
+                />
+                {#if $quartersDetailError.unitAndQuarter}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$quartersDetailError.unitAndQuarter[0]}</span
+                    >
+                {/if}
+
                 <SectionHeader
                     title="Kadar Bayaran Sewa Kuarters (Unit Pengurusan Fasiliti)"
-                ></SectionHeader>
+                />
                 <TextField
+                    hasError={!!$quartersDetailError.monthRentalValue}
+                    name="monthRentalValue"
                     label="Nilai Sewaan Bulanan"
-                    value={CurrencyHelper.formatCurrency(900)}
-                ></TextField>
+                    bind:value={$quartersDetailForm.monthRentalValue}
+                />
+                {#if $quartersDetailError.monthRentalValue}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$quartersDetailError.monthRentalValue[0]}</span
+                    >
+                {/if}
                 <TextField
+                    hasError={!!$quartersDetailError.rentalDeposit}
+                    name="rentalDeposit"
                     label="Deposit (2 Bulan nilai sewaan)"
-                    value={CurrencyHelper.formatCurrency(1800)}
-                ></TextField>
+                    bind:value={$quartersDetailForm.rentalDeposit}
+                />
+                {#if $quartersDetailError.rentalDeposit}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$quartersDetailError.rentalDeposit[0]}</span
+                    >
+                {/if}
 
                 <TextField
+                    hasError={!!$quartersDetailError.utilityDeposit}
+                    name="utilityDeposit"
                     label="Deposit (Air dan Elektrik)"
-                    value={CurrencyHelper.formatCurrency(300)}
-                ></TextField>
-            </div>
+                    bind:value={$quartersDetailForm.utilityDeposit}
+                />
+                {#if $quartersDetailError.utilityDeposit}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$quartersDetailError.utilityDeposit[0]}</span
+                    >
+                {/if}
+            </form>
             <!-- Document Upload -->
             <div
                 class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 pb-5"
@@ -546,7 +998,8 @@
                 </div>
             </div>
         </StepperContentBody>
-    </StepperContent><StepperContent>
+    </StepperContent>
+    <StepperContent>
         <StepperContentHeader title="Surat Tawaran Kuarters"
             ><FormButton
                 type="back"
@@ -571,3 +1024,5 @@
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+
+<Toaster />

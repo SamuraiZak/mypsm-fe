@@ -2,27 +2,10 @@ import { fail } from '@sveltejs/kit';
 import { getErrorToast, getPromiseToast } from '$lib/services/core/toast/toast-service';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from "zod";
+
 // ===================================================
 // Form Schema
 // ===================================================
-const optionalScheme = z.enum(['1', '2'], {
-    errorMap: (issue) => ({
-        message:
-            issue.code === 'invalid_enum_value'
-                ? 'Pilihan perlu dipilih.'
-                : 'Pilihan perlu dipilih.',
-    }),
-})
-const earlyDateScheme = z.coerce
-    .date({
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_date'
-                    ? 'Tarikh tidak boleh dibiar kosong.'
-                    : defaultError,
-        }),
-    });
-
 const dateScheme = z.coerce
     .date({
         errorMap: (issue, { defaultError }) => ({
@@ -36,76 +19,79 @@ const dateScheme = z.coerce
         message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
     });
 
+const pastDateScheme = z.coerce
+    .date({
+        errorMap: (issue, { defaultError }) => ({
+            message:
+                issue.code === 'invalid_date'
+                    ? 'Tarikh tidak boleh dibiar kosong.'
+                    : defaultError,
+        }),
+    });
+
 const numberScheme = z.union([z.string({
     invalid_type_error: "Medan ini tidak boleh dibiar kosong."
 }), z.number()]).transform((x) => Number(x)).pipe(z.number({
     required_error: "Medan ini tidak boleh dibiar kosong.",
     invalid_type_error: "Hanya nombor sahaja dibenarkan. Contoh (500.40)",
     description: "Hanya nombor sahaja dibenarkan. Contoh (500.40)"
-}).default(0))
+}))
 
 const generalEmailSchema = z.string({
     invalid_type_error: "Medan ini tidak boleh dibiar kosong."
 }).email("Sila nyatakan format emel yang sah. ")
 const generalSelectSchema = z.string().min(1, { message: "Sila tetapkan pilihan anda. " });
-const generalTextSchema = z.string({invalid_type_error: "Medan ini tidak boleh dibiar kosong."}).min(1, { message: "Medan ini perlu diisi dengan lengkap. " });
+const generalTextSchema = z.string({
+    invalid_type_error: "Medan ini tidak boleh dibiar kosong."
+}).min(1, { message: "Medan ini tidak boleh dibiar kosong." });
 
-export const _approvalRemarkFormSchema = z.object({
-    secretaryRemark: generalTextSchema,
-    approvalResult: generalSelectSchema,
+export const _partnerDetailSchema = z.object({
+    partnerName: generalTextSchema,
+    partnerTelephoneNo: generalTextSchema,
+    partnerPosition: generalTextSchema,
+    partnerSalary: numberScheme,
+    noOfChildren: generalTextSchema,
 })
 
-export const _exitQuartersSchema = z.object({
-    exitQuarterDate: dateScheme,
-    unitAndQuarter: generalTextSchema,
-    approverName: generalSelectSchema,
-    applicantEmail: generalEmailSchema,
-    quarterEntryDate: earlyDateScheme,
-    monthlyRentalAmount: numberScheme,
-    depositAmount: numberScheme,
-}).partial()
+export const _serviceDetailSchema = z.object({
+    agencyAddress: generalTextSchema,
+    payrollAgency: generalTextSchema,
+    payrollBank: generalTextSchema,
+})
 
-export const _nonStaffExitQuarterSchema = z.object({
-    quarterExitDate: dateScheme,
-    hasOutstanding: z.boolean().default(false),
-    outstandingAmount: numberScheme.optional(),
-}).partial()
+export const _validationSchema = z.object({
+    staffValidation: z.literal(true, {errorMap: ({ }) => ({
+        message: "Pengesahan perlu disemak untuk menghantar permohonan kuarters ke pangkalan data."
+    })})
+})
 
 // =============================================
 // load function
 // =============================================
 export const load = async () => {
-
-    const approvalRemarkForm = await superValidate(
-        _approvalRemarkFormSchema
-    );
-
-    const exitQuarterForm = await superValidate(
-        _exitQuartersSchema
-    );
-
-    const nonStaffExitQuarterForm = await superValidate(_nonStaffExitQuarterSchema)
-
+    const partnerDetailForm = await superValidate(_partnerDetailSchema);
+    const serviceDetailForm = await superValidate(_serviceDetailSchema);
+    const validationForm = await superValidate(_validationSchema)
     return {
-        approvalRemarkForm,
-        exitQuarterForm,
-        nonStaffExitQuarterForm,
+        partnerDetailForm,
+        serviceDetailForm,
+        validationForm,
     };
 }
 
 // =============================================
 // Submit Form Function
 // =============================================
-export const _submitApprovalRemarkForm = async (formData: Object) => {
-    const approvalRemarkForm = await superValidate(formData, _approvalRemarkFormSchema);
-    if (!approvalRemarkForm.valid) {
+export const _submitPartnerDetailForm = async (formData: Object) => {
+    const partnerDetailForm = await superValidate(formData, _partnerDetailSchema);
+    if (!partnerDetailForm.valid) {
         getErrorToast();
-        console.log(approvalRemarkForm)
-        return fail(400, approvalRemarkForm);
+        console.log(partnerDetailForm)
+        return fail(400, partnerDetailForm);
     }
     const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
         method: 'POST',
-        body: JSON.stringify(approvalRemarkForm),
+        body: JSON.stringify(partnerDetailForm),
         headers: {
             'Content-type': 'application/json; charset=UTF-8',
         },
@@ -116,19 +102,19 @@ export const _submitApprovalRemarkForm = async (formData: Object) => {
         });
 
     getPromiseToast(responsePromise)
-    return { approvalRemarkForm }
+    return { partnerDetailForm }
 }
 
-export const _submitExitQuarterForm = async (formData: Object) => {
-    const exitQuarterForm = await superValidate(formData, _exitQuartersSchema);
-    if (!exitQuarterForm.valid) {
+export const _submitServiceDetailForm = async (formData: Object) => {
+    const serviceDetailForm = await superValidate(formData, _serviceDetailSchema);
+    if (!serviceDetailForm.valid) {
         getErrorToast();
-        console.log(exitQuarterForm)
-        return fail(400, exitQuarterForm);
+        console.log(serviceDetailForm)
+        return fail(400, serviceDetailForm);
     }
     const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
         method: 'POST',
-        body: JSON.stringify(exitQuarterForm),
+        body: JSON.stringify(serviceDetailForm),
         headers: {
             'Content-type': 'application/json; charset=UTF-8',
         },
@@ -139,19 +125,19 @@ export const _submitExitQuarterForm = async (formData: Object) => {
         });
 
     getPromiseToast(responsePromise)
-    return { exitQuarterForm }
+    return { serviceDetailForm }
 }
 
-export const _submitNonStaffExitQuarterForm = async (formData: Object) => {
-    const nonStaffExitQuarterForm = await superValidate(formData, _nonStaffExitQuarterSchema);
-    if (!nonStaffExitQuarterForm.valid) {
+export const _submitValidationForm = async (formData: Object) => {
+    const validationForm = await superValidate(formData, _validationSchema);
+    if (!validationForm.valid) {
         getErrorToast();
-        console.log(nonStaffExitQuarterForm)
-        return fail(400, nonStaffExitQuarterForm);
+        console.log(validationForm)
+        return fail(400, validationForm);
     }
     const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
         method: 'POST',
-        body: JSON.stringify(nonStaffExitQuarterForm),
+        body: JSON.stringify(validationForm),
         headers: {
             'Content-type': 'application/json; charset=UTF-8',
         },
@@ -162,5 +148,5 @@ export const _submitNonStaffExitQuarterForm = async (formData: Object) => {
         });
 
     getPromiseToast(responsePromise)
-    return { nonStaffExitQuarterForm }
+    return { validationForm }
 }

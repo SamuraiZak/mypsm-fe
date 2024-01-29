@@ -21,15 +21,47 @@
     import { fileSelectionList } from '$lib/stores/globalState';
     import { Checkbox } from 'flowbite-svelte';
     import { onMount } from 'svelte';
+    import { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import {
+        _submitPartnerDetailForm,
+        _partnerDetailSchema,
+        _serviceDetailSchema,
+        _submitServiceDetailForm,
+        _submitValidationForm,
+        _validationSchema,
+    } from './+page';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+
+    export let data: PageData;
 
     let disabled = true;
     let labelBlack = false;
     let isStaff = 'true';
     let infoTrue = false;
     let activeStepper = 0;
-    let currRecord = mockRekodKuarters.filter(
-        (rec) => rec.id == $selectedRecordId,
-    )[0];
+    // let currRecord = mockRekodKuarters.filter(
+    //     (rec) => rec.id == $selectedRecordId,
+    // )[0];
+
+    let currRecord: Record<string, any> = [
+        {
+            id: 1,
+            employeeNumber: '00001',
+            employeeName: 'Mohd Irfan Bin Abu',
+            typeOfRequestor: 'Kakitangan LKIM',
+            identityDocumentNumber: '890405-11-1234',
+            category: 'Tetap',
+            applicationDate: '2023-10-10',
+            approvedDate: '2023-11-15',
+            status: 'DALAM PROSES',
+            typeOfRequest: 'Masuk',
+            isOccupied: 'Ya',
+            remarks: '',
+        },
+    ];
     let currentEmployee = mockEmployees.filter((rec) => rec.id == 1)[0];
 
     let currEmpService = mockCurrentService.filter(
@@ -86,6 +118,49 @@
         selectedFiles.splice(index, 1);
         fileSelectionList.set(selectedFiles);
     }
+
+    // ====================== Form Validation
+    const {
+        form: partnerDetailForm,
+        errors: partnerDetailError,
+        enhance: partnerDetailEnhance,
+    } = superForm(data.partnerDetailForm, {
+        SPA: true,
+        id: 'partnerDetailForm',
+        validators: _partnerDetailSchema,
+        onSubmit() {
+            _submitPartnerDetailForm($partnerDetailForm);
+        },
+        taintedMessage: false,
+    });
+
+    const {
+        form: serviceDetailForm,
+        errors: serviceDetailError,
+        enhance: serviceDetailEnhance,
+    } = superForm(data.serviceDetailForm, {
+        SPA: true,
+        id: 'serviceDetailForm',
+        validators: _serviceDetailSchema,
+        onSubmit() {
+            _submitServiceDetailForm($serviceDetailForm);
+        },
+        taintedMessage: false,
+    });
+
+    const {
+        form: validationForm,
+        errors: validationError,
+        enhance: validationEnhance,
+    } = superForm(data.validationForm, {
+        SPA: true,
+        id: 'validationForm',
+        validators: _validationSchema,
+        onSubmit() {
+            _submitValidationForm($validationForm);
+        },
+        taintedMessage: false,
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -197,25 +272,90 @@
                 onClick={() => {
                     activeStepper = 1;
                 }}
-            ></FormButton><FormButton type="reset" onClick={() => {}}
-            ></FormButton><FormButton
-                onClick={() => {
-                    activeStepper = 3;
-                }}
             ></FormButton>
+            <FormButton type="reset" onClick={() => {}} />
+            <TextIconButton primary label="Simpan" form="partnerDetailForm">
+                <SvgCheck />
+            </TextIconButton>
         </StepperContentHeader>
         <StepperContentBody>
-            <TextField label="Nama Penuh" value={'-'}></TextField>
-            <TextField label="No. Telefon" value={'-'}></TextField>
-            <TextField label="Jabatan / Jawatan" value={'-'}></TextField>
-            <TextField
-                label="Gaji Sekarang yang Diterima (Gaji Pokok / Hakiki) (RM)"
-                value={'-'}
-            ></TextField>
-            <TextField
-                label="Bilangan anak yang tinggal bersama pemohon yang berumur kurang 21 tahun"
-                value={'-'}
-            ></TextField>
+            <form
+                id="partnerDetailForm"
+                method="POST"
+                use:partnerDetailEnhance
+                class="flex w-full flex-col gap-2"
+            >
+                <TextField
+                    hasError={!!$partnerDetailError.partnerName}
+                    name="partnerName"
+                    {labelBlack}
+                    label="Nama Penuh"
+                    bind:value={$partnerDetailForm.partnerName}
+                />
+                {#if $partnerDetailError.partnerName}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$partnerDetailError.partnerName[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$partnerDetailError.partnerTelephoneNo}
+                    name="partnerTelephoneNo"
+                    {labelBlack}
+                    label="No. Telefon"
+                    bind:value={$partnerDetailForm.partnerTelephoneNo}
+                />
+                {#if $partnerDetailError.partnerTelephoneNo}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$partnerDetailError.partnerTelephoneNo[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$partnerDetailError.partnerPosition}
+                    name="partnerPosition"
+                    {labelBlack}
+                    label="Jabatan / Jawatan"
+                    bind:value={$partnerDetailForm.partnerPosition}
+                />
+                {#if $partnerDetailError.partnerPosition}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$partnerDetailError.partnerPosition[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$partnerDetailError.partnerSalary}
+                    name="partnerSalary"
+                    {labelBlack}
+                    label="Gaji Sekarang yang Diterima (Gaji Pokok / Hakiki) (RM)"
+                    bind:value={$partnerDetailForm.partnerSalary}
+                />
+                {#if $partnerDetailError.partnerSalary}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$partnerDetailError.partnerSalary[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$partnerDetailError.noOfChildren}
+                    name="noOfChildren"
+                    {labelBlack}
+                    label="Bilangan anak yang tinggal bersama pemohon yang berumur kurang 21 tahun"
+                    bind:value={$partnerDetailForm.noOfChildren}
+                />
+                {#if $partnerDetailError.noOfChildren}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$partnerDetailError.noOfChildren[0]}
+                    </span>
+                {/if}
+            </form>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -226,38 +366,76 @@
                     activeStepper = 2;
                 }}
             ></FormButton><FormButton type="reset" onClick={() => {}}
-            ></FormButton><FormButton
-                onClick={() => {
-                    activeStepper = 4;
-                }}
-            ></FormButton></StepperContentHeader
-        >
+            ></FormButton>
+            <TextIconButton primary label="Simpan" form="serviceDetailForm">
+                <SvgCheck />
+            </TextIconButton>
+        </StepperContentHeader>
         <StepperContentBody>
-            <TextField
-                {disabled}
-                {labelBlack}
-                label="Nama Jawatan"
-                value={currEmpPosition[0].name}
-            ></TextField>
-            <TextField
-                {disabled}
-                {labelBlack}
-                label="Gred"
-                value={currEmpGrade[0].code}
-            ></TextField>
-            <LongTextField label="Alamat Penuh Jabatan / Agensi" value={'-'}
-            ></LongTextField>
-            <LongTextField
-                label="Alamat Penuh Jabatan / Agensi Pembayar Gaji"
-                value={'-'}
-            ></LongTextField>
-            <TextField label="Bank Pembayar Gaji" value={'-'}></TextField>
-            <TextField
-                {disabled}
-                {labelBlack}
-                label="Gaji Sekarang (Gaji Pokok / Hakiki) (RM)"
-                value={CurrencyHelper.formatCurrency(3532.54)}
-            ></TextField>
+            <form
+                id="serviceDetailForm"
+                method="POST"
+                use:serviceDetailEnhance
+                class="flex w-full flex-col gap-2"
+            >
+                <TextField
+                    {disabled}
+                    {labelBlack}
+                    label="Nama Jawatan"
+                    value={currEmpPosition[0].name}
+                ></TextField>
+                <TextField
+                    {disabled}
+                    {labelBlack}
+                    label="Gred"
+                    value={currEmpGrade[0].code}
+                ></TextField>
+                <LongTextField
+                    hasError={!!$serviceDetailError.agencyAddress}
+                    name="agencyAddress"
+                    label="Alamat Penuh Jabatan / Agensi"
+                    bind:value={$serviceDetailForm.agencyAddress}
+                />
+                {#if $serviceDetailError.agencyAddress}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$serviceDetailError.agencyAddress[0]}
+                    </span>
+                {/if}
+                <LongTextField
+                    hasError={!!$serviceDetailError.payrollAgency}
+                    name="payrollAgency"
+                    label="Alamat Penuh Jabatan / Agensi Pembayar Gaji"
+                    bind:value={$serviceDetailForm.payrollAgency}
+                />
+                {#if $serviceDetailError.payrollAgency}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$serviceDetailError.payrollAgency[0]}
+                    </span>
+                {/if}
+                <TextField
+                    hasError={!!$serviceDetailError.payrollBank}
+                    name="payrollBank"
+                    label="Bank Pembayar Gaji"
+                    bind:value={$serviceDetailForm.payrollBank}
+                />
+                {#if $serviceDetailError.payrollBank}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >
+                        {$serviceDetailError.payrollBank[0]}
+                    </span>
+                {/if}
+                <TextField
+                    {disabled}
+                    {labelBlack}
+                    label="Gaji Sekarang (Gaji Pokok / Hakiki) (RM)"
+                    value={CurrencyHelper.formatCurrency(3532.54)}
+                ></TextField>
+            </form>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -363,24 +541,37 @@
                     activeStepper = 4;
                 }}
             ></FormButton><FormButton type="reset" onClick={() => {}}
-            ></FormButton><FormButton
-                type="done"
-                onClick={() => {
-                    window.history.back();
-                }}
-            ></FormButton></StepperContentHeader
-        >
+            ></FormButton>
+            <TextIconButton primary label="Simpan" form="validationForm">
+                <SvgCheck />
+            </TextIconButton>
+        </StepperContentHeader>
         <StepperContentBody>
             <div
                 class="flex h-fit w-full flex-col items-start justify-start gap-2.5"
             >
-                <Checkbox checked={infoTrue}
-                    ><p>
-                        Saya dengan ini mengesahkan bahawa maklumat sebagaimana
-                        yang dinyatakan berikut adalah benar
-                    </p></Checkbox
+                <form
+                    id="validationForm"
+                    method="POST"
+                    use:validationEnhance
+                    class="flex w-full flex-col gap-2"
                 >
+                    <Checkbox bind:checked={$validationForm.staffValidation}
+                        ><p>
+                            Saya dengan ini mengesahkan bahawa maklumat
+                            sebagaimana yang dinyatakan berikut adalah benar
+                        </p>
+                    </Checkbox>
+                    {#if $validationError.staffValidation}
+                        <span
+                            class="font-sans text-sm italic text-system-danger"
+                        >
+                            {$validationError.staffValidation[0]}
+                        </span>
+                    {/if}
+                </form>
             </div>
         </StepperContentBody>
     </StepperContent>
 </Stepper>
+<Toaster />

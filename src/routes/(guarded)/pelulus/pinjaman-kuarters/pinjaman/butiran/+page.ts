@@ -6,14 +6,6 @@ import { z } from "zod";
 // ===================================================
 // Form Schema
 // ===================================================
-const optionalScheme = z.enum(['1', '2'], {
-    errorMap: (issue) => ({
-        message:
-            issue.code === 'invalid_enum_value'
-                ? 'Pilihan perlu dipilih.'
-                : 'Pilihan perlu dipilih.',
-    }),
-})
 const dateScheme = z.coerce
     .date({
         errorMap: (issue, { defaultError }) => ({
@@ -96,7 +88,6 @@ export const _letterOfAgreementSchema = z.object({
     checked: z.boolean().default(true),
 })
 
-
 // =============================================
 // load function
 // =============================================
@@ -125,16 +116,16 @@ export const load = async () => {
     const letterOfAgreementForm = await superValidate(
         _letterOfAgreementSchema
     )
+
     return {
         supporterAndApproverForm,
         updateLoanDetailQualificationForm,
         approvalAndOfferForm,
         vehicleDetailAndDescriptionForm,
         secondScheduleForm,
-        letterOfAgreementForm
+        letterOfAgreementForm,
     };
 }
-
 
 // =============================================
 // Submit Form Function

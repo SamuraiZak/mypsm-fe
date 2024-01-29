@@ -21,6 +21,7 @@
     import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions';
     import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
     import { mockRekodKuarters } from '$lib/mocks/pinjaman-kuarters/mockRekodKuarters.js';
+    import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
     import {
         fileSelectionList,
         selectedRecordId,
@@ -37,6 +38,7 @@
         _submitApprovalAndOfferForm,
     } from './+page';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
 
     export let data: PageData;
 
@@ -93,11 +95,11 @@
 
     const approvalOptions: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'LULUS',
         },
         {
-            value: 'false',
+            value: false,
             label: 'TIDAK LULUS',
         },
     ];
@@ -235,12 +237,6 @@
             <TextField
                 {disabled}
                 {labelBlack}
-                label="No. Pekerja"
-                value={currentEmployee.employeeNumber}
-            ></TextField>
-            <TextField
-                {disabled}
-                {labelBlack}
                 label="Nama"
                 value={currentEmployee.name}
             ></TextField>
@@ -253,14 +249,8 @@
             <TextField
                 {disabled}
                 {labelBlack}
-                label="Gred"
-                value={currEmpGrade[0].code}
-            ></TextField>
-            <TextField
-                {disabled}
-                {labelBlack}
-                label="Penempatan Semasa"
-                value={currEmpService[0].placement}
+                label="No. Pekerja"
+                value={currentEmployee.employeeNumber}
             ></TextField>
             <TextField
                 {disabled}
@@ -342,6 +332,7 @@
             ></FormButton></StepperContentHeader
         >
         <StepperContentBody>
+            <!-- TODO: DIFFERENT CONTENT FOR AGENSI LUAR  -->
             <TextField
                 {disabled}
                 {labelBlack}
@@ -361,10 +352,16 @@
                 userSelected={selectedService}
                 legend="Perkhidmatan"
             ></RadioSingle>
+            <DateSelector
+                label="Tarikh Mula Dilantik ke Perkhidmatan Kerajaan"
+                {disabled}
+                name="appointedDateToGoverment"
+                {labelBlack}
+            />
             <LongTextField
                 {disabled}
                 {labelBlack}
-                label="Alamat Penuh Jabatan / Agensi"
+                label="Alamat Penuh Jabatan / Agensi Bertugas"
                 value={'D/A Lembaga Kemajuan Ikan Malaysia, Lot 329, Seksyen 9, Jalan Satok, Pelabuhan Senari, Sarawak, 93400 Kuching'}
             ></LongTextField>
             <LongTextField
@@ -373,30 +370,39 @@
                 label="Alamat Penuh Jabatan / Agensi Pembayar Gaji"
                 value={'D/A Lembaga Kemajuan Ikan Malaysia, Lot 329, Seksyen 9, Jalan Satok, Pelabuhan Senari, Sarawak, 93400 Kuching'}
             ></LongTextField>
-            <TextField
+            <DropdownSelect
                 {disabled}
                 {labelBlack}
+                dropdownType="label-left-full"
                 label="Bank Pembayar Gaji"
-                value={'Maybank'}
-            ></TextField>
+                options={[
+                    {
+                        value: 'Maybank',
+                        name: 'Maybank',
+                    },
+                ]}
+            ></DropdownSelect>
             <TextField
                 {disabled}
                 {labelBlack}
                 label="Gaji Sekarang (Gaji Pokok / Hakiki) (RM)"
                 value={CurrencyHelper.formatCurrency(3532.54)}
             ></TextField>
-            <TextField
-                {disabled}
-                {labelBlack}
-                label="ITP (RM)"
-                value={CurrencyHelper.formatCurrency(100.0)}
-            ></TextField>
-            <TextField
-                {disabled}
-                {labelBlack}
-                label="COLA (RM)"
-                value={CurrencyHelper.formatCurrency(150.0)}
-            ></TextField>
+
+            {#if currRecord.typeOfRequestor == 'Kakitangan LKIM'}
+                <TextField
+                    {disabled}
+                    {labelBlack}
+                    label="ITP (RM)"
+                    value={CurrencyHelper.formatCurrency(100.0)}
+                ></TextField>
+                <TextField
+                    {disabled}
+                    {labelBlack}
+                    label="COLA (RM)"
+                    value={CurrencyHelper.formatCurrency(150.0)}
+                ></TextField>
+            {/if}
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -413,6 +419,7 @@
             ></FormButton></StepperContentHeader
         >
         <StepperContentBody>
+            <!-- TODO: DIFFERENT CONTENT FOR AGENSI LUAR -->
             <!-- Document Upload -->
             <div
                 class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 pb-5"
@@ -421,34 +428,105 @@
                     ><div hidden={$fileSelectionList.length == 0}>
                         <FileInputField id="fileInput" {handleOnChange}
                         ></FileInputField>
-                    </div></SectionHeader
-                >
-                <div class="flex w-full items-start justify-start">
-                    <p class="text-sm text-system-primary">
-                        Fail - fail yang dimuat naik:
-                    </p>
-                </div>
+                    </div>
+                </SectionHeader>
+                {#if currRecord.typeOfRequestor == 'Kakitangan LKIM'}
+                    <div class="flex w-full items-start justify-start">
+                        <p class="text-sm text-system-primary">
+                            Fail - fail yang dimuat naik:
+                        </p>
+                    </div>
 
-                <DownloadAttachment fileName="Kad Pengenalan Sendiri.pdf"
-                ></DownloadAttachment>
-                <DownloadAttachment fileName="Kad Pengenalan Pasangan.pdf"
-                ></DownloadAttachment>
-                <DownloadAttachment fileName="Kad Nikah.pdf"
-                ></DownloadAttachment>
-                <DownloadAttachment fileName="Kad Pekerja.pdf"
-                ></DownloadAttachment>
-                <DownloadAttachment
-                    fileName="Surat Pengesahan Jabatan/Majikan.pdf"
-                ></DownloadAttachment>
-                <DownloadAttachment
-                    fileName="Slip Gaji 3 Bulan yang Terkini.pdf"
-                ></DownloadAttachment>
-                <DownloadAttachment fileName="Gambar Dalaman Kuarters.pdf"
-                ></DownloadAttachment>
-                <DownloadAttachment fileName="Gambar Luaran Kuarters.pdf"
-                ></DownloadAttachment>
-            </div></StepperContentBody
-        >
+                    <DownloadAttachment fileName="Kad Pengenalan Sendiri.pdf"
+                    ></DownloadAttachment>
+                    <DownloadAttachment fileName="Kad Pengenalan Pasangan.pdf"
+                    ></DownloadAttachment>
+                    <DownloadAttachment fileName="Kad Nikah.pdf"
+                    ></DownloadAttachment>
+                    <DownloadAttachment fileName="Kad Pekerja.pdf"
+                    ></DownloadAttachment>
+                    <DownloadAttachment
+                        fileName="Surat Pengesahan Jabatan/Majikan.pdf"
+                    ></DownloadAttachment>
+                    <DownloadAttachment
+                        fileName="Slip Gaji 3 Bulan yang Terkini.pdf"
+                    ></DownloadAttachment>
+                    <DownloadAttachment fileName="Gambar Dalaman Kuarters.pdf"
+                    ></DownloadAttachment>
+                    <DownloadAttachment fileName="Gambar Luaran Kuarters.pdf"
+                    ></DownloadAttachment>
+                {:else}
+                    <div class="flex w-full flex-col text-sm text-txt-tertiary">
+                        <span>Muat naik salinan</span>
+                        <span>1. Gambar berukuran passport</span>
+                        <span>2. Kad pengenalan sendiri</span>
+                        <span>3. Kad pengenalan pasangan</span>
+                        <span>4. Kad nikah</span>
+                        <span>5. Kad pekerja</span>
+                        <span>6. Surat Pengesahan Jabatan/Majikan</span>
+                        <span>7. Slip gaji 3 bulan yang terkini</span>
+                        <span>8. Lain-lain</span>
+                    </div>
+                    <SectionHeader>
+                        <div
+                            class="flex w-full justify-end"
+                            hidden={$fileSelectionList.length == 0}
+                        >
+                            <FileInputField id="fileInput" {handleOnChange}
+                            ></FileInputField>
+                        </div>
+                    </SectionHeader>
+                    <div
+                        class="border-bdr-primaryp-5 flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border p-2.5"
+                    >
+                        <div class="flex flex-wrap gap-3">
+                            {#each $fileSelectionList as item, index}
+                                <FileInputFieldChildren
+                                    childrenType="grid"
+                                    handleDelete={() => handleDelete(index)}
+                                    fileName={item.name}
+                                />
+                            {/each}
+                        </div>
+                        <div
+                            class="flex flex-col items-center justify-center gap-2.5"
+                        >
+                            <p
+                                class=" text-sm text-txt-tertiary"
+                                hidden={$fileSelectionList.length > 0}
+                            >
+                                Pilih fail dari peranti anda.
+                            </p>
+                            <!-- svelte-ignore a11y-click-events-have-key-events -->
+                            <div
+                                class="text-txt-tertiary"
+                                hidden={$fileSelectionList.length > 0}
+                            >
+                                <svg
+                                    width={40}
+                                    height={40}
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                                    />
+                                </svg>
+                            </div>
+                            <div hidden={$fileSelectionList.length > 0}>
+                                <FileInputField id="fileInput" {handleOnChange}
+                                ></FileInputField>
+                            </div>
+                        </div>
+                    </div>
+                {/if}
+            </div>
+        </StepperContentBody>
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Pengesahan"
@@ -484,9 +562,17 @@
                     activeStepper = 5;
                 }}
             />
-            <TextIconButton primary label="Simpan" form="approvalRemarkForm" />
+            <TextIconButton primary label="Simpan" form="approvalRemarkForm"
+                ><SvgCheck /></TextIconButton
+            >
         </StepperContentHeader>
         <StepperContentBody>
+            <div class="w-full">
+                <span class="text-sm text-system-primary"
+                    >&#8226; Keputusan akan dihantar ke email klinik dan Urus
+                    Setia berkaitan</span
+                >
+            </div>
             <form
                 id="approvalRemarkForm"
                 method="POST"
@@ -527,195 +613,416 @@
                     activeStepper = 6;
                 }}
             ></FormButton>
-            <TextIconButton
-                primary
-                label="Simpan"
-                form="approvalAndOfferForm"
-            /></StepperContentHeader
-        >
+            <TextIconButton primary label="Simpan" form="approvalAndOfferForm"
+                ><SvgCheck />
+            </TextIconButton>
+        </StepperContentHeader>
         <StepperContentBody>
+            <!-- TODO: DIFFERENT CONTENT FOR AGENSI LUAR -->
             <CustomTab>
-                <CustomTabContent title="Maklumat Kelayakan">
-                    <SectionHeader title="Maklumat Kelayakan"></SectionHeader>
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
-                    >
-                        <TextField
-                            {disabled}
-                            {labelBlack}
-                            label="Gred"
-                            value={currEmpGrade[0].code}
-                        ></TextField>
-                    </div>
-                </CustomTabContent>
-                <CustomTabContent title="Maklumat Kelulusan dan Tawaran">
-                    <form
-                        id="approvalAndOfferForm"
-                        method="POST"
-                        use:approvalAndOfferEnhance
-                        class="flex w-full flex-col gap-2"
-                    >
+                {#if currRecord.typeOfRequestor == 'Kakitangan LKIM'}
+                    <CustomTabContent title="Maklumat Kelayakan">
+                        <SectionHeader title="Maklumat Kelayakan"
+                        ></SectionHeader>
                         <div
-                            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b pb-5"
+                            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
                         >
-                            <SectionHeader title="Nama Pelulus"></SectionHeader>
-                            <DropdownSelect
-                                hasError={!!$approvalAndOfferError.approvalName}
-                                dropdownType="label-left-full"
-                                id="approvalName"
-                                label="Nama Pelulus"
-                                options={allEmp}
-                                bind:value={$approvalAndOfferForm.approvalName}
-                            ></DropdownSelect>
-                            {#if $approvalAndOfferError.approvalName}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$approvalAndOfferError
-                                        .approvalName[0]}</span
-                                >
-                            {/if}
-                        </div>
-                        <div
-                            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b pb-5"
-                        >
-                            <SectionHeader title="Butiran Penempatan Kuarter"
-                            ></SectionHeader>
                             <TextField
-                                hasError={!!$approvalAndOfferError.applicantEmail}
-                                name="applicantEmail"
-                                label="Emel Pemohon"
-                                bind:value={$approvalAndOfferForm.applicantEmail}
+                                {disabled}
+                                {labelBlack}
+                                label="Gred"
+                                value={currEmpGrade[0].code}
                             ></TextField>
-                            {#if $approvalAndOfferError.applicantEmail}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$approvalAndOfferError
-                                        .applicantEmail[0]}</span
-                                >
-                            {/if}
-                            <DateSelector
-                                hasError={!!$approvalAndOfferError.quarterEntryDate}
-                                name="quarterEntryDate"
-                                handleDateChange
-                                label="Tarikh Masuk Kuarter"
-                                bind:selectedDate={$approvalAndOfferForm.quarterEntryDate}
-                            ></DateSelector>
-                            {#if $approvalAndOfferError.quarterEntryDate}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$approvalAndOfferError
-                                        .quarterEntryDate[0]}</span
-                                >
-                            {/if}
-                            <TextField
-                                hasError={!!$approvalAndOfferError.unitAndQuarter}
-                                name="unitAndQuarter"
-                                label="Unit Dan Kuarter"
-                                bind:value={$approvalAndOfferForm.unitAndQuarter}
-                            ></TextField>
-                            {#if $approvalAndOfferError.unitAndQuarter}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$approvalAndOfferError
-                                        .unitAndQuarter[0]}</span
-                                >
-                            {/if}
                         </div>
-                        <div
-                            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b pb-5"
+                    </CustomTabContent>
+                    <CustomTabContent title="Maklumat Kelulusan dan Tawaran">
+                        <form
+                            id="approvalAndOfferForm"
+                            method="POST"
+                            use:approvalAndOfferEnhance
+                            class="flex w-full flex-col gap-2"
                         >
-                            <!-- WIP -->
-                            <SectionHeader
-                                title="Kadar Bayaran Sewa Kuarters (Unit Pengurusan Fasiliti)"
-                            ></SectionHeader>
-                            <div class="flex flex-col gap-5">
-                                <ul
-                                    class="bg-white dark:divide-gray-600 dark:border-gray-600 dark:bg-gray-800"
+                            <div
+                                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b pb-5"
+                            >
+                                <SectionHeader title="Nama Pelulus"
+                                ></SectionHeader>
+                                <DropdownSelect
+                                    {labelBlack}
+                                    hasError={!!$approvalAndOfferError.approvalName}
+                                    dropdownType="label-left-full"
+                                    id="approvalName"
+                                    label="Nama Pelulus"
+                                    options={allEmp}
+                                    bind:value={$approvalAndOfferForm.approvalName}
+                                ></DropdownSelect>
+                                {#if $approvalAndOfferError.approvalName}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$approvalAndOfferError
+                                            .approvalName[0]}</span
+                                    >
+                                {/if}
+                            </div>
+                            <div
+                                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b pb-5"
+                            >
+                                <SectionHeader
+                                    title="Butiran Penempatan Kuarter"
+                                ></SectionHeader>
+                                <TextField
+                                    {labelBlack}
+                                    hasError={!!$approvalAndOfferError.applicantEmail}
+                                    name="applicantEmail"
+                                    label="Emel Pemohon"
+                                    bind:value={$approvalAndOfferForm.applicantEmail}
+                                ></TextField>
+                                {#if $approvalAndOfferError.applicantEmail}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$approvalAndOfferError
+                                            .applicantEmail[0]}</span
+                                    >
+                                {/if}
+                                <DateSelector
+                                    {labelBlack}
+                                    hasError={!!$approvalAndOfferError.quarterEntryDate}
+                                    name="quarterEntryDate"
+                                    handleDateChange
+                                    label="Tarikh Masuk Kuarter"
+                                    bind:selectedDate={$approvalAndOfferForm.quarterEntryDate}
+                                ></DateSelector>
+                                {#if $approvalAndOfferError.quarterEntryDate}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$approvalAndOfferError
+                                            .quarterEntryDate[0]}</span
+                                    >
+                                {/if}
+                                <TextField
+                                    {labelBlack}
+                                    hasError={!!$approvalAndOfferError.unitAndQuarter}
+                                    name="unitAndQuarter"
+                                    label="Unit Dan Kuarter"
+                                    bind:value={$approvalAndOfferForm.unitAndQuarter}
+                                ></TextField>
+                                {#if $approvalAndOfferError.unitAndQuarter}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$approvalAndOfferError
+                                            .unitAndQuarter[0]}</span
+                                    >
+                                {/if}
+                            </div>
+                            <div
+                                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b pb-5"
+                            >
+                                <!-- WIP -->
+                                <SectionHeader
+                                    title="Kadar Bayaran Sewa Kuarters (Unit Pengurusan Fasiliti)"
+                                ></SectionHeader>
+                                {#if $approvalAndOfferError.rentalPaymentRates}
+                                    <span
+                                        class="font-sans text-sm italic text-system-danger"
+                                        >{$approvalAndOfferError
+                                            .rentalPaymentRates[0]}</span
+                                    >
+                                {/if}
+                                <div class="flex flex-col gap-5">
+                                    <ul
+                                        class="bg-white dark:divide-gray-600 dark:border-gray-600 dark:bg-gray-800"
+                                    >
+                                        <li>
+                                            <Radio
+                                                class="p-3"
+                                                bind:group={$approvalAndOfferForm.rentalPaymentRates}
+                                                value="under25km"
+                                            >
+                                                <div
+                                                    class="flex flex-col pl-10 text-sm italic {$approvalAndOfferForm.rentalPaymentRates ==
+                                                    'under25km'
+                                                        ? 'text-txt-primary'
+                                                        : 'text-txt-tertiary'}"
+                                                >
+                                                    <p>Dalam Jarak 25 KM:</p>
+                                                    <ul
+                                                        class="list-inside list-disc pl-2"
+                                                    >
+                                                        <li>
+                                                            Potongan ITP 75%
+                                                        </li>
+                                                        <li>
+                                                            Potongan COLA 50%
+                                                        </li>
+                                                    </ul>
+                                                </div></Radio
+                                            >
+                                        </li>
+                                        <li>
+                                            <Radio
+                                                class="p-3"
+                                                bind:group={$approvalAndOfferForm.rentalPaymentRates}
+                                                value="more25km"
+                                                ><div
+                                                    class="flex flex-col pl-10 text-sm italic {$approvalAndOfferForm.rentalPaymentRates ==
+                                                    'more25km'
+                                                        ? 'text-txt-primary'
+                                                        : 'text-txt-tertiary'}"
+                                                >
+                                                    <p>Jarak Melebihi 25 KM:</p>
+                                                    <ul
+                                                        class="list-inside list-disc pl-2"
+                                                    >
+                                                        <li>
+                                                            Potongan COLA 50%
+                                                        </li>
+                                                    </ul>
+                                                </div></Radio
+                                            >
+                                        </li>
+                                        <li>
+                                            <Radio
+                                                class="p-3"
+                                                bind:group={$approvalAndOfferForm.rentalPaymentRates}
+                                                value="gredExceed"
+                                                ><div
+                                                    class="flex flex-col pl-10 text-sm italic {$approvalAndOfferForm.rentalPaymentRates ==
+                                                    'gredExceed'
+                                                        ? 'text-txt-primary'
+                                                        : 'text-txt-tertiary'}"
+                                                >
+                                                    <p>
+                                                        Gred Jawatan Melebihi
+                                                        Kategori Kuarters:
+                                                    </p>
+                                                    <ul
+                                                        class="list-inside list-disc pl-2"
+                                                    >
+                                                        <li>
+                                                            Potongan ITP
+                                                            Mengikut Nilar
+                                                            Sewaan Gred
+                                                            Tertinggi Kuarters
+                                                            yang Diperuntukkan
+                                                            (RM)
+                                                        </li>
+                                                        <TextField
+                                                            labelBlack
+                                                            disabled={$approvalAndOfferForm.rentalPaymentRates !=
+                                                                'gredExceed'}
+                                                            label=""
+                                                            value={CurrencyHelper.formatCurrency(
+                                                                0,
+                                                            )}
+                                                        ></TextField>
+                                                    </ul>
+                                                </div></Radio
+                                            >
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </form>
+                    </CustomTabContent>
+                {:else}
+                    <CustomTabContent title="Maklumat Kelulusan dan Tawaran">
+                        <form
+                            id="approvalAndOfferForm"
+                            method="POST"
+                            use:approvalAndOfferEnhance
+                            class="flex w-full flex-col gap-2"
+                        >
+                            <div
+                                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b pb-4"
+                            >
+                                <SectionHeader title="Masukkan Nama Pelulus" />
+                                <DropdownSelect
+                                    hasError={!!$approvalAndOfferError.approvalName}
+                                    {labelBlack}
+                                    name="approvalName"
+                                    label="Nama Pelulus"
+                                    dropdownType="label-left-full"
+                                    options={[
+                                        {
+                                            value: 'Irfan',
+                                            name: 'Irfan',
+                                        },
+                                    ]}
+                                    bind:value={$approvalAndOfferForm.approvalName}
+                                />
+                                {#if $approvalAndOfferError.approvalName}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$approvalAndOfferError
+                                            .approvalName[0]}</span
+                                    >
+                                {/if}
+
+                                <SectionHeader
+                                    title="Butiran Penempatan Kuarter"
+                                />
+                                <TextField
+                                    hasError={!!$approvalAndOfferError.applicantEmail}
+                                    {labelBlack}
+                                    name="applicantEmail"
+                                    label="Emel Pemohon"
+                                    bind:value={$approvalAndOfferForm.applicantEmail}
+                                />
+                                {#if $approvalAndOfferError.applicantEmail}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$approvalAndOfferError
+                                            .applicantEmail[0]}</span
+                                    >
+                                {/if}
+                                <DateSelector
+                                    {labelBlack}
+                                    hasError={!!$approvalAndOfferError.quarterEntryDate}
+                                    name="quarterEntryDate"
+                                    handleDateChange
+                                    label="Tarikh Masuk Kuarter"
+                                    bind:selectedDate={$approvalAndOfferForm.quarterEntryDate}
+                                ></DateSelector>
+                                {#if $approvalAndOfferError.quarterEntryDate}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$approvalAndOfferError
+                                            .quarterEntryDate[0]}</span
+                                    >
+                                {/if}
+                                <TextField
+                                    hasError={!!$approvalAndOfferError.unitAndQuarter}
+                                    {labelBlack}
+                                    name="unitAndQuarter"
+                                    label="Unit Dan Kuarter"
+                                    bind:value={$approvalAndOfferForm.unitAndQuarter}
+                                />
+                                {#if $approvalAndOfferError.unitAndQuarter}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$approvalAndOfferError
+                                            .unitAndQuarter[0]}</span
+                                    >
+                                {/if}
+                                <SectionHeader
+                                    title="Kadar Bayaran Sewa Kuarters (Unit Pengurusan Fasiliti)"
+                                />
+                                <TextField
+                                    hasError={!!$approvalAndOfferError.monthlyRentalValue}
+                                    {labelBlack}
+                                    name="monthlyRentalValue"
+                                    label="Nilai Sewaan Bulanan (RM)"
+                                    bind:value={$approvalAndOfferForm.monthlyRentalValue}
+                                />
+                                {#if $approvalAndOfferError.monthlyRentalValue}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$approvalAndOfferError
+                                            .monthlyRentalValue[0]}</span
+                                    >
+                                {/if}
+                                <TextField
+                                    hasError={!!$approvalAndOfferError.twoMonthsDeposit}
+                                    {labelBlack}
+                                    name="twoMonthsDeposit"
+                                    label="Deposits (2 Bulan Nilai Sewaan) (RM)"
+                                    bind:value={$approvalAndOfferForm.twoMonthsDeposit}
+                                />
+                                {#if $approvalAndOfferError.twoMonthsDeposit}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$approvalAndOfferError
+                                            .twoMonthsDeposit[0]}</span
+                                    >
+                                {/if}
+                                <TextField
+                                    hasError={!!$approvalAndOfferError.utilityDeposit}
+                                    {labelBlack}
+                                    name="utilityDeposit"
+                                    label="Deposits (Air dan Elektrik) (RM)"
+                                    bind:value={$approvalAndOfferForm.utilityDeposit}
+                                />
+                                {#if $approvalAndOfferError.utilityDeposit}
+                                    <span
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        >{$approvalAndOfferError
+                                            .utilityDeposit[0]}</span
+                                    >
+                                {/if}
+                            </div>
+                        </form>
+                        <SectionHeader title="Muat Naik Resit Bayaran" />
+                        <div
+                            class="flex w-full flex-col text-sm text-txt-tertiary"
+                        >
+                            <span>1. Resit Deposit Sewaan</span>
+                            <span>2. Resit Utiliti</span>
+                            <span>3. Penyata Bank (Standing Instruction)</span>
+                            <span>4. Gambar Dalaman Kuarters</span>
+                            <span>5. Gambar Luaran Kuarters</span>
+                        </div>
+
+                        <SectionHeader>
+                            <div
+                                class="flex w-full justify-end"
+                                hidden={$fileSelectionList.length == 0}
+                            >
+                                <FileInputField id="fileInput" {handleOnChange}
+                                ></FileInputField>
+                            </div>
+                        </SectionHeader>
+                        <div
+                            class="border-bdr-primaryp-5 flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border p-2.5"
+                        >
+                            <div class="flex flex-wrap gap-3">
+                                {#each $fileSelectionList as item, index}
+                                    <FileInputFieldChildren
+                                        childrenType="grid"
+                                        handleDelete={() => handleDelete(index)}
+                                        fileName={item.name}
+                                    />
+                                {/each}
+                            </div>
+                            <div
+                                class="flex flex-col items-center justify-center gap-2.5"
+                            >
+                                <p
+                                    class=" text-sm text-txt-tertiary"
+                                    hidden={$fileSelectionList.length > 0}
                                 >
-                                    <li>
-                                        <Radio
-                                            class="p-3"
-                                            bind:group={$approvalAndOfferForm.rentalPaymentRates}
-                                            value="under25km"
-                                        >
-                                            <div
-                                                class="flex flex-col pl-10 text-sm italic {$approvalAndOfferForm.rentalPaymentRates ==
-                                                'under25km'
-                                                    ? 'text-txt-primary'
-                                                    : 'text-txt-tertiary'}"
-                                            >
-                                                <p>Dalam Jarak 25 KM:</p>
-                                                <ul
-                                                    class="list-inside list-disc pl-2"
-                                                >
-                                                    <li>Potongan ITP 75%</li>
-                                                    <li>Potongan COLA 50%</li>
-                                                </ul>
-                                            </div></Radio
-                                        >
-                                    </li>
-                                    <li>
-                                        <Radio
-                                            class="p-3"
-                                            bind:group={$approvalAndOfferForm.rentalPaymentRates}
-                                            value="more25km"
-                                            ><div
-                                                class="flex flex-col pl-10 text-sm italic {$approvalAndOfferForm.rentalPaymentRates ==
-                                                'more25km'
-                                                    ? 'text-txt-primary'
-                                                    : 'text-txt-tertiary'}"
-                                            >
-                                                <p>Jarak Melebihi 25 KM:</p>
-                                                <ul
-                                                    class="list-inside list-disc pl-2"
-                                                >
-                                                    <li>Potongan COLA 50%</li>
-                                                </ul>
-                                            </div></Radio
-                                        >
-                                    </li>
-                                    <li>
-                                        <Radio
-                                            class="p-3"
-                                            bind:group={$approvalAndOfferForm.rentalPaymentRates}
-                                            value="gredExceed"
-                                            ><div
-                                                class="flex flex-col pl-10 text-sm italic {$approvalAndOfferForm.rentalPaymentRates ==
-                                                'gredExceed'
-                                                    ? 'text-txt-primary'
-                                                    : 'text-txt-tertiary'}"
-                                            >
-                                                <p>
-                                                    Gred Jawatan Melebihi
-                                                    Kategori Kuarters:
-                                                </p>
-                                                <ul
-                                                    class="list-inside list-disc pl-2"
-                                                >
-                                                    <li>
-                                                        Potongan ITP Mengikut
-                                                        Nilar Sewaan Gred
-                                                        Tertinggi Kuarters yang
-                                                        Diperuntukkan (RM)
-                                                    </li>
-                                                    <TextField
-                                                        labelBlack
-                                                        disabled={ $approvalAndOfferForm.rentalPaymentRates !=
-                                                            'gredExceed'}
-                                                        label=""
-                                                        value={CurrencyHelper.formatCurrency(
-                                                            0,
-                                                        )}
-                                                    ></TextField>
-                                                </ul>
-                                            </div></Radio
-                                        >
-                                    </li>
-                                </ul>
+                                    Pilih fail dari peranti anda.
+                                </p>
+                                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                                <div
+                                    class="text-txt-tertiary"
+                                    hidden={$fileSelectionList.length > 0}
+                                >
+                                    <svg
+                                        width={40}
+                                        height={40}
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.5"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                                        />
+                                    </svg>
+                                </div>
+                                <div hidden={$fileSelectionList.length > 0}>
+                                    <FileInputField
+                                        id="fileInput"
+                                        {handleOnChange}
+                                    ></FileInputField>
+                                </div>
                             </div>
                         </div>
-                    </form>
-                </CustomTabContent>
+                    </CustomTabContent>
+                {/if}
             </CustomTab>
         </StepperContentBody>
     </StepperContent>
