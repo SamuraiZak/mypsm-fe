@@ -33,8 +33,8 @@ const generalTextSchema = z.string({
 }).min(1, { message: "Medan ini perlu diisi dengan lengkap. " });
 
 export const _supporterAndApproverSchema = z.object({
-    supporterName: generalSelectSchema,
-    approverName: generalSelectSchema,
+    approverRemark: generalTextSchema,
+    approverService: z.boolean().default(true),
 })
 
 export const _qualificationDetailSchema = z.object({

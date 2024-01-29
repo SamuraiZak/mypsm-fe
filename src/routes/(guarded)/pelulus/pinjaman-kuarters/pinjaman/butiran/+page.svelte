@@ -131,11 +131,11 @@
     ];
     const approvalOptions: RadioOption[] = [
         {
-            value: 'true',
+            value: true,
             label: 'LULUS',
         },
         {
-            value: 'false',
+            value: false,
             label: 'TIDAK LULUS',
         },
     ];
@@ -1447,22 +1447,45 @@
             >
                 <SvgCheck />
             </TextIconButton>
-            </StepperContentHeader
-        >
+        </StepperContentHeader>
         <StepperContentBody>
             <div
                 class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
             >
                 <SectionHeader title="Keputusan Dari Pelulus"></SectionHeader>
-                <LongTextField
-                    label="Tindakan / Ulasan"
-                    value={'Pemohon layak menduduki kuarters.'}
-                ></LongTextField>
-                <RadioSingle
-                    options={approvalOptions}
-                    userSelected={selectedApproval}
-                    legend="Perkhidmatan"
-                ></RadioSingle>
+                <form
+                    id="supporterAndApproverFormValidation"
+                    use:supporterAndApproverEnhance
+                    method="POST"
+                    class="flex w-full flex-col gap-2"
+                >
+                    <LongTextField
+                        hasError={!!$supporterAndApproverErrors.approverRemark}
+                        name="approverRemark"
+                        label="Tindakan / Ulasan"
+                        bind:value={$supporterAndApproverForm.approverRemark}
+                    />
+                    {#if $supporterAndApproverErrors.approverRemark}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$supporterAndApproverErrors
+                                .approverRemark[0]}</span
+                        >
+                    {/if}
+                    <RadioSingle
+                        name="approverService"
+                        options={approvalOptions}
+                        bind:userSelected={$supporterAndApproverForm.approverService}
+                        legend="Perkhidmatan"
+                    />
+                    {#if $supporterAndApproverErrors.approverService}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$supporterAndApproverErrors
+                                .approverService[0]}</span
+                        >
+                    {/if}
+                </form>
             </div>
             <div
                 class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
