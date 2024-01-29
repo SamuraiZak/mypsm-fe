@@ -45,7 +45,7 @@
         _submitServiceInfoForm,
     } from './+page';
     import { superForm, superValidate } from 'sveltekit-superforms/client';
-    import toast, { Toaster } from 'svelte-french-toast';
+    import { Toaster } from 'svelte-french-toast';
     import { getErrorToast } from '$lib/services/core/toast/toast-service';
     import { fileSelectionList } from '$lib/stores/globalState';
     import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
