@@ -79,9 +79,7 @@
                     <div class="flex w-full flex-col gap-2">
                         <p class="text-sm font-bold">Permohonan Persaraan</p>
                         <DateSelector
-                            hasError={$permohonanPersaraanErrors.earlyRetirementDate
-                                ? true
-                                : false}
+                            hasError={!!$permohonanPersaraanErrors.earlyRetirementDate}
                             name="earlyRetirementDate"
                             handleDateChange
                             label="Tarikh Bersara Awal"
@@ -90,15 +88,12 @@
                         {#if $permohonanPersaraanErrors.earlyRetirementDate}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$permohonanPersaraanErrors
-                                    .earlyRetirementDate[0]}</span
+                                >{$permohonanPersaraanErrors.earlyRetirementDate}</span
                             >
                         {/if}
 
                         <DateSelector
-                            hasError={$permohonanPersaraanErrors.earlyRetirementApplicationDate
-                                ? true
-                                : false}
+                            hasError={!!$permohonanPersaraanErrors.earlyRetirementApplicationDate}
                             name="earlyRetirementApplicationDate"
                             handleDateChange
                             label="Tarikh Permohonan Persaraan Awal"
@@ -107,15 +102,12 @@
                         {#if $permohonanPersaraanErrors.earlyRetirementApplicationDate}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$permohonanPersaraanErrors
-                                    .earlyRetirementApplicationDate[0]}</span
+                                >{$permohonanPersaraanErrors.earlyRetirementApplicationDate}</span
                             >
                         {/if}
 
                         <LongTextField
-                            hasError={$permohonanPersaraanErrors.applicationPurpose
-                                ? true
-                                : false}
+                            hasError={!!$permohonanPersaraanErrors.applicationPurpose}
                             name="applicationPurpose"
                             label="Tujuan Permohonan"
                             bind:value={$permohonanPersaraanForm.applicationPurpose}
@@ -123,8 +115,7 @@
                         {#if $permohonanPersaraanErrors.applicationPurpose}
                             <span
                                 class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$permohonanPersaraanErrors
-                                    .applicationPurpose[0]}</span
+                                >{$permohonanPersaraanErrors.applicationPurpose}</span
                             >
                         {/if}
                     </div>
