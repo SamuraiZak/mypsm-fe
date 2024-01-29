@@ -73,16 +73,16 @@ overflow-y-auto bg-bgr-primary p-3"
         class="my-5 space-y-2.5"
     >
         <TextField
-            hasError={$errors.tempId ? true : false}
+            hasError={$errors.name ? true : false}
             type="text"
-            name="tempId"
+            name="name"
             label="Nama Calon Kontrak"
             placeholder="contoh: Nur Haszmidah"
-            bind:value={$form.tempId}
+            bind:value={$form.name}
         />
-        {#if $errors.tempId}
+        {#if $errors.name}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
-                >{$errors.tempId}</span
+                >{$errors.name}</span
             >
         {/if}
         <TextField
