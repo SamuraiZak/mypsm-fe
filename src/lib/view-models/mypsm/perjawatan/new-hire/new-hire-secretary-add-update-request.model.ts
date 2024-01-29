@@ -1,6 +1,7 @@
 export interface NewHireSecretaryAddUpdateRequestBody {
     candidateId: number;
     gradeId: number;
+    maxGradeId: number;
     positionId: number;
     placementId: number;
     serviceTypeId: number;
