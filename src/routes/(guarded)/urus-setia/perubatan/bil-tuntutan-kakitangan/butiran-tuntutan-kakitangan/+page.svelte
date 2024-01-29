@@ -17,8 +17,21 @@
     import { klinik } from '$lib/mocks/urus-setia/perubatan/klinik';
     import DynamicAccordionForm from '$lib/components/form/DynamicAccordionForm.svelte';
     import { mockSenaraiTuntutanLists } from '$lib/mocks/database/mockSenaraiTuntutanLists';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import { Toaster } from 'svelte-french-toast';
+    import {
+        _stepperApplicationValidation,
+        _submitFormStepperApplicationValidation,
+    } from './+page';
+    import {
+        _stepperSupporterApprover,
+        _submitFormStepperSupporterApprover,
+    } from './+page';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
 
     export let disabled: boolean = true;
+    export let data: PageData;
 
     let selectedDate = new Date();
     let selectedKlinik = klinik[0].value;
@@ -45,6 +58,35 @@
             label: 'Tidak Sah',
         },
     ];
+
+    // Application Validation
+    const {
+        form: applicationValidationForm,
+        errors: applicationValidationErrors,
+        enhance: applicationValidationEnhance,
+    } = superForm(data.stepperApplicationValidation, {
+        SPA: true,
+        validators: _stepperApplicationValidation,
+        onSubmit() {
+            _submitFormStepperApplicationValidation($applicationValidationForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+    // Supporter Approver
+    const {
+        form: supporterApproverForm,
+        errors: supporterApproverErrors,
+        enhance: supporterApproverEnhance,
+    } = superForm(data.stepperSupporterApprover, {
+        SPA: true,
+        validators: _stepperSupporterApprover,
+        onSubmit() {
+            _submitFormStepperSupporterApprover($supporterApproverForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -190,51 +232,104 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Pengesahan Permohonan"
-        ></StepperContentHeader>
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="FormStepperApplicationValidation"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
+        >
         <StepperContentBody
-            ><div class="flex w-full flex-col gap-2">
-                <p class="text-sm font-bold">
-                    Ulasan Penyemakan daripada Urus Setia
-                </p>
-                <div
-                    class="flex h-fit w-full flex-col items-center justify-start gap-2"
-                >
-                    <LongTextField
-                        label="Tindakan/Ulasan"
-                        placeholder="-"
-                        value=""
-                    />
-                    <RadioSingle {options} />
+            ><form
+                id="FormStepperApplicationValidation"
+                class="flex w-full flex-col gap-2"
+                use:applicationValidationEnhance
+                method="POST"
+            >
+                <div class="flex w-full flex-col gap-2">
+                    <p class="text-sm font-bold">
+                        Ulasan Penyemakan daripada Urus Setia
+                    </p>
+                    <div
+                        class="flex h-fit w-full flex-col items-center justify-start gap-2"
+                    >
+                        <LongTextField
+                            hasError={!!$applicationValidationErrors.remark}
+                            name="remark"
+                            label="Tindakan / Ulasan"
+                            bind:value={$applicationValidationForm.remark}
+                        />
+                        {#if $applicationValidationErrors.remark}
+                            <span
+                                class="ml-[-400px] font-sans text-sm italic text-system-danger"
+                                >{$applicationValidationErrors.remark}</span
+                            >
+                        {/if}
+                        <RadioSingle
+                            {options}
+                            name="resultOption"
+                            bind:userSelected={$applicationValidationForm.resultOption}
+                        ></RadioSingle>
+                        {#if $applicationValidationErrors.resultOption}
+                            <span
+                                class="ml-[-940px] font-sans text-sm italic text-system-danger"
+                                >{$applicationValidationErrors.resultOption}</span
+                            >
+                        {/if}
+                    </div>
                 </div>
-            </div></StepperContentBody
+            </form></StepperContentBody
         >
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Penyokong dan Pelulus"
             ><TextIconButton
                 primary
-                label="Hantar"
-                onClick={() => {
-                    goto('');
-                }}><SvgPaperAirplane /></TextIconButton
-            ></StepperContentHeader
+                label="Simpan"
+                form="FormStepperSupporterApprover"
+            >
+                <SvgCheck></SvgCheck>
+            </TextIconButton></StepperContentHeader
         >
-        <StepperContentBody>
-            <div class="flex w-full flex-col gap-2">
-                <p class="text-sm font-bold">
-                    Ulasan Penyemakan daripada Urus Setia
-                </p>
-                <TextField
-                    id="namaPenyokong"
-                    label={'Nama Penyokong'}
-                    value={'Ahmad'}
-                ></TextField>
-                <TextField
-                    id="namaPelulus"
-                    label={'Nama Pelulus'}
-                    value={'Muhammad'}
-                ></TextField>
-            </div></StepperContentBody
+        <StepperContentBody
+            ><form
+                id="FormStepperSupporterApprover"
+                class="flex w-full flex-col gap-2"
+                use:supporterApproverEnhance
+                method="POST"
+            >
+                <div class="flex w-full flex-col gap-2">
+                    <p class="text-sm font-bold">
+                        Ulasan Penyemakan daripada Urus Setia
+                    </p>
+                    <TextField
+                        hasError={!!$supporterApproverErrors.supporterName}
+                        name="supporterName"
+                        label="Nama Penyokong"
+                        bind:value={$supporterApproverForm.supporterName}
+                    />
+                    {#if $supporterApproverErrors.supporterName}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$supporterApproverErrors.supporterName}</span
+                        >
+                    {/if}
+                    <TextField
+                        hasError={!!$supporterApproverErrors.approverName}
+                        name="approverName"
+                        label="Nama Pelulus"
+                        bind:value={$supporterApproverForm.approverName}
+                    />
+                    {#if $supporterApproverErrors.approverName}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$supporterApproverErrors.approverName}</span
+                        >
+                    {/if}
+                </div>
+            </form></StepperContentBody
         >
     </StepperContent>
 </Stepper>
+<Toaster />
