@@ -15,7 +15,13 @@
     import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
     import { Badge, Radio } from 'flowbite-svelte';
     import DownloadAttachment from '$lib/components/input/DownloadAttachment.svelte';
+    import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
+    import { superForm } from 'sveltekit-superforms/client';
+    import { _submitQuarterRentalRateForm, _quartersRentalRate } from './+page';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
 
+    export let data: PageData;
     export let disabled: boolean = true;
     let target: any;
     let appealMeetingResult: string = 'pass';
@@ -57,6 +63,22 @@
             label: 'Agensi / Jabatan Luar',
         },
     ];
+
+    // ====================== Form Validation
+    const {
+        form: quarterRentalRateForm,
+        errors: quarterRentalRateError,
+        enhance: quarterRentalRateEnhance,
+    } = superForm(data.quarterRentalRateForm, {
+        SPA: true,
+        id: 'quarterRentalRateForm',
+        validators: _quartersRentalRate,
+        onSubmit() {
+            _submitQuarterRentalRateForm($quarterRentalRateForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -158,88 +180,109 @@
     <StepperContent>
         <StepperContentHeader
             title="Kadar Bayaran Sewa Kuarters (Unit Pengurusan Fasiliti)"
-        ></StepperContentHeader>
-        <StepperContentBody
-            ><div class="flex w-full flex-col gap-2">
-                <div class="flex flex-col gap-5">
-                    <ul
-                        class="bg-white dark:divide-gray-600 dark:border-gray-600 dark:bg-gray-800"
-                    >
-                        <li>
-                            <Radio
-                                class="p-1"
-                                bind:group={kadarBayaran}
-                                value="1"
-                            >
-                                <div
-                                    class="flex flex-col pl-2 text-sm {kadarBayaran ==
-                                    '1'
-                                        ? 'text-txt-primary'
-                                        : 'text-txt-tertiary'}"
-                                >
-                                    <p>
-                                        Simpan Balik Kes Kepada JKTT untuk
-                                        Dipertimbangkan Semula
-                                    </p>
-                                </div></Radio
-                            >
-                        </li>
-                        <li>
-                            <Radio
-                                class="p-1"
-                                bind:group={kadarBayaran}
-                                value="2"
-                            >
-                                <div
-                                    class="flex flex-col pl-2 text-sm {kadarBayaran ==
-                                    '2'
-                                        ? 'text-txt-primary'
-                                        : 'text-txt-tertiary'}"
-                                >
-                                    <p>Mengesahkan Keputusan JKTT</p>
-                                </div></Radio
-                            >
-                        </li>
-                        <li>
-                            <Radio
-                                class="p-1"
-                                bind:group={kadarBayaran}
-                                value="3"
-                            >
-                                <div
-                                    class="flex flex-col pl-2 text-sm {kadarBayaran ==
-                                    '3'
-                                        ? 'text-txt-primary'
-                                        : 'text-txt-tertiary'}"
-                                >
-                                    <p>
-                                        Mengesahkan Keputusan JKTT Tetapi
-                                        Mengubah Kepada Hukuman Yang Lebih
-                                        Ringan
-                                    </p>
-                                </div></Radio
-                            >
-                        </li>
-                        <li>
-                            <Radio
-                                class="p-1"
-                                bind:group={kadarBayaran}
-                                value="4"
-                            >
-                                <div
-                                    class="flex flex-col pl-2 text-sm {kadarBayaran ==
-                                    '4'
-                                        ? 'text-txt-primary'
-                                        : 'text-txt-tertiary'}"
-                                >
-                                    <p>Mengakas dan Membebaskan</p>
-                                </div></Radio
-                            >
-                        </li>
-                    </ul>
-                </div>
-            </div></StepperContentBody
+            ><TextIconButton
+                primary
+                label="Simpan"
+                form="quarterRentalRateForm"
+            >
+                <SvgCheck /></TextIconButton
+            ></StepperContentHeader
         >
+        <StepperContentBody>
+            <form
+                id="quarterRentalRateForm"
+                method="POST"
+                use:quarterRentalRateEnhance
+                class="flex w-full flex-col gap-2"
+            >
+                <div class="flex w-full flex-col gap-2">
+                    <div class="flex flex-col gap-5">
+                        <ul
+                            class="bg-white dark:divide-gray-600 dark:border-gray-600 dark:bg-gray-800"
+                        >
+                            <li>
+                                <Radio
+                                    class="p-1"
+                                    bind:group={$quarterRentalRateForm.rentalRateOption}
+                                    value="1"
+                                >
+                                    <div
+                                        class="flex flex-col pl-2 text-sm {$quarterRentalRateForm.rentalRateOption ==
+                                        '1'
+                                            ? 'text-txt-primary'
+                                            : 'text-txt-tertiary'}"
+                                    >
+                                        <p>
+                                            Simpan Balik Kes Kepada JKTT untuk
+                                            Dipertimbangkan Semula
+                                        </p>
+                                    </div></Radio
+                                >
+                            </li>
+                            <li>
+                                <Radio
+                                    class="p-1"
+                                    bind:group={$quarterRentalRateForm.rentalRateOption}
+                                    value="2"
+                                >
+                                    <div
+                                        class="flex flex-col pl-2 text-sm {$quarterRentalRateForm.rentalRateOption ==
+                                        '2'
+                                            ? 'text-txt-primary'
+                                            : 'text-txt-tertiary'}"
+                                    >
+                                        <p>Mengesahkan Keputusan JKTT</p>
+                                    </div></Radio
+                                >
+                            </li>
+                            <li>
+                                <Radio
+                                    class="p-1"
+                                    bind:group={$quarterRentalRateForm.rentalRateOption}
+                                    value="3"
+                                >
+                                    <div
+                                        class="flex flex-col pl-2 text-sm {$quarterRentalRateForm.rentalRateOption ==
+                                        '3'
+                                            ? 'text-txt-primary'
+                                            : 'text-txt-tertiary'}"
+                                    >
+                                        <p>
+                                            Mengesahkan Keputusan JKTT Tetapi
+                                            Mengubah Kepada Hukuman Yang Lebih
+                                            Ringan
+                                        </p>
+                                    </div></Radio
+                                >
+                            </li>
+                            <li>
+                                <Radio
+                                    class="p-1"
+                                    bind:group={$quarterRentalRateForm.rentalRateOption}
+                                    value="4"
+                                >
+                                    <div
+                                        class="flex flex-col pl-2 text-sm {$quarterRentalRateForm.rentalRateOption ==
+                                        '4'
+                                            ? 'text-txt-primary'
+                                            : 'text-txt-tertiary'}"
+                                    >
+                                        <p>Mengakas dan Membebaskan</p>
+                                    </div></Radio
+                                >
+                                {#if $quarterRentalRateError.rentalRateOption}
+                                    <span
+                                        class="font-sans text-sm italic text-system-danger"
+                                        >{$quarterRentalRateError
+                                            .rentalRateOption[0]}</span
+                                    >
+                                {/if}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </form>
+        </StepperContentBody>
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Maklumat Butiran Masuk Kuarter"
@@ -361,3 +404,5 @@
         >
     </StepperContent>
 </Stepper>
+
+<Toaster/>
