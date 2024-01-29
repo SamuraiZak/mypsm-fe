@@ -16,6 +16,7 @@ import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
 import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
 import {
     getErrorToast,
+    getLoadingToast,
     getServerErrorToast,
     getSuccessToast,
 } from '$lib/services/core/toast/toast-service';
@@ -256,8 +257,10 @@ export async function load({ params }) {
         familyInfoResponse,
         dependencyInfoResponse,
         nextOfKinInfoResponse,
+        serviceResponse,
         serviceInfoForm,
         documentInfoResponse,
+        secretaryApprovalResponse,
         secretaryApprovalInfoForm,
 
         data,
@@ -289,9 +292,8 @@ export const _submitServiceInfoForm = async (formData: object) => {
         return fail(400, form);
     }
 
-    // form.data.candidateId = candidateIdRequestBody.candidateId;
-
-    console.log(form.data);
+    // start by rendering loading toast
+    getLoadingToast();
 
     const response: RequestSuccessBody =
         await EmployeeService.createCurrentCandidateSecretaryUpdate(
