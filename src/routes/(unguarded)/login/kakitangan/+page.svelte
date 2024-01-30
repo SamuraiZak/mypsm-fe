@@ -7,6 +7,7 @@
     import { _kakitanganLoginSchema, _submit } from './+page';
     import { showLoadingOverlay } from '$lib/stores/globalState';
     import type { EnumRole, EnumRoleResponseData } from '$lib/view-models/core/lookup/role/role-enum-reponse.view-model';
+    import { Toaster } from 'svelte-french-toast';
 
     export let data: PageData;
 
@@ -83,7 +84,7 @@
 
             <!-- {#each currentRoleOptions as option}
             <p>{option}</p>
-                
+
             {/each} -->
 
             <div>
@@ -270,3 +271,5 @@
         </form>
     </div>
 </div>
+
+<Toaster/>
