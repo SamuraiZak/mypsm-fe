@@ -19,10 +19,7 @@
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import { Toaster } from 'svelte-french-toast';
-    import {
-        _stepperClaimInfo,
-        _submitFormStepperClaimInfo,
-    } from './+page';
+    import { _stepperClaimInfo, _submitFormStepperClaimInfo } from './+page';
 
     export let data: PageData;
     export let disabled: boolean = true;
@@ -37,9 +34,7 @@
         SPA: true,
         validators: _stepperClaimInfo,
         onSubmit() {
-            _submitFormStepperClaimInfo(
-                $claimInfoForm,
-            );
+            _submitFormStepperClaimInfo($claimInfoForm);
         },
         taintedMessage:
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
@@ -111,11 +106,7 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Maklumat Tuntutan"
-            ><TextIconButton
-                primary
-                label="Simpan"
-                form="FormStepperClaimInfo"
-            >
+            ><TextIconButton primary label="Simpan" form="FormStepperClaimInfo">
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
@@ -212,6 +203,7 @@
                         <div class="flex w-full flex-row gap-x-2.5">
                             <div class="w-1/3 space-y-2.5">
                                 <TextField
+                                    {disabled}
                                     labelType="top"
                                     type="text"
                                     id="namaKakitangan"
@@ -219,6 +211,7 @@
                                     value="Mohd Safwan Adam"
                                 ></TextField>
                                 <TextField
+                                    {disabled}
                                     labelType="top"
                                     type="text"
                                     id="noKP"
@@ -253,6 +246,7 @@
                         <div class="flex w-full flex-row gap-x-2.5">
                             <div class="w-1/3 space-y-2.5">
                                 <TextField
+                                    {disabled}
                                     labelType="top"
                                     type="text"
                                     id="namaKakitangan"
@@ -260,6 +254,7 @@
                                     value="Mohd Safwan Adam"
                                 ></TextField>
                                 <TextField
+                                    {disabled}
                                     labelType="top"
                                     type="text"
                                     id="noKP"
@@ -294,6 +289,7 @@
                         <div class="flex w-full flex-row gap-x-2.5">
                             <div class="w-1/3 space-y-2.5">
                                 <TextField
+                                    {disabled}
                                     labelType="top"
                                     type="text"
                                     id="namaKakitangan"
@@ -301,6 +297,7 @@
                                     value="Mohd Safwan Adam"
                                 ></TextField>
                                 <TextField
+                                    {disabled}
                                     labelType="top"
                                     type="text"
                                     id="noKP"
@@ -343,7 +340,7 @@
                         <p
                             class="mt-2 h-fit w-full bg-bgr-primary text-sm italic text-system-accent"
                         >
-                            ● Sila klik "OK" untuk menghantar pembatalan tututan
+                            ● Sila klik "Simpan" untuk menghantar pembatalan tuntutan
                             ke Klinik Panel dan Kakitangan yang berkaitan.
                         </p>
                     </div>
@@ -364,12 +361,7 @@
                                 ></LongTextField>
                                 <div
                                     class="flex max-h-full w-full flex-col items-start justify-start"
-                                >
-                                    <SectionHeader>
-                                        <TextIconButton primary label="OK"
-                                        ></TextIconButton>
-                                    </SectionHeader>
-                                </div>
+                                ></div>
                             </div>
                         </div>
                     </div>
@@ -390,6 +382,7 @@
                                 ></LongTextField>
 
                                 <TextField
+                                    {disabled}
                                     id="tindakanUlasan"
                                     label={'Jumlah Perlu Ditanggung oleh Kakitangan (RM) '}
                                     value={'RM955'}
@@ -397,12 +390,7 @@
 
                                 <div
                                     class="flex max-h-full w-full flex-col items-start justify-start"
-                                >
-                                    <SectionHeader>
-                                        <TextIconButton primary label="OK"
-                                        ></TextIconButton>
-                                    </SectionHeader>
-                                </div>
+                                ></div>
                             </div>
                         </div>
                     </div>
@@ -489,6 +477,7 @@
                                 </div>
                             </div>
                             <TextField
+                                {disabled}
                                 id="tindakanUlasan"
                                 label={'Jumlah Tanggungan oleh LKIM (RM)'}
                                 value={'RM955'}
@@ -498,7 +487,7 @@
                                 class="flex max-h-full w-full flex-col items-start justify-start"
                             >
                                 <SectionHeader>
-                                    <TextIconButton primary label="SAH">
+                                    <TextIconButton primary label="Simpan">
                                         <SvgDoubleTick></SvgDoubleTick>
                                     </TextIconButton>
                                 </SectionHeader>
@@ -511,3 +500,4 @@
         </Modal>
     </StepperContent>
 </Stepper>
+<Toaster />
