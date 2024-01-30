@@ -62,8 +62,9 @@
         _submitPromotionMeetingResultDetailForm,
     } from './+page';
     import type { PageData } from './$types';
+    import type { ChosenEmployeeList } from '$lib/view-models/mypsm/perjawatan/grade-acting-type/list-chosen-employee-list-response.view-model';
     export let data: PageData;
-
+    let tempData: ChosenEmployeeList;
     //===================== Stepper controls =====================
     let stepperIndex = 0;
 
@@ -296,7 +297,7 @@
                 <TextIconButton
                     label="Kembali"
                     onClick={() => {
-                        goto('/urus-setia/perjawatan/pemangkuan/1_54/baru');
+                        goto('/urus-setia/perjawatan/pemangkuan/gred-1_54/baru');
                     }}
                 >
                     <SvgArrowLeft></SvgArrowLeft>
@@ -343,22 +344,13 @@
                 >
                     <!-- selectedCandidatesList -->
                     <DynamicTable
-                        tableItems={mockPerjawatanPemangkuan}
+                        tableItems={data.chosenEmployeeRecord}
                         withRowSelection
                         onSelect={() => {
                             console.log('pop selected here');
                         }}
                         editable
-                        columnKeys={[
-                            'nomborPekerja',
-                            'namaPekerja',
-                            'noKadPengenalan',
-                            'program',
-                            'skim',
-                            'gred',
-                            'namaJawatan',
-                            'penempatanSekarang',
-                        ]}
+                        bind:passData={tempData}
                     ></DynamicTable>
                 </div>
             </StepperContentBody>
