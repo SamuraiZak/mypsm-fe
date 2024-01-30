@@ -14,7 +14,15 @@
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import TreatmentList from '$lib/components/klinik-panel/TreatmentList.svelte';
     import PatientList from '$lib/components/klinik-panel/PatientList.svelte';
-
+    import { superForm } from 'sveltekit-superforms/client';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+    import type { PageData } from './$types';
+    import { Toaster } from 'svelte-french-toast';
+    import {
+        _stepperStaffInfo,
+        _submitFormStepperStaffInfo,
+    } from './+page';
+    export let data: PageData;
     export let disabled: boolean = true;
 
     let selectedDate = new Date();
@@ -38,6 +46,23 @@
             namaPesakit: 'Danial',
         },
     };
+
+    // Panel Clinic Application Verification
+    const {
+        form: staffInfoForm,
+        errors: staffInfoErrors,
+        enhance: staffInfoEnhance,
+    } = superForm(data.stepperStaffInfo, {
+        SPA: true,
+        validators: _stepperStaffInfo,
+        onSubmit() {
+            _submitFormStepperStaffInfo(
+                $staffInfoForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -59,39 +84,81 @@
     <Stepper>
         <StepperContent>
             <StepperContentHeader title="Maklumat Kakitangan"
-            ></StepperContentHeader>
-            <StepperContentBody>
-                <div
-                    class="flex h-fit w-full flex-col items-start justify-start gap-2"
+                ><TextIconButton
+                    primary
+                    label="Simpan"
+                    form="FormStepperStaffInfo"
                 >
-                    <TextField id="nama" label={'Nama'} value={'Ali Bin Abu'}
-                    ></TextField>
-                    <TextField
-                        id="noPekerja"
-                        label={'No Pekerja'}
-                        value={'K3123'}
-                    ></TextField>
-                    <TextField
-                        id="noKadPengenalan"
-                        label={'No. K/P'}
-                        value={'111111-11-1111'}
-                    ></TextField>
-                    <TextField {disabled} id="gred" label={'Gred'} value={'41'}
-                    ></TextField>
-                    <TextField
-                        {disabled}
-                        id="penempatan"
-                        label={'Penempatan'}
-                        value={'52345 - Bhgn. Teknologi Maklumat'}
-                    ></TextField>
-                    <TextField
-                        {disabled}
-                        id="kumpulan"
-                        label={'Kumpulan'}
-                        value={'PP! - Pengurusan dan Professional - A'}
-                    ></TextField>
-                </div>
-            </StepperContentBody>
+                    <SvgCheck></SvgCheck>
+                </TextIconButton></StepperContentHeader
+            >
+            <StepperContentBody
+                ><form
+                    id="FormStepperStaffInfo"
+                    class="flex w-full flex-col gap-2"
+                    use:staffInfoEnhance
+                    method="POST"
+                >
+                    <div
+                        class="flex h-fit w-full flex-col items-start justify-start gap-2"
+                    >
+                        <TextField
+                            hasError={!!$staffInfoErrors.name}
+                            name="name"
+                            label="Nama"
+                            bind:value={staffInfoForm.name}
+                        />
+                        {#if $staffInfoErrors.name}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$staffInfoErrors.name}</span
+                            >
+                        {/if}
+                        <TextField
+                            hasError={!!$staffInfoErrors.staffId}
+                            name="staffId"
+                            label="No. Pekerja"
+                            bind:value={$staffInfoForm.staffId}
+                        />
+                        {#if $staffInfoErrors.staffId}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$staffInfoErrors.staffId}</span
+                            >
+                        {/if}
+                        <TextField
+                            hasError={!!$staffInfoErrors.idNumber}
+                            name="idNumber"
+                            label="No. K/P"
+                            bind:value={$staffInfoForm.idNumber}
+                        />
+                        {#if $staffInfoErrors.idNumber}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$staffInfoErrors.idNumber}</span
+                            >
+                        {/if}
+                        <TextField
+                            {disabled}
+                            id="gred"
+                            label={'Gred'}
+                            value={'41'}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            id="penempatan"
+                            label={'Penempatan'}
+                            value={'52345 - Bhgn. Teknologi Maklumat'}
+                        ></TextField>
+                        <TextField
+                            {disabled}
+                            id="kumpulan"
+                            label={'Kumpulan'}
+                            value={'PP! - Pengurusan dan Professional - A'}
+                        ></TextField>
+                    </div>
+                </form></StepperContentBody
+            >
         </StepperContent>
         <StepperContent>
             <StepperContentHeader title="Maklumat Pesakit"
@@ -127,3 +194,4 @@
         </StepperContent>
     </Stepper>
 </section>
+<Toaster />
