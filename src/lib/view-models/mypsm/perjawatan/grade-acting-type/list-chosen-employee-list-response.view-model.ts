@@ -1,4 +1,4 @@
-export interface ListChosenEmployeeList {
+export interface ListChosenEmployeeListResponse {
     status:  number;
     message: string;
     data:    Data;

@@ -1,4 +1,4 @@
-export interface ListGradeActingType154 {
+export interface ListGradeActingType154Response {
     status:  number;
     message: string;
     data:    Data;

@@ -1,4 +1,4 @@
-export interface ListGradeActingTypeFlexi41 {
+export interface ListGradeActingTypeFlexi41Request {
     pageNum:   number;
     pageSize:  number;
     orderBy:   string;

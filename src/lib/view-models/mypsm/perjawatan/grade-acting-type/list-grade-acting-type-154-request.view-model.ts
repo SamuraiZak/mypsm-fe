@@ -1,4 +1,4 @@
-export interface ListGradeActingType154 {
+export interface ListGradeActingType154Request {
     pageNum:   number;
     pageSize:  number;
     orderBy:   string;
