@@ -22,8 +22,6 @@ import type { CandidateNextOfKinDetailsRequestBody } from '$lib/view-models/myps
 import type { CandidateNextOfKinDetailsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-next-of-kin-details-response.model';
 import type { CandidatePersonalDetailsRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-request.model';
 import type { CandidatePersonalDetailsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-respone.model';
-import type { PensionTableFilter } from '$lib/view-models/mypsm/perjawatan/pension/pension-list-details-request.view-model';
-import type { PensionTableResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-list-details-response.view-model';
 import type { NewHireApproverResultResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-approver-result-response.model';
 import type { NewHireGetApproversResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-approvers-response.model';
 import type { NewHireDocumentsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-document-response.view-model';
@@ -34,8 +32,11 @@ import type { NewHireSecretaryUpdateResponse } from '$lib/view-models/mypsm/perj
 import type { NewHireSetApproversRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-set-approvers-request.model';
 import type { NewHireSupporterTableListRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-supporter-table-list-request.model';
 import type { NewHireSupporterTableListResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-supporter-table-list-response.model';
+import type { PensionTableFilter } from '$lib/view-models/mypsm/perjawatan/pension/pension-list-details-request.view-model';
+import type { PensionTableResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-list-details-response.view-model';
 import type { RequestSuccessBody } from '$lib/view-models/mypsm/request-success.view-model';
 
+import type { CandidateDependenciesDetailRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-dependencies-details-request.model';
 import type { AddPensionDetailRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-add-pension-detail-request.view-model';
 import type { AddPensionDetailResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-add-pension-detail-response.view-model';
 import type { DetailPensionDetailRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-detail-pension-detail-request.view-model';
@@ -52,16 +53,14 @@ import type { PensionEditRolesRelatedRequest } from '$lib/view-models/mypsm/perj
 import type { PensionEditRolesRelatedResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-edit-detail-role-related-response.model';
 import type { EditPensionDetailRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-edit-pension-detail-request.view-model';
 import type { EditPensionDetailResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-edit-pension-detail-response.view-model';
+import type { PensionEditSupportRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-edit-support-request.model';
+import type { PensionEditSupportResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-edit-support-response.model';
 import type { PensionListApproveRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-list-approve-request.model';
 import type { PensionListApproveResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-list-approve-response.model';
 import type { PensionListSupportRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-list-support-request.model';
 import type { PensionListSupportResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-list-support-response.model';
 import type { PensionPersonalDetailRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-personal-detail-request.view-model';
 import type { PensionPersonalDetailResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-personal-detail-response.view-model';
-import type { PensionEditSupportRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-edit-support-request.model';
-import type { PensionEditSupportResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-edit-support-response.model';
-import type { CandidateDependenciesDetailRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-dependencies-details-request.model';
-
 
 export class EmployeeService {
     // get list of employee
@@ -313,21 +312,8 @@ export class EmployeeService {
         return response;
     }
 
-    // get new hire approvers
-    static async getCurrentCandidateApprovers(
-        param: CandidateIDRequestBody,
-    ): Promise<NewHireGetApproversResponse> {
-        const response: NewHireGetApproversResponse = await http
-            .post(`employments/get-new-hire-set-supporter-approver`, {
-                body: JSON.stringify(param),
-            })
-            .json();
-
-        return response;
-    }
-
-    // create new hire approvers
-    static async createCurrentCandidateSecretaryApprover(
+    // create new hire secretary result
+    static async createCurrentCandidateSecretaryApproval(
         param: AddApprovalResultRequestBody,
     ): Promise<RequestSuccessBody> {
         const response: RequestSuccessBody = await http
@@ -352,8 +338,21 @@ export class EmployeeService {
         return response;
     }
 
+    // get new hire approvers
+    static async getCurrentCandidateApprovers(
+        param: CandidateIDRequestBody,
+    ): Promise<NewHireGetApproversResponse> {
+        const response: NewHireGetApproversResponse = await http
+            .post(`employments/get-new-hire-set-supporter-approver`, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
     // create employee set approvers
-    static async createCurrentCandidateSecretaryApproval(
+    static async createCurrentCandidateApprovers(
         param: NewHireSetApproversRequestBody,
     ): Promise<RequestSuccessBody> {
         const response: RequestSuccessBody = await http
@@ -379,11 +378,11 @@ export class EmployeeService {
     }
 
     //  get chosen supporter
-    static async getCurrentCandidateSupporter(
+    static async getCurrentCandidateSupporterApproval(
         param: CandidateIDRequestBody,
     ): Promise<NewHireSupporterResultResponse> {
         const response: NewHireSupporterResultResponse = await http
-            .post(`employments/get-new-hire-secretary-approval`, {
+            .post(`employments/get-new-hire-supporter-approval`, {
                 body: JSON.stringify(param),
             })
             .json();
@@ -396,7 +395,7 @@ export class EmployeeService {
         param: AddApprovalResultRequestBody,
     ): Promise<RequestSuccessBody> {
         const response: RequestSuccessBody = await http
-            .post(`employments/add-new-hire-secretary-approval`, {
+            .post(`employments/add-new-hire-supporter-approval`, {
                 body: JSON.stringify(param),
             })
             .json();
@@ -418,7 +417,7 @@ export class EmployeeService {
     }
 
     //  get chosen approver
-    static async getCurrentCandidateApprover(
+    static async getCurrentCandidateApproverApproval(
         param: CandidateIDRequestBody,
     ): Promise<NewHireApproverResultResponse> {
         const response: NewHireApproverResultResponse = await http
@@ -435,7 +434,7 @@ export class EmployeeService {
         param: AddApprovalResultRequestBody,
     ): Promise<RequestSuccessBody> {
         const response: RequestSuccessBody = await http
-            .post(`employments/add-new-hire-secretary-approval`, {
+            .post(`employments/add-new-hire-approver-approval`, {
                 body: JSON.stringify(param),
             })
             .json();
