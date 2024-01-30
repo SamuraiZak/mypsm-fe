@@ -56,12 +56,11 @@ import type {
     CandidatePersonalData,
     CandidatePersonalDetailsResponse,
 } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-respone.model.js';
+import type { NewHireApproverResultResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-approver-result-response.model';
 import type { NewHireDocumentsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-document-response.view-model';
-import type { NewHireSecretaryAddUpdateRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-secretary-add-update-request.model';
-import type {
-    NewHireSecretaryUpdateResponse,
-    SecretaryUpdateData,
-} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-secretary-update-response.model.js';
+import type { NewHireSupporterResultResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-supporter-result-response.model';
+import type { NewHireSecretaryApprovalResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-secretary-approval-response.model';
+import type { NewHireSecretaryUpdateResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-secretary-update-response.model.js';
 import type { RequestSuccessBody } from '$lib/view-models/mypsm/request-success.view-model';
 import { error, fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
@@ -99,28 +98,6 @@ const longTextSchema = z
     })
     .trim();
 
-const dateSchema = z.coerce.date({
-    errorMap: (issue, { defaultError }) => ({
-        message:
-            issue.code === 'invalid_date'
-                ? 'Tarikh tidak boleh dibiar kosong.'
-                : defaultError,
-    }),
-});
-
-const minDateSchema = z.coerce
-    .date({
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_date'
-                    ? 'Tarikh tidak boleh dibiar kosong.'
-                    : defaultError,
-        }),
-    })
-    .min(new Date(), {
-        message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
-    });
-
 const maxDateSchema = z.coerce
     .date({
         errorMap: (issue, { defaultError }) => ({
@@ -137,11 +114,6 @@ const maxDateSchema = z.coerce
 const booleanSchema = z.boolean({
     required_error: 'Sila tetapkan pilihan anda.',
     invalid_type_error: 'Medan ini haruslah jenis boolean.',
-});
-
-const numberSchema = z.coerce.number({
-    required_error: 'Medan ini hendaklah diisi.',
-    invalid_type_error: 'Sila pastikan medan ini ditaip dengan angka',
 });
 
 const numberIdSchema = z.coerce.number({
@@ -179,10 +151,10 @@ export const _personalInfoForm = z.object({
     mailPostcode: shortTextSchema,
     isExPoliceOrSoldier: booleanSchema,
     isInternalRelationship: booleanSchema,
-    employeeNumber: z.string().nullish(),
-    employeeName: z.string().nullable(),
-    employeePosition: z.string().nullable(),
-    relationshipId: numberIdSchema.nullish(),
+    employeeNumber: shortTextSchema.default(' '),
+    employeeName: shortTextSchema.default(' '),
+    employeePosition: shortTextSchema.default(' '),
+    relationshipId: numberIdSchema.default(0),
 });
 // .superRefine(({ isInternalRelationship }, ctx) => {
 //     if (isInternalRelationship) {
@@ -338,42 +310,6 @@ export const _nextOfKinListSchema = z.object({
 //=============Maklumat Perkhidmatan ========================
 //==========================================================
 
-export const _serviceInfoSchema = z.object({
-    // candidateId: numberIdSchema,
-    gradeId: numberIdSchema,
-    positionId: numberIdSchema,
-    placementId: numberIdSchema,
-    serviceTypeId: numberIdSchema,
-    serviceGroupId: numberIdSchema,
-    unitId: numberIdSchema,
-    employmentStatusId: numberIdSchema,
-    effectiveDate: minDateSchema,
-    retirementBenefit: codeSchema,
-    epfNumber: shortTextSchema,
-    socsoNumber: shortTextSchema,
-    incomeNumber: shortTextSchema,
-    bankName: shortTextSchema,
-    bankAccount: shortTextSchema,
-    eligibleLeaveCount: numberSchema,
-    civilServiceStartDate: dateSchema,
-    newRecruitEffectiveDate: dateSchema,
-    serviceDate: dateSchema,
-    firstServiceDate: dateSchema,
-    firstConfirmServiceDate: dateSchema,
-    firstEffectiveDate: dateSchema,
-    confirmDate: dateSchema,
-    pensionNumber: shortTextSchema,
-    kgt: numberSchema,
-    retirementDate: minDateSchema,
-    revisionMonth: codeSchema,
-    maximumSalary: numberSchema,
-    baseSalary: numberSchema,
-    itka: numberSchema,
-    itp: numberSchema,
-    epw: numberSchema,
-    cola: numberSchema,
-});
-
 export const load = async ({ params }) => {
     // set request body
     const candidateIdRequestBody = {
@@ -422,7 +358,21 @@ export const load = async ({ params }) => {
         await EmployeeService.getCurrentCandidateSecretaryUpdate(
             candidateIdRequestBody,
         );
-    const serviceDetails: SecretaryUpdateData = serviceResponse.data;
+
+    const secretaryApprovalResponse: NewHireSecretaryApprovalResponse =
+        await EmployeeService.getCurrentCandidateSecretaryApproval(
+            candidateIdRequestBody,
+        );
+
+    const supporterResultResponse: NewHireSupporterResultResponse =
+        await EmployeeService.getCurrentCandidateSupporterApproval(
+            candidateIdRequestBody,
+        );
+
+    const approverResultResponse: NewHireApproverResultResponse =
+        await EmployeeService.getCurrentCandidateApproverApproval(
+            candidateIdRequestBody,
+        );
 
     // form data based on schema and response
     const personalInfoForm = await superValidate(
@@ -457,10 +407,6 @@ export const load = async ({ params }) => {
         nextOfKinInfoResponse.data as NextOfKinData,
         _nextOfKinListSchema,
     );
-    const serviceInfoForm = await superValidate(
-        serviceDetails,
-        _serviceInfoSchema,
-    );
     const addAcademicModal = await superValidate(_academicInfoSchema);
     const addExperienceModal = await superValidate(_experienceInfoSchema);
     const addActivityModal = await superValidate(_activityInfoSchema);
@@ -485,7 +431,6 @@ export const load = async ({ params }) => {
         nextOfKinInfoResponse,
         nextOfKinInfoForm,
         serviceResponse,
-        serviceInfoForm,
         addAcademicModal,
         addExperienceModal,
         addActivityModal,
@@ -493,6 +438,9 @@ export const load = async ({ params }) => {
         addNonFamilyModal,
         addNextOfKinModal,
         documentInfoResponse,
+        secretaryApprovalResponse,
+        supporterResultResponse,
+        approverResultResponse,
     };
 };
 
@@ -514,36 +462,7 @@ export const _submitPersonalInfoForm = async (formData: object) => {
         ).finally(() => toast.dismiss());
     console.log(response);
 
-    if (response.status !== 201) {
-        // if error toast
-        getServerErrorToast();
-        return error(400, { message: response.message });
-    }
-
-    // if success toast
-    getSuccessToast();
-
-    return { response };
-};
-
-export const _submitServiceInfoForm = async (formData: object) => {
-    const form = await superValidate(formData, _serviceInfoSchema);
-    console.log(form);
-
-    if (!form.valid) {
-        getErrorToast();
-        return fail(400, form);
-    }
-
-    // start by rendering loading toast
-    getLoadingToast();
-
-    const response: RequestSuccessBody =
-        await EmployeeService.createCurrentCandidateSecretaryUpdate(
-            form.data as NewHireSecretaryAddUpdateRequestBody,
-        ).finally(() => toast.dismiss());
-
-    if (response.status !== 201) {
+    if (response.status > 201) {
         // if error toast
         getServerErrorToast();
         return error(400, { message: response.message });
@@ -572,7 +491,7 @@ export const _submitAcademicInfoForm = async (formData: AcademicList[]) => {
             requestData,
         ).finally(() => toast.dismiss());
 
-    if (response.status !== 201) {
+    if (response.status > 201) {
         // if error toast
         getServerErrorToast();
         return error(400, { message: response.message });
@@ -601,7 +520,7 @@ export const _submitExperienceInfoForm = async (formData: Experience[]) => {
             requestData,
         ).finally(() => toast.dismiss());
 
-    if (response.status !== 201) {
+    if (response.status > 201) {
         // if error toast
         getServerErrorToast();
         return error(400, { message: response.message });
@@ -630,7 +549,7 @@ export const _submitActivityInfoForm = async (formData: Activity[]) => {
             requestData,
         ).finally(() => toast.dismiss());
 
-    if (response.status !== 201) {
+    if (response.status > 201) {
         // if error toast
         getServerErrorToast();
         return error(400, { message: response.message });
@@ -657,7 +576,7 @@ export const _submitFamilyInfoForm = async (formData: Family[]) => {
         requestData,
     ).finally(() => toast.dismiss());
 
-    if (response.status !== 201) {
+    if (response.status > 201) {
         // if error toast
         getServerErrorToast();
         return error(400, { message: response.message });
@@ -685,7 +604,7 @@ export const _submitDependencyInfoForm = async (formData: Dependency[]) => {
             requestData,
         ).finally(() => toast.dismiss());
 
-    if (response.status !== 201) {
+    if (response.status > 201) {
         // if error toast
         getServerErrorToast();
         return error(400, { message: response.message });
@@ -713,7 +632,7 @@ export const _submitNextOfKinInfoForm = async (formData: NextOfKin[]) => {
             requestData,
         ).finally(() => toast.dismiss());
 
-    if (response.status !== 201) {
+    if (response.status > 201) {
         // if error toast
         getServerErrorToast();
         return error(400, { message: response.message });
@@ -736,7 +655,7 @@ export const _submitDocumentInfoForm = async () => {
         requestData,
     ).finally(() => toast.dismiss());
 
-    if (response.status !== 201) {
+    if (response.status > 201) {
         // if error toast
         getServerErrorToast();
         return error(400, { message: response.message });
