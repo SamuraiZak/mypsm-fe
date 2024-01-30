@@ -28,6 +28,7 @@
         _stepperInvoiceInfo,
         _submitFormStepperInvoiceInfo,
     } from './+page';
+    import { onMount } from 'svelte';
 
     export let data: PageData;
     export let disabled: boolean = true;
@@ -51,6 +52,10 @@
         console.log(formattedDate);
     }
 
+    onMount(() => {
+        target = document.getElementById('fileInput');
+    });
+    
     function handleOnChange() {
         texthidden = true;
         const files = target.files;
@@ -68,7 +73,7 @@
         fileSelectionList.set(selectedFiles);
     }
 
-    const retirementDocumentForm = async (event: Event) => {
+    const documentForm = async (event: Event) => {
         let uploadedFiles = selectedFiles;
         const formData = new FormData(event.target as HTMLFormElement);
 
@@ -176,7 +181,7 @@
                     ></DropdownSelect>
                     {#if $invoiceInfoErrors.name}
                         <span
-                            class="ml-[-500px] font-sans text-sm italic text-system-danger"
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$invoiceInfoErrors.name}</span
                         >
                     {/if}
@@ -205,7 +210,7 @@
                     ></DropdownSelect>
                     {#if $invoiceInfoErrors.treatmentMonth}
                         <span
-                            class="ml-[-500px] font-sans text-sm italic text-system-danger"
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$invoiceInfoErrors.treatmentMonth}</span
                         >
                     {/if}
@@ -223,7 +228,7 @@
                     ></DropdownSelect>
                     {#if $invoiceInfoErrors.treatmentYear}
                         <span
-                            class="ml-[-500px] font-sans text-sm italic text-system-danger"
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$invoiceInfoErrors.treatmentYear}</span
                         >
                     {/if}
@@ -242,14 +247,14 @@
             ><TextIconButton
                 primary
                 label="Hantar"
-                form="retirementDocumentFormValidation"
+                form="documentFormValidation"
                 ><SvgPaperAirplane /></TextIconButton
             ></StepperContentHeader
         >
         <StepperContentBody
             ><form
-                id="retirementDocumentFormValidation"
-                on:submit|preventDefault={retirementDocumentForm}
+                id="documentFormValidation"
+                on:submit|preventDefault={documentForm}
                 class="flex w-full flex-col gap-2"
             >
                 <div class="flex w-full flex-col gap-2">
