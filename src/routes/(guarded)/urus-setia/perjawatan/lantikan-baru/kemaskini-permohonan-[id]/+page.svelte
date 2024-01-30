@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
@@ -10,6 +9,7 @@
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
+    import StepperOtherRolesResult from '$lib/components/stepper-conditional-rules/StepperOtherRolesResult.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
@@ -28,8 +28,10 @@
     import Stepper204 from '$lib/components/stepper-conditional-rules/Stepper204.svelte';
     import type { CandidatePersonalData } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-respone.model';
     import {
+    approveOptions,
         certifyOptions,
         commonOptions,
+        supportOptions,
     } from '$lib/constants/mypsm/radio-option-constants';
     export let data: PageData;
 
@@ -37,54 +39,64 @@
         data.personalDetailResponse.data;
 
     let isSuccessPersonalFormResponse: boolean =
-        data.personalDetailResponse.status === 201;
+        data.personalDetailResponse.status >= 200 &&
+        data.personalDetailResponse.status <= 201;
     let isReadonlyPersonalFormStepper: boolean =
         data.personalDetailResponse?.data?.isReadonly;
 
     let isSuccessAcademicFormResponse: boolean =
-        data.academicInfoResponse.status === 201;
+        data.academicInfoResponse.status >= 200 &&
+        data.academicInfoResponse.status <= 201;
     let isReadonlyAcademicFormStepper: boolean =
         data.academicInfoResponse?.data?.isReadonly;
 
     let isSuccessExperienceFormResponse: boolean =
-        data.experienceInfoResponse.status === 201;
+        data.experienceInfoResponse.status >= 200 &&
+        data.experienceInfoResponse.status <= 201;
     let isReadonlyExperienceFormStepper: boolean =
         data.experienceInfoResponse?.data?.isReadonly;
 
     let isSuccessActivityFormResponse: boolean =
-        data.activityInfoResponse.status === 201;
+        data.activityInfoResponse.status >= 200 &&
+        data.activityInfoResponse.status <= 201;
     let isReadonlyActivityFormStepper: boolean =
         data.activityInfoResponse?.data?.isReadonly;
 
     let isSuccessFamilyFormResponse: boolean =
-        data.familyInfoResponse.status === 201;
+        data.familyInfoResponse.status >= 200 &&
+        data.familyInfoResponse.status <= 201;
     let isReadonlyFamilyFormStepper: boolean =
         data.familyInfoResponse?.data?.isReadonly;
 
     let isSuccessDependencyFormResponse: boolean =
-        data.dependencyInfoResponse.status === 201;
+        data.dependencyInfoResponse.status >= 200 &&
+        data.dependencyInfoResponse.status <= 201;
     let isReadonlyDependencyFormStepper: boolean =
         data.dependencyInfoResponse?.data?.isReadonly;
 
     let isSuccessNextOfKinFormResponse: boolean =
-        data.nextOfKinInfoResponse.status === 201;
+        data.nextOfKinInfoResponse.status >= 200 &&
+        data.nextOfKinInfoResponse.status <= 201;
     let isReadonlyNextOfKinFormStepper: boolean =
         data.nextOfKinInfoResponse?.data?.isReadonly;
 
     let isSuccessDocumentFormResponse: boolean =
-        data.documentInfoResponse.status === 201;
+        data.documentInfoResponse.status >= 200 &&
+        data.documentInfoResponse.status <= 201;
     let isReadonlyDocumentFormStepper: boolean =
         data.documentInfoResponse?.data?.isReadonly;
 
     let isSuccessServiceFormResponse: boolean =
-        data.serviceResponse.status === 201;
+        data.serviceResponse.status >= 200 &&
+        data.serviceResponse.status <= 201;
     let isReadonlyServiceFormStepper: boolean =
         data.serviceResponse?.data?.isReadonly;
 
     let isSuccessSetApproversResponse: boolean =
-        data.secretarySetApproversResponse.status === 201;
+        data.secretaryGetApproversResponse.status >= 200 &&
+        data.secretaryGetApproversResponse.status <= 201;
     let isReadonlySetApproversFormStepper: boolean =
-        data.secretarySetApproversDetails?.isReadonly;
+        data.secretaryGetApproversResponse?.data?.isReadonly;
 
     // Stepper Classes
     let stepperFormTitleClass =
@@ -739,7 +751,6 @@
             </div></StepperContentBody
         >
     </StepperContent>
-    <!-- {#if !isReadonlyDocumentFormStepper} -->
     <StepperContent>
         <StepperContentHeader title="Kemaskini Lantikan Baru">
             {#if !isReadonlyServiceFormStepper}
@@ -1268,18 +1279,20 @@
             </form>
         </StepperContentBody>
     </StepperContent>
-    <!-- {/if} -->
     <StepperContent>
         <StepperContentHeader
             title="Keputusan Lantikan Baru (Urus Setia Perjawatan)"
-            ><TextIconButton
-                primary
-                label="Simpan"
-                form="newEmploymentSecretaryResultForm"
-            >
-                <SvgCheck></SvgCheck>
-            </TextIconButton></StepperContentHeader
         >
+            {#if !data.secretaryApprovalResponse.data.isApproved}
+                <TextIconButton
+                    primary
+                    label="Simpan"
+                    form="newEmploymentSecretaryResultForm"
+                >
+                    <SvgCheck></SvgCheck>
+                </TextIconButton>
+            {/if}
+        </StepperContentHeader>
         <StepperContentBody>
             <form
                 id="newEmploymentSecretaryResultForm"
@@ -1296,6 +1309,7 @@
                 <input hidden bind:value={$secretaryApprovalInfoForm.id} />
 
                 <LongTextField
+                    disabled={data.secretaryApprovalResponse.data.isApproved}
                     hasError={!!$secretaryApprovalInfoErrors.remark}
                     name="remark"
                     label="Tindakan/Ulasan"
@@ -1309,8 +1323,8 @@
                 {/if}
 
                 <RadioSingle
+                    disabled={data.secretaryApprovalResponse.data.isApproved}
                     name="isApproved"
-                    disabled={false}
                     options={certifyOptions}
                     legend={'Keputusan'}
                     bind:userSelected={$secretaryApprovalInfoForm.isApproved}
@@ -1349,11 +1363,17 @@
                     bind:value={$secretarySetApproverForm.candidateId}
                 />
                 <DropdownSelect
+                    disabled={isReadonlySetApproversFormStepper}
                     hasError={!!$secretarySetApproverErrors.supporterId}
                     id="supporterId"
                     label="Nama Penyokong"
                     dropdownType="label-left-full"
-                    options={data.employeeListLookup}
+                    options={[
+                        {
+                            value: 1,
+                            name: 'Mohd Iqbal',
+                        },
+                    ]}
                     bind:value={$secretarySetApproverForm.supporterId}
                 />
                 {#if $secretarySetApproverErrors.supporterId}
@@ -1363,11 +1383,17 @@
                     >
                 {/if}
                 <DropdownSelect
+                    disabled={isReadonlySetApproversFormStepper}
                     hasError={!!$secretarySetApproverErrors.approverId}
                     id="approverId"
                     label="Nama Pelulus"
                     dropdownType="label-left-full"
-                    options={data.employeeListLookup}
+                    options={[
+                        {
+                            value: 2,
+                            name: 'Mohd Kairom',
+                        },
+                    ]}
                     bind:value={$secretarySetApproverForm.approverId}
                 />
                 {#if $secretarySetApproverErrors.approverId}
@@ -1379,7 +1405,6 @@
             </form>
         </StepperContentBody>
     </StepperContent>
-
     <StepperContent>
         <StepperContentHeader title="Keputusan daripada Peranan - Peranan Lain"
         ></StepperContentHeader>
@@ -1392,27 +1417,29 @@
                     <TextField
                         disabled
                         type="text"
-                        name="supporter-name"
+                        name="supporterName"
                         label="Nama"
-                        value="Mohd Rahim Ismail"
+                        bind:value={data.supporterResultResponse.data.name}
                     ></TextField>
-                    <LongTextField
-                        disabled
-                        name="supporter-remark"
-                        label="Tindakan/Ulasan"
-                        value="Layak"
-                    ></LongTextField>
-                    <div class="flex w-full flex-row text-sm">
-                        <label for="supporter-result" class="w-[220px]"
-                            >Keputusan</label
-                        >
-                        <!-- <Badge
-                            border
-                            color={passerResult == 'supported'
-                                ? 'green'
-                                : 'red'}>{results[3].name}</Badge -->
-                        >
-                    </div>
+                    {#if data.supporterResultResponse.data.isApproved}
+                        <LongTextField
+                            disabled
+                            name="supporterRemark"
+                            label="Tindakan/Ulasan"
+                            bind:value={data.supporterResultResponse.data
+                                .remark}
+                        ></LongTextField>
+                        <RadioSingle
+                            disabled
+                            name="supporterIsApproved"
+                            options={supportOptions}
+                            legend={'Keputusan'}
+                            bind:userSelected={data.supporterResultResponse.data
+                                .isApproved}
+                        ></RadioSingle>
+                    {:else}
+                        <StepperOtherRolesResult />
+                    {/if}
                 </div>
                 <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
                     <div class="mb-5">
@@ -1421,26 +1448,28 @@
                     <TextField
                         disabled
                         type="text"
-                        name="approver-name"
+                        name="approverName"
                         label="Nama"
-                        value="Mohd Safwan Adam"
+                        bind:value={data.approverResultResponse.data.name}
                     ></TextField>
-                    <LongTextField
-                        disabled
-                        name="approver-remark"
-                        label="Tindakan/Ulasan"
-                        value="Layak"
-                    ></LongTextField>
-                    <div class="flex w-full flex-row text-sm">
-                        <label for="approver-result" class="w-[220px]"
-                            >Keputusan</label
-                        >
-                        <!-- <Badge
-                            border
-                            color={passerResult == 'passed' ? 'green' : 'red'}
-                            >{results.name}</Badge
-                        > -->
-                    </div>
+                    {#if data.approverResultResponse.data.isApproved}
+                        <LongTextField
+                            disabled
+                            name="approverRemark"
+                            label="Tindakan/Ulasan"
+                            bind:value={data.approverResultResponse.data.remark}
+                        ></LongTextField>
+                        <RadioSingle
+                            disabled
+                            name="approverIsApproved"
+                            options={approveOptions}
+                            legend={'Keputusan'}
+                            bind:userSelected={data.approverResultResponse.data
+                                .isApproved}
+                        ></RadioSingle>
+                    {:else}
+                        <StepperOtherRolesResult />
+                    {/if}
                 </div>
                 <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
                     <div class="mb-5">
@@ -1453,41 +1482,31 @@
                         type="text"
                         name="service-secretary-name"
                         label="Nama"
-                        value="Ikhwan bin Salem"
+                        bind:value={data.secretaryApprovalResponse.data.name}
                     ></TextField>
-                    <LongTextField
-                        disabled
-                        name="service-secretary-remark"
-                        label="Tindakan/Ulasan"
-                        value="Layak"
-                    ></LongTextField>
-                    <div class="flex w-full flex-row text-sm">
-                        <label for="service-secretary-result" class="w-[220px]"
-                            >Keputusan</label
-                        >
-                        <!-- <Badge
-                            border
-                            color={passerResult == 'passed' ? 'green' : 'red'}
-                            >{results.name}</Badge
-                        > -->
-                    </div>
+                    {#if !!data.secretaryApprovalResponse.data.isApproved}
+                        <LongTextField
+                            disabled
+                            name="service-secretary-remark"
+                            label="Tindakan/Ulasan"
+                            bind:value={data.secretaryApprovalResponse.data
+                                .remark}
+                        ></LongTextField>
+                        <RadioSingle
+                            disabled
+                            name="supporterIsApproved"
+                            options={certifyOptions}
+                            legend={'Keputusan'}
+                            bind:userSelected={data.secretaryApprovalResponse
+                                .data.isApproved}
+                        ></RadioSingle>
+                    {:else}
+                        <StepperOtherRolesResult />
+                    {/if}
                 </div>
             </div>
         </StepperContentBody>
     </StepperContent>
-    <!--<StepperContent>
-        <StepperContentHeader title="Maklumat ID MyPSM"></StepperContentHeader>
-        <StepperContentBody>
-            <div class="flex w-full flex-col gap-2">
-                <TextField
-                    {disabled}
-                    name="staff-number"
-                    label={'No. Pekerja (Dijana secara automatik)'}
-                    value={data.currentEmployee.employeeNumber}
-                ></TextField>
-            </div>
-        </StepperContentBody>
-    </StepperContent> -->
 </Stepper>
 
 <Toaster />
