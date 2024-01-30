@@ -1,34 +1,16 @@
 <script lang="ts">
     // Importing external components and libraries
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
-    import FormButton from '$lib/components/buttons/FormButton.svelte';
     import FilterContainer from '$lib/components/filter-container/FilterContainer.svelte';
-    import { status } from '$lib/mocks/status/status';
     import { goto } from '$app/navigation';
     import ShortTextField from '$lib/components/input/ShortTextField.svelte';
-    import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import StaffSelector from '$lib/components/staff-selector/StaffSelector.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
-
-    let selectedStatus = status[0].value; // Default selected filter
-
-    // mock data
-    const lantikanBaru = [
-        {
-            namaKakitangan: 'Mohd  Irfan bin Abu',
-            idSementara: '01288',
-            noKadPengenalan: '889955-11-2244',
-            kategori: 'Tetap',
-            TarikhMohon: '23-08-2023',
-            TarikLantikan: '',
-            TarikhBersara: '',
-            emel: 'wee.ting@hrmis.com',
-            status: 'SAH - Urusetia Perjawatan',
-        },
-    ];
-
-    let tempStaff: any;
+    import type { NewHire } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-supporter-table-list-response.model';
+    import type { PageData } from './$types';
+    export let data: PageData;
+    let tempStaff: NewHire;
 </script>
 
 <!-- content header starts here -->
@@ -51,13 +33,13 @@
         <ShortTextField label="Tarikh Lantikan" type="date" />
         <ShortTextField label="Tarikh Mohon" type="date" />
         <!-- Select dropdown for status -->
-        <DropdownSelect
+        <!-- <DropdownSelect
             id="status-dropdown"
             label="Status"
             dropdownType="label-left"
             bind:index={selectedStatus}
             options={status}
-        />
+        /> -->
     </FilterContainer>
 
     <!-- Sample table for testing purposes -->
@@ -67,10 +49,12 @@
             withActions
             actionOptions={['edit']}
             editActions={() => {
-                const url = './lantikan-baru/kemaskini-permohonan';
+                const url =
+                    './lantikan-baru/kemaskini-permohonan-' +
+                    tempStaff.candidateId;
                 goto(url);
             }}
-            tableItems={lantikanBaru}
+            tableItems={data.newHireLists}
             bind:passData={tempStaff}
         ></DynamicTable>
     </div>
