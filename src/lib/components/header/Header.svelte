@@ -6,6 +6,9 @@
     import MyPSM from '$lib/assets/MyPSM.png';
     import { AuthService } from '$lib/services/implementations/core/auth/authentication.service';
     import { goto } from '$app/navigation';
+    import type { RoleOption } from '$lib/view-models/core/role-option/role-option.view-model';
+
+    export let roleOptionList: RoleOption[] = [];
 
     const logOutUser = async () => {
         await AuthService.logout().finally(() => {
@@ -28,7 +31,7 @@
     </div>
     <div class="flex w-fit flex-row items-center md:justify-end">
         <!-- <HeaderProfile /> -->
-        <AccountTile></AccountTile>
+        <AccountTile roleOptionList={roleOptionList}></AccountTile>
         <div class="flex w-[50px] flex-col items-center justify-center p-0">
             
                 <button on:click={logOutUser}>
