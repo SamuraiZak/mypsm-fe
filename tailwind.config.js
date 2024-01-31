@@ -188,7 +188,7 @@ export default {
                             dark: '#F9F9FC',
                         },
                         separator: {
-                            light: '#C7C7C9',
+                            light: '#E5E7EB',
                             dark: '#98989B',
                         },
                         opaqueSeparator: {
