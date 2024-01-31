@@ -18,21 +18,24 @@
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import {
-        _secretaryApprovalInfoSchema,
+        _approvalResultSchema,
         _secretarySetApproversSchema,
         _serviceInfoSchema,
+        _submitApproverApprovalForm,
         _submitSecretaryApprovalForm,
         _submitSecretarySetApproverForm,
         _submitServiceInfoForm,
+        _submitSupporterApprovalForm,
     } from './+page';
     import Stepper204 from '$lib/components/stepper-conditional-rules/Stepper204.svelte';
     import type { CandidatePersonalData } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-respone.model';
     import {
-    approveOptions,
         certifyOptions,
+        approveOptions,
         commonOptions,
         supportOptions,
     } from '$lib/constants/mypsm/radio-option-constants';
+    import { goto } from '$app/navigation';
     export let data: PageData;
 
     const personalDetails: CandidatePersonalData =
@@ -152,7 +155,7 @@
         enhance: secretaryApprovalInfoEnhance,
     } = superForm(data.secretaryApprovalInfoForm, {
         SPA: true,
-        validators: _secretaryApprovalInfoSchema,
+        validators: _approvalResultSchema,
         onSubmit() {
             _submitSecretaryApprovalForm($secretaryApprovalInfoForm);
         },
@@ -169,13 +172,37 @@
             _submitSecretarySetApproverForm($secretarySetApproverForm);
         },
     });
+
+    const {
+        form: supporterApprovalForm,
+        errors: supporterApprovalErrors,
+        enhance: supporterApprovalEnhance,
+    } = superForm(data.supporterApprovalForm, {
+        SPA: true,
+        validators: _approvalResultSchema,
+        onSubmit() {
+            _submitSupporterApprovalForm($supporterApprovalForm);
+        },
+    });
+
+    const {
+        form: approverApprovalForm,
+        errors: approverApprovalErrors,
+        enhance: approverApprovalEnhance,
+    } = superForm(data.approverApprovalForm, {
+        SPA: true,
+        validators: _approvalResultSchema,
+        onSubmit() {
+            _submitApproverApprovalForm($approverApprovalForm);
+        },
+    });
 </script>
 
 <ContentHeader title="Maklumat Lantikan Baru" description=""
     ><FormButton
         type="close"
         onClick={() => {
-            // goto('../lantikan-baru');
+            goto('../lantikan-baru');
         }}
     /></ContentHeader
 >
@@ -771,7 +798,6 @@
                 use:serviceInfoEnhance
                 class="flex w-full flex-col gap-2.5"
             >
-                <!-- <input hidden bind:value={$serviceInfoForm.candidateId} /> -->
                 <DropdownSelect
                     disabled={isReadonlyServiceFormStepper}
                     hasError={!!$serviceInfoErrors.gradeId}
@@ -1167,18 +1193,6 @@
                 </p>
                 <div class="grid grid-cols-2 gap-10">
                     <div class="space-y-2.5">
-                        <!-- <TextField
-                            hasError={!!$serviceInfoErrors.salaryDateOfEffect}
-                            name="salaryDateOfEffect"
-                            label={'Tarikh Berkuatkuasa'}
-                            bind:value={'12/12/2021'}
-                        ></TextField>
-                        {#if $serviceInfoErrors.salaryDateOfEffect}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$serviceInfoErrors.salaryDateOfEffect}</span
-                            >
-                        {/if} -->
                         <TextField
                             disabled={isReadonlyServiceFormStepper}
                             hasError={!!$serviceInfoErrors.maximumSalary}
@@ -1282,17 +1296,15 @@
     <StepperContent>
         <StepperContentHeader
             title="Keputusan Lantikan Baru (Urus Setia Perjawatan)"
-        >
-            {#if !data.secretaryApprovalResponse.data.isApproved}
+            >{#if !data.secretaryApprovalResponse.data.isApproved}
                 <TextIconButton
                     primary
                     label="Simpan"
                     form="newEmploymentSecretaryResultForm"
                 >
                     <SvgCheck></SvgCheck>
-                </TextIconButton>
-            {/if}
-        </StepperContentHeader>
+                </TextIconButton>{/if}</StepperContentHeader
+        >
         <StepperContentBody>
             <form
                 id="newEmploymentSecretaryResultForm"
@@ -1309,7 +1321,7 @@
                 <input hidden bind:value={$secretaryApprovalInfoForm.id} />
 
                 <LongTextField
-                    disabled={data.secretaryApprovalResponse.data.isApproved}
+                    disabled
                     hasError={!!$secretaryApprovalInfoErrors.remark}
                     name="remark"
                     label="Tindakan/Ulasan"
@@ -1323,8 +1335,8 @@
                 {/if}
 
                 <RadioSingle
-                    disabled={data.secretaryApprovalResponse.data.isApproved}
                     name="isApproved"
+                    disabled
                     options={certifyOptions}
                     legend={'Keputusan'}
                     bind:userSelected={$secretaryApprovalInfoForm.isApproved}
@@ -1406,10 +1418,61 @@
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Keputusan daripada Peranan - Peranan Lain"
-        ></StepperContentHeader>
+        <StepperContentHeader title="Keputusan daripada Peranan - Peranan Lain">
+            {#if !data.approverResultResponse.data.isApproved}
+                <TextIconButton
+                    primary
+                    label="Simpan"
+                    form="newEmploymentApproverApproval"
+                >
+                    <SvgCheck></SvgCheck>
+                </TextIconButton>
+            {/if}
+        </StepperContentHeader>
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2.5">
+                <form
+                    id="newEmploymentApproverApproval"
+                    method="POST"
+                    use:approverApprovalEnhance
+                    class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                >
+                    <div class="mb-5">
+                        <b class="text-sm text-system-primary">Pelulus</b>
+                    </div>
+                    {#if data.supporterResultResponse.data.isApproved}
+                        <LongTextField
+                            disabled={data.approverResultResponse.data
+                                .isApproved}
+                            hasError={!!$approverApprovalErrors.remark}
+                            name="approverRemark"
+                            label="Tindakan/Ulasan"
+                            bind:value={$approverApprovalForm.remark}
+                        ></LongTextField>
+                        {#if $approverApprovalErrors.remark}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$approverApprovalErrors.remark}</span
+                            >
+                        {/if}
+                        <RadioSingle
+                            disabled={data.approverResultResponse.data
+                                .isApproved}
+                            name="approverIsApproved"
+                            options={approveOptions}
+                            legend={'Keputusan'}
+                            bind:userSelected={$approverApprovalForm.isApproved}
+                        ></RadioSingle>
+                        {#if $approverApprovalErrors.isApproved}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$approverApprovalErrors.isApproved}</span
+                            >
+                        {/if}
+                    {:else}
+                        <StepperOtherRolesResult />
+                    {/if}
+                </form>
                 <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
                     <div class="mb-5">
                         <b class="text-sm text-system-primary">Penyokong</b>
@@ -1435,36 +1498,6 @@
                             options={supportOptions}
                             legend={'Keputusan'}
                             bind:userSelected={data.supporterResultResponse.data
-                                .isApproved}
-                        ></RadioSingle>
-                    {:else}
-                        <StepperOtherRolesResult />
-                    {/if}
-                </div>
-                <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
-                    <div class="mb-5">
-                        <b class="text-sm text-system-primary">Pelulus</b>
-                    </div>
-                    <TextField
-                        disabled
-                        type="text"
-                        name="approverName"
-                        label="Nama"
-                        bind:value={data.approverResultResponse.data.name}
-                    ></TextField>
-                    {#if data.approverResultResponse.data.isApproved}
-                        <LongTextField
-                            disabled
-                            name="approverRemark"
-                            label="Tindakan/Ulasan"
-                            bind:value={data.approverResultResponse.data.remark}
-                        ></LongTextField>
-                        <RadioSingle
-                            disabled
-                            name="approverIsApproved"
-                            options={approveOptions}
-                            legend={'Keputusan'}
-                            bind:userSelected={data.approverResultResponse.data
                                 .isApproved}
                         ></RadioSingle>
                     {:else}

@@ -13,13 +13,19 @@ import type { CandidateExperienceDetailsResponse } from '$lib/view-models/mypsm/
 import type { CandidateFamilyDetailsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-family-details-response.model';
 import type { CandidateNextOfKinDetailsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-next-of-kin-details-response.model';
 import type { CandidatePersonalDetailsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-personal-details-respone.model';
-import type { NewHireApproverResultResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-approver-result-response.model';
+import type {
+    NewHireApproverResult,
+    NewHireApproverResultResponse,
+} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-approver-result-response.model';
 import type {
     NewHireGetApproversResponse,
     SupporterApprovalData,
 } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-approvers-response.model.js';
 import type { NewHireDocumentsResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-document-response.view-model';
-import type { NewHireSupporterResultResponse } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-supporter-result-response.model';
+import type {
+    NewHireSupporterResult,
+    NewHireSupporterResultResponse,
+} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-get-supporter-result-response.model';
 import type { NewHireSecretaryAddUpdateRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-secretary-add-update-request.model';
 import type {
     NewHireSecretaryApprovalResponse,
@@ -144,7 +150,7 @@ export const _serviceInfoSchema = z.object({
     cola: numberSchema,
 });
 
-export const _secretaryApprovalInfoSchema = z.object({
+export const _approvalResultSchema = z.object({
     id: numberIdSchema,
     remark: longTextSchema,
     isApproved: booleanSchema.default(true),
@@ -155,6 +161,18 @@ export const _secretarySetApproversSchema = z.object({
     supporterId: numberIdSchema,
     approverId: numberIdSchema,
 });
+
+// export const _supporterResultSchema = z.object({
+//     id: numberIdSchema,
+//     remark: longTextSchema,
+//     isApproved: booleanSchema,
+// });
+
+// export const _approverResultSchema = z.object({
+//     candidateId: numberIdSchema,
+//     supporterId: numberIdSchema,
+//     approverId: numberIdSchema,
+// });
 
 export async function load({ params }) {
     const candidateIdRequestBody = {
@@ -236,7 +254,7 @@ export async function load({ params }) {
 
     const secretaryApprovalInfoForm = await superValidate(
         secretaryApprovalDetails,
-        _secretaryApprovalInfoSchema,
+        _approvalResultSchema,
     );
 
     const secretarySetApproversForm = await superValidate(
@@ -244,13 +262,22 @@ export async function load({ params }) {
         _secretarySetApproversSchema,
     );
 
+    const supporterApprovalForm = await superValidate(
+        supporterResultResponse.data as NewHireSupporterResult,
+        _approvalResultSchema,
+    );
+    const approverApprovalForm = await superValidate(
+        approverResultResponse.data as NewHireApproverResult,
+        _approvalResultSchema,
+    );
+
     serviceInfoForm.data.candidateId = candidateIdRequestBody.candidateId;
     secretarySetApproversForm.data.candidateId =
         candidateIdRequestBody.candidateId;
+    supporterApprovalForm.data.id = candidateIdRequestBody.candidateId;
+    approverApprovalForm.data.id = candidateIdRequestBody.candidateId;
 
     return {
-        supporterResultResponse,
-        approverResultResponse,
         personalDetailResponse,
         academicInfoResponse,
         experienceInfoResponse,
@@ -265,6 +292,10 @@ export async function load({ params }) {
         secretaryApprovalInfoForm,
         secretaryGetApproversResponse,
         secretarySetApproversForm,
+        supporterResultResponse,
+        approverResultResponse,
+        supporterApprovalForm,
+        approverApprovalForm,
     };
 }
 
@@ -297,7 +328,7 @@ export const _submitServiceInfoForm = async (formData: object) => {
 };
 
 export const _submitSecretaryApprovalForm = async (formData: object) => {
-    const form = await superValidate(formData, _secretaryApprovalInfoSchema);
+    const form = await superValidate(formData, _approvalResultSchema);
 
     if (!form.valid) {
         getErrorToast();
@@ -340,6 +371,64 @@ export const _submitSecretarySetApproverForm = async (formData: object) => {
     const response: RequestSuccessBody =
         await EmployeeService.createCurrentCandidateApprovers(
             form.data as NewHireSetApproversRequestBody,
+        ).finally(() => toast.dismiss());
+
+    if (response.status > 201) {
+        // if error toast
+        getServerErrorToast();
+        return error(400, { message: response.message });
+    }
+
+    // if success toast
+    getSuccessToast();
+
+    return { form };
+};
+
+export const _submitSupporterApprovalForm = async (formData: object) => {
+    const form = await superValidate(formData, _approvalResultSchema);
+
+    if (!form.valid) {
+        getErrorToast();
+        return fail(400, form);
+    }
+
+    console.log(form.data);
+    // start by rendering loading toast
+    getLoadingToast();
+
+    const response: RequestSuccessBody =
+        await EmployeeService.createCurrentCandidateSupporterApproval(
+            form.data as AddApprovalResultRequestBody,
+        ).finally(() => toast.dismiss());
+
+    if (response.status !== 201) {
+        // if error toast
+        getServerErrorToast();
+        return error(400, { message: response.message });
+    }
+
+    // if success toast
+    getSuccessToast();
+
+    return { form };
+};
+
+export const _submitApproverApprovalForm = async (formData: object) => {
+    const form = await superValidate(formData, _approvalResultSchema);
+
+    if (!form.valid) {
+        getErrorToast();
+        return fail(400, form);
+    }
+
+    console.log(form.data);
+    // start by rendering loading toast
+    getLoadingToast();
+
+    const response: RequestSuccessBody =
+        await EmployeeService.createCurrentCandidateApproverApproval(
+            form.data as AddApprovalResultRequestBody,
         ).finally(() => toast.dismiss());
 
     if (response.status > 201) {

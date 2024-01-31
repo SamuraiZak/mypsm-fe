@@ -19,6 +19,7 @@
     import { goto } from '$app/navigation';
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import { Checkbox } from 'flowbite-svelte';
+    import StepperOtherRolesResult from '$lib/components/stepper-conditional-rules/StepperOtherRolesResult.svelte';
     import FileInputField from '$lib/components/input/FileInputField.svelte';
     import {
         _academicInfoSchema,
@@ -33,7 +34,6 @@
         _nextOfKinInfoSchema,
         _nextOfKinListSchema,
         _personalInfoForm,
-        _serviceInfoSchema,
         _submitAcademicInfoForm,
         _submitActivityInfoForm,
         _submitDependencyInfoForm,
@@ -42,10 +42,9 @@
         _submitFamilyInfoForm,
         _submitNextOfKinInfoForm,
         _submitPersonalInfoForm,
-        _submitServiceInfoForm,
     } from './+page';
     import { superForm, superValidate } from 'sveltekit-superforms/client';
-    import toast, { Toaster } from 'svelte-french-toast';
+    import { Toaster } from 'svelte-french-toast';
     import { getErrorToast } from '$lib/services/core/toast/toast-service';
     import { fileSelectionList } from '$lib/stores/globalState';
     import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
@@ -58,7 +57,12 @@
     import type { DependenciesList } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-dependencies-details-response.model';
     import type { NextOfKinList } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-next-of-kin-details-response.model';
     import StepperUneditable from '$lib/components/stepper-conditional-rules/StepperUneditable.svelte';
-    import { commonOptions } from '$lib/constants/mypsm/radio-option-constants';
+    import {
+        approveOptions,
+        certifyOptions,
+        commonOptions,
+        supportOptions,
+    } from '$lib/constants/mypsm/radio-option-constants';
     export let data: PageData;
     export let openAcademicInfoModal: boolean = false;
     export let openExperienceInfoModal: boolean = false;
@@ -75,47 +79,56 @@
     let tempNextOfKinFromFamily: NextOfKinList[] = [];
 
     let isSuccessPersonalFormResponse: boolean =
-        data.personalDetailResponse.status === 201;
+        data.personalDetailResponse.status >= 200 &&
+        data.personalDetailResponse.status <= 201;
     let isReadonlyPersonalFormStepper: boolean =
         data.personalDetailResponse?.data?.isReadonly;
 
     let isSuccessAcademicFormResponse: boolean =
-        data.academicInfoResponse.status === 201;
+        data.academicInfoResponse.status >= 200 &&
+        data.academicInfoResponse.status <= 201;
     let isReadonlyAcademicFormStepper: boolean =
         data.academicInfoResponse?.data?.isReadonly;
 
     let isSuccessExperienceFormResponse: boolean =
-        data.experienceInfoResponse.status === 201;
+        data.experienceInfoResponse.status >= 200 &&
+        data.experienceInfoResponse.status <= 201;
     let isReadonlyExperienceFormStepper: boolean =
         data.experienceInfoResponse?.data?.isReadonly;
 
     let isSuccessActivityFormResponse: boolean =
-        data.activityInfoResponse.status === 201;
+        data.activityInfoResponse.status >= 200 &&
+        data.activityInfoResponse.status <= 201;
     let isReadonlyActivityFormStepper: boolean =
         data.activityInfoResponse?.data?.isReadonly;
 
     let isSuccessFamilyFormResponse: boolean =
-        data.familyInfoResponse.status === 201;
+        data.familyInfoResponse.status >= 200 &&
+        data.familyInfoResponse.status <= 201;
     let isReadonlyFamilyFormStepper: boolean =
         data.familyInfoResponse?.data?.isReadonly;
 
     let isSuccessDependencyFormResponse: boolean =
-        data.dependencyInfoResponse.status === 201;
+        data.dependencyInfoResponse.status >= 200 &&
+        data.dependencyInfoResponse.status <= 201;
     let isReadonlyDependencyFormStepper: boolean =
         data.dependencyInfoResponse?.data?.isReadonly;
 
     let isSuccessNextOfKinFormResponse: boolean =
-        data.nextOfKinInfoResponse.status === 201;
+        data.nextOfKinInfoResponse.status >= 200 &&
+        data.nextOfKinInfoResponse.status <= 201;
     let isReadonlyNextOfKinFormStepper: boolean =
         data.nextOfKinInfoResponse?.data?.isReadonly;
 
     let isSuccessDocumentFormResponse: boolean =
-        data.documentInfoResponse.status === 201;
+        data.documentInfoResponse.status >= 200 &&
+        data.documentInfoResponse.status <= 201;
     let isReadonlyDocumentFormStepper: boolean =
         data.documentInfoResponse?.data?.isReadonly;
 
     let isSuccessServiceFormResponse: boolean =
-        data.serviceResponse.status === 201;
+        data.serviceResponse.status >= 200 &&
+        data.serviceResponse.status <= 201;
     let isReadonlyServiceFormStepper: boolean =
         data.serviceResponse?.data?.isReadonly;
 
@@ -160,18 +173,6 @@
 
         onSubmit() {
             _submitPersonalInfoForm($form);
-        },
-    });
-
-    const {
-        form: serviceInfoForm,
-        errors: serviceInfoErrors,
-        enhance: serviceInfoEnhance,
-    } = superForm(data.serviceInfoForm, {
-        SPA: true,
-        validators: _serviceInfoSchema,
-        onSubmit() {
-            _submitServiceInfoForm($serviceInfoForm);
         },
     });
 
@@ -1548,505 +1549,389 @@
     {#if !isReadonlyDocumentFormStepper}
         <StepperContent>
             <StepperContentHeader title="Kemaskini Lantikan Baru"
-                ><TextIconButton
-                    primary
-                    label="Simpan"
-                    form="newHireEmploymentServiceForm"
-                >
-                    <SvgCheck></SvgCheck>
-                </TextIconButton>
-            </StepperContentHeader>
+            ></StepperContentHeader>
             <StepperContentBody>
                 <p class={stepperFormTitleClass}>Maklumat Perkhidmatan</p>
-                <form
-                    id="newHireEmploymentServiceForm"
-                    method="POST"
-                    use:serviceInfoEnhance
-                    class="flex w-full flex-col gap-2.5"
-                >
-                    <!-- <input hidden bind:value={$serviceInfoForm.candidateId} /> -->
+                <div class="flex w-full flex-col gap-2.5">
+                    <!-- <input hidden bind:value={data.serviceResponse.data.candidateId} /> -->
                     <DropdownSelect
-                        hasError={!!$serviceInfoErrors.gradeId}
+                        disabled={isReadonlyServiceFormStepper}
                         dropdownType="label-left-full"
                         id="gradeId"
                         label="Gred Semasa"
-                        bind:value={$serviceInfoForm.gradeId}
-                        options={data.countryLookup}
+                        bind:value={data.serviceResponse.data.gradeId}
+                        options={data.gradeLookup}
                     ></DropdownSelect>
-                    {#if $serviceInfoErrors.gradeId}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.gradeId}</span
-                        >
-                    {/if}
                     <DropdownSelect
-                        hasError={!!$serviceInfoErrors.positionId}
+                        disabled={isReadonlyServiceFormStepper}
+                        dropdownType="label-left-full"
+                        id="maxGradeId"
+                        label="Gred Maksimum"
+                        bind:value={data.serviceResponse.data.maxGradeId}
+                        options={data.gradeLookup}
+                    ></DropdownSelect>
+                    <DropdownSelect
+                        disabled={isReadonlyServiceFormStepper}
                         dropdownType="label-left-full"
                         id="positionId"
                         label="Jawatan"
-                        bind:value={$serviceInfoForm.positionId}
-                        options={data.countryLookup}
+                        bind:value={data.serviceResponse.data.positionId}
+                        options={data.positionLookup}
                     ></DropdownSelect>
-                    {#if $serviceInfoErrors.positionId}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.positionId}</span
-                        >
-                    {/if}
                     <DropdownSelect
-                        hasError={!!$serviceInfoErrors.placementId}
+                        disabled={isReadonlyServiceFormStepper}
                         dropdownType="label-left-full"
                         id="placementId"
                         label="Penempatan"
-                        bind:value={$serviceInfoForm.placementId}
-                        options={data.countryLookup}
+                        bind:value={data.serviceResponse.data.placementId}
+                        options={data.placementLookup}
                     ></DropdownSelect>
-                    {#if $serviceInfoErrors.placementId}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.placementId}</span
-                        >
-                    {/if}
                     <DropdownSelect
-                        hasError={!!$serviceInfoErrors.serviceTypeId}
+                        disabled={isReadonlyServiceFormStepper}
                         dropdownType="label-left-full"
                         id="serviceTypeId"
                         label="Taraf Perkhidmatan"
-                        bind:value={$serviceInfoForm.serviceTypeId}
-                        options={data.countryLookup}
+                        bind:value={data.serviceResponse.data.serviceTypeId}
+                        options={data.educationLookup}
                     ></DropdownSelect>
-                    {#if $serviceInfoErrors.serviceTypeId}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.serviceTypeId}</span
-                        >
-                    {/if}
 
                     <DropdownSelect
-                        hasError={!!$serviceInfoErrors.serviceGroupId}
+                        disabled={isReadonlyServiceFormStepper}
                         dropdownType="label-left-full"
                         id="serviceGroupId"
                         label="Kumpulan Perkhidmatan"
-                        bind:value={$serviceInfoForm.serviceGroupId}
-                        options={data.countryLookup}
+                        bind:value={data.serviceResponse.data.serviceGroupId}
+                        options={data.serviceGroupLookup}
                     ></DropdownSelect>
-                    {#if $serviceInfoErrors.serviceGroupId}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.serviceGroupId}</span
-                        >
-                    {/if}
 
                     <DropdownSelect
-                        hasError={!!$serviceInfoErrors.unitId}
+                        disabled={isReadonlyServiceFormStepper}
                         dropdownType="label-left-full"
                         id="unitId"
                         label="Unit Perkhidmatan"
-                        bind:value={$serviceInfoForm.unitId}
-                        options={data.countryLookup}
+                        bind:value={data.serviceResponse.data.unitId}
+                        options={data.unitLookup}
                     ></DropdownSelect>
-                    {#if $serviceInfoErrors.unitId}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.unitId}</span
-                        >
-                    {/if}
 
                     <DropdownSelect
-                        hasError={!!$serviceInfoErrors.employmentStatusId}
+                        disabled={isReadonlyServiceFormStepper}
                         dropdownType="label-left-full"
                         id="employmentStatusId"
                         label="Status Perkhidmatan"
-                        bind:value={$serviceInfoForm.employmentStatusId}
-                        options={data.countryLookup}
+                        bind:value={data.serviceResponse.data
+                            .employmentStatusId}
+                        options={data.serviceTypeLookup}
                     ></DropdownSelect>
-                    {#if $serviceInfoErrors.employmentStatusId}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.employmentStatusId}</span
-                        >
-                    {/if}
 
                     <DateSelector
-                        hasError={!!$serviceInfoErrors.effectiveDate}
+                        disabled={isReadonlyServiceFormStepper}
                         name="effectiveDate"
-                        disabled={false}
                         label={'Tarikh Kuatkuasa Lantikan Semasa'}
-                        bind:selectedDate={$serviceInfoForm.effectiveDate}
+                        bind:selectedDate={data.serviceResponse.data
+                            .effectiveDate}
                     ></DateSelector>
-                    {#if $serviceInfoErrors.effectiveDate}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.effectiveDate}</span
-                        >
-                    {/if}
 
                     <DropdownSelect
-                        hasError={!!$serviceInfoErrors.retirementBenefit}
+                        disabled={isReadonlyServiceFormStepper}
                         dropdownType="label-left-full"
                         id="retirementBenefit"
                         label="Faedah Persaraan"
-                        bind:value={$serviceInfoForm.retirementBenefit}
+                        bind:value={data.serviceResponse.data.retirementBenefit}
                         options={data.retirementBenefitLookup}
                     ></DropdownSelect>
-                    {#if $serviceInfoErrors.retirementBenefit}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.retirementBenefit}</span
-                        >
-                    {/if}
 
                     <TextField
-                        disabled={false}
-                        hasError={!!$serviceInfoErrors.epfNumber}
+                        disabled={isReadonlyServiceFormStepper}
                         name="epfNumber"
                         label={'No. KWSP'}
-                        bind:value={$serviceInfoForm.epfNumber}
+                        bind:value={data.serviceResponse.data.epfNumber}
                     ></TextField>
-                    {#if $serviceInfoErrors.epfNumber}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.epfNumber}</span
-                        >
-                    {/if}
 
                     <TextField
-                        disabled={false}
-                        hasError={!!$serviceInfoErrors.socsoNumber}
+                        disabled={isReadonlyServiceFormStepper}
                         name="socsoNumber"
                         label={'No. SOCSO'}
-                        bind:value={$serviceInfoForm.socsoNumber}
+                        bind:value={data.serviceResponse.data.socsoNumber}
                     ></TextField>
-                    {#if $serviceInfoErrors.socsoNumber}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.socsoNumber}</span
-                        >
-                    {/if}
                     <TextField
-                        disabled={false}
-                        hasError={!!$serviceInfoErrors.incomeNumber}
+                        disabled={isReadonlyServiceFormStepper}
                         name="incomeNumber"
                         label={'No. Cukai'}
-                        bind:value={$serviceInfoForm.incomeNumber}
+                        bind:value={data.serviceResponse.data.incomeNumber}
                     ></TextField>
-                    {#if $serviceInfoErrors.incomeNumber}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.incomeNumber}</span
-                        >
-                    {/if}
 
                     <TextField
-                        disabled={false}
-                        hasError={!!$serviceInfoErrors.bankName}
+                        disabled={isReadonlyServiceFormStepper}
                         name="bankName"
                         label={'Bank'}
-                        bind:value={$serviceInfoForm.bankName}
+                        bind:value={data.serviceResponse.data.bankName}
                     ></TextField>
-                    {#if $serviceInfoErrors.bankName}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.bankName}</span
-                        >
-                    {/if}
 
                     <TextField
-                        disabled={false}
-                        hasError={!!$serviceInfoErrors.bankAccount}
+                        disabled={isReadonlyServiceFormStepper}
                         name="bankAccount"
                         label={'No. Akaun'}
-                        bind:value={$serviceInfoForm.bankAccount}
+                        bind:value={data.serviceResponse.data.bankAccount}
                     ></TextField>
-                    {#if $serviceInfoErrors.bankAccount}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.bankAccount}</span
-                        >
-                    {/if}
 
                     <TextField
-                        disabled={false}
-                        hasError={!!$serviceInfoErrors.eligibleLeaveCount}
+                        disabled={isReadonlyServiceFormStepper}
                         name="eligibleLeaveCount"
                         label={'Kelayakan Cuti'}
-                        bind:value={$serviceInfoForm.eligibleLeaveCount}
+                        bind:value={data.serviceResponse.data
+                            .eligibleLeaveCount}
                     ></TextField>
-                    {#if $serviceInfoErrors.eligibleLeaveCount}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.eligibleLeaveCount}</span
-                        >
-                    {/if}
 
                     <DateSelector
-                        hasError={!!$serviceInfoErrors.civilServiceStartDate}
+                        disabled={isReadonlyServiceFormStepper}
                         name="civilServiceStartDate"
-                        disabled={false}
                         label={'Mula Dilantik Perkhidmatan Kerajaan'}
-                        bind:selectedDate={$serviceInfoForm.civilServiceStartDate}
+                        bind:selectedDate={data.serviceResponse.data
+                            .civilServiceStartDate}
                     ></DateSelector>
-                    {#if $serviceInfoErrors.civilServiceStartDate}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.civilServiceStartDate}</span
-                        >
-                    {/if}
                     <DateSelector
-                        hasError={!!$serviceInfoErrors.firstServiceDate}
+                        disabled={isReadonlyServiceFormStepper}
                         name="firstServiceDate"
-                        disabled={false}
                         label={'Mula Dilantik Perkhidmatan LKIM'}
-                        bind:selectedDate={$serviceInfoForm.firstServiceDate}
+                        bind:selectedDate={data.serviceResponse.data
+                            .firstServiceDate}
                     ></DateSelector>
-                    {#if $serviceInfoErrors.firstServiceDate}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.firstServiceDate}</span
-                        >
-                    {/if}
                     <DateSelector
-                        hasError={!!$serviceInfoErrors.serviceDate}
+                        disabled={isReadonlyServiceFormStepper}
                         name="serviceDate"
-                        disabled={false}
                         label={'Mula Dilantik Perkhidmatan Sekarang'}
-                        bind:selectedDate={$serviceInfoForm.serviceDate}
+                        bind:selectedDate={data.serviceResponse.data
+                            .serviceDate}
                     ></DateSelector>
-                    {#if $serviceInfoErrors.serviceDate}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.serviceDate}</span
-                        >
-                    {/if}
                     <DateSelector
-                        hasError={!!$serviceInfoErrors.firstConfirmServiceDate}
+                        disabled={isReadonlyServiceFormStepper}
                         name="firstConfirmServiceDate"
-                        disabled={false}
                         label={'Disahkan Dalam Jawatan Pertama LKIM'}
-                        bind:selectedDate={$serviceInfoForm.firstConfirmServiceDate}
+                        bind:selectedDate={data.serviceResponse.data
+                            .firstConfirmServiceDate}
                     ></DateSelector>
-                    {#if $serviceInfoErrors.firstConfirmServiceDate}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.firstConfirmServiceDate}</span
-                        >
-                    {/if}
                     <DateSelector
-                        hasError={!!$serviceInfoErrors.confirmDate}
+                        disabled={isReadonlyServiceFormStepper}
                         name="confirmDate"
-                        disabled={false}
                         label={'Disahkan Dalam Jawatan Semasa LKIM'}
-                        bind:selectedDate={$serviceInfoForm.confirmDate}
+                        bind:selectedDate={data.serviceResponse.data
+                            .confirmDate}
                     ></DateSelector>
-                    {#if $serviceInfoErrors.confirmDate}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.confirmDate}</span
-                        >
-                    {/if}
 
                     <DateSelector
-                        hasError={!!$serviceInfoErrors.firstEffectiveDate}
+                        disabled={isReadonlyServiceFormStepper}
                         name="firstEffectiveDate"
-                        disabled={false}
                         label={'Tarikh Berkuatkuasa Lantikan Pertama'}
-                        bind:selectedDate={$serviceInfoForm.firstEffectiveDate}
+                        bind:selectedDate={data.serviceResponse.data
+                            .firstEffectiveDate}
                     ></DateSelector>
-                    {#if $serviceInfoErrors.firstEffectiveDate}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.firstEffectiveDate}</span
-                        >
-                    {/if}
                     <DateSelector
-                        hasError={!!$serviceInfoErrors.newRecruitEffectiveDate}
+                        disabled={isReadonlyServiceFormStepper}
                         name="newRecruitEffectiveDate"
-                        disabled={false}
                         label={'Tarikh Lantikan Baru'}
-                        bind:selectedDate={$serviceInfoForm.newRecruitEffectiveDate}
+                        bind:selectedDate={data.serviceResponse.data
+                            .newRecruitEffectiveDate}
                     ></DateSelector>
-                    {#if $serviceInfoErrors.newRecruitEffectiveDate}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.newRecruitEffectiveDate}</span
-                        >
-                    {/if}
 
                     <TextField
-                        disabled={false}
-                        hasError={!!$serviceInfoErrors.pensionNumber}
+                        disabled={isReadonlyServiceFormStepper}
                         name="pensionNumber"
                         label={'Nombor Pencen'}
-                        bind:value={$serviceInfoForm.pensionNumber}
+                        bind:value={data.serviceResponse.data.pensionNumber}
                     ></TextField>
-                    {#if $serviceInfoErrors.pensionNumber}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.pensionNumber}</span
-                        >
-                    {/if}
 
                     <DropdownSelect
-                        hasError={!!$serviceInfoErrors.revisionMonth}
+                        disabled={isReadonlyServiceFormStepper}
                         dropdownType="label-left-full"
                         id="revisionMonth"
                         label="Bulan KGT"
-                        bind:value={$serviceInfoForm.revisionMonth}
+                        bind:value={data.serviceResponse.data.revisionMonth}
                         options={data.monthStringLookup}
                     ></DropdownSelect>
 
-                    {#if $serviceInfoErrors.revisionMonth}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.revisionMonth}</span
-                        >
-                    {/if}
-
                     <TextField
-                        disabled={false}
-                        hasError={!!$serviceInfoErrors.kgt}
+                        disabled={isReadonlyServiceFormStepper}
                         name="kgt"
                         type="number"
                         label={'KGT'}
-                        bind:value={$serviceInfoForm.kgt}
+                        bind:value={data.serviceResponse.data.kgt}
                     ></TextField>
-                    {#if $serviceInfoErrors.kgt}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.kgt}</span
-                        >
-                    {/if}
 
                     <DateSelector
-                        hasError={!!$serviceInfoErrors.retirementDate}
+                        disabled={isReadonlyServiceFormStepper}
                         name="retirementDate"
-                        disabled={false}
                         label={'Tarikh Bersara'}
-                        bind:selectedDate={$serviceInfoForm.retirementDate}
+                        bind:selectedDate={data.serviceResponse.data
+                            .retirementDate}
                     ></DateSelector>
-                    {#if $serviceInfoErrors.retirementDate}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.retirementDate}</span
-                        >
-                    {/if}
 
                     <p class={stepperFormTitleClass}>
                         Maklumat Gaji dan Elaun - Elaun
                     </p>
                     <div class="grid grid-cols-2 gap-10">
                         <div class="space-y-2.5">
-                            <!-- <TextField
-                            disabled={false}
-                            hasError={!!$serviceInfoErrors.salaryDateOfEffect}
-                            name="salaryDateOfEffect"
-                            label={'Tarikh Berkuatkuasa'}
-                            bind:value={'12/12/2021'}
-                        ></TextField>
-                        {#if $serviceInfoErrors.salaryDateOfEffect}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$serviceInfoErrors.salaryDateOfEffect}</span
-                            >
-                        {/if} -->
                             <TextField
-                                disabled={false}
-                                hasError={!!$serviceInfoErrors.maximumSalary}
+                                disabled={isReadonlyServiceFormStepper}
                                 name="maximumSalary"
                                 label={'Tangga Gaji'}
-                                bind:value={$serviceInfoForm.maximumSalary}
+                                bind:value={data.serviceResponse.data
+                                    .maximumSalary}
                             ></TextField>
-                            {#if $serviceInfoErrors.maximumSalary}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$serviceInfoErrors.maximumSalary}</span
-                                >
-                            {/if}
 
                             <TextField
-                                disabled={false}
-                                hasError={!!$serviceInfoErrors.baseSalary}
+                                disabled={isReadonlyServiceFormStepper}
                                 name="baseSalary"
                                 label={'Gaji Pokok'}
-                                bind:value={$serviceInfoForm.baseSalary}
+                                bind:value={data.serviceResponse.data
+                                    .baseSalary}
                             ></TextField>
-                            {#if $serviceInfoErrors.baseSalary}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$serviceInfoErrors.baseSalary}</span
-                                >
-                            {/if}
                         </div>
                         <div class="space-y-2.5">
                             <TextField
                                 hasTooltip={true}
                                 toolTipID="type-itka"
-                                disabled={false}
-                                hasError={!!$serviceInfoErrors.itka}
+                                disabled={isReadonlyServiceFormStepper}
                                 name="itka"
                                 label={'ITKA'}
-                                bind:value={$serviceInfoForm.itka}
+                                bind:value={data.serviceResponse.data.itka}
                             ></TextField>
-                            {#if $serviceInfoErrors.itka}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$serviceInfoErrors.itka}</span
-                                >
-                            {/if}
                             <TextField
                                 hasTooltip={true}
                                 toolTipID="type-itp"
-                                disabled={false}
-                                hasError={!!$serviceInfoErrors.itp}
+                                disabled={isReadonlyServiceFormStepper}
                                 name="itp"
                                 label={'ITP'}
-                                bind:value={$serviceInfoForm.itp}
+                                bind:value={data.serviceResponse.data.itp}
                             ></TextField>
-                            {#if $serviceInfoErrors.itp}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$serviceInfoErrors.itp}</span
-                                >
-                            {/if}
                             <TextField
                                 hasTooltip={true}
                                 toolTipID="type-epw"
-                                disabled={false}
-                                hasError={!!$serviceInfoErrors.epw}
+                                disabled={isReadonlyServiceFormStepper}
                                 name="epw"
                                 label={'EPW'}
-                                bind:value={$serviceInfoForm.epw}
+                                bind:value={data.serviceResponse.data.epw}
                             ></TextField>
-                            {#if $serviceInfoErrors.epw}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$serviceInfoErrors.epw}</span
-                                >
-                            {/if}
                             <TextField
                                 hasTooltip={true}
                                 toolTipID="type-cola"
-                                disabled={false}
-                                hasError={!!$serviceInfoErrors.cola}
+                                disabled={isReadonlyServiceFormStepper}
                                 name="cola"
                                 label={'COLA'}
-                                bind:value={$serviceInfoForm.cola}
+                                bind:value={data.serviceResponse.data.cola}
                             ></TextField>
-                            {#if $serviceInfoErrors.cola}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$serviceInfoErrors.cola}</span
-                                >
-                            {/if}
-                            <!-- Tooltip body -->
                             <!-- <Tooltip
-                            type="dark"
-                            triggeredBy="[id^='type-']"
-                            on:show={assignContent}>"{tooltipContent}"</Tooltip
-                        > -->
+                        type="dark"
+                        triggeredBy="[id^='type-']"
+                        on:show={assignContent}>"{tooltipContent}"</Tooltip
+                    > -->
                         </div>
                     </div>
-                </form>
+                </div>
+            </StepperContentBody>
+        </StepperContent>
+        <StepperContent>
+            <StepperContentHeader
+                title="Keputusan daripada Peranan - Peranan Lain"
+            ></StepperContentHeader>
+            <StepperContentBody>
+                <div class="flex w-full flex-col gap-2.5">
+                    <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                        <div class="mb-5">
+                            <b class="text-sm text-system-primary">Penyokong</b>
+                        </div>
+                        <TextField
+                            disabled
+                            type="text"
+                            name="supporterName"
+                            label="Nama"
+                            bind:value={data.supporterResultResponse.data.name}
+                        ></TextField>
+                        {#if data.supporterResultResponse.data.isApproved}
+                            <LongTextField
+                                disabled
+                                name="supporterRemark"
+                                label="Tindakan/Ulasan"
+                                bind:value={data.supporterResultResponse.data
+                                    .remark}
+                            ></LongTextField>
+                            <RadioSingle
+                                disabled
+                                name="supporterIsApproved"
+                                options={supportOptions}
+                                legend={'Keputusan'}
+                                bind:userSelected={data.supporterResultResponse
+                                    .data.isApproved}
+                            ></RadioSingle>
+                        {:else}
+                            <StepperOtherRolesResult />
+                        {/if}
+                    </div>
+                    <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                        <div class="mb-5">
+                            <b class="text-sm text-system-primary">Pelulus</b>
+                        </div>
+                        <TextField
+                            disabled
+                            type="text"
+                            name="approverName"
+                            label="Nama"
+                            bind:value={data.approverResultResponse.data.name}
+                        ></TextField>
+                        {#if data.approverResultResponse.data.isApproved}
+                            <LongTextField
+                                disabled
+                                name="approverRemark"
+                                label="Tindakan/Ulasan"
+                                bind:value={data.approverResultResponse.data
+                                    .remark}
+                            ></LongTextField>
+                            <RadioSingle
+                                disabled
+                                name="approverIsApproved"
+                                options={approveOptions}
+                                legend={'Keputusan'}
+                                bind:userSelected={data.approverResultResponse
+                                    .data.isApproved}
+                            ></RadioSingle>
+                        {:else}
+                            <StepperOtherRolesResult />
+                        {/if}
+                    </div>
+                    <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                        <div class="mb-5">
+                            <b class="text-sm text-system-primary"
+                                >Urus Setia Perjawatan</b
+                            >
+                        </div>
+                        <TextField
+                            disabled
+                            type="text"
+                            name="service-secretary-name"
+                            label="Nama"
+                            bind:value={data.secretaryApprovalResponse.data
+                                .name}
+                        ></TextField>
+                        {#if !!data.secretaryApprovalResponse.data.isApproved}
+                            <LongTextField
+                                disabled
+                                name="service-secretary-remark"
+                                label="Tindakan/Ulasan"
+                                bind:value={data.secretaryApprovalResponse.data
+                                    .remark}
+                            ></LongTextField>
+                            <RadioSingle
+                                disabled
+                                name="supporterIsApproved"
+                                options={certifyOptions}
+                                legend={'Keputusan'}
+                                bind:userSelected={data
+                                    .secretaryApprovalResponse.data.isApproved}
+                            ></RadioSingle>
+                        {:else}
+                            <StepperOtherRolesResult />
+                        {/if}
+                    </div>
+                </div>
             </StepperContentBody>
         </StepperContent>
     {/if}
