@@ -3,6 +3,7 @@
 // ===============================================================
 
 import { textLibrary } from "$lib/constants/core/text-translation-constant";
+import type { TextTranslation } from "$lib/view-models/core/library/text-translation.view-model";
 
 export class TranslationHelper {
     static toMalay(keyword: string){
