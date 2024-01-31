@@ -10,18 +10,13 @@
     import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
-    import { mockEmployees } from '$lib/mocks/database/mockEmployees';
-    import { mockActingIndividual } from '$lib/mocks/database/mockActingIndividual';
-    import { mockActingBatch } from '$lib/mocks/database/mockActingBatch';
-    import { currentActingBatchId } from '$lib/stores/pemangkuan/pemangkuanStores';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import SvgBlock from '$lib/assets/svg/SvgBlock.svelte';
     import type { EmployeeListResponse } from '$lib/view-models/mypsm/perjawatan/grade-acting-type/list-employee-list-response.view-model';
-
-    let tempData: EmployeeListResponse;
+   
+    let tempData: EmployeeListResponse;    
     export let data;
-
     let selectedEmployee: EmployeeListResponse[] = [];
 
     function pushSelected(data: EmployeeListResponse) {
@@ -37,27 +32,9 @@
         tempSelected = tempSelected.filter((item) => item !== data);
 
         selectedEmployee = tempSelected;
-        console.log(selectedEmployee)
     }
 
     function pushNewCandidate() {
-        let lastBatchIndex = mockActingBatch.length - 1;
-        let lastBatchId = mockActingBatch[lastBatchIndex].batchId;
-        selectedEmployee.forEach((item) => {
-            let employeeDetails = mockEmployees.filter(
-                (item) => item.employeeNumber == item.employeeNumber,
-            );
-            let tempCandidate: EmployeeListResponse = {
-                employeeNumber: item.employeeNumber,
-                employeeName: item.employeeName,
-                ICNumber: item.ICNumber,
-                homeAddress: item.homeAddress,
-                programme: item.programme,
-                scheme: item.scheme,
-                grade: item.grade,
-                roles: item.roles,
-            };
-        });
     }
 </script>
 
@@ -81,7 +58,10 @@
             primary
             onClick={() => {
                 pushNewCandidate();
-                goto('/urus-setia/perjawatan/pemangkuan/gred-1_54/butiran');
+                // goto('/urus-setia/perjawatan/pemangkuan/gred-1_54/butiran-'+ );
+                const url = './pemangkuan/gred-1_54/butiran-'+selectedEmployee;
+
+                goto(url);
             }}
         >
             <SvgArrowRight></SvgArrowRight>
