@@ -20,6 +20,10 @@
     background-color: #e4e4e4;
 }
 
+::-webkit-scrollbar-track{
+    background: #f4f4f4;
+}
+
 
 /* removed default field bg color when using autofill */
 input:-webkit-autofill {
