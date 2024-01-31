@@ -1,17 +1,17 @@
 export interface GetPersonalMedicalRecordResponse {
-    status:  number;
+    status: number;
     message: string;
-    data:    Data;
+    data: PersonalMedicalRecordResponseData;
 }
 
-export interface Data {
+export interface PersonalMedicalRecordResponseData {
     medicalHistory: MedicalHistory[];
 }
 
 export interface MedicalHistory {
-    id:         string;
-    diseases:   string;
+    id: string;
+    diseases: string;
     isPersonal: boolean;
-    isFamily:   boolean;
-    remark:     string;
+    isFamily: boolean;
+    remark: string;
 }
