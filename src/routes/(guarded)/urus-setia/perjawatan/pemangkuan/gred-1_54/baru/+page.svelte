@@ -37,6 +37,7 @@
         tempSelected = tempSelected.filter((item) => item !== data);
 
         selectedEmployee = tempSelected;
+        console.log(selectedEmployee)
     }
 
     function pushNewCandidate() {
@@ -159,6 +160,7 @@
                 <DynamicTable
                     tableItems={selectedEmployee}
                     withRowSelection
+                    bind:passData={tempData}
                     onSelect={() => {
                         popSelected(tempData);
                     }}
