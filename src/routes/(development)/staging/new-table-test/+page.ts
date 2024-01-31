@@ -35,14 +35,3 @@ export async function load() {
     };
 }
 
-export async function _retrieveData(param: NewHireListRequestViewModel){
-    const newHireList: NewHireListResponseViewModel = await NewHireServices.getNewHireList(param);
-
-    setTimeout(() => showLoadingOverlay.set(false), 2500);
-    return {
-        props: {
-            newHireList,
-            param,
-        },
-    };
-}
