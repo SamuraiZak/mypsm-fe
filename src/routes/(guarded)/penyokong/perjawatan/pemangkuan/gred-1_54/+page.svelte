@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
     import SvgArrowLeft from '$lib/assets/svg/SvgArrowLeft.svelte';
     import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
     import SvgBlock from '$lib/assets/svg/SvgBlock.svelte';
@@ -46,6 +45,7 @@
         _submitActingSupporterResultForm,
     } from './+page';
     import { superForm } from 'sveltekit-superforms/client';
+    import { supportOptions } from '$lib/constants/mypsm/radio-option-constants';
 
     let editMode: boolean = false;
 
@@ -99,17 +99,6 @@
         selectedFiles.splice(index, 1);
     }
 
-    const supportOptions: RadioOption[] = [
-        {
-            value: 'true',
-            label: 'Sokong',
-        },
-        {
-            value: 'false',
-            label: 'Tidak Sokong',
-        },
-    ];
-
     // ==================================
     // Form Validation ==================
     // ==================================
@@ -118,8 +107,8 @@
     const { form, errors, enhance } = superForm(data.form, {
         SPA: true,
         validators: _actingSupporterResultSchema,
-        onSubmit(){
-            _submitActingSupporterResultForm($form)
+        onSubmit() {
+            _submitActingSupporterResultForm($form);
         },
         taintedMessage:
             'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
@@ -230,24 +219,20 @@
             <StepperContentBody>
                 <SectionHeader title="Maklumat Peraku Keputusan Mesyuarat"
                 ></SectionHeader>
-                <div
-                    class="flex max-h-full w-full flex-col items-start justify-start"
-                >
-                    <DropdownSelect
-                        disabled
-                        id="position-dropdown"
-                        label="Nama Urus Setia Integriti"
-                        dropdownType="label-left-full"
-                        options={positions}
-                    />
-                    <DropdownSelect
-                        disabled
-                        id="position-dropdown"
-                        label="Nama Pengarah Bahagian / Negeri"
-                        dropdownType="label-left-full"
-                        options={positions}
-                    />
-                </div>
+                <DropdownSelect
+                    disabled
+                    id="position-dropdown"
+                    label="Nama Urus Setia Integriti"
+                    dropdownType="label-left-full"
+                    options={positions}
+                />
+                <DropdownSelect
+                    disabled
+                    id="position-dropdown"
+                    label="Nama Pengarah Bahagian / Negeri"
+                    dropdownType="label-left-full"
+                    options={positions}
+                />
                 <SectionHeader
                     title="Kemaskini Senarai Calon Yang Terpilih Mengikut Keputusan Mesyuarat"
                 ></SectionHeader>
@@ -432,69 +417,6 @@
                     value={'LKIM SARAWAK - KUCHING'}
                 ></TextField>
 
-                <!-- Document Upload -->
-                <div
-                    class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 pb-5 pt-5"
-                >
-                    <SectionHeader
-                        color="system-primary"
-                        title="Dokumen-Dokumen yang Berkaitan"
-                        ><div hidden={$fileSelectionList.length == 0}>
-                            <FileInputField id="fileInput" {handleOnChange}
-                            ></FileInputField>
-                        </div></SectionHeader
-                    >
-                    <div
-                        class="border-bdr-primaryp-5 flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border p-2.5"
-                    >
-                        <div class="flex flex-wrap gap-3">
-                            {#each $fileSelectionList as item, index}
-                                <FileInputFieldChildren
-                                    childrenType="grid"
-                                    handleDelete={() => handleDelete(index)}
-                                    fileName={item.name}
-                                />
-                            {/each}
-                        </div>
-                        <div
-                            class="flex flex-col items-center justify-center gap-2.5"
-                        >
-                            <p
-                                class=" text-sm text-txt-tertiary"
-                                hidden={$fileSelectionList.length > 0}
-                            >
-                                Seret dan lepas fail anda ke dalam ruangan ini
-                                atau pilih fail dari peranti anda
-                            </p>
-                            <!-- svelte-ignore a11y-click-events-have-key-events -->
-                            <div
-                                class="text-txt-tertiary"
-                                hidden={$fileSelectionList.length > 0}
-                            >
-                                <svg
-                                    width={40}
-                                    height={40}
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke-width="1.5"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                                    />
-                                </svg>
-                            </div>
-                            <div hidden={$fileSelectionList.length > 0}>
-                                <FileInputField id="fileInput" {handleOnChange}
-                                ></FileInputField>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <SectionHeader
                     title="Kemaskini Senarai Calon Yang Terpilih Mengikut Keputusan Mesyuarat"
                 ></SectionHeader>
@@ -627,15 +549,10 @@
             {:else}
                 <StepperContentHeader title="Maklumat Keputusan Temuduga">
                     <TextIconButton
-                        label="Batal"
+                        label="Kembali"
                         onClick={() => (editMode = false)}
-                    ></TextIconButton>
-                    <TextIconButton
-                        primary
-                        label="Simpan"
-                        onClick={() =>
-                            alert('save maklumat keputusan temuduga')}
-                    ></TextIconButton>
+                        ><SvgArrowLeft /></TextIconButton
+                    >
                 </StepperContentHeader>
 
                 <StepperContentBody>
@@ -836,20 +753,12 @@
             {:else}
                 <StepperContentHeader
                     title="Maklumat Keputusan Mesyuarat Kenaikan Pangkat"
-                    ><TextIconButton
-                        label="Batal"
-                        onClick={() => {
-                            editMode = false;
-                        }}
-                    ></TextIconButton>
+                >
                     <TextIconButton
-                        primary
-                        label="Simpan"
-                        onClick={() =>
-                            alert(
-                                'save the keputusan mesyuarat kenaikan pangkat',
-                            )}
-                    ></TextIconButton>
+                        label="Kembali"
+                        onClick={() => (editMode = false)}
+                        ><SvgArrowLeft /></TextIconButton
+                    >
                 </StepperContentHeader>
 
                 <StepperContentBody>
@@ -1043,14 +952,10 @@
                     title="Maklumat Keputusan Mesyuarat Kenaikan Pangkat"
                 >
                     <TextIconButton
+                        label="Kembali"
                         onClick={() => (editMode = false)}
-                        label="Batal"
-                    ></TextIconButton>
-                    <TextIconButton
-                        primary
-                        label="Simpan"
-                        onClick={() => alert('save the keputusan mesyuarat')}
-                    ></TextIconButton>
+                        ><SvgArrowLeft /></TextIconButton
+                    >
                 </StepperContentHeader>
                 <StepperContentBody>
                     <SectionHeader title="Maklumat Calon"></SectionHeader>
@@ -1175,14 +1080,10 @@
                     title="Kemaskini Maklumat Permohonan Penangguhan/Pindaan Penempatan"
                 >
                     <TextIconButton
+                        label="Kembali"
                         onClick={() => (editMode = false)}
-                        label="Batal"
-                    ></TextIconButton>
-                    <TextIconButton
-                        primary
-                        label="Simpan"
-                        onClick={() => alert('save the keputusan mesyuarat')}
-                    ></TextIconButton>
+                        ><SvgArrowLeft /></TextIconButton
+                    >
                 </StepperContentHeader>
 
                 <StepperContentBody>
@@ -1435,15 +1336,11 @@
             {:else}
                 <StepperContentHeader title="Kemaskini Keputusan Pemangkuan"
                     ><TextIconButton
+                        label="Kembali"
                         onClick={() => (editMode = false)}
-                        label="Batal"
-                    ></TextIconButton>
-                    <TextIconButton
-                        primary
-                        label="Simpan"
-                        onClick={() => alert('save the keputusan mesyuarat')}
-                    ></TextIconButton></StepperContentHeader
-                >
+                        ><SvgArrowLeft /></TextIconButton
+                    >
+                </StepperContentHeader>
 
                 <StepperContentBody>
                     <SectionHeader title="Maklumat Calon"></SectionHeader>
@@ -1556,9 +1453,7 @@
             <StepperContentBody>
                 <SectionHeader title="Keputusan daripada Penyokong"
                 ></SectionHeader>
-                <div
-                    class="flex w-full flex-col gap-2"
-                >
+                <div class="flex w-full flex-col gap-2">
                     <span class="text-sm italic text-system-primary"
                         >&#x2022; Keputusan akan dihantar ke email klinik dan
                         Urus Setia berkaitan</span
@@ -1571,7 +1466,7 @@
                     class="flex w-full flex-col gap-2"
                 >
                     <LongTextField
-                        hasError={$errors.supporterRemark ? true : false}
+                        hasError={!!$errors.supporterRemark}
                         labelBlack={false}
                         name="supporterRemark"
                         label={'Tindakan/Ulasan'}
@@ -1586,12 +1481,11 @@
                     <RadioSingle
                         disabled={false}
                         options={supportOptions}
-                        name="supporterResult"
                         bind:userSelected={$form.supporterResult}
                     />
                     {#if $errors.supporterResult}
                         <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            class="font-sans text-sm italic text-system-danger"
                             >{$errors.supporterResult[0]}</span
                         >
                     {/if}

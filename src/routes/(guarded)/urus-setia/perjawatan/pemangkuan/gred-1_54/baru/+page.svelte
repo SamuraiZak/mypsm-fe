@@ -14,7 +14,7 @@
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import SvgBlock from '$lib/assets/svg/SvgBlock.svelte';
     import type { EmployeeListResponse } from '$lib/view-models/mypsm/perjawatan/grade-acting-type/list-employee-list-response.view-model';
-   
+    import type { Filter } from '$lib/view-models/mypsm/perjawatan/grade-acting-type/list-chosen-employee-list-request.view-model';
     let tempData: EmployeeListResponse;    
     export let data;
     let selectedEmployee: EmployeeListResponse[] = [];
