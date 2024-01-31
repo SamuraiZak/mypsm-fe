@@ -6,6 +6,7 @@ import {
     getLoginSuccessToast,
 } from '$lib/services/core/toast/toast-service';
 import { AuthService } from '$lib/services/implementations/core/auth/authentication.service';
+import currentRole from '$lib/stores/activeRole';
 import type { AuthenticationRequestViewModel } from '$lib/view-models/core/auth/auth-request.view-model';
 import type { AuthenticationResponseViewModel } from '$lib/view-models/core/auth/auth-response.view-model';
 import type { EnumRoleResponseViewModel } from '$lib/view-models/core/lookup/role/role-enum-reponse.view-model';
@@ -45,6 +46,7 @@ export const _submit = async (formData: AuthenticationRequestViewModel) => {
             LocalStorageKeyConstant.currentRole,
             formData.currentRole,
         );
+        currentRole.set(formData.currentRole);
         getLoginSuccessToast().finally(() =>
             setTimeout(() => {
                 switch (formData.currentRole) {

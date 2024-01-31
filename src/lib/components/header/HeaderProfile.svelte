@@ -16,7 +16,6 @@
         currentUrl = $page.url.pathname;
         pages = currentUrl.replace('/', '');
         subs = pages.split('/');
-        /* console.log(subs) */
     }
 
     let selected: string = subs[0];

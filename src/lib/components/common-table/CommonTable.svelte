@@ -148,7 +148,6 @@
     </table>
     <button
         on:click={() => {
-            console.log(data);
         }}
     >
         show

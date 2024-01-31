@@ -6,7 +6,13 @@
     import { roles } from '$lib/config/roles';
     import { activeRole } from '$lib/stores/globalState';
     import currentRole from '$lib/stores/activeRole';
+    import type { EnumRole, EnumRoleResponseViewModel } from '$lib/view-models/core/lookup/role/role-enum-reponse.view-model';
+    import { AuthService } from '$lib/services/implementations/core/auth/authentication.service';
+    import type { RoleOption } from '$lib/view-models/core/role-option/role-option.view-model';
+    import { TextHelper } from '$lib/helper/core/text-helper/text-helper';
+    import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key-constant';
 
+    export let roleOptionList:RoleOption[]=[];
     let currentUrl = $page.url.pathname;
     let pages = currentUrl.replace('/', '');
     let subs = pages.split('/');
@@ -16,10 +22,10 @@
         currentUrl = $page.url.pathname;
         pages = currentUrl.replace('/', '');
         subs = pages.split('/');
-        /* console.log(subs) */
+
     }
 
-    let selected: string = subs[0];
+    let selected: string | null = localStorage.getItem(LocalStorageKeyConstant.currentRole);
 
     let open = false;
     let active = 'Inbox';
@@ -33,6 +39,18 @@
         fullName: 'Mohd Irfan bin Abu',
         adminEmail: 'irfan@lkim.com',
     };
+
+    function generateUrlPrefix(param:string) {
+        let currentRolePrefix = param.replaceAll(" ", "-");
+
+        currentRolePrefix = currentRolePrefix.replaceAll("/", "-");
+
+        if (currentRolePrefix.includes("urus-setia") || currentRolePrefix.includes("unit")) {
+            return "urus-setia"
+        } else{
+            return currentRolePrefix;
+        }
+    }
 </script>
 
 <div
@@ -71,12 +89,14 @@
             <Select
                 placeholder=""
                 class="cursor-pointer truncate rounded-[3px] border-0 bg-transparent px-2 py-0 text-sm font-normal"
-                items={roles}
+                items={roleOptionList}
                 bind:value={selected}
                 on:change={() => {
-                    activeRole.set(selected);
-                    currentRole.set(selected);
-                    goto('/' + selected + '/halaman-utama');
+                    activeRole.set(selected??"kakitangan");
+                    currentRole.set(selected??"kakitangan");
+
+                    let rolePrefix = generateUrlPrefix(selected ?? "kakitangan");
+                    goto('/' + rolePrefix + '/halaman-utama');
                 }}
             />
         </div>
