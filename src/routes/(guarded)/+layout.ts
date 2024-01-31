@@ -1,6 +1,10 @@
+import { TextHelper } from '$lib/helper/core/text-helper/text-helper';
 import type { DropdownOptionsInterface } from '$lib/interfaces/common/dropdown-option';
+import { AuthService } from '$lib/services/implementations/core/auth/authentication.service';
 import { LookupService } from '$lib/services/implementations/core/lookup/lookup.services';
 import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
+import type { EnumRole, EnumRoleResponseViewModel } from '$lib/view-models/core/lookup/role/role-enum-reponse.view-model';
+import type { RoleOption } from '$lib/view-models/core/role-option/role-option.view-model';
 import type { EmployeesListResponseViewModel } from '$lib/view-models/mypsm/employee/employee-list-response';
 
 export const load = async () => {
@@ -362,7 +366,29 @@ export const load = async () => {
         { value: 'December', name: 'Disember' },
     ];
 
+    // get role list
+    const roleResponse: EnumRoleResponseViewModel =
+        await AuthService.getRoleOptions();
+
+    let roleOptions: EnumRole[] = roleResponse.data.rolesList;
+
+    let rawRoleList: EnumRole[] = roleResponse.data.rolesList;
+
+    let roleOptionsList: RoleOption[] = [];
+
+    rawRoleList.forEach(role => {
+        let tempRoleOption: RoleOption = {
+            value: role.name,
+            name: TextHelper.toCamelCase(role.name)
+        }
+
+        roleOptionsList.push(tempRoleOption);
+
+        roleOptionsList = roleOptionsList;
+    });
+
     return {
+        roleOptionsList,
         agencyGroupsLookup,
         assetDeclarationLookup,
         awardLookup,
