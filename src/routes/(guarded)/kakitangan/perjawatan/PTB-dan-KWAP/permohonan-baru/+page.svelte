@@ -5,9 +5,6 @@
     import { goto } from '$app/navigation';
 </script>
 
-<!-- test button to click to copy -->
-<!-- <button use:clickToCopy={'generated-link'}> Click to copy </button> -->
-
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader

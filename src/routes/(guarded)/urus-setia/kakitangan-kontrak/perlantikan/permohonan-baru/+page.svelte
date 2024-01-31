@@ -30,9 +30,6 @@
         generatedLink = randomString + '.com';
     }
 
-    // funtion to copy text from html body
-    // import { clickToCopy } from '$lib/components/click-to-copy/ClickToCopy';
-
     let text = '';
 
     //Supporter Approver
@@ -50,9 +47,6 @@
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
 </script>
-
-<!-- test button to click to copy -->
-<!-- <button use:clickToCopy={'generated-link'}> Click to copy </button> -->
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
