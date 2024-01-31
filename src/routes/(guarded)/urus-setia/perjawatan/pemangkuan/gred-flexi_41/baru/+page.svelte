@@ -16,10 +16,13 @@
     import { currentActingBatchId } from '$lib/stores/pemangkuan/pemangkuanStores';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import SvgBlock from '$lib/assets/svg/SvgBlock.svelte';
+    import type { EmployeeListResponse } from '$lib/view-models/mypsm/perjawatan/grade-acting-type/list-employee-list-response.view-model';
+    
 
-    let tempData: any = {};
+    let tempData: EmployeeListResponse;
+    export let data;
 
-    let selectedEmployee: IntEmployees[] = [];
+    let selectedEmployee: EmployeeListResponse[] = [];
 
     function pushSelected(data: any) {
         let tempSelected = selectedEmployee;
@@ -29,7 +32,7 @@
         }
     }
 
-    function popSelected(data: any) {
+    function popSelected(data: EmployeeListResponse) {
         let tempSelected = selectedEmployee;
         tempSelected = tempSelected.filter((item) => item !== data);
 
@@ -37,74 +40,74 @@
     }
 
     function pushNewCandidate() {
-        let lastBatchIndex = mockActingBatch.length - 1;
-        let lastBatchId = mockActingBatch[lastBatchIndex].batchId;
-        let newBatchId = lastBatchId + 1;
-        console.log('length is', lastBatchIndex);
-        console.log('last is', lastBatchId);
-        console.log('new is', newBatchId);
-        console.log(mockActingBatch[0]);
-        selectedEmployee.forEach((item) => {
-            let employeeDetails = mockEmployees.filter(
-                (item) => item.employeeNumber == item.employeeNumber,
-            );
-            let newCandidateId: number =
-                mockActingIndividual[mockActingIndividual.length - 1]
-                    .candidateId + 1;
-            let tempCandidate: IntActingIndividual = {
-                candidateId: newCandidateId,
-                batchId: newBatchId,
-                employeeId: item.id,
-                employeeName: item.name,
-                employeeIDNumber: item.identityDocumentNumber,
-                actingGrade: '',
-                actingPosition: '',
-                qualifierMeetingName: '',
-                qualifierMeetingDate: '',
-                qualifierMeetingResult: '',
-                qualifierMeetingResultApproval: '',
-                qualifierMeetingResultApprover: '',
-                qualifierMeetingResultSupport: '',
-                qualifierMeetingResultSupporter: '',
-                interviewDate: '',
-                interviewTime: '',
-                interviewVenue: '',
-                interviewMarks: '',
-                interviewResult: '',
-                promotionMeetingName: '',
-                promotionMeetingDate: '',
-                promotionMeetingResult: '',
-                suggestedReportingDate: '',
-                suggestedPlacement: '',
-                postponementApplication: false,
-                postponementReason: '',
-                postponementResult: '',
-                requestedReportingDate: '',
-                requestedPlacement: '',
-                decidedReportingDate: '',
-                decidedPlacement: '',
-                finalResultApproval: '',
-                finalResultApprover: '',
-                finalResultSupport: '',
-                finalResultSupporter: '',
-            };
+        // let lastBatchIndex = mockActingBatch.length - 1;
+        // let lastBatchId = mockActingBatch[lastBatchIndex].batchId;
+        // let newBatchId = lastBatchId + 1;
+        // console.log('length is', lastBatchIndex);
+        // console.log('last is', lastBatchId);
+        // console.log('new is', newBatchId);
+        // console.log(mockActingBatch[0]);
+        // selectedEmployee.forEach((item) => {
+        //     let employeeDetails = mockEmployees.filter(
+        //         (item) => item.employeeNumber == item.employeeNumber,
+        //     );
+        //     let newCandidateId: number =
+        //         mockActingIndividual[mockActingIndividual.length - 1]
+        //             .candidateId + 1;
+        //     let tempCandidate: IntActingIndividual = {
+        //         candidateId: newCandidateId,
+        //         batchId: newBatchId,
+        //         employeeId: item.id,
+        //         employeeName: item.name,
+        //         employeeIDNumber: item.identityDocumentNumber,
+        //         actingGrade: '',
+        //         actingPosition: '',
+        //         qualifierMeetingName: '',
+        //         qualifierMeetingDate: '',
+        //         qualifierMeetingResult: '',
+        //         qualifierMeetingResultApproval: '',
+        //         qualifierMeetingResultApprover: '',
+        //         qualifierMeetingResultSupport: '',
+        //         qualifierMeetingResultSupporter: '',
+        //         interviewDate: '',
+        //         interviewTime: '',
+        //         interviewVenue: '',
+        //         interviewMarks: '',
+        //         interviewResult: '',
+        //         promotionMeetingName: '',
+        //         promotionMeetingDate: '',
+        //         promotionMeetingResult: '',
+        //         suggestedReportingDate: '',
+        //         suggestedPlacement: '',
+        //         postponementApplication: false,
+        //         postponementReason: '',
+        //         postponementResult: '',
+        //         requestedReportingDate: '',
+        //         requestedPlacement: '',
+        //         decidedReportingDate: '',
+        //         decidedPlacement: '',
+        //         finalResultApproval: '',
+        //         finalResultApprover: '',
+        //         finalResultSupport: '',
+        //         finalResultSupporter: '',
+        //     };
 
-            mockActingIndividual.push(tempCandidate);
-        });
+        //     mockActingIndividual.push(tempCandidate);
+        // });
 
-        let newActingBatch = {
-            batchId: newBatchId,
-            type: 'Gred Flexi 41',
-            date: '29/09/2023',
-            candidateCount: mockActingIndividual.filter(
-                (item) => item.batchId == newBatchId,
-            ).length,
-            status: 'Sedang Diproses',
-        };
+        // let newActingBatch = {
+        //     batchId: newBatchId,
+        //     type: 'Gred Flexi 41',
+        //     date: '29/09/2023',
+        //     candidateCount: mockActingIndividual.filter(
+        //         (item) => item.batchId == newBatchId,
+        //     ).length,
+        //     status: 'Sedang Diproses',
+        // };
 
-        mockActingBatch.push(newActingBatch);
+        // mockActingBatch.push(newActingBatch);
 
-        currentActingBatchId.set(newBatchId);
+        // currentActingBatchId.set(newBatchId);
     }
 </script>
 
@@ -166,22 +169,12 @@
             >
                 <DynamicTable
                     bind:passData={tempData}
-                    tableItems={mockEmployees}
+                    tableItems={data.employeeRecord}
                     withRowSelection
                     selectAdd
                     onSelect={() => {
                         pushSelected(tempData);
                     }}
-                    columnKeys={[
-                        'employeeNumber',
-                        'name',
-                        'identityDocumentNumber',
-                        'program',
-                        'skim',
-                        'gred',
-                        'roles',
-                        'homeAddress',
-                    ]}
                 ></DynamicTable>
             </div>
         </CustomTabContent>
@@ -209,19 +202,10 @@
                 <DynamicTable
                     tableItems={selectedEmployee}
                     withRowSelection
+                    bind:passData={tempData}
                     onSelect={() => {
                         popSelected(tempData);
                     }}
-                    columnKeys={[
-                        'employeeNumber',
-                        'name',
-                        'identityDocumentNumber',
-                        'program',
-                        'skim',
-                        'gred',
-                        'roles',
-                        'homeAddress',
-                    ]}
                 ></DynamicTable>
             </div>
         </CustomTabContent>
