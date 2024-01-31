@@ -1,12 +1,20 @@
-import { getErrorToast, getPromiseToast } from '$lib/services/core/toast/toast-service';
+import {
+    getErrorToast,
+    getLoadingToast,
+    getPromiseToast,
+    getServerErrorToast,
+    getSuccessToast,
+} from '$lib/services/core/toast/toast-service';
+import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
+import { ProfileService } from '$lib/services/implementations/mypsm/profile/profile.service';
+import type { PersonalMedicalRecordGeneralAssessmentResponseData } from '$lib/view-models/mypsm/profile/profile-get-personal-medical-record-general-assessment-response.modal';
+import type { GetPersonalDetailResponse } from '$lib/view-models/mypsm/profile/proflle-get-personal-detail-response.modal';
+import type { PutPersonalDetailRequest } from '$lib/view-models/mypsm/profile/proflle-put-personal-detail-request.modal';
+import type { PutPersonalDetailResponse } from '$lib/view-models/mypsm/profile/proflle-put-personal-detail-response.modal.js';
 import { error, fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
-import  type { PutPersonalDetailResponse } from '$lib/view-models/mypsm/profile/proflle-put-personal-detail-response.modal.js';
-import type { PutPersonalDetailRequest } from '$lib/view-models/mypsm/profile/proflle-put-personal-detail-request.modal';
-import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
-import type { GetPersonalDetailResponse } from '$lib/view-models/mypsm/profile/proflle-get-personal-detail-response.modal';
 
 // =========================================================================
 // z validation schema and submit function for the new employment form fields
@@ -20,7 +28,7 @@ const longTextSchema = z
         message: 'Medan ini tidak boleh melebihi 124 karakter.',
     })
     .trim();
-    const minDateSchema = z.coerce
+const minDateSchema = z.coerce
     .date({
         errorMap: (issue, { defaultError }) => ({
             message:
@@ -33,7 +41,7 @@ const longTextSchema = z
         message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
     });
 
-    const shortTextSchema = z
+const shortTextSchema = z
     .string({ required_error: 'Medan ini tidak boleh kosong.' })
     .min(4, {
         message: 'Medan ini hendaklah lebih daripada 4 karakter.',
@@ -43,13 +51,12 @@ const longTextSchema = z
     })
     .trim();
 
-    const booleanSchema = z.boolean({
-        required_error: 'Sila tetapkan pilihan anda.',
-        invalid_type_error: 'Medan ini haruslah jenis boolean.',
-    });
+const booleanSchema = z.boolean({
+    required_error: 'Sila tetapkan pilihan anda.',
+    invalid_type_error: 'Medan ini haruslah jenis boolean.',
+});
 
-
-    const codeSchema = z
+const codeSchema = z
     .string({ required_error: 'Medan ini tidak boleh kosong.' })
     .min(1, {
         message: 'Medan ini hendaklah lebih daripada 1 karakter.',
@@ -59,7 +66,7 @@ const longTextSchema = z
     })
     .trim();
 
-    const maxDateSchema = z.coerce
+const maxDateSchema = z.coerce
     .date({
         errorMap: (issue, { defaultError }) => ({
             message:
@@ -72,19 +79,16 @@ const longTextSchema = z
         message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
     });
 
-    const numberIdSchema = z.coerce
+const numberIdSchema = z.coerce
     .number({
         required_error: 'Tidak tepat.',
         invalid_type_error: 'Sila pastikan ID ditaip dengan angka',
     })
     .min(12, { message: 'Kurang daripada 12 angka mengikut ID Malaysia' });
 
-    const generalSelectSchema = z
+const generalSelectSchema = z
     .string()
     .min(1, { message: 'Sila tetapkan pilihan anda.' });
-
-
-
 
 // =========================================================================
 // =========================Maklumat Peribadi===============================
@@ -205,7 +209,7 @@ const maklumatPerkhidmatanSelectSchema = z
     .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
 export const _stepperMaklumatPerkhidmatan = z.object({
-    faedahPersaraanPerkhidmatan:booleanSchema,
+    faedahPersaraanPerkhidmatan: booleanSchema,
 
     currentGrade: maklumatPerkhidmatanSelectSchema,
     currentPosition: maklumatPerkhidmatanSelectSchema,
@@ -400,39 +404,39 @@ const pemeriksaanDoktorSelectSchema = z
 
 export const _stepperPemeriksaanDoktor = z.object({
     sistemMuskuloskeletalRadio: pemeriksaanDoktorSelectSchema,
-    paleSkin: pemeriksaanDoktorSelectSchema,
-    cycnosis: pemeriksaanDoktorSelectSchema,
-    edama: pemeriksaanDoktorSelectSchema,
-    jaundice: pemeriksaanDoktorSelectSchema,
-    lymphGlands: pemeriksaanDoktorSelectSchema,
-    skinDisease: pemeriksaanDoktorSelectSchema,
-    penglihatanWarnaRadio: pemeriksaanDoktorSelectSchema,
-    funduskopiRadio: pemeriksaanDoktorSelectSchema,
-    telingaRadio: pemeriksaanDoktorSelectSchema,
-    ronggaGigiMulutRadio: pemeriksaanDoktorSelectSchema,
-    leherRadio: pemeriksaanDoktorSelectSchema,
-    kardiovaskularRadio: pemeriksaanDoktorSelectSchema,
-    pemeriksaanRadio: pemeriksaanDoktorSelectSchema,
-    xrayRadio: pemeriksaanDoktorSelectSchema,
-    abdomenHerniaRadio: pemeriksaanDoktorSelectSchema,
-    sistemSarafRadio: pemeriksaanDoktorSelectSchema,
-    sugar: pemeriksaanDoktorSelectSchema,
-    albumin: pemeriksaanDoktorSelectSchema,
+    paleSkin: booleanSchema,
+    cycnosis: booleanSchema,
+    edama: booleanSchema,
+    jaundice: booleanSchema,
+    lymphGlands: booleanSchema,
+    skinDisease: booleanSchema,
+    // penglihatanWarnaRadio: pemeriksaanDoktorSelectSchema,
+    // funduskopiRadio: pemeriksaanDoktorSelectSchema,
+    // telingaRadio: pemeriksaanDoktorSelectSchema,
+    // ronggaGigiMulutRadio: pemeriksaanDoktorSelectSchema,
+    // leherRadio: pemeriksaanDoktorSelectSchema,
+    // kardiovaskularRadio: pemeriksaanDoktorSelectSchema,
+    // pemeriksaanRadio: pemeriksaanDoktorSelectSchema,
+    // xrayRadio: pemeriksaanDoktorSelectSchema,
+    // abdomenHerniaRadio: pemeriksaanDoktorSelectSchema,
+    // sistemSarafRadio: pemeriksaanDoktorSelectSchema,
+    sugar: booleanSchema,
+    albumin: booleanSchema,
 
-    height: shortTextSchema,
-    weight: shortTextSchema,
-    BMI: shortTextSchema,
-    BPM: shortTextSchema,
+    height: numberIdSchema,
+    weight: numberIdSchema,
+    BMI: numberIdSchema,
+    BPM: numberIdSchema,
     BP: shortTextSchema,
-    penglihatanTanpaBantuan: shortTextSchema,
-    penglihatanTanpaBantuan2: shortTextSchema.nullable(),
-    penglihatanTanpaBantuan3: shortTextSchema.nullable(),
-    penglihatanTanpaBantuan4: shortTextSchema.nullable(),
-    penglihatanTanpaBantuan5: shortTextSchema.nullable(),
-    penglihatanTanpaBantuan6: shortTextSchema.nullable(),
-    penglihatanDenganBantuan: shortTextSchema,
-    penglihatanDenganBantuan2: shortTextSchema.nullable(),
-    penglihatanDenganBantuan3: shortTextSchema.nullable(),
+    unaidedVisionLeft: shortTextSchema,
+    unaidedVisionRight: shortTextSchema.nullable(),
+    // penglihatanTanpaBantuan3: shortTextSchema.nullable(),
+    // penglihatanTanpaBantuan4: shortTextSchema.nullable(),
+    // penglihatanTanpaBantuan5: shortTextSchema.nullable(),
+    // penglihatanTanpaBantuan6: shortTextSchema.nullable(),
+    aidedVisionLeft: shortTextSchema,
+    aidedVisionRight: shortTextSchema.nullable(),
+    // penglihatanDenganBantuan3: shortTextSchema.nullable(),
     fundoscopic: shortTextSchema.nullable(),
     colourVision: shortTextSchema.nullable(),
     ear: shortTextSchema.nullable(),
@@ -441,14 +445,13 @@ export const _stepperPemeriksaanDoktor = z.object({
     cardiovascular: shortTextSchema.nullable(),
     breathingExam: shortTextSchema.nullable(),
     xray: shortTextSchema.nullable(),
-    xrayTaken: shortTextSchema,
+    xrayTaken: minDateSchema,
     xrayLocation: shortTextSchema,
     xrayReference: shortTextSchema,
     abdomenHernia: shortTextSchema.nullable(),
     mentalState: shortTextSchema.nullable(),
     musculoskeletal: shortTextSchema.nullable(),
     microscopic: shortTextSchema,
-
 });
 //==========================================================
 //================== Makluma tAkademik Modal ===================
@@ -576,12 +579,12 @@ export const _approverResultSchema = z.object({
 //=====================================================
 
 export const load = async () => {
-
-
     // const personalDetailResponse: GetPersonalDetailResponse =
     // await EmployeeService.ProfileDetail(PutPersonalDetailRequest);
     // const personalDetailResponse.data.
 
+    const stepperPemeriksaanDoktorRespone =
+        await ProfileService.medicalGeneralAssessment();
 
     // const id = parseInt(params.id);
     const stepperMaklumatPeribadi = await superValidate(
@@ -602,6 +605,7 @@ export const load = async () => {
     const stepperSejarahPenyakit = await superValidate(_stepperSejarahPenyakit);
 
     const stepperPemeriksaanDoktor = await superValidate(
+        stepperPemeriksaanDoktorRespone?.data as PersonalMedicalRecordGeneralAssessmentResponseData,
         _stepperPemeriksaanDoktor,
     );
     const addAcademicModal = await superValidate(_addAcademicInfoSchema);

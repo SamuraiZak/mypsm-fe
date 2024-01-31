@@ -1,10 +1,10 @@
 export interface GetPersonalMedicalRecordGeneralAssessmentResponse {
     status:  number;
     message: string;
-    data:    Data;
+    data:    PersonalMedicalRecordGeneralAssessmentResponseData;
 }
 
-export interface Data {
+export interface PersonalMedicalRecordGeneralAssessmentResponseData {
     year:               number;
     height:             number;
     weight:             number;

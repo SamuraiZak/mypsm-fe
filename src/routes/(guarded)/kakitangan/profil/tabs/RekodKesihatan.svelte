@@ -15,7 +15,7 @@
     import toast, { Toaster } from 'svelte-french-toast';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { superForm } from 'sveltekit-superforms/client';
-    import type { PageData } from './$types';
+    import type { PageData } from '../$types';
     import {
         _stepperSejarahPenyakit,
         _submitFormStepperSejarahPenyakit,
@@ -1409,19 +1409,19 @@
                             <td class="w-[200px] min-w-[160px] max-w-[220px]">
                                 <TextField
                                     {disabled}
-                                    hasError={$pemeriksaanDoktorErrors.penglihatanTanpaBantuan
+                                    hasError={$pemeriksaanDoktorErrors.unaidedVisionLeft
                                         ? true
                                         : false}
-                                    name="penglihatanTanpaBantuan"
+                                    name="unaidedVisionLeft"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.penglihatanTanpaBantuan}
+                                    bind:value={$pemeriksaanDoktorForm.unaidedVisionLeft}
                                 ></TextField>
-                                {#if $pemeriksaanDoktorErrors.penglihatanTanpaBantuan}
+                                {#if $pemeriksaanDoktorErrors.unaidedVisionLeft}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
-                                            .penglihatanTanpaBantuan[0]}</span
+                                            .unaidedVisionLeft[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -1429,24 +1429,24 @@
                             <td>
                                 <TextField
                                     {disabled}
-                                    hasError={$pemeriksaanDoktorErrors.penglihatanTanpaBantuan2
+                                    hasError={$pemeriksaanDoktorErrors.unaidedVisionRight
                                         ? true
                                         : false}
-                                    name="penglihatanTanpaBantuan2"
+                                    name="unaidedVisionRight"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.penglihatanTanpaBantuan2}
+                                    bind:value={$pemeriksaanDoktorForm.unaidedVisionRight}
                                 ></TextField>
-                                {#if $pemeriksaanDoktorErrors.penglihatanTanpaBantuan2}
+                                {#if $pemeriksaanDoktorErrors.unaidedVisionRight}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
-                                            .penglihatanTanpaBantuan2[0]}</span
+                                            .unaidedVisionRight[0]}</span
                                     >
                                 {/if}
                             </td>
                             <td>
-                                <TextField
+                                <!-- <TextField
                                     {disabled}
                                     hasError={$pemeriksaanDoktorErrors.penglihatanTanpaBantuan3
                                         ? true
@@ -1462,11 +1462,11 @@
                                         >{$pemeriksaanDoktorErrors
                                             .penglihatanTanpaBantuan3[0]}</span
                                     >
-                                {/if}
+                                {/if} -->
                             </td>
                         </tr>
                         <tr>
-                            <td>Penglihatan Tanpa Bantuan</td>
+                            <!-- <td>Penglihatan Tanpa Bantuan</td>
                             <td>
                                 <TextField
                                     {disabled}
@@ -1525,48 +1525,48 @@
                                 {/if}
                             </td>
                         </tr>
-                        <tr>
+                        <tr> -->
                             <td>Penglihatan Dengan Bantuan</td>
                             <td>
                                 <TextField
                                     {disabled}
-                                    hasError={$pemeriksaanDoktorErrors.penglihatanDenganBantuan
+                                    hasError={$pemeriksaanDoktorErrors.aidedVisionLeft
                                         ? true
                                         : false}
-                                    name="penglihatanDenganBantuan"
+                                    name="aidedVisionLeft"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.penglihatanDenganBantuan}
+                                    bind:value={$pemeriksaanDoktorForm.aidedVisionLeft}
                                 ></TextField>
-                                {#if $pemeriksaanDoktorErrors.penglihatanDenganBantuan}
+                                {#if $pemeriksaanDoktorErrors.aidedVisionLeft}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
-                                            .penglihatanDenganBantuan[0]}</span
+                                            .aidedVisionLeft[0]}</span
                                     >
                                 {/if}
                             </td>
                             <td>
                                 <TextField
                                     {disabled}
-                                    hasError={$pemeriksaanDoktorErrors.penglihatanDenganBantuan2
+                                    hasError={$pemeriksaanDoktorErrors.aidedVisionRight
                                         ? true
                                         : false}
-                                    name="penglihatanDenganBantuan2"
+                                    name="aidedVisionRight"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.penglihatanDenganBantuan2}
+                                    bind:value={$pemeriksaanDoktorForm.aidedVisionRight}
                                 ></TextField>
 
-                                {#if $pemeriksaanDoktorErrors.penglihatanDenganBantuan2}
+                                {#if $pemeriksaanDoktorErrors.aidedVisionRight}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
-                                            .penglihatanDenganBantuan2[0]}</span
+                                            .aidedVisionRight[0]}</span
                                     >
                                 {/if}
                             </td>
-                            <td>
+                            <!-- <td>
                                 <TextField
                                     {disabled}
                                     hasError={$pemeriksaanDoktorErrors.penglihatanDenganBantuan3
@@ -1585,13 +1585,13 @@
                                             .penglihatanDenganBantuan3[0]}</span
                                     >
                                 {/if}
-                            </td>
+                            </td> -->
                         </tr>
 
                         <tr>
                             <td>Penglihatan Warna</td>
                             <td>
-                                <RadioSingle
+                                <!-- <RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
                                     name="penglihatanWarnaRadio"
@@ -1604,7 +1604,7 @@
                                         >{$pemeriksaanDoktorErrors
                                             .penglihatanWarnaRadio[0]}</span
                                     >
-                                {/if}
+                                {/if} -->
                             </td>
 
                             <td colspan="2">
@@ -1631,7 +1631,7 @@
                         <tr>
                             <td>Funduskopi</td>
                             <td>
-                                <RadioSingle
+                                <!-- <RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
                                     name="funduskopiRadio"
@@ -1644,7 +1644,7 @@
                                         >{$pemeriksaanDoktorErrors
                                             .funduskopiRadio[0]}</span
                                     >
-                                {/if}
+                                {/if} -->
                             </td>
 
                             <td colspan="2">
@@ -1679,7 +1679,7 @@
                                 ><p class="text-sm font-bold">Telinga</p></td
                             >
                             <td class="w-[160px] min-w-[160px] max-w-[160px]">
-                                <RadioSingle
+                                <!-- <RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
                                     name="telingaRadio"
@@ -1692,7 +1692,7 @@
                                         >{$pemeriksaanDoktorErrors
                                             .telingaRadio[0]}</span
                                     >
-                                {/if}
+                                {/if} -->
                             </td>
 
                             <td colspan="2">
@@ -1722,7 +1722,7 @@
                                 </p>
                             </td>
                             <td>
-                                <RadioSingle
+                                <!-- <RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
                                     name="ronggaGigiMulutRadio"
@@ -1735,7 +1735,7 @@
                                         >{$pemeriksaanDoktorErrors
                                             .ronggaGigiMulutRadio[0]}</span
                                     >
-                                {/if}
+                                {/if} -->
                             </td>
 
                             <td colspan="2">
@@ -1761,7 +1761,7 @@
                         <tr>
                             <td><p class="text-sm font-bold">Leher</p></td>
                             <td>
-                                <RadioSingle
+                                <!-- <RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
                                     name="leherRadio"
@@ -1774,7 +1774,7 @@
                                         >{$pemeriksaanDoktorErrors
                                             .leherRadio[0]}</span
                                     >
-                                {/if}
+                                {/if} -->
                             </td>
 
                             <td colspan="2">
@@ -1804,7 +1804,7 @@
                                 </p></td
                             >
                             <td>
-                                <RadioSingle
+                                <!-- <RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
                                     name="kardiovaskularRadio"
@@ -1817,7 +1817,7 @@
                                         >{$pemeriksaanDoktorErrors
                                             .kardiovaskularRadio[0]}</span
                                     >
-                                {/if}
+                                {/if} -->
                             </td>
 
                             <td colspan="2">
@@ -1852,7 +1852,7 @@
                                 >Pemeriksaan</td
                             >
                             <td class="w-[160px] min-w-[160px] max-w-[160px]">
-                                <RadioSingle
+                                <!-- <RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
                                     name="pemeriksaanRadio"
@@ -1865,7 +1865,7 @@
                                         >{$pemeriksaanDoktorErrors
                                             .pemeriksaanRadio[0]}</span
                                     >
-                                {/if}
+                                {/if} -->
                             </td>
 
                             <td colspan="2">
@@ -1891,7 +1891,7 @@
                         <tr>
                             <td>X-ray</td>
                             <td>
-                                <RadioSingle
+                                <!-- <RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
                                     name="xrayRadio"
@@ -1904,7 +1904,7 @@
                                         >{$pemeriksaanDoktorErrors
                                             .xrayRadio[0]}</span
                                     >
-                                {/if}
+                                {/if} -->
                             </td>
 
                             <td colspan="2">
@@ -1996,7 +1996,7 @@
                                 </p></td
                             >
                             <td class="w-[160px] min-w-[160px] max-w-[160px]">
-                                <RadioSingle
+                                <!-- <RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
                                     name="abdomenHerniaRadio"
@@ -2009,7 +2009,7 @@
                                         >{$pemeriksaanDoktorErrors
                                             .abdomenHerniaRadio[0]}</span
                                     >
-                                {/if}
+                                {/if} -->
                             </td>
 
                             <td colspan="2">
@@ -2039,8 +2039,8 @@
                                     Sistem saraf dan keadaan mental
                                 </p></td
                             >
-                            <td
-                                ><RadioSingle
+                            <td>
+                                <!-- <RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
                                     name="sistemSarafRadio"
@@ -2053,7 +2053,7 @@
                                     >{$pemeriksaanDoktorErrors
                                         .sistemSarafRadio[0]}</span
                                 >
-                            {/if}
+                            {/if} -->
                             </td>
 
                             <td colspan="2">
