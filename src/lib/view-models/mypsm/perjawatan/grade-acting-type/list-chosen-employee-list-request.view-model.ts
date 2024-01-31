@@ -1,4 +1,4 @@
-export interface ListChosenEmployeeList {
+export interface ListChosenEmployeeListRequest {
     pageNum:   number;
     pageSize:  number;
     orderBy:   string;

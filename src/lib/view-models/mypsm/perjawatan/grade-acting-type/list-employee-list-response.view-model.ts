@@ -1,4 +1,4 @@
-export interface ListEmployeeList {
+export interface ListEmployeeListResponse {
     status:  number;
     message: string;
     data:    Data;
@@ -8,10 +8,10 @@ export interface Data {
     pageNum:       number;
     totalData:     number;
     totalPage:     number;
-    employeeLists: EmployeeList[];
+    employeeLists: EmployeeListResponse[];
 }
 
-export interface EmployeeList {
+export interface EmployeeListResponse {
     employeeNumber: string;
     employeeName:   string;
     ICNumber:       string;

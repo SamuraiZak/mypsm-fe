@@ -1,4 +1,4 @@
-export interface ListGradeActingTypeFlexi41 {
+export interface ListGradeActingTypeFlexi41Response {
     status:  number;
     message: string;
     data:    Data;

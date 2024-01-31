@@ -17,12 +17,14 @@
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import SvgBlock from '$lib/assets/svg/SvgBlock.svelte';
+    import type { EmployeeListResponse } from '$lib/view-models/mypsm/perjawatan/grade-acting-type/list-employee-list-response.view-model';
 
-    let tempData: any = {};
+    let tempData: EmployeeListResponse;
+    export let data;
 
-    let selectedEmployee: IntEmployees[] = [];
+    let selectedEmployee: EmployeeListResponse[] = [];
 
-    function pushSelected(data: any) {
+    function pushSelected(data: EmployeeListResponse) {
         let tempSelected = selectedEmployee;
         if (!tempSelected.includes(data)) {
             tempSelected.push(data);
@@ -30,82 +32,32 @@
         }
     }
 
-    function popSelected(data: any) {
+    function popSelected(data: EmployeeListResponse) {
         let tempSelected = selectedEmployee;
         tempSelected = tempSelected.filter((item) => item !== data);
 
         selectedEmployee = tempSelected;
+        console.log(selectedEmployee)
     }
 
     function pushNewCandidate() {
         let lastBatchIndex = mockActingBatch.length - 1;
         let lastBatchId = mockActingBatch[lastBatchIndex].batchId;
-        let newBatchId = lastBatchId + 1;
-        console.log('length is', lastBatchIndex);
-        console.log('last is', lastBatchId);
-        console.log('new is', newBatchId);
-        console.log(mockActingBatch[0]);
         selectedEmployee.forEach((item) => {
             let employeeDetails = mockEmployees.filter(
                 (item) => item.employeeNumber == item.employeeNumber,
             );
-            let newCandidateId: number =
-                mockActingIndividual[mockActingIndividual.length - 1]
-                    .candidateId + 1;
-            let tempCandidate: IntActingIndividual = {
-                candidateId: newCandidateId,
-                batchId: newBatchId,
-                employeeId: item.id,
-                employeeName: item.name,
-                employeeIDNumber: item.identityDocumentNumber,
-                actingGrade: '',
-                actingPosition: '',
-                qualifierMeetingName: '',
-                qualifierMeetingDate: '',
-                qualifierMeetingResult: '',
-                qualifierMeetingResultApproval: '',
-                qualifierMeetingResultApprover: '',
-                qualifierMeetingResultSupport: '',
-                qualifierMeetingResultSupporter: '',
-                interviewDate: '',
-                interviewTime: '',
-                interviewVenue: '',
-                interviewMarks: '',
-                interviewResult: '',
-                promotionMeetingName: '',
-                promotionMeetingDate: '',
-                promotionMeetingResult: '',
-                suggestedReportingDate: '',
-                suggestedPlacement: '',
-                postponementApplication: false,
-                postponementReason: '',
-                postponementResult: '',
-                requestedReportingDate: '',
-                requestedPlacement: '',
-                decidedReportingDate: '',
-                decidedPlacement: '',
-                finalResultApproval: '',
-                finalResultApprover: '',
-                finalResultSupport: '',
-                finalResultSupporter: '',
+            let tempCandidate: EmployeeListResponse = {
+                employeeNumber: item.employeeNumber,
+                employeeName: item.employeeName,
+                ICNumber: item.ICNumber,
+                homeAddress: item.homeAddress,
+                programme: item.programme,
+                scheme: item.scheme,
+                grade: item.grade,
+                roles: item.roles,
             };
-
-            mockActingIndividual.push(tempCandidate);
         });
-
-        let newActingBatch = {
-            batchId: newBatchId,
-            type: 'Gred Flexi 41',
-            date: '29/09/2023',
-            candidateCount: mockActingIndividual.filter(
-                (item) => item.batchId == newBatchId,
-            ).length,
-            status: 'Sedang Diproses',
-        };
-
-        mockActingBatch.push(newActingBatch);
-
-        currentActingBatchId.set(newBatchId);
     }
 </script>
 
@@ -165,28 +117,18 @@
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
-            <SectionHeader 
-                title="Hasil Carian" 
-                subTitle="Tekan tombol tambah untuk masukkan nama kakitangan ke dalam senarai kakitangan yang terpilih"
+                <SectionHeader
+                    title="Hasil Carian"
+                    subTitle="Tekan tombol tambah untuk masukkan nama kakitangan ke dalam senarai kakitangan yang terpilih"
                 ></SectionHeader>
                 <DynamicTable
                     bind:passData={tempData}
-                    tableItems={mockEmployees}
+                    tableItems={data.employeeRecord}
                     withRowSelection
                     selectAdd
                     onSelect={() => {
                         pushSelected(tempData);
                     }}
-                    columnKeys={[
-                        'employeeNumber',
-                        'name',
-                        'identityDocumentNumber',
-                        'program',
-                        'skim',
-                        'gred',
-                        'roles',
-                        'homeAddress'
-                    ]}
                 ></DynamicTable>
             </div>
         </CustomTabContent>
@@ -211,25 +153,17 @@
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
-            <SectionHeader 
-                title="Hasil Carian" 
-                subTitle="Tekan tombol tolak untuk keluarkan nama kakitangan daripada senarai kakitangan yang terpilih"
+                <SectionHeader
+                    title="Hasil Carian"
+                    subTitle="Tekan tombol tolak untuk keluarkan nama kakitangan daripada senarai kakitangan yang terpilih"
                 ></SectionHeader>
                 <DynamicTable
                     tableItems={selectedEmployee}
-                    withRowSelection onSelect={() => {
+                    withRowSelection
+                    bind:passData={tempData}
+                    onSelect={() => {
                         popSelected(tempData);
                     }}
-                    columnKeys={[
-                        'employeeNumber',
-                        'name',
-                        'identityDocumentNumber',
-                        'program',
-                        'skim',
-                        'gred',
-                        'roles',
-                        'homeAddress'
-                    ]}
                 ></DynamicTable>
             </div>
         </CustomTabContent>

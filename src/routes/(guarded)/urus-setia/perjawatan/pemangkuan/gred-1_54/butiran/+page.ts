@@ -2,7 +2,9 @@ import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 import { getPromiseToast, getErrorToast } from '$lib/services/core/toast/toast-service';
 import { fail } from '@sveltejs/kit';
-
+import { GradeActingService } from '$lib/services/implementations/mypsm/perjawatan/grade-acting/grade-acting-services.service';
+import type { ListChosenEmployeeListRequest } from '$lib/view-models/mypsm/perjawatan/grade-acting-type/list-chosen-employee-list-request.view-model';
+import type { ListChosenEmployeeListResponse, ChosenEmployeeList } from '$lib/view-models/mypsm/perjawatan/grade-acting-type/list-chosen-employee-list-response.view-model';
 
 const GeneralTextSchema = z
     .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
@@ -98,7 +100,20 @@ export const _placementMeetingResultSchema = z.object({
     reportingDate: generalSelectSchema,
 })
 
-export const load = async () => {
+export async function load() {
+
+    const chosenEmployeeRequestBody: ListChosenEmployeeListRequest = {
+        pageNum: 1,
+        pageSize: 10,
+        orderBy: 'createdAt',
+        orderType: 'asc',
+        filter: {
+            employeeIds: [10, 5, 9]
+        },
+    };
+    const chosenEmployeeResponse: ListChosenEmployeeListResponse =
+        await GradeActingService.getActingChosenEmployeeRecord(chosenEmployeeRequestBody);
+    const chosenEmployeeRecord: ChosenEmployeeList[] = chosenEmployeeResponse.data.chosenEmployeeLists
 
     const meetingResultCandidateSelectionForm = await superValidate(
         _meetingResultCandidateSelectionSchema
@@ -142,7 +157,8 @@ export const load = async () => {
         staffPlacementForm,
         staffPlacementAmendmentForm,
         updateActing,
-        placementMeetingResultForm
+        placementMeetingResultForm,
+        chosenEmployeeRecord,
 
     };
 };
