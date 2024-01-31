@@ -21,7 +21,6 @@
     $: {
         $page.url.pathname;
         breadcrumbData = getBreadcrumbData();
-        console.log($moduleName);
     }
     // let currentURL = $page.url.toString();
     export let currentpath: string;
