@@ -18,12 +18,14 @@
     import type { PageData } from '../$types';
     import {
         _stepperSejarahPenyakit,
+        _stepperSejarahPenyakitList,
         _submitFormStepperSejarahPenyakit,
     } from '../+page';
     import {
         _stepperPemeriksaanDoktor,
         _submitFormStepperPemeriksaanDoktor,
     } from '../+page';
+    import { commonOptions } from '$lib/constants/mypsm/radio-option-constants';
 
     export let disabled: boolean = false;
     export let data: PageData;
@@ -64,8 +66,9 @@
         errors: sejarahPenyakitErrors,
         enhance: sejarahPenyakitEnhance,
     } = superForm(data.stepperSejarahPenyakit, {
+        dataType: 'json',
         SPA: true,
-        validators: _stepperSejarahPenyakit,
+        validators: _stepperSejarahPenyakitList,
         onSubmit() {
             _submitFormStepperSejarahPenyakit($sejarahPenyakitForm);
         },
@@ -77,7 +80,7 @@
         form: pemeriksaanDoktorForm,
         errors: pemeriksaanDoktorErrors,
         enhance: pemeriksaanDoktorEnhance,
-    } = superForm(data.stepperPemeriksaanDoktor, {
+    } = superForm(data?.stepperPemeriksaanDoktor!, {
         SPA: true,
         validators: _stepperPemeriksaanDoktor,
         onSubmit() {
@@ -86,9 +89,8 @@
         taintedMessage:
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
+
     let errorData: any;
-
-
 </script>
 
 <Stepper>
@@ -121,7 +123,48 @@
                     method="POST"
                 >
                     <div class="flex w-full flex-col gap-2">
-                        <table
+                        {#each data.medicalHistoryDiseaseNamesResponse.data.list as record, i}
+                            <div class="flex flex-row">
+                                <label
+                                    for="diseases"
+                                    class="w-full min-w-[220px] text-sm"
+                                    >{record}</label
+                                >
+                                <input
+                                    hidden
+                                    type="text"
+                                    value={$sejarahPenyakitForm.medicalHistory[
+                                        i
+                                    ]?.diseases ?? ' '}
+                                />
+                                <RadioSingle
+                                    {disabled}
+                                    options={commonOptions}
+                                    name="record{i}isPesonal"
+                                    legend=""
+                                    userSelected={$sejarahPenyakitForm
+                                        .medicalHistory[i]?.isPersonal ?? true}
+                                ></RadioSingle>
+                                <RadioSingle
+                                    {disabled}
+                                    options={commonOptions}
+                                    name="record{i}isFamily"
+                                    legend=""
+                                    userSelected={$sejarahPenyakitForm
+                                        .medicalHistory[i]?.isFamily ?? true}
+                                ></RadioSingle>
+                                <TextField
+                                    {disabled}
+                                    name="alahan"
+                                    label=""
+                                    type="text"
+                                    value={$sejarahPenyakitForm.medicalHistory[
+                                        i
+                                    ]?.remark ?? ' '}
+                                ></TextField>
+                            </div>
+                        {/each}
+                        <!-- <table
                             class="text-left text-sm {stepperFormTitleClass}"
                         >
                             <tr>
@@ -1196,7 +1239,7 @@
                                     {/if}
                                 </td>
                             </tr>
-                        </table>
+                        </table> -->
                     </div>
                 </form>
             </div></StepperContentBody
@@ -1237,7 +1280,7 @@
                 method="POST"
             >
                 <div
-                    class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+                    class="border-bdr-primary flex w-full flex-col gap-2 border-b pb-5"
                 >
                     <p class="text-sm font-bold">Pemeriksaan Am</p>
                     <TextField
@@ -1253,13 +1296,15 @@
 
                     {#if $pemeriksaanDoktorErrors.height}
                         <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
                             >{$pemeriksaanDoktorErrors.height[0]}</span
                         >
                     {/if}
                     <TextField
                         {disabled}
-                        hasError={$pemeriksaanDoktorErrors.weight ? true : false}
+                        hasError={$pemeriksaanDoktorErrors.weight
+                            ? true
+                            : false}
                         name="weight"
                         label="berat (kg)"
                         type="text"
@@ -1267,7 +1312,7 @@
                     ></TextField>
                     {#if $pemeriksaanDoktorErrors.weight}
                         <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
                             >{$pemeriksaanDoktorErrors.weight[0]}</span
                         >
                     {/if}
@@ -1282,15 +1327,13 @@
 
                     {#if $pemeriksaanDoktorErrors.BMI}
                         <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
                             >{$pemeriksaanDoktorErrors.BMI[0]}</span
                         >
                     {/if}
                     <TextField
                         {disabled}
-                        hasError={$pemeriksaanDoktorErrors.BPM
-                            ? true
-                            : false}
+                        hasError={$pemeriksaanDoktorErrors.BPM ? true : false}
                         name="BPM"
                         label="Denyutan Nadi (setiap minit )"
                         type="text"
@@ -1299,7 +1342,7 @@
 
                     {#if $pemeriksaanDoktorErrors.BPM}
                         <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
                             >{$pemeriksaanDoktorErrors.BPM[0]}</span
                         >
                     {/if}
@@ -1314,7 +1357,7 @@
 
                     {#if $pemeriksaanDoktorErrors.BP}
                         <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
                             >{$pemeriksaanDoktorErrors.BP[0]}</span
                         >
                     {/if}
@@ -1327,7 +1370,7 @@
                     ></RadioSingle>
                     {#if $pemeriksaanDoktorErrors.paleSkin}
                         <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
                             >{$pemeriksaanDoktorErrors.paleSkin[0]}</span
                         >
                     {/if}
@@ -1340,7 +1383,7 @@
                     ></RadioSingle>
                     {#if $pemeriksaanDoktorErrors.cycnosis}
                         <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
                             >{$pemeriksaanDoktorErrors.cycnosis[0]}</span
                         >
                     {/if}
@@ -1353,7 +1396,7 @@
                     ></RadioSingle>
                     {#if $pemeriksaanDoktorErrors.edama}
                         <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
                             >{$pemeriksaanDoktorErrors.edama[0]}</span
                         >
                     {/if}
@@ -1366,7 +1409,7 @@
                     ></RadioSingle>
                     {#if $pemeriksaanDoktorErrors.jaundice}
                         <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
                             >{$pemeriksaanDoktorErrors.jaundice[0]}</span
                         >
                     {/if}
@@ -1379,7 +1422,7 @@
                     ></RadioSingle>
                     {#if $pemeriksaanDoktorErrors?.lymphGlands}
                         <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
                             >{$pemeriksaanDoktorErrors?.lymphGlands[0]}</span
                         >
                     {/if}
@@ -1392,13 +1435,13 @@
                     ></RadioSingle>
                     {#if $pemeriksaanDoktorErrors.skinDisease}
                         <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
                             >{$pemeriksaanDoktorErrors.skinDisease[0]}</span
                         >
                     {/if}
                 </div>
                 <div
-                    class="flex w-full flex-col gap-2.5 border-b border-bdr-primary pb-5"
+                    class="border-bdr-primary flex w-full flex-col gap-2.5 border-b pb-5"
                 >
                     <p class="text-sm font-bold">Mata</p>
                     <table class="text-left text-sm">
@@ -1419,7 +1462,7 @@
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.unaidedVisionLeft}
                                     <span
-                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
                                         >{$pemeriksaanDoktorErrors
                                             .unaidedVisionLeft[0]}</span
                                     >
@@ -1439,7 +1482,7 @@
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.unaidedVisionRight}
                                     <span
-                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
                                         >{$pemeriksaanDoktorErrors
                                             .unaidedVisionRight[0]}</span
                                     >
@@ -1540,7 +1583,7 @@
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.aidedVisionLeft}
                                     <span
-                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
                                         >{$pemeriksaanDoktorErrors
                                             .aidedVisionLeft[0]}</span
                                     >
@@ -1560,7 +1603,7 @@
 
                                 {#if $pemeriksaanDoktorErrors.aidedVisionRight}
                                     <span
-                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
                                         >{$pemeriksaanDoktorErrors
                                             .aidedVisionRight[0]}</span
                                     >
@@ -1621,7 +1664,7 @@
 
                                 {#if $pemeriksaanDoktorErrors.colourVision}
                                     <span
-                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
                                         >{$pemeriksaanDoktorErrors
                                             .colourVision[0]}</span
                                     >
@@ -1661,7 +1704,7 @@
 
                                 {#if $pemeriksaanDoktorErrors.fundoscopic}
                                     <span
-                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
                                         >{$pemeriksaanDoktorErrors
                                             .fundoscopic[0]}</span
                                     >
@@ -1671,7 +1714,7 @@
                     </table>
                 </div>
                 <div
-                    class="flex w-full flex-col gap-2.5 border-b border-bdr-primary pb-5"
+                    class="border-bdr-primary flex w-full flex-col gap-2.5 border-b pb-5"
                 >
                     <table class="text-left text-sm">
                         <tr>
@@ -1708,9 +1751,8 @@
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.ear}
                                     <span
-                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                        >{$pemeriksaanDoktorErrors
-                                            .ear[0]}</span
+                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                        >{$pemeriksaanDoktorErrors.ear[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -1751,7 +1793,7 @@
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.dental}
                                     <span
-                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
                                         >{$pemeriksaanDoktorErrors
                                             .dental[0]}</span
                                     >
@@ -1790,7 +1832,7 @@
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.neck}
                                     <span
-                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
                                         >{$pemeriksaanDoktorErrors
                                             .neck[0]}</span
                                     >
@@ -1833,7 +1875,7 @@
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.cardiovascular}
                                     <span
-                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
                                         >{$pemeriksaanDoktorErrors
                                             .cardiovascular[0]}</span
                                     >
@@ -1843,7 +1885,7 @@
                     </table>
                 </div>
                 <div
-                    class="flex w-full flex-col gap-2.5 border-b border-bdr-primary pb-5"
+                    class="border-bdr-primary flex w-full flex-col gap-2.5 border-b pb-5"
                 >
                     <p class="text-sm font-bold">Sistem pernafasan</p>
                     <table class="text-left text-sm">
@@ -1881,7 +1923,7 @@
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.breathingExam}
                                     <span
-                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        class="text-system-danger ml-[220px] font-sans text-sm italic"
                                         >{$pemeriksaanDoktorErrors
                                             .breathingExam[0]}</span
                                     >
@@ -1920,7 +1962,7 @@
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.xray}
                                     <span
-                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                        class="text-system-danger ml-[220px] font-sans text-sm italic"
                                         >{$pemeriksaanDoktorErrors
                                             .xray[0]}</span
                                     >
@@ -1941,9 +1983,8 @@
                     ></TextField>
                     {#if $pemeriksaanDoktorErrors.xrayTaken}
                         <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$pemeriksaanDoktorErrors
-                                .xrayTaken[0]}</span
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            >{$pemeriksaanDoktorErrors.xrayTaken[0]}</span
                         >
                     {/if}
 
@@ -1960,9 +2001,8 @@
 
                     {#if $pemeriksaanDoktorErrors.xrayLocation}
                         <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$pemeriksaanDoktorErrors
-                                .xrayLocation[0]}</span
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            >{$pemeriksaanDoktorErrors.xrayLocation[0]}</span
                         >
                     {/if}
 
@@ -1979,14 +2019,13 @@
 
                     {#if $pemeriksaanDoktorErrors.xrayReference}
                         <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$pemeriksaanDoktorErrors
-                                .xrayReference[0]}</span
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            >{$pemeriksaanDoktorErrors.xrayReference[0]}</span
                         >
                     {/if}
                 </div>
                 <div
-                    class="flex w-full flex-col gap-2.5 border-b border-bdr-primary pb-5"
+                    class="border-bdr-primary flex w-full flex-col gap-2.5 border-b pb-5"
                 >
                     <table class="text-left text-sm">
                         <tr>
@@ -2025,12 +2064,12 @@
                                 ></TextField>
 
                                 {#if $pemeriksaanDoktorErrors.abdomenHernia}
-                                <span
-                                    class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                    >{$pemeriksaanDoktorErrors
-                                        .abdomenHernia[0]}</span
-                                >
-                            {/if}
+                                    <span
+                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                        >{$pemeriksaanDoktorErrors
+                                            .abdomenHernia[0]}</span
+                                    >
+                                {/if}
                             </td>
                         </tr>
                         <tr>
@@ -2069,12 +2108,12 @@
                                 ></TextField>
 
                                 {#if $pemeriksaanDoktorErrors.mentalState}
-                                <span
-                                    class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                    >{$pemeriksaanDoktorErrors
-                                        .mentalState[0]}</span
-                                >
-                            {/if}
+                                    <span
+                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                        >{$pemeriksaanDoktorErrors
+                                            .mentalState[0]}</span
+                                    >
+                                {/if}
                             </td>
                         </tr>
                         <tr>
@@ -2092,12 +2131,12 @@
                                     bind:userSelected={$pemeriksaanDoktorForm.sistemMuskuloskeletalRadio}
                                 ></RadioSingle>
                                 {#if $pemeriksaanDoktorErrors.sistemMuskuloskeletalRadio}
-                                <span
-                                    class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                    >{$pemeriksaanDoktorErrors
-                                        .sistemMuskuloskeletalRadio[0]}</span
-                                >
-                            {/if}
+                                    <span
+                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                        >{$pemeriksaanDoktorErrors
+                                            .sistemMuskuloskeletalRadio[0]}</span
+                                    >
+                                {/if}
                             </td>
 
                             <td colspan="2">
@@ -2113,18 +2152,18 @@
                                 ></TextField>
 
                                 {#if $pemeriksaanDoktorErrors.musculoskeletal}
-                                <span
-                                    class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                    >{$pemeriksaanDoktorErrors
-                                        .musculoskeletal[0]}</span
-                                >
-                            {/if}
+                                    <span
+                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                        >{$pemeriksaanDoktorErrors
+                                            .musculoskeletal[0]}</span
+                                    >
+                                {/if}
                             </td>
                         </tr>
                     </table>
                 </div>
                 <div
-                    class="flex w-full flex-col gap-2.5 border-b border-bdr-primary pb-5"
+                    class="border-bdr-primary flex w-full flex-col gap-2.5 border-b pb-5"
                 >
                     <p class="text-sm font-bold">Kencing</p>
                     <RadioSingle
@@ -2135,12 +2174,11 @@
                         bind:userSelected={$pemeriksaanDoktorForm.sugar}
                     ></RadioSingle>
                     {#if $pemeriksaanDoktorErrors.sugar}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$pemeriksaanDoktorErrors
-                                        .sugar[0]}</span
-                                >
-                            {/if}
+                        <span
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            >{$pemeriksaanDoktorErrors.sugar[0]}</span
+                        >
+                    {/if}
                     <RadioSingle
                         {disabled}
                         options={normalAbnormalOptions}
@@ -2149,12 +2187,11 @@
                         bind:userSelected={$pemeriksaanDoktorForm.albumin}
                     ></RadioSingle>
                     {#if $pemeriksaanDoktorErrors.albumin}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$pemeriksaanDoktorErrors
-                                        .albumin[0]}</span
-                                >
-                            {/if}
+                        <span
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            >{$pemeriksaanDoktorErrors.albumin[0]}</span
+                        >
+                    {/if}
                     <TextField
                         {disabled}
                         hasError={$pemeriksaanDoktorErrors.microscopic
@@ -2167,12 +2204,11 @@
                     ></TextField>
 
                     {#if $pemeriksaanDoktorErrors.microscopic}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$pemeriksaanDoktorErrors
-                            .microscopic[0]}</span
-                    >
-                {/if}
+                        <span
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            >{$pemeriksaanDoktorErrors.microscopic[0]}</span
+                        >
+                    {/if}
                 </div>
             </form>
             <div class="flex w-full flex-col gap-2.5">
@@ -2198,5 +2234,3 @@
         >
     </StepperContent>
 </Stepper>
-
-
