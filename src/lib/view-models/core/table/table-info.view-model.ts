@@ -5,4 +5,6 @@ interface TableInfoViewModel{
     orderType: string;
     totalData: number;
     totalPage: number;
+    data: object[];
+    selectedData: object[];
 }

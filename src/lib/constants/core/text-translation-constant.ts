@@ -25,4 +25,34 @@ export const textLibrary: TextTranslation[]=[
         malay: "Jumlah Peruntukan Cuti",
         display: "Jumlah Peruntukan Cuti",
     },
+    {
+        english: "eligibleLeaveCount",
+        malay: "Jumlah Peruntukan Cuti",
+        display: "Jumlah Peruntukan Cuti",
+    },
+    {
+        english: "candidateId",
+        malay: "ID Calon",
+        display: "ID Calon",
+    },
+    {
+        english: "candidateName",
+        malay: "Nama Calon",
+        display: "Nama Calon",
+    },
+    {
+        english: "temporaryId",
+        malay: "ID Sementara",
+        display: "ID Sementara",
+    },
+    {
+        english: "identityCardNo",
+        malay: "No. Kad Pengenalan",
+        display: "No. Kad Pengenalan",
+    },
+    {
+        english: "email",
+        malay: "E-mel",
+        display: "E-mel",
+    },
 ];
