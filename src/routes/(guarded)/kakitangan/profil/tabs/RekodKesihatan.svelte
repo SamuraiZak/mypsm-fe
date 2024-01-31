@@ -1242,106 +1242,106 @@
                     <p class="text-sm font-bold">Pemeriksaan Am</p>
                     <TextField
                         {disabled}
-                        hasError={$pemeriksaanDoktorErrors.tinggi
+                        hasError={$pemeriksaanDoktorErrors.height
                             ? true
                             : false}
-                        name="tinggi"
+                        name="height"
                         label="Tinggi (cm)"
                         type="text"
-                        bind:value={$pemeriksaanDoktorForm.tinggi}
+                        bind:value={$pemeriksaanDoktorForm.height}
                     ></TextField>
 
-                    {#if $pemeriksaanDoktorErrors.tinggi}
+                    {#if $pemeriksaanDoktorErrors.height}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$pemeriksaanDoktorErrors.tinggi[0]}</span
+                            >{$pemeriksaanDoktorErrors.height[0]}</span
                         >
                     {/if}
                     <TextField
                         {disabled}
-                        hasError={$pemeriksaanDoktorErrors.berat ? true : false}
-                        name="berat"
+                        hasError={$pemeriksaanDoktorErrors.weight ? true : false}
+                        name="weight"
                         label="berat (kg)"
                         type="text"
-                        bind:value={$pemeriksaanDoktorForm.berat}
+                        bind:value={$pemeriksaanDoktorForm.weight}
                     ></TextField>
-                    {#if $pemeriksaanDoktorErrors.berat}
+                    {#if $pemeriksaanDoktorErrors.weight}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$pemeriksaanDoktorErrors.berat[0]}</span
+                            >{$pemeriksaanDoktorErrors.weight[0]}</span
                         >
                     {/if}
                     <TextField
                         {disabled}
-                        hasError={$pemeriksaanDoktorErrors.bmi ? true : false}
-                        name="bmi"
+                        hasError={$pemeriksaanDoktorErrors.BMI ? true : false}
+                        name="BMI"
                         label="BMI"
                         type="text"
-                        bind:value={$pemeriksaanDoktorForm.bmi}
+                        bind:value={$pemeriksaanDoktorForm.BMI}
                     ></TextField>
 
-                    {#if $pemeriksaanDoktorErrors.bmi}
+                    {#if $pemeriksaanDoktorErrors.BMI}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$pemeriksaanDoktorErrors.bmi[0]}</span
+                            >{$pemeriksaanDoktorErrors.BMI[0]}</span
                         >
                     {/if}
                     <TextField
                         {disabled}
-                        hasError={$pemeriksaanDoktorErrors.denyutanNadi
+                        hasError={$pemeriksaanDoktorErrors.BPM
                             ? true
                             : false}
-                        name="denyutanNadi"
+                        name="BPM"
                         label="Denyutan Nadi (setiap minit )"
                         type="text"
-                        bind:value={$pemeriksaanDoktorForm.denyutanNadi}
+                        bind:value={$pemeriksaanDoktorForm.BPM}
                     ></TextField>
 
-                    {#if $pemeriksaanDoktorErrors.denyutanNadi}
+                    {#if $pemeriksaanDoktorErrors.BPM}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$pemeriksaanDoktorErrors.denyutanNadi[0]}</span
+                            >{$pemeriksaanDoktorErrors.BPM[0]}</span
                         >
                     {/if}
                     <TextField
                         {disabled}
-                        hasError={$pemeriksaanDoktorErrors.bp ? true : false}
-                        name="bp"
+                        hasError={$pemeriksaanDoktorErrors.BP ? true : false}
+                        name="BP"
                         label="BP (mmHg)"
                         type="text"
-                        bind:value={$pemeriksaanDoktorForm.bp}
+                        bind:value={$pemeriksaanDoktorForm.BP}
                     ></TextField>
 
-                    {#if $pemeriksaanDoktorErrors.bp}
+                    {#if $pemeriksaanDoktorErrors.BP}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$pemeriksaanDoktorErrors.bp[0]}</span
+                            >{$pemeriksaanDoktorErrors.BP[0]}</span
                         >
                     {/if}
                     <RadioSingle
                         {disabled}
                         {options}
-                        name="kulitPucat"
+                        name="paleSkin"
                         legend="Kulit pucat"
-                        bind:userSelected={$pemeriksaanDoktorForm.kulitPucat}
+                        bind:userSelected={$pemeriksaanDoktorForm.paleSkin}
                     ></RadioSingle>
-                    {#if $pemeriksaanDoktorErrors.kulitPucat}
+                    {#if $pemeriksaanDoktorErrors.paleSkin}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$pemeriksaanDoktorErrors.kulitPucat[0]}</span
+                            >{$pemeriksaanDoktorErrors.paleSkin[0]}</span
                         >
                     {/if}
                     <RadioSingle
                         {disabled}
                         {options}
-                        name="sianosis"
+                        name="cycnosis"
                         legend="Sianosis"
-                        bind:userSelected={$pemeriksaanDoktorForm.sianosis}
+                        bind:userSelected={$pemeriksaanDoktorForm.cycnosis}
                     ></RadioSingle>
-                    {#if $pemeriksaanDoktorErrors.sianosis}
+                    {#if $pemeriksaanDoktorErrors.cycnosis}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$pemeriksaanDoktorErrors.sianosis[0]}</span
+                            >{$pemeriksaanDoktorErrors.cycnosis[0]}</span
                         >
                     {/if}
                     <RadioSingle
@@ -1360,40 +1360,40 @@
                     <RadioSingle
                         {disabled}
                         {options}
-                        name="penyakitKuning"
+                        name="jaundice"
                         legend="Penyakit kuning"
-                        bind:userSelected={$pemeriksaanDoktorForm.penyakitKuning}
+                        bind:userSelected={$pemeriksaanDoktorForm.jaundice}
                     ></RadioSingle>
-                    {#if $pemeriksaanDoktorErrors.penyakitKuning}
+                    {#if $pemeriksaanDoktorErrors.jaundice}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$pemeriksaanDoktorErrors.penyakitKuning[0]}</span
+                            >{$pemeriksaanDoktorErrors.jaundice[0]}</span
                         >
                     {/if}
                     <RadioSingle
                         {disabled}
                         {options}
-                        name="kelenjarLimfa"
+                        name="lymphGlands"
                         legend="Kelenjar limfa"
-                        bind:userSelected={$pemeriksaanDoktorForm.kelenjarLimfa}
+                        bind:userSelected={$pemeriksaanDoktorForm.lymphGlands}
                     ></RadioSingle>
-                    {#if $pemeriksaanDoktorErrors?.kelenjarLimfa}
+                    {#if $pemeriksaanDoktorErrors?.lymphGlands}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$pemeriksaanDoktorErrors?.kelenjarLimfa[0]}</span
+                            >{$pemeriksaanDoktorErrors?.lymphGlands[0]}</span
                         >
                     {/if}
                     <RadioSingle
                         {disabled}
                         {options}
-                        name="penyakitKulit"
+                        name="skinDisease"
                         legend="Penyakit kulit"
-                        bind:userSelected={$pemeriksaanDoktorForm.penyakitKulit}
+                        bind:userSelected={$pemeriksaanDoktorForm.skinDisease}
                     ></RadioSingle>
-                    {#if $pemeriksaanDoktorErrors.penyakitKulit}
+                    {#if $pemeriksaanDoktorErrors.skinDisease}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$pemeriksaanDoktorErrors.penyakitKulit[0]}</span
+                            >{$pemeriksaanDoktorErrors.skinDisease[0]}</span
                         >
                     {/if}
                 </div>
@@ -1610,20 +1610,20 @@
                             <td colspan="2">
                                 <TextField
                                     {disabled}
-                                    hasError={$pemeriksaanDoktorErrors.penglihatanWarna
+                                    hasError={$pemeriksaanDoktorErrors.colourVision
                                         ? true
                                         : false}
-                                    name="penglihatanWarna"
+                                    name="colourVision"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.penglihatanWarna}
+                                    bind:value={$pemeriksaanDoktorForm.colourVision}
                                 ></TextField>
 
-                                {#if $pemeriksaanDoktorErrors.penglihatanWarna}
+                                {#if $pemeriksaanDoktorErrors.colourVision}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
-                                            .penglihatanWarna[0]}</span
+                                            .colourVision[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -1650,20 +1650,20 @@
                             <td colspan="2">
                                 <TextField
                                     {disabled}
-                                    hasError={$pemeriksaanDoktorErrors.funduskopi
+                                    hasError={$pemeriksaanDoktorErrors.fundoscopic
                                         ? true
                                         : false}
-                                    name="funduskopi"
+                                    name="fundoscopic"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.funduskopi}
+                                    bind:value={$pemeriksaanDoktorForm.fundoscopic}
                                 ></TextField>
 
-                                {#if $pemeriksaanDoktorErrors.funduskopi}
+                                {#if $pemeriksaanDoktorErrors.fundoscopic}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
-                                            .funduskopi[0]}</span
+                                            .fundoscopic[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -1698,19 +1698,19 @@
                             <td colspan="2">
                                 <TextField
                                     {disabled}
-                                    hasError={$pemeriksaanDoktorErrors.telinga
+                                    hasError={$pemeriksaanDoktorErrors.ear
                                         ? true
                                         : false}
-                                    name="telinga"
+                                    name="ear"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.telinga}
+                                    bind:value={$pemeriksaanDoktorForm.ear}
                                 ></TextField>
-                                {#if $pemeriksaanDoktorErrors.telinga}
+                                {#if $pemeriksaanDoktorErrors.ear}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
-                                            .telinga[0]}</span
+                                            .ear[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -1741,19 +1741,19 @@
                             <td colspan="2">
                                 <TextField
                                     {disabled}
-                                    hasError={$pemeriksaanDoktorErrors.ronggaGigiMulut
+                                    hasError={$pemeriksaanDoktorErrors.dental
                                         ? true
                                         : false}
-                                    name="ronggaGigiMulut"
+                                    name="dental"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.ronggaGigiMulut}
+                                    bind:value={$pemeriksaanDoktorForm.dental}
                                 ></TextField>
-                                {#if $pemeriksaanDoktorErrors.ronggaGigiMulut}
+                                {#if $pemeriksaanDoktorErrors.dental}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
-                                            .ronggaGigiMulut[0]}</span
+                                            .dental[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -1780,19 +1780,19 @@
                             <td colspan="2">
                                 <TextField
                                     {disabled}
-                                    hasError={$pemeriksaanDoktorErrors.leher
+                                    hasError={$pemeriksaanDoktorErrors.neck
                                         ? true
                                         : false}
-                                    name="leher"
+                                    name="neck"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.leher}
+                                    bind:value={$pemeriksaanDoktorForm.neck}
                                 ></TextField>
-                                {#if $pemeriksaanDoktorErrors.leher}
+                                {#if $pemeriksaanDoktorErrors.neck}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
-                                            .leher[0]}</span
+                                            .neck[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -1823,19 +1823,19 @@
                             <td colspan="2">
                                 <TextField
                                     {disabled}
-                                    hasError={$pemeriksaanDoktorErrors.kardiovaskular
+                                    hasError={$pemeriksaanDoktorErrors.cardiovascular
                                         ? true
                                         : false}
-                                    name="kardiovaskular"
+                                    name="cardiovascular"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.kardiovaskular}
+                                    bind:value={$pemeriksaanDoktorForm.cardiovascular}
                                 ></TextField>
-                                {#if $pemeriksaanDoktorErrors.kardiovaskular}
+                                {#if $pemeriksaanDoktorErrors.cardiovascular}
                                     <span
                                         class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
-                                            .kardiovaskular[0]}</span
+                                            .cardiovascular[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -1871,19 +1871,19 @@
                             <td colspan="2">
                                 <TextField
                                     {disabled}
-                                    hasError={$pemeriksaanDoktorErrors.pemeriksaan
+                                    hasError={$pemeriksaanDoktorErrors.breathingExam
                                         ? true
                                         : false}
-                                    name="pemeriksaan"
+                                    name="breathingExam"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.pemeriksaan}
+                                    bind:value={$pemeriksaanDoktorForm.breathingExam}
                                 ></TextField>
-                                {#if $pemeriksaanDoktorErrors.pemeriksaan}
+                                {#if $pemeriksaanDoktorErrors.breathingExam}
                                     <span
                                         class="ml-[220px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
-                                            .pemeriksaan[0]}</span
+                                            .breathingExam[0]}</span
                                     >
                                 {/if}
                             </td>
@@ -1931,57 +1931,57 @@
 
                     <TextField
                         {disabled}
-                        hasError={$pemeriksaanDoktorErrors.tarikhPengambilanXray
+                        hasError={$pemeriksaanDoktorErrors.xrayTaken
                             ? true
                             : false}
-                        name="tarikhPengambilanXray"
+                        name="xrayTaken"
                         label="Tarikh pengambilan x-ray"
                         type="text"
-                        bind:value={$pemeriksaanDoktorForm.tarikhPengambilanXray}
+                        bind:value={$pemeriksaanDoktorForm.xrayTaken}
                     ></TextField>
-                    {#if $pemeriksaanDoktorErrors.tarikhPengambilanXray}
+                    {#if $pemeriksaanDoktorErrors.xrayTaken}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$pemeriksaanDoktorErrors
-                                .tarikhPengambilanXray[0]}</span
+                                .xrayTaken[0]}</span
                         >
                     {/if}
 
                     <TextField
                         {disabled}
-                        hasError={$pemeriksaanDoktorErrors.lokasiPengambilanXray
+                        hasError={$pemeriksaanDoktorErrors.xrayLocation
                             ? true
                             : false}
-                        name="lokasiPengambilanXray"
+                        name="xrayLocation"
                         label="Lokasi pengambilan x-ray"
                         type="text"
-                        bind:value={$pemeriksaanDoktorForm.lokasiPengambilanXray}
+                        bind:value={$pemeriksaanDoktorForm.xrayLocation}
                     ></TextField>
 
-                    {#if $pemeriksaanDoktorErrors.lokasiPengambilanXray}
+                    {#if $pemeriksaanDoktorErrors.xrayLocation}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$pemeriksaanDoktorErrors
-                                .lokasiPengambilanXray[0]}</span
+                                .xrayLocation[0]}</span
                         >
                     {/if}
 
                     <TextField
                         {disabled}
-                        hasError={$pemeriksaanDoktorErrors.nomborRujukanXray
+                        hasError={$pemeriksaanDoktorErrors.xrayReference
                             ? true
                             : false}
-                        name="nomborRujukanXray"
+                        name="xrayReference"
                         label="Nombor Rujukan x-ray"
                         type="text"
-                        bind:value={$pemeriksaanDoktorForm.nomborRujukanXray}
+                        bind:value={$pemeriksaanDoktorForm.xrayReference}
                     ></TextField>
 
-                    {#if $pemeriksaanDoktorErrors.nomborRujukanXray}
+                    {#if $pemeriksaanDoktorErrors.xrayReference}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$pemeriksaanDoktorErrors
-                                .nomborRujukanXray[0]}</span
+                                .xrayReference[0]}</span
                         >
                     {/if}
                 </div>
@@ -2059,20 +2059,20 @@
                             <td colspan="2">
                                 <TextField
                                     {disabled}
-                                    hasError={$pemeriksaanDoktorErrors.sistemSaraf
+                                    hasError={$pemeriksaanDoktorErrors.mentalState
                                         ? true
                                         : false}
-                                    name="sistemSaraf"
+                                    name="mentalState"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.sistemSaraf}
+                                    bind:value={$pemeriksaanDoktorForm.mentalState}
                                 ></TextField>
 
-                                {#if $pemeriksaanDoktorErrors.sistemSaraf}
+                                {#if $pemeriksaanDoktorErrors.mentalState}
                                 <span
                                     class="ml-[0px] font-sans text-sm italic text-system-danger"
                                     >{$pemeriksaanDoktorErrors
-                                        .sistemSaraf[0]}</span
+                                        .mentalState[0]}</span
                                 >
                             {/if}
                             </td>
@@ -2103,20 +2103,20 @@
                             <td colspan="2">
                                 <TextField
                                     {disabled}
-                                    hasError={$pemeriksaanDoktorErrors.sistemMuskuloskeletal
+                                    hasError={$pemeriksaanDoktorErrors.musculoskeletal
                                         ? true
                                         : false}
-                                    name="sistemMuskuloskeletal"
+                                    name="musculoskeletal"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.sistemMuskuloskeletal}
+                                    bind:value={$pemeriksaanDoktorForm.musculoskeletal}
                                 ></TextField>
 
-                                {#if $pemeriksaanDoktorErrors.sistemMuskuloskeletal}
+                                {#if $pemeriksaanDoktorErrors.musculoskeletal}
                                 <span
                                     class="ml-[0px] font-sans text-sm italic text-system-danger"
                                     >{$pemeriksaanDoktorErrors
-                                        .sistemMuskuloskeletal[0]}</span
+                                        .musculoskeletal[0]}</span
                                 >
                             {/if}
                             </td>
@@ -2130,15 +2130,15 @@
                     <RadioSingle
                         {disabled}
                         options={normalAbnormalOptions}
-                        name="gula"
+                        name="sugar"
                         legend="Gula"
-                        bind:userSelected={$pemeriksaanDoktorForm.gula}
+                        bind:userSelected={$pemeriksaanDoktorForm.sugar}
                     ></RadioSingle>
-                    {#if $pemeriksaanDoktorErrors.gula}
+                    {#if $pemeriksaanDoktorErrors.sugar}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
                                     >{$pemeriksaanDoktorErrors
-                                        .gula[0]}</span
+                                        .sugar[0]}</span
                                 >
                             {/if}
                     <RadioSingle
@@ -2157,20 +2157,20 @@
                             {/if}
                     <TextField
                         {disabled}
-                        hasError={$pemeriksaanDoktorErrors.mikroskopi
+                        hasError={$pemeriksaanDoktorErrors.microscopic
                             ? true
                             : false}
-                        name="mikroskopi"
+                        name="microscopic"
                         label="Mikroskopi"
                         type="text"
-                        bind:value={$pemeriksaanDoktorForm.mikroskopi}
+                        bind:value={$pemeriksaanDoktorForm.microscopic}
                     ></TextField>
 
-                    {#if $pemeriksaanDoktorErrors.mikroskopi}
+                    {#if $pemeriksaanDoktorErrors.microscopic}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
                         >{$pemeriksaanDoktorErrors
-                            .mikroskopi[0]}</span
+                            .microscopic[0]}</span
                     >
                 {/if}
                 </div>
