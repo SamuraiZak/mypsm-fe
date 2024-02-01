@@ -1,8 +1,9 @@
+import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
+import { LookupHelper } from '$lib/helper/core/lookup-helper/lookup-helper';
 import { TextHelper } from '$lib/helper/core/text-helper/text-helper';
 import type { DropdownOptionsInterface } from '$lib/interfaces/common/dropdown-option';
 import { AuthService } from '$lib/services/implementations/core/auth/authentication.service';
 import { LookupServices } from '$lib/services/implementations/core/lookup/lookup.service';
-import { LookupService } from '$lib/services/implementations/core/lookup/lookup.services';
 import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
 import type { EnumRole, EnumRoleResponseViewModel } from '$lib/view-models/core/lookup/role/role-enum-reponse.view-model';
 import type { RoleOption } from '$lib/view-models/core/role-option/role-option.view-model';
@@ -10,320 +11,216 @@ import type { EmployeesListResponseViewModel } from '$lib/view-models/mypsm/empl
 
 export const load = async () => {
 
-    const what = await LookupServices.getLookup("agency-group");
+    // CORRECT EXAMPLE STARTS HERE ================
     // agency group list
-    const agencyGroupsListResponse =
-        await LookupService.getEnumAgencyGroupList();
+    const agencyGroupsListResponse : LookupDTO[] =
+        await LookupServices.getLookup("agency-group");
 
-    const agencyGroupsLookup: DropdownOptionsInterface[] =
-        agencyGroupsListResponse.data.agencyGroups.map((agency) => ({
-            value: Number(agency.id),
-            name: agency.description,
-        }));
+    const agencyGroupsLookup: DropdownOptionsInterface[] = LookupHelper.toDropdown(agencyGroupsListResponse);
+
+    // CORRECT EXAMPLE ENDS HERE ==================
 
     // list of asset declaration status
     const assetDeclarationStatusResponse =
-        await LookupService.getEnumAssetDeclarationStatus();
+        await LookupServices.getLookup("asset-declaration-status");
 
     const assetDeclarationLookup: DropdownOptionsInterface[] =
-        assetDeclarationStatusResponse.data.assetDeclarationStatus.map(
-            (asset) => ({
-                value: Number(asset.id),
-                name: asset.description,
-            }),
-        );
+        LookupHelper.toDropdown(assetDeclarationStatusResponse);
 
     // award list
-    const awardListResponse = await LookupService.getEnumAwardList();
+    const awardListResponse = await LookupServices.getLookup("award");
 
     const awardLookup: DropdownOptionsInterface[] =
-        awardListResponse.data.awards.map((awards) => ({
-            value: Number(awards.id),
-            name: awards.description,
-        }));
+    LookupHelper.toDropdown(awardListResponse);
 
     // award category list
     const awardListCategoryResponse =
-        await LookupService.getEnumAwardCategoryList();
+        await LookupServices.getLookup("award-category");
 
     const awardCategoryLookup: DropdownOptionsInterface[] =
-        awardListCategoryResponse.data.awardCategories.map(
-            (awardCategories) => ({
-                value: Number(awardCategories.id),
-                name: awardCategories.description,
-            }),
-        );
+    LookupHelper.toDropdown(awardListCategoryResponse);
 
     // city list
-    const cityListResponse = await LookupService.getEnumCityList();
+    const cityListResponse = await LookupServices.getLookup("city");
 
     const cityLookup: DropdownOptionsInterface[] =
-        cityListResponse.data.cities.map((city) => ({
-            value: Number(city.id),
-            name: city.description,
-        }));
+    LookupHelper.toDropdown(cityListResponse);
 
     // country list
-    const countryListResponse = await LookupService.getEnumCountryList();
+    const countryListResponse = await LookupServices.getLookup("country");
 
     const countryLookup: DropdownOptionsInterface[] =
-        countryListResponse.data.countries.map((country) => ({
-            value: Number(country.id),
-            name: country.description,
-        }));
+    LookupHelper.toDropdown(countryListResponse);
 
     // department list
-    const departmentListResponse = await LookupService.getEnumDepartmentList();
+    const departmentListResponse = await LookupServices.getLookup("department");
 
     const departmentLookup: DropdownOptionsInterface[] =
-        departmentListResponse.data.departments.map((department) => ({
-            value: Number(department.id),
-            name: department.name,
-        }));
+    LookupHelper.toDropdown(departmentListResponse);
 
     // district list
-    const districtListResponse = await LookupService.getEnumDistrictList();
+    const districtListResponse = await LookupServices.getLookup("district");
 
     const districtLookup: DropdownOptionsInterface[] =
-        districtListResponse.data.districts.map((district) => ({
-            value: Number(district.id),
-            name: district.name,
-        }));
+    LookupHelper.toDropdown(districtListResponse);
 
     // division list
-    const divisionListResponse = await LookupService.getEnumDivisionList();
+    const divisionListResponse = await LookupServices.getLookup("division");
 
     const divisionLookup: DropdownOptionsInterface[] =
-        divisionListResponse.data.divisions.map((division) => ({
-            value: Number(division.id),
-            name: division.name,
-        }));
+    LookupHelper.toDropdown(divisionListResponse);
 
     // employment status list
     const employmentStatusListResponse =
-        await LookupService.getEnumEmploymentStatusList();
+        await LookupServices.getLookup("employment-status");
 
     const empoymentStatusLookup: DropdownOptionsInterface[] =
-        employmentStatusListResponse.data.employmentStatus.map(
-            (employment) => ({
-                value: Number(employment.id),
-                name: employment.occSectorName,
-            }),
-        );
+    LookupHelper.toDropdown(employmentStatusListResponse);
 
     // ethnicity list
-    const ethnicityListResponse = await LookupService.getEnumEthnicityList();
+    const ethnicityListResponse = await LookupServices.getLookup("ethnicity");
 
     const ethnicityLookup: DropdownOptionsInterface[] =
-        ethnicityListResponse.data.ethnicities.map((ethnicity) => ({
-            value: Number(ethnicity.id),
-            name: ethnicity.description,
-        }));
+    LookupHelper.toDropdown(ethnicityListResponse);
 
     // gender list
-    const genderListResponse = await LookupService.getEnumGenderList();
+    const genderListResponse = await LookupServices.getLookup("gender");
 
     const genderLookup: DropdownOptionsInterface[] =
-        genderListResponse.data.genders.map((gender) => ({
-            value: Number(gender.id),
-            name: gender.description,
-        }));
+    LookupHelper.toDropdown(genderListResponse);
 
     // grade list
-    const gradeListResponse = await LookupService.getEnumGradeList();
+    const gradeListResponse = await LookupServices.getLookup("grade");
 
     const gradeLookup: DropdownOptionsInterface[] =
-        gradeListResponse.data.grades.map((grade) => ({
-            value: Number(grade.id),
-            name: grade.name,
-        }));
+    LookupHelper.toDropdown(gradeListResponse);
 
     // education list
-    const educationListResponse = await LookupService.getEnumEducationList();
+    const educationListResponse = await LookupServices.getLookup("highest-education-level");
 
     const educationLookup: DropdownOptionsInterface[] =
-        educationListResponse.data.highestEducationLevels.map((education) => ({
-            value: Number(education.id),
-            name: education.description,
-        }));
+    LookupHelper.toDropdown(educationListResponse);
 
     // institution list
     const institutionListResponse =
-        await LookupService.getEnumInstitutionList();
+        await LookupServices.getLookup("institution");
 
     const institutionLookup: DropdownOptionsInterface[] =
-        institutionListResponse.data.institutions.map((institution) => ({
-            value: Number(institution.id),
-            name: institution.description,
-        }));
+    LookupHelper.toDropdown(institutionListResponse);
 
     // major minor list
-    const majorMinorListResponse = await LookupService.getEnumMajorMinorList();
+    const majorMinorListResponse = await LookupServices.getLookup("major-minor");
 
     const majorMinorLookup: DropdownOptionsInterface[] =
-        majorMinorListResponse.data.majorMinors.map((majorMinor) => ({
-            value: Number(majorMinor.id),
-            name: majorMinor.description,
-        }));
+    LookupHelper.toDropdown(majorMinorListResponse);
 
     // marital list
-    const maritalListResponse = await LookupService.getEnumMaritalList();
+    const maritalListResponse = await LookupServices.getLookup("marital-status");
 
     const maritalLookup: DropdownOptionsInterface[] =
-        maritalListResponse.data.maritalStatus.map((marital) => ({
-            value: Number(marital.id),
-            name: marital.description,
-        }));
+    LookupHelper.toDropdown(maritalListResponse);
 
     // nationality list
     const nationalityListResponse =
-        await LookupService.getEnumNationalityList();
+        await LookupServices.getLookup("nationality");
 
     const nationalityLookup: DropdownOptionsInterface[] =
-        nationalityListResponse.data.nationalities.map((nationality) => ({
-            value: Number(nationality.id),
-            name: nationality.description,
-        }));
+    LookupHelper.toDropdown(nationalityListResponse);
 
     // placement list
-    const placementListResponse = await LookupService.getEnumPlacementList();
+    const placementListResponse = await LookupServices.getLookup("placement");
 
     const placementLookup: DropdownOptionsInterface[] =
-        placementListResponse.data.placements.map((placements) => ({
-            value: Number(placements.id),
-            name: placements.name,
-        }));
+    LookupHelper.toDropdown(placementListResponse);
 
     // position list
-    const positionResponse = await LookupService.getEnumPositionList();
+    const positionResponse = await LookupServices.getLookup("position");
 
     const positionLookup: DropdownOptionsInterface[] =
-        positionResponse.data.positions.map((position) => ({
-            value: Number(position.id),
-            name: position.name,
-        }));
+    LookupHelper.toDropdown(positionResponse);
 
     // race list
-    const raceListResponse = await LookupService.getEnumRaceList();
+    const raceListResponse = await LookupServices.getLookup("race");
 
     const raceLookup: DropdownOptionsInterface[] =
-        raceListResponse.data.races.map((race) => ({
-            value: Number(race.id),
-            name: race.description,
-        }));
+    LookupHelper.toDropdown(raceListResponse);
 
     // relationship list
     const relationshipListResponse =
-        await LookupService.getEnumRelationshipList();
+        await LookupServices.getLookup("relationship");
 
     const relationshipLookup: DropdownOptionsInterface[] =
-        relationshipListResponse.data.relationships.map((relationship) => ({
-            value: Number(relationship.id),
-            name: relationship.description,
-        }));
+    LookupHelper.toDropdown(relationshipListResponse);
 
     // religion list
-    const religionListResponse = await LookupService.getEnumReligionList();
+    const religionListResponse = await LookupServices.getLookup("religion");
 
     const religionLookup: DropdownOptionsInterface[] =
-        religionListResponse.data.religions.map((religions) => ({
-            value: Number(religions.id),
-            name: religions.description,
-        }));
+    LookupHelper.toDropdown(religionListResponse);
 
     // role list
-    const roleListResponse = await LookupService.getEnumRoleList();
+    const roleListResponse = await LookupServices.getLookup("role");
 
     const roleLookup: DropdownOptionsInterface[] =
-        roleListResponse.data.rolesList.map((roles) => ({
-            value: Number(roles.id),
-            name: roles.name,
-        }));
+    LookupHelper.toDropdown(roleListResponse);
 
     // scheme of service list
     const schemeOfServiceListResponse =
-        await LookupService.getEnumSchemeOfServiceList();
+        await LookupServices.getLookup("scheme-of-service");
 
     const schemeOfServiceLookup: DropdownOptionsInterface[] =
-        schemeOfServiceListResponse.data.schemeOfServices.map((scheme) => ({
-            value: Number(scheme.id),
-            name: scheme.description,
-        }));
+    LookupHelper.toDropdown(schemeOfServiceListResponse);
 
     // section list
-    const sectionListResponse = await LookupService.getEnumSectionList();
+    const sectionListResponse = await LookupServices.getLookup("section");
 
     const sectionLookup: DropdownOptionsInterface[] =
-        sectionListResponse.data.sections.map((section) => ({
-            value: Number(section.id),
-            name: section.name,
-        }));
+    LookupHelper.toDropdown(sectionListResponse);
 
     // service class list
     const serviceClassListResponse =
-        await LookupService.getEnumServiceClassList();
+        await LookupServices.getLookup("service-class");
 
     const serviceClassLookup: DropdownOptionsInterface[] =
-        serviceClassListResponse.data.serviceClass.map((service) => ({
-            value: Number(service.id),
-            name: service.description,
-        }));
+    LookupHelper.toDropdown(serviceClassListResponse);
 
     // service group list
-    const serviceGroupResponse = await LookupService.getEnumServiceGroupList();
+    const serviceGroupResponse = await LookupServices.getLookup("service-group");
 
     const serviceGroupLookup: DropdownOptionsInterface[] =
-        serviceGroupResponse.data.serviceGroups.map((service) => ({
-            value: Number(service.id),
-            name: service.name,
-        }));
+    LookupHelper.toDropdown(serviceGroupResponse);
 
     // service type list
     const serviceTypeListResponse =
-        await LookupService.getEnumServiceTypeList();
+        await LookupServices.getLookup("service-type");
 
     const serviceTypeLookup: DropdownOptionsInterface[] =
-        serviceTypeListResponse.data.serviceTypes.map((service) => ({
-            value: Number(service.id),
-            name: service.name,
-        }));
+    LookupHelper.toDropdown(serviceTypeListResponse);
 
     // sponsorship list
     const sponsorshipListResponse =
-        await LookupService.getEnumSponsorshipList();
+        await LookupServices.getLookup("sponsorship");
 
     const sponsorshipLookup: DropdownOptionsInterface[] =
-        sponsorshipListResponse.data.sponsorships.map((sponsor) => ({
-            value: Number(sponsor.id),
-            name: sponsor.description,
-        }));
+    LookupHelper.toDropdown(sponsorshipListResponse);
 
     // state list
-    const stateListResponse = await LookupService.getEnumStateList();
+    const stateListResponse = await LookupServices.getLookup("state");
 
     const stateLookup: DropdownOptionsInterface[] =
-        stateListResponse.data.states.map((state) => ({
-            value: Number(state.id),
-            name: state.description,
-        }));
+    LookupHelper.toDropdown(stateListResponse);
 
     // title list
-    const titleListResponse = await LookupService.getEnumTitleList();
+    const titleListResponse = await LookupServices.getLookup("title");
 
     const titleLookup: DropdownOptionsInterface[] =
-        titleListResponse.data.titles.map((title) => ({
-            value: Number(title.id),
-            name: title.description,
-        }));
+    LookupHelper.toDropdown(titleListResponse);
 
     // unit list
-    const unitListResponse = await LookupService.getEnumUnitList();
+    const unitListResponse = await LookupServices.getLookup("unit");
 
     const unitLookup: DropdownOptionsInterface[] =
-        unitListResponse.data.units.map((nit) => ({
-            value: Number(nit.id),
-            name: nit.name,
-        }));
+    LookupHelper.toDropdown(unitListResponse);
 
     const request: EmployeesListRequestViewModel = {
         pageNum: 1,
@@ -341,6 +238,8 @@ export const load = async () => {
             value: String(employee.employeeNumber),
             name: employee.employeeNumber,
         }));
+
+    // stop editing here: hamiz
 
     const identityCardColorLookup: DropdownOptionsInterface[] = [
         { value: 'blue', name: 'Biru' },
