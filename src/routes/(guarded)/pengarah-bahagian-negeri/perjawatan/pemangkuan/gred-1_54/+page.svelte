@@ -52,7 +52,7 @@
 
     //reset what have been typed by user in the long text field for Tindakan/Ulasan
     function resetText() {
-        
+        $form.directorRemark=""
     }
 
     // ==================================

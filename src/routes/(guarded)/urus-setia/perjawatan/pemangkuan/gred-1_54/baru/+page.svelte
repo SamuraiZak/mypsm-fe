@@ -58,10 +58,10 @@
             primary
             onClick={() => {
                 pushNewCandidate();
-                // goto('/urus-setia/perjawatan/pemangkuan/gred-1_54/butiran-'+ );
-                const url = './pemangkuan/gred-1_54/butiran-'+selectedEmployee;
+                goto('/urus-setia/perjawatan/pemangkuan/gred-1_54/butiran');
+                // const url = './pemangkuan/gred-1_54/butiran-'+selectedEmployee;
 
-                goto(url);
+                // goto(url);
             }}
         >
             <SvgArrowRight></SvgArrowRight>
