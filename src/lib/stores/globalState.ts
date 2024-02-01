@@ -21,3 +21,5 @@ export const selectedRecordId: Writable<number> = writable();
 export const selectedPatientTreatmentId: Writable<string> = writable();
 
 export const showLoadingOverlay: Writable<boolean> = writable();
+
+export const loadingState : Writable<boolean> = writable(false);
