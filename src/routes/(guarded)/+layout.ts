@@ -1,6 +1,7 @@
 import { TextHelper } from '$lib/helper/core/text-helper/text-helper';
 import type { DropdownOptionsInterface } from '$lib/interfaces/common/dropdown-option';
 import { AuthService } from '$lib/services/implementations/core/auth/authentication.service';
+import { LookupServices } from '$lib/services/implementations/core/lookup/lookup.service';
 import { LookupService } from '$lib/services/implementations/core/lookup/lookup.services';
 import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
 import type { EnumRole, EnumRoleResponseViewModel } from '$lib/view-models/core/lookup/role/role-enum-reponse.view-model';
@@ -8,6 +9,8 @@ import type { RoleOption } from '$lib/view-models/core/role-option/role-option.v
 import type { EmployeesListResponseViewModel } from '$lib/view-models/mypsm/employee/employee-list-response';
 
 export const load = async () => {
+
+    const what = await LookupServices.getLookup("agency-group");
     // agency group list
     const agencyGroupsListResponse =
         await LookupService.getEnumAgencyGroupList();
