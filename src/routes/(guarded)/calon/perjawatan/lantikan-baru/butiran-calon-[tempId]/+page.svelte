@@ -333,7 +333,7 @@
     } = superForm(data.addExperienceModal, {
         SPA: true,
         invalidateAll: true,
-        resetForm: false,
+        resetForm: true,
         validators: _experienceInfoSchema,
         async onSubmit() {
             await superValidate(
@@ -360,7 +360,7 @@
     } = superForm(data.addActivityModal, {
         SPA: true,
         invalidateAll: true,
-        resetForm: false,
+        resetForm: true,
         validators: _activityInfoSchema,
         async onSubmit() {
             await superValidate($addActivityModal, _activityInfoSchema).then(
@@ -386,7 +386,7 @@
     } = superForm(data.addFamilyModal, {
         SPA: true,
         invalidateAll: true,
-        resetForm: false,
+        resetForm: true,
         validators: _familyInfoSchema,
         async onSubmit() {
             await superValidate($addFamilyModal, _familyInfoSchema).then(
@@ -410,7 +410,7 @@
         id: 'addNonFamilyForm',
         SPA: true,
         invalidateAll: true,
-        resetForm: false,
+        resetForm: true,
         validators: _dependencyInfoSchema,
         async onSubmit() {
             await superValidate($addNonFamilyModal, _dependencyInfoSchema).then(
@@ -437,7 +437,7 @@
         id: 'addNextOfKinForm',
         SPA: true,
         invalidateAll: true,
-        resetForm: false,
+        resetForm: true,
         validators: _nextOfKinInfoSchema,
         async onSubmit() {
             await superValidate($addNextOfKinModal, _nextOfKinInfoSchema).then(
@@ -507,11 +507,7 @@
 
                 <TextField
                     disabled={$isReadonlyPersonalFormStepper}
-                    hasError={!!$errors.alternativeName
-                        ? true
-                        : false
-                          ? true
-                          : false}
+                    hasError={!!$errors.alternativeName}
                     name="alternativeName"
                     label={'Nama Lain'}
                     type="text"
@@ -527,11 +523,7 @@
 
                 <TextField
                     disabled={$isReadonlyPersonalFormStepper}
-                    hasError={!!$errors.identityDocumentNumber
-                        ? true
-                        : false
-                          ? true
-                          : false}
+                    hasError={!!$errors.identityDocumentNumber}
                     name="identityDocumentNumber"
                     type="number"
                     label={'No. Kad Pengenalan'}
