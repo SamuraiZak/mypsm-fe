@@ -20,7 +20,7 @@ const dateScheme = z.coerce
 const generalSelectSchema = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
 
 export const _amendmentOfPlacementApplicationSchema = z.object({
-    amendmentDropdown: generalSelectSchema,
+    amendmentDropdown: z.boolean(),
     requestedPlacementAmendment: generalSelectSchema,
     requestedReportingDate: dateScheme,
 });

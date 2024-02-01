@@ -26,6 +26,7 @@
     } from './+page';
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
 
     //===================== Stepper controls =====================
     let stepperIndex = 0;
@@ -72,11 +73,12 @@
     const { form, errors, enhance } = superForm(data.form, {
         SPA: true,
         validators: _amendmentOfPlacementApplicationSchema,
-        onSubmit(){ _submitActingDirectorResultForm($form)},
+        onSubmit() {
+            _submitActingDirectorResultForm($form);
+        },
         taintedMessage:
             'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
     });
-
 </script>
 
 <!-- header section -->
@@ -275,10 +277,8 @@
             >
                 <TextIconButton label="Kembali" onClick={() => goPrevious()}
                     ><SvgArrowLeft /></TextIconButton
-                ><TextIconButton
-                    primary
-                    label="Seterusnya"
-                    onClick={() => goNext()}><SvgArrowRight /></TextIconButton
+                ><TextIconButton primary label="Simpan" form="formValidation"
+                    ><SvgCheck /></TextIconButton
                 ></StepperContentHeader
             >
             <StepperContentBody>
@@ -292,16 +292,13 @@
                     class="flex w-full flex-col gap-2"
                 >
                     <DropdownSelect
-                        hasError={$errors.amendmentDropdown ? true : false}
+                        hasError={!!$errors.amendmentDropdown}
                         id="amendmentDropdown"
                         label="Adakah anda memerlukan penangguhan/Pindaan Penempatan?"
                         labelBlack={false}
                         dropdownType="label-left-full"
                         bind:value={$form.amendmentDropdown}
-                        options={[
-                            { value: 'true', name: 'Ya' },
-                            { value: 'false', name: 'Tidak' },
-                        ]}
+                        options={data.requestPlacementAmendmentLookup}
                     />
                     {#if $errors.amendmentDropdown}
                         <span
@@ -311,7 +308,7 @@
                     {/if}
 
                     <DateSelector
-                        hasError={$errors.requestedReportingDate ? true : false}
+                        hasError={!!$errors.requestedReportingDate}
                         name="requestedReportingDate"
                         labelBlack={false}
                         label={'Tarikh Lapor Diri yang Dipohon'}
@@ -325,9 +322,7 @@
                     {/if}
 
                     <DropdownSelect
-                        hasError={$errors.requestedPlacementAmendment
-                            ? true
-                            : false}
+                        hasError={!!$errors.requestedPlacementAmendment}
                         id="requestedPlacementAmendment"
                         label="Pindaan Penempatan Dipohon"
                         labelBlack={false}
@@ -353,7 +348,7 @@
                     </div>
                 </SectionHeader>
                 <div
-                    class="border-bdr-primary p-5 flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border p-2.5"
+                    class="flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border border-bdr-primary p-2.5 p-5"
                 >
                     <div class="flex flex-wrap gap-3">
                         {#each $fileSelectionList as item, index}
@@ -392,9 +387,10 @@
         <StepperContent>
             <StepperContentHeader
                 title="Keputusan Permohonan Penangguhan/Pindaan Penempatan"
-                ><TextIconButton label="Kembali" onClick={() => goPrevious()}
-                    ><SvgArrowLeft /></TextIconButton
-                ><TextIconButton
+                ><TextIconButton label="Kembali" onClick={() => goPrevious()}>
+                    <SvgArrowLeft />
+                </TextIconButton>
+                <TextIconButton
                     primary
                     label="Seterusnya"
                     onClick={() => goNext()}><SvgArrowRight /></TextIconButton
@@ -488,7 +484,7 @@
             <StepperContentHeader title="Keputusan Akhir Pemangkuan"
                 ><TextIconButton label="Kembali" onClick={() => goPrevious()}
                     ><SvgArrowLeft /></TextIconButton
-                ><TextIconButton primary label="Selesai" form="formValidation"
+                ><TextIconButton primary label="Selesai" onClick={() => goto('/kakitangan/perjawatan/pemangkuan')}
                     ><SvgCircleF2 /></TextIconButton
                 ></StepperContentHeader
             >
