@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/content-header/ContentHeader.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
@@ -58,10 +59,9 @@
             >
                 <DynamicTable
                     withActions
-                    actionOptions={['edit']}
+                    actionOptions={['detail']}
                     bind:passData={currentData}
-                    editActions={() => {
-                        editMode = true;
+                    detailActions={() => { goto('/pelulus/perjawatan/pemangkuan/butiran')
                     }}
                     tableItems={senaraiRekodPermohonan}
                     columnKeys={[
@@ -86,10 +86,9 @@
             >
                 <DynamicTable
                     withActions
-                    actionOptions={['edit']}
+                    actionOptions={['detail']}
                     bind:passData={currentData}
-                    editActions={() => {
-                        editMode = true;
+                    detailActions={() => { goto('/pelulus/perjawatan/pemangkuan/butiran')
                     }}
                     tableItems={pengesahanKeputusan}
                     columnKeys={[
