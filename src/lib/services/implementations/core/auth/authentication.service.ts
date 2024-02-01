@@ -3,29 +3,34 @@
 // ===============================================================
 
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key-constant";
+import type { AuthRequestDTO } from "$lib/dto/core/auth/auth-request.dto";
+import type { AuthResponseDTO } from "$lib/dto/core/auth/auth-response.dto";
+import { CommonResponseConvert } from "$lib/dto/core/common/common-response.dto";
 import { AuthenticationHelper } from "$lib/helper/core/authentication-helper/authentication-helper";
 import http from "$lib/services/provider/service-provider.service";
+import currentRole from "$lib/stores/activeRole";
 import type { AuthenticationRequestViewModel } from "$lib/view-models/core/auth/auth-request.view-model";
 import { AuthenticationResponseConvert } from "$lib/view-models/core/auth/auth-response.view-model";
 import { EnumRoleResponseConvert } from "$lib/view-models/core/lookup/role/role-enum-reponse.view-model";
+import type { Input } from "ky";
 
 export class AuthService {
 
     // login service for employee
-    static async loginEmployee(param: AuthenticationRequestViewModel){
+    static async loginEmployee(param: AuthenticationRequestViewModel) {
         const response: Response = await http
-        .post('authentication/employee-login', {
-            body: JSON.stringify(param),
-            headers: {
-                Accept: 'application/json',
-                'Content-type': 'application/json',
-            },
-        })
-        .json();
+            .post('authentication/employee-login', {
+                body: JSON.stringify(param),
+                headers: {
+                    Accept: 'application/json',
+                    'Content-type': 'application/json',
+                },
+            })
+            .json();
 
         const loginResponse = AuthenticationResponseConvert.fromResponse(response);
 
-        if(loginResponse.status === 200) {
+        if (loginResponse.status === 200) {
             localStorage.setItem(LocalStorageKeyConstant.accessToken, loginResponse.data.token);
         }
 
@@ -33,20 +38,20 @@ export class AuthService {
     }
 
     // login service for candidate
-    static async loginCandidate(param: AuthenticationRequestViewModel){
+    static async loginCandidate(param: AuthenticationRequestViewModel) {
         const response: Response = await http
-        .post('authentication/candidate-login', {
-            body: JSON.stringify(param),
-            headers: {
-                Accept: 'application/json',
-                'Content-type': 'application/json',
-            },
-        })
-        .json();
+            .post('authentication/candidate-login', {
+                body: JSON.stringify(param),
+                headers: {
+                    Accept: 'application/json',
+                    'Content-type': 'application/json',
+                },
+            })
+            .json();
 
         const loginResponse = AuthenticationResponseConvert.fromResponse(response);
 
-        if(loginResponse.status === 200) {
+        if (loginResponse.status === 200) {
             localStorage.setItem(LocalStorageKeyConstant.accessToken, loginResponse.data.token);
         }
 
@@ -54,16 +59,16 @@ export class AuthService {
     }
 
     // login service for panel clinic
-    static async loginClinic(param: AuthenticationRequestViewModel){
+    static async loginClinic(param: AuthenticationRequestViewModel) {
         const response: Response = await http
-        .post('authentication/login-candidate', {
-            body: JSON.stringify(param),
-            headers: {
-                Accept: 'application/json',
-                'Content-type': 'application/json',
-            },
-        })
-        .json();
+            .post('authentication/login-candidate', {
+                body: JSON.stringify(param),
+                headers: {
+                    Accept: 'application/json',
+                    'Content-type': 'application/json',
+                },
+            })
+            .json();
 
         const loginResponse = AuthenticationResponseConvert.fromResponse(response);
 
@@ -73,12 +78,61 @@ export class AuthService {
     }
 
     // get all roles available
-    static async getRoleOptions(){
+    static async getRoleOptions() {
         const response: Response = await http.get('lookups/roles').json();
         return EnumRoleResponseConvert.fromResponse(response);
     }
     // get all roles available
-    static async logout(){
+    static async logout() {
         AuthenticationHelper.clearLocalStorage();
+    }
+
+    static async authenticateUser(param: AuthRequestDTO) {
+        let url: Input = ""
+
+        switch (param.userGroup) {
+            case "employee":
+                url = 'authentication/employee-login'
+                break;
+
+            case "candidate":
+                url = 'authentication/candidate-login'
+                break;
+
+            case "clinic":
+                url = 'authentication/clinic-login'
+                break;
+
+            default:
+                url = 'authentication/employee-login'
+                break;
+        }
+
+        const response: Response = await http
+            .post(url, {
+                body: JSON.stringify(param),
+                headers: {
+                    Accept: 'application/json',
+                    'Content-type': 'application/json',
+                },
+            })
+            .json();
+
+        const result = CommonResponseConvert.fromResponse(response);
+
+        if (result.status == "success") {
+            const authResponse: AuthResponseDTO = result.data?.details as AuthResponseDTO;
+
+            localStorage.setItem(LocalStorageKeyConstant.accessToken, authResponse.token);
+
+            localStorage.setItem(
+                LocalStorageKeyConstant.currentRole,
+                param.currentRole,
+            );
+            
+            currentRole.set(param.currentRole);
+
+        }
+        return result;
     }
 }
