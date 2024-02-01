@@ -4,8 +4,6 @@
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { tahun } from '$lib/mocks/ketua-seksyen/cuti/tahun';
-    import { jenisCuti } from '$lib/mocks/kakitangan/cuti/laporan-cuti/jenis-cuti';
-    import { mengikutTahun } from '$lib/mocks/kakitangan/cuti/laporan-cuti/mengikut-tahun';
     import type { PageData } from './$types';
 
     export let data: PageData;
@@ -36,7 +34,7 @@
         ></DropdownSelect></SectionHeader
     >
     <div class="flex max-h-full w-full flex-col items-start justify-start">
-        <DynamicTable tableItems={data.entitlements}></DynamicTable>
+        <DynamicTable tableItems={data.props.leaveHistoryList.data.dataList}></DynamicTable>
     </div>
     <!-- </section>
 <section
@@ -54,6 +52,6 @@
         ></DropdownSelect>
     </SectionHeader>
     <div class="flex max-h-full w-full flex-col items-start justify-start">
-        <DynamicTable tableItems={data.leaveHistory}></DynamicTable>
+        <DynamicTable tableItems={data.props.leaveHistoryList.data.dataList}></DynamicTable>
     </div>
 </section>
