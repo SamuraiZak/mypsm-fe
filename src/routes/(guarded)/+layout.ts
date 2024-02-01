@@ -268,6 +268,11 @@ export const load = async () => {
         { value: 'December', name: 'Disember' },
     ];
 
+    const requestPlacementAmendmentLookup: DropdownOptionsInterface[] = [
+        { value: true, name: "Ya"},
+        { value: false, name: "Tidak"},
+    ]
+
     // get role list
     // const roleResponse: EnumRoleResponseViewModel =
     //     await AuthService.getRoleOptions();
@@ -335,5 +340,6 @@ export const load = async () => {
         identityCardColorLookup,
         monthStringLookup,
         retirementBenefitLookup,
+        requestPlacementAmendmentLookup,
     };
 };
