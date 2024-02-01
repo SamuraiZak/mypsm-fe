@@ -87,6 +87,20 @@
     const isReadonlyPersonalFormStepper = writable<boolean>();
     const isSuccessAcademicFormResponse = writable<boolean>();
     const isReadonlyAcademicFormStepper = writable<boolean>();
+    const isSuccessExperienceFormResponse = writable<boolean>();
+    const isReadonlyExperienceFormStepper = writable<boolean>();
+    const isSuccessActivityFormResponse = writable<boolean>();
+    const isReadonlyActivityFormStepper = writable<boolean>();
+    const isSuccessFamilyFormResponse = writable<boolean>();
+    const isReadonlyFamilyFormStepper = writable<boolean>();
+    const isSuccessDependencyFormResponse = writable<boolean>();
+    const isReadonlyDependencyFormStepper = writable<boolean>();
+    const isSuccessNextOfKinFormResponse = writable<boolean>();
+    const isReadonlyNextOfKinFormStepper = writable<boolean>();
+    const isSuccessDocumentFormResponse = writable<boolean>();
+    const isReadonlyDocumentFormStepper = writable<boolean>();
+    const isSuccessServiceFormResponse = writable<boolean>();
+    const isReadonlyServiceFormStepper = writable<boolean>();
 
     $: {
         isSuccessPersonalFormResponse.set(
@@ -108,49 +122,68 @@
         isReadonlyAcademicFormStepper.set(
             data.academicInfoResponse?.data?.isReadonly,
         );
+
+        isSuccessExperienceFormResponse.set(
+            !!(
+                data.experienceInfoResponse.status >= 200 &&
+                data.experienceInfoResponse.status <= 201
+            ),
+        );
+        isReadonlyExperienceFormStepper.set(
+            data.experienceInfoResponse?.data?.isReadonly,
+        );
+        isSuccessActivityFormResponse.set(
+            !!(
+                data.activityInfoResponse.status >= 200 &&
+                data.activityInfoResponse.status <= 201
+            ),
+        );
+        isReadonlyActivityFormStepper.set(
+            data.activityInfoResponse?.data?.isReadonly,
+        );
+
+        isSuccessFamilyFormResponse.set(
+            !!(
+                data.familyInfoResponse.status >= 200 &&
+                data.familyInfoResponse.status <= 201
+            ),
+        );
+        isReadonlyFamilyFormStepper.set(
+            data.familyInfoResponse?.data?.isReadonly,
+        );
+
+        isSuccessDependencyFormResponse.set(
+            data.dependencyInfoResponse.status >= 200 &&
+                data.dependencyInfoResponse.status <= 201,
+        );
+        isReadonlyDependencyFormStepper.set(
+            data.dependencyInfoResponse?.data?.isReadonly,
+        );
+
+        isSuccessNextOfKinFormResponse.set(
+            data.nextOfKinInfoResponse.status >= 200 &&
+                data.nextOfKinInfoResponse.status <= 201,
+        );
+        isReadonlyNextOfKinFormStepper.set(
+            data.nextOfKinInfoResponse?.data?.isReadonly,
+        );
+
+        isSuccessDocumentFormResponse.set(
+            data.documentInfoResponse.status >= 200 &&
+                data.documentInfoResponse.status <= 201,
+        );
+        isReadonlyDocumentFormStepper.set(
+            data.documentInfoResponse?.data?.isReadonly,
+        );
+
+        isSuccessServiceFormResponse.set(
+            data.serviceResponse.status >= 200 &&
+                data.serviceResponse.status <= 201,
+        );
+        isReadonlyServiceFormStepper.set(
+            data.serviceResponse?.data?.isReadonly,
+        );
     }
-
-    const isSuccessExperienceFormResponse: boolean =
-        data.experienceInfoResponse.status >= 200 &&
-        data.experienceInfoResponse.status <= 201;
-    const isReadonlyExperienceFormStepper: boolean =
-        data.experienceInfoResponse?.data?.isReadonly;
-
-    const isSuccessActivityFormResponse: boolean =
-        data.activityInfoResponse.status >= 200 &&
-        data.activityInfoResponse.status <= 201;
-    const isReadonlyActivityFormStepper: boolean =
-        data.activityInfoResponse?.data?.isReadonly;
-
-    const isSuccessFamilyFormResponse: boolean =
-        data.familyInfoResponse.status >= 200 &&
-        data.familyInfoResponse.status <= 201;
-    const isReadonlyFamilyFormStepper: boolean =
-        data.familyInfoResponse?.data?.isReadonly;
-
-    const isSuccessDependencyFormResponse: boolean =
-        data.dependencyInfoResponse.status >= 200 &&
-        data.dependencyInfoResponse.status <= 201;
-    const isReadonlyDependencyFormStepper: boolean =
-        data.dependencyInfoResponse?.data?.isReadonly;
-
-    const isSuccessNextOfKinFormResponse: boolean =
-        data.nextOfKinInfoResponse.status >= 200 &&
-        data.nextOfKinInfoResponse.status <= 201;
-    const isReadonlyNextOfKinFormStepper: boolean =
-        data.nextOfKinInfoResponse?.data?.isReadonly;
-
-    const isSuccessDocumentFormResponse: boolean =
-        data.documentInfoResponse.status >= 200 &&
-        data.documentInfoResponse.status <= 201;
-    const isReadonlyDocumentFormStepper: boolean =
-        data.documentInfoResponse?.data?.isReadonly;
-
-    const isSuccessServiceFormResponse: boolean =
-        data.serviceResponse.status >= 200 &&
-        data.serviceResponse.status <= 201;
-    const isReadonlyServiceFormStepper: boolean =
-        data.serviceResponse?.data?.isReadonly;
 
     let selectedFiles: File[] = [];
     let target: any;
@@ -199,7 +232,9 @@
             },
         },
     );
-    const proxyPersonalBirthDate = dateProxy(form, 'birthDate', { format: 'date' });
+    const proxyPersonalBirthDate = dateProxy(form, 'birthDate', {
+        format: 'date',
+    });
     const proxyPersonalPropertyDeclarationDate = dateProxy(
         form,
         'propertyDeclarationDate',
@@ -1003,7 +1038,7 @@
 
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2.5">
-                {#if isSuccessAcademicFormResponse}
+                {#if $isSuccessAcademicFormResponse}
                     {#if tempAcademicRecord.length > 0}
                         <div
                             class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
@@ -1130,7 +1165,7 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Maklumat Pengalaman">
-            {#if !isReadonlyExperienceFormStepper}
+            {#if !$isReadonlyExperienceFormStepper}
                 <TextIconButton
                     primary
                     label="Simpan"
@@ -1142,7 +1177,7 @@
         </StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2.5">
-                {#if isSuccessExperienceFormResponse}
+                {#if $isSuccessExperienceFormResponse}
                     {#if tempExperienceRecord.length > 0}
                         <div
                             class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
@@ -1221,7 +1256,7 @@
                             ></TextField>
                         </div>
                     {/each}
-                    {#if !isReadonlyExperienceFormStepper}
+                    {#if !$isReadonlyExperienceFormStepper}
                         <div
                             class="w-full rounded-[3px] border-b border-t p-2.5"
                         >
@@ -1244,7 +1279,7 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Maklumat Kegiatan / Keahlian">
-            {#if !isReadonlyActivityFormStepper}
+            {#if !$isReadonlyActivityFormStepper}
                 <TextIconButton
                     primary
                     label="Simpan"
@@ -1256,7 +1291,7 @@
         </StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
-                {#if isSuccessActivityFormResponse}
+                {#if $isSuccessActivityFormResponse}
                     {#if tempActivityRecord.length > 0}
                         <div
                             class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
@@ -1276,7 +1311,7 @@
                     <DynamicTable
                         tableItems={data.activityInfoResponse.data.activityList}
                     ></DynamicTable>
-                    {#if !isReadonlyActivityFormStepper}
+                    {#if !$isReadonlyActivityFormStepper}
                         <div
                             class="w-full rounded-[3px] border-b border-t p-2.5"
                         >
@@ -1299,7 +1334,7 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Maklumat Keluarga">
-            {#if !isReadonlyFamilyFormStepper}
+            {#if !$isReadonlyFamilyFormStepper}
                 <TextIconButton
                     primary
                     label="Simpan"
@@ -1313,7 +1348,7 @@
         </StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
-                {#if isSuccessFamilyFormResponse}
+                {#if $isSuccessFamilyFormResponse}
                     {#if tempFamilyRecord.length > 0}
                         <div
                             class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
@@ -1334,7 +1369,7 @@
                         tableItems={data.familyInfoResponse.data
                             .dependenciesList}
                     ></DynamicTable>
-                    {#if !isReadonlyFamilyFormStepper}
+                    {#if !$isReadonlyFamilyFormStepper}
                         <div
                             class="w-full rounded-[3px] border-b border-t p-2.5"
                         >
@@ -1359,7 +1394,7 @@
         <StepperContentHeader
             title="Maklumat Tanggungan Selain Suami/Isteri dan Anak"
         >
-            {#if !isReadonlyDependencyFormStepper}
+            {#if !$isReadonlyDependencyFormStepper}
                 <TextIconButton
                     primary
                     label="Simpan"
@@ -1373,7 +1408,7 @@
         </StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
-                {#if isSuccessDependencyFormResponse}
+                {#if $isSuccessDependencyFormResponse}
                     {#if tempNonFamilyRecord.length > 0}
                         <div
                             class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
@@ -1395,7 +1430,7 @@
                         tableItems={data.dependencyInfoResponse.data
                             .dependenciesList}
                     ></DynamicTable>
-                    {#if !isReadonlyDependencyFormStepper}
+                    {#if !$isReadonlyDependencyFormStepper}
                         <div
                             class="w-full rounded-[3px] border-b border-t p-2.5"
                         >
@@ -1418,7 +1453,7 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Maklumat Waris">
-            {#if !isReadonlyNextOfKinFormStepper}
+            {#if !$isReadonlyNextOfKinFormStepper}
                 <TextIconButton
                     primary
                     label="Simpan"
@@ -1430,7 +1465,7 @@
         </StepperContentHeader>
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2 overflow-y-auto">
-                {#if !isReadonlyNextOfKinFormStepper}
+                {#if !$isReadonlyNextOfKinFormStepper}
                     <SectionHeader title="Pilih Waris Daripada Ahli Keluarga"
                     ></SectionHeader>
                     <DynamicTable
@@ -1442,7 +1477,7 @@
                 {/if}
             </div>
             <div class="flex w-full flex-col gap-2 overflow-y-auto">
-                {#if isSuccessNextOfKinFormResponse}
+                {#if $isSuccessNextOfKinFormResponse}
                     {#if tempNextOfKinRecord.length > 0}
                         <div
                             class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
@@ -1464,7 +1499,7 @@
                         tableItems={data.nextOfKinInfoResponse.data
                             .nextOfKinList}
                     ></DynamicTable>
-                    {#if !isReadonlyNextOfKinFormStepper}
+                    {#if !$isReadonlyNextOfKinFormStepper}
                         <div
                             class="w-full rounded-[3px] border-b border-t p-2.5"
                         >
@@ -1487,7 +1522,7 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Dokumen - Dokumen Sokongan yang Berkaitan">
-            {#if !isReadonlyDocumentFormStepper}
+            {#if !$isReadonlyDocumentFormStepper}
                 <TextIconButton
                     primary
                     label="Simpan"
@@ -1519,7 +1554,7 @@
                         Berkenaan Dengan Akta Rahsia Rasmi, 1972
                     </li>
                 </ul>
-                {#if !isReadonlyDocumentFormStepper}
+                {#if !$isReadonlyDocumentFormStepper}
                     <!-- <div
                     class="flex flex-col items-center justify-center rounded-[3px] border border-system-primaryTint p-2.5"
                 >
@@ -1598,7 +1633,7 @@
             </div></StepperContentBody
         >
     </StepperContent>
-    {#if !isReadonlyDocumentFormStepper}
+    {#if !$isReadonlyDocumentFormStepper}
         <StepperContent>
             <StepperContentHeader title="Kemaskini Lantikan Baru"
             ></StepperContentHeader>
@@ -1607,7 +1642,7 @@
                 <div class="flex w-full flex-col gap-2.5">
                     <!-- <input hidden bind:value={data.serviceResponse.data.candidateId} /> -->
                     <DropdownSelect
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         dropdownType="label-left-full"
                         id="gradeId"
                         label="Gred Semasa"
@@ -1615,7 +1650,7 @@
                         options={data.gradeLookup}
                     ></DropdownSelect>
                     <DropdownSelect
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         dropdownType="label-left-full"
                         id="maxGradeId"
                         label="Gred Maksimum"
@@ -1623,7 +1658,7 @@
                         options={data.gradeLookup}
                     ></DropdownSelect>
                     <DropdownSelect
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         dropdownType="label-left-full"
                         id="positionId"
                         label="Jawatan"
@@ -1631,7 +1666,7 @@
                         options={data.positionLookup}
                     ></DropdownSelect>
                     <DropdownSelect
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         dropdownType="label-left-full"
                         id="placementId"
                         label="Penempatan"
@@ -1639,7 +1674,7 @@
                         options={data.placementLookup}
                     ></DropdownSelect>
                     <DropdownSelect
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         dropdownType="label-left-full"
                         id="serviceTypeId"
                         label="Taraf Perkhidmatan"
@@ -1648,7 +1683,7 @@
                     ></DropdownSelect>
 
                     <DropdownSelect
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         dropdownType="label-left-full"
                         id="serviceGroupId"
                         label="Kumpulan Perkhidmatan"
@@ -1657,7 +1692,7 @@
                     ></DropdownSelect>
 
                     <DropdownSelect
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         dropdownType="label-left-full"
                         id="unitId"
                         label="Unit Perkhidmatan"
@@ -1666,7 +1701,7 @@
                     ></DropdownSelect>
 
                     <DropdownSelect
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         dropdownType="label-left-full"
                         id="employmentStatusId"
                         label="Status Perkhidmatan"
@@ -1676,7 +1711,7 @@
                     ></DropdownSelect>
 
                     <DateSelector
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         name="effectiveDate"
                         label={'Tarikh Kuatkuasa Lantikan Semasa'}
                         bind:selectedDate={data.serviceResponse.data
@@ -1684,7 +1719,7 @@
                     ></DateSelector>
 
                     <DropdownSelect
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         dropdownType="label-left-full"
                         id="retirementBenefit"
                         label="Faedah Persaraan"
@@ -1693,41 +1728,41 @@
                     ></DropdownSelect>
 
                     <TextField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         name="epfNumber"
                         label={'No. KWSP'}
                         bind:value={data.serviceResponse.data.epfNumber}
                     ></TextField>
 
                     <TextField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         name="socsoNumber"
                         label={'No. SOCSO'}
                         bind:value={data.serviceResponse.data.socsoNumber}
                     ></TextField>
                     <TextField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         name="incomeNumber"
                         label={'No. Cukai'}
                         bind:value={data.serviceResponse.data.incomeNumber}
                     ></TextField>
 
                     <TextField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         name="bankName"
                         label={'Bank'}
                         bind:value={data.serviceResponse.data.bankName}
                     ></TextField>
 
                     <TextField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         name="bankAccount"
                         label={'No. Akaun'}
                         bind:value={data.serviceResponse.data.bankAccount}
                     ></TextField>
 
                     <TextField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         name="eligibleLeaveCount"
                         label={'Kelayakan Cuti'}
                         bind:value={data.serviceResponse.data
@@ -1735,35 +1770,35 @@
                     ></TextField>
 
                     <DateSelector
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         name="civilServiceStartDate"
                         label={'Mula Dilantik Perkhidmatan Kerajaan'}
                         bind:selectedDate={data.serviceResponse.data
                             .civilServiceStartDate}
                     ></DateSelector>
                     <DateSelector
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         name="firstServiceDate"
                         label={'Mula Dilantik Perkhidmatan LKIM'}
                         bind:selectedDate={data.serviceResponse.data
                             .firstServiceDate}
                     ></DateSelector>
                     <DateSelector
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         name="serviceDate"
                         label={'Mula Dilantik Perkhidmatan Sekarang'}
                         bind:selectedDate={data.serviceResponse.data
                             .serviceDate}
                     ></DateSelector>
                     <DateSelector
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         name="firstConfirmServiceDate"
                         label={'Disahkan Dalam Jawatan Pertama LKIM'}
                         bind:selectedDate={data.serviceResponse.data
                             .firstConfirmServiceDate}
                     ></DateSelector>
                     <DateSelector
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         name="confirmDate"
                         label={'Disahkan Dalam Jawatan Semasa LKIM'}
                         bind:selectedDate={data.serviceResponse.data
@@ -1771,14 +1806,14 @@
                     ></DateSelector>
 
                     <DateSelector
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         name="firstEffectiveDate"
                         label={'Tarikh Berkuatkuasa Lantikan Pertama'}
                         bind:selectedDate={data.serviceResponse.data
                             .firstEffectiveDate}
                     ></DateSelector>
                     <DateSelector
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         name="newRecruitEffectiveDate"
                         label={'Tarikh Lantikan Baru'}
                         bind:selectedDate={data.serviceResponse.data
@@ -1786,14 +1821,14 @@
                     ></DateSelector>
 
                     <TextField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         name="pensionNumber"
                         label={'Nombor Pencen'}
                         bind:value={data.serviceResponse.data.pensionNumber}
                     ></TextField>
 
                     <DropdownSelect
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         dropdownType="label-left-full"
                         id="revisionMonth"
                         label="Bulan KGT"
@@ -1802,7 +1837,7 @@
                     ></DropdownSelect>
 
                     <TextField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         name="kgt"
                         type="number"
                         label={'KGT'}
@@ -1810,7 +1845,7 @@
                     ></TextField>
 
                     <DateSelector
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={true}
                         name="retirementDate"
                         label={'Tarikh Bersara'}
                         bind:selectedDate={data.serviceResponse.data
@@ -1823,7 +1858,7 @@
                     <div class="grid grid-cols-2 gap-10">
                         <div class="space-y-2.5">
                             <TextField
-                                disabled={isReadonlyServiceFormStepper}
+                                disabled={true}
                                 name="maximumSalary"
                                 label={'Tangga Gaji'}
                                 bind:value={data.serviceResponse.data
@@ -1831,7 +1866,7 @@
                             ></TextField>
 
                             <TextField
-                                disabled={isReadonlyServiceFormStepper}
+                                disabled={true}
                                 name="baseSalary"
                                 label={'Gaji Pokok'}
                                 bind:value={data.serviceResponse.data
@@ -1842,7 +1877,7 @@
                             <TextField
                                 hasTooltip={true}
                                 toolTipID="type-itka"
-                                disabled={isReadonlyServiceFormStepper}
+                                disabled={true}
                                 name="itka"
                                 label={'ITKA'}
                                 bind:value={data.serviceResponse.data.itka}
@@ -1850,7 +1885,7 @@
                             <TextField
                                 hasTooltip={true}
                                 toolTipID="type-itp"
-                                disabled={isReadonlyServiceFormStepper}
+                                disabled={true}
                                 name="itp"
                                 label={'ITP'}
                                 bind:value={data.serviceResponse.data.itp}
@@ -1858,7 +1893,7 @@
                             <TextField
                                 hasTooltip={true}
                                 toolTipID="type-epw"
-                                disabled={isReadonlyServiceFormStepper}
+                                disabled={true}
                                 name="epw"
                                 label={'EPW'}
                                 bind:value={data.serviceResponse.data.epw}
@@ -1866,7 +1901,7 @@
                             <TextField
                                 hasTooltip={true}
                                 toolTipID="type-cola"
-                                disabled={isReadonlyServiceFormStepper}
+                                disabled={true}
                                 name="cola"
                                 label={'COLA'}
                                 bind:value={data.serviceResponse.data.cola}
