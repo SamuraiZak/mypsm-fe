@@ -194,14 +194,7 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Pengesahan Permohonan Persaraan"
-            ><TextIconButton
-                primary
-                label="Simpan"
-                form="FormStepperVerificationRetirementApplication"
-            >
-                <SvgCheck></SvgCheck>
-            </TextIconButton></StepperContentHeader
-        >
+        ></StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
                 <div
@@ -214,6 +207,7 @@
                         method="POST"
                     >
                         <LongTextField
+                            {disabled}
                             hasError={$verificationRetirementApplicationErrors.actionRemark
                                 ? true
                                 : false}
@@ -223,19 +217,20 @@
                         />
                         {#if $verificationRetirementApplicationErrors.actionRemark}
                             <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                class="text-system-danger ml-[220px] font-sans text-sm italic"
                                 >{$verificationRetirementApplicationErrors
                                     .actionRemark[0]}</span
                             >
                         {/if}
                         <RadioSingle
+                            {disabled}
                             {options}
                             name="resultOption"
                             bind:userSelected={$verificationRetirementApplicationForm.resultOption}
                         ></RadioSingle>
                         {#if $verificationRetirementApplicationErrors.resultOption}
                             <span
-                                class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                class="text-system-danger ml-[0px] font-sans text-sm italic"
                                 >{$verificationRetirementApplicationErrors
                                     .resultOption[0]}</span
                             >
@@ -247,14 +242,7 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Penyokong & Pelulus"
-            ><TextIconButton
-                primary
-                label="Simpan"
-                form="FormStepperSupporterApprover"
-            >
-                <SvgCheck></SvgCheck>
-            </TextIconButton></StepperContentHeader
-        >
+        ></StepperContentHeader>
         <StepperContentBody
             ><form
                 id="FormStepperSupporterApprover"
@@ -265,8 +253,8 @@
                 <div class="flex w-full flex-col gap-2">
                     <div>
                         <DropdownSelect
-                            hasError={!!$supporterApproverErrors.supporter1Option
-                                }
+                            {disabled}
+                            hasError={!!$supporterApproverErrors.supporter1Option}
                             dropdownType="label-left-full"
                             id="supporter1Option"
                             label="Nama Penyokong #1"
@@ -279,14 +267,14 @@
                         ></DropdownSelect>
                         {#if $supporterApproverErrors.supporter1Option}
                             <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$supporterApproverErrors
-                                    .supporter1Option}</span
+                                class="text-system-danger ml-[220px] font-sans text-sm italic"
+                                >{$supporterApproverErrors.supporter1Option}</span
                             >
                         {/if}
                     </div>
                     <div>
                         <DropdownSelect
+                            {disabled}
                             hasError={$supporterApproverErrors.supporter2Option
                                 ? true
                                 : false}
@@ -302,14 +290,14 @@
                         ></DropdownSelect>
                         {#if $supporterApproverErrors.supporter2Option}
                             <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$supporterApproverErrors
-                                    .supporter2Option}</span
+                                class="text-system-danger ml-[220px] font-sans text-sm italic"
+                                >{$supporterApproverErrors.supporter2Option}</span
                             >
                         {/if}
                     </div>
                     <div>
                         <DropdownSelect
+                            {disabled}
                             hasError={$supporterApproverErrors.approverOption
                                 ? true
                                 : false}
@@ -317,13 +305,16 @@
                             id="approverOption"
                             label="Nama Pelulus"
                             bind:value={$supporterApproverForm.approverOption}
-                            options={data.employeeListLookup}
+                            options={[
+                                { value: '1', name: 'Ali Bin Abu' },
+                                { value: '2', name: 'Abu Bin Ahmad' },
+                                { value: '3', name: 'Ahmad Bin Ali' },
+                            ]}
                         ></DropdownSelect>
                         {#if $supporterApproverErrors.approverOption}
                             <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$supporterApproverErrors
-                                    .approverOption}</span
+                                class="text-system-danger ml-[220px] font-sans text-sm italic"
+                                >{$supporterApproverErrors.approverOption}</span
                             >
                         {/if}
                     </div>
@@ -338,7 +329,7 @@
             ><div class="flex w-full flex-col gap-2">
                 <p class="text-sm font-bold">Penyokong #1</p>
                 <div
-                    class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
+                    class="border-bdr-primary flex h-fit w-full flex-col items-center justify-start gap-2 border-b pb-5"
                 >
                     <TextField
                         {disabled}
@@ -362,7 +353,7 @@
             <div class="flex w-full flex-col gap-2">
                 <p class="text-sm font-bold">Penyokong #2</p>
                 <div
-                    class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
+                    class="border-bdr-primary flex h-fit w-full flex-col items-center justify-start gap-2 border-b pb-5"
                 >
                     <TextField
                         {disabled}
@@ -386,7 +377,7 @@
             <div class="flex w-full flex-col gap-2">
                 <p class="text-sm font-bold">Pelulus</p>
                 <div
-                    class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
+                    class="border-bdr-primary flex h-fit w-full flex-col items-center justify-start gap-2 border-b pb-5"
                 >
                     <TextField
                         {disabled}
@@ -411,14 +402,7 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Kelulusan Permohonan Persaraan"
-            ><TextIconButton
-                primary
-                label="Simpan"
-                form="FormStepperRetirementApplicationApproval"
-            >
-                <SvgCheck></SvgCheck>
-            </TextIconButton></StepperContentHeader
-        >
+        ></StepperContentHeader>
         <StepperContentBody
             ><form
                 id="FormStepperRetirementApplicationApproval"
@@ -429,6 +413,7 @@
                 <div class="flex w-full flex-col gap-2">
                     <div>
                         <LongTextField
+                            {disabled}
                             hasError={$retirementApplicationApprovalErrors.actionRemarkRAA
                                 ? true
                                 : false}
@@ -438,28 +423,22 @@
                         />
                         {#if $retirementApplicationApprovalErrors.actionRemarkRAA}
                             <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$retirementApplicationApprovalErrors
-                                    .actionRemarkRAA}</span
+                                class="text-system-danger ml-[220px] font-sans text-sm italic"
+                                >{$retirementApplicationApprovalErrors.actionRemarkRAA}</span
                             >
                         {/if}
                         <RadioSingle
-                        options={approveOptions}
+                            {disabled}
+                            options={approveOptions}
                             name="resultOptionRAA"
                             bind:userSelected={$retirementApplicationApprovalForm.resultOptionRAA}
                         ></RadioSingle>
                         {#if $retirementApplicationApprovalErrors.resultOptionRAA}
                             <span
-                                class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                >{$retirementApplicationApprovalErrors
-                                    .resultOptionRAA}</span
+                                class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                >{$retirementApplicationApprovalErrors.resultOptionRAA}</span
                             >
                         {/if}
-
-                        <p class="text-sm">
-                            Nota: Notifikasi akan dihantar ke kakitangan untuk
-                            mengisi borang persaraan
-                        </p>
                     </div>
                 </div>
             </form>
@@ -467,14 +446,7 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Pengesahan Dokumen Persaraan"
-            ><TextIconButton
-                primary
-                label="Simpan"
-                form="FormStepperVerificationRetirementDocuments"
-            >
-                <SvgCheck></SvgCheck>
-            </TextIconButton></StepperContentHeader
-        >
+        ></StepperContentHeader>
         <StepperContentBody
             ><form
                 id="FormStepperVerificationRetirementDocuments"
@@ -483,7 +455,7 @@
                 method="POST"
             >
                 <div
-                    class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+                    class="border-bdr-primary flex w-full flex-col gap-2 border-b pb-5"
                 >
                     <p class="text-sm font-bold">
                         Dokumen Persaraan Kakitangan
@@ -510,11 +482,12 @@
                     </ul>
                 </div>
                 <div
-                    class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+                    class="border-bdr-primary flex w-full flex-col gap-2 border-b pb-5"
                 >
                     <p class="text-sm font-bold">Pengesahan Urus Setia</p>
                     <div>
                         <LongTextField
+                            {disabled}
                             hasError={$verificationRetirementDocumentsErrors.actionRemarkVRD
                                 ? true
                                 : false}
@@ -524,21 +497,20 @@
                         />
                         {#if $verificationRetirementDocumentsErrors.actionRemarkVRD}
                             <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$verificationRetirementDocumentsErrors
-                                    .actionRemarkVRD}</span
+                                class="text-system-danger ml-[220px] font-sans text-sm italic"
+                                >{$verificationRetirementDocumentsErrors.actionRemarkVRD}</span
                             >
                         {/if}
                         <RadioSingle
+                            {disabled}
                             {options}
                             name="resultOptionVRD"
                             bind:userSelected={$verificationRetirementDocumentsForm.resultOptionVRD}
                         ></RadioSingle>
                         {#if $verificationRetirementDocumentsErrors.resultOptionVRD}
                             <span
-                                class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                >{$verificationRetirementDocumentsErrors
-                                    .resultOptionVRD}</span
+                                class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                >{$verificationRetirementDocumentsErrors.resultOptionVRD}</span
                             >
                         {/if}
                     </div>
@@ -547,15 +519,9 @@
         >
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Kemaskini Maklumat Penghantaran Permohonan"
-            ><TextIconButton
-                primary
-                label="Simpan"
-                form="FormStepperUpdateApplicationDeliveryInformation"
-            >
-                <SvgCheck></SvgCheck>
-            </TextIconButton></StepperContentHeader
-        >
+        <StepperContentHeader
+            title="Kemaskini Maklumat Penghantaran Permohonan"
+        ></StepperContentHeader>
         <StepperContentBody
             ><form
                 id="FormStepperUpdateApplicationDeliveryInformation"
@@ -564,7 +530,7 @@
                 method="POST"
             >
                 <div
-                    class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+                    class="border-bdr-primary flex w-full flex-col gap-2 border-b pb-5"
                 >
                     <p class="text-sm font-bold">Cetak Surat Iringan</p>
                     <ul
@@ -576,13 +542,14 @@
                     </ul>
                 </div>
                 <div
-                    class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+                    class="border-bdr-primary flex w-full flex-col gap-2 border-b pb-5"
                 >
                     <p class="text-sm font-bold">
                         Maklumat Penghantaran Permohonan
                     </p>
                     <div>
                         <LongTextField
+                            {disabled}
                             hasError={$updateApplicationDeliveryInformationErrors.actionRemarkUADI
                                 ? true
                                 : false}
@@ -592,21 +559,20 @@
                         />
                         {#if $updateApplicationDeliveryInformationErrors.actionRemarkUADI}
                             <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$updateApplicationDeliveryInformationErrors
-                                    .actionRemarkUADI}</span
+                                class="text-system-danger ml-[220px] font-sans text-sm italic"
+                                >{$updateApplicationDeliveryInformationErrors.actionRemarkUADI}</span
                             >
                         {/if}
                         <RadioSingle
+                            {disabled}
                             {options}
                             name="resultOptionUADI"
                             bind:userSelected={$updateApplicationDeliveryInformationForm.resultOptionUADI}
                         ></RadioSingle>
                         {#if $updateApplicationDeliveryInformationErrors.resultOptionUADI}
                             <span
-                                class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                >{$updateApplicationDeliveryInformationErrors
-                                    .resultOptionUADI}</span
+                                class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                >{$updateApplicationDeliveryInformationErrors.resultOptionUADI}</span
                             >
                         {/if}
                     </div>

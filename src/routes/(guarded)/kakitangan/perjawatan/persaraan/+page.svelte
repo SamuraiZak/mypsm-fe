@@ -50,7 +50,7 @@
                     actionOptions={['detail']}
                     detailActions={() => {
                         goto(
-                            '',
+                            '/kakitangan/perjawatan/persaraan/permohonan-persaraan/butiran',
                         );
                     }}
                 ></DynamicTable>

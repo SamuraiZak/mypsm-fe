@@ -89,7 +89,6 @@
         taintedMessage:
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
-
     let errorData: any;
 </script>
 
@@ -1256,13 +1255,14 @@
                 onClick={() => {
                     goto('/kakitangan/profil');
                 }}
-            /><TextIconButton
+            />
+            <!-- <TextIconButton
                 primary
                 label="Hantar"
                 onClick={() => {
                     goto('/kakitangan/profil');
                 }}><SvgPaperAirplane /></TextIconButton
-            >
+            > -->
 
             {#if !disabled}
                 <TextIconButton
@@ -1374,7 +1374,7 @@
                             >{$pemeriksaanDoktorErrors.paleSkin[0]}</span
                         >
                     {/if}
-                    <RadioSingle
+                    <!-- <RadioSingle
                         {disabled}
                         {options}
                         name="cycnosis"
@@ -1386,18 +1386,18 @@
                             class="text-system-danger ml-[220px] font-sans text-sm italic"
                             >{$pemeriksaanDoktorErrors.cycnosis[0]}</span
                         >
-                    {/if}
+                    {/if} -->
                     <RadioSingle
                         {disabled}
                         {options}
-                        name="edama"
+                        name="edema"
                         legend="Edama"
-                        bind:userSelected={$pemeriksaanDoktorForm.edama}
+                        bind:userSelected={$pemeriksaanDoktorForm.edema}
                     ></RadioSingle>
-                    {#if $pemeriksaanDoktorErrors.edama}
+                    {#if $pemeriksaanDoktorErrors.edema}
                         <span
                             class="text-system-danger ml-[220px] font-sans text-sm italic"
-                            >{$pemeriksaanDoktorErrors.edama[0]}</span
+                            >{$pemeriksaanDoktorErrors.edema[0]}</span
                         >
                     {/if}
                     <RadioSingle
@@ -1488,7 +1488,7 @@
                                     >
                                 {/if}
                             </td>
-                            <td>
+                            <!-- <td> -->
                                 <!-- <TextField
                                     {disabled}
                                     hasError={$pemeriksaanDoktorErrors.penglihatanTanpaBantuan3
@@ -1506,7 +1506,7 @@
                                             .penglihatanTanpaBantuan3[0]}</span
                                     >
                                 {/if} -->
-                            </td>
+                            <!-- </td> -->
                         </tr>
                         <tr>
                             <!-- <td>Penglihatan Tanpa Bantuan</td>
@@ -2122,7 +2122,8 @@
                                     Sistem muskuloskeletal
                                 </p></td
                             >
-                            <td
+                            <!-- <td
+
                                 ><RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
@@ -2137,7 +2138,7 @@
                                             .sistemMuskuloskeletalRadio[0]}</span
                                     >
                                 {/if}
-                            </td>
+                            </td> -->
 
                             <td colspan="2">
                                 <TextField
