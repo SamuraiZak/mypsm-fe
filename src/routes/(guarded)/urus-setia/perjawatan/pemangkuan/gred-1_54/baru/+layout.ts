@@ -1,18 +1,19 @@
 import { GradeActingService } from '$lib/services/implementations/mypsm/perjawatan/grade-acting/grade-acting-services.service';
-import type { ListEmployeeListRequest } from '$lib/view-models/mypsm/perjawatan/grade-acting-type/list-employee-list-request.view-model';
-import type { ListEmployeeListResponse, EmployeeListResponse } from '$lib/view-models/mypsm/perjawatan/grade-acting-type/list-employee-list-response.view-model';
+import { ActingServices } from '$lib/services/implementations/mypsm/employment/acting/acting.service';
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
+import type { CommonResponseDTO, Meta } from '$lib/dto/core/common/common-response.dto';
+import type { PMGEmployeeListDTO } from '$lib/dto/mypsm/employment/acting/pmg-employee-response.dto';
 
 export async function load() {
-    const employeeRequestBody: ListEmployeeListRequest = {
+    const employeeRequestBody: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 10,
         orderBy: 'createdAt',
         orderType: 'asc',
         filter: {},
     };
-    const employeeResponse: ListEmployeeListResponse =
-        await GradeActingService.getActingEmployeeRecord(employeeRequestBody);
-    const employeeRecord: EmployeeListResponse[] = employeeResponse.data.employeeLists
+    const employeeResponse: PMGEmployeeListDTO[] =
+        await ActingServices.getEmployeeList(employeeRequestBody);
 
-    return { employeeRecord };
+    return { employeeResponse };
 }
