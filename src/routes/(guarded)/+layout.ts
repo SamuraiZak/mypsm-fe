@@ -165,11 +165,11 @@ export const load = async () => {
     LookupHelper.toDropdown(roleListResponse);
 
     // scheme of service list
-    const schemeOfServiceListResponse =
-        await LookupServices.getLookup("scheme-of-service");
+    // const schemeOfServiceListResponse =
+    //     await LookupServices.getLookup("scheme-of-service");
 
-    const schemeOfServiceLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(schemeOfServiceListResponse);
+    // const schemeOfServiceLookup: DropdownOptionsInterface[] =
+    // LookupHelper.toDropdown(schemeOfServiceListResponse);
 
     // section list
     const sectionListResponse = await LookupServices.getLookup("section");
@@ -269,25 +269,31 @@ export const load = async () => {
     ];
 
     // get role list
-    const roleResponse: EnumRoleResponseViewModel =
-        await AuthService.getRoleOptions();
+    // const roleResponse: EnumRoleResponseViewModel =
+    //     await AuthService.getRoleOptions();
 
-    let roleOptions: EnumRole[] = roleResponse.data.rolesList;
+    // let roleOptions: EnumRole[] = roleResponse.data.rolesList;
 
-    let rawRoleList: EnumRole[] = roleResponse.data.rolesList;
+    // let rawRoleList: EnumRole[] = roleResponse.data.rolesList;
 
-    let roleOptionsList: RoleOption[] = [];
+    // let roleOptionsList: RoleOption[] = [];
 
-    rawRoleList.forEach(role => {
-        let tempRoleOption: RoleOption = {
-            value: role.name,
-            name: TextHelper.toCamelCase(role.name)
-        }
+    // rawRoleList.forEach(role => {
+    //     let tempRoleOption: RoleOption = {
+    //         value: role.name,
+    //         name: TextHelper.toCamelCase(role.name)
+    //     }
 
-        roleOptionsList.push(tempRoleOption);
+    //     roleOptionsList.push(tempRoleOption);
 
-        roleOptionsList = roleOptionsList;
-    });
+    //     roleOptionsList = roleOptionsList;
+    // });
+
+    const roles=
+        await LookupServices.getLookup("role");
+
+    const roleOptionsList: RoleOption[] =
+    LookupHelper.toRoleOption(roles);
 
     return {
         roleOptionsList,
@@ -315,7 +321,7 @@ export const load = async () => {
         gradeLookup,
         religionLookup,
         roleLookup,
-        schemeOfServiceLookup,
+        // schemeOfServiceLookup,
         sectionLookup,
         serviceClassLookup,
         serviceGroupLookup,

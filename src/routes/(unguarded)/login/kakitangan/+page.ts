@@ -7,10 +7,12 @@ import {
     getLoginSuccessToast,
 } from '$lib/services/core/toast/toast-service';
 import { AuthService } from '$lib/services/implementations/core/auth/authentication.service';
-import type { EnumRoleResponseViewModel } from '$lib/view-models/core/lookup/role/role-enum-reponse.view-model';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
+import { LookupServices } from '$lib/services/implementations/core/lookup/lookup.service';
+import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
+
 
 // creating schema
 export const _kakitanganLoginSchema = z.object({
@@ -25,8 +27,7 @@ export const load = async () => {
     const form = await superValidate(_kakitanganLoginSchema);
 
     // get role list
-    const roleResponse: EnumRoleResponseViewModel =
-        await AuthService.getRoleOptions();
+    const roleResponse : LookupDTO[] = await LookupServices.getLookup("role");
 
     return { form, roleResponse };
 };
@@ -38,6 +39,8 @@ export const _submit = async (formData: AuthRequestDTO) => {
         await AuthService.authenticateUser(formData).finally(() =>
             toast.dismiss(),
         );
+
+        console.log(response);
 
     if (response.status == "success") {
 

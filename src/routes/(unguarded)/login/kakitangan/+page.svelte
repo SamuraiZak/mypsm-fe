@@ -6,14 +6,14 @@
 
     import { _kakitanganLoginSchema, _submit } from './+page';
     import { showLoadingOverlay } from '$lib/stores/globalState';
-    import type { EnumRole, EnumRoleResponseData } from '$lib/view-models/core/lookup/role/role-enum-reponse.view-model';
     import { Toaster } from 'svelte-french-toast';
+    import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
 
     export let data: PageData;
 
     let isLoading = false;
 
-    let currentRoleOptions: EnumRole[] = data.roleResponse.data.rolesList;
+    let currentRoleOptions: LookupDTO[] = data.roleResponse;
 
     // idType options
     let idTypeOptions = [
@@ -37,7 +37,7 @@
     // preset form data
     data.form.data.idType = idTypeOptions[0].value;
     data.form.data.userGroup = 'employee';
-    data.form.data.currentRole = currentRoleOptions[0].name;
+    data.form.data.currentRole = currentRoleOptions[0].name ?? "";
 
     const { form, errors, message, constraints, enhance } = superForm(
         data.form,
