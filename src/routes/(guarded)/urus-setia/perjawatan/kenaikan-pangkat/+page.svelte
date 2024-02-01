@@ -59,10 +59,10 @@
                         'status',
                     ]}
                     withActions={true}
-                    actionOptions={['detail', 'edit']}
+                    actionOptions={['edit']}
                     editActions={() => {
                         goto(
-                            '/urus-setia/perjawatan/kenaikan-pangkat/gred-1_54/baru',
+                            '/urus-setia/perjawatan/kenaikan-pangkat/gred-1_54/butiran',
                         );
                     }}
                     detailActions={() => {
@@ -91,7 +91,7 @@
                         'status',
                     ]}
                     withActions={true}
-                    actionOptions={['detail', 'edit']}
+                    actionOptions={['edit']}
                     editActions={() => {
                         goto(
                             '/urus-setia/perjawatan/kenaikan-pangkat/tbk-1-2/baru',
@@ -123,7 +123,7 @@
                         'status',
                     ]}
                     withActions={true}
-                    actionOptions={['detail', 'edit']}
+                    actionOptions={['edit']}
                     editActions={() => {
                         goto(
                             '/urus-setia/perjawatan/kenaikan-pangkat/gred-utama/baru',
