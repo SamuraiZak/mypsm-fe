@@ -1,13 +1,12 @@
+
 import { goto } from '$app/navigation';
-import {
-    getLoadingToast,
-    getLoginErrorToast,
-    getLoginSuccessToast,
-} from '$lib/services/core/toast/toast-service';
+import { AuthRequestConvert, type AuthRequestDTO } from '$lib/dto/core/auth/auth-request.dto';
+import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import { getErrorToast, getLoginErrorToast } from '$lib/services/core/toast/toast-service';
 import { AuthService } from '$lib/services/implementations/core/auth/authentication.service';
-import type { AuthenticationRequestViewModel } from '$lib/view-models/core/auth/auth-request.view-model';
-import type { AuthenticationResponseViewModel } from '$lib/view-models/core/auth/auth-response.view-model';
-import toast from 'svelte-french-toast';
+import http from '$lib/services/provider/service-provider.service';
+import { loadingState, showLoadingOverlay } from '$lib/stores/globalState';
+import { fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
@@ -25,18 +24,27 @@ export const load = async () => {
     return { form };
 };
 
-export const _submit = async (formData: AuthenticationRequestViewModel) => {
-    getLoadingToast();
-    const response: AuthenticationResponseViewModel =
-        await AuthService.loginCandidate(formData).finally(() =>
-            toast.dismiss(),
-        );
+export const _submit = async (formData: AuthRequestDTO) => {
 
-    if (response.status === 200) {
-        getLoginSuccessToast().finally(() =>
-            setTimeout(() => goto('/calon/halaman-utama'), 2000),
-        );
+    const form = await superValidate(formData, _calonLoginSchema);
+
+    // check if form valid
+    if (form.valid) {
+
+        // show loading screen
+        loadingState.set(true);
+
+        const response : CommonResponseDTO = await AuthService.authenticateUser(formData);
+
+        if (response.status == "success") {
+            loadingState.set(false);
+            goto('/calon/halaman-utama');
+        } else {
+            loadingState.set(false);
+            getLoginErrorToast();
+        }
     } else {
-        getLoginErrorToast();
+        return fail(400, form);
     }
 };
+ 
