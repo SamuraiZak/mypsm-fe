@@ -43,7 +43,11 @@
         _submitNextOfKinInfoForm,
         _submitPersonalInfoForm,
     } from './+page';
-    import { superForm, superValidate } from 'sveltekit-superforms/client';
+    import {
+        dateProxy,
+        superForm,
+        superValidate,
+    } from 'sveltekit-superforms/client';
     import { Toaster } from 'svelte-french-toast';
     import { getErrorToast } from '$lib/services/core/toast/toast-service';
     import { fileSelectionList } from '$lib/stores/globalState';
@@ -57,12 +61,14 @@
     import type { DependenciesList } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-dependencies-details-response.model';
     import type { NextOfKinList } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-next-of-kin-details-response.model';
     import StepperUneditable from '$lib/components/stepper-conditional-rules/StepperUneditable.svelte';
+    import StepperNextStep from '$lib/components/stepper-conditional-rules/StepperNextStep.svelte';
     import {
         approveOptions,
         certifyOptions,
         commonOptions,
         supportOptions,
     } from '$lib/constants/mypsm/radio-option-constants';
+    import { writable } from 'svelte/store';
     export let data: PageData;
     export let openAcademicInfoModal: boolean = false;
     export let openExperienceInfoModal: boolean = false;
@@ -77,59 +83,73 @@
     let tempNonFamilyRecord: DependenciesList[] = [];
     let tempNextOfKinRecord: NextOfKinList[] = [];
     let tempNextOfKinFromFamily: NextOfKinList[] = [];
+    const isSuccessPersonalFormResponse = writable<boolean>();
+    const isReadonlyPersonalFormStepper = writable<boolean>();
+    const isSuccessAcademicFormResponse = writable<boolean>();
+    const isReadonlyAcademicFormStepper = writable<boolean>();
 
-    let isSuccessPersonalFormResponse: boolean =
-        data.personalDetailResponse.status >= 200 &&
-        data.personalDetailResponse.status <= 201;
-    let isReadonlyPersonalFormStepper: boolean =
-        data.personalDetailResponse?.data?.isReadonly;
+    $: {
+        isSuccessPersonalFormResponse.set(
+            !!(
+                data.personalDetailResponse.status >= 200 &&
+                data.personalDetailResponse.status <= 201
+            ),
+        );
+        isReadonlyPersonalFormStepper.set(
+            data.personalDetailResponse?.data?.isReadonly,
+        );
 
-    let isSuccessAcademicFormResponse: boolean =
-        data.academicInfoResponse.status >= 200 &&
-        data.academicInfoResponse.status <= 201;
-    let isReadonlyAcademicFormStepper: boolean =
-        data.academicInfoResponse?.data?.isReadonly;
+        isSuccessAcademicFormResponse.set(
+            !!(
+                data.academicInfoResponse.status >= 200 &&
+                data.academicInfoResponse.status <= 201
+            ),
+        );
+        isReadonlyAcademicFormStepper.set(
+            data.academicInfoResponse?.data?.isReadonly,
+        );
+    }
 
-    let isSuccessExperienceFormResponse: boolean =
+    const isSuccessExperienceFormResponse: boolean =
         data.experienceInfoResponse.status >= 200 &&
         data.experienceInfoResponse.status <= 201;
-    let isReadonlyExperienceFormStepper: boolean =
+    const isReadonlyExperienceFormStepper: boolean =
         data.experienceInfoResponse?.data?.isReadonly;
 
-    let isSuccessActivityFormResponse: boolean =
+    const isSuccessActivityFormResponse: boolean =
         data.activityInfoResponse.status >= 200 &&
         data.activityInfoResponse.status <= 201;
-    let isReadonlyActivityFormStepper: boolean =
+    const isReadonlyActivityFormStepper: boolean =
         data.activityInfoResponse?.data?.isReadonly;
 
-    let isSuccessFamilyFormResponse: boolean =
+    const isSuccessFamilyFormResponse: boolean =
         data.familyInfoResponse.status >= 200 &&
         data.familyInfoResponse.status <= 201;
-    let isReadonlyFamilyFormStepper: boolean =
+    const isReadonlyFamilyFormStepper: boolean =
         data.familyInfoResponse?.data?.isReadonly;
 
-    let isSuccessDependencyFormResponse: boolean =
+    const isSuccessDependencyFormResponse: boolean =
         data.dependencyInfoResponse.status >= 200 &&
         data.dependencyInfoResponse.status <= 201;
-    let isReadonlyDependencyFormStepper: boolean =
+    const isReadonlyDependencyFormStepper: boolean =
         data.dependencyInfoResponse?.data?.isReadonly;
 
-    let isSuccessNextOfKinFormResponse: boolean =
+    const isSuccessNextOfKinFormResponse: boolean =
         data.nextOfKinInfoResponse.status >= 200 &&
         data.nextOfKinInfoResponse.status <= 201;
-    let isReadonlyNextOfKinFormStepper: boolean =
+    const isReadonlyNextOfKinFormStepper: boolean =
         data.nextOfKinInfoResponse?.data?.isReadonly;
 
-    let isSuccessDocumentFormResponse: boolean =
+    const isSuccessDocumentFormResponse: boolean =
         data.documentInfoResponse.status >= 200 &&
         data.documentInfoResponse.status <= 201;
-    let isReadonlyDocumentFormStepper: boolean =
+    const isReadonlyDocumentFormStepper: boolean =
         data.documentInfoResponse?.data?.isReadonly;
 
-    let isSuccessServiceFormResponse: boolean =
+    const isSuccessServiceFormResponse: boolean =
         data.serviceResponse.status >= 200 &&
         data.serviceResponse.status <= 201;
-    let isReadonlyServiceFormStepper: boolean =
+    const isReadonlyServiceFormStepper: boolean =
         data.serviceResponse?.data?.isReadonly;
 
     let selectedFiles: File[] = [];
@@ -165,16 +185,26 @@
     // $: $form.employeePosition = data.positionLookup.find((position)=>
     // position. === $form.employeeNumber)?.;
 
-    export const { form, errors, enhance } = superForm(data.personalInfoForm, {
-        SPA: true,
-        validators: _personalInfoForm,
-        taintedMessage:
-            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
-
-        onSubmit() {
-            _submitPersonalInfoForm($form);
+    export const { form, errors, enhance, reset, restore } = superForm(
+        data.personalInfoForm,
+        {
+            SPA: true,
+            invalidateAll: true,
+            resetForm: false,
+            validators: _personalInfoForm,
+            taintedMessage:
+                'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+            onSubmit() {
+                _submitPersonalInfoForm($form);
+            },
         },
-    });
+    );
+    const proxyBirthDate = dateProxy(form, 'birthDate', { format: 'date' });
+    const proxyPropertyDeclarationDate = dateProxy(
+        form,
+        'propertyDeclarationDate',
+        { format: 'date' },
+    );
 
     const triggerSubmitAcademicTempData = () => {
         _submitAcademicInfoForm(tempAcademicRecord);
@@ -234,6 +264,8 @@
         enhance: addAcademicInfoEnhance,
     } = superForm(data.addAcademicModal, {
         SPA: true,
+        invalidateAll: true,
+        resetForm: true,
         validators: _academicInfoSchema,
         async onSubmit() {
             await superValidate(
@@ -253,12 +285,20 @@
         },
     });
 
+    const proxyAcademicCompletionDate = dateProxy(
+        addAcademicInfoModal,
+        'completionDate',
+        { format: 'date' },
+    );
+
     const {
         form: addExperienceModalForm,
         errors: addExperienceModalErrors,
         enhance: addExperienceModalEnhance,
     } = superForm(data.addExperienceModal, {
         SPA: true,
+        invalidateAll: true,
+        resetForm: false,
         validators: _experienceInfoSchema,
         async onSubmit() {
             await superValidate(
@@ -284,6 +324,8 @@
         enhance: addActivityModalEnhance,
     } = superForm(data.addActivityModal, {
         SPA: true,
+        invalidateAll: true,
+        resetForm: false,
         validators: _activityInfoSchema,
         async onSubmit() {
             await superValidate($addActivityModal, _activityInfoSchema).then(
@@ -308,6 +350,8 @@
         enhance: addFamilyEnhance,
     } = superForm(data.addFamilyModal, {
         SPA: true,
+        invalidateAll: true,
+        resetForm: false,
         validators: _familyInfoSchema,
         async onSubmit() {
             await superValidate($addFamilyModal, _familyInfoSchema).then(
@@ -330,6 +374,8 @@
     } = superForm(data.addNonFamilyModal, {
         id: 'addNonFamilyForm',
         SPA: true,
+        invalidateAll: true,
+        resetForm: false,
         validators: _dependencyInfoSchema,
         async onSubmit() {
             await superValidate($addNonFamilyModal, _dependencyInfoSchema).then(
@@ -355,6 +401,8 @@
     } = superForm(data.addNextOfKinModal, {
         id: 'addNextOfKinForm',
         SPA: true,
+        invalidateAll: true,
+        resetForm: false,
         validators: _nextOfKinInfoSchema,
         async onSubmit() {
             await superValidate($addNextOfKinModal, _nextOfKinInfoSchema).then(
@@ -385,7 +433,7 @@
 <Stepper>
     <StepperContent>
         <StepperContentHeader title="Maklumat Peribadi">
-            {#if !isReadonlyPersonalFormStepper}
+            {#if !$isReadonlyPersonalFormStepper}
                 <TextIconButton
                     primary
                     label="Simpan"
@@ -393,6 +441,8 @@
                 >
                     <SvgCheck></SvgCheck>
                 </TextIconButton>
+            {:else}
+                <StepperNextStep />
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
@@ -405,7 +455,7 @@
             >
                 <p class={stepperFormTitleClass}>Maklumat Peribadi</p>
                 <TextField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     hasError={!!$errors.name}
                     name="name"
                     label={'Nama Penuh'}
@@ -421,7 +471,7 @@
                 {/if}
 
                 <TextField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     hasError={!!$errors.alternativeName
                         ? true
                         : false
@@ -441,7 +491,7 @@
                 {/if}
 
                 <TextField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     hasError={!!$errors.identityDocumentNumber
                         ? true
                         : false
@@ -461,7 +511,7 @@
                 {/if}
 
                 <DropdownSelect
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     hasError={!!$errors.titleId}
                     dropdownType="label-left-full"
                     id="titleId"
@@ -477,7 +527,7 @@
                     >
                 {/if}
                 <DropdownSelect
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     hasError={!!$errors.identityDocumentColor}
                     dropdownType="label-left-full"
                     id="identityDocumentColor"
@@ -494,12 +544,12 @@
                 {/if}
 
                 <DateSelector
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     hasError={!!$errors.birthDate}
                     name="birthDate"
                     handleDateChange
                     label="Tarikh Lahir"
-                    bind:selectedDate={$form.birthDate}
+                    bind:selectedDate={$proxyBirthDate}
                 ></DateSelector>
                 {#if $errors?.birthDate}
                     <span
@@ -508,7 +558,7 @@
                     >
                 {/if}
                 <DropdownSelect
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     hasError={!!$errors.birthStateId}
                     dropdownType="label-left-full"
                     id="birthStateId"
@@ -525,7 +575,7 @@
                 {/if}
 
                 <DropdownSelect
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     hasError={!!$errors.birthCountryId}
                     dropdownType="label-left-full"
                     id="birthCountryId"
@@ -542,7 +592,7 @@
                 {/if}
 
                 <DropdownSelect
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     hasError={!!$errors.nationalityId}
                     dropdownType="label-left-full"
                     id="nationalityId"
@@ -559,7 +609,7 @@
                 {/if}
 
                 <DropdownSelect
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     hasError={!!$errors.raceId}
                     dropdownType="label-left-full"
                     id="raceId"
@@ -576,7 +626,7 @@
                 {/if}
 
                 <DropdownSelect
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     hasError={!!$errors.ethnicId}
                     dropdownType="label-left-full"
                     id="ethnicId"
@@ -593,7 +643,7 @@
                 {/if}
 
                 <DropdownSelect
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     hasError={!!$errors.religionId}
                     dropdownType="label-left-full"
                     id="religionId"
@@ -610,7 +660,7 @@
                 {/if}
 
                 <DropdownSelect
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     hasError={!!$errors.genderId}
                     dropdownType="label-left-full"
                     id="genderId"
@@ -627,7 +677,7 @@
                 {/if}
 
                 <DropdownSelect
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     hasError={!!$errors.maritalId}
                     dropdownType="label-left-full"
                     id="maritalId"
@@ -643,7 +693,7 @@
                 {/if}
 
                 <TextField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     hasError={!!$errors.email}
                     name="email"
                     label={'Emel'}
@@ -660,7 +710,7 @@
 
                 <LongTextField
                     hasError={!!$errors.homeAddress}
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     name="homeAddress"
                     label="Alamat Rumah"
                     bind:value={$form.homeAddress}
@@ -673,7 +723,7 @@
                 {/if}
                 <DropdownSelect
                     hasError={!!$errors.homeCountryId}
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     dropdownType="label-left-full"
                     id="homeCountryId"
                     name="homeCountryId"
@@ -689,7 +739,7 @@
                 {/if}
                 <DropdownSelect
                     hasError={!!$errors.homeStateId}
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     dropdownType="label-left-full"
                     id="homeStateId"
                     name="homeStateId"
@@ -705,7 +755,7 @@
                 {/if}
                 <DropdownSelect
                     hasError={!!$errors.homeCityId}
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     dropdownType="label-left-full"
                     id="homeStateId"
                     name="homeCityId"
@@ -721,7 +771,7 @@
                 {/if}
                 <TextField
                     hasError={!!$errors.homePostcode}
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     name="homePostcode"
                     label="Poskod Rumah"
                     bind:value={$form.homePostcode}
@@ -735,7 +785,7 @@
 
                 <LongTextField
                     hasError={!!$errors.mailAddress}
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     name="mailAddress"
                     label="Alamat Surat Menyurat"
                     bind:value={$form.mailAddress}
@@ -748,7 +798,7 @@
                 {/if}
                 <DropdownSelect
                     hasError={!!$errors.mailCountryId}
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     dropdownType="label-left-full"
                     id="mailCountryId"
                     name="mailCountryId"
@@ -764,7 +814,7 @@
                 {/if}
                 <DropdownSelect
                     hasError={!!$errors.mailStateId}
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     dropdownType="label-left-full"
                     id="mailStateId"
                     name="mailStateId"
@@ -780,7 +830,7 @@
                 {/if}
                 <DropdownSelect
                     hasError={!!$errors.mailCityId}
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     dropdownType="label-left-full"
                     id="mailStateId"
                     name="mailCityId"
@@ -796,7 +846,7 @@
                 {/if}
                 <TextField
                     hasError={!!$errors.mailPostcode}
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     name="mailPostcode"
                     label="Poskod Surat Menyurat"
                     bind:value={$form.mailPostcode}
@@ -809,7 +859,7 @@
                 {/if}
 
                 <DropdownSelect
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     hasError={!!$errors.assetDeclarationStatusId}
                     dropdownType="label-left-full"
                     name="assetDeclarationStatusId"
@@ -825,12 +875,12 @@
                 {/if}
 
                 <DateSelector
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     hasError={!!$errors.propertyDeclarationDate}
                     name="propertyDeclarationDate"
                     handleDateChange
                     label="Tarikh Pengikstiharan Harta"
-                    bind:selectedDate={$form.propertyDeclarationDate}
+                    bind:selectedDate={$proxyPropertyDeclarationDate}
                 ></DateSelector>
                 {#if $errors.propertyDeclarationDate}
                     <span
@@ -841,7 +891,7 @@
 
                 <RadioSingle
                     name="isExPoliceOrSoldier"
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     options={commonOptions}
                     legend={'Bekas Polis / Tentera'}
                     bind:userSelected={$form.isExPoliceOrSoldier}
@@ -861,75 +911,75 @@
                     <RadioSingle
                         name="isInternalRelationship"
                         options={commonOptions}
-                        disabled={isReadonlyPersonalFormStepper}
+                        disabled={$isReadonlyPersonalFormStepper}
                         legend={'Perhubungan Dengan Kakitangan LKIM'}
                         bind:userSelected={$form.isInternalRelationship}
                     ></RadioSingle>
-                    {#if $form.isInternalRelationship}
-                        <DropdownSelect
-                            disabled={isReadonlyPersonalFormStepper}
-                            hasError={!!$errors.employeeNumber}
-                            dropdownType="label-left-full"
-                            id="employeeNumber"
-                            label="'No. Pekerja LKIM'"
-                            bind:value={$form.employeeNumber}
-                            options={data.employeeListLookup}
-                        ></DropdownSelect>
-                        {#if $errors.employeeNumber}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$errors.employeeNumber[0]}</span
-                            >
-                        {/if}
-
-                        <TextField
-                            disabled={isReadonlyPersonalFormStepper}
-                            hasError={!!$errors.employeeName}
-                            name="employeeName"
-                            label={'Nama Kakitangan LKIM'}
-                            type="text"
-                            bind:value={$form.employeeName}
-                        ></TextField>
-
-                        {#if $errors.employeeName}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$errors.employeeName}</span
-                            >
-                        {/if}
-
-                        <TextField
-                            disabled={isReadonlyPersonalFormStepper}
-                            hasError={!!$errors.employeePosition}
-                            name="employeePosition"
-                            label={'Jawatan Kakitangan LKIM'}
-                            type="text"
-                            bind:value={$form.employeePosition}
-                        ></TextField>
-
-                        {#if $errors.employeePosition}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$errors.employeePosition}</span
-                            >
-                        {/if}
-
-                        <DropdownSelect
-                            disabled={isReadonlyPersonalFormStepper}
-                            hasError={!!$errors.relationshipId}
-                            dropdownType="label-left-full"
-                            id="relationshipId"
-                            label="Hubungan"
-                            bind:value={$form.relationshipId}
-                            options={data.relationshipLookup}
-                        ></DropdownSelect>
-                        {#if $errors.relationshipId}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$errors.relationshipId}</span
-                            >
-                        {/if}
+                    <!-- {#if $form.isInternalRelationship} -->
+                    <DropdownSelect
+                        disabled={$isReadonlyPersonalFormStepper}
+                        hasError={!!$errors.employeeNumber}
+                        dropdownType="label-left-full"
+                        id="employeeNumber"
+                        label="No. Pekerja LKIM"
+                        bind:value={$form.employeeNumber}
+                        options={data.employeeListLookup}
+                    ></DropdownSelect>
+                    {#if $errors.employeeNumber}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.employeeNumber[0]}</span
+                        >
                     {/if}
+
+                    <TextField
+                        disabled={$isReadonlyPersonalFormStepper}
+                        hasError={!!$errors.employeeName}
+                        name="employeeName"
+                        label={'Nama Kakitangan LKIM'}
+                        type="text"
+                        bind:value={$form.employeeName}
+                    ></TextField>
+
+                    {#if $errors.employeeName}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.employeeName}</span
+                        >
+                    {/if}
+
+                    <TextField
+                        disabled={$isReadonlyPersonalFormStepper}
+                        hasError={!!$errors.employeePosition}
+                        name="employeePosition"
+                        label={'Jawatan Kakitangan LKIM'}
+                        type="text"
+                        bind:value={$form.employeePosition}
+                    ></TextField>
+
+                    {#if $errors.employeePosition}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.employeePosition}</span
+                        >
+                    {/if}
+
+                    <DropdownSelect
+                        disabled={$isReadonlyPersonalFormStepper}
+                        hasError={!!$errors.relationshipId}
+                        dropdownType="label-left-full"
+                        id="relationshipId"
+                        label="Hubungan"
+                        bind:value={$form.relationshipId}
+                        options={data.relationshipLookup}
+                    ></DropdownSelect>
+                    {#if $errors.relationshipId}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.relationshipId}</span
+                        >
+                    {/if}
+                    <!-- {/if} -->
                 </div>
             </form>
         </StepperContentBody>
@@ -938,7 +988,7 @@
         <StepperContentHeader
             title="Maklumat Akademik / Kelayakan / Latihan yang Lalu"
         >
-            {#if !isReadonlyAcademicFormStepper}
+            {#if !$isReadonlyAcademicFormStepper}
                 <TextIconButton
                     primary
                     label="Simpan"
@@ -946,6 +996,8 @@
                 >
                     <SvgCheck></SvgCheck>
                 </TextIconButton>
+            {:else}
+                <StepperNextStep />
             {/if}
         </StepperContentHeader>
 
@@ -1057,7 +1109,7 @@
                             ></TextField>
                         </div>
                     {/each}
-                    {#if !isReadonlyAcademicFormStepper}
+                    {#if !$isReadonlyAcademicFormStepper}
                         <div
                             class="w-full rounded-[3px] border-b border-t p-2.5"
                         >
@@ -2048,7 +2100,7 @@
             hasError={!!$addAcademicInfoErrors.completionDate}
             name="completionDate"
             label={'Tarikh Kelulusan'}
-            bind:selectedDate={$addAcademicInfoModal.completionDate}
+            bind:selectedDate={$proxyAcademicCompletionDate}
         ></DateSelector>
         {#if $addAcademicInfoErrors.completionDate}
             <span class="ml-[220px] font-sans text-sm italic text-system-danger"
