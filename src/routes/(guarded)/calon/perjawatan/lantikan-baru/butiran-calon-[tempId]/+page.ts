@@ -71,6 +71,15 @@ import { z } from 'zod';
 // =========================================================================
 // z validation schema and submit function for the calon lantikan baru form fields
 // =========================================================================
+// const identityNumberSchema = z
+//     .number({ required_error: 'Medan ini tidak boleh kosong.' })
+//     .min(12, {
+//         message: 'Nombor kad pengenalan hendaklah merangkumi 12 angka.',
+//     })
+//     .max(12, {
+//         message: 'Nombor kad pengenalan hendaklah merangkumi 12 angka.',
+//     });
+
 const shortTextSchema = z
     .string({ required_error: 'Medan ini tidak boleh kosong.' })
     .min(4, {
