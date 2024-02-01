@@ -46,6 +46,8 @@
         _submitActingSupporterResultForm,
     } from './+page';
     import type { PageData } from './$types';
+    import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
+    import { supportOptions } from '$lib/constants/mypsm/radio-option-constants';
 
     let editMode: boolean = false;
 
@@ -98,17 +100,6 @@
     function handleDelete(index: number) {
         selectedFiles.splice(index, 1);
     }
-
-    const supportOptions: RadioOption[] = [
-        {
-            value: 'true',
-            label: 'Sokong',
-        },
-        {
-            value: 'false',
-            label: 'Tidak Sokong',
-        },
-    ];
 
     // ==================================
     // Form Validation ==================
@@ -1549,6 +1540,7 @@
         <!-- Penyokong Pemangkuan -->
         <StepperContent>
             <StepperContentHeader title="Penyokong Pemangkuan">
+                <TextIconButton label="Tutup" onClick={() => goto('/penyokong/perjawatan/pemangkuan')}><SvgXMark/></TextIconButton>
                 <TextIconButton primary label="Hantar" form="formValidation"
                     ><SvgPaperAirplane /></TextIconButton
                 ></StepperContentHeader
@@ -1571,6 +1563,7 @@
                     class="flex w-full flex-col gap-2"
                 >
                     <LongTextField
+                        hasError={!!$errors.supporterRemark}
                         labelBlack={false}
                         name="supporterRemark"
                         label={'Tindakan/Ulasan'}
@@ -1584,6 +1577,7 @@
                     {/if}
                     <RadioSingle
                         disabled={false}
+                        legend="Keputusan"
                         options={supportOptions}
                         name="supporterResult"
                         bind:userSelected={$form.supporterResult}

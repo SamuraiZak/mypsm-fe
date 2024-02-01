@@ -48,6 +48,8 @@
         _submitActingSupporterResultForm,
     } from './+page';
     import { superForm } from 'sveltekit-superforms/client';
+    import { supportOptions } from '$lib/constants/mypsm/radio-option-constants';
+    import { goto } from '$app/navigation';
 
     export let disabled: boolean = true;
 
@@ -64,17 +66,6 @@
     export let selectedFiles: any = [];
     let target: any;
     let texthidden = false;
-
-    const supportOptions: RadioOption[] = [
-        {
-            value: 'true',
-            label: 'Sokong',
-        },
-        {
-            value: 'false',
-            label: 'Tidak Sokong',
-        },
-    ];
 
     onMount(() => {
         target = document.getElementById('fileInput');
@@ -1538,6 +1529,7 @@
 
         <StepperContent>
             <StepperContentHeader title="Penyokongan Pemangkuan">
+                <TextIconButton label="Tutup" onClick={() => goto('/penyokong/perjawatan/pemangkuan')}><SvgXMark/></TextIconButton>
                 <TextIconButton primary label="Hantar" form="formValidation"
                     ><SvgPaperAirplane /></TextIconButton
                 >
@@ -1560,8 +1552,7 @@
                         class="flex w-full flex-col gap-2"
                     >
                         <LongTextField
-                            hasError={$errors.supporterRemark ? true : false}
-                            labelBlack={false}
+                            hasError={!!$errors.supporterRemark}
                             name="supporterRemark"
                             label={'Tindakan/Ulasan'}
                             bind:value={$form.supporterRemark}
@@ -1575,6 +1566,7 @@
                         <RadioSingle
                             disabled={false}
                             options={supportOptions}
+                            legend="Keputusan"
                             name="supporterResult"
                             bind:userSelected={$form.supporterResult}
                         />

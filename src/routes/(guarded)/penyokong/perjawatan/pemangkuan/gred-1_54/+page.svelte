@@ -46,6 +46,8 @@
     } from './+page';
     import { superForm } from 'sveltekit-superforms/client';
     import { supportOptions } from '$lib/constants/mypsm/radio-option-constants';
+    import { goto } from '$app/navigation';
+    import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
 
     let editMode: boolean = false;
 
@@ -1446,6 +1448,7 @@
         <!-- Penyokong Pemangkuan -->
         <StepperContent>
             <StepperContentHeader title="Penyokongan Pemangkuan">
+                <TextIconButton label="Tutup" onClick={() => goto('/penyokong/perjawatan/pemangkuan')}><SvgXMark/></TextIconButton>
                 <TextIconButton primary label="Hantar" form="formValidation"
                     ><SvgPaperAirplane /></TextIconButton
                 ></StepperContentHeader
@@ -1467,7 +1470,6 @@
                 >
                     <LongTextField
                         hasError={!!$errors.supporterRemark}
-                        labelBlack={false}
                         name="supporterRemark"
                         label={'Tindakan/Ulasan'}
                         bind:value={$form.supporterRemark}
@@ -1480,6 +1482,7 @@
                     {/if}
                     <RadioSingle
                         disabled={false}
+                        legend="Keputusan"
                         options={supportOptions}
                         bind:userSelected={$form.supporterResult}
                     />

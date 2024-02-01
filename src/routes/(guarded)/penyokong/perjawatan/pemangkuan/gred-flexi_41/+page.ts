@@ -16,14 +16,7 @@ export const _actingSupporterResultSchema = z.object({
         .trim(),
 
     //Radio Button
-    supporterResult: z.enum(['true', 'false'], {
-        errorMap: (issue, { defaultError }) => ({
-            message:
-                issue.code === 'invalid_enum_value'
-                    ? 'Sila tetapkan pilihan anda.'
-                    : defaultError,
-        }),
-    }),
+    supporterResult: z.boolean()
 });
 
 export const load = async ({ fetch }) => {
