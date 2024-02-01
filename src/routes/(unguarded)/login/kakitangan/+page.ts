@@ -1,14 +1,12 @@
 import { goto } from '$app/navigation';
-import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key-constant';
+import type { AuthRequestDTO } from '$lib/dto/core/auth/auth-request.dto';
+import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import {
     getLoadingToast,
     getLoginErrorToast,
     getLoginSuccessToast,
 } from '$lib/services/core/toast/toast-service';
 import { AuthService } from '$lib/services/implementations/core/auth/authentication.service';
-import currentRole from '$lib/stores/activeRole';
-import type { AuthenticationRequestViewModel } from '$lib/view-models/core/auth/auth-request.view-model';
-import type { AuthenticationResponseViewModel } from '$lib/view-models/core/auth/auth-response.view-model';
 import type { EnumRoleResponseViewModel } from '$lib/view-models/core/lookup/role/role-enum-reponse.view-model';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
@@ -33,20 +31,16 @@ export const load = async () => {
     return { form, roleResponse };
 };
 
-export const _submit = async (formData: AuthenticationRequestViewModel) => {
+export const _submit = async (formData: AuthRequestDTO) => {
     getLoadingToast();
 
-    const response: AuthenticationResponseViewModel =
-        await AuthService.loginEmployee(formData).finally(() =>
+    const response: CommonResponseDTO =
+        await AuthService.authenticateUser(formData).finally(() =>
             toast.dismiss(),
         );
 
-    if (response.status === 200) {
-        localStorage.setItem(
-            LocalStorageKeyConstant.currentRole,
-            formData.currentRole,
-        );
-        currentRole.set(formData.currentRole);
+    if (response.status == "success") {
+
         getLoginSuccessToast().finally(() =>
             setTimeout(() => {
                 switch (formData.currentRole) {

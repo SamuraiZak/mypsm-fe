@@ -7,6 +7,9 @@
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import { maklumatKakitangan } from '$lib/mocks/klinik-panel/maklumat-kakitangan';
+    import type { PageData } from './$types';
+
+    export let data:PageData;
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -61,7 +64,7 @@
     <SectionHeader title="Senarai Rekod"></SectionHeader>
     <div class="flex max-h-full w-full flex-col items-start justify-start">
         <DynamicTable
-            tableItems={maklumatKakitangan}
+            tableItems={data.props.employeeList}
             withActions
                     actionOptions={['detail']}
                     detailActions={() => {
