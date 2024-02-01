@@ -199,8 +199,8 @@
             },
         },
     );
-    const proxyBirthDate = dateProxy(form, 'birthDate', { format: 'date' });
-    const proxyPropertyDeclarationDate = dateProxy(
+    const proxyPersonalBirthDate = dateProxy(form, 'birthDate', { format: 'date' });
+    const proxyPersonalPropertyDeclarationDate = dateProxy(
         form,
         'propertyDeclarationDate',
         { format: 'date' },
@@ -498,8 +498,8 @@
                           ? true
                           : false}
                     name="identityDocumentNumber"
+                    type="number"
                     label={'No. Kad Pengenalan'}
-                    type="text"
                     bind:value={$form.identityDocumentNumber}
                 ></TextField>
 
@@ -549,7 +549,7 @@
                     name="birthDate"
                     handleDateChange
                     label="Tarikh Lahir"
-                    bind:selectedDate={$proxyBirthDate}
+                    bind:selectedDate={$proxyPersonalBirthDate}
                 ></DateSelector>
                 {#if $errors?.birthDate}
                     <span
@@ -880,7 +880,7 @@
                     name="propertyDeclarationDate"
                     handleDateChange
                     label="Tarikh Pengikstiharan Harta"
-                    bind:selectedDate={$proxyPropertyDeclarationDate}
+                    bind:selectedDate={$proxyPersonalPropertyDeclarationDate}
                 ></DateSelector>
                 {#if $errors.propertyDeclarationDate}
                     <span
@@ -2350,8 +2350,8 @@
         <TextField
             hasError={!!$addFamilyErrors.identityDocumentNumber}
             name="addIdentityDocumentNumber"
+            type="number"
             label={'Nombor Kad Pengenalan'}
-            type="text"
             bind:value={$addFamilyModal.identityDocumentNumber}
         ></TextField>
         {#if $addFamilyErrors.identityDocumentNumber}
@@ -2632,8 +2632,8 @@
         <TextField
             hasError={!!$addNonFamilyErrors.identityDocumentNumber}
             name="addIdentityDocumentNumber"
+            type="number"
             label={'Nombor Kad Pengenalan'}
-            type="text"
             bind:value={$addNonFamilyModal.identityDocumentNumber}
         ></TextField>
         {#if $addNonFamilyErrors.identityDocumentNumber}
@@ -2911,8 +2911,8 @@
         <TextField
             hasError={!!$addNextOfKinErrors.identityDocumentNumber}
             name="addIdentityDocumentNumber"
+            type="number"
             label={'Nombor Kad Pengenalan'}
-            type="text"
             bind:value={$addNextOfKinModal.identityDocumentNumber}
         ></TextField>
         {#if $addNextOfKinErrors.identityDocumentNumber}

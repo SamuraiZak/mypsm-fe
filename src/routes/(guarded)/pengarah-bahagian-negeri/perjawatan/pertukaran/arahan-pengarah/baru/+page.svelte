@@ -44,20 +44,6 @@
 >
 <Stepper dataId={id} dataStatus={status}>
     <StepperContent>
-        <StepperContentHeader title="Butiran Pemohon"></StepperContentHeader>
-        <StepperContentBody
-            ><div class="flex w-full flex-col gap-2">
-                <TextField
-                    label="Nama Pengarah"
-                    value="Iskandar Ismail"
-                    disabled={true}
-                ></TextField>
-                <TextField label="Jabatan" value="LKIM SELANGOR" disabled={true}
-                ></TextField>
-            </div></StepperContentBody
-        >
-    </StepperContent>
-    <StepperContent>
         <StepperContentHeader title="Butiran Kakitangan"></StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
@@ -91,6 +77,20 @@
                     label="Kumpulan"
                     value="PP1 - Pengurusan dan Professional - A"
                     disabled={true}
+                ></TextField>
+            </div></StepperContentBody
+        >
+    </StepperContent>
+    <StepperContent>
+        <StepperContentHeader title="Butiran Pemohon"></StepperContentHeader>
+        <StepperContentBody
+            ><div class="flex w-full flex-col gap-2">
+                <TextField
+                    label="Nama Pengarah"
+                    value="Iskandar Ismail"
+                    disabled={true}
+                ></TextField>
+                <TextField label="Jabatan" value="LKIM SELANGOR" disabled={true}
                 ></TextField>
             </div></StepperContentBody
         >
