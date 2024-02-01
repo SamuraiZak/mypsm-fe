@@ -1,3 +1,4 @@
+import { invalidateAll } from '$app/navigation';
 import {
     getErrorToast,
     getLoadingToast,
@@ -80,7 +81,7 @@ const shortTextSchema = z
     })
     .trim();
 const codeSchema = z
-    .string({ required_error: 'Medan ini tidak boleh kosong.' })
+    .string()
     .min(1, {
         message: 'Medan ini hendaklah lebih daripada 1 karakter.',
     })
@@ -116,14 +117,18 @@ const booleanSchema = z.boolean({
     invalid_type_error: 'Medan ini haruslah jenis boolean.',
 });
 
-const numberIdSchema = z.coerce.number({
-    required_error: 'Tidak tepat.',
-    invalid_type_error: 'Sila pastikan ID ditaip dengan angka',
-});
+const numberIdSchema = z.coerce
+    .number({
+        required_error: 'Tidak tepat.',
+        invalid_type_error: 'Sila pastikan ID ditaip dengan angka',
+    })
+    .refine((data) => data > 0, {
+        message: 'Sila tetapkan pilihan anda.',
+    });
 
 export const _personalInfoForm = z.object({
     name: shortTextSchema,
-    alternativeName: codeSchema.default(' '),
+    alternativeName: codeSchema,
     identityDocumentNumber: shortTextSchema,
     identityDocumentColor: codeSchema,
     email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
@@ -151,10 +156,10 @@ export const _personalInfoForm = z.object({
     mailPostcode: shortTextSchema,
     isExPoliceOrSoldier: booleanSchema,
     isInternalRelationship: booleanSchema,
-    employeeNumber: shortTextSchema.default(' '),
-    employeeName: shortTextSchema.default(' '),
-    employeePosition: shortTextSchema.default(' '),
-    relationshipId: numberIdSchema.default(0),
+    employeeNumber: z.nullable(z.string()),
+    employeeName: z.nullable(z.string()),
+    employeePosition: z.nullable(z.string()),
+    relationshipId: z.nullable(z.number()),
 });
 // .superRefine(({ isInternalRelationship }, ctx) => {
 //     if (isInternalRelationship) {
@@ -468,6 +473,8 @@ export const _submitPersonalInfoForm = async (formData: object) => {
         return error(400, { message: response.message });
     }
 
+    invalidateAll();
+
     // if success toast
     getSuccessToast();
 
@@ -496,6 +503,8 @@ export const _submitAcademicInfoForm = async (formData: AcademicList[]) => {
         getServerErrorToast();
         return error(400, { message: response.message });
     }
+
+    invalidateAll();
 
     // if success toast
     getSuccessToast();
@@ -526,6 +535,8 @@ export const _submitExperienceInfoForm = async (formData: Experience[]) => {
         return error(400, { message: response.message });
     }
 
+    invalidateAll();
+
     // if success toast
     getSuccessToast();
 
@@ -555,8 +566,11 @@ export const _submitActivityInfoForm = async (formData: Activity[]) => {
         return error(400, { message: response.message });
     }
 
+    invalidateAll();
+
     // if success toast
     getSuccessToast();
+
     return { response };
 };
 
@@ -582,8 +596,11 @@ export const _submitFamilyInfoForm = async (formData: Family[]) => {
         return error(400, { message: response.message });
     }
 
+    invalidateAll();
+
     // if success toast
     getSuccessToast();
+
     return { response };
 };
 
@@ -610,8 +627,11 @@ export const _submitDependencyInfoForm = async (formData: Dependency[]) => {
         return error(400, { message: response.message });
     }
 
+    invalidateAll();
+
     // if success toast
     getSuccessToast();
+
     return { response };
 };
 
@@ -638,8 +658,11 @@ export const _submitNextOfKinInfoForm = async (formData: NextOfKin[]) => {
         return error(400, { message: response.message });
     }
 
+    invalidateAll();
+
     // if success toast
     getSuccessToast();
+
     return { response };
 };
 
@@ -661,7 +684,10 @@ export const _submitDocumentInfoForm = async () => {
         return error(400, { message: response.message });
     }
 
+    invalidateAll();
+
     // if success toast
     getSuccessToast();
+
     return { response };
 };

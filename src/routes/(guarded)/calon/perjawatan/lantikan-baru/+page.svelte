@@ -19,15 +19,13 @@
 
 <!-- content body starts here -->
 <!-- notes: you may change the flex directions but do not change the height and max height of this section -->
-<section
-    class="flex h-full w-full flex-col overflow-y-auto"
->
+<section class="flex h-full w-full flex-col overflow-y-auto">
     <Tabs>
-        <TabContent title="Senarai Rekod Lantikan yang Telah Dihantar">
-            <SubmittedRecord listData={data.submittedRecord} />
-        </TabContent>
         <TabContent title="Senarai Rekod Baru">
             <NewRecord listData={data.newRecord} />
+        </TabContent>
+        <TabContent title="Senarai Rekod Lantikan yang Telah Dihantar">
+            <SubmittedRecord listData={data.submittedRecord} />
         </TabContent>
     </Tabs>
 </section>
