@@ -410,10 +410,10 @@ const pemeriksaanDoktorSelectSchema = z
     .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
 export const _stepperPemeriksaanDoktor = z.object({
-    sistemMuskuloskeletalRadio: pemeriksaanDoktorSelectSchema,
+    // sistemMuskuloskeletalRadio: pemeriksaanDoktorSelectSchema,
     paleSkin: booleanSchema,
-    cycnosis: booleanSchema,
-    edama: booleanSchema,
+    // cycnosis: booleanSchema,
+    edema: booleanSchema,
     jaundice: booleanSchema,
     lymphGlands: booleanSchema,
     skinDisease: booleanSchema,
@@ -452,7 +452,7 @@ export const _stepperPemeriksaanDoktor = z.object({
     cardiovascular: shortTextSchema.nullable(),
     breathingExam: shortTextSchema.nullable(),
     xray: shortTextSchema.nullable(),
-    xrayTaken: minDateSchema,
+    xrayTaken: maxDateSchema,
     xrayLocation: shortTextSchema,
     xrayReference: shortTextSchema,
     abdomenHernia: shortTextSchema.nullable(),
