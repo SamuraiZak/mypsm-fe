@@ -229,7 +229,7 @@
                         ></DropdownSelect>
                         {#if $claimInfoErrors.name}
                             <span
-                                class="ml-[-500px] font-sans text-sm italic text-system-danger"
+                                class="ml-[-665px] font-sans text-sm italic text-system-danger"
                                 >{$claimInfoErrors.name}</span
                             >
                         {/if}

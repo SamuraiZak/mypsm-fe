@@ -251,9 +251,8 @@
                     <p class="text-sm font-bold">
                         Ulasan Penyemakan daripada Urus Setia
                     </p>
-                    <div
-                        class="flex h-fit w-full flex-col items-center justify-start gap-2"
-                    >
+                </div>
+
                         <LongTextField
                             hasError={!!$applicationValidationErrors.remark}
                             name="remark"
@@ -262,7 +261,7 @@
                         />
                         {#if $applicationValidationErrors.remark}
                             <span
-                                class="ml-[-400px] font-sans text-sm italic text-system-danger"
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
                                 >{$applicationValidationErrors.remark}</span
                             >
                         {/if}
@@ -273,12 +272,11 @@
                         ></RadioSingle>
                         {#if $applicationValidationErrors.resultOption}
                             <span
-                                class="ml-[-940px] font-sans text-sm italic text-system-danger"
+                                class="ml-[0px] font-sans text-sm italic text-system-danger"
                                 >{$applicationValidationErrors.resultOption}</span
                             >
                         {/if}
-                    </div>
-                </div>
+
             </form></StepperContentBody
         >
     </StepperContent>

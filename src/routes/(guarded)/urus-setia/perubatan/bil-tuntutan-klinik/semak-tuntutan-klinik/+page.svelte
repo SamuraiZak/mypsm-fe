@@ -139,9 +139,7 @@
                 <div
                     class="border-bdr-primary flex w-full flex-col gap-2 border-b pb-5"
                 >
-                    <div
-                        class="flex h-fit w-full flex-col items-center justify-start gap-2"
-                    >
+
                         <TextField
                             hasError={!!$claimInfoErrors.month}
                             name="month"
@@ -150,7 +148,7 @@
                         />
                         {#if $claimInfoErrors.month}
                             <span
-                                class="text-system-danger ml-[-560px] font-sans text-sm italic"
+                                class="text-system-danger ml-[220px] font-sans text-sm italic"
                                 >{$claimInfoErrors.month}</span
                             >
                         {/if}
@@ -163,7 +161,7 @@
                         />
                         {#if $claimInfoErrors.totalClaimed}
                             <span
-                                class="text-system-danger ml-[-580px] font-sans text-sm italic"
+                                class="text-system-danger ml-[220px] font-sans text-sm italic"
                                 >{$claimInfoErrors.totalClaimed}</span
                             >
                         {/if}
@@ -175,12 +173,12 @@
                         />
                         {#if $claimInfoErrors.claimedId}
                             <span
-                                class="text-system-danger ml-[-580px] font-sans text-sm italic"
+                                class="text-system-danger ml-[220px] font-sans text-sm italic"
                                 >{$claimInfoErrors.claimedId}</span
                             >
                         {/if}
                     </div>
-                </div>
+
             </form>
             <div
                 class="border-bdr-primary flex w-full flex-col gap-2 border-b pb-5"
