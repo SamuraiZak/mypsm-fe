@@ -12,7 +12,13 @@
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import { Toaster } from 'svelte-french-toast';
+    import { _stepperRetirementApplicationSupporter, _submitFormStepperRetirementApplicationSupporter } from './+page';
 
+
+    export let data: PageData;
     const options: RadioOption[] = [
         {
             value: 'lulus',
@@ -25,6 +31,22 @@
     ];
 
     export let disabled: boolean = true;
+
+    const {
+        form: retirementApplicationSupporterForm,
+        errors: retirementApplicationSupporterErrors,
+        enhance: retirementApplicationSupporterEnhance,
+    } = superForm(data.stepperRetirementApplicationSupporterForm, {
+        SPA: true,
+        validators: _stepperRetirementApplicationSupporter,
+        onSubmit() {
+            _submitFormStepperRetirementApplicationSupporter(
+                $retirementApplicationSupporterForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -165,11 +187,7 @@
                 ><TextIconButton
                     primary
                     label="Hantar"
-                    onClick={() => {
-                        goto(
-                            '/pengarah-bahagian-negeri/cuti/pengumpulan-gantian-cuti-rehat',
-                        );
-                    }}
+                    form="FormStepperRetirementApplicationSupporter"
                 >
                     <SvgPaperAirplane></SvgPaperAirplane>
                 </TextIconButton></StepperContentHeader
@@ -184,14 +202,43 @@
                     ● Keputusan akan dihantar ke email klinik dan Urus Setia
                     berkaitan.
                 </p>
+                <form
+                id="FormStepperRetirementApplicationSupporter"
+                class="flex w-full flex-col gap-2"
+                use:retirementApplicationSupporterEnhance
+                method="POST"
+            >
                 <LongTextField
-                    disabled
-                    label="Tindakan/Ulasan"
-                    placeholder="-"
-                    value="Butiran Lengkap"
+                    hasError={$retirementApplicationSupporterErrors.actionRemark
+                        ? true
+                        : false}
+                    name="actionRemark"
+                    label="Tindakan / Ulasan"
+                    bind:value={$retirementApplicationSupporterForm.actionRemark}
                 />
-                <RadioSingle {options} disabled />
+                {#if $retirementApplicationSupporterErrors.actionRemark}
+                    <span
+                        class="text-system-danger ml-[220px] font-sans text-sm italic"
+                        >{$retirementApplicationSupporterErrors
+                            .actionRemark[0]}</span
+                    >
+                {/if}
+                <RadioSingle
+                    {options}
+                    name="resultOption"
+                    legend="Keputusan"
+                    bind:userSelected={$retirementApplicationSupporterForm.resultOption}
+                ></RadioSingle>
+                {#if $retirementApplicationSupporterErrors.resultOption}
+                    <span
+                        class="text-system-danger ml-[220px] font-sans text-sm italic"
+                        >{$retirementApplicationSupporterErrors
+                            .resultOption[0]}</span
+                    >
+                {/if}
+            </form>
             </StepperContentBody>
         </StepperContent>
     </Stepper>
 </section>
+<Toaster />

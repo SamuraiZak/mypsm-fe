@@ -5,164 +5,175 @@ import type { DropdownOptionsInterface } from '$lib/interfaces/common/dropdown-o
 import { AuthService } from '$lib/services/implementations/core/auth/authentication.service';
 import { LookupServices } from '$lib/services/implementations/core/lookup/lookup.service';
 import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
-import type { EnumRole, EnumRoleResponseViewModel } from '$lib/view-models/core/lookup/role/role-enum-reponse.view-model';
+import type {
+    EnumRole,
+    EnumRoleResponseViewModel,
+} from '$lib/view-models/core/lookup/role/role-enum-reponse.view-model';
 import type { RoleOption } from '$lib/view-models/core/role-option/role-option.view-model';
 import type { EmployeesListResponseViewModel } from '$lib/view-models/mypsm/employee/employee-list-response';
 
 export const load = async () => {
-
     // CORRECT EXAMPLE STARTS HERE ================
     // agency group list
-    const agencyGroupsListResponse : LookupDTO[] =
-        await LookupServices.getLookup("agency-group");
+    const agencyGroupsListResponse: LookupDTO[] =
+        await LookupServices.getLookup('agency-group');
 
-    const agencyGroupsLookup: DropdownOptionsInterface[] = LookupHelper.toDropdown(agencyGroupsListResponse);
+    const agencyGroupsLookup: DropdownOptionsInterface[] =
+        LookupHelper.toDropdown(agencyGroupsListResponse);
 
     // CORRECT EXAMPLE ENDS HERE ==================
 
     // list of asset declaration status
-    const assetDeclarationStatusResponse =
-        await LookupServices.getLookup("asset-declaration-status");
+    const assetDeclarationStatusResponse = await LookupServices.getLookup(
+        'asset-declaration-status',
+    );
 
     const assetDeclarationLookup: DropdownOptionsInterface[] =
         LookupHelper.toDropdown(assetDeclarationStatusResponse);
 
     // award list
-    const awardListResponse = await LookupServices.getLookup("award");
+    const awardListResponse = await LookupServices.getLookup('award');
 
     const awardLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(awardListResponse);
+        LookupHelper.toDropdown(awardListResponse);
 
     // award category list
     const awardListCategoryResponse =
-        await LookupServices.getLookup("award-category");
+        await LookupServices.getLookup('award-category');
 
     const awardCategoryLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(awardListCategoryResponse);
+        LookupHelper.toDropdown(awardListCategoryResponse);
 
     // city list
-    const cityListResponse = await LookupServices.getLookup("city");
+    const cityListResponse = await LookupServices.getLookup('city');
 
     const cityLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(cityListResponse);
+        LookupHelper.toDropdown(cityListResponse);
 
     // country list
-    const countryListResponse = await LookupServices.getLookup("country");
+    const countryListResponse = await LookupServices.getLookup('country');
 
     const countryLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(countryListResponse);
+        LookupHelper.toDropdown(countryListResponse);
 
     // department list
-    const departmentListResponse = await LookupServices.getLookup("department");
+    const departmentListResponse = await LookupServices.getLookup('department');
 
     const departmentLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(departmentListResponse);
+        LookupHelper.toDropdown(departmentListResponse);
 
     // district list
-    const districtListResponse = await LookupServices.getLookup("district");
+    const districtListResponse = await LookupServices.getLookup('district');
 
     const districtLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(districtListResponse);
+        LookupHelper.toDropdown(districtListResponse);
 
     // division list
-    const divisionListResponse = await LookupServices.getLookup("division");
+    const divisionListResponse = await LookupServices.getLookup('division');
 
     const divisionLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(divisionListResponse);
+        LookupHelper.toDropdown(divisionListResponse);
 
     // employment status list
     const employmentStatusListResponse =
-        await LookupServices.getLookup("employment-status");
+        await LookupServices.getLookup('employment-status');
 
     const empoymentStatusLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(employmentStatusListResponse);
+        LookupHelper.toDropdown(employmentStatusListResponse);
 
     // ethnicity list
-    const ethnicityListResponse = await LookupServices.getLookup("ethnicity");
+    const ethnicityListResponse = await LookupServices.getLookup('ethnicity');
 
-    const ethnicityLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(ethnicityListResponse);
+    const ethnicityLookup: DropdownOptionsInterface[] = LookupHelper.toDropdown(
+        ethnicityListResponse,
+    );
 
     // gender list
-    const genderListResponse = await LookupServices.getLookup("gender");
+    const genderListResponse = await LookupServices.getLookup('gender');
 
     const genderLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(genderListResponse);
+        LookupHelper.toDropdown(genderListResponse);
 
     // grade list
-    const gradeListResponse = await LookupServices.getLookup("grade");
+    const gradeListResponse = await LookupServices.getLookup('grade');
 
     const gradeLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(gradeListResponse);
+        LookupHelper.toDropdown(gradeListResponse);
 
     // education list
-    const educationListResponse = await LookupServices.getLookup("highest-education-level");
+    const educationListResponse = await LookupServices.getLookup(
+        'highest-education-level',
+    );
 
-    const educationLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(educationListResponse);
+    const educationLookup: DropdownOptionsInterface[] = LookupHelper.toDropdown(
+        educationListResponse,
+    );
 
     // institution list
     const institutionListResponse =
-        await LookupServices.getLookup("institution");
+        await LookupServices.getLookup('institution');
 
     const institutionLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(institutionListResponse);
+        LookupHelper.toDropdown(institutionListResponse);
 
     // major minor list
-    const majorMinorListResponse = await LookupServices.getLookup("major-minor");
+    const majorMinorListResponse =
+        await LookupServices.getLookup('major-minor');
 
     const majorMinorLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(majorMinorListResponse);
+        LookupHelper.toDropdown(majorMinorListResponse);
 
     // marital list
-    const maritalListResponse = await LookupServices.getLookup("marital-status");
+    const maritalListResponse =
+        await LookupServices.getLookup('marital-status');
 
     const maritalLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(maritalListResponse);
+        LookupHelper.toDropdown(maritalListResponse);
 
     // nationality list
     const nationalityListResponse =
-        await LookupServices.getLookup("nationality");
+        await LookupServices.getLookup('nationality');
 
     const nationalityLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(nationalityListResponse);
+        LookupHelper.toDropdown(nationalityListResponse);
 
     // placement list
-    const placementListResponse = await LookupServices.getLookup("placement");
+    const placementListResponse = await LookupServices.getLookup('placement');
 
-    const placementLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(placementListResponse);
+    const placementLookup: DropdownOptionsInterface[] = LookupHelper.toDropdown(
+        placementListResponse,
+    );
 
     // position list
-    const positionResponse = await LookupServices.getLookup("position");
+    const positionResponse = await LookupServices.getLookup('position');
 
     const positionLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(positionResponse);
+        LookupHelper.toDropdown(positionResponse);
 
     // race list
-    const raceListResponse = await LookupServices.getLookup("race");
+    const raceListResponse = await LookupServices.getLookup('race');
 
     const raceLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(raceListResponse);
+        LookupHelper.toDropdown(raceListResponse);
 
     // relationship list
     const relationshipListResponse =
-        await LookupServices.getLookup("relationship");
+        await LookupServices.getLookup('relationship');
 
     const relationshipLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(relationshipListResponse);
+        LookupHelper.toDropdown(relationshipListResponse);
 
     // religion list
-    const religionListResponse = await LookupServices.getLookup("religion");
+    const religionListResponse = await LookupServices.getLookup('religion');
 
     const religionLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(religionListResponse);
+        LookupHelper.toDropdown(religionListResponse);
 
     // role list
-    const roleListResponse = await LookupServices.getLookup("role");
+    const roleListResponse = await LookupServices.getLookup('role');
 
     const roleLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(roleListResponse);
+        LookupHelper.toDropdown(roleListResponse);
 
     // scheme of service list
     // const schemeOfServiceListResponse =
@@ -172,55 +183,56 @@ export const load = async () => {
     // LookupHelper.toDropdown(schemeOfServiceListResponse);
 
     // section list
-    const sectionListResponse = await LookupServices.getLookup("section");
+    const sectionListResponse = await LookupServices.getLookup('section');
 
     const sectionLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(sectionListResponse);
+        LookupHelper.toDropdown(sectionListResponse);
 
     // service class list
     const serviceClassListResponse =
-        await LookupServices.getLookup("service-class");
+        await LookupServices.getLookup('service-class');
 
     const serviceClassLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(serviceClassListResponse);
+        LookupHelper.toDropdown(serviceClassListResponse);
 
     // service group list
-    const serviceGroupResponse = await LookupServices.getLookup("service-group");
+    const serviceGroupResponse =
+        await LookupServices.getLookup('service-group');
 
     const serviceGroupLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(serviceGroupResponse);
+        LookupHelper.toDropdown(serviceGroupResponse);
 
     // service type list
     const serviceTypeListResponse =
-        await LookupServices.getLookup("service-type");
+        await LookupServices.getLookup('service-type');
 
     const serviceTypeLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(serviceTypeListResponse);
+        LookupHelper.toDropdown(serviceTypeListResponse);
 
     // sponsorship list
     const sponsorshipListResponse =
-        await LookupServices.getLookup("sponsorship");
+        await LookupServices.getLookup('sponsorship');
 
     const sponsorshipLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(sponsorshipListResponse);
+        LookupHelper.toDropdown(sponsorshipListResponse);
 
     // state list
-    const stateListResponse = await LookupServices.getLookup("state");
+    const stateListResponse = await LookupServices.getLookup('state');
 
     const stateLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(stateListResponse);
+        LookupHelper.toDropdown(stateListResponse);
 
     // title list
-    const titleListResponse = await LookupServices.getLookup("title");
+    const titleListResponse = await LookupServices.getLookup('title');
 
     const titleLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(titleListResponse);
+        LookupHelper.toDropdown(titleListResponse);
 
     // unit list
-    const unitListResponse = await LookupServices.getLookup("unit");
+    const unitListResponse = await LookupServices.getLookup('unit');
 
     const unitLookup: DropdownOptionsInterface[] =
-    LookupHelper.toDropdown(unitListResponse);
+        LookupHelper.toDropdown(unitListResponse);
 
     const request: EmployeesListRequestViewModel = {
         pageNum: 1,
@@ -231,12 +243,12 @@ export const load = async () => {
     };
 
     const employeeListResponse: EmployeesListResponseViewModel =
-        await EmployeeService.getEmployeeList(request);
+        await EmployeeService.getEmployeeList();
 
     const employeeListLookup: DropdownOptionsInterface[] =
-        employeeListResponse.data.map((employee) => ({
-            value: String(employee.employeeNumber),
-            name: employee.employeeNumber,
+        employeeListResponse.data.result.map((employee) => ({
+            value: String(employee.employeeId),
+            name: employee.name,
         }));
 
     // stop editing here: hamiz
@@ -294,11 +306,9 @@ export const load = async () => {
     //     roleOptionsList = roleOptionsList;
     // });
 
-    const roles=
-        await LookupServices.getLookup("role");
+    const roles = await LookupServices.getLookup('role');
 
-    const roleOptionsList: RoleOption[] =
-    LookupHelper.toRoleOption(roles);
+    const roleOptionsList: RoleOption[] = LookupHelper.toRoleOption(roles);
 
     return {
         roleOptionsList,

@@ -36,10 +36,17 @@
     import { onMount } from 'svelte';
     import { fileSelectionList } from '$lib/stores/globalState';
     import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
-    import { uploadedFileSchema } from './form-schema';
+    import {
+        _stepperRetirementApplicationSupporter,
+        _submitFormStepperRetirementApplicationSupporter,
+        uploadedFileSchema,
+    } from './form-schema';
     import { ZodError } from 'zod';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
 
     let selectedCuti = '';
+    export let data: PageData;
 
     const options: RadioOption[] = [
         {
@@ -116,6 +123,21 @@
             }
         }
     };
+    const {
+        form: retirementApplicationSupporterForm,
+        errors: retirementApplicationSupporterErrors,
+        enhance: retirementApplicationSupporterEnhance,
+    } = superForm(data.stepperRetirementApplicationSupporterForm, {
+        SPA: true,
+        validators: _stepperRetirementApplicationSupporter,
+        onSubmit() {
+            _submitFormStepperRetirementApplicationSupporter(
+                $retirementApplicationSupporterForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -191,12 +213,12 @@
         <StepperContent>
             <StepperContentHeader title="Maklumat Cuti">
                 <TextIconButton primary label="Hantar" form="formValidation">
-                    <SvgPaperAirplane/>
+                    <SvgPaperAirplane />
                 </TextIconButton>
             </StepperContentHeader>
             <StepperContentBody>
                 <div
-                    class="flex max-h-full w-full flex-col gap-2.5 border-bdr-primary pb-5"
+                    class="border-bdr-primary flex max-h-full w-full flex-col gap-2.5 pb-5"
                 >
                     <DropdownSelect
                         dropdownType="label-left-full"
@@ -253,7 +275,8 @@
                     primary
                     label="Hantar"
                     onClick={() => submitFilesForm()}
-                ><SvgPaperAirplane/></TextIconButton></StepperContentHeader
+                    ><SvgPaperAirplane /></TextIconButton
+                ></StepperContentHeader
             >
             <StepperContentBody>
                 <div class="flex w-full flex-col"></div>
@@ -266,7 +289,7 @@
                 <div class="w-full">
                     {#if errorData?.uploadedFiles}
                         <span
-                            class="font-sans text-sm italic text-system-danger"
+                            class="text-system-danger font-sans text-sm italic"
                             >{errorData?.uploadedFiles[0]}</span
                         >
                     {/if}
@@ -287,7 +310,7 @@
                         class="flex flex-col items-center justify-center gap-2.5"
                     >
                         <p
-                            class=" text-sm text-txt-tertiary"
+                            class=" text-txt-tertiary text-sm"
                             hidden={$fileSelectionList.length > 0}
                         >
                             Pilih fail dari peranti anda.
@@ -360,9 +383,7 @@
                 ><TextIconButton
                     primary
                     label="Hantar"
-                    onClick={() => {
-                        goto('/penyokong/cuti/permohonan-cuti');
-                    }}
+                    form="FormStepperRetirementApplicationSupporter"
                 >
                     <SvgPaperAirplane></SvgPaperAirplane>
                 </TextIconButton></StepperContentHeader
@@ -373,13 +394,41 @@
                 <div
                     class="flex h-fit w-full flex-col items-start justify-start gap-2"
                 >
-                    <LongTextField
-                        disabled
-                        label="Tindakan/Ulasan"
-                        value="butiran lengkap"
-                        placeholder="-"
-                    ></LongTextField>
-                    <RadioSingle options={supportOptions} disabled />
+                    <form
+                        id="FormStepperRetirementApplicationSupporter"
+                        class="flex w-full flex-col gap-2"
+                        use:retirementApplicationSupporterEnhance
+                        method="POST"
+                    >
+                        <LongTextField
+                            hasError={$retirementApplicationSupporterErrors.actionRemark
+                                ? true
+                                : false}
+                            name="actionRemark"
+                            label="Tindakan / Ulasan"
+                            bind:value={$retirementApplicationSupporterForm.actionRemark}
+                        />
+                        {#if $retirementApplicationSupporterErrors.actionRemark}
+                            <span
+                                class="text-system-danger ml-[220px] font-sans text-sm italic"
+                                >{$retirementApplicationSupporterErrors
+                                    .actionRemark[0]}</span
+                            >
+                        {/if}
+                        <RadioSingle
+                            {options}
+                            name="resultOption"
+                            legend="Keputusan"
+                            bind:userSelected={$retirementApplicationSupporterForm.resultOption}
+                        ></RadioSingle>
+                        {#if $retirementApplicationSupporterErrors.resultOption}
+                            <span
+                                class="text-system-danger ml-[220px] font-sans text-sm italic"
+                                >{$retirementApplicationSupporterErrors
+                                    .resultOption[0]}</span
+                            >
+                        {/if}
+                    </form>
                 </div>
             </StepperContentBody>
         </StepperContent>

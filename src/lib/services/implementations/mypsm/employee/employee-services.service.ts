@@ -6,7 +6,7 @@ import http from '$lib/services/provider/service-provider.service';
 import type { AddApprovalResultRequestBody } from '$lib/view-models/mypsm/common/add-approval-results-request.model';
 import type { DocumentData } from '$lib/view-models/mypsm/common/add-documents-request.model';
 import type { CandidateIDRequestBody } from '$lib/view-models/mypsm/common/candidate-id-request.view-model';
-import { EmployeesListResponseConvert } from '$lib/view-models/mypsm/employee/employee-list-response';
+import { EmployeesListResponseConvert, type EmployeesListResponseViewModel } from '$lib/view-models/mypsm/employee/employee-list-response';
 import type { CandidateActivityRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-activity-request.view-model';
 import { type NewHireActivity } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-activity-response.view-model';
 import type { NewHireApproverTableListRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-approver-table-list-request.model';
@@ -64,18 +64,11 @@ import type { PensionPersonalDetailResponse } from '$lib/view-models/mypsm/perja
 
 export class EmployeeService {
     // get list of employee
-    static async getEmployeeList(param: EmployeesListRequestViewModel) {
-        const response: Response = await http
-            .post('employees/employees', {
-                body: JSON.stringify(param),
-                headers: {
-                    Accept: 'application/json',
-                    'Content-type': 'application/json',
-                },
-            })
-            .json();
+    static async getEmployeeList() {
+        const response: EmployeesListResponseViewModel = await http.get('employees/list').json();
 
-        return EmployeesListResponseConvert.fromResponse(response);
+        return response;
+        // return EmployeesListResponseConvert.fromResponse(response);
     }
 
     // get list of employee's personal details

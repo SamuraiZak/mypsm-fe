@@ -13,6 +13,15 @@
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import { Badge } from 'flowbite-svelte';
     import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
+    import {
+        _stepperRetirementApplicationSupporter,
+        _submitFormStepperRetirementApplicationSupporter,
+    } from './+page';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import { Toaster } from 'svelte-french-toast';
+
+    export let data: PageData;
 
     const options: RadioOption[] = [
         {
@@ -24,6 +33,21 @@
             label: 'Tidak Sokong',
         },
     ];
+    const {
+        form: retirementApplicationSupporterForm,
+        errors: retirementApplicationSupporterErrors,
+        enhance: retirementApplicationSupporterEnhance,
+    } = superForm(data.stepperRetirementApplicationSupporterForm, {
+        SPA: true,
+        validators: _stepperRetirementApplicationSupporter,
+        onSubmit() {
+            _submitFormStepperRetirementApplicationSupporter(
+                $retirementApplicationSupporterForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <!-- header section -->
@@ -106,9 +130,7 @@
             <StepperContentHeader title="Butiran Pengumpulan GCR"
             ></StepperContentHeader>
             <StepperContentBody>
-                <div
-                    class="flex w-full flex-col gap-2"
-                >
+                <div class="flex w-full flex-col gap-2">
                     <TextField
                         label="Tahun Terkini"
                         disabled={true}
@@ -164,7 +186,7 @@
                 >
                     <p class="text-sm font-bold">Urus Setia</p>
                     <div
-                        class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
+                        class="border-bdr-primary flex h-fit w-full flex-col items-center justify-start gap-2 border-b pb-5"
                     >
                         <TextField
                             disabled
@@ -173,10 +195,10 @@
                             value="Mat Irdam bin Inu"
                         />
                         <p
-                        class="mt-2 h-fit w-full bg-bgr-primary text-sm italic text-system-accent"
-                    >
-                        ● Menunggu keputusan daripada PENGARAH BAHAGIAN..
-                    </p>
+                            class="bg-bgr-primary text-system-accent mt-2 h-fit w-full text-sm italic"
+                        >
+                            ● Menunggu keputusan daripada PENGARAH BAHAGIAN..
+                        </p>
                     </div>
                 </div>
                 <div
@@ -193,10 +215,10 @@
                             value="Wan Awie"
                         />
                         <p
-                        class="mt-2 h-fit w-full bg-bgr-primary text-sm italic text-system-accent"
-                    >
-                        ● Menunggu keputusan daripada KETUA SEKSYEN..
-                    </p>
+                            class="bg-bgr-primary text-system-accent mt-2 h-fit w-full text-sm italic"
+                        >
+                            ● Menunggu keputusan daripada KETUA SEKSYEN..
+                        </p>
                     </div>
                 </div>
             </StepperContentBody>
@@ -206,9 +228,7 @@
                 ><TextIconButton
                     label="Hantar"
                     primary
-                    onClick={() => {
-                        goto('/ketua-seksyen/cuti/gantian-cuti-rehat');
-                    }}
+                    form="FormStepperRetirementApplicationSupporter"
                 >
                     <SvgPaperAirplane></SvgPaperAirplane>
                 </TextIconButton></StepperContentHeader
@@ -217,18 +237,48 @@
                 <SectionHeader title="Ulasan Sokongan daripada Ketua Seksyen"
                 ></SectionHeader>
                 <p
-                        class="mt-2 h-fit w-full bg-bgr-primary text-sm italic text-system-accent"
-                    >
-                        ● Keputusan akan dihantar ke email klinik dan Urus Setia berkaitan
-                    </p>
-                <LongTextField
-                    disabled
-                    label="Tindakan/Ulasan"
-                    placeholder="-"
-                    value="Butiran Lengkap"
-                />
-                <RadioSingle {options} disabled />
-            </StepperContentBody>
+                    class="bg-bgr-primary text-system-accent mt-2 h-fit w-full text-sm italic"
+                >
+                    ● Keputusan akan dihantar ke email klinik dan Urus Setia
+                    berkaitan
+                </p>
+                <form
+                    id="FormStepperRetirementApplicationSupporter"
+                    class="flex w-full flex-col gap-2"
+                    use:retirementApplicationSupporterEnhance
+                    method="POST"
+                >
+                    <LongTextField
+                        hasError={$retirementApplicationSupporterErrors.actionRemark
+                            ? true
+                            : false}
+                        name="actionRemark"
+                        label="Tindakan / Ulasan"
+                        bind:value={$retirementApplicationSupporterForm.actionRemark}
+                    />
+                    {#if $retirementApplicationSupporterErrors.actionRemark}
+                        <span
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            >{$retirementApplicationSupporterErrors
+                                .actionRemark[0]}</span
+                        >
+                    {/if}
+                    <RadioSingle
+                        {options}
+                        name="resultOption"
+                        legend="Keputusan"
+                        bind:userSelected={$retirementApplicationSupporterForm.resultOption}
+                    ></RadioSingle>
+                    {#if $retirementApplicationSupporterErrors.resultOption}
+                        <span
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            >{$retirementApplicationSupporterErrors
+                                .resultOption[0]}</span
+                        >
+                    {/if}
+                </form></StepperContentBody
+            >
         </StepperContent>
     </Stepper>
 </section>
+<Toaster />

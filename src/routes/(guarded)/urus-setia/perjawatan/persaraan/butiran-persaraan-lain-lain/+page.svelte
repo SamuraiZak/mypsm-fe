@@ -85,34 +85,34 @@
             }),
         });
 
-        try {
-            const result = exampleFormSchema.parse(exampleFormData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
+        // try {
+        //     const result = exampleFormSchema.parse(exampleFormData);
+        //     if (result) {
+        //         errorData = [];
+        //         toast.success('Berjaya disimpan!', {
+        //             style: 'background: #333; color: #fff;',
+        //         });
 
-                const id = crypto.randomUUID().toString();
-                const validatedExamFormData = { ...exampleFormData, id };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedExamFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
+        //         const id = crypto.randomUUID().toString();
+        //         const validatedExamFormData = { ...exampleFormData, id };
+        //         console.log(
+        //             'REQUEST BODY: ',
+        //             JSON.stringify(validatedExamFormData),
+        //         );
+        //     }
+        // } catch (err: unknown) {
+        //     if (err instanceof ZodError) {
+        //         const { fieldErrors: errors } = err.flatten();
+        //         errorData = errors;
+        //         console.log('ERROR!', err.flatten());
+        //         toast.error(
+        //             'Sila pastikan maklumat adalah lengkap dengan tepat.',
+        //             {
+        //                 style: 'background: #333; color: #fff;',
+        //             },
+        //         );
+        //     }
+        // }
     };
 
     //Retirement Verification
