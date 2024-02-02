@@ -19,7 +19,12 @@
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import { Toaster } from 'svelte-french-toast';
-    import { _stepperClaimInfo, _submitFormStepperClaimInfo } from './+page';
+    import {
+        _stepperAction,
+        _stepperClaimInfo,
+        _submitFormStepperAction,
+        _submitFormStepperClaimInfo,
+    } from './+page';
 
     export let data: PageData;
     export let disabled: boolean = true;
@@ -35,6 +40,20 @@
         validators: _stepperClaimInfo,
         onSubmit() {
             _submitFormStepperClaimInfo($claimInfoForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+
+    const {
+        form: actionForm,
+        errors: actionErrors,
+        enhance: actionEnhance,
+    } = superForm(data.stepperAction, {
+        SPA: true,
+        validators: _stepperAction,
+        onSubmit() {
+            _submitFormStepperAction($actionForm);
         },
         taintedMessage:
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
@@ -118,7 +137,7 @@
                 method="POST"
             >
                 <div
-                    class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+                    class="border-bdr-primary flex w-full flex-col gap-2 border-b pb-5"
                 >
                     <div
                         class="flex h-fit w-full flex-col items-center justify-start gap-2"
@@ -131,7 +150,7 @@
                         />
                         {#if $claimInfoErrors.month}
                             <span
-                                class="ml-[-400px] font-sans text-sm italic text-system-danger"
+                                class="text-system-danger ml-[-560px] font-sans text-sm italic"
                                 >{$claimInfoErrors.month}</span
                             >
                         {/if}
@@ -144,183 +163,183 @@
                         />
                         {#if $claimInfoErrors.totalClaimed}
                             <span
-                                class="ml-[-420px] font-sans text-sm italic text-system-danger"
+                                class="text-system-danger ml-[-580px] font-sans text-sm italic"
                                 >{$claimInfoErrors.totalClaimed}</span
                             >
                         {/if}
                         <TextField
-                            hasError={!!$claimInfoErrors.totalClaimed}
+                            hasError={!!$claimInfoErrors.claimedId}
                             name="claimedId"
                             label="Bilangan Tuntutan"
-                            bind:value={$claimInfoForm.totalClaimed}
+                            bind:value={$claimInfoForm.claimedId}
                         />
-                        {#if $claimInfoErrors.totalClaimed}
+                        {#if $claimInfoErrors.claimedId}
                             <span
-                                class="ml-[-420px] font-sans text-sm italic text-system-danger"
-                                >{$claimInfoErrors.totalClaimed}</span
+                                class="text-system-danger ml-[-580px] font-sans text-sm italic"
+                                >{$claimInfoErrors.claimedId}</span
                             >
                         {/if}
                     </div>
                 </div>
-                <div
-                    class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+            </form>
+            <div
+                class="border-bdr-primary flex w-full flex-col gap-2 border-b pb-5"
+            >
+                <p class="text-sm font-bold">Semua Tuntutan Klinik Wee</p>
+                <p class="text-sm">
+                    Senarai semua tuntutan yang dipilih dibawah
+                </p>
+            </div>
+            <div
+                class="flex h-fit w-full flex-col items-center justify-start gap-2"
+            >
+                <SectionHeader
+                    title="Sahkan semua tuntutan yang dipilih dibawah"
+                    ><FormButton type="sahkan"></FormButton></SectionHeader
                 >
-                    <p class="text-sm font-bold">Semua Tuntutan Klinik Wee</p>
-                    <p class="text-sm">
-                        Senarai semua tuntutan yang dipilih dibawah
-                    </p>
+            </div>
+            <div class="flex w-full flex-col gap-2.5">
+                <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                    <div class="flex w-full">
+                        <div
+                            class="flex w-1/3 flex-row items-start pt-4 text-sm"
+                        >
+                            <Checkbox />
+                            <div class="font-bold">Senarai Tuntutan</div>
+                        </div>
+                    </div>
                 </div>
                 <div
-                    class="flex h-fit w-full flex-col items-center justify-start gap-2"
+                    class="h-fit w-full space-y-2.5 rounded-[3px] border p-2.5"
                 >
-                    <SectionHeader
-                        title="Sahkan semua tuntutan yang dipilih dibawah"
-                        ><FormButton type="sahkan"></FormButton></SectionHeader
-                    >
+                    <div class="flex">
+                        <div
+                            class="flex w-1/3 flex-row items-start pt-4 text-sm"
+                        >
+                            <Checkbox />
+                            <div class="font-bold">Tuntutan 1</div>
+                        </div>
+                    </div>
+                    <div class="flex w-full flex-row gap-x-2.5">
+                        <div class="w-1/3 space-y-2.5">
+                            <TextField
+                                {disabled}
+                                labelType="top"
+                                type="text"
+                                id="namaKakitangan"
+                                label="Nama Kakitangan"
+                                value="Mohd Safwan Adam"
+                            ></TextField>
+                            <TextField
+                                {disabled}
+                                labelType="top"
+                                type="text"
+                                id="noKP"
+                                label="No. Kad Pengenalan"
+                                value="111111-11-1111"
+                            ></TextField>
+                        </div>
+                        <div class="w-2/3 space-y-2.5 space-y-2.5">
+                            <DynamicTable tableItems={senaraiTuntutan}
+                            ></DynamicTable>
+                        </div>
+                    </div>
+                    <FormButton
+                        type="tindakan"
+                        addLabel="Tindakan"
+                        onClick={() => {
+                            formModal = true;
+                        }}
+                    />
                 </div>
-                <div class="flex w-full flex-col gap-2.5">
-                    <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
-                        <div class="flex w-full">
-                            <div
-                                class="flex w-1/3 flex-row items-start pt-4 text-sm"
-                            >
-                                <Checkbox />
-                                <div class="font-bold">Senarai Tuntutan</div>
-                            </div>
+                <div
+                    class="h-fit w-full space-y-2.5 rounded-[3px] border p-2.5"
+                >
+                    <div class="flex">
+                        <div
+                            class="flex w-1/3 flex-row items-start pt-4 text-sm"
+                        >
+                            <Checkbox />
+                            <div class="font-bold">Tuntutan 2</div>
                         </div>
                     </div>
-                    <div
-                        class="h-fit w-full space-y-2.5 rounded-[3px] border p-2.5"
-                    >
-                        <div class="flex">
-                            <div
-                                class="flex w-1/3 flex-row items-start pt-4 text-sm"
-                            >
-                                <Checkbox />
-                                <div class="font-bold">Tuntutan 1</div>
-                            </div>
+                    <div class="flex w-full flex-row gap-x-2.5">
+                        <div class="w-1/3 space-y-2.5">
+                            <TextField
+                                {disabled}
+                                labelType="top"
+                                type="text"
+                                id="namaKakitangan"
+                                label="Nama Kakitangan"
+                                value="Mohd Safwan Adam"
+                            ></TextField>
+                            <TextField
+                                {disabled}
+                                labelType="top"
+                                type="text"
+                                id="noKP"
+                                label="No. Kad Pengenalan"
+                                value="111111-11-1111"
+                            ></TextField>
                         </div>
-                        <div class="flex w-full flex-row gap-x-2.5">
-                            <div class="w-1/3 space-y-2.5">
-                                <TextField
-                                    {disabled}
-                                    labelType="top"
-                                    type="text"
-                                    id="namaKakitangan"
-                                    label="Nama Kakitangan"
-                                    value="Mohd Safwan Adam"
-                                ></TextField>
-                                <TextField
-                                    {disabled}
-                                    labelType="top"
-                                    type="text"
-                                    id="noKP"
-                                    label="No. Kad Pengenalan"
-                                    value="111111-11-1111"
-                                ></TextField>
-                            </div>
-                            <div class="w-2/3 space-y-2.5 space-y-2.5">
-                                <DynamicTable tableItems={senaraiTuntutan}
-                                ></DynamicTable>
-                            </div>
+                        <div class="w-2/3 space-y-2.5 space-y-2.5">
+                            <DynamicTable tableItems={senaraiTuntutan}
+                            ></DynamicTable>
                         </div>
-                        <FormButton
-                            type="tindakan"
-                            addLabel="Tindakan"
-                            onClick={() => {
-                                formModal = true;
-                            }}
-                        />
                     </div>
-                    <div
-                        class="h-fit w-full space-y-2.5 rounded-[3px] border p-2.5"
-                    >
-                        <div class="flex">
-                            <div
-                                class="flex w-1/3 flex-row items-start pt-4 text-sm"
-                            >
-                                <Checkbox />
-                                <div class="font-bold">Tuntutan 2</div>
-                            </div>
-                        </div>
-                        <div class="flex w-full flex-row gap-x-2.5">
-                            <div class="w-1/3 space-y-2.5">
-                                <TextField
-                                    {disabled}
-                                    labelType="top"
-                                    type="text"
-                                    id="namaKakitangan"
-                                    label="Nama Kakitangan"
-                                    value="Mohd Safwan Adam"
-                                ></TextField>
-                                <TextField
-                                    {disabled}
-                                    labelType="top"
-                                    type="text"
-                                    id="noKP"
-                                    label="No. Kad Pengenalan"
-                                    value="111111-11-1111"
-                                ></TextField>
-                            </div>
-                            <div class="w-2/3 space-y-2.5 space-y-2.5">
-                                <DynamicTable tableItems={senaraiTuntutan}
-                                ></DynamicTable>
-                            </div>
-                        </div>
-                        <FormButton
-                            type="tindakan"
-                            addLabel="Tindakan"
-                            onClick={() => {
-                                formModal = true;
-                            }}
-                        />
-                    </div>
-                    <div
-                        class="h-fit w-full space-y-2.5 rounded-[3px] border p-2.5"
-                    >
-                        <div class="flex">
-                            <div
-                                class="flex w-1/3 flex-row items-start pt-4 text-sm"
-                            >
-                                <Checkbox />
-                                <div class="font-bold">Tuntutan 3</div>
-                            </div>
-                        </div>
-                        <div class="flex w-full flex-row gap-x-2.5">
-                            <div class="w-1/3 space-y-2.5">
-                                <TextField
-                                    {disabled}
-                                    labelType="top"
-                                    type="text"
-                                    id="namaKakitangan"
-                                    label="Nama Kakitangan"
-                                    value="Mohd Safwan Adam"
-                                ></TextField>
-                                <TextField
-                                    {disabled}
-                                    labelType="top"
-                                    type="text"
-                                    id="noKP"
-                                    label="No. Kad Pengenalan"
-                                    value="111111-11-1111"
-                                ></TextField>
-                            </div>
-                            <div class="w-2/3 space-y-2.5 space-y-2.5">
-                                <DynamicTable tableItems={senaraiTuntutan}
-                                ></DynamicTable>
-                            </div>
-                        </div>
-                        <FormButton
-                            type="tindakan"
-                            addLabel="Tindakan"
-                            onClick={() => {
-                                formModal = true;
-                            }}
-                        />
-                    </div>
+                    <FormButton
+                        type="tindakan"
+                        addLabel="Tindakan"
+                        onClick={() => {
+                            formModal = true;
+                        }}
+                    />
                 </div>
-            </form></StepperContentBody
-        >
+                <div
+                    class="h-fit w-full space-y-2.5 rounded-[3px] border p-2.5"
+                >
+                    <div class="flex">
+                        <div
+                            class="flex w-1/3 flex-row items-start pt-4 text-sm"
+                        >
+                            <Checkbox />
+                            <div class="font-bold">Tuntutan 3</div>
+                        </div>
+                    </div>
+                    <div class="flex w-full flex-row gap-x-2.5">
+                        <div class="w-1/3 space-y-2.5">
+                            <TextField
+                                {disabled}
+                                labelType="top"
+                                type="text"
+                                id="namaKakitangan"
+                                label="Nama Kakitangan"
+                                value="Mohd Safwan Adam"
+                            ></TextField>
+                            <TextField
+                                {disabled}
+                                labelType="top"
+                                type="text"
+                                id="noKP"
+                                label="No. Kad Pengenalan"
+                                value="111111-11-1111"
+                            ></TextField>
+                        </div>
+                        <div class="w-2/3 space-y-2.5 space-y-2.5">
+                            <DynamicTable tableItems={senaraiTuntutan}
+                            ></DynamicTable>
+                        </div>
+                    </div>
+                    <FormButton
+                        type="tindakan"
+                        addLabel="Tindakan"
+                        onClick={() => {
+                            formModal = true;
+                        }}
+                    />
+                </div>
+            </div>
+        </StepperContentBody>
 
         <Modal
             bind:open={formModal}
@@ -330,7 +349,10 @@
         >
             <div class="space-y-50 w-full p-8 md:p-8">
                 <!-- formdiv -->
-                <form action="#" class="flex w-full flex-col gap-6">
+                <form action="#" class="flex w-full flex-col gap-6"
+                id="FormStepperClaimInfo"
+                use:actionEnhance
+                method="POST">
                     <!-- form header -->
                     <div class="flex w-full flex-col gap-2">
                         <h3 class="mb-2 text-xl font-medium text-gray-900">
@@ -338,10 +360,11 @@
                         </h3>
 
                         <p
-                            class="mt-2 h-fit w-full bg-bgr-primary text-sm italic text-system-accent"
+                            class="bg-bgr-primary text-system-accent mt-2 h-fit w-full text-sm italic"
                         >
-                            ● Sila klik "Simpan" untuk menghantar pembatalan tuntutan
-                            ke Klinik Panel dan Kakitangan yang berkaitan.
+                            ● Sila klik "Simpan" untuk menghantar pembatalan
+                            tuntutan ke Klinik Panel dan Kakitangan yang
+                            berkaitan.
                         </p>
                     </div>
 
@@ -352,19 +375,27 @@
                                 Klinik
                             </p>
                             <div
-                                class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
+                                class="border-bdr-primary flex h-fit w-full flex-col items-center justify-start gap-2 border-b pb-5"
                             >
                                 <LongTextField
-                                    id="tindakanUlasan"
+                                    hasError={!!$actionErrors.clinicAction}
+                                    name="clinicAction"
                                     label={'Tindakan/ Ulasan'}
-                                    value={'Simpan ke klinik semula untuk membuat pembetulan'}
+                                    bind:value={$actionForm.clinicAction}
                                 ></LongTextField>
+                                {#if $actionErrors.clinicAction}
+                                    <span
+                                        class="text-system-danger ml-[-500px] font-sans text-sm italic"
+                                        >{$actionErrors.clinicAction}</span
+                                    >
+                                {/if}
                                 <div
                                     class="flex max-h-full w-full flex-col items-start justify-start"
                                 ></div>
                             </div>
                         </div>
                     </div>
+
 
                     <!-- form group (kakitangan) -->
                     <div>
@@ -373,13 +404,20 @@
                                 Kakitangan
                             </p>
                             <div
-                                class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
+                                class="border-bdr-primary flex h-fit w-full flex-col items-center justify-start gap-2 border-b pb-5"
                             >
                                 <LongTextField
-                                    id="tindakanUlasan"
+                                hasError={!!$actionErrors.action}
+                                name="action"
                                     label={'Tindakan/ Ulasan'}
-                                    value={'Simpan ke kakitangan unyuk membuat pembayaran rawatan yang tidak ditanggung oleh LKIM..'}
+                                    bind:value={$actionForm.action}
                                 ></LongTextField>
+                                {#if $actionErrors.action}
+                                <span
+                                    class="text-system-danger ml-[-500px] font-sans text-sm italic"
+                                    >{$actionErrors.action}</span
+                                >
+                            {/if}
 
                                 <TextField
                                     {disabled}
@@ -404,7 +442,7 @@
                         </div>
 
                         <div
-                            class="flex h-fit w-full flex-col items-center justify-start gap-2 border-b border-bdr-primary pb-5"
+                            class="border-bdr-primary flex h-fit w-full flex-col items-center justify-start gap-2 border-b pb-5"
                         >
                             <!-- form row -->
                             <div class="flex w-full flex-row gap-2">
@@ -496,7 +534,10 @@
                     </div>
                 </form>
                 <!-- <form class="flex w-full flex-col space-y-6" action="#"> -->
+
             </div>
+            <Toaster />
+
         </Modal>
     </StepperContent>
 </Stepper>

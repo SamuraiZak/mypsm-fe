@@ -30,6 +30,12 @@ export const _stepperClaimInfo = z.object({
     totalClaimed: number,
     claimedId: number,
 });
+// modal
+export const _stepperAction = z.object({
+    clinicAction: textField.nullable(),
+    action: textField.nullable(),
+
+});
 
 export const _submitFormStepperClaimInfo = async (
     formData: object,
@@ -63,13 +69,52 @@ export const _submitFormStepperClaimInfo = async (
     return { stepperClaimInfo };
 };
 
+
+// modal
+
+export const _submitFormStepperAction = async (
+    formData: object,
+) => {
+    const stepperAction = await superValidate(
+        formData,
+        _stepperAction,
+    );
+
+    if (!stepperAction.valid) {
+        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+            style: 'background: #333; color: #fff;',
+        });
+        return fail(400, stepperAction);
+    }
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
+            method: 'POST',
+            body: JSON.stringify(_stepperClaimInfo),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        },
+    )
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+    getPromiseToast(responsePromise);
+    return { stepperAction };
+};
+
 export const load = async () => {
     const stepperClaimInfo = await superValidate(
         _stepperClaimInfo,
     );
-    
+    const stepperAction = await superValidate(
+        _stepperAction,
+    );
+
 
     return {
         stepperClaimInfo,
+        stepperAction,
     };
 };

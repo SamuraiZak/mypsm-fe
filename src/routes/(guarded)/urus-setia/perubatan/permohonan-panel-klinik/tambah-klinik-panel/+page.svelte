@@ -227,7 +227,7 @@
                         ></RadioSingle>
                         {#if $panelClinicApplicationVerificationErrors.resultOption}
                             <span
-                                class="ml-[-940px] font-sans text-sm italic text-system-danger"
+                                class="ml-[-1110px] font-sans text-sm italic text-system-danger"
                                 >{$panelClinicApplicationVerificationErrors
                                     .resultOption[0]}</span
                             >
