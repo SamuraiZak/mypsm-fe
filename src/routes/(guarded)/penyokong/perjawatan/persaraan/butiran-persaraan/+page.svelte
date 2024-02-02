@@ -38,7 +38,7 @@
         form: retirementApplicationSupporterForm,
         errors: retirementApplicationSupporterErrors,
         enhance: retirementApplicationSupporterEnhance,
-    } = superForm(data.stepperRetirementApplicationSupporter, {
+    } = superForm(data.stepperRetirementApplicationSupporterForm, {
         SPA: true,
         validators: _stepperRetirementApplicationSupporter,
         onSubmit() {

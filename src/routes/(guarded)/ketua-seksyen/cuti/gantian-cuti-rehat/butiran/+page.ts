@@ -1,28 +1,28 @@
-import { getPromiseToast } from '$lib/services/core/toast/toast-service';
-import { fail } from '@sveltejs/kit';
-import toast from 'svelte-french-toast';
-import { superValidate } from 'sveltekit-superforms/client';
-import { z } from 'zod';
+import { getPromiseToast } from "$lib/services/core/toast/toast-service";
+import { fail } from "@sveltejs/kit";
+import toast from "svelte-french-toast";
+import { superValidate } from "sveltekit-superforms/client";
+import { z } from "zod";
 
-// RetirementApplicationSupporter
 const longTextFieldRV = z
-    .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-    .min(4, {
-        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-    })
-    .max(124, {
-        message: 'Medan ini tidak boleh melebihi 124 karakter.',
-    })
-    .trim();
+.string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
+.min(4, {
+    message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+})
+.max(124, {
+    message: 'Medan ini tidak boleh melebihi 124 karakter.',
+})
+.trim();
 
 const resultOptionRV = z
-    .string()
-    .min(1, { message: 'Sila tetapkan pilihan anda.' });
+.string()
+.min(1, { message: 'Sila tetapkan pilihan anda.' });
 
 export const _stepperRetirementApplicationSupporter = z.object({
-    actionRemark: longTextFieldRV,
-    resultOption: resultOptionRV,
+actionRemark: longTextFieldRV,
+resultOption: resultOptionRV,
 });
+
 
 export const _submitFormStepperRetirementApplicationSupporter = async (
     formData: object,
@@ -56,7 +56,7 @@ export const _submitFormStepperRetirementApplicationSupporter = async (
     return { stepperRetirementApplicationSupporter };
 };
 
-//Async
+
 export const load = async () => {
     const stepperRetirementApplicationSupporterForm = await superValidate(
         _stepperRetirementApplicationSupporter,

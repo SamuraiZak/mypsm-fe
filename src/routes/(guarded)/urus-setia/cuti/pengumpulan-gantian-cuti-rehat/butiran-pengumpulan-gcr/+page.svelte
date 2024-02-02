@@ -14,8 +14,13 @@
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import { Badge } from 'flowbite-svelte';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import { Toaster } from 'svelte-french-toast';
+    import { _stepperRetirementApplicationSupporter, _submitFormStepperRetirementApplicationSupporter } from './+page';
 
     export let disabled: boolean = true;
+    export let data: PageData;
 
     let selectedDate = new Date();
     function handleDateChange(event: any) {
@@ -38,6 +43,21 @@
             label: 'Tidak Sah',
         },
     ];
+    const {
+        form: retirementApplicationSupporterForm,
+        errors: retirementApplicationSupporterErrors,
+        enhance: retirementApplicationSupporterEnhance,
+    } = superForm(data.stepperRetirementApplicationSupporterForm, {
+        SPA: true,
+        validators: _stepperRetirementApplicationSupporter,
+        onSubmit() {
+            _submitFormStepperRetirementApplicationSupporter(
+                $retirementApplicationSupporterForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <ContentHeader
@@ -220,9 +240,7 @@
             ><TextIconButton
                 primary
                 label="Hantar"
-                onClick={() => {
-                    goto('/urus-setia/cuti/pengumpulan-gantian-cuti-rehat');
-                }}><SvgPaperAirplane /></TextIconButton
+                form="FormStepperRetirementApplicationSupporter"><SvgPaperAirplane /></TextIconButton
             ></StepperContentHeader
         >
         <StepperContentBody>
@@ -235,14 +253,43 @@
                 >
                     ● Keputusan akan dihantar ke email klinik dan Urus Setia berkaitan
                 </p>
-                <LongTextField
-                    disabled
-                    label="Tindakan/Ulasan"
-                    placeholder="-"
-                    value="Butiran Lengkap"
-                />
-                <RadioSingle {options} disabled />
+                <form
+                    id="FormStepperRetirementApplicationSupporter"
+                    class="flex w-full flex-col gap-2"
+                    use:retirementApplicationSupporterEnhance
+                    method="POST"
+                >
+                    <LongTextField
+                        hasError={$retirementApplicationSupporterErrors.actionRemark
+                            ? true
+                            : false}
+                        name="actionRemark"
+                        label="Tindakan / Ulasan"
+                        bind:value={$retirementApplicationSupporterForm.actionRemark}
+                    />
+                    {#if $retirementApplicationSupporterErrors.actionRemark}
+                        <span
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            >{$retirementApplicationSupporterErrors
+                                .actionRemark[0]}</span
+                        >
+                    {/if}
+                    <RadioSingle
+                        {options}
+                        name="resultOption"
+                        legend="Keputusan"
+                        bind:userSelected={$retirementApplicationSupporterForm.resultOption}
+                    ></RadioSingle>
+                    {#if $retirementApplicationSupporterErrors.resultOption}
+                        <span
+                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            >{$retirementApplicationSupporterErrors
+                                .resultOption[0]}</span
+                        >
+                    {/if}
+                </form>
             </div></StepperContentBody
         >
     </StepperContent>
 </Stepper>
+<Toaster />

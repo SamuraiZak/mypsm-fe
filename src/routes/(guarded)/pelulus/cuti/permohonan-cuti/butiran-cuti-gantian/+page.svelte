@@ -39,6 +39,11 @@
     import { uploadedFileSchema } from '../form-schema';
     import { ZodError } from 'zod';
     import type { PageData } from './$types';
+    import {
+        _stepperRetirementApplicationSupporter,
+        _submitFormStepperRetirementApplicationSupporter,
+    } from './+page';
+    import { superForm } from 'sveltekit-superforms/client';
 
     export let data: PageData;
 
@@ -119,6 +124,21 @@
             }
         }
     };
+    const {
+        form: retirementApplicationSupporterForm,
+        errors: retirementApplicationSupporterErrors,
+        enhance: retirementApplicationSupporterEnhance,
+    } = superForm(data.stepperRetirementApplicationSupporterForm, {
+        SPA: true,
+        validators: _stepperRetirementApplicationSupporter,
+        onSubmit() {
+            _submitFormStepperRetirementApplicationSupporter(
+                $retirementApplicationSupporterForm,
+            );
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -194,7 +214,7 @@
         <StepperContent>
             <StepperContentHeader title="Maklumat Cuti">
                 <TextIconButton primary label="Hantar" form="formValidation">
-                    <SvgPaperAirplane/>
+                    <SvgPaperAirplane />
                 </TextIconButton>
             </StepperContentHeader>
             <StepperContentBody>
@@ -228,7 +248,8 @@
                     {:else if selectedCuti === 'Cuti Kuarantin'}
                         <CutiKuarantin {data}></CutiKuarantin>
                     {:else if selectedCuti === 'Cuti Menjaga Anak Tanpa Gaji'}
-                        <CutiMenjagaAnakTanpaGaji {data}></CutiMenjagaAnakTanpaGaji>
+                        <CutiMenjagaAnakTanpaGaji {data}
+                        ></CutiMenjagaAnakTanpaGaji>
                     {:else if selectedCuti === 'Cuti Kursus Sambilan'}
                         <CutiKursusSambilan {data}></CutiKursusSambilan>
                     {:else if selectedCuti === 'Cuti Perakuan Tidak Hadir Ke Pejabat'}
@@ -240,7 +261,8 @@
                         <CutiTanpaGajiMengikutPasangan {data}
                         ></CutiTanpaGajiMengikutPasangan>
                     {:else if selectedCuti === 'Cuti Penyakit Barah Dan Kusta'}
-                        <CutiPenyakitBarahDanKusta {data}></CutiPenyakitBarahDanKusta>
+                        <CutiPenyakitBarahDanKusta {data}
+                        ></CutiPenyakitBarahDanKusta>
                     {:else if selectedCuti === 'Cuti Penyakit Tibi'}
                         <CutiPenyakitTibi {data}></CutiPenyakitTibi>
                     {/if}
@@ -254,7 +276,8 @@
                     primary
                     label="Hantar"
                     onClick={() => submitFilesForm()}
-                ><SvgPaperAirplane/></TextIconButton>
+                    ><SvgPaperAirplane /></TextIconButton
+                >
             </StepperContentHeader>
             <StepperContentBody>
                 <div class="flex w-full flex-col"></div>
@@ -267,7 +290,7 @@
                 <div class="w-full">
                     {#if errorData?.uploadedFiles}
                         <span
-                            class="font-sans text-sm italic text-system-danger"
+                            class="text-system-danger font-sans text-sm italic"
                             >{errorData?.uploadedFiles[0]}</span
                         >
                     {/if}
@@ -288,7 +311,7 @@
                         class="flex flex-col items-center justify-center gap-2.5"
                     >
                         <p
-                            class=" text-sm text-txt-tertiary"
+                            class=" text-txt-tertiary text-sm"
                             hidden={$fileSelectionList.length > 0}
                         >
                             Pilih fail dari peranti anda.
@@ -397,9 +420,7 @@
                 ><TextIconButton
                     primary
                     label="Hantar"
-                    onClick={() => {
-                        goto('/pelulus/cuti/permohonan-cuti');
-                    }}
+                    form="FormStepperRetirementApplicationSupporter"
                 >
                     <SvgPaperAirplane></SvgPaperAirplane>
                 </TextIconButton></StepperContentHeader
@@ -410,17 +431,45 @@
                 <div
                     class="flex h-fit w-full flex-col items-start justify-start gap-2"
                 >
-                    <LongTextField
-                        disabled
-                        label="Tindakan/Ulasan"
-                        value="Dokumen-dokumen telah disemak"
-                        placeholder="-"
-                    ></LongTextField>
-                    <RadioSingle {options} disabled />
+                    <form
+                        id="FormStepperRetirementApplicationSupporter"
+                        class="flex w-full flex-col gap-2"
+                        use:retirementApplicationSupporterEnhance
+                        method="POST"
+                    >
+                        <LongTextField
+                            hasError={$retirementApplicationSupporterErrors.actionRemark
+                                ? true
+                                : false}
+                            name="actionRemark"
+                            label="Tindakan / Ulasan"
+                            bind:value={$retirementApplicationSupporterForm.actionRemark}
+                        />
+                        {#if $retirementApplicationSupporterErrors.actionRemark}
+                            <span
+                                class="text-system-danger ml-[220px] font-sans text-sm italic"
+                                >{$retirementApplicationSupporterErrors
+                                    .actionRemark[0]}</span
+                            >
+                        {/if}
+                        <RadioSingle
+                            {options}
+                            name="resultOption"
+                            legend="Keputusan"
+                            bind:userSelected={$retirementApplicationSupporterForm.resultOption}
+                        ></RadioSingle>
+                        {#if $retirementApplicationSupporterErrors.resultOption}
+                            <span
+                                class="text-system-danger ml-[220px] font-sans text-sm italic"
+                                >{$retirementApplicationSupporterErrors
+                                    .resultOption[0]}</span
+                            >
+                        {/if}
+                    </form>
                 </div>
             </StepperContentBody>
         </StepperContent>
     </Stepper>
 </section>
 
-<Toaster/>
+<Toaster />

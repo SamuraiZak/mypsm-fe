@@ -5,31 +5,40 @@
 export interface EmployeesListResponseViewModel {
     status: number;
     message: string;
-    data: EmployeesListResponseData[];
+    data: EmployeesListResponseData;
 }
 
 export interface EmployeesListResponseData {
+    result: EmployeesList[];
+}
+export interface EmployeesList {
+    employeeId: number;
     employeeNumber: string;
-    retirementDate: Date;
-    scheme: null | string;
-    eligibleLeaveCount: number;
-    newRecruitEffectiveDate: Date;
-    programme: string;
-    civilServiceStartDate: Date;
-    firstServiceDate: Date;
-    firstConfirmServiceDate: Date;
-    firstEffectiveServiceDate: Date | null;
-    serviceDate: Date;
-    confirmServiceDate: Date | null;
-    effectiveDate: Date;
-    officeNumber: null | string;
+    name: string;
+    position: string;
+    grade: string;
+    // employeeNumber: string;
+    // retirementDate: Date;
+    // scheme: null | string;
+    // eligibleLeaveCount: number;
+    // newRecruitEffectiveDate: Date;
+    // programme: string;
+    // civilServiceStartDate: Date;
+    // firstServiceDate: Date;
+    // firstConfirmServiceDate: Date;
+    // firstEffectiveServiceDate: Date | null;
+    // serviceDate: Date;
+    // confirmServiceDate: Date | null;
+    // effectiveDate: Date;
+    // officeNumber: null | string;
 }
 
 // Converts JSON strings to/from your types
 export class EmployeesListResponseConvert {
-
     // to model from response
-    public static fromResponse(response: Response): EmployeesListResponseViewModel {
+    public static fromResponse(
+        response: Response,
+    ): EmployeesListResponseViewModel {
         return JSON.parse(JSON.stringify(response));
     }
 

@@ -271,11 +271,7 @@
                             id="supporter1Option"
                             label="Nama Penyokong #1"
                             bind:value={$supporterApproverForm.supporter1Option}
-                            options={[
-                                { value: '1', name: 'Ali Bin Abu' },
-                                { value: '2', name: 'Abu Bin Ahmad' },
-                                { value: '3', name: 'Ahmad Bin Ali' },
-                            ]}
+                            options={data.employeeListLookup}
                         ></DropdownSelect>
                         {#if $supporterApproverErrors.supporter1Option}
                             <span
@@ -294,11 +290,7 @@
                             id="supporter2Option"
                             label="Nama Penyokong #1"
                             bind:value={$supporterApproverForm.supporter2Option}
-                            options={[
-                                { value: '1', name: 'Ali Bin Abu' },
-                                { value: '2', name: 'Abu Bin Ahmad' },
-                                { value: '3', name: 'Ahmad Bin Ali' },
-                            ]}
+                            options={data.employeeListLookup}
                         ></DropdownSelect>
                         {#if $supporterApproverErrors.supporter2Option}
                             <span
