@@ -7,11 +7,14 @@ export interface LookupDTO {
     code?: string;
     name?: string;
     description?: string;
+    ssmCode?: string;
+    minimumSalary?: number;
+    maximumSalary?: number;
+    annualIncrementRate?: number;
 }
 
 // Converts JSON strings to/from your types
 export class LookupConvert {
-
     // to model from json string
     public static fromJson(json: string): LookupDTO {
         return JSON.parse(json);
