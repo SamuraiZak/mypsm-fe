@@ -3,6 +3,7 @@
     import '../app.css';
     import { navigating } from '$app/stores';
     import { afterUpdate } from 'svelte';
+    import { loadingState } from '$lib/stores/globalState';
 
     let showLoadingOverlay: boolean = false;
 
@@ -19,10 +20,16 @@
         // Clear the timeout when loaded
         return () => clearTimeout(timeoutId);
     });
+
+    $: loading = loadingState;
 </script>
 
 {#if $navigating && showLoadingOverlay}
     <LoadingOverlay />
+{/if}
+
+{#if $loading}
+    <LoadingOverlay></LoadingOverlay>
 {/if}
 
 <slot />

@@ -3,9 +3,9 @@
 // ===============================================================
 
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key-constant";
-import type { AuthRequestDTO } from "$lib/dto/core/auth/auth-request.dto";
+import { AuthRequestConvert, type AuthRequestDTO } from "$lib/dto/core/auth/auth-request.dto";
 import type { AuthResponseDTO } from "$lib/dto/core/auth/auth-response.dto";
-import { CommonResponseConvert } from "$lib/dto/core/common/common-response.dto";
+import { CommonResponseConvert, type CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
 import { AuthenticationHelper } from "$lib/helper/core/authentication-helper/authentication-helper";
 import http from "$lib/services/provider/service-provider.service";
 import currentRole from "$lib/stores/activeRole";
@@ -87,52 +87,62 @@ export class AuthService {
         AuthenticationHelper.clearLocalStorage();
     }
 
+    // authentication service for all types of user
     static async authenticateUser(param: AuthRequestDTO) {
-        let url: Input = ""
+        try {
+            let url: Input = ""
 
-        switch (param.userGroup) {
-            case "employee":
-                url = 'authentication/employee-login'
-                break;
+            switch (param.userGroup) {
+                case "employee":
+                    url = 'authentication/employee-login'
+                    break;
 
-            case "candidate":
-                url = 'authentication/candidate-login'
-                break;
+                case "candidate":
+                    url = 'authentication/candidate-login'
+                    break;
 
-            case "clinic":
-                url = 'authentication/clinic-login'
-                break;
+                case "clinic":
+                    url = 'authentication/clinic-login'
+                    break;
 
-            default:
-                url = 'authentication/employee-login'
-                break;
+                default:
+                    url = 'authentication/employee-login'
+                    break;
+            }
+
+            const httpResponse: Response = await http
+                .post(url, {
+                    body: AuthRequestConvert.toJson(param),
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-type': 'application/json',
+                    },
+                });
+
+            const response = await httpResponse.json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == "success") {
+                const authResponse: AuthResponseDTO = result.data?.details as AuthResponseDTO;
+
+                localStorage.setItem(LocalStorageKeyConstant.accessToken, authResponse.token);
+
+                localStorage.setItem(
+                    LocalStorageKeyConstant.currentRole,
+                    param.currentRole,
+                );
+
+                currentRole.set(param.currentRole);
+            }
+            return result;
+        } catch (error) {
+            const result : CommonResponseDTO = {
+                status: "error",
+            }
+
+            return result;
         }
 
-        const response: Response = await http
-            .post(url, {
-                body: JSON.stringify(param),
-                headers: {
-                    Accept: 'application/json',
-                    'Content-type': 'application/json',
-                },
-            })
-            .json();
-
-        const result = CommonResponseConvert.fromResponse(response);
-
-        if (result.status == "success") {
-            const authResponse: AuthResponseDTO = result.data?.details as AuthResponseDTO;
-
-            localStorage.setItem(LocalStorageKeyConstant.accessToken, authResponse.token);
-
-            localStorage.setItem(
-                LocalStorageKeyConstant.currentRole,
-                param.currentRole,
-            );
-            
-            currentRole.set(param.currentRole);
-
-        }
-        return result;
     }
 }
