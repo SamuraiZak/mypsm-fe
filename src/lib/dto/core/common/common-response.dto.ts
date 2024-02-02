@@ -12,6 +12,7 @@ export interface Data {
     meta?: Meta;
     details?: any;
     dataList?: any[];
+    medicalHistory?: any[];
 }
 
 export interface Meta {
