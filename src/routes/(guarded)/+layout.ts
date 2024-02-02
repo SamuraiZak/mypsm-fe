@@ -284,13 +284,15 @@ export const load = async () => {
     ]
 
     // get role list
-    // const roleResponse: EnumRoleResponseViewModel =
-    //     await AuthService.getRoleOptions();
 
-    // const roleOptionsList: RoleOption[] =
-    // LookupHelper.toRoleOption(roles);
+    // const roleOptionsList: RoleOption[] =await AccountService.getRoles();
 
-    const roleOptionsList: RoleOption[] =await AccountService.getRoles();
+    const roles=
+        await LookupServices.getLookup("role");
+
+    const roleOptionsList: RoleOption[] =
+    LookupHelper.toRoleOption(roles);
+
 
     return {
         roleOptionsList,
