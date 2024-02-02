@@ -35,7 +35,7 @@
     import { Checkbox } from 'flowbite-svelte';
     import { onMount } from 'svelte';
 
-    import { _butiranPinjamanForm, _submitButiranPinjamanForm } from './+page';
+    import { _butiranPinjamanForm, _submitButiranPinjamanForm, _submitValidationForm, _validationSchema } from './+page';
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import toast, { Toaster } from 'svelte-french-toast';
@@ -163,6 +163,19 @@
             console.log('HERE: ', $form);
             _submitButiranPinjamanForm($form);
         },
+    });
+    const {
+        form: validationForm,
+        errors: validationError,
+        enhance: validationEnhance,
+    } = superForm(data.validationForm, {
+        SPA: true,
+        id: 'validationForm',
+        validators: _validationSchema,
+        onSubmit() {
+            _submitValidationForm($validationForm);
+        },
+        taintedMessage: false,
     });
 </script>
 
@@ -337,16 +350,17 @@
                     activeStepper = 1;
                 }}
             ></FormButton>
-            <FormButton type="reset" onClick={() => {}}></FormButton>
+            <TextIconButton
+            primary
+            label="Simpan"
+            form="validationForm"
+        >
+
+        </TextIconButton>
         </StepperContentHeader>
 
         <StepperContentBody>
-            <form
-                id="FormButiranPinjaman"
-                class="flex w-full flex-col gap-2"
-                use:enhance
-                method="POST"
-            >
+
                 <!-- Document Upload -->
                 <div
                     class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 pb-5"
@@ -410,14 +424,28 @@
                 <div
                     class="flex h-fit w-full flex-col items-start justify-start gap-2.5"
                 >
-                    <Checkbox checked={infoTrue}
+                <form
+                id="validationForm"
+                class="flex w-full flex-col gap-2"
+                use:validationEnhance
+                method="POST"
+            >
+                    <Checkbox bind:checked={$validationForm.staffValidation}
                         ><p>
                             Saya dengan ini mengesahkan bahawa maklumat
                             sebagaimana yang dinyatakan berikut adalah benar
                         </p></Checkbox
                     >
-                </div>
+                    {#if $validationError.staffValidation}
+                    <span
+                        class="font-sans text-sm italic text-system-danger"
+                    >
+                        {$validationError.staffValidation[0]}
+                    </span>
+                {/if}
             </form>
+                </div>
+
         </StepperContentBody>
     </StepperContent>
 </Stepper>
