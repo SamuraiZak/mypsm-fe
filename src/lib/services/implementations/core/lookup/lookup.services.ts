@@ -3,8 +3,6 @@
 // ===============================================================
 
 import http from '$lib/services/provider/service-provider.service';
-import { EnumAgencyGroupConvert } from '$lib/view-models/core/lookup/agency-group/agency-group-senum.view-model';
-import { EnumAssetDeclarationStatusResponseConvert } from '$lib/view-models/core/lookup/asset-declaration/asset-declaration-enum.view-model';
 import { type EnumAgencyGroupResponseViewModel } from '$lib/view-models/core/lookup/agency-group/agency-group-senum.view-model';
 import { type EnumAssetDeclarationStatusResponseViewModel } from '$lib/view-models/core/lookup/asset-declaration/asset-declaration-enum.view-model';
 import type { EnumAwardCategoryReponseViewModel } from '$lib/view-models/core/lookup/award-category/award-category.view-model';
@@ -19,7 +17,6 @@ import type { EnumEthnicityResponseViewModel } from '$lib/view-models/core/looku
 import type { EnumGenderResponseViewModel } from '$lib/view-models/core/lookup/gender/gender-enum-response.view-model';
 import type { EnumGradeResponseViewModel } from '$lib/view-models/core/lookup/grade/grade-enum-response.view-model';
 import type { EnumEducationLevelResponseViewModel } from '$lib/view-models/core/lookup/highest-education-level/highest-education-level-enum-response.view-model';
-import type { EnumLoginIDTypeResponseViewModel } from '$lib/view-models/core/lookup/id-type/id-type-enum-response.view-model';
 import type { EnumInstituionResponseViewModel } from '$lib/view-models/core/lookup/institution/instituion-enum-response.view-model';
 import type { EnumMajorMinorResponseViewModel } from '$lib/view-models/core/lookup/major-minor/major-minor-enum.view-model';
 import type { EnumMaritalStatusResponseViewModel } from '$lib/view-models/core/lookup/marital-status/marital-status-enum-response.view-model';
@@ -140,7 +137,7 @@ export class LookupService {
 
         return response;
     }
-    
+
     // get division list
     static async getEnumDivisionList(): Promise<EnumDivisionResponseViewModel> {
         const response: EnumDivisionResponseViewModel = await http
@@ -194,7 +191,7 @@ export class LookupService {
 
         return response;
     }
-    
+
     // get grade list
     static async getEnumGradeList(): Promise<EnumGradeResponseViewModel> {
         const response: EnumGradeResponseViewModel = await http
@@ -257,7 +254,7 @@ export class LookupService {
 
         return response;
     }
-    
+
     // get position list
     static async getEnumPositionList(): Promise<EnumPositionResponseViewModel> {
         const response: EnumPositionResponseViewModel = await http
@@ -311,7 +308,7 @@ export class LookupService {
 
         return response;
     }
-   
+
     // get section list
     static async getEnumSectionList(): Promise<EnumSectionResponseViewModel> {
         const response: EnumSectionResponseViewModel = await http
@@ -329,7 +326,7 @@ export class LookupService {
 
         return response;
     }
-    
+
     // get service group list
     static async getEnumServiceGroupList(): Promise<EnumServiceGroupResponseViewModel> {
         const response: EnumServiceGroupResponseViewModel = await http
@@ -338,7 +335,7 @@ export class LookupService {
 
         return response;
     }
-  
+
     // get service type list
     static async getEnumServiceTypeList(): Promise<EnumServiceTypeResponseViewModel> {
         const response: EnumServiceTypeResponseViewModel = await http
@@ -374,7 +371,7 @@ export class LookupService {
 
         return response;
     }
-    
+
     // get unit list
     static async getEnumUnitList(): Promise<EnumUnitResponseViewModel> {
         const response: EnumUnitResponseViewModel = await http
