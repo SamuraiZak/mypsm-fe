@@ -61,6 +61,8 @@ import type { PensionListSupportRequest } from '$lib/view-models/mypsm/perjawata
 import type { PensionListSupportResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-list-support-response.model';
 import type { PensionPersonalDetailRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-personal-detail-request.view-model';
 import type { PensionPersonalDetailResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-personal-detail-response.view-model';
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
+import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 
 export class EmployeeService {
     // get list of employee
@@ -69,6 +71,15 @@ export class EmployeeService {
 
         return response;
         // return EmployeesListResponseConvert.fromResponse(response);
+    }
+
+    static async getNewHireList(param: CommonListRequestDTO): Promise<CommonResponseDTO> {
+        const response: CommonResponseDTO = await http.post('employments/new-hires', {
+            body: JSON.stringify(param),
+        })
+        .json()
+
+        return response;
     }
 
     // get list of employee's personal details

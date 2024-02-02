@@ -1,11 +1,10 @@
-import http from '$lib/services/provider/service-provider.service';
-import type {
-    NewHireData,
-    NewHireListResponse,
-} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-list-response.view-model';
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
+import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
+import type { NewHireData } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-list-response.view-model';
 
 export const load = async () => {
-    const getNewApplication = {
+    const newApplications: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
         orderBy: '',
@@ -21,7 +20,7 @@ export const load = async () => {
         },
     };
 
-    const getSubmitted = {
+    const submittedApplications: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
         orderBy: '',
@@ -37,20 +36,17 @@ export const load = async () => {
         },
     };
 
-    const response: NewHireListResponse = await http
-        .post('employments/new-hires', {
-            body: JSON.stringify(getNewApplication),
-        })
-        .json();
+    const response: CommonResponseDTO =
+        await EmployeeService.getNewHireList(newApplications);
 
-    const submittedResponse: NewHireListResponse = await http
-        .post('employments/new-hires', {
-            body: JSON.stringify(getSubmitted),
-        })
-        .json();
+    const submittedResponse: CommonResponseDTO =
+        await await EmployeeService.getNewHireList(submittedApplications);
 
-    const newRecord: NewHireData[] = response.data?.newHires;
-    const submittedRecord: NewHireData[] = submittedResponse.data?.newHires;
+    const newRecord: NewHireData[] = response.data?.dataList as NewHireData[];
+    const submittedRecord: NewHireData[] = submittedResponse.data
+        ?.dataList as NewHireData[];
+
+    console.log('Response:', response);
 
     return {
         newRecord,
