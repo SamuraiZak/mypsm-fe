@@ -94,7 +94,7 @@
                     actionOptions={['edit']}
                     editActions={() => {
                         goto(
-                            '/urus-setia/perjawatan/kenaikan-pangkat/tbk-1-2/baru',
+                            '/urus-setia/perjawatan/kenaikan-pangkat/tbk-1-2/butiran',
                         );
                     }}
                     detailActions={() => {
@@ -126,7 +126,7 @@
                     actionOptions={['edit']}
                     editActions={() => {
                         goto(
-                            '/urus-setia/perjawatan/kenaikan-pangkat/gred-utama/baru',
+                            '/urus-setia/perjawatan/kenaikan-pangkat/gred-utama/butiran',
                         );
                     }}
                     detailActions={() => {

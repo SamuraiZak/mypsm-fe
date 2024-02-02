@@ -15,6 +15,30 @@ const earlyDateScheme = z.coerce
         }),
     });
 
+const dateScheme = z.coerce
+    .date({
+        errorMap: (issue, { defaultError }) => ({
+            message:
+                issue.code === 'invalid_date'
+                    ? 'Tarikh tidak boleh dibiar kosong.'
+                    : defaultError,
+        }),
+    })
+    .min(new Date(), {
+        message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
+    });
+
+const numberScheme = z.union([z.string({
+    invalid_type_error: "Medan ini tidak boleh dibiar kosong."
+}), z.number()]).transform((x) => Number(x)).pipe(z.number({
+    required_error: "Medan ini tidak boleh dibiar kosong.",
+    invalid_type_error: "Hanya nombor sahaja dibenarkan. Contoh (500.40)",
+    description: "Hanya nombor sahaja dibenarkan. Contoh (500.40)"
+}).default(0))
+
+const generalEmailSchema = z.string({
+    invalid_type_error: "Medan ini tidak boleh dibiar kosong."
+}).email("Sila nyatakan format emel yang sah. ")
 const generalSelectSchema = z.string().min(1, { message: "Sila tetapkan pilihan anda. " });
 const generalTextSchema = z.string({invalid_type_error: "Medan ini tidak boleh dibiar kosong."}).min(1, { message: "Medan ini perlu diisi dengan lengkap. " });
 
