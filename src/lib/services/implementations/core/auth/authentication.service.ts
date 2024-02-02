@@ -87,8 +87,8 @@ export class AuthService {
         AuthenticationHelper.clearLocalStorage();
     }
 
+    // authentication service for all types of user
     static async authenticateUser(param: AuthRequestDTO) {
-
         try {
             let url: Input = ""
 

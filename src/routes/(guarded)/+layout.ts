@@ -2,6 +2,7 @@ import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
 import { LookupHelper } from '$lib/helper/core/lookup-helper/lookup-helper';
 import { TextHelper } from '$lib/helper/core/text-helper/text-helper';
 import type { DropdownOptionsInterface } from '$lib/interfaces/common/dropdown-option';
+import { AccountService } from '$lib/services/implementations/core/account/account.service';
 import { AuthService } from '$lib/services/implementations/core/auth/authentication.service';
 import { LookupServices } from '$lib/services/implementations/core/lookup/lookup.service';
 import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
@@ -11,14 +12,11 @@ import type { EmployeesListResponseViewModel } from '$lib/view-models/mypsm/empl
 
 export const load = async () => {
 
-    // CORRECT EXAMPLE STARTS HERE ================
     // agency group list
     const agencyGroupsListResponse : LookupDTO[] =
         await LookupServices.getLookup("agency-group");
 
     const agencyGroupsLookup: DropdownOptionsInterface[] = LookupHelper.toDropdown(agencyGroupsListResponse);
-
-    // CORRECT EXAMPLE ENDS HERE ==================
 
     // list of asset declaration status
     const assetDeclarationStatusResponse =
@@ -268,32 +266,13 @@ export const load = async () => {
         { value: 'December', name: 'Disember' },
     ];
 
-    // get role list
-    // const roleResponse: EnumRoleResponseViewModel =
-    //     await AuthService.getRoleOptions();
+    // const roles=
+    //     await LookupServices.getLookup("role");
 
-    // let roleOptions: EnumRole[] = roleResponse.data.rolesList;
+    // const roleOptionsList: RoleOption[] =
+    // LookupHelper.toRoleOption(roles);
 
-    // let rawRoleList: EnumRole[] = roleResponse.data.rolesList;
-
-    // let roleOptionsList: RoleOption[] = [];
-
-    // rawRoleList.forEach(role => {
-    //     let tempRoleOption: RoleOption = {
-    //         value: role.name,
-    //         name: TextHelper.toCamelCase(role.name)
-    //     }
-
-    //     roleOptionsList.push(tempRoleOption);
-
-    //     roleOptionsList = roleOptionsList;
-    // });
-
-    const roles=
-        await LookupServices.getLookup("role");
-
-    const roleOptionsList: RoleOption[] =
-    LookupHelper.toRoleOption(roles);
+    const roleOptionsList: RoleOption[] =await AccountService.getRoles();
 
     return {
         roleOptionsList,
@@ -321,7 +300,6 @@ export const load = async () => {
         gradeLookup,
         religionLookup,
         roleLookup,
-        // schemeOfServiceLookup,
         sectionLookup,
         serviceClassLookup,
         serviceGroupLookup,

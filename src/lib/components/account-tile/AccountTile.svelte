@@ -25,7 +25,7 @@
 
     }
 
-    let selected: string | null = localStorage.getItem(LocalStorageKeyConstant.currentRole);
+    let selected: string = localStorage.getItem(LocalStorageKeyConstant.currentRole) ?? "default";
 
     let open = false;
     let active = 'Inbox';
