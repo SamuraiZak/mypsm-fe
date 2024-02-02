@@ -27,6 +27,18 @@
     import { months } from '$lib/mocks/dateSelection/months';
     import { mockSalaryIncrementRecord } from '$lib/mocks/gaji/rekodKenaikanGaji/mockSalaryIncrementRecord';
     import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
+    import type { PageData } from './$types';
+    import { dateProxy, superForm } from 'sveltekit-superforms/client';
+    import { Toaster } from 'svelte-french-toast';
+    import {
+        _updatePromotionMeetingResultSchema,
+        _submitUpdatePromotionMeetingResultForm,
+    } from './+page';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+    import { approveOptions } from '$lib/constants/mypsm/radio-option-constants';
+
+    export let data: PageData;
 
     let editMeetingResult = false;
     let editPlacementMeetingResult = false;
@@ -63,31 +75,51 @@
     function saveSelected() {
         actingDetails.calonPemangkuan = selectedCandidatesList;
     }
-    let radioValue: any = 'lulus';
-    let radioValue2: any = 'sah';
 
-    const options: RadioOption[] = [
+    // ====================== Form Validation
+    const { form, errors, enhance } = superForm(
+        data.updatePromotionMeetingResultForm,
         {
-            value: 'lulus',
-            label: 'LULUS',
+            SPA: true,
+            id: 'promotionMeetingResultForm',
+            validators: _updatePromotionMeetingResultSchema,
+            onSubmit() {
+                _submitUpdatePromotionMeetingResultForm($form);
+            },
+            taintedMessage:
+                'Terdapat maklumat yang belum disimpan. Adakah anda henda keluar dari laman ini?',
         },
+    );
+    const proxyMeetingDate = dateProxy(form, 'meetingDate', {
+        format: 'date',
+    });
+    const proxyVerifiedPromotionDate = dateProxy(
+        form,
+        'verifiedPromotionDate',
         {
-            value: 'tidak lulus',
-            label: 'TIDAK LULUS',
+            format: 'date',
         },
-    ];
-    const options2: RadioOption[] = [
+    );
+    const proxyActingEndDate = dateProxy(form, 'actingEndDate', {
+        format: 'date',
+    });
+    const proxyReturnToOriginalGradeDate = dateProxy(
+        form,
+        'returnToOriginalGradeDate',
         {
-            value: 'sah',
-            label: 'SAH',
+            format: 'date',
         },
-        {
-            value: 'tidak sah',
-            label: 'TIDAK SAH',
-        },
-    ];
+    );
 
-    // Step 1 script ends here
+    $: {
+        if (!$form.meetingResult) {
+            $form.verifiedPromotionDate = null;
+        } else {
+            $form.actingEndDate = null;
+            $form.returnToOriginalGradeDate = null;
+            $form.newPlacement = undefined;
+        }
+    }
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -252,489 +284,152 @@
         <StepperContentHeader
             title="Kemaskini Keputusan Mesyuarat Kenaikan Pangkat"
         >
-            {#if editMeetingResult == false}
-                <FormButton
-                    type="back"
-                    onClick={() => {
-                        stepperIndex = 1;
-                    }}
-                ></FormButton><FormButton
-                    type="next"
-                    onClick={() => {
-                        stepperIndex = 3;
-                    }}
-                ></FormButton>
-            {:else}
-                <FormButton
-                    type="back"
-                    onClick={() => {
-                        editMeetingResult = false;
-                        disabled = false;
-                    }}
-                ></FormButton><FormButton
-                    type="done"
-                    onClick={() => {
-                        editMeetingResult = false;
-                        disabled = false;
-                    }}
-                ></FormButton>
-            {/if}
+            <FormButton
+                type="back"
+                onClick={() => {
+                    stepperIndex = 1;
+                }}
+            ></FormButton>
+            <TextIconButton
+                primary
+                label="Simpan"
+                form="promotionMeetingResultForm"
+            >
+                <SvgCheck />
+            </TextIconButton>
         </StepperContentHeader>
         <StepperContentBody>
-            {#if editMeetingResult == false}
+            <form
+                id="promotionMeetingResultForm"
+                method="POST"
+                use:enhance
+                class="flex w-full flex-col gap-2"
+            >
+                <p class="h-[35px] text-sm italic text-system-accent">
+                    Sekiranya kakitangan tidak lulus mesyuarat, proses akan
+                    berakhir untuk kakitangan tersebut
+                </p>
+                <TextField
+                    name="meetingName"
+                    hasError={!!$errors.meetingName}
+                    label="Nama dan Bilangan Mesyuarat"
+                    bind:value={$form.meetingName}
+                    {disabled}
+                ></TextField>
+                {#if $errors.meetingName}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.meetingName[0]}</span
+                    >
+                {/if}
+                <DateSelector
+                    name="meetingDate"
+                    hasError={!!$errors.meetingDate}
+                    handleDateChange
+                    label="Tarikh Mesyuarat"
+                    bind:selectedDate={$proxyMeetingDate}
+                    {disabled}
+                ></DateSelector>
+                {#if $errors.meetingDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.meetingDate[0]}</span
+                    >
+                {/if}
+                <LongTextField
+                    name="secretaryRemark"
+                    hasError={!!$errors.secretaryRemark}
+                    label="Tindakan / Ulasan Mesyuarat"
+                    bind:value={$form.secretaryRemark}
+                    {disabled}
+                ></LongTextField>
+                {#if $errors.secretaryRemark}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.secretaryRemark[0]}</span
+                    >
+                {/if}
+                <RadioSingle
+                    options={approveOptions}
+                    legend="Keputusan Mesyuarat"
+                    bind:userSelected={$form.meetingResult}
+                    {disabled}
+                />
+                {#if $errors.meetingResult}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.meetingResult[0]}</span
+                    >
+                {/if}
+                <DateSelector
+                    disabled={!$form.meetingResult}
+                    name="verifiedPromotionDate"
+                    hasError={!!$errors.verifiedPromotionDate}
+                    handleDateChange
+                    label="Tarikh Pengesahan Kenaikan Pangkat (Jika LULUS)"
+                    bind:selectedDate={$proxyVerifiedPromotionDate}
+                ></DateSelector>
+                {#if $errors.verifiedPromotionDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.verifiedPromotionDate[0]}</span
+                    >
+                {/if}
+
                 <div
-                    class="flex max-h-full w-full flex-col items-start justify-start"
+                    class="flex max-h-full w-full flex-col gap-2.5 border-t border-bdr-primary py-2.5"
                 >
-                    <DynamicTable
-                        tableItems={mockPromotionCandidate}
-                        withActions
-                        actionOptions={['detail', 'edit']}
-                        detailActions={() => {
-                            editMeetingResult = true;
-                            disabled = true;
-                        }}
-                        editActions={() => {
-                            editMeetingResult = true;
-                        }}
-                        columnKeys={[
-                            'employeeNumber',
-                            'name',
-                            'identityDocumentNumber',
-                            'meetingResult',
-                            'integritySecretariatCertification',
-                            'districtOrStateDirectorCertification',
-                        ]}
-                    ></DynamicTable>
-                </div>
-            {:else}
-                <div
-                    class="flex h-[340px] max-h-full w-full flex-col gap-2.5 border-b border-bdr-primary"
-                >
-                    <p class="h-[35px] text-sm italic text-system-accent">
-                        Sekiranya kakitangan tidak lulus mesyuarat, proses akan
-                        berakhir untuk kakitangan tersebut
-                    </p>
-                    <TextField
-                        label="Nama dan Bilangan Mesyuarat"
-                        value="1/02"
-                        {disabled}
-                    ></TextField>
-                    <DateSelector
-                        handleDateChange
-                        label="Tarikh Mesyuarat"
-                        selectedDate="2023-08-23"
-                        {disabled}
-                    ></DateSelector>
-                    <LongTextField
-                        label="Tindakan / Ulasan Mesyuarat"
-                        value="Layak untuk dinaikkan pangkat."
-                        {disabled}
-                    ></LongTextField>
-                    <RadioSingle
-                        {options}
-                        legend="Keputusan Mesyuarat"
-                        bind:userSelected={radioValue}
-                        {disabled}
-                    /><DateSelector
-                        handleDateChange
-                        label="Tarikh Pengesahan Kenaikan Pangkat (Jika LULUS)"
-                        selectedDate="2023-08-23"
-                        {disabled}
-                    ></DateSelector>
-                </div>
-                <div
-                    class="flex h-[200px] max-h-full w-full flex-col gap-2.5 border-b border-bdr-primary"
-                >
-                    <p class="h-[35px] text-lg text-txt-primary">
+                    <p class="text-lg text-txt-primary">
                         Penamatan Pemangkuan (Jika Mesyuarat TIDAK LULUS)
                     </p>
-
-                    <DateSelector
-                        handleDateChange
-                        label="Tarikh Tamat Pemangkuan"
-                        selectedDate="2023-08-23"
-                        {disabled}
-                    ></DateSelector>
-                    <DateSelector
-                        handleDateChange
-                        label="Tarikh Kembali ke Gred Asal"
-                        selectedDate="2023-08-23"
-                        {disabled}
-                    ></DateSelector>
-                    <DropdownField
-                        dropdownType="label-left-full"
-                        label="Penempatan Baru"
-                        bind:index={selectedValue}
-                        id="dropdown"
-                        options={placements}
-                        {disabled}
-                    />
                 </div>
-            {/if}
+                <DateSelector
+                    disabled={$form.meetingResult}
+                    name="actingEndDate"
+                    hasError={!!$errors.actingEndDate}
+                    handleDateChange
+                    label="Tarikh Tamat Pemangkuan"
+                    bind:selectedDate={$proxyActingEndDate}
+                ></DateSelector>
+                {#if $errors.actingEndDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.actingEndDate[0]}</span
+                    >
+                {/if}
+                <DateSelector
+                    disabled={$form.meetingResult}
+                    name="returnToOriginalGradeDate"
+                    hasError={!!$errors.returnToOriginalGradeDate}
+                    handleDateChange
+                    label="Tarikh Kembali ke Gred Asal"
+                    bind:selectedDate={$proxyReturnToOriginalGradeDate}
+                ></DateSelector>
+                {#if $errors.returnToOriginalGradeDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.returnToOriginalGradeDate[0]}</span
+                    >
+                {/if}
+                <DropdownField
+                    disabled={$form.meetingResult}
+                    id="newPlacement"
+                    hasError={!!$errors.newPlacement}
+                    dropdownType="label-left-full"
+                    label="Penempatan Baru"
+                    bind:value={$form.newPlacement}
+                    options={placements}
+                />
+                {#if $errors.newPlacement}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.newPlacement[0]}</span
+                    >
+                {/if}
+            </form>
         </StepperContentBody>
     </StepperContent>
     <!-- STEPPER 3 -->
-    <StepperContent>
-        <StepperContentHeader
-            title="Kemaskini Keputusan Mesyuarat Penempatan Kakitangan"
-        >
-            {#if editPlacementMeetingResult == false}
-                <FormButton
-                    type="back"
-                    onClick={() => {
-                        stepperIndex = 2;
-                    }}
-                ></FormButton><FormButton
-                    type="next"
-                    onClick={() => {
-                        stepperIndex = 4;
-                    }}
-                ></FormButton>
-            {:else}
-                <FormButton
-                    type="back"
-                    onClick={() => {
-                        editPlacementMeetingResult = false;
-                        disabled = false;
-                    }}
-                ></FormButton><FormButton
-                    type="done"
-                    onClick={() => {
-                        editPlacementMeetingResult = false;
-                        disabled = false;
-                    }}
-                ></FormButton>
-            {/if}
-        </StepperContentHeader>
-        <StepperContentBody>
-            {#if editPlacementMeetingResult === false}
-                <div
-                    class="flex max-h-full w-full flex-col items-start justify-start"
-                >
-                    <DynamicTable
-                        tableItems={mockPromotionCandidate}
-                        withActions
-                        actionOptions={['detail', 'edit']}
-                        detailActions={() => {
-                            editPlacementMeetingResult = true;
-                            disabled = true;
-                        }}
-                        editActions={() => {
-                            editPlacementMeetingResult = true;
-                        }}
-                        columnKeys={[
-                            'employeeNumber',
-                            'name',
-                            'identityDocumentNumber',
-                            'gradeId',
-                            'positionId',
-                            'currentPlacement',
-                        ]}
-                    ></DynamicTable>
-                </div>
-            {:else}
-                <CustomTab>
-                    <!-- Butiran Kenaikan Pangkat Kakitangan -->
-
-                    <CustomTabContent
-                        title="Butiran Kenaikan Pangkat Kakitangan"
-                    >
-                        <div
-                            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
-                        >
-                            <TextField
-                                labelBlack={false}
-                                labelType="read-only-list-value"
-                                label="Borang-borang berkaitan yang akan dijana:"
-                                valueList={[
-                                    '1. Surat Tawaran Kenaikan Pangkat',
-                                    '2. Borang Lapor Diri',
-                                    '3. Jadual Pelarasan Gaji',
-                                ]}
-                                {disabled}
-                            ></TextField>
-                            <SectionHeader title="Butiran Kenaikan Pangkat"
-                            ></SectionHeader>
-                            <TextField
-                                label="No. Pekerja"
-                                value="00001"
-                                {disabled}
-                            ></TextField>
-                            <TextField
-                                label="Nama Pkerja"
-                                value="Mohd Irfan Bin Abu"
-                                {disabled}
-                            ></TextField>
-                            <DateSelector
-                                handleDateChange
-                                label="Tarikh Kenaikan Pangkat"
-                                selectedDate="2023-08-23"
-                                {disabled}
-                            ></DateSelector>
-                            <DropdownField
-                                dropdownType="label-left-full"
-                                label="Tarikh Pergerakan Gaji Baru"
-                                bind:index={selectedMonth}
-                                id="dropdown"
-                                options={months}
-                                {disabled}
-                            />
-                            <TextField
-                                label="Gaji Minimum - Gaji Maksimum E19"
-                                value={CurrencyHelper.formatCurrency(1335) +
-                                    ' - ' +
-                                    CurrencyHelper.formatCurrency(4005)}
-                                {disabled}
-                            ></TextField>
-                            <TextField
-                                label="Kenaikan Gaji Tahunan E19"
-                                value={CurrencyHelper.formatCurrency(100)}
-                                {disabled}
-                            ></TextField>
-                            <TextField
-                                label="Gaji Minimum - Gaji Maksimum E19"
-                                value={CurrencyHelper.formatCurrency(2254) +
-                                    ' - ' +
-                                    CurrencyHelper.formatCurrency(4694)}
-                                {disabled}
-                            ></TextField>
-                            <TextField
-                                label="Kenaikan Gaji Tahunan E19"
-                                value={CurrencyHelper.formatCurrency(115)}
-                                {disabled}
-                            ></TextField>
-                            <TextField
-                                label="Penempatan Sekarang"
-                                value="Pejabat Ketua Pengarah"
-                                disabled={true}
-                            ></TextField>
-                            <DropdownField
-                                dropdownType="label-left-full"
-                                label="Penempatan Baru"
-                                bind:index={selectedValue}
-                                id="dropdown"
-                                options={placements}
-                                {disabled}
-                            />
-                        </div>
-                    </CustomTabContent>
-
-                    <!-- Jadual Pelarasan Gaji Kakitangan -->
-
-                    <CustomTabContent title="Jadual Pelarasan Gaji Kakitangan">
-                        <div
-                            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
-                        >
-                            <TextField
-                                labelBlack={false}
-                                labelType="read-only-list-value"
-                                label="Borang-borang berkaitan yang akan dijana:"
-                                valueList={[
-                                    '1. Surat Tawaran Kenaikan Pangkat',
-                                    '2. Borang Lapor Diri',
-                                    '3. Jadual Pelarasan Gaji',
-                                ]}
-                                {disabled}
-                            ></TextField>
-                            <SectionHeader title="Kemaskini Rekod Kenaikan Gaji"
-                            ></SectionHeader>
-                            <DateSelector
-                                handleDateChange
-                                label="Tarikh Kenaikan Pangkat"
-                                selectedDate="2022-04-01"
-                                {disabled}
-                            ></DateSelector>
-                            <TextField
-                                label="Gaji Sekarang"
-                                value={CurrencyHelper.formatCurrency(2269)}
-                                {disabled}
-                            ></TextField>
-                            <TextField
-                                label="Gaji Baru"
-                                value={CurrencyHelper.formatCurrency(2369)}
-                                {disabled}
-                            ></TextField>
-                            <LongTextField
-                                rows={2}
-                                label="Catatan"
-                                value="TPG Gred Jawatan Baru Diberi Pergerakan Gaji Biasa Mengikut Keputusan PPSM Selaras Dengan Perlaksanaan Penambahbaikan Gaji Baru SSM. (Pergerakan Gaji Tahunan RM 115.00 Bagi Gred E22)"
-                                {disabled}
-                            ></LongTextField>
-                            <SectionHeader title="Senarai Rekod Kenaikan Gaji"
-                            ></SectionHeader>
-                            <DynamicTable
-                                tableItems={mockSalaryIncrementRecord.filter(
-                                    (record) => record.id != '3',
-                                )}
-                                columnKeys={[
-                                    'enforcedDate',
-                                    'currentSalary',
-                                    'newSalary',
-                                    'remarks',
-                                ]}
-                            ></DynamicTable>
-                        </div>
-                    </CustomTabContent>
-                </CustomTab>
-            {/if}
-        </StepperContentBody>
-    </StepperContent>
-    <!-- STEPPER 4 -->
-    <StepperContent>
-        <StepperContentHeader title="Kemaskini Kenaikan Pangkat Kakitangan">
-            {#if editPromotionInfo == false}
-                <FormButton
-                    type="back"
-                    onClick={() => {
-                        stepperIndex = 3;
-                    }}
-                />
-            {:else}
-                <FormButton
-                    type="back"
-                    onClick={() => {
-                        editPromotionInfo = false;
-                        disabled = false;
-                    }}
-                ></FormButton><FormButton
-                    type="done"
-                    onClick={() => {
-                        editPromotionInfo = false;
-                        disabled = false;
-                    }}
-                ></FormButton>
-            {/if}
-        </StepperContentHeader>
-        <StepperContentBody>
-            {#if editPromotionInfo === false}
-                <div
-                    class="flex max-h-full w-full flex-col items-start justify-start"
-                >
-                    <DynamicTable
-                        tableItems={mockPromotionCandidateDetail}
-                        withActions
-                        actionOptions={['detail', 'edit']}
-                        detailActions={() => {
-                            editPromotionInfo = true;
-                            disabled = true;
-                        }}
-                        editActions={() => {
-                            editPromotionInfo = true;
-                        }}
-                        columnKeys={[
-                            'employeeNumber',
-                            'employeeName',
-                            'identityDocumentNumber',
-                            'secretariatConfirmation',
-                            'supporterSupport',
-                            'approverApproval',
-                        ]}
-                    ></DynamicTable>
-                </div>
-            {:else}
-                <DateSelector
-                    label="Tarikh Pengesahan"
-                    handleDateChange
-                    selectedDate="2023-08-23"
-                    {disabled}
-                ></DateSelector>
-                <LongTextField
-                    label="Ulasan"
-                    value="Borang lengkap dan kakitangan setuju."
-                    {disabled}
-                ></LongTextField>
-                <RadioSingle
-                    options={options2}
-                    legend="Pengesahan"
-                    bind:userSelected={radioValue2}
-                    {disabled}
-                />
-                <TextField label="Nama Pelulus" value="Ramli bin Mat" {disabled}
-                ></TextField>
-                <TextField
-                    label="Nama Penyokong"
-                    value="Mohd. Ikhwan Bin Ali"
-                    {disabled}
-                ></TextField>
-            {/if}
-        </StepperContentBody>
-    </StepperContent>
-    <!-- STEPPER 5 -->
-    <StepperContent>
-        <StepperContentHeader
-            title="Semak Keputusan Kenaikan Pangkat Kakitangan (Akhir)"
-        >
-            {#if editPromotionInfo == false}
-                <FormButton
-                    type="back"
-                    onClick={() => {
-                        stepperIndex = 4;
-                    }}
-                /><FormButton
-                    type="done"
-                    onClick={() => {
-                        window.history.back();
-                    }}
-                />
-            {:else}
-                <FormButton
-                    type="back"
-                    onClick={() => {
-                        editPromotionInfo = false;
-                        disabled = false;
-                    }}
-                />
-            {/if}
-        </StepperContentHeader>
-        <StepperContentBody>
-            {#if editPromotionInfo == false}
-                <div
-                    class="flex max-h-full w-full flex-col items-start justify-start"
-                >
-                    <DynamicTable
-                        tableItems={mockPromotionCandidateDetail.filter(
-                            (record) =>
-                                record.secretariatConfirmation !==
-                                'Sedang Diproses',
-                        )}
-                        withActions
-                        actionOptions={['detail']}
-                        detailActions={() => {
-                            editPromotionInfo = true;
-                            disabled = true;
-                        }}
-                        columnKeys={[
-                            'employeeNumber',
-                            'employeeName',
-                            'identityDocumentNumber',
-                            'secretariatConfirmation',
-                            'supporterSupport',
-                            'approverApproval',
-                        ]}
-                    ></DynamicTable>
-                </div>
-            {:else}
-                <DateSelector
-                    label="Tarikh Pengesahan"
-                    handleDateChange
-                    selectedDate="2023-08-23"
-                    {disabled}
-                ></DateSelector>
-                <LongTextField
-                    label="Ulasan"
-                    value="Borang lengkap dan kakitangan setuju."
-                    {disabled}
-                ></LongTextField>
-                <TextField label="Pengesahan" value="SAH" {disabled}
-                ></TextField>
-                <TextField label="Nama Pelulus" value="Ramli bin Mat" {disabled}
-                ></TextField>
-                <TextField
-                    label="Nama Penyokong"
-                    value="Mohd. Ikhwan Bin Ali"
-                    {disabled}
-                ></TextField>
-            {/if}
-        </StepperContentBody>
-    </StepperContent>
 </Stepper>
+
+<Toaster />

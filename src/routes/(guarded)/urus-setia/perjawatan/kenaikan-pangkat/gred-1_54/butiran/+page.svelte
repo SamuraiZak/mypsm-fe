@@ -350,13 +350,21 @@
                         disabled = false;
                     }}
                 ></FormButton>
-                <TextIconButton
-                    primary
-                    label="Selesai"
-                    form="promotionMeetingResultForm"
-                >
-                    <SvgCheck /></TextIconButton
-                >
+                {#if !disabled}
+                    <TextIconButton
+                        primary
+                        label="Selesai"
+                        form="promotionMeetingResultForm"
+                    >
+                        <SvgCheck /></TextIconButton
+                    >{:else}
+                    <FormButton
+                        type="next"
+                        onClick={() => {
+                            stepperIndex = 3;
+                        }}
+                    ></FormButton>
+                {/if}
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
@@ -403,7 +411,7 @@
                         bind:value={$promotionMeetingResultForm.meetingName}
                         {disabled}
                     ></TextField>
-                    {#if $promotionMeetingResultError.meetingName}
+                    {#if $promotionMeetingResultError.meetingName && !disabled}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$promotionMeetingResultError.meetingName[0]}</span
@@ -417,7 +425,7 @@
                         bind:selectedDate={$proxyMeetingDate}
                         {disabled}
                     ></DateSelector>
-                    {#if $promotionMeetingResultError.meetingDate}
+                    {#if $promotionMeetingResultError.meetingDate && !disabled}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$promotionMeetingResultError.meetingDate[0]}</span
@@ -430,7 +438,7 @@
                         bind:value={$promotionMeetingResultForm.secretaryRemark}
                         {disabled}
                     ></LongTextField>
-                    {#if $promotionMeetingResultError.secretaryRemark}
+                    {#if $promotionMeetingResultError.secretaryRemark && !disabled}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$promotionMeetingResultError
@@ -443,81 +451,85 @@
                         bind:userSelected={$promotionMeetingResultForm.meetingResult}
                         {disabled}
                     />
-                    {#if $promotionMeetingResultError.meetingResult}
+                    {#if $promotionMeetingResultError.meetingResult && !disabled}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$promotionMeetingResultError
                                 .meetingResult[0]}</span
                         >
                     {/if}
-                    <DateSelector
-                        {disabled}
-                        name="verifiedPromotionDate"
-                        hasError={!!$promotionMeetingResultError.verifiedPromotionDate}
-                        handleDateChange
-                        label="Tarikh Pengesahan Kenaikan Pangkat (Jika LULUS)"
-                        bind:selectedDate={$proxyVerifiedPromotionDate}
-                    ></DateSelector>
-                    {#if $promotionMeetingResultError.verifiedPromotionDate}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$promotionMeetingResultError
-                                .verifiedPromotionDate[0]}</span
-                        >
-                    {/if}
 
-                    <div
-                        class="flex max-h-full w-full flex-col gap-2.5 border-t border-bdr-primary py-2.5"
-                    >
-                        <p class="text-lg text-txt-primary">
-                            Penamatan Pemangkuan (Jika Mesyuarat TIDAK LULUS)
-                        </p>
-                    </div>
-                    <DateSelector
-                        {disabled}
-                        name="actingEndDate"
-                        hasError={!!$promotionMeetingResultError.actingEndDate}
-                        handleDateChange
-                        label="Tarikh Tamat Pemangkuan"
-                        bind:selectedDate={$proxyActingEndDate}
-                    ></DateSelector>
-                    {#if $promotionMeetingResultError.actingEndDate}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$promotionMeetingResultError
-                                .actingEndDate[0]}</span
+                    {#if !$promotionMeetingResultForm.meetingResult}
+                        <DateSelector
+                            {disabled}
+                            name="verifiedPromotionDate"
+                            hasError={!!$promotionMeetingResultError.verifiedPromotionDate}
+                            handleDateChange
+                            label="Tarikh Pengesahan Kenaikan Pangkat (Jika LULUS)"
+                            bind:selectedDate={$proxyVerifiedPromotionDate}
+                        />
+                        {#if $promotionMeetingResultError.verifiedPromotionDate && !disabled}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$promotionMeetingResultError
+                                    .verifiedPromotionDate[0]}</span
+                            >
+                        {/if}
+                    {:else}
+                        <div
+                            class="flex max-h-full w-full flex-col gap-2.5 border-t border-bdr-primary py-2.5"
                         >
-                    {/if}
-                    <DateSelector
-                        {disabled}
-                        name="returnToOriginalGradeDate"
-                        hasError={!!$promotionMeetingResultError.returnToOriginalGradeDate}
-                        handleDateChange
-                        label="Tarikh Kembali ke Gred Asal"
-                        bind:selectedDate={$proxyReturnToOriginalGradeDate}
-                    ></DateSelector>
-                    {#if $promotionMeetingResultError.returnToOriginalGradeDate}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$promotionMeetingResultError
-                                .returnToOriginalGradeDate[0]}</span
-                        >
-                    {/if}
-                    <DropdownField
-                        {disabled}
-                        id="newPlacement"
-                        hasError={!!$promotionMeetingResultError.newPlacement}
-                        dropdownType="label-left-full"
-                        label="Penempatan Baru"
-                        bind:value={$promotionMeetingResultForm.newPlacement}
-                        options={placements}
-                    />
-                    {#if $promotionMeetingResultError.newPlacement}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$promotionMeetingResultError
-                                .newPlacement[0]}</span
-                        >
+                            <p class="text-lg text-txt-primary">
+                                Penamatan Pemangkuan (Jika Mesyuarat TIDAK
+                                LULUS)
+                            </p>
+                        </div>
+                        <DateSelector
+                            {disabled}
+                            name="actingEndDate"
+                            hasError={!!$promotionMeetingResultError.actingEndDate}
+                            handleDateChange
+                            label="Tarikh Tamat Pemangkuan"
+                            bind:selectedDate={$proxyActingEndDate}
+                        />
+                        {#if $promotionMeetingResultError.actingEndDate && !disabled}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$promotionMeetingResultError
+                                    .actingEndDate[0]}</span
+                            >
+                        {/if}
+                        <DateSelector
+                            {disabled}
+                            name="returnToOriginalGradeDate"
+                            hasError={!!$promotionMeetingResultError.returnToOriginalGradeDate}
+                            handleDateChange
+                            label="Tarikh Kembali ke Gred Asal"
+                            bind:selectedDate={$proxyReturnToOriginalGradeDate}
+                        />
+                        {#if $promotionMeetingResultError.returnToOriginalGradeDate && !disabled}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$promotionMeetingResultError
+                                    .returnToOriginalGradeDate[0]}</span
+                            >
+                        {/if}
+                        <DropdownField
+                            {disabled}
+                            id="newPlacement"
+                            hasError={!!$promotionMeetingResultError.newPlacement}
+                            dropdownType="label-left-full"
+                            label="Penempatan Baru"
+                            bind:value={$promotionMeetingResultForm.newPlacement}
+                            options={placements}
+                        />
+                        {#if $promotionMeetingResultError.newPlacement && !disabled}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$promotionMeetingResultError
+                                    .newPlacement[0]}</span
+                            >
+                        {/if}
                     {/if}
                 </form>
             {/if}

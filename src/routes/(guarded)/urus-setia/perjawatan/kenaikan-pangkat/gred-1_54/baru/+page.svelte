@@ -41,9 +41,7 @@
 
     export let data: PageData;
 
-    let editMeetingResult = false;
-    let editPlacementMeetingResult = false;
-    let editPromotionInfo = false;
+
     let disabled = false;
     let selectedValue: any;
     let selectedMonth: any;
