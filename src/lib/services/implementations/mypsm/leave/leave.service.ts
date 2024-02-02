@@ -5,14 +5,15 @@
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { AddLeaveApprovalResultRequestBody } from '$lib/dto/mypsm/leave/add-leave-approvers-results-request.model';
-import type { AddAlternateUntrackedLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/alternate-untracked-leave/add-alternate-untracked-leave-request.dto';
 import type { AddHajiLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/haji-leave/add-haji-leave-request.dto';
 import type { AddHalfPayLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/halfpay-leave/add-halfpay-leave-request.dto';
-import type { LeaveIDRequest } from '$lib/dto/mypsm/leave/leave-applications/leave-id-request.dto';
 import type { AddMaternityLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/maternity-leave/add-maternity-leave-request.dto';
 import type { AddOtherLeavesRequest } from '$lib/dto/mypsm/leave/leave-applications/other-leaves/add-other-leaves-request.dto';
 import type { AddReplacementLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/replacement-leave/add-replacement-leave-request.dto';
+import type { AddUnrecordLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/unrecord-leave/add-unrecord-leave-request.dto';
 import type { AddWithoutPayLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/without-pay-leave/add-without-pay-leave-request.dto';
+import type { LeaveEmployeeIDRequest } from '$lib/dto/mypsm/leave/leave-employee-id-request.dto';
+import type { LeaveIDRequest } from '$lib/dto/mypsm/leave/leave-id-request.dto';
 import http from '$lib/services/provider/service-provider.service';
 import {
     LeaveHistoryListRequestConvert,
@@ -20,21 +21,34 @@ import {
 } from '$lib/view-models/mypsm/leave/report/history/leave-history-list-request.view-model';
 
 export class LeaveServices {
-    // // get list of leave
-    // static async getLeaveList() {
-    //     // fetching data
-    //     const response: CommonResponseDTO = await http
-    //         .post('leaves/application/leave-list', {
-    //             body: LeaveHistoryListRequestConvert.toJson(),
-    //         })
-    //         .json();
+    // get list of leave
+    static async getLeaveList() {
+        // fetching data
+        const response: CommonResponseDTO = await http
+            .post('leaves/application/leave-list')
+            .json();
 
-    //     if (response.status! === 'success') {
-    //         return response;
-    //     } else {
-    //         throw new Error('Unknown error');
-    //     }
-    // }
+        // if (response.status! === 'success') {
+        //     return response;
+        // } else {
+        //     throw new Error('Unknown error');
+        // }
+        return response;
+    }
+
+    // get leave employee detail
+    static async getLeaveEmployeeDetail() {
+        // fetching data
+        const response: CommonResponseDTO = await http
+            .post('leaves/application/employee-detail')
+            .json();
+
+        if (response.status! === 'success') {
+            return response;
+        } else {
+            throw new Error('Unknown error');
+        }
+    }
 
     // get list of leave history
     static async getLeaveHistoryList(param: LeaveHistoryListRequestViewModel) {
@@ -545,13 +559,11 @@ export class LeaveServices {
     // Alternate untracked Leave
     // ===============================================================
 
-    // get alternate untracked leave list
-    static async getAlternateUntrackedLeaveList(param: CommonListRequestDTO) {
+    // get unrecord leave list
+    static async getUnrecordLeaveList() {
         // fetching data
         const response: CommonResponseDTO = await http
-            .post('leaves/alternate-untracked-leaves', {
-                body: JSON.stringify(param),
-            })
+            .post('leaves/application/unrecord-leave-list')
             .json();
 
         if (response.status! === 'success') {
@@ -561,8 +573,8 @@ export class LeaveServices {
         }
     }
 
-    // get alternate untracked leave detail
-    static async getAlternateUntrackedLeaveDetail(param: LeaveIDRequest) {
+    // get unrecord leave detail
+    static async getUnrecordLeaveDetail(param: LeaveIDRequest) {
         // fetching data
         const response: CommonResponseDTO = await http
             .post('leaves/get-alternate-untracked-leave', {
@@ -577,10 +589,8 @@ export class LeaveServices {
         }
     }
 
-    // create alternate untracked leave
-    static async createAlternateUntrackedLeave(
-        param: AddAlternateUntrackedLeaveRequest,
-    ) {
+    // create unrecord leave
+    static async createUnrecordLeave(param: AddUnrecordLeaveRequest) {
         // fetching data
         const response: CommonResponseDTO = await http
             .post('leaves/add-alternate-untracked-leave', {
@@ -595,8 +605,8 @@ export class LeaveServices {
         }
     }
 
-    // create alternate untracked leave approvers results
-    static async createAlternateUntrackedLeaveApproversResults(
+    // create unrecord leave approvers results
+    static async createUnrecordLeaveApproversResults(
         param: AddLeaveApprovalResultRequestBody,
     ) {
         // fetching data
@@ -613,8 +623,8 @@ export class LeaveServices {
         }
     }
 
-    // get alternate untracked Director Supporter Detail
-    static async getAlternateUntrackedLeaveDirectorSupporterDetail(
+    // get unrecord Director Supporter Detail
+    static async getUnrecordLeaveDirectorSupporterDetail(
         param: LeaveIDRequest,
     ) {
         // fetching data
@@ -634,10 +644,8 @@ export class LeaveServices {
         }
     }
 
-    // get alternate untracked leave supporter detail
-    static async getAlternateUntrackedLeaveSupporterDetail(
-        param: LeaveIDRequest,
-    ) {
+    // get unrecord leave supporter detail
+    static async getUnrecordLeaveSupporterDetail(param: LeaveIDRequest) {
         // fetching data
         const response: CommonResponseDTO = await http
             .post(
@@ -655,10 +663,8 @@ export class LeaveServices {
         }
     }
 
-    // get alternate untracked leave verifier detail
-    static async getAlternateUntrackedLeaveVerifierDetail(
-        param: LeaveIDRequest,
-    ) {
+    // get unrecord leave verifier detail
+    static async getUnrecordLeaveVerifierDetail(param: LeaveIDRequest) {
         // fetching data
         const response: CommonResponseDTO = await http
             .post(
@@ -676,10 +682,8 @@ export class LeaveServices {
         }
     }
 
-    // get alternate untracked leave approver detail
-    static async getAlternateUntrackedLeaveApproverDetail(
-        param: LeaveIDRequest,
-    ) {
+    // get unrecord leave approver detail
+    static async getUnrecordLeaveApproverDetail(param: LeaveIDRequest) {
         // fetching data
         const response: CommonResponseDTO = await http
             .post(
@@ -913,12 +917,9 @@ export class LeaveServices {
     static async getOtherLeavesConfirmerDetail(param: LeaveIDRequest) {
         // fetching data
         const response: CommonResponseDTO = await http
-            .post(
-                'leaves/get-other-leave-process-confirmer-detail',
-                {
-                    body: JSON.stringify(param),
-                },
-            )
+            .post('leaves/get-other-leave-process-confirmer-detail', {
+                body: JSON.stringify(param),
+            })
             .json();
 
         if (response.status! === 'success') {
@@ -932,12 +933,9 @@ export class LeaveServices {
     static async getOtherLeavesSupporterDetail(param: LeaveIDRequest) {
         // fetching data
         const response: CommonResponseDTO = await http
-            .post(
-                'leaves/get-other-leave-process-supporter-detail',
-                {
-                    body: JSON.stringify(param),
-                },
-            )
+            .post('leaves/get-other-leave-process-supporter-detail', {
+                body: JSON.stringify(param),
+            })
             .json();
 
         if (response.status! === 'success') {
