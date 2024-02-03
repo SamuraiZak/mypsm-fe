@@ -6,7 +6,6 @@ import type { LeaveHistoryListRequestViewModel } from '$lib/view-models/mypsm/le
 // import type { LeaveHistoryListResponseViewModel } from '$lib/view-models/mypsm/leave/report/history/leave-history-list-response.view-model';
 
 export const load = async () => {
-
     // show loading screen
     // showLoadingOverlay.set(true);
 
@@ -17,13 +16,16 @@ export const load = async () => {
         orderType: '',
     };
 
-    const leaveHistoryList: CommonResponseDTO = await LeaveServices.getLeaveHistoryList(param);
+    const leaveEntitlementList: CommonResponseDTO =
+        await LeaveServices.getLeaveEntitlementList(param);
+
+    const leaveHistoryList: CommonResponseDTO =
+        await LeaveServices.getLeaveHistoryList(param);
 
     // setTimeout(() => showLoadingOverlay.set(false), 2500);
     return {
-        props: {
-            leaveHistoryList,
-            param,
-        },
+        leaveEntitlementList,
+        leaveHistoryList,
+        param,
     };
 };
