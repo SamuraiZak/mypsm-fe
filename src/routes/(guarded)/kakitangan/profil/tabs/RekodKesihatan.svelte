@@ -68,7 +68,7 @@
     } = superForm(data.stepperSejarahPenyakit, {
         dataType: 'json',
         SPA: true,
-        validators: _stepperSejarahPenyakitList,
+        validators: _stepperSejarahPenyakit,
         onSubmit() {
             _submitFormStepperSejarahPenyakit($sejarahPenyakitForm);
         },
@@ -122,7 +122,7 @@
                     method="POST"
                 >
                     <div class="flex w-full flex-col gap-2">
-                        {#each data.medicalHistoryDiseaseNamesResponse.data.list as record, i}
+                        <!-- {#each data.medicalHistoryDiseaseNamesResponse.data.list as record, i}
                             <div class="flex flex-row">
                                 <label
                                     for="diseases"
@@ -162,8 +162,8 @@
                                     ]?.remark ?? ' '}
                                 ></TextField>
                             </div>
-                        {/each}
-                        <!-- <table
+                        {/each} -->
+                        <table
                             class="text-left text-sm {stepperFormTitleClass}"
                         >
                             <tr>
@@ -1238,7 +1238,7 @@
                                     {/if}
                                 </td>
                             </tr>
-                        </table> -->
+                        </table>
                     </div>
                 </form>
             </div></StepperContentBody
@@ -1634,7 +1634,7 @@
                         <tr>
                             <td>Penglihatan Warna</td>
                             <td>
-                                <!-- <RadioSingle
+                                <RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
                                     name="penglihatanWarnaRadio"
@@ -1647,7 +1647,7 @@
                                         >{$pemeriksaanDoktorErrors
                                             .penglihatanWarnaRadio[0]}</span
                                     >
-                                {/if} -->
+                                {/if}
                             </td>
 
                             <td colspan="2">
@@ -1674,7 +1674,7 @@
                         <tr>
                             <td>Funduskopi</td>
                             <td>
-                                <!-- <RadioSingle
+                                <RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
                                     name="funduskopiRadio"
@@ -1687,7 +1687,7 @@
                                         >{$pemeriksaanDoktorErrors
                                             .funduskopiRadio[0]}</span
                                     >
-                                {/if} -->
+                                {/if}
                             </td>
 
                             <td colspan="2">
@@ -1722,7 +1722,7 @@
                                 ><p class="text-sm font-bold">Telinga</p></td
                             >
                             <td class="w-[160px] min-w-[160px] max-w-[160px]">
-                                <!-- <RadioSingle
+                                <RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
                                     name="telingaRadio"
@@ -1735,7 +1735,7 @@
                                         >{$pemeriksaanDoktorErrors
                                             .telingaRadio[0]}</span
                                     >
-                                {/if} -->
+                                {/if}
                             </td>
 
                             <td colspan="2">
@@ -1764,7 +1764,7 @@
                                 </p>
                             </td>
                             <td>
-                                <!-- <RadioSingle
+                                <RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
                                     name="ronggaGigiMulutRadio"
@@ -1777,7 +1777,7 @@
                                         >{$pemeriksaanDoktorErrors
                                             .ronggaGigiMulutRadio[0]}</span
                                     >
-                                {/if} -->
+                                {/if}
                             </td>
 
                             <td colspan="2">
@@ -1803,7 +1803,7 @@
                         <tr>
                             <td><p class="text-sm font-bold">Leher</p></td>
                             <td>
-                                <!-- <RadioSingle
+                                <RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
                                     name="leherRadio"
@@ -1816,7 +1816,7 @@
                                         >{$pemeriksaanDoktorErrors
                                             .leherRadio[0]}</span
                                     >
-                                {/if} -->
+                                {/if}
                             </td>
 
                             <td colspan="2">
@@ -1846,7 +1846,7 @@
                                 </p></td
                             >
                             <td>
-                                <!-- <RadioSingle
+                                <RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
                                     name="kardiovaskularRadio"
@@ -1859,7 +1859,7 @@
                                         >{$pemeriksaanDoktorErrors
                                             .kardiovaskularRadio[0]}</span
                                     >
-                                {/if} -->
+                                {/if}
                             </td>
 
                             <td colspan="2">
@@ -1894,7 +1894,7 @@
                                 >Pemeriksaan</td
                             >
                             <td class="w-[160px] min-w-[160px] max-w-[160px]">
-                                <!-- <RadioSingle
+                                <RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
                                     name="pemeriksaanRadio"
@@ -1907,7 +1907,7 @@
                                         >{$pemeriksaanDoktorErrors
                                             .pemeriksaanRadio[0]}</span
                                     >
-                                {/if} -->
+                                {/if}
                             </td>
 
                             <td colspan="2">
@@ -1933,7 +1933,7 @@
                         <tr>
                             <td>X-ray</td>
                             <td>
-                                <!-- <RadioSingle
+                                <RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
                                     name="xrayRadio"
@@ -1946,7 +1946,7 @@
                                         >{$pemeriksaanDoktorErrors
                                             .xrayRadio[0]}</span
                                     >
-                                {/if} -->
+                                {/if}
                             </td>
 
                             <td colspan="2">
@@ -2035,7 +2035,7 @@
                                 </p></td
                             >
                             <td class="w-[160px] min-w-[160px] max-w-[160px]">
-                                <!-- <RadioSingle
+                                <RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
                                     name="abdomenHerniaRadio"
@@ -2048,7 +2048,7 @@
                                         >{$pemeriksaanDoktorErrors
                                             .abdomenHerniaRadio[0]}</span
                                     >
-                                {/if} -->
+                                {/if}
                             </td>
 
                             <td colspan="2">
@@ -2079,7 +2079,7 @@
                                 </p></td
                             >
                             <td>
-                                <!-- <RadioSingle
+                                <RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
                                     name="sistemSarafRadio"
@@ -2092,7 +2092,7 @@
                                     >{$pemeriksaanDoktorErrors
                                         .sistemSarafRadio[0]}</span
                                 >
-                            {/if} -->
+                            {/if}
                             </td>
 
                             <td colspan="2">
@@ -2122,7 +2122,7 @@
                                     Sistem muskuloskeletal
                                 </p></td
                             >
-                            <!-- <td
+                            <td
 
                                 ><RadioSingle
                                     {disabled}
@@ -2138,7 +2138,7 @@
                                             .sistemMuskuloskeletalRadio[0]}</span
                                     >
                                 {/if}
-                            </td> -->
+                            </td>
 
                             <td colspan="2">
                                 <TextField

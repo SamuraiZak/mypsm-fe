@@ -332,69 +332,72 @@ const SejarahPenyakitSelectSchema = z
     .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
 export const _stepperSejarahPenyakit = z.object({
-    id: z.string().nullish(),
-    diseases: z.string().nullish(),
-    isPersonal: z.boolean().nullish(),
-    isFamily: z.boolean().nullish(),
-    remark: z.string().nullish(),
-    // sendiriPenyakitSejakLahir: SejarahPenyakitSelectSchema,
-    // keluargaPenyakitSejakLahir: SejarahPenyakitSelectSchema,
-    // sendiriAlahan: SejarahPenyakitSelectSchema,
-    // keluargaAlahan: SejarahPenyakitSelectSchema,
-    // sendiriSakitJiwa: SejarahPenyakitSelectSchema,
-    // keluargaSakitJiwa: SejarahPenyakitSelectSchema,
-    // sendiriEpilepsi: SejarahPenyakitSelectSchema,
-    // keluargaEpilepsi: SejarahPenyakitSelectSchema,
-    // sendiriDarahTinggi: SejarahPenyakitSelectSchema,
-    // keluargaDarahTinggi: SejarahPenyakitSelectSchema,
-    // sendiriKencingManis: SejarahPenyakitSelectSchema,
-    // keluargaKencingManis: SejarahPenyakitSelectSchema,
-    // sendiriJantung: SejarahPenyakitSelectSchema,
-    // keluargaJantung: SejarahPenyakitSelectSchema,
-    // sendiriAsma: SejarahPenyakitSelectSchema,
-    // keluargaAsma: SejarahPenyakitSelectSchema,
-    // sendiriSakitBuahPinggang: SejarahPenyakitSelectSchema,
-    // keluargaSakitBuahPinggang: SejarahPenyakitSelectSchema,
-    // sendiriBarah: SejarahPenyakitSelectSchema,
-    // keluargaBarah: SejarahPenyakitSelectSchema,
-    // sendiriBatukKering: SejarahPenyakitSelectSchema,
-    // keluargaBatukKering: SejarahPenyakitSelectSchema,
-    // sendiriKetagihanDadah: SejarahPenyakitSelectSchema,
-    // keluargaKetagihanDadah: SejarahPenyakitSelectSchema,
-    // sendiriAIDS: SejarahPenyakitSelectSchema,
-    // keluargaAIDS: SejarahPenyakitSelectSchema,
-    // sendiriHepatitisB: SejarahPenyakitSelectSchema,
-    // keluargaHepatitisB: SejarahPenyakitSelectSchema,
-    // sendiriSejarahPembedahan: SejarahPenyakitSelectSchema,
-    // keluargaSejarahPembedahan: SejarahPenyakitSelectSchema,
-    // sendiriKecacatan: SejarahPenyakitSelectSchema,
-    // keluargaKecacatan: SejarahPenyakitSelectSchema,
-    // sendiriMerokok: SejarahPenyakitSelectSchema,
-    // keluargaMerokok: SejarahPenyakitSelectSchema,
-    // sendiriPenyakitSeriusLain: SejarahPenyakitSelectSchema,
-    // keluargaPenyakitSeriusLain: SejarahPenyakitSelectSchema,
-    // sendiriSedangMenerimaRawatan: SejarahPenyakitSelectSchema,
-    // keluargaSedangMenerimaRawatan: SejarahPenyakitSelectSchema,
+    // id: z.string().nullish(),
+    // diseases: z.string().nullish(),
+    // isPersonal: z.boolean().nullish(),
+    // isFamily: z.boolean().nullish(),
+    // remark: z.string().nullish(),
 
-    // penyakitSejakLahir: shortTextSchema.nullable(),
-    // alahan: shortTextSchema.nullable(),
-    // sakitJiwa: shortTextSchema.nullable(),
-    // epilepsi: shortTextSchema.nullable(),
-    // darahTinggi: shortTextSchema.nullable(),
-    // kencingManis: shortTextSchema.nullable(),
-    // jantungAtatuSalurDarah: shortTextSchema.nullable(),
-    // asma: shortTextSchema.nullable(),
-    // sakitBuahPinggang: shortTextSchema.nullable(),
-    // barah: shortTextSchema.nullable(),
-    // batukKering: shortTextSchema.nullable(),
-    // ketagihanDadah: shortTextSchema.nullable(),
-    // AIDS: shortTextSchema.nullable(),
-    // hepatitisB: shortTextSchema.nullable(),
-    // sejarahPembedahan: shortTextSchema.nullable(),
-    // kecacatan: shortTextSchema.nullable(),
-    // merokok: shortTextSchema.nullable(),
-    // penyakitSeriusLain: shortTextSchema.nullable(),
-    // sedangMenerimaRawatan: shortTextSchema.nullable(),
+
+
+    sendiriPenyakitSejakLahir: SejarahPenyakitSelectSchema,
+    keluargaPenyakitSejakLahir: SejarahPenyakitSelectSchema,
+    sendiriAlahan: SejarahPenyakitSelectSchema,
+    keluargaAlahan: SejarahPenyakitSelectSchema,
+    sendiriSakitJiwa: SejarahPenyakitSelectSchema,
+    keluargaSakitJiwa: SejarahPenyakitSelectSchema,
+    sendiriEpilepsi: SejarahPenyakitSelectSchema,
+    keluargaEpilepsi: SejarahPenyakitSelectSchema,
+    sendiriDarahTinggi: SejarahPenyakitSelectSchema,
+    keluargaDarahTinggi: SejarahPenyakitSelectSchema,
+    sendiriKencingManis: SejarahPenyakitSelectSchema,
+    keluargaKencingManis: SejarahPenyakitSelectSchema,
+    sendiriJantung: SejarahPenyakitSelectSchema,
+    keluargaJantung: SejarahPenyakitSelectSchema,
+    sendiriAsma: SejarahPenyakitSelectSchema,
+    keluargaAsma: SejarahPenyakitSelectSchema,
+    sendiriSakitBuahPinggang: SejarahPenyakitSelectSchema,
+    keluargaSakitBuahPinggang: SejarahPenyakitSelectSchema,
+    sendiriBarah: SejarahPenyakitSelectSchema,
+    keluargaBarah: SejarahPenyakitSelectSchema,
+    sendiriBatukKering: SejarahPenyakitSelectSchema,
+    keluargaBatukKering: SejarahPenyakitSelectSchema,
+    sendiriKetagihanDadah: SejarahPenyakitSelectSchema,
+    keluargaKetagihanDadah: SejarahPenyakitSelectSchema,
+    sendiriAIDS: SejarahPenyakitSelectSchema,
+    keluargaAIDS: SejarahPenyakitSelectSchema,
+    sendiriHepatitisB: SejarahPenyakitSelectSchema,
+    keluargaHepatitisB: SejarahPenyakitSelectSchema,
+    sendiriSejarahPembedahan: SejarahPenyakitSelectSchema,
+    keluargaSejarahPembedahan: SejarahPenyakitSelectSchema,
+    sendiriKecacatan: SejarahPenyakitSelectSchema,
+    keluargaKecacatan: SejarahPenyakitSelectSchema,
+    sendiriMerokok: SejarahPenyakitSelectSchema,
+    keluargaMerokok: SejarahPenyakitSelectSchema,
+    sendiriPenyakitSeriusLain: SejarahPenyakitSelectSchema,
+    keluargaPenyakitSeriusLain: SejarahPenyakitSelectSchema,
+    sendiriSedangMenerimaRawatan: SejarahPenyakitSelectSchema,
+    keluargaSedangMenerimaRawatan: SejarahPenyakitSelectSchema,
+
+    penyakitSejakLahir: shortTextSchema.nullable(),
+    alahan: shortTextSchema.nullable(),
+    sakitJiwa: shortTextSchema.nullable(),
+    epilepsi: shortTextSchema.nullable(),
+    darahTinggi: shortTextSchema.nullable(),
+    kencingManis: shortTextSchema.nullable(),
+    jantungAtatuSalurDarah: shortTextSchema.nullable(),
+    asma: shortTextSchema.nullable(),
+    sakitBuahPinggang: shortTextSchema.nullable(),
+    barah: shortTextSchema.nullable(),
+    batukKering: shortTextSchema.nullable(),
+    ketagihanDadah: shortTextSchema.nullable(),
+    AIDS: shortTextSchema.nullable(),
+    hepatitisB: shortTextSchema.nullable(),
+    sejarahPembedahan: shortTextSchema.nullable(),
+    kecacatan: shortTextSchema.nullable(),
+    merokok: shortTextSchema.nullable(),
+    penyakitSeriusLain: shortTextSchema.nullable(),
+    sedangMenerimaRawatan: shortTextSchema.nullable(),
 }).partial();
 
 export const _stepperSejarahPenyakitList = z.object({
@@ -417,16 +420,17 @@ export const _stepperPemeriksaanDoktor = z.object({
     jaundice: booleanSchema,
     lymphGlands: booleanSchema,
     skinDisease: booleanSchema,
-    // penglihatanWarnaRadio: pemeriksaanDoktorSelectSchema,
-    // funduskopiRadio: pemeriksaanDoktorSelectSchema,
-    // telingaRadio: pemeriksaanDoktorSelectSchema,
-    // ronggaGigiMulutRadio: pemeriksaanDoktorSelectSchema,
-    // leherRadio: pemeriksaanDoktorSelectSchema,
-    // kardiovaskularRadio: pemeriksaanDoktorSelectSchema,
-    // pemeriksaanRadio: pemeriksaanDoktorSelectSchema,
-    // xrayRadio: pemeriksaanDoktorSelectSchema,
-    // abdomenHerniaRadio: pemeriksaanDoktorSelectSchema,
-    // sistemSarafRadio: pemeriksaanDoktorSelectSchema,
+    penglihatanWarnaRadio: pemeriksaanDoktorSelectSchema,
+    funduskopiRadio: pemeriksaanDoktorSelectSchema,
+    telingaRadio: pemeriksaanDoktorSelectSchema,
+    ronggaGigiMulutRadio: pemeriksaanDoktorSelectSchema,
+    leherRadio: pemeriksaanDoktorSelectSchema,
+    kardiovaskularRadio: pemeriksaanDoktorSelectSchema,
+    pemeriksaanRadio: pemeriksaanDoktorSelectSchema,
+    xrayRadio: pemeriksaanDoktorSelectSchema,
+    abdomenHerniaRadio: pemeriksaanDoktorSelectSchema,
+    sistemSarafRadio: pemeriksaanDoktorSelectSchema,
+    sistemMuskuloskeletalRadio: pemeriksaanDoktorSelectSchema,
     sugar: booleanSchema,
     albumin: booleanSchema,
 
@@ -590,11 +594,13 @@ export const load = async () => {
     // await EmployeeService.ProfileDetail(PutPersonalDetailRequest);
     // const personalDetailResponse.data.
 
-    const stepperPemeriksaanDoktorRespone =
-        await ProfileService.medicalGeneralAssessment();
-    const stepperSejarahPenyakitRespone = await ProfileService.medicalHistory();
-    const medicalHistoryDiseaseNamesResponse =
-        await ProfileService.getDiseases();
+    // const stepperPemeriksaanDoktorRespone =
+    //     await ProfileService.medicalGeneralAssessment();
+    // const stepperSejarahPenyakitRespone = await ProfileService.medicalHistory();
+    // const medicalHistoryDiseaseNamesResponse =
+    //     await ProfileService.getDiseases();
+
+
     // const id = parseInt(params.id);
     const stepperMaklumatPeribadi = await superValidate(
         _stepperMaklumatPeribadi,
@@ -611,15 +617,21 @@ export const load = async () => {
     );
     const stepperMaklumatWaris = await superValidate(_stepperMaklumatWaris);
 
-    const stepperSejarahPenyakit = await superValidate(
-        stepperSejarahPenyakitRespone?.data! as PersonalMedicalRecordResponseData,
-        _stepperSejarahPenyakitList,
+    const stepperSejarahPenyakit = await superValidate(_stepperSejarahPenyakit);
+
+     const stepperPemeriksaanDoktor = await superValidate(_stepperPemeriksaanDoktor
+
     );
 
-    const stepperPemeriksaanDoktor = await superValidate(
-        stepperPemeriksaanDoktorRespone?.data as PersonalMedicalRecordGeneralAssessmentResponseData,
-        _stepperPemeriksaanDoktor,
-    );
+    // const stepperSejarahPenyakit = await superValidate(
+    //     stepperSejarahPenyakitRespone?.data! as PersonalMedicalRecordResponseData,
+    //     _stepperSejarahPenyakitList,
+    // );
+
+    // const stepperPemeriksaanDoktor = await superValidate(
+    //     stepperPemeriksaanDoktorRespone?.data as PersonalMedicalRecordGeneralAssessmentResponseData,
+    //     _stepperPemeriksaanDoktor,
+    // );
     const addAcademicModal = await superValidate(_addAcademicInfoSchema);
     const addExperienceModal = await superValidate(_addExperienceModalSchema);
     const addActivityModal = await superValidate(_addActivityModalSchema);
@@ -642,7 +654,7 @@ export const load = async () => {
         addFamilyModal,
         addNonFamilyModal,
         addNextOfKinModal,
-        medicalHistoryDiseaseNamesResponse,
+
     };
 };
 
