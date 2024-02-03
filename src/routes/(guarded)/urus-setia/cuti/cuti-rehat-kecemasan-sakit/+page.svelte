@@ -7,33 +7,25 @@
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import StaffSelector from '$lib/components/staff-selector/StaffSelector.svelte';
     import { tahun } from '$lib/mocks/ketua-seksyen/cuti/tahun';
-    import { jenisCuti } from '$lib/mocks/urus-setia/cuti/cuti-rks/jenis-cuti';
-    import { cutiRks } from '$lib/mocks/urus-setia/cuti/cuti-rks/cuti-rks';
+    import { cutiRks } from '$lib/mocks/kakitangan/cuti/cuti-rks/cuti-rks';
     import { Select } from 'flowbite-svelte';
     import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
     import FilterDateSelector from '$lib/components/filter/FilterDateSelector.svelte';
-
+    import type { PageData } from './$types';
+    export let data: PageData;
     let selectedTahun = tahun[0].value;
-    let selectedJenisCuti = jenisCuti[0].value;
 </script>
 
-<!-- header section -->
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader
-        title="Cuti Rehat, Kecemasan dan Sakit"
+        title="Cuti Rehat, Kecemasan & Sakit"
         description="Senarai cuti berdasarkan Sistem HRMIS"
-    >
-        <!-- TODO: put buttons in this area if necessary -->
-    </ContentHeader>
+    ></ContentHeader>
 </section>
 
-<!-- content section -->
-<!-- do not change the style of this section -->
 <section
-    class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
+    class="flex h-full w-full flex-col items-center justify-start gap-2.5 overflow-y-auto p-2.5"
 >
-    <!-- start your content with this div and style it with your own preference -->
-
     <FilterContainer>
         <div class="flex w-full flex-wrap gap-2.5">
             <FilterTextInput label="Nama Pekerja"></FilterTextInput>
@@ -42,22 +34,11 @@
             <FilterTextInput label="Bulan Cuti"></FilterTextInput>
             <FilterTextInput label="Tahun"></FilterTextInput>
             <FilterTextInput label="Unit Organisasi"></FilterTextInput>
-            <FilterTextInput label="Jenis Cuti"></FilterTextInput>
-            <FilterTextInput label="Kod Jenis Cuti"></FilterTextInput>
-            <FilterTextInput label="Status Cuti"></FilterTextInput>
-            <FilterDateSelector
-            id="course-start-date"
-            label="Tarikh Mohon"
-            selectedDate=""
-            handleDateChange={() => {}}
-        />
+            <FilterTextInput label="Message ID"></FilterTextInput>
 
-
-
-        </div>
-        <!-- <div class="flex flex-row gap-x-2.5">
+            <!-- <div class="flex flex-row gap-x-2.5">
             <div class="flex flex-row items-center justify-center gap-x-2.5">
-                <p class="text-sm font-normal">Bulan Cuti</p>
+                <p class="text-sm font-normal">Bulan Cuti*</p>
                 <div class="flex flex-row items-center justify-start gap-x-2.5">
                     <Select
                         id="bulan-cuti-bulan"
@@ -140,36 +121,22 @@
                         value={''}
                     ></Select>
                 </div>
-            </div>
+            </div> -->
         </div>
-        <ShortTextField label="Unit Organisasi*" type="text" />
-        <DropdownSelect
-            id="jenis-cuti-dropdown"
-            label="Jenis Cuti"
-            dropdownType="label-left"
-            bind:index={selectedJenisCuti}
-            options={jenisCuti}
-        ></DropdownSelect>
-        <DropdownSelect
-            id="jenis-cuti-dropdown"
-            label="Kod Jenis Cuti"
-            dropdownType="label-left"
-            bind:index={selectedJenisCuti}
-            options={jenisCuti}
-        ></DropdownSelect>
-        <DropdownSelect
-            id="jenis-cuti-dropdown"
-            label="Status Cuti"
-            dropdownType="label-left"
-            bind:index={selectedJenisCuti}
-            options={jenisCuti}
-        ></DropdownSelect>
-        <ShortTextField label="Tarikh Mohon" type="date" /> -->
+        <!-- <ShortTextField label="Unit Organisasi*" type="text" />
+        <ShortTextField label="Message ID" type="text" /> -->
     </FilterContainer>
-    <SectionHeader title="Senarai Permohonan Gantian Cuti Rehat (GCR) Tahun 2023"></SectionHeader>
+
+    <SectionHeader title="Senarai Keluar Ofis"></SectionHeader>
     <div class="flex max-h-full w-full flex-col items-start justify-start">
-        <DynamicTable
-            tableItems={cutiRks}
+        <DynamicTable tableItems={data.hrmisOutOfOffice ?? undefined}
+        ></DynamicTable>
+    </div>
+
+    <SectionHeader title="Senarai Cuti Rehat, Kecemasan & Sakit"
+    ></SectionHeader>
+    <div class="flex max-h-full w-full flex-col items-start justify-start">
+        <DynamicTable tableItems={data.hrmisLeaveList ?? undefined}
         ></DynamicTable>
     </div>
 </section>
