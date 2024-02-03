@@ -23,7 +23,6 @@
         _annualSalaryIncrement,
         _submitFormAnnualSalaryIncrement,
     } from './+page';
-
     export let data: PageData;
 
     let isGredChecked: boolean = false;
@@ -85,6 +84,8 @@
             format: 'date',
         },
     );
+
+    console.log(data.salaryMovementList)
 </script>
 
 <!-- content header starts here -->
@@ -141,7 +142,7 @@
             options={status}
             bind:selectedVal={selectedStatus}
         ></FilterSelectInput>
-        
+                
     </FilterContainer>
 
     <!-- area for setting for bulk salary movements -->
@@ -382,7 +383,7 @@
 
         <DynamicTable
             hasCheckbox
-            tableItems={data.records.salaryMovementRecord}
+            tableItems={data.salaryMovementList}
             bind:passData={tempUrl}
             withActions
             actionOptions={['detail']}
@@ -395,7 +396,24 @@
 
                 goto(url);
             }}
-        ></DynamicTable>
+            columnKeys={[
+                'employeeNumber',
+                'employeeName',
+                'employeeGrade',
+                'tpg',
+                'kgt',
+                'salary1',
+                'wilayahAllowance1',
+                'criticalAllowance1',
+                'salary2',
+                'wilayahAllowance2',
+                'criticalAllowance2',
+                'specialkgt',
+                'specialSalary',
+                'specialWilayahAllowance',
+                'specialAid',
+            ]}
+        />
     </div>
     <br />
     <div class="flex h-fit w-full flex-col items-start justify-center">

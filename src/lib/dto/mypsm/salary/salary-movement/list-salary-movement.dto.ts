@@ -10,7 +10,7 @@ export interface SalaryMovementListDTO {
     employeeNumber:          string;
     employeeGrade:           string;
     tpg:                     number;
-    kgt:                     null;
+    kgt?:                     number;
     salary1:                 number;
     wilayahAllowance1:       number;
     criticalAllowance1:      number;
@@ -20,6 +20,7 @@ export interface SalaryMovementListDTO {
     specialkgt:              number;
     specialSalary:           number;
     specialWilayahAllowance: number;
+    status:                  string;
 }
 
 export class SalaryMovementListDTOConvert {

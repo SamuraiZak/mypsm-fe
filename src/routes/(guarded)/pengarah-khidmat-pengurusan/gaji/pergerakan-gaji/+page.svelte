@@ -12,6 +12,7 @@
     import { greds } from '$lib/mocks/gred/gred';
     import { Tooltip } from 'flowbite-svelte';
 
+    export let data;
     let selectedMonth = months[6].value;
     let tooltipContent: string = '';
     function assignContent(ev: CustomEvent<HTMLDivElement>) {
@@ -70,6 +71,36 @@
         <SectionHeader title="Luluskan semua medan yang dipilih dibawah"
             ><FormButton type="approve"></FormButton>
         </SectionHeader>
+        <div class="flex max-h-full w-full flex-col items-start justify-start">
+            <DynamicTable
+                hasCheckbox
+                onSelect={() => {}}
+                withActions
+                actionOptions={['detail']}
+                detailActions={() => {
+                    goto('/pengarah-khidmat-pengurusan/gaji/pergerakan-gaji/butiran');
+                }}
+                tableItems={data.salaryMovementApprovalList}
+                columnKeys={[
+                    'employeeNumber',
+                    'employeeName',
+                    'employeeGrade',
+                    'tpg',
+                    'kgt',
+                    'salary1',
+                    'wilayahAllowance1',
+                    'criticalAllowance1',
+                    'salary2',
+                    'wilayahAllowance2',
+                    'criticalAllowance2',
+                    'specialkgt',
+                    'specialSalary',
+                    'specialWilayahAllowance',
+                    'specialAid',
+                    'status'
+                ]}
+            ></DynamicTable>
+        </div>
         <div class="flex max-h-full w-full flex-col items-start justify-start">
             <DynamicTable
                 hasCheckbox
