@@ -11,7 +11,8 @@
     import { mockSalaryMovementRecord } from '$lib/mocks/gaji/salaryMovementRecord/mockSalaryMovementRecord';
     import { greds } from '$lib/mocks/gred/gred';
     import { Tooltip } from 'flowbite-svelte';
-
+    import type { SalaryMovementListDTO } from '$lib/dto/mypsm/salary/salary-movement/list-salary-movement.dto';
+    let tempData: SalaryMovementListDTO;
     export let data;
     let selectedMonth = months[6].value;
     let tooltipContent: string = '';
@@ -78,9 +79,13 @@
                 withActions
                 actionOptions={['detail']}
                 detailActions={() => {
-                    goto('/pengarah-khidmat-pengurusan/gaji/pergerakan-gaji/butiran');
+                    const url =
+                    '/pengarah-khidmat-pengurusan/gaji/pergerakan-gaji/butiran-' +
+                    tempData.meetingId+'-'+tempData.employeeNumber
+                    goto(url);
                 }}
                 tableItems={data.salaryMovementApprovalList}
+                bind:passData={tempData}
                 columnKeys={[
                     'employeeNumber',
                     'employeeName',
@@ -99,18 +104,6 @@
                     'specialAid',
                     'status'
                 ]}
-            ></DynamicTable>
-        </div>
-        <div class="flex max-h-full w-full flex-col items-start justify-start">
-            <DynamicTable
-                hasCheckbox
-                onSelect={() => {}}
-                withActions
-                actionOptions={['detail']}
-                detailActions={() => {
-                    goto('../gaji/pergerakan-gaji/butiran');
-                }}
-                tableItems={mockSalaryMovementRecord}
             ></DynamicTable>
         </div>
     </div>
