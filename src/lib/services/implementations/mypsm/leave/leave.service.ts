@@ -66,7 +66,7 @@ export class LeaveServices {
     static async getLeaveEntitlementList(param: CommonListRequestDTO) {
         // fetching data
         const response: CommonResponseDTO = await http
-            .post('leaves/leave-entitlements', {
+            .post('leaves/leaves/entitlement', {
                 body: JSON.stringify(param),
             })
             .json();
