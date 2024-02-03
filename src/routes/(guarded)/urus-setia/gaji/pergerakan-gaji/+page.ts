@@ -4,6 +4,12 @@ import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 import { mockSalaryMovementRecord } from '$lib/mocks/gaji/salaryMovementRecord/mockSalaryMovementRecord';
 import api from '$lib/services/core/ky.service';
+import type { ListSalaryMovementFilterDTO } from '$lib/dto/mypsm/salary/salary-movement/list-salary-movement-filter.dto';
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
+import type { SalaryMovementListDTO } from '$lib/dto/mypsm/salary/salary-movement/list-salary-movement.dto';
+import  { SalaryServices } from '$lib/services/implementations/mypsm/salary/salary.service';
+import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import { showLoadingOverlay } from '$lib/stores/globalState';
 // import { showLoadingOverlay } from '$lib/stores/globalState';
 
 // Annual Salary Increment
@@ -77,16 +83,31 @@ export const _submitFormAnnualSalaryIncrement = async (formData: object) => {
 };
 
 //Async
-export const load = async () => {
-    const getGredLookup = {
+export async function load() {
+
+    showLoadingOverlay.set(true)
+    const filter: ListSalaryMovementFilterDTO = {
+        month: 1,
+        year: 2024
+    }
+    const param: CommonListRequestDTO = {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 5,
         orderBy: 'createdAt',
         orderType: 'asc',
-        filter: {},
+        filter: filter,
     };
+    // const getGredLookup: CommonListRequestDTO = {
+    //     pageNum: 1,
+    //     pageSize: 10,
+    //     orderBy: 'createdAt',
+    //     orderType: 'asc',
+    //     filter: filter,
+    // };
 
-    console.log(JSON.stringify(getGredLookup));
+    
+
+    // console.log(JSON.stringify(getGredLookup));
 
     // Gred lookup
     // const gredResponse: Response = await api
@@ -100,18 +121,22 @@ export const load = async () => {
     //     value: element.code,
     //     name: element.code,
     // }));
-
-
-
     const salaryMovementRecord: IntSalaryMovementRecord[] =
-        await mockSalaryMovementRecord;
+         mockSalaryMovementRecord;
+
+
     const annualSalaryIncrement = await superValidate(_annualSalaryIncrement);
 
+    const response: CommonResponseDTO = await SalaryServices.getSalaryMovementList(param)
+    const salaryMovementList: SalaryMovementListDTO[] = response.data?.dataList as SalaryMovementListDTO[];
+
+    setTimeout(() => showLoadingOverlay.set(false), 2500);
     return {
         records: {
             gredLists,
             salaryMovementRecord,
         },
         annualSalaryIncrement,
+       salaryMovementList,
     };
 };
