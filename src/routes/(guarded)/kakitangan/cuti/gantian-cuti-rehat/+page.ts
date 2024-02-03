@@ -20,8 +20,9 @@ export const load = async () => {
     const gcrWithdrawalAnnualLeaveListResponse: CommonResponseDTO =
         await LeaveServices.getGCRWithdrawalAnnualLeaves(param);
 
-    const gcrWithdrawalAnnualLeaveList = gcrWithdrawalAnnualLeaveListResponse
-        .data?.dataList as GCRWithdrawalResponse[];
+    const gcrWithdrawalAnnualLeaveList: GCRWithdrawalResponse[] =
+        gcrWithdrawalAnnualLeaveListResponse.data
+            ?.dataList as GCRWithdrawalResponse[];
 
     // setTimeout(() => showLoadingOverlay.set(false), 2500);
     return {
