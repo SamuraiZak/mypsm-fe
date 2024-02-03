@@ -1,19 +1,12 @@
 <script lang="ts">
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import CustomTab from '$lib/components/tab/CustomTab.svelte';
-    import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
-    import TugasTugasRasmiYangJatuhPadaHariCuti from './TugasTugasRasmiYangJatuhPadaHariCuti.svelte';
     import type { PageData } from '../$types';
     import { dateProxy, superForm } from 'sveltekit-superforms/client';
     import {
         _replacementLeaveSchema,
-        _replacementLeaveSchema1,
-        _replacementLeaveSchema2,
-        _replacementLeaveSchema3,
-        _replacementLeaveSchema4,
         _submitReplacementLeaveForm,
     } from '../+page';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
@@ -22,24 +15,16 @@
 
     export let data: PageData;
 
-    let selectedJenisGantian = '';
-    // let hasHalfDayStartDate: boolean = false;
-    // let hasHalfDayEndDate: boolean = false;
-
     // ================ Form Validation ================
     const { form, errors, enhance } = superForm(data.replacementLeaveForm, {
         SPA: true,
         validators: _replacementLeaveSchema,
         invalidateAll: true,
-        multipleSubmits: 'prevent',
         validationMethod: 'oninput',
         resetForm: false,
+        multipleSubmits: 'prevent',
         onSubmit() {
-            _submitReplacementLeaveForm(
-                $form,
-                // hasHalfDayStartDate,
-                // hasHalfDayEndDate,
-            );
+            _submitReplacementLeaveForm($form);
         },
         taintedMessage:
             'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
@@ -53,16 +38,12 @@
     const proxyDutyDate = dateProxy(form, 'dutyDate', {
         format: 'date',
     });
-
-    // $: if (hasHalfDayStartDate && !hasHalfDayEndDate) {
-    //     options.validators = _replacementLeaveSchema2;
-    // } else if (hasHalfDayEndDate && !hasHalfDayStartDate) {
-    //     options.validators = _replacementLeaveSchema3;
-    // } else if (hasHalfDayEndDate && hasHalfDayStartDate) {
-    //     options.validators = _replacementLeaveSchema4;
-    // } else if (!hasHalfDayStartDate && !hasHalfDayEndDate) {
-    //     options.validators = _replacementLeaveSchema1;
-    // }
+    const proxyDutyStartHour = dateProxy(form, 'dutyStartHour', {
+        format: 'time',
+    });
+    const proxyDutyEndHour = dateProxy(form, 'dutyEndHour', {
+        format: 'time',
+    });
 </script>
 
 <section
@@ -183,11 +164,11 @@
                             {/if}
                         </div> -->
                 </div>
-                <TextField
+                <!-- <TextField
                     disabled
                     label="Jumlah Cuti Gantian Yang Telah Diambil Pada Tahun Semasa"
                     value="2"
-                ></TextField>
+                ></TextField> -->
                 <DateSelector
                     hasError={!!$errors.lastLeaveDate}
                     name="lastLeaveDate"
@@ -281,7 +262,7 @@
                                 label="Waktu Mula"
                                 type="time"
                                 name="dutyStartHour"
-                                bind:value={$form.dutyStartHour}
+                                bind:value={$proxyDutyStartHour}
                             />
                         </div>
                         {#if $errors.dutyStartHour}
@@ -298,7 +279,7 @@
                                 label="Waktu Tamat"
                                 type="time"
                                 name="dutyEndHour"
-                                bind:value={$form.dutyEndHour}
+                                bind:value={$proxyDutyEndHour}
                             />
                         </div>
                         {#if $errors.dutyEndHour}

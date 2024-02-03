@@ -9,8 +9,8 @@
     import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import { Checkbox } from 'flowbite-svelte';
+    import LongTextField from '$lib/components/input/LongTextField.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import { categories } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/categories';
     import CutiGantian from './forms/CutiGantian.svelte';
     import CutiTanpaGaji from './forms/CutiTanpaGaji.svelte';
     import CutiSeparuhGaji from './forms/CutiSeparuhGaji.svelte';
@@ -18,15 +18,8 @@
     import CutiBersalinAwal from './forms/CutiBersalinAwal.svelte';
     import CutiBersalinPegawai from './forms/CutiBersalinPegawai.svelte';
     import CutiIsteriBersalin from './forms/CutiIsteriBersalin.svelte';
+    import DateSelector from '$lib/components/input/DateSelector.svelte';
     import CutiHaji from './forms/CutiHaji.svelte';
-    import CutiKuarantin from './forms/CutiKuarantin.svelte';
-    import CutiPenyakitTibi from './forms/CutiPenyakitTibi.svelte';
-    import CutiPenyakitBarahDanKusta from './forms/CutiPenyakitBarahDanKusta.svelte';
-    import CutiTanpaGajiMengikutPasangan from './forms/CutiTanpaGajiMengikutPasangan.svelte';
-    import CutiSakitLanjutan from './forms/CutiSakitLanjutan.svelte';
-    import CutiPerakuanTidakHadirKePejabat from './forms/CutiPerakuanTidakHadirKePejabat.svelte';
-    import CutiKursusSambilan from './forms/CutiKursusSambilan.svelte';
-    import CutiMenjagaAnakTanpaGaji from './forms/CutiMenjagaAnakTanpaGaji.svelte';
     import FileInputField from '$lib/components/input/FileInputField.svelte';
     import toast, { Toaster } from 'svelte-french-toast';
     import { z, ZodError } from 'zod';
@@ -35,12 +28,18 @@
     import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import type { PageData } from './$types';
-    import { superForm } from 'sveltekit-superforms/client';
-    import { _staffDetailSchema, _submitStaffDetailForm } from './+page';
-    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+    import { dateProxy, superForm } from 'sveltekit-superforms/client';
+    import {
+        _commonLeavePropsSchema,
+        _otherLeavesSchema,
+        _otherLeavesSecondarySchema,
+        _otherLeavesTertiarySchema,
+        _submitOtherLeaveForm,
+        _submitOtherLeaveSecondaryForm,
+        _submitOtherLeaveTertiaryForm,
+    } from './+page';
 
     export let data: PageData;
-    export let disabled: boolean = false;
     let selectedCuti = '';
 
     // ================ Stepper Control ==================
@@ -107,15 +106,52 @@
         }
     };
 
-    const { form, errors, enhance } = superForm(data.staffDetailForm, {
+    // ================ Form Validation ================
+    const { form, errors, enhance, options } = superForm(data.otherLeavesForm, {
         SPA: true,
-        validators: _staffDetailSchema,
+        validators: _otherLeavesSchema,
+        invalidateAll: true,
+        validationMethod: 'oninput',
+        resetForm: false,
+        multipleSubmits: 'prevent',
         onSubmit() {
-            _submitStaffDetailForm($form);
+            if (
+                selectedCuti === 'Cuti Kuarantin' ||
+                selectedCuti === 'Cuti Menjaga Anak Tanpa Gaji' ||
+                selectedCuti === 'Cuti Penyakit Barah Dan Kusta' ||
+                selectedCuti === 'Cuti Penyakit Tibi'
+            ) {
+                _submitOtherLeaveForm($form);
+            } else if (
+                selectedCuti === 'Cuti Perakuan Tidak Hadir Ke Pejabat' ||
+                selectedCuti === 'Cuti Sakit Lanjutan' ||
+                selectedCuti === 'Cuti Tanpa Gaji Mengikut Pasangan'
+            ) {
+                _submitOtherLeaveSecondaryForm($form);
+            } else if (selectedCuti === 'Cuti Kursus Sambilan') {
+                _submitOtherLeaveTertiaryForm($form);
+            }
         },
         taintedMessage:
             'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
     });
+
+    const proxyStartDate = dateProxy(form, 'startDate', { format: 'date' });
+    const proxyEndDate = dateProxy(form, 'endDate', { format: 'date' });
+
+    $: {
+        if (
+            selectedCuti === 'Cuti Perakuan Tidak Hadir Ke Pejabat' ||
+            selectedCuti === 'Cuti Sakit Lanjutan' ||
+            selectedCuti === 'Cuti Tanpa Gaji Mengikut Pasangan'
+        ) {
+            options.validators = _otherLeavesSecondarySchema;
+        } else if (selectedCuti === 'Cuti Kursus Sambilan') {
+            options.validators = _otherLeavesTertiarySchema;
+        }
+
+        $form.leaveType = selectedCuti;
+    }
 </script>
 
 <ContentHeader
@@ -212,25 +248,135 @@
                     <CutiIsteriBersalin {data}></CutiIsteriBersalin>
                 {:else if selectedCuti === 'Cuti Haji'}
                     <CutiHaji {data}></CutiHaji>
-                {:else if selectedCuti === 'Cuti Kuarantin'}
-                    <CutiKuarantin {data}></CutiKuarantin>
-                {:else if selectedCuti === 'Cuti Menjaga Anak Tanpa Gaji'}
-                    <CutiMenjagaAnakTanpaGaji {data}></CutiMenjagaAnakTanpaGaji>
-                {:else if selectedCuti === 'Cuti Kursus Sambilan'}
-                    <CutiKursusSambilan {data}></CutiKursusSambilan>
-                {:else if selectedCuti === 'Cuti Perakuan Tidak Hadir Ke Pejabat'}
-                    <CutiPerakuanTidakHadirKePejabat {data}
-                    ></CutiPerakuanTidakHadirKePejabat>
-                {:else if selectedCuti === 'Cuti Sakit Lanjutan'}
-                    <CutiSakitLanjutan {data}></CutiSakitLanjutan>
-                {:else if selectedCuti === 'Cuti Tanpa Gaji Mengikut Pasangan'}
-                    <CutiTanpaGajiMengikutPasangan {data}
-                    ></CutiTanpaGajiMengikutPasangan>
-                {:else if selectedCuti === 'Cuti Penyakit Barah Dan Kusta'}
-                    <CutiPenyakitBarahDanKusta {data}
-                    ></CutiPenyakitBarahDanKusta>
-                {:else if selectedCuti === 'Cuti Penyakit Tibi'}
-                    <CutiPenyakitTibi {data}></CutiPenyakitTibi>
+                {:else if selectedCuti === 'Cuti Kuarantin' || selectedCuti === 'Cuti Menjaga Anak Tanpa Gaji' || selectedCuti === 'Cuti Kursus Sambilan' || selectedCuti === 'Cuti Perakuan Tidak Hadir Ke Pejabat' || selectedCuti === 'Cuti Sakit Lanjutan' || selectedCuti === 'Cuti Tanpa Gaji Mengikut Pasangan' || selectedCuti === 'Cuti Penyakit Barah Dan Kusta' || selectedCuti === 'Cuti Penyakit Tibi'}
+                    <section>
+                        <div
+                            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+                        >
+                            <SectionHeader title={selectedCuti}></SectionHeader>
+                            <form
+                                id="formValidation"
+                                method="POST"
+                                use:enhance
+                                class="flex w-full flex-col gap-2"
+                            >
+                                {#if selectedCuti === 'Cuti Perakuan Tidak Hadir Ke Pejabat' || selectedCuti === 'Cuti Sakit Lanjutan' || selectedCuti === 'Cuti Tanpa Gaji Mengikut Pasangan'}
+                                    <LongTextField
+                                        hasError={!!$errors.reason}
+                                        name="reason"
+                                        label="Tujuan Permohonan"
+                                        bind:value={$form.reason}
+                                        placeholder="Sila taip jawapan anda dalam ruangan ini"
+                                    ></LongTextField>
+                                    {#if $errors.reason}
+                                        <span
+                                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                            >{$errors.reason}</span
+                                        >
+                                    {/if}
+                                {/if}
+                                <div
+                                    class="flex w-full flex-row items-center justify-start gap-2.5"
+                                >
+                                    <div class="flex w-full flex-col">
+                                        <DateSelector
+                                            hasError={$errors.startDate
+                                                ? true
+                                                : false}
+                                            name="startDate"
+                                            handleDateChange
+                                            bind:selectedDate={$proxyStartDate}
+                                            label="Tarikh Mula"
+                                        ></DateSelector>
+                                        {#if $errors.startDate}
+                                            <span
+                                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                                >{$errors.startDate}</span
+                                            >
+                                        {/if}
+                                    </div>
+                                </div>
+                                <div
+                                    class="flex w-full flex-row items-center justify-start gap-2.5"
+                                >
+                                    <div class="flex w-full flex-col">
+                                        <DateSelector
+                                            hasError={$errors.endDate
+                                                ? true
+                                                : false}
+                                            name="endDate"
+                                            handleDateChange
+                                            label="Tarikh Tamat"
+                                            bind:selectedDate={$proxyEndDate}
+                                        ></DateSelector>
+                                        {#if $errors.endDate}
+                                            <span
+                                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                                >{$errors.endDate}</span
+                                            >
+                                        {/if}
+                                    </div>
+                                </div>
+                                {#if selectedCuti === 'Cuti Kursus Sambilan'}
+                                    <DropdownSelect
+                                        hasError={!!$errors.academicQualification}
+                                        name="academicQualification"
+                                        dropdownType="label-left-full"
+                                        label={'Jenis Jurusan'}
+                                        options={data.majorMinorLookup}
+                                        bind:value={$form.academicQualification}
+                                    ></DropdownSelect>
+                                    {#if $errors.academicQualification}
+                                        <span
+                                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                            >{$errors.academicQualification}</span
+                                        >
+                                    {/if}
+                                    <DropdownSelect
+                                        hasError={!!$errors.institution}
+                                        name="institution"
+                                        dropdownType="label-left-full"
+                                        label={'Institusi'}
+                                        options={data.institutionLookup}
+                                        bind:value={$form.institution}
+                                    ></DropdownSelect>
+                                    {#if $errors.institution}
+                                        <span
+                                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                            >{$errors.institution}</span
+                                        >
+                                    {/if}
+                                    <TextField
+                                        hasError={!!$errors.professionalQualification}
+                                        name="professionalQualification"
+                                        label={'Kelayakan Perfesional'}
+                                        bind:value={$form.professionalQualification}
+                                    ></TextField>
+                                    {#if $errors.professionalQualification}
+                                        <span
+                                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                            >{$errors.professionalQualification}</span
+                                        >
+                                    {/if}
+                                    <TextField
+                                        hasError={!!$errors.courseTaken}
+                                        name="courseTaken"
+                                        label={'Khusus'}
+                                        bind:value={$form.courseTaken}
+                                    ></TextField>
+                                    {#if $errors.courseTaken}
+                                        <span
+                                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                            >{$errors.courseTaken}</span
+                                        >
+                                    {/if}
+                                {/if}
+                            </form>
+                            <!-- <TextField disabled label="Bilangan Hari" value="7"
+                            >
+                        </TextField> -->
+                        </div>
+                    </section>
                 {/if}
             </div></StepperContentBody
         >

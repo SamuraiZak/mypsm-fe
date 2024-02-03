@@ -12,13 +12,8 @@ import type { AddOtherLeavesRequest } from '$lib/dto/mypsm/leave/leave-applicati
 import type { AddReplacementLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/replacement-leave/add-replacement-leave-request.dto';
 import type { AddUnrecordLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/unrecord-leave/add-unrecord-leave-request.dto';
 import type { AddWithoutPayLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/without-pay-leave/add-without-pay-leave-request.dto';
-import type { LeaveEmployeeIDRequest } from '$lib/dto/mypsm/leave/leave-employee-id-request.dto';
 import type { LeaveIDRequest } from '$lib/dto/mypsm/leave/leave-id-request.dto';
 import http from '$lib/services/provider/service-provider.service';
-import {
-    LeaveHistoryListRequestConvert,
-    type LeaveHistoryListRequestViewModel,
-} from '$lib/view-models/mypsm/leave/report/history/leave-history-list-request.view-model';
 
 export class LeaveServices {
     // get list of leave
@@ -51,11 +46,27 @@ export class LeaveServices {
     }
 
     // get list of leave history
-    static async getLeaveHistoryList(param: LeaveHistoryListRequestViewModel) {
+    static async getLeaveHistoryList(param: CommonListRequestDTO) {
         // fetching data
         const response: CommonResponseDTO = await http
             .post('leaves/leaves/history', {
-                body: LeaveHistoryListRequestConvert.toJson(param),
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        if (response.status! === 'success') {
+            return response;
+        } else {
+            throw new Error('Unknown error');
+        }
+    }
+
+    // get list of leave enttitlements
+    static async getLeaveEntitlementList(param: CommonListRequestDTO) {
+        // fetching data
+        const response: CommonResponseDTO = await http
+            .post('leaves/leave-entitlements', {
+                body: JSON.stringify(param),
             })
             .json();
 
@@ -966,6 +977,35 @@ export class LeaveServices {
         // fetching data
         const response: CommonResponseDTO = await http
             .post('leaves/get-other-leave-process-approver-detail', {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        if (response.status! === 'success') {
+            return response;
+        } else {
+            throw new Error('Unknown error');
+        }
+    }
+
+    // HRMIS Leaves
+    static async getHrmisLeaves(param: CommonListRequestDTO) {
+        const response: CommonResponseDTO = await http
+            .post('leaves/leaves/hrmis-leave', {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        if (response.status! === 'success') {
+            return response;
+        } else {
+            throw new Error('Unknown error');
+        }
+    }
+
+    static async getHrmisOutOfOfficeLeaves(param: CommonListRequestDTO) {
+        const response: CommonResponseDTO = await http
+            .post('leaves/leaves/hrmis-out-of-office', {
                 body: JSON.stringify(param),
             })
             .json();

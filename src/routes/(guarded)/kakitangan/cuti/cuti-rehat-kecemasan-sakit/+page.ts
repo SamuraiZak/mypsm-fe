@@ -1,35 +1,30 @@
-import api from '$lib/services/core/ky.service';
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
+import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { HrmisOutOfOfficeLeavesResponse } from '$lib/dto/mypsm/leave/hrmis-leaves/hrmis-leave-out-of-office-response.dto';
+import type { HrmisLeavesResponse } from '$lib/dto/mypsm/leave/hrmis-leaves/hrmis-leave-response.dto';
+import { LeaveServices } from '$lib/services/implementations/mypsm/leave/leave.service';
 
 export const load = async () => {
-    // console.log('HEY');
-    // const hrmisLeavesResponse: Response = await api
-    //     .get('leaves/leaves/hrmis')
-    //     .json();
+    const param: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: '',
+        orderType: '',
+    };
 
-    try {
-        await api.get('leaves/leaves/hrmis').json();
-    } catch (error) {
-        if (error.name === 'HTTPError') {
-            const errorJson = await error.response.json();
-            console.log(errorJson);
-        }
-    }
+    const hrmisOutOfOfficeResponse: CommonResponseDTO =
+        await LeaveServices.getHrmisOutOfOfficeLeaves(param);
 
-    const hrmisOutOfOfficeResponse: Response = await api
-        .get('leaves/leaves/hrmis-out-of-office')
-        .json();
+    const hrmisLeavesResponse: CommonResponseDTO =
+        await LeaveServices.getHrmisLeaves(param);
 
-    // else hrmisLeaves = hrmisLeavesResponse.data;
-    // if (hrmisLeavesResponse.status !== 200) ;
-    // let hrmisLeaves = undefined;
-    // if (hrmisLeavesResponse.status > 200) {
-    //     hrmisLeaves = undefined;
-    // } else hrmisLeaves = hrmisLeavesResponse.data;
-
-    const hrmisOutOfOffice = hrmisOutOfOfficeResponse.data;
+    const hrmisLeaveList = hrmisLeavesResponse.data
+        ?.dataList as HrmisLeavesResponse[];
+    const hrmisOutOfOffice = hrmisOutOfOfficeResponse.data
+        ?.dataList as HrmisOutOfOfficeLeavesResponse[];
 
     return {
-        // hrmisLeaves,
+        hrmisLeaveList,
         hrmisOutOfOffice,
     };
 };

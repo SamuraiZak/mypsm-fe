@@ -129,12 +129,14 @@
 
     <SectionHeader title="Senarai Keluar Ofis"></SectionHeader>
     <div class="flex max-h-full w-full flex-col items-start justify-start">
-        <DynamicTable tableItems={data.hrmisOutOfOffice}></DynamicTable>
+        <DynamicTable tableItems={data.hrmisOutOfOffice ?? undefined}
+        ></DynamicTable>
     </div>
 
     <SectionHeader title="Senarai Cuti Rehat, Kecemasan & Sakit"
     ></SectionHeader>
     <div class="flex max-h-full w-full flex-col items-start justify-start">
-        <DynamicTable tableItems={data.hrmisLeaves ?? undefined}></DynamicTable>
+        <DynamicTable tableItems={data.hrmisLeaveList ?? undefined}
+        ></DynamicTable>
     </div>
 </section>
