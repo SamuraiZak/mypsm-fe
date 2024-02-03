@@ -4,7 +4,7 @@
 
     const navigateTo = async (url: string) => {
         goto(url);
-    };
+    }; 
 </script>
 
 <div class="flex h-fit w-full flex-row items-center justify-start px-2 py-5">
