@@ -12,7 +12,6 @@ import type { AddOtherLeavesRequest } from '$lib/dto/mypsm/leave/leave-applicati
 import type { AddReplacementLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/replacement-leave/add-replacement-leave-request.dto';
 import type { AddUnrecordLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/unrecord-leave/add-unrecord-leave-request.dto';
 import type { AddWithoutPayLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/without-pay-leave/add-without-pay-leave-request.dto';
-import type { LeaveEmployeeIDRequest } from '$lib/dto/mypsm/leave/leave-employee-id-request.dto';
 import type { LeaveIDRequest } from '$lib/dto/mypsm/leave/leave-id-request.dto';
 import http from '$lib/services/provider/service-provider.service';
 import {
@@ -966,6 +965,35 @@ export class LeaveServices {
         // fetching data
         const response: CommonResponseDTO = await http
             .post('leaves/get-other-leave-process-approver-detail', {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        if (response.status! === 'success') {
+            return response;
+        } else {
+            throw new Error('Unknown error');
+        }
+    }
+
+    // HRMIS Leaves
+    static async getHrmisLeaves(param: CommonListRequestDTO) {
+        const response: CommonResponseDTO = await http
+            .post('leaves/leaves/hrmis-leave', {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        if (response.status! === 'success') {
+            return response;
+        } else {
+            throw new Error('Unknown error');
+        }
+    }
+
+    static async getHrmisOutOfOfficeLeaves(param: CommonListRequestDTO) {
+        const response: CommonResponseDTO = await http
+            .post('leaves/leaves/hrmis-out-of-office', {
                 body: JSON.stringify(param),
             })
             .json();
