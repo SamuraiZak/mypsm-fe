@@ -4,44 +4,21 @@
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
-    import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import FormButton from '$lib/components/buttons/FormButton.svelte';
     import { goto } from '$app/navigation';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgPaperAirplane from '$lib/assets/svg/SvgPaperAirplane.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import DownloadAttachment from '$lib/components/input/DownloadAttachment.svelte';
-    import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import { penempatan } from '$lib/mocks/kakitangan/cuti/gcr/penempatan';
-    import { kumpulan } from '$lib/mocks/kakitangan/cuti/gcr/kumpulan';
-    import { gred } from '$lib/mocks/kakitangan/cuti/gcr/gred';
     import FileInputField from '$lib/components/input/FileInputField.svelte';
     import { onMount } from 'svelte';
     import { fileSelectionList } from '$lib/stores/globalState';
     import FileInputFieldChildren from '$lib/components/input/FileInputFieldChildren.svelte';
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { getSuccessToast } from '$lib/services/core/toast/toast-service';
+    import { Toaster } from 'svelte-french-toast';
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import { _submitLeaveReplacementForm, _staffDetailSchema } from './+page';
-
     export let data: PageData;
-    export let disabled: boolean = true;
-
-    let selectedGred = gred[0].value;
-    let selectedPenempatan = penempatan[0].value;
-    let selectedKumpulan = kumpulan[0].value;
-    let selectedDate = new Date();
-
-    function handleDateChange(event: any) {
-        selectedDate = new Date(event.target.value);
-        const formattedDate = selectedDate.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-        });
-        console.log(formattedDate);
-    }
 
     // Function to handle the file changes
     let selectedFiles: File[] = [];
@@ -61,7 +38,7 @@
         }
 
         fileSelectionList.set(selectedFiles);
-        $form.uploadedFiles.push(selectedFiles)
+        $form.uploadedFiles.push(selectedFiles);
     }
 
     // Function to handle the file deletion
@@ -76,9 +53,9 @@
     // ==================================
     const { form, errors, enhance } = superForm(data.form, {
         SPA: true,
-        validators: _staffDetailSchema,
+        validators: false,
         onSubmit() {
-            _submitLeaveReplacementForm($form);
+            _submitLeaveReplacementForm();
         },
         taintedMessage:
             'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
@@ -110,66 +87,43 @@
                 >
                     <p class="text-sm font-bold">Maklumat Kakitangan</p>
                     <TextField
-                        {disabled}
+                        disabled
                         id="nama"
                         label={'Nama'}
-                        value={'Irfan Bin Abu'}
+                        bind:value={data.gcrWithdrawalEmployeeDetail.name}
                     ></TextField>
                     <TextField
-                        {disabled}
+                        disabled
                         id="noKadPengenalan"
                         label={'No. K/P'}
-                        value={'111111-11-1111'}
+                        bind:value={data.gcrWithdrawalEmployeeDetail
+                            .identityCard}
                     ></TextField>
                     <TextField
-                        {disabled}
+                        disabled
                         id="noPekerja"
                         label={'No. Pekerja'}
-                        value={'A23412'}
+                        bind:value={data.gcrWithdrawalEmployeeDetail
+                            .employeeNumber}
                     ></TextField>
-
-                    <DropdownSelect
-                        hasError={$errors.gred ? true : false}
-                        id="gred"
-                        label="Gred"
-                        dropdownType="label-left-full"
-                        bind:value={$form.gred}
-                        options={gred}
-                    ></DropdownSelect>
-                    {#if $errors.gred}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$errors.gred[0]}</span
-                        >
-                    {/if}
-                    <DropdownSelect
-                        hasError={$errors.placement ? true : false}
-                        id="placement"
-                        label="Penempatan"
-                        dropdownType="label-left-full"
-                        bind:value={$form.placement}
-                        options={penempatan}
-                    ></DropdownSelect>
-                    {#if $errors.placement}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$errors.placement[0]}</span
-                        >
-                    {/if}
-                    <DropdownSelect
-                        hasError={$errors.group ? true : false}
-                        id="group"
-                        label="Kumpulan"
-                        dropdownType="label-left-full"
-                        bind:value={$form.group}
-                        options={kumpulan}
-                    ></DropdownSelect>
-                    {#if $errors.group}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$errors.group[0]}</span
-                        >
-                    {/if}
+                    <TextField
+                        disabled
+                        id="noPekerja"
+                        label={'Gred'}
+                        bind:value={data.gcrWithdrawalEmployeeDetail.grade}
+                    ></TextField>
+                    <TextField
+                        disabled
+                        id="noPekerja"
+                        label={'Penempatan'}
+                        bind:value={data.gcrWithdrawalEmployeeDetail.placement}
+                    ></TextField>
+                    <TextField
+                        disabled
+                        id="noPekerja"
+                        label={'Kumpulan'}
+                        bind:value={data.gcrWithdrawalEmployeeDetail.group}
+                    ></TextField>
                 </form>
             </div>
         </StepperContentBody>
@@ -181,22 +135,22 @@
             <div class="flex w-full flex-col gap-2">
                 <p class="text-sm font-bold">Butiran GCR Sedia Ada</p>
                 <TextField
-                    {disabled}
+                    disabled
                     id="jumlahGcrTerkumpul"
                     label={'Jumlah GCR Terkumpul'}
-                    value={'120'}
+                    bind:value={data.gcrDetail.accumulatedLeave}
                 ></TextField>
                 <TextField
-                    {disabled}
+                    disabled
                     id="jumlahLayakUntukPengeluaran"
                     label={'Jumlah Layak Untuk Pengeluaran'}
-                    value={'90'}
+                    bind:value={data.gcrDetail.leaveWithdrawal}
                 ></TextField>
                 <TextField
-                    {disabled}
+                    disabled
                     id="bakiSelepasPengeluaran"
                     label={'Baki Selepas Pengeluaran'}
-                    value={'30'}
+                    bind:value={data.gcrDetail.leaveBalance}
                 ></TextField>
             </div>
             <div class="flex w-full flex-col gap-2">
@@ -227,10 +181,7 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Dokumen Sokongan"
-            ><TextIconButton
-                primary
-                label="Hantar"
-                form="formValidation"
+            ><TextIconButton primary label="Hantar" form="formValidation"
                 ><SvgPaperAirplane /></TextIconButton
             ></StepperContentHeader
         >
