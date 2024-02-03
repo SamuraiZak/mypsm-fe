@@ -8,6 +8,7 @@
     import { showLoadingOverlay } from '$lib/stores/globalState';
     import { Toaster } from 'svelte-french-toast';
     import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
+    import { TextHelper } from '$lib/helper/core/text-helper/text-helper';
 
     export let data: PageData;
 
@@ -99,9 +100,12 @@
                     class=" block h-9 w-full rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
                 >
                     {#each currentRoleOptions as option}
-                        <option value={option.name}>
-                            {option.name}
-                        </option>
+                    {#if option.name !== "calon" && option.name !== "klinik panel"}
+                        
+                    <option value={option.name}>
+                        {TextHelper.toCamelCase(option.name ?? "undefined")}
+                    </option>
+                    {/if}
                     {/each}
                 </select>
 
