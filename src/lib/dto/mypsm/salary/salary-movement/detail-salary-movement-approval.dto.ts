@@ -6,7 +6,7 @@ export interface DetailSalaryMovementApprovalDTO {
 }
 
 // Converts JSON strings to/from your types
-export class Convert {
+export class DetailSalaryMovementApprovalDTOConvert {
     public static toDetailSalaryMovementApprovalDTO(json: string): DetailSalaryMovementApprovalDTO {
         return JSON.parse(json);
     }
