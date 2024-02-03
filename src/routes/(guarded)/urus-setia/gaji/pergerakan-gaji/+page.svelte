@@ -23,8 +23,9 @@
         _annualSalaryIncrement,
         _submitFormAnnualSalaryIncrement,
     } from './+page';
+    import type { SalaryMovementListDTO } from '$lib/dto/mypsm/salary/salary-movement/list-salary-movement.dto';
     export let data: PageData;
-
+    let tempData: SalaryMovementListDTO;
     let isGredChecked: boolean = false;
     let isSpecialFiAidTextChecked: boolean = false;
     let isSpecialIncrementChecked: boolean = false;
@@ -69,6 +70,10 @@
     } = superForm(data.annualSalaryIncrement, {
         SPA: true,
         id: 'FormAnnualSalaryIncrement',
+        validationMethod: 'oninput',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'prevent',
         validators: _annualSalaryIncrement,
         onSubmit() {
             _submitFormAnnualSalaryIncrement($annualSalaryIncrementForm);
@@ -381,21 +386,20 @@
         <SectionHeader title="Senarai Rekod Layak Mengikut Bulan"
         ></SectionHeader>
 
+        
         <DynamicTable
             hasCheckbox
             tableItems={data.salaryMovementList}
-            bind:passData={tempUrl}
             withActions
             actionOptions={['detail']}
             detailActions={() => {
                 const url =
                     './pergerakan-gaji/butiran-' +
-                    tempUrl.employeeNumber +
-                    '-' +
-                    tempUrl.identityDocumentNumber;
+                    tempData.meetingId+'-'+tempData.employeeNumber
 
                 goto(url);
             }}
+            bind:passData={tempData}
             columnKeys={[
                 'employeeNumber',
                 'employeeName',
