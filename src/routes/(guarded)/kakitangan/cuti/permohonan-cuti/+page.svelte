@@ -126,99 +126,55 @@
 <Stepper bind:activeIndex={stepperIndex}>
     <StepperContent>
         <StepperContentHeader title="Maklumat Kakitangan"
-            ><TextIconButton label="Simpan" primary form="staffDetailForm"
-            ><SvgCheck/></TextIconButton></StepperContentHeader
-        >
+        ></StepperContentHeader>
 
         <!-- ========== STEPPER 1 ========== -->
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2">
-                <p class="text-sm font-bold">Maklumat Kakitangan</p>
-                <form
-                    id="staffDetailForm"
-                    use:enhance
-                    method="POST"
-                    class="flex w-full flex-col gap-2"
-                >
+                <div class="flex w-full flex-col gap-2">
                     <TextField
-                        hasError={$errors.staffNo ? true : false}
-                        {disabled}
-                        name="staffNo"
+                        disabled
+                        name="employeeNumber"
                         label={'No. Pekerja'}
-                        bind:value={$form.staffNo}
+                        bind:value={data.employeeDetails.employeeNumber}
                     ></TextField>
-                    {#if $errors.staffNo}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$errors.staffNo[0]}</span
-                        >
-                    {/if}
                     <TextField
-                        hasError={$errors.staffName ? true : false}
-                        {disabled}
+                        disabled
                         name="staffName"
                         label={'Nama'}
-                        bind:value={$form.staffName}
+                        bind:value={data.employeeDetails.name}
                     ></TextField>
-                    {#if $errors.staffName}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$errors.staffName[0]}</span
-                        >
-                    {/if}
                     <TextField
-                        hasError={$errors.identificationNo ? true : false}
-                        {disabled}
+                        disabled
                         name="identificationNo"
                         label={'No. K/P'}
-                        bind:value={$form.identificationNo}
+                        bind:value={data.employeeDetails.identityCardNumber}
                     ></TextField>
-                    {#if $errors.identificationNo}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$errors.identificationNo[0]}</span
-                        >
-                    {/if}
                     <TextField
-                        hasError={$errors.grade ? true : false}
-                        {disabled}
+                        disabled
                         name="grade"
                         label={'Gred'}
-                        bind:value={$form.grade}
+                        bind:value={data.employeeDetails.grade}
                     ></TextField>
-                    {#if $errors.grade}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$errors.grade[0]}</span
-                        >
-                    {/if}
                     <TextField
-                        hasError={$errors.placement ? true : false}
-                        {disabled}
+                        disabled
+                        name="position"
+                        label={'Jawatan'}
+                        bind:value={data.employeeDetails.position}
+                    ></TextField>
+                    <TextField
+                        disabled
                         name="placement"
                         label={'Penempatan'}
-                        bind:value={$form.placement}
+                        bind:value={data.employeeDetails.placement}
                     ></TextField>
-                    {#if $errors.placement}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$errors.placement[0]}</span
-                        >
-                    {/if}
                     <TextField
-                        hasError={$errors.group ? true : false}
-                        {disabled}
-                        name="group"
+                        disabled
+                        name="serviceGroup"
                         label={'Kumpulan'}
-                        bind:value={$form.group}
+                        bind:value={data.employeeDetails.serviceGroup}
                     ></TextField>
-                    {#if $errors.group}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$errors.group[0]}</span
-                        >
-                    {/if}
-                </form>
+                </div>
             </div></StepperContentBody
         >
     </StepperContent>
@@ -235,7 +191,7 @@
                 <DropdownSelect
                     dropdownType="label-left-full"
                     label="Jenis Cuti"
-                    options={categories.filter((cat) => cat.name != 'Semua')}
+                    options={data.leaveList}
                     bind:value={selectedCuti}
                     onSelect={() => {}}
                 ></DropdownSelect>

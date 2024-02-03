@@ -1,7 +1,19 @@
+import { invalidateAll } from '$app/navigation';
+import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { LeaveEmployeeDetailsResponse } from '$lib/dto/mypsm/leave/leave-employee-detail-response.dto';
+import type { LeaveListResponse } from '$lib/dto/mypsm/leave/leave-list-response.dto';
+import type { DropdownOptionsInterface } from '$lib/interfaces/common/dropdown-option';
+import {
+    getErrorToast,
+    getLoadingToast,
+    getPromiseToast,
+    getServerErrorToast,
+    getSuccessToast,
+} from '$lib/services/core/toast/toast-service';
+import { LeaveServices } from '$lib/services/implementations/mypsm/leave/leave.service';
 import { error, fail } from '@sveltejs/kit';
-import { getErrorToast, getPromiseToast } from '$lib/services/core/toast/toast-service';
 import { superValidate } from 'sveltekit-superforms/client';
-import { z } from "zod";
+import { z } from 'zod';
 
 // ===================================================
 // General Form Schema
@@ -13,7 +25,7 @@ const optionalScheme = z.enum(['1', '2'], {
                 ? 'Pilihan perlu dipilih.'
                 : 'Pilihan perlu dipilih.',
     }),
-})
+});
 const dateScheme = z.coerce
     .date({
         errorMap: (issue, { defaultError }) => ({
@@ -26,70 +38,77 @@ const dateScheme = z.coerce
     .min(new Date(), {
         message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
     });
-const generalSelectSchema = z.string().min(1, { message: "Sila tetapkan pilihan anda. " });
-const generalTextSchema = z.string().min(1, { message: "Medan ini perlu diisi. " });
+const generalSelectSchema = z
+    .string()
+    .min(1, { message: 'Sila tetapkan pilihan anda. ' });
+const generalTextSchema = z
+    .string()
+    .min(1, { message: 'Medan ini perlu diisi. ' });
 
 export const _hasApplicationReasonSchema = z.object({
     applicationReason: generalSelectSchema,
     startDate: dateScheme,
     endDate: dateScheme,
     totalDay: generalSelectSchema,
-})
+});
 
 export const _generalMaternityLeaveSchema = z.object({
     applicationReason: generalSelectSchema,
     expectedBirthDate: generalSelectSchema,
     startDate: dateScheme,
     endDate: dateScheme,
-})
+});
 
 export const _generalLeaveSchema = z.object({
     startDate: dateScheme,
     endDate: dateScheme,
-})
+});
 
 // =============================================
 // load function
 // =============================================
 export const load = async () => {
+    const employeeResponse: CommonResponseDTO =
+        await LeaveServices.getLeaveEmployeeDetail();
 
-    const staffDetailForm = await superValidate(
-        _staffDetailSchema
-    )
+    const employeeDetails: LeaveEmployeeDetailsResponse = employeeResponse.data
+        ?.details as LeaveEmployeeDetailsResponse;
 
-    const replacementLeaveForm = await superValidate(
-        _replacementLeaveSchema4,
-    )
+    const leaveListResponse: CommonResponseDTO =
+        await LeaveServices.getLeaveList();
 
-    const leaveTypeForm = await superValidate(
-        _leaveTypeSchema
-    )
+    const leaveList: DropdownOptionsInterface[] = (
+        leaveListResponse.data?.details as LeaveListResponse
+    ).leaveTypes?.map((val) => ({ value: val, name: val }));
+
+    const staffDetailForm = await superValidate(_staffDetailSchema);
+
+    const replacementLeaveForm = await superValidate(_replacementLeaveSchema);
+
+    const leaveTypeForm = await superValidate(_leaveTypeSchema);
     const officialTaskOnHolidayForm = await superValidate(
-         _officialTaskOnHolidaySchema
-    )
+        _officialTaskOnHolidaySchema,
+    );
 
     const leaveWithoutRecordForm = await superValidate(
-         _leaveWithoutRecordSchema4
-    )
+        _leaveWithoutRecordSchema4,
+    );
 
-    const halfSalaryLeaveForm = await superValidate(
-         _halfSalaryLeaveSchema3
-    )
+    const halfSalaryLeaveForm = await superValidate(_halfSalaryLeaveSchema3);
 
     const earlyMaternityLeaveForm = await superValidate(
-         _earlyMaternityLeaveSchema4
-    )
+        _earlyMaternityLeaveSchema4,
+    );
 
     const officerMaternityLeaveForm = await superValidate(
-         _earlyMaternityLeaveOfficerSchema4
-    )
+        _earlyMaternityLeaveOfficerSchema4,
+    );
 
-    const generalLeaveForm = await superValidate(
-         _generalLeaveSchema
-    )
-
+    const generalLeaveForm = await superValidate(_generalLeaveSchema);
 
     return {
+        employeeDetails,
+        leaveList,
         staffDetailForm,
         replacementLeaveForm,
         leaveTypeForm,
@@ -100,158 +119,98 @@ export const load = async () => {
         officerMaternityLeaveForm,
         generalLeaveForm,
     };
-}
+};
 // ===================================================
 // Maklumat Kakitangan
 // ===================================================
 export const _staffDetailSchema = z.object({
-    staffNo:generalTextSchema,
-    staffName:generalTextSchema,
-    identificationNo:generalTextSchema,
-    grade:generalTextSchema,
-    placement:generalTextSchema,
-    group:generalTextSchema,
-})
+    staffNo: generalTextSchema,
+    staffName: generalTextSchema,
+    identificationNo: generalTextSchema,
+    grade: generalTextSchema,
+    placement: generalTextSchema,
+    group: generalTextSchema,
+});
 
 export const _submitStaffDetailForm = async (formData: Object) => {
     const staffDetailForm = await superValidate(formData, _staffDetailSchema);
     if (!staffDetailForm.valid) {
         getErrorToast();
-        console.log(staffDetailForm)
+        console.log(staffDetailForm);
         return fail(400, staffDetailForm);
     }
-    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
-        body: JSON.stringify(staffDetailForm),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
+            method: 'POST',
+            body: JSON.stringify(staffDetailForm),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
         },
-    })
+    )
         .then((response) => response.json())
         .then((json) => {
             console.log('Response Returned: ', json);
         });
 
-    getPromiseToast(responsePromise)
-    return { staffDetailForm }
-}
+    getPromiseToast(responsePromise);
+    return { staffDetailForm };
+};
 
 // ===================================================
 // Cuti Gantian (Maklumat Gantian)
 // ===================================================
+
+export const _replacementLeaveSchema = z
+    .object({
+        substituteName: generalTextSchema,
+        startDate: dateScheme,
+        endDate: dateScheme,
+        lastLeaveDate: dateScheme,
+        replacementType: generalSelectSchema,
+        dutyDescription: generalTextSchema,
+        dutyDate: dateScheme,
+        dutyLocation: generalTextSchema,
+        dutyStartHour: generalTextSchema,
+        dutyEndHour: generalTextSchema,
+        leaveCategory: z.string().optional(),
+    })
+    .superRefine(({ replacementType }, ctx) => {
+        if (replacementType === 'Tugas-tugas Rasmi Yang Jatuh Pada Hari Cuti') {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'Sila isi medan ini.',
+                path: ['leaveCategory'],
+            });
+        }
+    });
+
 export const _replacementLeaveSchema1 = z.object({
     substituteName: generalSelectSchema,
     startDate: dateScheme,
     endDate: dateScheme,
-    latestReplacementLeave: dateScheme,
-})
+    lastLeaveDate: dateScheme,
+});
 
-export const _replacementLeaveSchema2 = z.object({
-    halfDayStartDate: optionalScheme,
-}).merge(_replacementLeaveSchema1)
+export const _replacementLeaveSchema2 = z
+    .object({
+        halfDayStartDate: optionalScheme,
+    })
+    .merge(_replacementLeaveSchema1);
 
-export const _replacementLeaveSchema3 = z.object({
-    halfDayEndDate: optionalScheme,
-}).merge(_replacementLeaveSchema1)
+export const _replacementLeaveSchema3 = z
+    .object({
+        halfDayEndDate: optionalScheme,
+    })
+    .merge(_replacementLeaveSchema1);
 
-export const _replacementLeaveSchema4 = z.object({
-    halfDayStartDate: optionalScheme,
-    halfDayEndDate: optionalScheme,
-}).merge(_replacementLeaveSchema1)
-
-export const _submitReplacementLeaveForm = async (formData: Object, startDate: boolean, endDate: boolean) => {
-
-    let hasHalfDayStartDate: boolean = startDate;
-    let hasHalfDayEndDate: boolean = endDate;
-
-    if (hasHalfDayStartDate && !hasHalfDayEndDate) {
-        const replacementLeaveForm = await superValidate(formData, _replacementLeaveSchema2);
-        if (!replacementLeaveForm.valid) {
-            getErrorToast();
-            console.log(replacementLeaveForm)
-            return fail(400, replacementLeaveForm);
-        }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(replacementLeaveForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                console.log('Response Returned: ', json);
-            });
-
-        getPromiseToast(responsePromise)
-        return { replacementLeaveForm }
-    } else if (!hasHalfDayStartDate && hasHalfDayEndDate) {
-        const replacementLeaveForm = await superValidate(formData, _replacementLeaveSchema3);
-        if (!replacementLeaveForm.valid) {
-            getErrorToast();
-            console.log(replacementLeaveForm)
-            return fail(400, replacementLeaveForm);
-        }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(replacementLeaveForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                console.log('Response Returned: ', json);
-            });
-
-        getPromiseToast(responsePromise)
-        return { replacementLeaveForm }
-    } else if (hasHalfDayStartDate && hasHalfDayEndDate) {
-        const replacementLeaveForm = await superValidate(formData, _replacementLeaveSchema4);
-        if (!replacementLeaveForm.valid) {
-            getErrorToast();
-            console.log(replacementLeaveForm)
-            return fail(400, replacementLeaveForm);
-        }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(replacementLeaveForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                console.log('Response Returned: ', json);
-            });
-
-        getPromiseToast(responsePromise)
-        return { replacementLeaveForm }
-    } else {
-        const replacementLeaveForm = await superValidate(formData, _replacementLeaveSchema1);
-        if (!replacementLeaveForm.valid) {
-            getErrorToast();
-            console.log(replacementLeaveForm)
-            return fail(400, replacementLeaveForm);
-        }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(replacementLeaveForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                console.log('Response Returned: ', json);
-            });
-
-        getPromiseToast(responsePromise)
-        return { replacementLeaveForm }
-    }
-}
-
-
+export const _replacementLeaveSchema4 = z
+    .object({
+        halfDayStartDate: optionalScheme,
+        halfDayEndDate: optionalScheme,
+    })
+    .merge(_replacementLeaveSchema1);
 
 // ===================================================
 // Jenis Gantian =====================================
@@ -263,604 +222,933 @@ export const _leaveTypeSchema = z.object({
     startTime: generalSelectSchema,
     endTime: generalSelectSchema,
     totalTime: generalSelectSchema,
-})
+});
 
-export const _officialTaskOnHolidaySchema = z.object({
-    holidayCategory: generalSelectSchema,
-}).merge(_leaveTypeSchema)
+export const _officialTaskOnHolidaySchema = z
+    .object({
+        holidayCategory: generalSelectSchema,
+    })
+    .merge(_leaveTypeSchema);
+
+export const _submitReplacementLeaveForm = async (
+    formData: object,
+    // startDate: boolean,
+    // endDate: boolean,
+) => {
+    const form = await superValidate(formData, _replacementLeaveSchema);
+    console.log(form);
+
+    if (!form.valid) {
+        getErrorToast();
+        return fail(400, form);
+    }
+
+    // // start by rendering loading toast
+    // getLoadingToast();
+
+    // const response: RequestSuccessBody =
+    //     await EmployeeService.createCurrentCandidatePersonalDetails(
+    //         form.data as CandidatePersonalDetailsRequestBody,
+    //     ).finally(() => toast.dismiss());
+    // console.log(response);
+
+    // if (response.status > 201) {
+    //     // if error toast
+    //     getServerErrorToast();
+    //     return error(400, { message: response.message });
+    // }
+
+    // invalidateAll();
+
+    // // if success toast
+    // getSuccessToast();
+
+    // return { response };
+
+    // let hasHalfDayStartDate: boolean = startDate;
+    // let hasHalfDayEndDate: boolean = endDate;
+
+    // if (hasHalfDayStartDate && !hasHalfDayEndDate) {
+    //     const replacementLeaveForm = await superValidate(
+    //         formData,
+    //         _replacementLeaveSchema2,
+    //     );
+    //     if (!replacementLeaveForm.valid) {
+    //         getErrorToast();
+    //         console.log(replacementLeaveForm);
+    //         return fail(400, replacementLeaveForm);
+    //     }
+    //     const responsePromise = fetch(
+    //         'https://jsonplaceholder.typicode.com/posts',
+    //         {
+    //             method: 'POST',
+    //             body: JSON.stringify(replacementLeaveForm),
+    //             headers: {
+    //                 'Content-type': 'application/json; charset=UTF-8',
+    //             },
+    //         },
+    //     )
+    //         .then((response) => response.json())
+    //         .then((json) => {
+    //             console.log('Response Returned: ', json);
+    //         });
+
+    //     getPromiseToast(responsePromise);
+    //     return { replacementLeaveForm };
+    // } else if (!hasHalfDayStartDate && hasHalfDayEndDate) {
+    //     const replacementLeaveForm = await superValidate(
+    //         formData,
+    //         _replacementLeaveSchema3,
+    //     );
+    //     if (!replacementLeaveForm.valid) {
+    //         getErrorToast();
+    //         console.log(replacementLeaveForm);
+    //         return fail(400, replacementLeaveForm);
+    //     }
+    //     const responsePromise = fetch(
+    //         'https://jsonplaceholder.typicode.com/posts',
+    //         {
+    //             method: 'POST',
+    //             body: JSON.stringify(replacementLeaveForm),
+    //             headers: {
+    //                 'Content-type': 'application/json; charset=UTF-8',
+    //             },
+    //         },
+    //     )
+    //         .then((response) => response.json())
+    //         .then((json) => {
+    //             console.log('Response Returned: ', json);
+    //         });
+
+    //     getPromiseToast(responsePromise);
+    //     return { replacementLeaveForm };
+    // } else if (hasHalfDayStartDate && hasHalfDayEndDate) {
+    //     const replacementLeaveForm = await superValidate(
+    //         formData,
+    //         _replacementLeaveSchema4,
+    //     );
+    //     if (!replacementLeaveForm.valid) {
+    //         getErrorToast();
+    //         console.log(replacementLeaveForm);
+    //         return fail(400, replacementLeaveForm);
+    //     }
+    //     const responsePromise = fetch(
+    //         'https://jsonplaceholder.typicode.com/posts',
+    //         {
+    //             method: 'POST',
+    //             body: JSON.stringify(replacementLeaveForm),
+    //             headers: {
+    //                 'Content-type': 'application/json; charset=UTF-8',
+    //             },
+    //         },
+    //     )
+    //         .then((response) => response.json())
+    //         .then((json) => {
+    //             console.log('Response Returned: ', json);
+    //         });
+
+    //     getPromiseToast(responsePromise);
+    //     return { replacementLeaveForm };
+    // } else {
+    //     const replacementLeaveForm = await superValidate(
+    //         formData,
+    //         _replacementLeaveSchema1,
+    //     );
+    //     if (!replacementLeaveForm.valid) {
+    //         getErrorToast();
+    //         console.log(replacementLeaveForm);
+    //         return fail(400, replacementLeaveForm);
+    //     }
+    //     const responsePromise = fetch(
+    //         'https://jsonplaceholder.typicode.com/posts',
+    //         {
+    //             method: 'POST',
+    //             body: JSON.stringify(replacementLeaveForm),
+    //             headers: {
+    //                 'Content-type': 'application/json; charset=UTF-8',
+    //             },
+    //         },
+    //     )
+    //         .then((response) => response.json())
+    //         .then((json) => {
+    //             console.log('Response Returned: ', json);
+    //         });
+
+    //     getPromiseToast(responsePromise);
+    //     return { replacementLeaveForm };
+    // }
+};
 
 export const _submitLeaveTypeForm = async (formData: Object) => {
     const leaveTypeForm = await superValidate(formData, _leaveTypeSchema);
     if (!leaveTypeForm.valid) {
         getErrorToast();
-        console.log(leaveTypeForm)
+        console.log(leaveTypeForm);
 
         return fail(400, leaveTypeForm);
     }
-    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
-        body: JSON.stringify(leaveTypeForm),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
+            method: 'POST',
+            body: JSON.stringify(leaveTypeForm),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
         },
-    })
+    )
         .then((response) => response.json())
         .then((json) => {
             console.log('Response Returned: ', json);
         });
 
-    getPromiseToast(responsePromise)
-    return { leaveTypeForm }
-}
+    getPromiseToast(responsePromise);
+    return { leaveTypeForm };
+};
 
 export const _submitOfficialTaskOnHolidayForm = async (formData: Object) => {
-    const officialTaskOnHolidayForm = await superValidate(formData, _officialTaskOnHolidaySchema);
+    const officialTaskOnHolidayForm = await superValidate(
+        formData,
+        _officialTaskOnHolidaySchema,
+    );
     if (!officialTaskOnHolidayForm.valid) {
         getErrorToast();
-        console.log(officialTaskOnHolidayForm)
+        console.log(officialTaskOnHolidayForm);
 
         return fail(400, officialTaskOnHolidayForm);
     }
-    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
-        body: JSON.stringify(officialTaskOnHolidayForm),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
+    const responsePromise = fetch(
+        'https://jsonplaceholder.typicode.com/posts',
+        {
+            method: 'POST',
+            body: JSON.stringify(officialTaskOnHolidayForm),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
         },
-    })
+    )
         .then((response) => response.json())
         .then((json) => {
             console.log('Response Returned: ', json);
         });
 
-    getPromiseToast(responsePromise)
-    return { officialTaskOnHolidayForm }
-}
+    getPromiseToast(responsePromise);
+    return { officialTaskOnHolidayForm };
+};
 
 // ==================================================
 // Cuti Tanpa Rekod =================================
 // ==================================================
-export const _leaveWithoutRecordSchema1 = z.object({
-    ctrCategory: generalSelectSchema,
-}).merge(_hasApplicationReasonSchema)
+export const _leaveWithoutRecordSchema1 = z
+    .object({
+        ctrCategory: generalSelectSchema,
+    })
+    .merge(_hasApplicationReasonSchema);
 
-export const _leaveWithoutRecordSchema2 = z.object({
-    halfDayStartDate: optionalScheme,
-}).merge(_leaveWithoutRecordSchema1)
+export const _leaveWithoutRecordSchema2 = z
+    .object({
+        halfDayStartDate: optionalScheme,
+    })
+    .merge(_leaveWithoutRecordSchema1);
 
-export const _leaveWithoutRecordSchema3 = z.object({
-    halfDayEndDate: optionalScheme,
-}).merge(_leaveWithoutRecordSchema1)
+export const _leaveWithoutRecordSchema3 = z
+    .object({
+        halfDayEndDate: optionalScheme,
+    })
+    .merge(_leaveWithoutRecordSchema1);
 
-export const _leaveWithoutRecordSchema4 = z.object({
-    halfDayStartDate: optionalScheme,
-    halfDayEndDate: optionalScheme,
-}).merge(_leaveWithoutRecordSchema1)
+export const _leaveWithoutRecordSchema4 = z
+    .object({
+        halfDayStartDate: optionalScheme,
+        halfDayEndDate: optionalScheme,
+    })
+    .merge(_leaveWithoutRecordSchema1);
 
-export const _submitLeaveWithoutRecordForm = async (formData: Object, startDate: boolean, endDate: boolean) => {
-
+export const _submitLeaveWithoutRecordForm = async (
+    formData: Object,
+    startDate: boolean,
+    endDate: boolean,
+) => {
     let hasHalfDayStartDate: boolean = startDate;
     let hasHalfDayEndDate: boolean = endDate;
 
     if (hasHalfDayStartDate && !hasHalfDayEndDate) {
-        const leaveWithoutRecord = await superValidate(formData, _leaveWithoutRecordSchema2);
+        const leaveWithoutRecord = await superValidate(
+            formData,
+            _leaveWithoutRecordSchema2,
+        );
         if (!leaveWithoutRecord.valid) {
             getErrorToast();
-            console.log(leaveWithoutRecord)
+            console.log(leaveWithoutRecord);
             return fail(400, leaveWithoutRecord);
         }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(leaveWithoutRecord),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(leaveWithoutRecord),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
             },
-        })
+        )
             .then((response) => response.json())
             .then((json) => {
                 console.log('Response Returned: ', json);
             });
 
-        getPromiseToast(responsePromise)
-        return { leaveWithoutRecord }
+        getPromiseToast(responsePromise);
+        return { leaveWithoutRecord };
     } else if (!hasHalfDayStartDate && hasHalfDayEndDate) {
-        const leaveWithoutRecord = await superValidate(formData, _leaveWithoutRecordSchema3);
+        const leaveWithoutRecord = await superValidate(
+            formData,
+            _leaveWithoutRecordSchema3,
+        );
         if (!leaveWithoutRecord.valid) {
             getErrorToast();
-            console.log(leaveWithoutRecord)
+            console.log(leaveWithoutRecord);
             return fail(400, leaveWithoutRecord);
         }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(leaveWithoutRecord),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(leaveWithoutRecord),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
             },
-        })
+        )
             .then((response) => response.json())
             .then((json) => {
                 console.log('Response Returned: ', json);
             });
 
-        getPromiseToast(responsePromise)
-        return { leaveWithoutRecord }
+        getPromiseToast(responsePromise);
+        return { leaveWithoutRecord };
     } else if (hasHalfDayStartDate && hasHalfDayEndDate) {
-        const leaveWithoutRecord = await superValidate(formData, _leaveWithoutRecordSchema4);
+        const leaveWithoutRecord = await superValidate(
+            formData,
+            _leaveWithoutRecordSchema4,
+        );
         if (!leaveWithoutRecord.valid) {
             getErrorToast();
-            console.log(leaveWithoutRecord)
+            console.log(leaveWithoutRecord);
             return fail(400, leaveWithoutRecord);
         }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(leaveWithoutRecord),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(leaveWithoutRecord),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
             },
-        })
+        )
             .then((response) => response.json())
             .then((json) => {
                 console.log('Response Returned: ', json);
             });
 
-        getPromiseToast(responsePromise)
-        return { leaveWithoutRecord }
+        getPromiseToast(responsePromise);
+        return { leaveWithoutRecord };
     } else {
-        const leaveWithoutRecord = await superValidate(formData, _leaveWithoutRecordSchema1);
+        const leaveWithoutRecord = await superValidate(
+            formData,
+            _leaveWithoutRecordSchema1,
+        );
         if (!leaveWithoutRecord.valid) {
             getErrorToast();
-            console.log(leaveWithoutRecord)
+            console.log(leaveWithoutRecord);
             return fail(400, leaveWithoutRecord);
         }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(leaveWithoutRecord),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(leaveWithoutRecord),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
             },
-        })
+        )
             .then((response) => response.json())
             .then((json) => {
                 console.log('Response Returned: ', json);
             });
 
-        getPromiseToast(responsePromise)
-        return { leaveWithoutRecord }
+        getPromiseToast(responsePromise);
+        return { leaveWithoutRecord };
     }
-}
+};
 
 // ==================================================
 // Cuti Separuh Gaji & Cuti Tanpa Gaji ==============
 // ==================================================
-export const _halfSalaryLeaveSchema = z.object({
-    halfDayStartDate: optionalScheme,
-}).merge(_hasApplicationReasonSchema)
+export const _halfSalaryLeaveSchema = z
+    .object({
+        halfDayStartDate: optionalScheme,
+    })
+    .merge(_hasApplicationReasonSchema);
 
-export const _halfSalaryLeaveSchema2 = z.object({
-    halfDayEndDate: optionalScheme,
-}).merge(_hasApplicationReasonSchema)
+export const _halfSalaryLeaveSchema2 = z
+    .object({
+        halfDayEndDate: optionalScheme,
+    })
+    .merge(_hasApplicationReasonSchema);
 
-export const _halfSalaryLeaveSchema3 = z.object({
-    halfDayStartDate: optionalScheme,
-    halfDayEndDate: optionalScheme,
-}).merge(_hasApplicationReasonSchema)
+export const _halfSalaryLeaveSchema3 = z
+    .object({
+        halfDayStartDate: optionalScheme,
+        halfDayEndDate: optionalScheme,
+    })
+    .merge(_hasApplicationReasonSchema);
 
-export const _submitHalfSalaryLeaveForm = async (formData: Object, startDate: boolean, endDate: boolean) => {
-
+export const _submitHalfSalaryLeaveForm = async (
+    formData: Object,
+    startDate: boolean,
+    endDate: boolean,
+) => {
     let hasHalfDayStartDate: boolean = startDate;
     let hasHalfDayEndDate: boolean = endDate;
 
     if (hasHalfDayStartDate && !hasHalfDayEndDate) {
-        const halfSalaryLeaveForm = await superValidate(formData, _halfSalaryLeaveSchema);
+        const halfSalaryLeaveForm = await superValidate(
+            formData,
+            _halfSalaryLeaveSchema,
+        );
         if (!halfSalaryLeaveForm.valid) {
             getErrorToast();
-            console.log(halfSalaryLeaveForm)
+            console.log(halfSalaryLeaveForm);
             return fail(400, halfSalaryLeaveForm);
         }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(halfSalaryLeaveForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(halfSalaryLeaveForm),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
             },
-        })
+        )
             .then((response) => response.json())
             .then((json) => {
                 console.log('Response Returned: ', json);
             });
 
-        getPromiseToast(responsePromise)
-        return { halfSalaryLeaveForm }
+        getPromiseToast(responsePromise);
+        return { halfSalaryLeaveForm };
     } else if (!hasHalfDayStartDate && hasHalfDayEndDate) {
-        const halfSalaryLeaveForm = await superValidate(formData, _halfSalaryLeaveSchema2);
+        const halfSalaryLeaveForm = await superValidate(
+            formData,
+            _halfSalaryLeaveSchema2,
+        );
         if (!halfSalaryLeaveForm.valid) {
             getErrorToast();
-            console.log(halfSalaryLeaveForm)
+            console.log(halfSalaryLeaveForm);
             return fail(400, halfSalaryLeaveForm);
         }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(halfSalaryLeaveForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(halfSalaryLeaveForm),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
             },
-        })
+        )
             .then((response) => response.json())
             .then((json) => {
                 console.log('Response Returned: ', json);
             });
 
-        getPromiseToast(responsePromise)
-        return { halfSalaryLeaveForm }
+        getPromiseToast(responsePromise);
+        return { halfSalaryLeaveForm };
     } else if (hasHalfDayStartDate && hasHalfDayEndDate) {
-        const halfSalaryLeaveForm = await superValidate(formData, _halfSalaryLeaveSchema3);
+        const halfSalaryLeaveForm = await superValidate(
+            formData,
+            _halfSalaryLeaveSchema3,
+        );
         if (!halfSalaryLeaveForm.valid) {
             getErrorToast();
-            console.log(halfSalaryLeaveForm)
+            console.log(halfSalaryLeaveForm);
             return fail(400, halfSalaryLeaveForm);
         }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(halfSalaryLeaveForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(halfSalaryLeaveForm),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
             },
-        })
+        )
             .then((response) => response.json())
             .then((json) => {
                 console.log('Response Returned: ', json);
             });
 
-        getPromiseToast(responsePromise)
-        return { halfSalaryLeaveForm }
+        getPromiseToast(responsePromise);
+        return { halfSalaryLeaveForm };
     } else {
-        const halfSalaryLeaveForm = await superValidate(formData, _hasApplicationReasonSchema);
+        const halfSalaryLeaveForm = await superValidate(
+            formData,
+            _hasApplicationReasonSchema,
+        );
         if (!halfSalaryLeaveForm.valid) {
             getErrorToast();
-            console.log(halfSalaryLeaveForm)
+            console.log(halfSalaryLeaveForm);
             return fail(400, halfSalaryLeaveForm);
         }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(halfSalaryLeaveForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(halfSalaryLeaveForm),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
             },
-        })
+        )
             .then((response) => response.json())
             .then((json) => {
                 console.log('Response Returned: ', json);
             });
 
-        getPromiseToast(responsePromise)
-        return { halfSalaryLeaveForm }
+        getPromiseToast(responsePromise);
+        return { halfSalaryLeaveForm };
     }
-}
+};
 
 // ==================================================
 // Cuti Bersalin Awal ===============================
 // ==================================================
-export const _earlyMaternityLeaveSchema2 = z.object({
-    halfDayStartDate: optionalScheme,
-}).merge(_generalMaternityLeaveSchema)
+export const _earlyMaternityLeaveSchema2 = z
+    .object({
+        halfDayStartDate: optionalScheme,
+    })
+    .merge(_generalMaternityLeaveSchema);
 
-export const _earlyMaternityLeaveSchema3 = z.object({
-    halfDayEndDate: optionalScheme,
-}).merge(_generalMaternityLeaveSchema)
+export const _earlyMaternityLeaveSchema3 = z
+    .object({
+        halfDayEndDate: optionalScheme,
+    })
+    .merge(_generalMaternityLeaveSchema);
 
-export const _earlyMaternityLeaveSchema4 = z.object({
-    halfDayStartDate: optionalScheme,
-    halfDayEndDate: optionalScheme,
-}).merge(_generalMaternityLeaveSchema)
+export const _earlyMaternityLeaveSchema4 = z
+    .object({
+        halfDayStartDate: optionalScheme,
+        halfDayEndDate: optionalScheme,
+    })
+    .merge(_generalMaternityLeaveSchema);
 
-export const _submitEarlyMaternityLeaveForm = async (formData: Object, startDate: boolean, endDate: boolean) => {
-
+export const _submitEarlyMaternityLeaveForm = async (
+    formData: Object,
+    startDate: boolean,
+    endDate: boolean,
+) => {
     let hasHalfDayStartDate: boolean = startDate;
     let hasHalfDayEndDate: boolean = endDate;
 
     if (hasHalfDayStartDate && !hasHalfDayEndDate) {
-        const earlyBirthLeaveForm = await superValidate(formData, _earlyMaternityLeaveSchema2);
+        const earlyBirthLeaveForm = await superValidate(
+            formData,
+            _earlyMaternityLeaveSchema2,
+        );
         if (!earlyBirthLeaveForm.valid) {
             getErrorToast();
-            console.log(earlyBirthLeaveForm)
+            console.log(earlyBirthLeaveForm);
             return fail(400, earlyBirthLeaveForm);
         }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(earlyBirthLeaveForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(earlyBirthLeaveForm),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
             },
-        })
+        )
             .then((response) => response.json())
             .then((json) => {
                 console.log('Response Returned: ', json);
             });
 
-        getPromiseToast(responsePromise)
-        return { earlyBirthLeaveForm }
+        getPromiseToast(responsePromise);
+        return { earlyBirthLeaveForm };
     } else if (!hasHalfDayStartDate && hasHalfDayEndDate) {
-        const earlyBirthLeaveForm = await superValidate(formData, _earlyMaternityLeaveSchema3);
+        const earlyBirthLeaveForm = await superValidate(
+            formData,
+            _earlyMaternityLeaveSchema3,
+        );
         if (!earlyBirthLeaveForm.valid) {
             getErrorToast();
-            console.log(earlyBirthLeaveForm)
+            console.log(earlyBirthLeaveForm);
             return fail(400, earlyBirthLeaveForm);
         }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(earlyBirthLeaveForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(earlyBirthLeaveForm),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
             },
-        })
+        )
             .then((response) => response.json())
             .then((json) => {
                 console.log('Response Returned: ', json);
             });
 
-        getPromiseToast(responsePromise)
-        return { earlyBirthLeaveForm }
+        getPromiseToast(responsePromise);
+        return { earlyBirthLeaveForm };
     } else if (hasHalfDayStartDate && hasHalfDayEndDate) {
-        const earlyBirthLeaveForm = await superValidate(formData, _earlyMaternityLeaveSchema4);
+        const earlyBirthLeaveForm = await superValidate(
+            formData,
+            _earlyMaternityLeaveSchema4,
+        );
         if (!earlyBirthLeaveForm.valid) {
             getErrorToast();
-            console.log(earlyBirthLeaveForm)
+            console.log(earlyBirthLeaveForm);
             return fail(400, earlyBirthLeaveForm);
         }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(earlyBirthLeaveForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(earlyBirthLeaveForm),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
             },
-        })
+        )
             .then((response) => response.json())
             .then((json) => {
                 console.log('Response Returned: ', json);
             });
 
-        getPromiseToast(responsePromise)
-        return { earlyBirthLeaveForm }
+        getPromiseToast(responsePromise);
+        return { earlyBirthLeaveForm };
     } else {
-        const earlyBirthLeaveForm = await superValidate(formData, _generalMaternityLeaveSchema);
+        const earlyBirthLeaveForm = await superValidate(
+            formData,
+            _generalMaternityLeaveSchema,
+        );
         if (!earlyBirthLeaveForm.valid) {
             getErrorToast();
-            console.log(earlyBirthLeaveForm)
+            console.log(earlyBirthLeaveForm);
             return fail(400, earlyBirthLeaveForm);
         }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(earlyBirthLeaveForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(earlyBirthLeaveForm),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
             },
-        })
+        )
             .then((response) => response.json())
             .then((json) => {
                 console.log('Response Returned: ', json);
             });
 
-        getPromiseToast(responsePromise)
-        return { earlyBirthLeaveForm }
+        getPromiseToast(responsePromise);
+        return { earlyBirthLeaveForm };
     }
-}
+};
 
 // ==================================================
 // Cuti Bersalin Pegawai ============================
 // ==================================================
-export const _earlyMaternityLeaveOfficerSchema1 = z.object({
-    address: generalSelectSchema,
-}).merge(_generalMaternityLeaveSchema)
+export const _earlyMaternityLeaveOfficerSchema1 = z
+    .object({
+        address: generalSelectSchema,
+    })
+    .merge(_generalMaternityLeaveSchema);
 
-export const _earlyMaternityLeaveOfficerSchema2 = z.object({
-    halfDayStartDate: optionalScheme,
-}).merge(_earlyMaternityLeaveOfficerSchema1)
+export const _earlyMaternityLeaveOfficerSchema2 = z
+    .object({
+        halfDayStartDate: optionalScheme,
+    })
+    .merge(_earlyMaternityLeaveOfficerSchema1);
 
-export const _earlyMaternityLeaveOfficerSchema3 = z.object({
-    halfDayEndDate: optionalScheme,
-}).merge(_earlyMaternityLeaveOfficerSchema1)
+export const _earlyMaternityLeaveOfficerSchema3 = z
+    .object({
+        halfDayEndDate: optionalScheme,
+    })
+    .merge(_earlyMaternityLeaveOfficerSchema1);
 
-export const _earlyMaternityLeaveOfficerSchema4 = z.object({
-    halfDayStartDate: optionalScheme,
-    halfDayEndDate: optionalScheme,
-}).merge(_earlyMaternityLeaveOfficerSchema1)
+export const _earlyMaternityLeaveOfficerSchema4 = z
+    .object({
+        halfDayStartDate: optionalScheme,
+        halfDayEndDate: optionalScheme,
+    })
+    .merge(_earlyMaternityLeaveOfficerSchema1);
 
-export const _submitEarlyMaternityLeaveOfficerForm = async (formData: Object, startDate: boolean, endDate: boolean) => {
-
+export const _submitEarlyMaternityLeaveOfficerForm = async (
+    formData: Object,
+    startDate: boolean,
+    endDate: boolean,
+) => {
     let hasHalfDayStartDate: boolean = startDate;
     let hasHalfDayEndDate: boolean = endDate;
 
     if (hasHalfDayStartDate && !hasHalfDayEndDate) {
-        const officerMaternityLeaveForm = await superValidate(formData, _earlyMaternityLeaveOfficerSchema2);
+        const officerMaternityLeaveForm = await superValidate(
+            formData,
+            _earlyMaternityLeaveOfficerSchema2,
+        );
         if (!officerMaternityLeaveForm.valid) {
             getErrorToast();
-            console.log(officerMaternityLeaveForm)
+            console.log(officerMaternityLeaveForm);
             return fail(400, officerMaternityLeaveForm);
         }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(officerMaternityLeaveForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(officerMaternityLeaveForm),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
             },
-        })
+        )
             .then((response) => response.json())
             .then((json) => {
                 console.log('Response Returned: ', json);
             });
 
-        getPromiseToast(responsePromise)
-        return { officerMaternityLeaveForm }
+        getPromiseToast(responsePromise);
+        return { officerMaternityLeaveForm };
     } else if (!hasHalfDayStartDate && hasHalfDayEndDate) {
-        const officerMaternityLeaveForm = await superValidate(formData, _earlyMaternityLeaveOfficerSchema3);
+        const officerMaternityLeaveForm = await superValidate(
+            formData,
+            _earlyMaternityLeaveOfficerSchema3,
+        );
         if (!officerMaternityLeaveForm.valid) {
             getErrorToast();
-            console.log(officerMaternityLeaveForm)
+            console.log(officerMaternityLeaveForm);
             return fail(400, officerMaternityLeaveForm);
         }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(officerMaternityLeaveForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(officerMaternityLeaveForm),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
             },
-        })
+        )
             .then((response) => response.json())
             .then((json) => {
                 console.log('Response Returned: ', json);
             });
 
-        getPromiseToast(responsePromise)
-        return { officerMaternityLeaveForm }
+        getPromiseToast(responsePromise);
+        return { officerMaternityLeaveForm };
     } else if (hasHalfDayStartDate && hasHalfDayEndDate) {
-        const officerMaternityLeaveForm = await superValidate(formData, _earlyMaternityLeaveOfficerSchema4);
+        const officerMaternityLeaveForm = await superValidate(
+            formData,
+            _earlyMaternityLeaveOfficerSchema4,
+        );
         if (!officerMaternityLeaveForm.valid) {
             getErrorToast();
-            console.log(officerMaternityLeaveForm)
+            console.log(officerMaternityLeaveForm);
             return fail(400, officerMaternityLeaveForm);
         }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(officerMaternityLeaveForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(officerMaternityLeaveForm),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
             },
-        })
+        )
             .then((response) => response.json())
             .then((json) => {
                 console.log('Response Returned: ', json);
             });
 
-        getPromiseToast(responsePromise)
-        return { officerMaternityLeaveForm }
+        getPromiseToast(responsePromise);
+        return { officerMaternityLeaveForm };
     } else {
-        const officerMaternityLeaveForm = await superValidate(formData, _earlyMaternityLeaveOfficerSchema1);
+        const officerMaternityLeaveForm = await superValidate(
+            formData,
+            _earlyMaternityLeaveOfficerSchema1,
+        );
         if (!officerMaternityLeaveForm.valid) {
             getErrorToast();
-            console.log(officerMaternityLeaveForm)
+            console.log(officerMaternityLeaveForm);
             return fail(400, officerMaternityLeaveForm);
         }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(officerMaternityLeaveForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(officerMaternityLeaveForm),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
             },
-        })
+        )
             .then((response) => response.json())
             .then((json) => {
                 console.log('Response Returned: ', json);
             });
 
-        getPromiseToast(responsePromise)
-        return { officerMaternityLeaveForm }
+        getPromiseToast(responsePromise);
+        return { officerMaternityLeaveForm };
     }
-}
+};
 
 // ==================================================
 //  General Leave Form ==============================
 // ==================================================
-export const _generalLeaveSchema2 = z.object({
-    halfDayStartDate: optionalScheme,
-}).merge(_generalLeaveSchema)
+export const _generalLeaveSchema2 = z
+    .object({
+        halfDayStartDate: optionalScheme,
+    })
+    .merge(_generalLeaveSchema);
 
-export const _generalLeaveSchema3 = z.object({
-    halfDayEndDate: optionalScheme,
-}).merge(_generalLeaveSchema)
+export const _generalLeaveSchema3 = z
+    .object({
+        halfDayEndDate: optionalScheme,
+    })
+    .merge(_generalLeaveSchema);
 
-export const _generalLeaveSchema4 = z.object({
-    halfDayStartDate: optionalScheme,
-    halfDayEndDate: optionalScheme,
-}).merge(_generalLeaveSchema)
+export const _generalLeaveSchema4 = z
+    .object({
+        halfDayStartDate: optionalScheme,
+        halfDayEndDate: optionalScheme,
+    })
+    .merge(_generalLeaveSchema);
 
-export const _submitGeneralLeaveForm = async (formData: Object, startDate: boolean, endDate: boolean) => {
-
+export const _submitGeneralLeaveForm = async (
+    formData: Object,
+    startDate: boolean,
+    endDate: boolean,
+) => {
     let hasHalfDayStartDate: boolean = startDate;
     let hasHalfDayEndDate: boolean = endDate;
 
     if (hasHalfDayStartDate && !hasHalfDayEndDate) {
-        const generalLeaveForm = await superValidate(formData, _generalLeaveSchema2);
+        const generalLeaveForm = await superValidate(
+            formData,
+            _generalLeaveSchema2,
+        );
         if (!generalLeaveForm.valid) {
             getErrorToast();
-            console.log(generalLeaveForm)
+            console.log(generalLeaveForm);
             return fail(400, generalLeaveForm);
         }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(generalLeaveForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(generalLeaveForm),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
             },
-        })
+        )
             .then((response) => response.json())
             .then((json) => {
                 console.log('Response Returned: ', json);
             });
 
-        getPromiseToast(responsePromise)
-        return { generalLeaveForm }
+        getPromiseToast(responsePromise);
+        return { generalLeaveForm };
     } else if (!hasHalfDayStartDate && hasHalfDayEndDate) {
-        const generalLeaveForm = await superValidate(formData, _generalLeaveSchema3);
+        const generalLeaveForm = await superValidate(
+            formData,
+            _generalLeaveSchema3,
+        );
         if (!generalLeaveForm.valid) {
             getErrorToast();
-            console.log(generalLeaveForm)
+            console.log(generalLeaveForm);
             return fail(400, generalLeaveForm);
         }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(generalLeaveForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(generalLeaveForm),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
             },
-        })
+        )
             .then((response) => response.json())
             .then((json) => {
                 console.log('Response Returned: ', json);
             });
 
-        getPromiseToast(responsePromise)
-        return { generalLeaveForm }
+        getPromiseToast(responsePromise);
+        return { generalLeaveForm };
     } else if (hasHalfDayStartDate && hasHalfDayEndDate) {
-        const generalLeaveForm = await superValidate(formData, _generalLeaveSchema4);
+        const generalLeaveForm = await superValidate(
+            formData,
+            _generalLeaveSchema4,
+        );
         if (!generalLeaveForm.valid) {
             getErrorToast();
-            console.log(generalLeaveForm)
+            console.log(generalLeaveForm);
             return fail(400, generalLeaveForm);
         }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(generalLeaveForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(generalLeaveForm),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
             },
-        })
+        )
             .then((response) => response.json())
             .then((json) => {
                 console.log('Response Returned: ', json);
             });
 
-        getPromiseToast(responsePromise)
-        return { generalLeaveForm }
+        getPromiseToast(responsePromise);
+        return { generalLeaveForm };
     } else {
-        const generalLeaveForm = await superValidate(formData, _generalLeaveSchema);
+        const generalLeaveForm = await superValidate(
+            formData,
+            _generalLeaveSchema,
+        );
         if (!generalLeaveForm.valid) {
             getErrorToast();
-            console.log(generalLeaveForm)
+            console.log(generalLeaveForm);
             return fail(400, generalLeaveForm);
         }
-        const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(generalLeaveForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
+        const responsePromise = fetch(
+            'https://jsonplaceholder.typicode.com/posts',
+            {
+                method: 'POST',
+                body: JSON.stringify(generalLeaveForm),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
             },
-        })
+        )
             .then((response) => response.json())
             .then((json) => {
                 console.log('Response Returned: ', json);
             });
 
-        getPromiseToast(responsePromise)
-        return { generalLeaveForm }
+        getPromiseToast(responsePromise);
+        return { generalLeaveForm };
     }
-}
+};
