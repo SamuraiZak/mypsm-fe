@@ -5,8 +5,11 @@
     import logo from '$lib/assets/logo.png';
     import MyPSM from '$lib/assets/MyPSM.png';
     import { AuthService } from '$lib/services/implementations/core/auth/authentication.service';
-    import { goto } from '$app/navigation';
+    import { goto, pushState } from '$app/navigation';
     import type { RoleOption } from '$lib/view-models/core/role-option/role-option.view-model';
+    import SvgAddCircle from '$lib/assets/svg/SvgAddCircle.svelte';
+    import SvgSettings from '$lib/assets/svg/SvgSettings.svelte';
+    import SvgPower from '$lib/assets/svg/SvgPower.svelte';
 
     export let roleOptionList: RoleOption[] = [];
 
@@ -14,6 +17,10 @@
         await AuthService.logout().finally(() => {
             goto('/');
         });
+    };
+
+    const redirectSetting = async () => {
+        goto('/tetapan');
     };
 </script>
 
@@ -31,27 +38,24 @@
     </div>
     <div class="flex w-fit flex-row items-center md:justify-end">
         <!-- <HeaderProfile /> -->
-        <AccountTile roleOptionList={roleOptionList}></AccountTile>
-        <div class="flex w-[50px] flex-col items-center justify-center p-0">
-            
-                <button on:click={logOutUser}>
-                    <IconButton>
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.5"
-                            stroke="currentColor"
-                            class="h-5 w-5"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M5.636 5.636a9 9 0 1012.728 0M12 3v9"
-                            />
-                        </svg>
-                    </IconButton></button
-                >
+        <AccountTile {roleOptionList}></AccountTile>
+        <div
+            class="flex h-full w-[50px] flex-col items-center justify-center border-r p-0"
+        >
+            <button type="button" on:click={redirectSetting} class="p-2">
+                <span class="text text-ios-labelColors-label-light">
+                    <SvgSettings size="19"></SvgSettings>
+                </span>
+            </button>
+        </div>
+        <div
+            class="flex h-full w-[50px] flex-col items-center justify-center p-0"
+        >
+            <button on:click={logOutUser} class="p-2">
+                <span class="text text-ios-labelColors-label-light">
+                    <SvgPower size="19"></SvgPower>
+                </span>
+            </button>
         </div>
     </div>
 </header>
