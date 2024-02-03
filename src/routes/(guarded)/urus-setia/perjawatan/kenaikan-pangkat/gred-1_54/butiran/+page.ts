@@ -44,14 +44,14 @@ const generalTextSchema = z.string({invalid_type_error: "Medan ini tidak boleh d
 
 export const _updatePromotionMeetingResultSchema = z.object({
     meetingName: generalTextSchema,
-    meetingDate: earlyDateScheme.nullable(),
+    meetingDate: earlyDateScheme.nullable().default(null),
     secretaryRemark: generalTextSchema,
     meetingResult: z.boolean().default(true),
-    verifiedPromotionDate: earlyDateScheme.nullable(),
-    actingEndDate: earlyDateScheme.nullable(),
-    returnToOriginalGradeDate: earlyDateScheme.nullable(),
-    newPlacement: generalSelectSchema,
-}).partial()
+    verifiedPromotionDate: earlyDateScheme.nullable().default(null),
+    actingEndDate: earlyDateScheme.nullable().default(null),
+    returnToOriginalGradeDate: earlyDateScheme.nullable().default(null),
+    newPlacement: generalSelectSchema.nullable(),
+})
 
 export const _updatePlacementMeetingResultSchema = z.object({
     promotionDate: dateScheme,

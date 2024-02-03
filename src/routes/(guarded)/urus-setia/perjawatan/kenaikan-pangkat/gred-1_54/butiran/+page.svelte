@@ -163,7 +163,7 @@
         } else {
             $promotionMeetingResultForm.actingEndDate = null;
             $promotionMeetingResultForm.returnToOriginalGradeDate = null;
-            $promotionMeetingResultForm.newPlacement = undefined;
+            $promotionMeetingResultForm.newPlacement = '';
         }
     }
 </script>

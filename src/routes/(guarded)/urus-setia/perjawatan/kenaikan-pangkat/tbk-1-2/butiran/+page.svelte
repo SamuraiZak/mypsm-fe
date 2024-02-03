@@ -40,6 +40,7 @@
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import { approveOptions } from '$lib/constants/mypsm/radio-option-constants';
+    import { goto } from '$app/navigation';
 
     export let data: PageData;
     let editMeetingResult = false;
@@ -474,7 +475,7 @@
                             hasError={!!$promotionMeetingResultError.verifiedPromotionDate}
                             handleDateChange
                             label="Tarikh Pengesahan Kenaikan Pangkat (Jika LULUS)"
-                            bind:selectedDate={$proxyVerifiedPromotionDate}
+                            bind:selectedDate={$promotionMeetingResultForm.verifiedPromotionDate}
                         />
                         {#if $promotionMeetingResultError.verifiedPromotionDate && !disabled}
                             <span
@@ -783,7 +784,7 @@
                                     name="promotionDate"
                                     handleDateChange
                                     label="Tarikh Kenaikan Pangkat"
-                                    bind:selectedDate={$updatePlacementMeetingResultForm.promotionDate}
+                                    bind:selectedDate={$proxyPromotionDate}
                                     {disabled}
                                 />
                                 {#if $updatePlacementMeetingResultError.promotionDate}
@@ -858,9 +859,9 @@
                     }}
                 />
                 <FormButton
-                    type="next"
+                    type="save"
                     onClick={() => {
-                        stepperIndex = 5;
+                        goto('/urus-setia/perjawatan/kenaikan-pangkat')
                     }}
                 />
             {:else}
