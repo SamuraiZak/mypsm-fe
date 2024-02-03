@@ -3,8 +3,6 @@
 // ===============================================================
 
 export interface CommonListRequestDTO {
-    employeeId?: number;
-    leaveType?: string;
     pageNum?: number;
     pageSize?: number;
     orderBy?: string;
