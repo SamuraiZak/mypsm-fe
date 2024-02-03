@@ -10,7 +10,6 @@
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import { months } from '$lib/mocks/dateSelection/months';
     import { mockCurrentService } from '$lib/mocks/database/mockCurrentService';
-    import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
     import { mockLookupDepartments } from '$lib/mocks/database/mockLookupDepartments';
     import { mockLookupEmploymentStatus } from '$lib/mocks/database/mockLookupEmploymentStatus';
     import { Modal, Tooltip } from 'flowbite-svelte';
@@ -29,18 +28,27 @@
     import { mockSalaryAndAllowanceDeduction } from '$lib/mocks/gaji/gaji-elaun/mockSalaryAndAllowanceDeduction';
     import { deductionType } from '$lib/mocks/gaji/gaji-elaun/deductionType';
     import { mockSalaryAdjustmentWithKey } from '$lib/mocks/gaji/gaji-elaun/mockSalaryAdjustmentWithKey';
-    import toast, { Toaster } from 'svelte-french-toast';
-    import { z, ZodError } from 'zod';
-    import { _submitSalaryAllowance } from './+page';
+    import { Toaster } from 'svelte-french-toast';
+    import { dateProxy, superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import {
+        _pemangkuanFormSchema,
+        _submitPemangkuanForm,
+        _submitSalaryAllowance,
+        _umumFormSchema,
+        _submitUmumForm,
+        _modalFormSchema,
+        _submitModalForm,
+    } from './+page';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+
+    export let data: PageData;
 
     export let noPekerja = '00001';
-    export let data;
     let activeStepper = 3;
     let currEmployee = mockEmployees;
     let currEmployeeService = mockCurrentService;
-    let currEmployeeGrade = mockLookupGrades.filter(
-        (g) => g.id == currEmployeeService.gradeId,
-    );
+
     let disabled = false;
     let labelBlack = !disabled;
     let errorData: any;
@@ -61,7 +69,9 @@
     let total: any;
     let senaraiPemotongan: IntSalaryAndAllowanceDeduction[] =
         mockSalaryAndAllowanceDeduction;
-    let openModal: boolean = false;
+    let openPelarasGajiModal: boolean = false;
+    let openUmumModal: boolean = false;
+    let openPemangkuanModal: boolean = false;
 
     let tooltipContent: string = '';
     const itkaTooltip: string = 'Imbuhan Tetap Khidmat Awam (ITKA)';
@@ -109,281 +119,55 @@
     }
     // -----------------------------------------------
 
-    const dateScheme = z.coerce
-        .date({
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_date'
-                        ? 'Tarikh tidak boleh dibiar kosong.'
-                        : defaultError,
-            }),
-        })
-        .min(new Date(), {
-            message: 'Tarikh tidak boleh kurang dari tarikh semasa.',
-        });
-
-    const modalFormSchema = z.object({
-        startDate: dateScheme.refine((value) => value >= new Date(endDate), {
-            message: 'Tidak boleh kurang daripada tarikh semasa',
-        }),
-
-        endDate: dateScheme.refine((value) => value <= new Date(startDate), {
-            message: 'Tidak boleh kurang daripada tarikh mula',
-        }),
-
-        jenisPenambahan: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-
-        totalPayment: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(1, {
-                message: 'Medan ini hendaklah mempunyai karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-
-        paymentType: z.enum(['1', '2'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Pilihan perlu dipilih.'
-                        : defaultError,
-            }),
-        }),
+    // ========================= Form Validation
+    const {
+        form: pemangkuanForm,
+        errors: pemangkuanError,
+        enhance: pemangkuanEnhance,
+    } = superForm(data.pemangkuanForm, {
+        SPA: true,
+        id: 'pemangkuanForm',
+        validators: _pemangkuanFormSchema,
+        onSubmit() {
+            _submitPemangkuanForm($pemangkuanForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
 
-    const submitModalForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-        const paymentTypeSelector = document.getElementById(
-            'paymentType',
-        ) as HTMLSelectElement;
-
-        const exampleFormData = {
-            jenisPenambahan: String(formData.get('jenisPenambahan')),
-            totalPayment: String(formData.get('totalPayment')),
-            paymentType: String(paymentTypeSelector.value),
-            startDate: String(formData.get('startDate')),
-            endDate: String(formData.get('endDate')),
-        };
-
-        try {
-            const result = modalFormSchema.parse(exampleFormData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedExamFormData = { ...exampleFormData, id };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedExamFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
-
-    const umumFormSchema = z.object({
-        tempohBayaran: z.enum(['1', '2', '3', '4'], {
-            errorMap: (issue, { defaultError }) => ({
-                message:
-                    issue.code === 'invalid_enum_value'
-                        ? 'Pilihan perlu dipilih.'
-                        : defaultError,
-            }),
-        }),
+    const proxyEffectiveDate = dateProxy(pemangkuanForm, 'effectiveDate', {
+        format: 'date',
     });
 
-    const submitUmumForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-        const tempohBayaranSelector = document.getElementById(
-            'tempohBayaran',
-        ) as HTMLSelectElement;
-
-        const exampleFormData = {
-            tempohBayaran: String(tempohBayaranSelector.value),
-        };
-
-        try {
-            const result = umumFormSchema.parse(exampleFormData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedExamFormData = { ...exampleFormData, id };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedExamFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
-
-    const pemangkuanFormSchema = z.object({
-        salary: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-
-        itka: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-
-        housingSchemeType: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-
-        totalHousingScheme: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-
-        cola: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-
-        month: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-
-        total: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-
-        gred: z
-            .string({ required_error: 'Medan ini tidak boleh kosong.' })
-            .min(4, {
-                message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-            })
-            .max(124, {
-                message: 'Medan ini tidak boleh melebihi 124 karakter.',
-            })
-            .trim(),
-
-        effectiveDate: dateScheme,
+    const {
+        form: umumForm,
+        errors: umumError,
+        enhance: umumEnhance,
+    } = superForm(data.umumForm, {
+        SPA: true,
+        id: 'umumForm',
+        validators: _umumFormSchema,
+        onSubmit() {
+            _submitUmumForm($umumForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
 
-    const submitPemangkuanForm = async (event: Event) => {
-        const formData = new FormData(event.target as HTMLFormElement);
-
-        const exampleFormData = {
-            effectiveDate: String(formData.get('effectiveDate')),
-            gred: String(formData.get('gred')),
-            salary: String(formData.get('salary')),
-            itka: String(formData.get('itka')),
-            housingSchemeType: String(formData.get('housingSchemeType')),
-            totalHousingScheme: String(formData.get('totalHousingScheme')),
-            cola: String(formData.get('cola')),
-            month: String(formData.get('month')),
-            total: String(formData.get('total')),
-        };
-
-        try {
-            const result = pemangkuanFormSchema.parse(exampleFormData);
-            if (result) {
-                errorData = [];
-                toast.success('Berjaya disimpan!', {
-                    style: 'background: #333; color: #fff;',
-                });
-
-                const id = crypto.randomUUID().toString();
-                const validatedExamFormData = { ...exampleFormData, id };
-                console.log(
-                    'REQUEST BODY: ',
-                    JSON.stringify(validatedExamFormData),
-                );
-            }
-        } catch (err: unknown) {
-            if (err instanceof ZodError) {
-                const { fieldErrors: errors } = err.flatten();
-                errorData = errors;
-                console.log('ERROR!', err.flatten());
-                toast.error(
-                    'Sila pastikan maklumat adalah lengkap dengan tepat.',
-                    {
-                        style: 'background: #333; color: #fff;',
-                    },
-                );
-            }
-        }
-    };
+    const {
+        form: modalForm,
+        errors: modalError,
+        enhance: modalEnhance,
+    } = superForm(data.modalForm, {
+        SPA: true,
+        id: 'modalForm',
+        validators: _modalFormSchema,
+        onSubmit() {
+            _submitModalForm($modalForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -453,7 +237,7 @@
                     {labelBlack}
                     disabled
                     label="Status Semasa Kakitangan"
-                    value={mockLookupEmploymentStatus.name}
+                    value={mockLookupEmploymentStatus[1].name}
                 ></TextField>
             </div>
         </StepperContentBody>
@@ -492,7 +276,12 @@
                     label="Gred"
                     value={data.props.salaryDetailData.grade}
                 ></TextField>
-                <TextField {labelBlack} disabled label="Gaji Pokok" value={data.props.salaryDetailData.currentPlacement}></TextField>
+                <TextField
+                    {labelBlack}
+                    disabled
+                    label="Gaji Pokok"
+                    value={data.props.salaryDetailData.currentPlacement}
+                ></TextField>
                 <TextField
                     {labelBlack}
                     hasTooltip
@@ -676,33 +465,19 @@
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Perubahan Gaji">
-            <!-- <FormButton
-                type="back"
-                onClick={() => {
-                    activeStepper = 0;
-                }}
-            /> -->
-
-            <!-- <FormButton
-                type="done"
-                onClick={() => {
-                    window.history.back();
-                }}
-            /> -->
-            <TextIconButton
-                primary
-                label="Simpan"
-                onClick={() => {
-                    _submitSalaryAllowance();
-                }}
-            />
-        </StepperContentHeader>
+        <StepperContentHeader title="Perubahan Gaji" />
         <StepperContentBody>
             <CustomTab>
                 <!-- Umum -->
                 <CustomTabContent title="Umum">
                     <div class="w-full">
+                        <SectionHeader title=""
+                            ><TextIconButton
+                                primary
+                                label="Simpan"
+                                form="umumForm"><SvgCheck /></TextIconButton
+                            ></SectionHeader
+                        >
                         <FilterCard>
                             <FilterDateSelector
                                 handleDateChange
@@ -718,13 +493,7 @@
                             ></FilterDateSelector>
                         </FilterCard>
                     </div>
-                    <SectionHeader title="Rekod Cuti Kakitangan">
-                        <!-- <TextIconButton
-                            primary
-                            label="Simpan"
-                            form="umumValidation"
-                        /> -->
-                    </SectionHeader>
+                    <SectionHeader title="Rekod Cuti Kakitangan" />
                     <div class="w-full">
                         <DynamicTable
                             tableItems={mockEmployeeLeaveRecord}
@@ -742,21 +511,30 @@
                     </div>
                     <div class="flex w-full flex-col gap-2">
                         <form
-                            id="umumValidation"
-                            on:submit|preventDefault={submitUmumForm}
+                            id="umumForm"
+                            use:umumEnhance
+                            method="POST"
                             class="flex w-full flex-col gap-2"
                         >
                             <TextField
+                                hasError={!!$umumError.totalSalaryDeduction}
                                 {labelBlack}
                                 disabled={false}
+                                bind:value={$umumForm.totalSalaryDeduction}
                                 label="Jumlah Potongan Cuti"
                             ></TextField>
+                            {#if $umumError.totalSalaryDeduction}
+                                <span
+                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                    >{$umumError.totalSalaryDeduction}</span
+                                >
+                            {/if}
                             <DropdownSelect
-                                hasError={errorData?.tempohBayaran}
+                                hasError={!!$umumError.tempohBayaran}
                                 dropdownType="label-left-full"
                                 id="tempohBayaran"
                                 label="Tempoh Bayaran (Bulan)"
-                                bind:value={tempohBayaran}
+                                bind:value={$umumForm.tempohBayaran}
                                 options={[
                                     { value: '1', name: '1' },
                                     { value: '2', name: '2' },
@@ -764,10 +542,10 @@
                                     { value: '4', name: '4' },
                                 ]}
                             ></DropdownSelect>
-                            {#if errorData?.tempohBayaran}
+                            {#if $umumError.tempohBayaran}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.tempohBayaran}</span
+                                    >{$umumError.tempohBayaran}</span
                                 >
                             {/if}
                         </form>
@@ -776,59 +554,59 @@
                         ><TextIconButton
                             primary
                             label="Tambah"
-                            onClick={() => (openModal = false)}
+                            onClick={() => (openUmumModal = true)}
                             ><SvgPlus /></TextIconButton
                         ></SectionHeader
                     >
-                    {#each senaraiPemotongan as item, index}
+                    <!-- {#each senaraiPemotongan as item, index}
                         <DynamicAccordionForm
                             hasDelete
                             header={item.deductionTitle}
                             open
-                            ><div
-                                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 text-black"
-                            >
-                                <div
-                                    class="flex w-full flex-row justify-evenly gap-2.5"
-                                >
-                                    <DateSelector
-                                        {labelBlack}
-                                        handleDateChange
-                                        disabled={false}
-                                        labelType="label-200"
-                                        label="Tarikh Mula"
-                                        selectedDate={item.deductionStartDate}
-                                    ></DateSelector>
-                                    <DateSelector
-                                        {labelBlack}
-                                        handleDateChange
-                                        disabled={false}
-                                        labelType="label-200"
-                                        label="Tarikh Tamat"
-                                        selectedDate={item.deductionEndDate}
-                                    ></DateSelector>
-                                </div>
-                                <p class="h-[35px] text-sm text-txt-tertiary">
-                                    Jumlah ansuran yang perlu dibayar setiap
-                                    bulan
-                                </p>
-                                <DropdownSelect
-                                    disabled={false}
-                                    dropdownType="label-left-200"
-                                    options={deductionType}
-                                    label="Jenis Bayaran"
-                                    labelBlack={false}
-                                    bind:value={item.deductionType}
-                                ></DropdownSelect>
-                                <TextField
-                                    labelType="label-200"
-                                    {labelBlack}
-                                    disabled={false}
-                                    label="Jumlah Bayaran"
-                                ></TextField>
-                            </div>
-                        </DynamicAccordionForm>
-                    {/each}
+                            > -->
+                    <div
+                        class="flex w-full flex-col gap-2 gap-2.5 border border-system-primary p-2.5 rounded"
+                    >
+                        <div
+                            class="flex w-full flex-row justify-evenly gap-2.5"
+                        >
+                            <DateSelector
+                                {labelBlack}
+                                handleDateChange
+                                disabled={false}
+                                labelType="label-200"
+                                label="Tarikh Mula"
+                                selectedDate={$umumForm.tempohBayaran}
+                            ></DateSelector>
+                            <DateSelector
+                                {labelBlack}
+                                handleDateChange
+                                disabled={false}
+                                labelType="label-200"
+                                label="Tarikh Tamat"
+                                selectedDate={$umumForm.tempohBayaran}
+                            ></DateSelector>
+                        </div>
+                        <p class="h-[35px] text-sm text-txt-tertiary">
+                            Jumlah ansuran yang perlu dibayar setiap bulan
+                        </p>
+                        <DropdownSelect
+                            disabled={false}
+                            dropdownType="label-left-200"
+                            options={deductionType}
+                            label="Jenis Bayaran"
+                            labelBlack
+                            bind:value={$umumForm.tempohBayaran}
+                        ></DropdownSelect>
+                        <TextField
+                            labelType="label-200"
+                            {labelBlack}
+                            disabled={false}
+                            label="Jumlah Bayaran"
+                        ></TextField>
+                    </div>
+                    <!-- </DynamicAccordionForm>
+                    {/each} -->
                 </CustomTabContent>
 
                 <!-- Pemangkuan -->
@@ -837,111 +615,114 @@
                         ><TextIconButton
                             primary
                             label="Simpan"
-                            form="pemangkuanValidation"
-                        /></SectionHeader
-                    >
+                            form="pemangkuanForm"
+                            ><SvgCheck />
+                        </TextIconButton>
+                    </SectionHeader>
 
                     <div
                         class="flex w-full flex-col gap-2 gap-2.5 border-b border-bdr-primary pb-5"
                     >
                         <form
-                            id="pemangkuanValidation"
-                            on:submit|preventDefault={submitPemangkuanForm}
+                            id="pemangkuanForm"
+                            method="POST"
+                            use:pemangkuanEnhance
                             class="flex w-full flex-col gap-2"
                         >
                             <DateSelector
-                                hasError={errorData?.effectiveDate}
+                                hasError={!!$pemangkuanError.effectiveDate}
                                 name="effectiveDate"
                                 handleDateChange
                                 label="Tarikh Berkuatkuasa"
-                                bind:selectedDate={effectiveDate}
+                                bind:selectedDate={$proxyEffectiveDate}
                             ></DateSelector>
-                            {#if errorData?.effectiveDate}
+                            {#if $pemangkuanError.effectiveDate}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.effectiveDate}</span
+                                    >{$pemangkuanError.effectiveDate}</span
                                 >
                             {/if}
-                            <TextField
-                                hasError={errorData?.gred}
+                            <DropdownSelect
+                                hasError={!!$pemangkuanError.gred}
+                                dropdownType={'label-left-full'}
                                 name="gred"
                                 label="Gred"
-                                type="text"
-                                bind:value={gred}
+                                options={data.gradeLookup}
+                                bind:value={$pemangkuanForm.gred}
                             />
-                            {#if errorData?.gred}
+                            {#if $pemangkuanError.gred}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.gred}</span
+                                    >{$pemangkuanError.gred}</span
                                 >
                             {/if}
                             <TextField
-                                hasError={errorData?.salary}
+                                hasError={!!$pemangkuanError.salary}
                                 name="salary"
-                                label="Gaji Pokok"
+                                label="Gaji Pokok (RM)"
                                 type="text"
-                                bind:value={salary}
+                                bind:value={$pemangkuanForm.salary}
                             />
-                            {#if errorData?.salary}
+                            {#if $pemangkuanError.salary}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.salary}</span
+                                    >{$pemangkuanError.salary}</span
                                 >
                             {/if}
                             <TextField
                                 hasTooltip
                                 toolTipID="type-itka"
-                                hasError={errorData?.itka}
+                                hasError={!!$pemangkuanError.itka}
                                 name="itka"
                                 label="ITKA"
                                 type="text"
-                                bind:value={itka}
+                                bind:value={$pemangkuanForm.itka}
                             />
-                            {#if errorData?.itka}
+                            {#if $pemangkuanError.itka}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.itka}</span
+                                    >{$pemangkuanError.itka}</span
                                 >
                             {/if}
                             <TextField
-                                hasError={errorData?.housingSchemeType}
+                                hasError={!!$pemangkuanError.housingSchemeType}
                                 name="housingSchemeType"
                                 label="Jenis Skim Perumahan"
                                 type="text"
-                                bind:value={housingSchemeType}
+                                bind:value={$pemangkuanForm.housingSchemeType}
                             />
-                            {#if errorData?.housingSchemeType}
+                            {#if $pemangkuanError.housingSchemeType}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.housingSchemeType}</span
+                                    >{$pemangkuanError.housingSchemeType}</span
                                 >
                             {/if}
                             <TextField
-                                hasError={errorData?.totalHousingScheme}
+                                hasError={!!$pemangkuanError.totalHousingScheme}
                                 name="totalHousingScheme"
                                 label="Jumlah Skim Perumahan"
                                 type="text"
-                                bind:value={totalHousingScheme}
+                                bind:value={$pemangkuanForm.totalHousingScheme}
                             />
-                            {#if errorData?.totalHousingScheme}
+                            {#if $pemangkuanError.totalHousingScheme}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.totalHousingScheme}</span
+                                    >{$pemangkuanError.totalHousingScheme}</span
                                 >
                             {/if}
                             <TextField
                                 hasTooltip
                                 toolTipID="type-cola"
-                                hasError={errorData?.cola}
+                                hasError={!!$pemangkuanError.cola}
                                 name="cola"
                                 label="COLA"
                                 type="text"
-                                bind:value={cola}
+                                bind:value={$pemangkuanForm.cola}
                             />
-                            {#if errorData?.cola}
+                            {#if $pemangkuanError.cola}
                                 <span
                                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.cola}</span
+                                    >{$pemangkuanError.cola}</span
                                 >
                             {/if}
                             <div
@@ -952,34 +733,38 @@
                                     class="w-[220px] min-w-[220px] text-sm font-medium"
                                     >Tarikh Pergerakan Gaji dan Jumlah (RM)</label
                                 >
-                                <TextField
-                                    labelType="label-fit"
-                                    hasError={errorData?.month}
-                                    name="month"
-                                    label="Bulan"
-                                    type="text"
-                                    bind:value={month}
-                                />
-                                {#if errorData?.month}
-                                    <span
-                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.month}</span
-                                    >
-                                {/if}
-                                <TextField
-                                    labelType="label-fit"
-                                    hasError={errorData?.total}
-                                    name="total"
-                                    label="Jumlah"
-                                    type="text"
-                                    bind:value={total}
-                                />
-                                {#if errorData?.total}
-                                    <span
-                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.total}</span
-                                    >
-                                {/if}
+                                <div class="w-full flex-row">
+                                    <TextField
+                                        labelType="label-fit"
+                                        hasError={!!$pemangkuanError.month}
+                                        name="month"
+                                        label="Bulan"
+                                        type="text"
+                                        bind:value={$pemangkuanForm.month}
+                                    />
+                                    {#if $pemangkuanError.month}
+                                        <span
+                                            class="ml-[40px] font-sans text-sm italic text-system-danger"
+                                            >{$pemangkuanError.month}</span
+                                        >
+                                    {/if}
+                                </div>
+                                <div class="w-full flex-row">
+                                    <TextField
+                                        labelType="label-fit"
+                                        hasError={!!$pemangkuanError.total}
+                                        name="total"
+                                        label="Jumlah"
+                                        type="text"
+                                        bind:value={$pemangkuanForm.total}
+                                    />
+                                    {#if $pemangkuanError.total}
+                                        <span
+                                            class="ml-[48px] font-sans text-sm italic text-system-danger"
+                                            >{$pemangkuanError.total}</span
+                                        >
+                                    {/if}
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -988,11 +773,11 @@
                         ><TextIconButton
                             primary
                             label="Tambah"
-                            onClick={() => (openModal = false)}
+                            onClick={() => (openPemangkuanModal = true)}
                             ><SvgPlus /></TextIconButton
                         ></SectionHeader
                     >
-                    {#each Object.entries(pelarasanGajiTuntutan) as [groupId, object]}
+                    <!-- {#each Object.entries(pelarasanGajiTuntutan) as [groupId, object]}
                         <DynamicAccordionForm
                             hasDelete
                             id={groupId}
@@ -1001,61 +786,62 @@
                             }}
                             header="Tuntutan #{groupId}"
                             open
-                            ><div
-                                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 text-black"
-                            >
-                                <TextField
-                                    labelType="label-200"
-                                    {labelBlack}
-                                    disabled={false}
-                                    label="Nama Tuntutan"
-                                    value="Bil Tuntutan Kakitangan"
-                                ></TextField>
-                                <div
-                                    class="flex w-full flex-row justify-evenly gap-2.5"
-                                >
-                                    <DateSelector
-                                        {labelBlack}
-                                        handleDateChange
-                                        disabled={false}
-                                        labelType="label-200"
-                                        label="Tarikh Mula"
-                                        selectedDate={object.startDate}
-                                    ></DateSelector>
-                                    <DateSelector
-                                        {labelBlack}
-                                        handleDateChange
-                                        disabled={false}
-                                        labelType="label-200"
-                                        label="Tarikh Tamat"
-                                        selectedDate={object.endDate}
-                                    ></DateSelector>
-                                </div>
-                                <div
-                                    class="flex w-full flex-row justify-evenly gap-2.5"
-                                >
-                                    <TextField
-                                        labelType="label-200"
-                                        {labelBlack}
-                                        disabled={false}
-                                        label="Sepatutnya Bayar"
-                                    ></TextField>
-                                    <TextField
-                                        labelType="label-200"
-                                        {labelBlack}
-                                        disabled={false}
-                                        label="Telah Bayar"
-                                    ></TextField>
-                                </div>
-                                <TextField
-                                    labelType="label-200"
-                                    {labelBlack}
-                                    disabled={false}
-                                    label="Jumlah Potongan / Tunggakan"
-                                ></TextField>
-                            </div>
-                        </DynamicAccordionForm>
-                    {/each}
+                            > -->
+                    <div
+                        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 rounded border border-system-primary p-2.5 text-black"
+                    >
+                        <TextField
+                            labelType="label-200"
+                            {labelBlack}
+                            disabled={false}
+                            label="Nama Tuntutan"
+                            value="Bil Tuntutan Kakitangan"
+                        ></TextField>
+                        <div
+                            class="flex w-full flex-row justify-evenly gap-2.5"
+                        >
+                            <DateSelector
+                                {labelBlack}
+                                handleDateChange
+                                disabled={false}
+                                labelType="label-200"
+                                label="Tarikh Mula"
+                                selectedDate={$umumForm.tempohBayaran}
+                            ></DateSelector>
+                            <DateSelector
+                                {labelBlack}
+                                handleDateChange
+                                disabled={false}
+                                labelType="label-200"
+                                label="Tarikh Tamat"
+                                selectedDate={$umumForm.tempohBayaran}
+                            ></DateSelector>
+                        </div>
+                        <div
+                            class="flex w-full flex-row justify-evenly gap-2.5"
+                        >
+                            <TextField
+                                labelType="label-200"
+                                {labelBlack}
+                                disabled={false}
+                                label="Sepatutnya Bayar (RM)"
+                            ></TextField>
+                            <TextField
+                                labelType="label-200"
+                                {labelBlack}
+                                disabled={false}
+                                label="Telah Bayar (RM)"
+                            ></TextField>
+                        </div>
+                        <TextField
+                            labelType="label-200"
+                            {labelBlack}
+                            disabled={false}
+                            label="Jumlah Potongan / Tunggakan (RM)"
+                        ></TextField>
+                    </div>
+                    <!-- </DynamicAccordionForm>
+                    {/each} -->
                 </CustomTabContent>
                 <!-- Pelarasan Gaji -->
                 <CustomTabContent title="Pelarasan Gaji">
@@ -1063,11 +849,52 @@
                         ><TextIconButton
                             primary
                             label="Tambah"
-                            onClick={() => (openModal = false)}
+                            onClick={() => (openPelarasGajiModal = true)}
                             ><SvgPlus /></TextIconButton
                         ></SectionHeader
                     >
-                    {#each senaraiPemotongan as item, index}
+                    <div
+                        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 rounded border border-system-primary p-2.5 text-black"
+                    >
+                        <TextField
+                            labelType="label-200"
+                            {labelBlack}
+                            disabled
+                            label="Jenis Penambahan"
+                            value="Penambahan 1"
+                        ></TextField>
+                        <DateSelector
+                            {labelBlack}
+                            handleDateChange
+                            disabled
+                            labelType="label-200"
+                            label="Tarikh Mula"
+                            bind:selectedDate={$modalForm.tempohBayaran}
+                        ></DateSelector>
+                        <DateSelector
+                            {labelBlack}
+                            handleDateChange
+                            disabled
+                            labelType="label-200"
+                            label="Tarikh Tamat"
+                            bind:selectedDate={$modalForm.tempohBayaran}
+                        ></DateSelector>
+                        <DropdownSelect
+                            disabled
+                            dropdownType="label-left-200"
+                            options={deductionType}
+                            label="Jenis Bayaran (RM)"
+                            {labelBlack}
+                            bind:value={$modalForm.tempohBayaran}
+                        ></DropdownSelect>
+                        <TextField
+                            labelType="label-200"
+                            {labelBlack}
+                            disabled
+                            label="Jumlah Bayaran"
+                        ></TextField>
+                    </div>
+                    <!-- {#each senaraiPemotongan as item, index}
                         <DynamicAccordionForm
                             hasDelete
                             header="Penambahan #{index + 1}"
@@ -1118,7 +945,7 @@
                                 ></TextField>
                             </div>
                         </DynamicAccordionForm>
-                    {/each}
+                    {/each} -->
                 </CustomTabContent>
             </CustomTab>
         </StepperContentBody>
@@ -1129,91 +956,273 @@
     >{tooltipContent}</Tooltip
 >
 
-<Modal title="Tambah Pemotongan" bind:open={openModal}>
+<!-- Umum Modal -->
+<Modal title="Tambah Pemotongan" bind:open={openUmumModal}>
     <form
-        id="modalValidation"
-        on:submit|preventDefault={submitModalForm}
+        id="modalForm"
+        use:modalEnhance
+        method="POST"
+        class="flex w-full flex-col gap-2"
+    >
+        <div
+            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 text-black"
+        >
+            <DateSelector
+                hasError={!!$modalError.startDate}
+                name="startDate"
+                handleDateChange
+                label="Tarikh Mula"
+                labelType="label-200"
+                bind:selectedDate={$modalForm.startDate}
+            ></DateSelector>
+            {#if $modalError.startDate}
+                <span
+                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                    >{$modalError.startDate}</span
+                >
+            {/if}
+
+            <DateSelector
+                hasError={!!$modalError.endDate}
+                name="endDate"
+                handleDateChange
+                label="Tarikh Tamat"
+                labelType="label-200"
+                bind:selectedDate={$modalForm.endDate}
+            ></DateSelector>
+            {#if $modalError.endDate}
+                <span
+                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                    >{$modalError.endDate}</span
+                >
+            {/if}
+            <DropdownSelect
+                hasError={!!$modalError.paymentType}
+                dropdownType="label-left-200"
+                id="paymentType"
+                label="Jenis Bayaran"
+                bind:value={$modalForm.paymentType}
+                options={[
+                    { value: '1', name: 'Bulanan' },
+                    { value: '2', name: 'Penuh' },
+                ]}
+            ></DropdownSelect>
+            {#if $modalError.paymentType}
+                <span
+                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                    >{$modalError.paymentType}</span
+                >
+            {/if}
+            <TextField
+                hasError={!!$modalError.totalPayment}
+                name="totalPayment"
+                label="Jumlah Bayaran"
+                labelType="label-200"
+                type="text"
+                bind:value={$modalForm.totalPayment}
+            />
+            {#if $modalError.totalPayment}
+                <span
+                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                    >{$modalError.totalPayment}</span
+                >
+            {/if}
+        </div>
+        <TextIconButton primary label="Simpan" form="modalForm"
+        ></TextIconButton>
+    </form>
+</Modal>
+
+<!-- Pemangkuan Modal -->
+<Modal title="Tambah Tuntutan" bind:open={openPemangkuanModal}>
+    <form
+        id="modalForm"
+        use:modalEnhance
+        method="POST"
         class="flex w-full flex-col gap-2"
     >
         <div
             class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 text-black"
         >
             <TextField
-                hasError={errorData?.jenisPenambahan}
-                name="jenisPenambahan"
-                label="Jenis Penambahan"
+                hasError={!!$modalError.jenisPenambahan}
+                name="namaTuntutan"
+                label="Name Tuntutan"
                 labelType="label-200"
                 type="text"
-                bind:value={jenisPenambahan}
+                bind:value={$modalForm.jenisPenambahan}
             />
-            {#if errorData?.jenisPenambahan}
+            {#if $modalError.jenisPenambahan}
                 <span
                     class="ml-[200px] font-sans text-sm italic text-system-danger"
-                    >{errorData?.jenisPenambahan}</span
+                    >{$modalError.jenisPenambahan}</span
                 >
             {/if}
             <DateSelector
-                hasError={errorData?.startDate}
+                hasError={!!$modalError.startDate}
                 name="startDate"
                 handleDateChange
                 label="Tarikh Mula"
                 labelType="label-200"
-                bind:selectedDate={startDate}
+                bind:selectedDate={$modalForm.startDate}
             ></DateSelector>
-            {#if errorData?.startDate}
+            {#if $modalError.startDate}
                 <span
                     class="ml-[200px] font-sans text-sm italic text-system-danger"
-                    >{errorData?.startDate}</span
+                    >{$modalError.startDate}</span
                 >
             {/if}
 
             <DateSelector
-                hasError={errorData?.endDate}
+                hasError={!!$modalError.endDate}
                 name="endDate"
                 handleDateChange
                 label="Tarikh Tamat"
                 labelType="label-200"
-                bind:selectedDate={endDate}
+                bind:selectedDate={$modalForm.endDate}
             ></DateSelector>
-            {#if errorData?.endDate}
+            {#if $modalError.endDate}
                 <span
                     class="ml-[200px] font-sans text-sm italic text-system-danger"
-                    >{errorData?.endDate}</span
+                    >{$modalError.endDate}</span
+                >
+            {/if}
+            
+            <TextField
+                hasError={!!$modalError.totalPayment}
+                name="totalPayment"
+                label="Sepatutnya Bayar"
+                labelType="label-200"
+                type="text"
+                bind:value={$modalForm.totalPayment}
+            />
+            {#if $modalError.paymentType}
+                <span
+                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                    >{$modalError.paymentType}</span
+                >
+            {/if}
+            <TextField
+                hasError={!!$modalError.totalPayment}
+                name="totalPayment"
+                label="Telah Bayar"
+                labelType="label-200"
+                type="text"
+                bind:value={$modalForm.totalPayment}
+            />
+            {#if $modalError.paymentType}
+                <span
+                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                    >{$modalError.paymentType}</span
+                >
+            {/if}
+            <TextField
+                hasError={!!$modalError.totalPayment}
+                name="totalPayment"
+                label="Jumlah Potongan / Tunggakan (RM)"
+                labelType="label-200"
+                type="text"
+                bind:value={$modalForm.totalPayment}
+            />
+            {#if $modalError.totalPayment}
+                <span
+                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                    >{$modalError.totalPayment}</span
+                >
+            {/if}
+        </div>
+        <TextIconButton primary label="Simpan" form="modalForm"
+        ></TextIconButton>
+    </form>
+</Modal>
+
+<!-- Pelaras Gaji Modal -->
+<Modal title="Tambah Penambahan" bind:open={openPelarasGajiModal}>
+    <form
+        id="modalForm"
+        use:modalEnhance
+        method="POST"
+        class="flex w-full flex-col gap-2"
+    >
+        <div
+            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 text-black"
+        >
+            <TextField
+                hasError={!!$modalError.jenisPenambahan}
+                name="jenisPenambahan"
+                label="Jenis Penambahan"
+                labelType="label-200"
+                type="text"
+                bind:value={$modalForm.jenisPenambahan}
+            />
+            {#if $modalError.jenisPenambahan}
+                <span
+                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                    >{$modalError.jenisPenambahan}</span
+                >
+            {/if}
+            <DateSelector
+                hasError={!!$modalError.startDate}
+                name="startDate"
+                handleDateChange
+                label="Tarikh Mula"
+                labelType="label-200"
+                bind:selectedDate={$modalForm.startDate}
+            ></DateSelector>
+            {#if $modalError.startDate}
+                <span
+                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                    >{$modalError.startDate}</span
+                >
+            {/if}
+
+            <DateSelector
+                hasError={!!$modalError.endDate}
+                name="endDate"
+                handleDateChange
+                label="Tarikh Tamat"
+                labelType="label-200"
+                bind:selectedDate={$modalForm.endDate}
+            ></DateSelector>
+            {#if $modalError.endDate}
+                <span
+                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                    >{$modalError.endDate}</span
                 >
             {/if}
             <DropdownSelect
-                hasError={errorData?.paymentType}
+                hasError={!!$modalError.paymentType}
                 dropdownType="label-left-200"
                 id="paymentType"
                 label="Jenis Bayaran"
-                bind:value={paymentType}
+                bind:value={$modalForm.paymentType}
                 options={[
                     { value: '1', name: 'Bulanan' },
                     { value: '2', name: 'Penuh' },
                 ]}
             ></DropdownSelect>
-            {#if errorData?.paymentType}
+            {#if $modalError.paymentType}
                 <span
                     class="ml-[200px] font-sans text-sm italic text-system-danger"
-                    >{errorData?.paymentType}</span
+                    >{$modalError.paymentType}</span
                 >
             {/if}
             <TextField
-                hasError={errorData?.totalPayment}
+                hasError={!!$modalError.totalPayment}
                 name="totalPayment"
-                label="Jumlah Bayaran"
+                label="Jumlah Bayaran (RM)"
                 labelType="label-200"
                 type="text"
-                bind:value={totalPayment}
+                bind:value={$modalForm.totalPayment}
             />
-            {#if errorData?.totalPayment}
+            {#if $modalError.totalPayment}
                 <span
                     class="ml-[200px] font-sans text-sm italic text-system-danger"
-                    >{errorData?.totalPayment}</span
+                    >{$modalError.totalPayment}</span
                 >
             {/if}
         </div>
-        <TextIconButton primary label="Simpan" form="modalValidation"
+        <TextIconButton primary label="Simpan" form="modalForm"
         ></TextIconButton>
     </form>
 </Modal>

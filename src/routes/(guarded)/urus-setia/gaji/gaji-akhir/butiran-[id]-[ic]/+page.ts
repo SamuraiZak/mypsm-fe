@@ -14,7 +14,11 @@ import { mockLookupReligions } from '$lib/mocks/database/mockLookupReligions';
 import { mockLookupServiceTypes } from '$lib/mocks/database/mockLookupServiceTypes';
 import { mockLookupStates } from '$lib/mocks/database/mockLookupStates';
 import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
-import { getEmployees } from '$lib/service/employees/staff-service.js';
+import { getEmployees } from '$lib/service/employees/staff-service';
+import { getErrorToast, getPromiseToast } from '$lib/services/core/toast/toast-service';
+import { fail } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms/client';
+import { z } from 'zod';
 
 export async function load({ params }) {
     const data: IntEmployees[] = await getEmployees();
@@ -98,6 +102,9 @@ export async function load({ params }) {
 
     if (!currentEmployee) throw new Error('Record not found');
 
+
+    const allowanceTypeForm = await superValidate(_addAllowanceTypeSchema);
+    const specialDeductionForm = await superValidate (_specialDeductionSchema)
     return {
         record: {
             data,
@@ -119,5 +126,82 @@ export async function load({ params }) {
             currentEmployeeNextOfKins,
             currentEmployeeUploadedDocuments,
         },
+        allowanceTypeForm,
+        specialDeductionForm,
     };
 }
+
+// ===================================================
+// Form Schema
+// ===================================================
+const numberScheme = z.union([z.string({
+    invalid_type_error: "Medan ini tidak boleh dibiar kosong."
+}), z.number()]).transform((x) => Number(x)).pipe(z.number({
+    required_error: "Medan ini tidak boleh dibiar kosong.",
+    invalid_type_error: "Hanya nombor sahaja dibenarkan. Contoh (500.40)",
+    description: "Hanya nombor sahaja dibenarkan. Contoh (500.40)"
+}))
+
+const generalTextSchema = z.string({
+    invalid_type_error: "Medan ini tidak boleh dibiar kosong."
+}).min(1, { message: "Medan ini tidak boleh dibiar kosong." }).max(124, {
+    message: 'Medan ini tidak boleh melebihi 124 karakter.',
+});
+
+export const _addAllowanceTypeSchema = z.object({
+    allowanceName: generalTextSchema,
+    serviceDuration: numberScheme,
+    currentAmount: numberScheme,
+})
+
+export const _specialDeductionSchema = z.object({
+    specialDeductionName: generalTextSchema,
+    total: numberScheme,
+})
+
+// ======================================== form function
+export const _submitAllowanceTypeForm = async (formData: object) => {
+    const allowanceTypeForm = await superValidate(formData, _addAllowanceTypeSchema);
+    if (!allowanceTypeForm.valid) {
+        getErrorToast();
+        console.log(allowanceTypeForm)
+        return fail(400, allowanceTypeForm);
+    }
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(allowanceTypeForm),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+
+    getPromiseToast(responsePromise)
+    return { allowanceTypeForm }
+};
+
+export const _submitSpecialDeductionForm = async (formData: object) => {
+    const specialDeductionForm = await superValidate(formData, _specialDeductionSchema);
+    if (!specialDeductionForm.valid) {
+        getErrorToast();
+        console.log(specialDeductionForm)
+        return fail(400, specialDeductionForm);
+    }
+    const responsePromise = fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(specialDeductionForm),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            console.log('Response Returned: ', json);
+        });
+
+    getPromiseToast(responsePromise)
+    return { specialDeductionForm }
+};

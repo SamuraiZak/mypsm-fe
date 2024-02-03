@@ -483,101 +483,98 @@
                 </CustomTabContent>
                 <!-- Pemangkuan -->
                 <CustomTabContent title="Pemangkuan">
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
-                    >
-                        <SectionHeader title="Jadual Elaun Pemangkuan"
-                        ></SectionHeader>
-                        <div class="w-full">
-                            <DynamicTable
-                                tableItems={mockActingAllowanceTable}
-                                columnKeys={[
-                                    'grade',
-                                    'itk',
-                                    'itp',
-                                    'actingAllowance',
-                                ]}
-                            ></DynamicTable>
-                        </div>
-                        <DateSelector
-                            {labelBlack}
-                            handleDateChange
-                            disabled
-                            label="Tarikh Berkuatkuasa"
-                            selectedDate="2023-10-01"
-                        ></DateSelector>
-                        <DropdownSelect
-                            disabled
-                            dropdownType="label-left-full"
-                            options={pelarasanGaji}
-                            label="Bulan Pelarasan Gaji"
-                            labelBlack={false}
-                            bind:value={pelarasanGajiValue}
-                        ></DropdownSelect>
-                        <TextField
-                            {labelBlack}
-                            disabled
-                            label="Gred"
-                            value={currEmployeeGrade.code}
-                        ></TextField>
-                        <DropdownSelect
-                            disabled
-                            dropdownType="label-left-full"
-                            options={placements}
-                            label="Penempatan"
-                            labelBlack={false}
-                            bind:value={selectedPlacements}
-                        ></DropdownSelect>
-                        <TextField {labelBlack} disabled label="Gaji Pokok"
-                        ></TextField>
-                        <TextField
-                            {labelBlack}
-                            hasTooltip
-                            toolTipID="type-itka"
-                            disabled
-                            label="ITKA"
-                        ></TextField>
-                        <TextField
-                            {labelBlack}
-                            disabled
-                            label="Jenis Skim Perumahan"
-                            value="Insentif Tetap Perumahan (ITP)"
-                        ></TextField>
-                        <TextField
-                            {labelBlack}
-                            disabled
-                            label="Jumlah Skim Perumahan"
-                        ></TextField>
-                        <TextField
-                            {labelBlack}
-                            hasTooltip
-                            toolTipID="type-cola"
-                            disabled
-                            label="COLA"
-                        ></TextField>
-                        <div
-                            class="flex w-full flex-row justify-evenly gap-2.5"
-                        >
-                            <label
-                                for=""
-                                class="w-[220px] min-w-[220px] text-sm font-medium text-txt-tertiary"
-                                >Tarikh Pergerakan Gaji dan Jumlah (RM)</label
-                            >
-                            <TextField
-                                labelType="label-fit"
-                                {labelBlack}
-                                disabled
-                                label="Bulan"
-                                value={months[6].name}
-                            ></TextField>
-                            <TextField
-                                labelType="label-fit"
-                                {labelBlack}
-                                disabled
-                                label="Jumlah"
-                            ></TextField>
-                        </div>
+                    <SectionHeader title="Jadual Elaun Pemangkuan"
+                    ></SectionHeader>
+                    <div class="w-full">
+                        <DynamicTable
+                            tableItems={mockActingAllowanceTable}
+                            columnKeys={[
+                                'grade',
+                                'itk',
+                                'itp',
+                                'actingAllowance',
+                            ]}
+                        ></DynamicTable>
                     </div>
+                    <DateSelector
+                        {labelBlack}
+                        handleDateChange
+                        disabled
+                        label="Tarikh Berkuatkuasa"
+                        selectedDate="2023-10-01"
+                    ></DateSelector>
+                    <DropdownSelect
+                        disabled
+                        dropdownType="label-left-full"
+                        options={pelarasanGaji}
+                        label="Bulan Pelarasan Gaji"
+                        labelBlack={false}
+                        bind:value={pelarasanGajiValue}
+                    ></DropdownSelect>
+                    <TextField
+                        {labelBlack}
+                        disabled
+                        label="Gred"
+                        value={currEmployeeGrade.code}
+                    ></TextField>
+                    <DropdownSelect
+                        disabled
+                        dropdownType="label-left-full"
+                        options={placements}
+                        label="Penempatan"
+                        labelBlack={false}
+                        bind:value={selectedPlacements}
+                    ></DropdownSelect>
+                    <TextField {labelBlack} disabled label="Gaji Pokok"
+                    ></TextField>
+                    <TextField
+                        {labelBlack}
+                        hasTooltip
+                        toolTipID="type-itka"
+                        disabled
+                        label="ITKA"
+                    ></TextField>
+                    <TextField
+                        {labelBlack}
+                        disabled
+                        label="Jenis Skim Perumahan"
+                        value="Insentif Tetap Perumahan (ITP)"
+                    ></TextField>
+                    <TextField
+                        {labelBlack}
+                        disabled
+                        label="Jumlah Skim Perumahan"
+                    ></TextField>
+                    <TextField
+                        {labelBlack}
+                        hasTooltip
+                        toolTipID="type-cola"
+                        disabled
+                        label="COLA"
+                    ></TextField>
+                    <div
+                        class="flex max-h-full w-full flex-row justify-evenly gap-2.5"
+                    >
+                        <label
+                            for=""
+                            class="w-[220px] min-w-[220px] text-sm font-medium text-txt-tertiary"
+                            >Tarikh Pergerakan Gaji dan Jumlah (RM)</label
+                        >
+                        <TextField
+                            labelType="label-fit"
+                            {labelBlack}
+                            disabled
+                            label="Bulan"
+                            value={months[6].name}
+                        ></TextField>
+                        <TextField
+                            labelType="label-fit"
+                            {labelBlack}
+                            disabled
+                            label="Jumlah"
+                        ></TextField>
+                    </div>
+
                     <SectionHeader title="Senarai Tuntutan"></SectionHeader>
                     {#each pelarasanGajiTuntutan as item, index}
                         <DynamicAccordionForm

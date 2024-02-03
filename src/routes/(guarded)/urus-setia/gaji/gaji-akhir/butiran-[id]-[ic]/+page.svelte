@@ -16,19 +16,29 @@
     import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import DownloadAttachment from '$lib/components/input/DownloadAttachment.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import { mockSalaryMovementSchedule } from '$lib/mocks/gaji/salaryMovementSchedule/mockSalaryMovementSchedule.js';
+    import { mockSalaryMovementSchedule } from '$lib/mocks/gaji/salaryMovementSchedule/mockSalaryMovementSchedule';
     import { Tooltip } from 'flowbite-svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import AccordianField from '$lib/components/input/AccordianField.svelte';
-    import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades.js';
-    import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions.js';
+    import { mockLookupGrades } from '$lib/mocks/database/mockLoopkupGrades';
+    import { mockLookupPositions } from '$lib/mocks/database/mockLookupPositions';
     import { afterUpdate, onMount } from 'svelte';
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import IntAllowancesFormGroup from '$lib/components/final-salary-form-group/AllowancesFormGroup.svelte';
     import SpecialDeductionFormGroup from '$lib/components/final-salary-form-group/SpecialDeductionFormGroup.svelte';
-    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper.js';
-    export let data;
+    import { CurrencyHelper } from '$lib/helper/core/currency-helper/currency-helper';
+    import { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import { Modal } from 'flowbite-svelte';
+    import {
+        _addAllowanceTypeSchema,
+        _submitAllowanceTypeForm,
+        _submitSpecialDeductionForm,
+        _specialDeductionSchema,
+    } from './+page';
+    export let data: PageData;
     export let noPekerja = data.record.currentEmployee?.employeeNumber;
     let activeStepper = 0;
     let salaryMovementData = data.record.currentEmployee;
@@ -235,6 +245,39 @@
         calculateSpecialDeductionTotal();
 
         overallFinalSalary = totalAllowance + totalSpecialDeduction;
+    });
+
+    let openAllowanceTypeModal: boolean = false;
+    let openSpecialDeductionModal: boolean = false;
+    // Form Validation =========================
+    const {
+        form: allowanceTypeForm,
+        errors: allowanceTypeError,
+        enhance: allowanceTypeEnhance,
+    } = superForm(data.allowanceTypeForm, {
+        SPA: true,
+        id: 'allowanceTypeForm',
+        validators: _addAllowanceTypeSchema,
+        onSubmit() {
+            _submitAllowanceTypeForm($allowanceTypeForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
+    });
+
+    const {
+        form: specialDeductionForm,
+        errors: specialDeductionError,
+        enhance: specialDeductionEnhance,
+    } = superForm(data.specialDeductionForm, {
+        SPA: true,
+        id: 'specialDeductionForm',
+        validators: _specialDeductionSchema,
+        onSubmit() {
+            _submitSpecialDeductionForm($specialDeductionForm);
+        },
+        taintedMessage:
+            'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
 </script>
 
@@ -740,7 +783,7 @@
                         ><div class="mr-2">
                             <TextIconButton
                                 primary
-                                onClick={addAllowanceFormGroup}
+                                onClick={() => (openAllowanceTypeModal = true)}
                                 label="Tambah Jenis Elaun"
                                 ><SvgPlus /></TextIconButton
                             >
@@ -786,7 +829,9 @@
                                 labelBlack={true}
                                 labelType="label-fit"
                                 label="JUMLAH BAYARAN ELAUN"
-                                value={CurrencyHelper.formatCurrency(totalAllowance)}
+                                value={CurrencyHelper.formatCurrency(
+                                    totalAllowance,
+                                )}
                             />
                         </div>
                     </div>
@@ -798,7 +843,7 @@
                         ><div class="mr-2">
                             <TextIconButton
                                 primary
-                                onClick={addSpecialDeductionFormGroup}
+                                onClick={() => openSpecialDeductionModal = true}
                                 label="Tambah Tolakan Khas"
                                 ><SvgPlus /></TextIconButton
                             >
@@ -825,7 +870,9 @@
                                 labelBlack={true}
                                 labelType="label-fit"
                                 label="JUMLAH TOLAKAN"
-                                value={CurrencyHelper.formatCurrency(totalSpecialDeduction)}
+                                value={CurrencyHelper.formatCurrency(
+                                    totalSpecialDeduction,
+                                )}
                             ></TextField>
                         </div>
                     </div>
@@ -850,3 +897,108 @@
         >
     </StepperContent>
 </Stepper>
+<Toaster />
+
+<!-- Tambah Jenis Elaun Modal -->
+<Modal title="Tambah Jenis Elaun" bind:open={openAllowanceTypeModal}>
+    <form
+        id="allowanceTypeForm"
+        use:allowanceTypeEnhance
+        method="POST"
+        class="flex w-full flex-col gap-2"
+    >
+        <div
+            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 text-black"
+        >
+            <TextField
+                hasError={!!$allowanceTypeError.allowanceName}
+                name="allowanceName"
+                label="Nama Elaun"
+                labelType="label-200"
+                type="text"
+                bind:value={$allowanceTypeForm.allowanceName}
+            />
+            {#if $allowanceTypeError.allowanceName}
+                <span
+                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                    >{$allowanceTypeError.allowanceName}</span
+                >
+            {/if}
+            <TextField
+                hasError={!!$allowanceTypeError.serviceDuration}
+                name="serviceDuration"
+                label="Tempoh Tahun Perkhidmatan"
+                labelType="label-200"
+                type="number"
+                bind:value={$allowanceTypeForm.serviceDuration}
+            />
+            {#if $allowanceTypeError.serviceDuration}
+                <span
+                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                    >{$allowanceTypeError.allowanceName}</span
+                >
+            {/if}
+            <TextField
+                hasError={!!$allowanceTypeError.currentAmount}
+                name="currentAmount"
+                label="Amaun Semasa (RM)"
+                labelType="label-200"
+                type="number"
+                bind:value={$allowanceTypeForm.currentAmount}
+            />
+            {#if $allowanceTypeError.currentAmount}
+                <span
+                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                    >{$allowanceTypeError.currentAmount}</span
+                >
+            {/if}
+        </div>
+        <TextIconButton primary label="Simpan" form="allowanceTypeForm"
+        ></TextIconButton>
+    </form>
+</Modal>
+
+<!-- Tambah Tolakan Khas Modal -->
+<Modal title="Tambah Tolakan Khas" bind:open={openSpecialDeductionModal}>
+    <form
+        id="specialDeductionForm"
+        use:specialDeductionEnhance
+        method="POST"
+        class="flex w-full flex-col gap-2"
+    >
+        <div
+            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 text-black"
+        >
+            <TextField
+                hasError={!!$specialDeductionError.specialDeductionName}
+                name="specialDeductionName"
+                label="Nama Tolakan Khas"
+                labelType="label-200"
+                type="text"
+                bind:value={$specialDeductionForm.specialDeductionName}
+            />
+            {#if $specialDeductionError.specialDeductionName}
+                <span
+                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                    >{$specialDeductionError.specialDeductionName}</span
+                >
+            {/if}
+            <TextField
+                hasError={!!$specialDeductionError.total}
+                name="total"
+                label="Jumlah (RM)"
+                labelType="label-200"
+                type="number"
+                bind:value={$specialDeductionForm.total}
+            />
+            {#if $specialDeductionError.total}
+                <span
+                    class="ml-[200px] font-sans text-sm italic text-system-danger"
+                    >{$specialDeductionError.total}</span
+                >
+            {/if}
+        </div>
+        <TextIconButton primary label="Simpan" form="specialDeductionForm"
+        ></TextIconButton>
+    </form>
+</Modal>
