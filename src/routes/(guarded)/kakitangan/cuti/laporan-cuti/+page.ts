@@ -1,26 +1,32 @@
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
-// import api from '$lib/services/core/ky.service';
+import type { LeaveEntitlementListResponse } from '$lib/dto/mypsm/leave/report-leave/leave-entitlement-list-response.dto';
+import type { LeaveHistoryListResponse } from '$lib/dto/mypsm/leave/report-leave/leave-history-list-response.dto';
 import { LeaveServices } from '$lib/services/implementations/mypsm/leave/leave.service';
-// import { showLoadingOverlay } from '$lib/stores/globalState';
-import type { LeaveHistoryListRequestViewModel } from '$lib/view-models/mypsm/leave/report/history/leave-history-list-request.view-model';
-// import type { LeaveHistoryListResponseViewModel } from '$lib/view-models/mypsm/leave/report/history/leave-history-list-response.view-model';
 
 export const load = async () => {
     // show loading screen
     // showLoadingOverlay.set(true);
 
-    const param: LeaveHistoryListRequestViewModel = {
+    const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
         orderBy: '',
         orderType: '',
     };
 
-    const leaveEntitlementList: CommonResponseDTO =
+    const leaveEntitlementListResponse: CommonResponseDTO =
         await LeaveServices.getLeaveEntitlementList(param);
 
-    const leaveHistoryList: CommonResponseDTO =
+    const leaveEntitlementList: LeaveEntitlementListResponse[] =
+        leaveEntitlementListResponse.data
+            ?.dataList as LeaveEntitlementListResponse[];
+
+    const leaveHistoryListResponse: CommonResponseDTO =
         await LeaveServices.getLeaveHistoryList(param);
+
+    const leaveHistoryList: LeaveHistoryListResponse[] =
+        leaveHistoryListResponse.data?.dataList as LeaveHistoryListResponse[];
 
     // setTimeout(() => showLoadingOverlay.set(false), 2500);
     return {

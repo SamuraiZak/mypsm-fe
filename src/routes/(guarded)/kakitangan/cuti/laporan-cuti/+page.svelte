@@ -34,7 +34,7 @@
         ></DropdownSelect></SectionHeader
     >
     <div class="flex max-h-full w-full flex-col items-start justify-start">
-        <DynamicTable tableItems={data.leaveEntitlementList.data?.dataList}
+        <DynamicTable tableItems={data.leaveEntitlementList ?? undefined}
         ></DynamicTable>
     </div>
     <!-- </section>
@@ -53,7 +53,7 @@
         ></DropdownSelect>
     </SectionHeader>
     <div class="flex max-h-full w-full flex-col items-start justify-start">
-        <DynamicTable tableItems={data.leaveHistoryList.data?.dataList}
+        <DynamicTable tableItems={data.leaveHistoryList ?? undefined}
         ></DynamicTable>
     </div>
 </section>
