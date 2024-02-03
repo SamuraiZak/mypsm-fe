@@ -1,4 +1,4 @@
-export interface UnrecordLeaveRequest {
+export interface UnrecordLeaveResponse {
     alternateUntrackedId: number;
     untrackedLeaveType: string;
     reason: string;
