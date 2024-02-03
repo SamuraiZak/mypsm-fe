@@ -5,6 +5,7 @@
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key-constant";
 import { AuthRequestConvert, type AuthRequestDTO } from "$lib/dto/core/auth/auth-request.dto";
 import type { AuthResponseDTO } from "$lib/dto/core/auth/auth-response.dto";
+import { PwdUpdateRequestConvert, type PwdUpdateRequestDTO } from "$lib/dto/core/auth/update-password-request.dto";
 import { CommonResponseConvert, type CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
 import { AuthenticationHelper } from "$lib/helper/core/authentication-helper/authentication-helper";
 import http from "$lib/services/provider/service-provider.service";
@@ -128,6 +129,8 @@ export class AuthService {
 
                 localStorage.setItem(LocalStorageKeyConstant.accessToken, authResponse.token);
 
+                localStorage.setItem(LocalStorageKeyConstant.userName, param.username);
+
                 localStorage.setItem(
                     LocalStorageKeyConstant.currentRole,
                     param.currentRole,
@@ -144,5 +147,32 @@ export class AuthService {
             return result;
         }
 
+    }
+
+    // update password service
+    static async updatePassword(param: PwdUpdateRequestDTO) {
+        try {
+            let url: Input = "authentication/update-password"
+
+            const httpResponse: Response = await http
+                .post(url, {
+                    body: PwdUpdateRequestConvert.toJson(param),
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-type': 'application/json',
+                    },
+                });
+
+            const response = await httpResponse.json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            return result;
+        } catch (error) {
+            const result : CommonResponseDTO = {
+                status: "error",
+            }
+            return result;
+        }
     }
 }
