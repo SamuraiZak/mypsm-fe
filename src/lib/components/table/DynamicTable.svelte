@@ -419,7 +419,7 @@
                                                     </span>
                                                 </div>
                                             </TableHeadCell>
-                                        {:else if typeof value === 'object'}
+                                        {:else if typeof value === 'object' && value !== null}
                                             {#if Object.keys(value)[0] !== '0'}
                                                 {#each Object.entries(value) as [objectKey, val]}
                                                     <TableHeadCell
@@ -470,48 +470,10 @@
                                             {/if}
                                         {/if}
                                     {/if}
-                                {:else if typeof value !== 'object'}
-                                    <TableHeadCell
-                                        {padding}
-                                        on:click={() => sort(key)}
-                                    >
-                                        <div
-                                            class="flex flex-row items-center justify-center gap-1"
-                                        >
-                                            <span class="text-sm"
-                                                >{translate(key)}</span
-                                            >
-                                            <span class="text-txt-tertiary">
-                                                <SvgChevronUpDown
-                                                ></SvgChevronUpDown>
-                                            </span>
-                                        </div>
-                                    </TableHeadCell>
-                                {:else if typeof value === 'object'}
-                                    {#if Object.keys(value)[0] !== '0'}
-                                        {#each Object.entries(value) as [objectKey, val]}
-                                            <TableHeadCell
-                                                {padding}
-                                                on:click={() => sort(objectKey)}
-                                            >
-                                                <div
-                                                    class="flex flex-row items-center justify-center gap-1"
-                                                >
-                                                    <span class="text-sm"
-                                                        >{translate(
-                                                            objectKey,
-                                                        )}</span
-                                                    >
-                                                    <span
-                                                        class="text-txt-tertiary"
-                                                    >
-                                                        <SvgChevronUpDown
-                                                        ></SvgChevronUpDown>
-                                                    </span>
-                                                </div>
-                                            </TableHeadCell>
-                                        {/each}
-                                    {:else if Object.keys(value)[0] === '0'}
+
+                                    <!-- lvl1 -->
+                                {:else if value !== null}
+                                    {#if typeof value !== 'object'}
                                         <TableHeadCell
                                             {padding}
                                             on:click={() => sort(key)}
@@ -528,6 +490,51 @@
                                                 </span>
                                             </div>
                                         </TableHeadCell>
+                                    {:else if typeof value === 'object'}
+                                        {#if Object.keys(value)[0] !== '0'}
+                                            {#each Object.entries(value) as [objectKey, val]}
+                                                <TableHeadCell
+                                                    {padding}
+                                                    on:click={() =>
+                                                        sort(objectKey)}
+                                                >
+                                                    <div
+                                                        class="flex flex-row items-center justify-center gap-1"
+                                                    >
+                                                        <span class="text-sm"
+                                                            >{translate(
+                                                                objectKey,
+                                                            )}</span
+                                                        >
+                                                        <span
+                                                            class="text-txt-tertiary"
+                                                        >
+                                                            <SvgChevronUpDown
+                                                            ></SvgChevronUpDown>
+                                                        </span>
+                                                    </div>
+                                                </TableHeadCell>
+                                            {/each}
+                                        {:else if Object.keys(value)[0] === '0'}
+                                            <TableHeadCell
+                                                {padding}
+                                                on:click={() => sort(key)}
+                                            >
+                                                <div
+                                                    class="flex flex-row items-center justify-center gap-1"
+                                                >
+                                                    <span class="text-sm"
+                                                        >{translate(key)}</span
+                                                    >
+                                                    <span
+                                                        class="text-txt-tertiary"
+                                                    >
+                                                        <SvgChevronUpDown
+                                                        ></SvgChevronUpDown>
+                                                    </span>
+                                                </div>
+                                            </TableHeadCell>
+                                        {/if}
                                     {/if}
                                 {/if}
                             {/if}
@@ -635,7 +642,7 @@
                                                             ></SvgXMark>
                                                         </div>
                                                     </TableBodyCell>
-                                                {:else if typeof value === 'object'}
+                                                {:else if typeof value === 'object' && value !== null}
                                                     <!-- Check for nested json or array -->
                                                     {#if Object.keys(value)[0] !== '0'}
                                                         <!-- Object -->
@@ -688,7 +695,7 @@
                                                     <SvgXMark></SvgXMark>
                                                 </div>
                                             </TableBodyCell>
-                                        {:else if typeof value === 'object'}
+                                        {:else if typeof value === 'object'&& value != null}
                                             <!-- Check for nested json or array -->
                                             {#if Object.keys(value)[0] !== '0'}
                                                 <!-- Object -->
