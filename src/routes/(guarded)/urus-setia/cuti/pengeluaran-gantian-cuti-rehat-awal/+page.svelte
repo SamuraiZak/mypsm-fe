@@ -12,7 +12,8 @@
     import { pencenMeninggalDunia } from '$lib/mocks/urus-setia/cuti/pengeluaran-gcr-awal/pencen-meninggal-dunia';
     import IconButton from '$lib/components/buttons/IconButton.svelte';
     import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
-
+    import type { PageData } from './$types';
+    export let data: PageData;
     let selectedTahun = tahun[0].value;
     let selectedJenisPengeluaran = jenisPengeluaran[0].value;
 </script>
@@ -60,7 +61,6 @@
             </ul>
             <div class="flex flex-row justify-center">
                 <IconButton type=""><SvgArrowRight /></IconButton>
-
             </div>
         </div>
     </div>
@@ -87,7 +87,7 @@
     ></SectionHeader>
     <div class="flex max-h-full w-full flex-col items-start justify-start">
         <DynamicTable
-            tableItems={permohonan}
+            tableItems={data.gcrWithdrawalAnnualLeaveList}
             withActions
             actionOptions={['detail']}
             detailActions={() => {

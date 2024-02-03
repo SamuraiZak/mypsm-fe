@@ -1,54 +1,30 @@
 <script lang="ts">
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import DynamicTable from '$lib/components/table/DynamicTable.svelte';
-    import { tarikh } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/tarikh';
     import TextField from '$lib/components/input/TextField.svelte';
-    import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
-    import { setengahHari } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/setengah-hari';
-    import { Checkbox } from 'flowbite-svelte';
-    import type { PageData } from './$types';
-    import { superForm } from 'sveltekit-superforms/client';
-    import {
-        _submitGeneralLeaveForm,
-        _generalLeaveSchema,
-        _generalLeaveSchema2,
-        _generalLeaveSchema3,
-        _generalLeaveSchema4,
-    } from '../+page';
+    import type { PageData } from '../$types';
+    import { dateProxy, superForm } from 'sveltekit-superforms/client';
+    import { _hajiLeaveSchema, _submitHajiLeaveForm } from '../+page';
 
     export let data: PageData;
-    let hasHalfDayStartDate: boolean = false;
-    let hasHalfDayEndDate: boolean = false;
 
-    // ==================================
-    // Form Validation ==================
-    // ==================================
-    const { form, errors, enhance, options } = superForm(
-        data.generalLeaveForm,
-        {
-            SPA: true,
-            onSubmit() {
-                _submitGeneralLeaveForm(
-                    $form,
-                    hasHalfDayStartDate,
-                    hasHalfDayEndDate,
-                );
-            },
-            taintedMessage:
-                'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    // ============== Form Validation
+    const { form, errors, enhance } = superForm(data.hajiLeaveForm, {
+        SPA: true,
+        validators: _hajiLeaveSchema,
+        validationMethod: 'oninput',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'prevent',
+        onSubmit() {
+            _submitHajiLeaveForm($form);
         },
-    );
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
 
-    $: if (hasHalfDayStartDate && !hasHalfDayEndDate) {
-        options.validators = _generalLeaveSchema2;
-    } else if (hasHalfDayEndDate && !hasHalfDayStartDate) {
-        options.validators = _generalLeaveSchema3;
-    } else if (hasHalfDayEndDate && hasHalfDayStartDate) {
-        options.validators = _generalLeaveSchema4;
-    } else if (!hasHalfDayStartDate && !hasHalfDayEndDate) {
-        options.validators = _generalLeaveSchema;
-    }
+    const proxyStartDate = dateProxy(form, 'startDate', { format: 'date' });
+    const proxyEndDate = dateProxy(form, 'endDate', { format: 'date' });
 </script>
 
 <section>
@@ -63,14 +39,14 @@
             class="flex w-full flex-col gap-2"
         >
             <div
-                class="flex flex w-full w-full flex-row items-center justify-start gap-2.5"
+                class="flex w-full flex-row items-center justify-start gap-2.5"
             >
                 <div class="flex w-full flex-col">
                     <DateSelector
                         hasError={$errors.startDate ? true : false}
                         name="startDate"
                         handleDateChange
-                        bind:selectedDate={$form.startDate}
+                        bind:selectedDate={$proxyStartDate}
                         label="Tarikh Mula"
                     ></DateSelector>
                     {#if $errors.startDate}
@@ -80,7 +56,7 @@
                         >
                     {/if}
                 </div>
-                <Checkbox
+                <!-- <Checkbox
                     name="hasHalfDayStartDate"
                     bind:checked={hasHalfDayStartDate}
                     class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
@@ -106,10 +82,10 @@
                             >{$errors.halfDayStartDate}</span
                         >
                     {/if}
-                </div>
+                </div> -->
             </div>
             <div
-                class="flex flex w-full w-full flex-row items-center justify-start gap-2.5"
+                class="flex w-full flex-row items-center justify-start gap-2.5"
             >
                 <div class="flex w-full flex-col">
                     <DateSelector
@@ -117,7 +93,7 @@
                         name="endDate"
                         handleDateChange
                         label="Tarikh Tamat"
-                        bind:selectedDate={$form.endDate}
+                        bind:selectedDate={$proxyEndDate}
                     ></DateSelector>
                     {#if $errors.endDate}
                         <span
@@ -126,7 +102,7 @@
                         >
                     {/if}
                 </div>
-                <Checkbox
+                <!-- <Checkbox
                     name="hasHalfDayEndDate"
                     bind:checked={hasHalfDayEndDate}
                     class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
@@ -152,15 +128,16 @@
                             >{$errors.halfDayEndDate}</span
                         >
                     {/if}
-                </div>
+                </div> -->
             </div>
-            <TextField disabled label="Bilangan Hari" value="7"></TextField>
+            <!-- <TextField disabled label="Bilangan Hari" value="7"></TextField> -->
         </form>
+        <TextField disabled label="Bilangan Hari" value="7"></TextField>
     </div>
-    <div class="flex max-h-full w-full flex-col items-start justify-start">
+    <!-- <div class="flex max-h-full w-full flex-col items-start justify-start">
         <SectionHeader
             title="Cuti Haji yang telah diambil sepanjang perkhidmatan"
         ></SectionHeader>
         <DynamicTable tableItems={tarikh}></DynamicTable>
-    </div>
+    </div> -->
 </section>
