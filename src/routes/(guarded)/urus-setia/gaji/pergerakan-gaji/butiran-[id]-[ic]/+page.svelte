@@ -19,7 +19,7 @@
     import { Checkbox } from 'flowbite-svelte';
     import type { PageData } from './$types';
     import { Toaster } from 'svelte-french-toast';
-    import { superForm } from 'sveltekit-superforms/client';
+    import { dateProxy, superForm } from 'sveltekit-superforms/client';
     import {
         _stepperMeetingResult,
         _submitFormStepperMeetingResult,
@@ -45,11 +45,11 @@
 
     const options: RadioOption[] = [
         {
-            value: 'sah',
+            value: true,
             label: 'SAH',
         },
         {
-            value: 'tidak sah',
+            value: false,
             label: 'TIDAK SAH',
         },
     ];
@@ -68,6 +68,14 @@
         taintedMessage:
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
+
+    const proxyMeetingDate = dateProxy(
+        meetingResultForm,
+        'meetingDate',
+        {
+            format: 'date',
+        },
+    );
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -154,9 +162,7 @@
                 >
                     <SectionHeader title="Pergerakan Gaji Baru"></SectionHeader>
                     <DropdownSelect
-                        hasError={$meetingResultErrors.meetingNameNum
-                            ? true
-                            : false}
+                        hasError={!!$meetingResultErrors.meetingNameNum}
                         dropdownType="label-left-full"
                         id="meetingNameNum"
                         label="Nama dan Bilangan Mesyuarat"
@@ -175,13 +181,11 @@
                         >
                     {/if}
                     <DateSelector
-                        hasError={$meetingResultErrors.meetingDate
-                            ? true
-                            : false}
+                        hasError={!!$meetingResultErrors.meetingDate}
                         name="meetingDate"
                         handleDateChange
                         label="Tarikh Mesyuarat"
-                        bind:selectedDate={$meetingResultForm.meetingDate}
+                        bind:selectedDate={$proxyMeetingDate}
                     ></DateSelector>
                     {#if $meetingResultErrors.meetingDate}
                         <span
@@ -190,9 +194,7 @@
                         >
                     {/if}
                     <DropdownSelect
-                        hasError={$meetingResultErrors.salaryMovementMonth
-                            ? true
-                            : false}
+                        hasError={!!$meetingResultErrors.salaryMovementMonth}
                         dropdownType="label-left-full"
                         id="salaryMovementMonth"
                         label="Bulan Pergerakan Gaji"
@@ -225,22 +227,23 @@
                                 <div>
                                     <DropdownSelect
                                         disabled={!isGredChecked}
-                                        hasError={!!$meetingResultErrors.gred}
+                                        hasError={!!$meetingResultErrors.gred && isSpecialFiAidTextChecked}
                                         dropdownType="label-left-full"
                                         id="gred"
                                         label="Gred"
                                         bind:value={$meetingResultForm.gred}
                                         options={[
-                                            { value: 'All', name: 'Semua' },
-                                            { value: 'N19', name: 'N19' },
-                                            { value: 'N21', name: 'N21' },
-                                            { value: 'N29', name: 'N29' },
-                                            { value: 'N32', name: 'N32' },
-                                            { value: 'N49', name: 'N49' },
-                                            { value: 'N52', name: 'N52' },
+                                            { value: 1, name: 'Semua' },
+                                            { value: 2, name: 'N19' },
+                                            { value: 3, name: 'N21' },
+                                            { value: 4, name: 'N29' },
+                                            { value: 5, name: 'N32' },
+                                            { value: 6, name: 'N49' },
+                                            { value: 7, name: 'N52' },
                                         ]}
 
-                                    ></DropdownSelect>{#if $meetingResultErrors.gred}
+                                    ></DropdownSelect
+                                    >{#if $meetingResultErrors.gred && isSpecialFiAidTextChecked}
                                         <span
                                             class="ml-[220px] font-sans text-sm italic text-system-danger"
                                             >{$meetingResultErrors.gred}</span
@@ -259,12 +262,12 @@
                                 <div>
                                     <LongTextField
                                         disabled={!isSpecialFiAidTextChecked}
-                                        hasError={!!$meetingResultErrors.specialFiAid}
+                                        hasError={!!$meetingResultErrors.specialFiAid && isSpecialFiAidTextChecked}
                                         name="specialFiAid"
                                         label="Bantuan Khas Kewangan (RM)"
                                         bind:value={$meetingResultForm.specialFiAid}
                                     />
-                                    {#if $meetingResultErrors.specialFiAid}
+                                    {#if $meetingResultErrors.specialFiAid && isSpecialFiAidTextChecked}
                                         <span
                                             class="ml-[220px] font-sans text-sm italic text-system-danger"
                                             >{$meetingResultErrors.specialFiAid}</span
@@ -283,12 +286,12 @@
                                 <div>
                                     <LongTextField
                                         disabled={!isSpecialIncrementTextChecked}
-                                        hasError={!!$meetingResultErrors.specialIncrement}
+                                        hasError={!!$meetingResultErrors.specialIncrement && isSpecialIncrementTextChecked}
                                         name="specialIncrement"
                                         label="Kenaikan Khas (RM)"
                                         bind:value={$meetingResultForm.specialIncrement}
                                     />
-                                    {#if $meetingResultErrors.specialIncrement}
+                                    {#if $meetingResultErrors.specialIncrement && isSpecialIncrementTextChecked}
                                         <span
                                             class="ml-[220px] font-sans text-sm italic text-system-danger"
                                             >{$meetingResultErrors.specialIncrement}</span

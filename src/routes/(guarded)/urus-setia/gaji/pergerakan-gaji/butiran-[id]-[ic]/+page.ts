@@ -27,15 +27,23 @@ const textField = z
     })
     .trim();
 
+const numberScheme = z.union([z.string({
+    invalid_type_error: "Medan ini tidak boleh dibiar kosong."
+}), z.number()]).transform((x) => Number(x)).pipe(z.number({
+    required_error: "Medan ini tidak boleh dibiar kosong.",
+    invalid_type_error: "Hanya nombor sahaja dibenarkan. Contoh (500.40)",
+    description: "Hanya nombor sahaja dibenarkan. Contoh (500.40)"
+}).default(0))
+
 export const _stepperMeetingResult = z.object({
     meetingNameNum: dropdown,
     meetingDate: date.refine((data) => data <= new Date(), {
         message: 'Tidak boleh lebih daripada tarikh semasa',
     }),
     salaryMovementMonth: dropdown,
-    gred: dropdown,
-    specialFiAid: textField,
-    specialIncrement: textField,
+    gred: numberScheme,
+    specialFiAid: numberScheme,
+    specialIncrement: numberScheme,
 });
 
 export const _submitFormStepperMeetingResult = async (formData: object) => {

@@ -4,9 +4,7 @@
     import FilterContainer from '$lib/components/filter-container/FilterContainer.svelte';
     import { status } from '$lib/mocks/status/status';
     import { goto } from '$app/navigation';
-    import ShortTextField from '$lib/components/input/ShortTextField.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import StaffSelector from '$lib/components/staff-selector/StaffSelector.svelte';
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
@@ -15,12 +13,10 @@
     import { Checkbox, Radio, Tooltip } from 'flowbite-svelte';
     import SvgArrowUp from '$lib/assets/svg/SvgArrowUp.svelte';
     import SvgArrowDownTail from '$lib/assets/svg/SvgArrowDownTail.svelte';
-    import { z, ZodError } from 'zod';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
     import FilterSelectInput from '$lib/components/filter/FilterSelectInput.svelte';
-    import FilterDateSelector from '$lib/components/filter/FilterDateSelector.svelte';
-    import { superForm } from 'sveltekit-superforms/client';
+    import { dateProxy, superForm } from 'sveltekit-superforms/client';
     import { Toaster } from 'svelte-french-toast';
     import type { PageData } from './$types';
     import {
@@ -36,15 +32,9 @@
     let selectedStatus = status.values; // Default selected filter
     let selectedSalaryMovementMonth = ''; // Default selected filter
     let selectedGred = ''; // Default selected filter
-    let errorData: any;
-    let meetingTypeOption: any;
-    let meetingDate: any;
-    let gred: any;
-    let specialFiAidText: any;
     let specialAid: any;
     let tempUrl: IntSalaryMovementRecord;
     let tooltipContent: string = '';
-    let salaryMovementMonthType: any;
 
     const specialFiAid: string =
         'Ditetapkan sekali sepanjang tahun pergerakan gaji';
@@ -79,6 +69,7 @@
         enhance: annualSalaryIncrementEnhance,
     } = superForm(data.annualSalaryIncrement, {
         SPA: true,
+        id: 'FormAnnualSalaryIncrement',
         validators: _annualSalaryIncrement,
         onSubmit() {
             _submitFormAnnualSalaryIncrement($annualSalaryIncrementForm);
@@ -86,6 +77,14 @@
         taintedMessage:
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
+
+    const proxyMeetingDate = dateProxy(
+        annualSalaryIncrementForm,
+        'meetingDate',
+        {
+            format: 'date',
+        },
+    );
 </script>
 
 <!-- content header starts here -->
@@ -142,30 +141,7 @@
             options={status}
             bind:selectedVal={selectedStatus}
         ></FilterSelectInput>
-        <!-- <DropdownSelect
-            toolTipID="type-special-fi-aid"
-            hasTooltip={true}
-            id="salary-movement-month-dropdown"
-            label="Bulan Pergerakan Gaji *"
-            dropdownType="label-left"
-            bind:index={selectedStatus}
-            options={status}
-        ></DropdownSelect> -->
-        <!-- <ShortTextField label="KGT Pegawai" type="text" /> -->
-        <!-- <DropdownSelect
-            id="gred-dropdown"
-            label="Gred"
-            dropdownType="label-left"
-            bind:index={selectedStatus}
-            options={status}
-        />
-        <DropdownSelect
-            id="status-dropdown"
-            label="Status"
-            dropdownType="label-left"
-            bind:index={selectedStatus}
-            options={status}
-        /> -->
+        
     </FilterContainer>
 
     <!-- area for setting for bulk salary movements -->
@@ -207,7 +183,7 @@
                         name="meetingDate"
                         handleDateChange
                         label="Tarikh Mesyuarat"
-                        bind:selectedDate={$annualSalaryIncrementForm.meetingDate}
+                        bind:selectedDate={$proxyMeetingDate}
                     ></DateSelector>
                     {#if $annualSalaryIncrementErrors.meetingDate}
                         <span
@@ -243,47 +219,25 @@
                 <div class="flex flex-row justify-between gap-x-5">
                     <Checkbox name="gred" bind:checked={isGredChecked}>
                         <div class="flex flex-col">
-                            <!-- <DropdownSelect
-                                hasError={errorData?.gred}
-                                disabled={!isGredChecked}
-                                dropdownType="label-left"
-                                id="gred"
-                                label="Gred"
-                                bind:value={gred}
-                                options={[
-                                    { value: 'All', name: 'Semua' },
-                                    { value: 'N19', name: 'N19' },
-                                    { value: 'N21', name: 'N21' },
-                                    { value: 'N29', name: 'N29' },
-                                    { value: 'N32', name: 'N32' },
-                                    { value: 'N49', name: 'N49' },
-                                    { value: 'N52', name: 'N52' },
-                                ]}
-                            ></DropdownSelect>
-                            {#if errorData?.gred}
-                                <span
-                                    class="ml-8 font-sans text-sm italic text-system-danger"
-                                    >{errorData?.gred}</span
-                                >
-                            {/if} -->
+                            
                             <DropdownSelect
                                 disabled={!isGredChecked}
-                                hasError={!!$annualSalaryIncrementErrors.gred}
+                                hasError={!!$annualSalaryIncrementErrors.gred && isGredChecked}
                                 dropdownType="label-left"
                                 id="gred"
                                 label="Gred"
                                 bind:value={$annualSalaryIncrementForm.gred}
                                 options={[
-                                    { value: 'All', name: 'Semua' },
-                                    { value: 'N19', name: 'N19' },
-                                    { value: 'N21', name: 'N21' },
-                                    { value: 'N29', name: 'N29' },
-                                    { value: 'N32', name: 'N32' },
-                                    { value: 'N49', name: 'N49' },
-                                    { value: 'N52', name: 'N52' },
+                                    { value: 1, name: 'Semua' },
+                                    { value: 2, name: 'N19' },
+                                    { value: 3, name: 'N21' },
+                                    { value: 4, name: 'N29' },
+                                    { value: 5, name: 'N32' },
+                                    { value: 6, name: 'N49' },
+                                    { value: 7, name: 'N52' },
                                 ]}
                             ></DropdownSelect>
-                            {#if $annualSalaryIncrementErrors.gred}
+                            {#if $annualSalaryIncrementErrors.gred && isGredChecked}
                                 <span
                                     class="ml-8 font-sans text-sm italic text-system-danger"
                                     >{$annualSalaryIncrementErrors.gred}</span
@@ -296,31 +250,13 @@
                         name="specialFiAidText"
                         bind:checked={isSpecialFiAidTextChecked}
                         ><div class="flex flex-col">
-                            <!-- <TextField
-                                labelType="label-fit"
-                                hasTooltip={true}
-                                toolTipID="type-special-fi-aid"
-                                hasError={errorData?.specialFiAidTexts}
-                                disabled={!isSpecialFiAidTextChecked}
-                                name="specialFiAidTexts"
-                                label="Bantuan Khas Kewangan (RM)"
-                                type="number"
-                                bind:value={specialFiAidText}
-                            />
-                            {#if errorData?.specialFiAidTexts}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{errorData?.specialFiAidTexts}</span
-                                >
-                            {/if} -->
+                            
                             <TextField
                                 labelType="label-fit"
                                 hasTooltip={true}
                                 toolTipID="type-special-fi-aid"
                                 disabled={!isSpecialFiAidTextChecked}
-                                hasError={$annualSalaryIncrementErrors.specialFiAid
-                                    ? true
-                                    : false}
+                                hasError={!!$annualSalaryIncrementErrors.specialFiAid}
                                 name="specialFiAid"
                                 label="Bantuan Khas Kewangan (RM)"
                                 bind:value={$annualSalaryIncrementForm.specialFiAid}
@@ -347,27 +283,7 @@
                                 bind:group={specialAid}
                                 value={'specialByAmount'}
                             >
-                                <!-- <TextField
-                                    disabled={specialAid !== 'specialByAmount'}
-                                    labelType="no-label"
-                                    hasError={errorData?.specialFiAidText}
-                                    name="specialFiAidText"
-                                    type="text"
-                                    bind:value={specialFiAidText}
-                                />
-
-                                {#if errorData?.specialFiAidText}
-                                    <span
-                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.specialFiAidText}</span
-                                    >
-                                {/if}
-                                {#if errorData?.specialFiAidText}
-                                    <span
-                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.specialFiAidText}</span
-                                    >
-                                {/if} -->
+                                
                                 <TextField
                                     disabled={specialAid !== 'specialByAmount'}
                                     labelType="no-label"
@@ -390,29 +306,6 @@
                                 value={'specialByGrossPay'}
                                 bind:group={specialAid}
                             >
-                                <!-- <TextField
-                                    disabled={specialAid !==
-                                        'specialByGrossPay'}
-                                    hasTooltip={true}
-                                    toolTipID="type-from-gross-pay"
-                                    labelType="no-label"
-                                    hasError={errorData?.specialFiAidText}
-                                    name="specialFiAidText"
-                                    type="text"
-                                    bind:value={specialFiAidText}
-                                />
-                                {#if errorData?.specialFiAidText}
-                                    <span
-                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.specialFiAidText}</span
-                                    >
-                                {/if}
-                                {#if errorData?.specialFiAidText}
-                                    <span
-                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.specialFiAidText}</span
-                                    >
-                                {/if} -->
                                 <TextField
                                     disabled={specialAid !==
                                         'specialByGrossPay'}
@@ -439,23 +332,7 @@
                                 value={'specialByKgtPercent'}
                                 bind:group={specialAid}
                             >
-                                <!-- <TextField
-                                    disabled={specialAid !==
-                                        'specialByKgtPercent'}
-                                    hasTooltip={true}
-                                    toolTipID="type-from-kgt"
-                                    labelType="no-label"
-                                    hasError={errorData?.specialFiAidText}
-                                    name="specialFiAidText"
-                                    type="text"
-                                    bind:value={specialFiAidText}
-                                />
-                                {#if errorData?.specialFiAidText}
-                                    <span
-                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                        >{errorData?.specialFiAidText}</span
-                                    >
-                                {/if} -->
+                               
                                 <TextField
                                     disabled={specialAid !==
                                         'specialByKgtPercent'}

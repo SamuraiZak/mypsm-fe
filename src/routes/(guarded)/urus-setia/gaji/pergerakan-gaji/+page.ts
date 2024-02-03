@@ -1,8 +1,10 @@
-import { getPromiseToast } from '$lib/services/core/toast/toast-service';
+import { getErrorToast, getPromiseToast } from '$lib/services/core/toast/toast-service';
 import { fail } from '@sveltejs/kit';
-import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
+import { mockSalaryMovementRecord } from '$lib/mocks/gaji/salaryMovementRecord/mockSalaryMovementRecord';
+import api from '$lib/services/core/ky.service';
+// import { showLoadingOverlay } from '$lib/stores/globalState';
 
 // Annual Salary Increment
 const textField = z
@@ -14,6 +16,14 @@ const textField = z
         message: 'Medan ini tidak boleh melebihi 124 karakter.',
     })
     .trim();
+
+const numberScheme = z.union([z.string({
+    invalid_type_error: "Medan ini tidak boleh dibiar kosong."
+}), z.number()]).transform((x) => Number(x)).pipe(z.number({
+    required_error: "Medan ini tidak boleh dibiar kosong.",
+    invalid_type_error: "Hanya nombor sahaja dibenarkan. Contoh (500.40)",
+    description: "Hanya nombor sahaja dibenarkan. Contoh (500.40)"
+}).default(0))
 
 const option = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
 
@@ -32,10 +42,10 @@ export const _annualSalaryIncrement = z.object({
         message: 'Tidak boleh lebih daripada tarikh semasa',
     }),
     salaryMovementMonth: option,
-    gred: option,
-    specialFiAid: textField,
-    specialFiAidText: textField,
-});
+    gred: numberScheme,
+    specialFiAid: numberScheme,
+    specialFiAidText: numberScheme,
+}).partial();
 
 export const _submitFormAnnualSalaryIncrement = async (formData: object) => {
     const annualSalaryIncrement = await superValidate(
@@ -44,9 +54,8 @@ export const _submitFormAnnualSalaryIncrement = async (formData: object) => {
     );
 
     if (!annualSalaryIncrement.valid) {
-        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
-            style: 'background: #333; color: #fff;',
-        });
+        getErrorToast();
+        console.log(annualSalaryIncrement)
         return fail(400, annualSalaryIncrement);
     }
     const responsePromise = fetch(
@@ -69,9 +78,40 @@ export const _submitFormAnnualSalaryIncrement = async (formData: object) => {
 
 //Async
 export const load = async () => {
+    const getGredLookup = {
+        pageNum: 1,
+        pageSize: 10,
+        orderBy: 'createdAt',
+        orderType: 'asc',
+        filter: {},
+    };
+
+    console.log(JSON.stringify(getGredLookup));
+
+    // Gred lookup
+    // const gredResponse: Response = await api
+    //     .post('lookups/grades', {
+    //         body: JSON.stringify(getGredLookup),
+    //     })
+    //     .json();
+
+    const gredLists = undefined
+    //  = gredResponse.data.map((element) => ({
+    //     value: element.code,
+    //     name: element.code,
+    // }));
+
+
+
+    const salaryMovementRecord: IntSalaryMovementRecord[] =
+        await mockSalaryMovementRecord;
     const annualSalaryIncrement = await superValidate(_annualSalaryIncrement);
 
     return {
+        records: {
+            gredLists,
+            salaryMovementRecord,
+        },
         annualSalaryIncrement,
     };
 };
