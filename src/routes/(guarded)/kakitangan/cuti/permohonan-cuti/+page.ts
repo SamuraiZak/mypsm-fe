@@ -7,7 +7,9 @@ import type { AddOtherLeavesRequest } from '$lib/dto/mypsm/leave/leave-applicati
 import type { AddReplacementLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/replacement-leave/add-replacement-leave-request.dto';
 import type { AddUnrecordLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/unrecord-leave/add-unrecord-leave-request.dto';
 import type { AddWithoutPayLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/without-pay-leave/add-without-pay-leave-request.dto';
+import type { LeaveApprovalResultResponse } from '$lib/dto/mypsm/leave/leave-approvers-results-response.model';
 import type { LeaveEmployeeDetailsResponse } from '$lib/dto/mypsm/leave/leave-employee-detail-response.dto';
+import type { LeaveIDRequest } from '$lib/dto/mypsm/leave/leave-id-request.dto';
 import type { LeaveListResponse } from '$lib/dto/mypsm/leave/leave-list-response.dto';
 import type { DropdownOptionsInterface } from '$lib/interfaces/common/dropdown-option';
 import {
@@ -201,6 +203,11 @@ export const _otherLeavesTertiarySchema = _otherLeavesSchema.required({
 // load function
 // =============================================
 export const load = async () => {
+    // temp id request
+    const leaveIdRequest: LeaveIDRequest = {
+        id: 1,
+    };
+    // fetch functions
     const employeeResponse: CommonResponseDTO =
         await LeaveServices.getLeaveEmployeeDetail();
 
@@ -221,6 +228,34 @@ export const load = async () => {
         untrackedLeaveListResponse.data?.details as LeaveListResponse
     ).leaveTypes?.map((val) => ({ value: val, name: val }));
 
+    const stateDirectorResultResponse: CommonResponseDTO =
+        await LeaveServices.getReplacementLeaveDirectorSupporterDetail(
+            leaveIdRequest,
+        );
+
+    const stateDirectorResult: LeaveApprovalResultResponse =
+        stateDirectorResultResponse.data
+            ?.details as LeaveApprovalResultResponse;
+
+    const verifierResponse: CommonResponseDTO =
+        await LeaveServices.getReplacementLeaveVerifierDetail(leaveIdRequest);
+
+    const verifierResult: LeaveApprovalResultResponse = verifierResponse.data
+        ?.details as LeaveApprovalResultResponse;
+
+    const supporterResponse: CommonResponseDTO =
+        await LeaveServices.getReplacementLeaveSupporterDetail(leaveIdRequest);
+
+    const supporterResult: LeaveApprovalResultResponse = supporterResponse.data
+        ?.details as LeaveApprovalResultResponse;
+
+    const apppproverResultResponse: CommonResponseDTO =
+        await LeaveServices.getReplacementLeaveApproverDetail(leaveIdRequest);
+
+    const appproverResult: LeaveApprovalResultResponse =
+        apppproverResultResponse.data?.details as LeaveApprovalResultResponse;
+
+    // superValidate sections
     const replacementLeaveForm = await superValidate(_replacementLeaveSchema);
 
     const untrackedLeaveForm = await superValidate(_untrackedLeaveSchema);
@@ -256,6 +291,10 @@ export const load = async () => {
         spouseMaternityLeaveForm,
         hajiLeaveForm,
         otherLeavesForm,
+        stateDirectorResult,
+        verifierResult,
+        supporterResult,
+        appproverResult,
     };
 };
 
