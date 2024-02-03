@@ -12,6 +12,8 @@
     import { cutiGantian } from '$lib/mocks/pelulus/cuti/cuti-gantian';
     import { cutiTanpaRekod } from '$lib/mocks/pelulus/cuti/cuti-tanpa-rekod';
     import { Select } from 'flowbite-svelte';
+    import type { PageData } from './$types';
+    export let data: PageData;
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -126,7 +128,7 @@
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
                 <DynamicTable
-                    tableItems={cutiGantian}
+                    tableItems={data.replacementLeaveHistoryList}
                     withActions
                     actionOptions={['detail']}
                     detailActions={() => {
@@ -238,7 +240,7 @@
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
                 <DynamicTable
-                    tableItems={cutiTanpaRekod}
+                    tableItems={data.untrackedLeaveHistoryList}
                     withActions
                     actionOptions={['detail']}
                     detailActions={() => {

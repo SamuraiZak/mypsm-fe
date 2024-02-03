@@ -11,14 +11,15 @@
     import { cutiGantian } from '$lib/mocks/pelulus/cuti/cuti-gantian';
     import { cutiTanpaRekod } from '$lib/mocks/pelulus/cuti/cuti-tanpa-rekod';
     import { Select } from 'flowbite-svelte';
+    import type { PageData } from './$types';
+    export let data: PageData;
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader
         title="Rekod Permohonan Cuti Gantian Kakitangan"
         description="Berikut adalah senarai permohonan berkaitan cuti gantian yang telah sah"
-    >
-    </ContentHeader>
+    ></ContentHeader>
 </section>
 
 <section
@@ -29,9 +30,13 @@
             <FilterContainer>
                 <StaffSelector />
                 <div class="flex flex-row gap-x-2.5">
-                    <div class="flex flex-row items-center justify-center gap-x-2.5">
+                    <div
+                        class="flex flex-row items-center justify-center gap-x-2.5"
+                    >
                         <p class="text-sm font-normal">Bulan Cuti*</p>
-                        <div class="flex flex-row items-center justify-start gap-x-2.5">
+                        <div
+                            class="flex flex-row items-center justify-start gap-x-2.5"
+                        >
                             <Select
                                 id="bulan-cuti-bulan"
                                 items={[
@@ -122,7 +127,7 @@
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
                 <DynamicTable
-                    tableItems={cutiGantian}
+                    tableItems={data.replacementLeaveHistoryList}
                     withActions
                     actionOptions={['detail']}
                     detailActions={() => {
@@ -137,9 +142,13 @@
             <FilterContainer>
                 <StaffSelector />
                 <div class="flex flex-row gap-x-2.5">
-                    <div class="flex flex-row items-center justify-center gap-x-2.5">
+                    <div
+                        class="flex flex-row items-center justify-center gap-x-2.5"
+                    >
                         <p class="text-sm font-normal">Bulan Cuti*</p>
-                        <div class="flex flex-row items-center justify-start gap-x-2.5">
+                        <div
+                            class="flex flex-row items-center justify-start gap-x-2.5"
+                        >
                             <Select
                                 id="bulan-cuti-bulan"
                                 items={[
@@ -230,7 +239,7 @@
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
                 <DynamicTable
-                    tableItems={cutiTanpaRekod}
+                    tableItems={data.untrackedLeaveHistoryList}
                     withActions
                     actionOptions={['detail']}
                     detailActions={() => {
