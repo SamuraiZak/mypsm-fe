@@ -11,7 +11,7 @@
     import IconButton from '$lib/components/buttons/IconButton.svelte';
     import { translate } from '$lib/config/dictionary';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
-    import { Tooltip } from 'flowbite-svelte';
+    import { onMount } from 'svelte';
 
     // =====================================================================
     // Variables
@@ -140,10 +140,31 @@
             tableData.selectedData = objectTarget;
         }
     }
+
+    let tableElement: any;
+
+    onMount(async () => {
+        tableElement = document.querySelector('#customTable');
+    });
+
+    function printDiv(elementId: any) {
+        let printElement = document.getElementById(elementId);
+        let printWindow = window.open('', 'PRINT');
+        printWindow?.document.write(document.documentElement.innerHTML);
+        setTimeout(() => {
+            // Needed for large documents
+            printWindow!.document.body.style.margin = '0 0';
+            printWindow!.document.body.innerHTML = printElement!.outerHTML;
+            printWindow!.document.close(); // necessary for IE >= 10
+            printWindow!.focus(); // necessary for IE >= 10*/
+            printWindow!.print();
+            printWindow!.close();
+        }, 1000);
+    }
 </script>
 
 <div
-    class="flex max-h-full h-full w-full flex-col rounded-sm border border-ios-labelColors-separator-light"
+    class="flex h-full max-h-full w-full flex-col rounded-sm border border-ios-labelColors-separator-light"
 >
     <!-- table info -->
 
@@ -171,26 +192,11 @@
 
         <!-- trailing -->
         <div class="flex flex-row items-center gap-2">
-            <button
-                on:click={() => {}}
-                class="flex h-7 min-h-7 flex-row items-center justify-center gap-1 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0"
-            >
-                <!-- icon -->
-                <div class="flex h-full flex-row items-center justify-center">
-                    <span class="leading-loose">
-                        <!-- icon slot -->
-                        <SvgDownload></SvgDownload>
-                        <slot />
-                    </span>
-                </div>
 
-                <!-- label -->
-                <div class="flex h-full flex-row items-center justify-center">
-                    <p class="text-sm font-normal leading-loose">XLS</p>
-                </div>
-            </button>
             <button
-                on:click={() => {}}
+                on:click={() => {
+                    printDiv('customTable');
+                }}
                 class="flex h-7 min-h-7 flex-row items-center justify-center gap-1 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0"
             >
                 <!-- icon -->
@@ -210,10 +216,11 @@
         </div>
     </div>
 
-    <div
-        class="max-h-full h-full min-h-[300px] w-full overflow-x-auto"
-    >
-        <table class="table max-h-full w-full table-auto border-collapse">
+    <div class="h-full max-h-full min-h-[300px] w-full overflow-x-auto">
+        <table
+            id="customTable"
+            class="table max-h-full w-full table-auto border-collapse"
+        >
             <!-- table head starts -->
 
             <thead class="sticky top-0 z-10">
@@ -350,7 +357,6 @@
                                                 ></SvgMinusCircle>
                                             </span>
                                         </IconButton>
-                                        
                                     {:else}
                                         <IconButton
                                             onClick={() => {
@@ -364,7 +370,6 @@
                                                 <SvgAddCircle></SvgAddCircle>
                                             </span>
                                         </IconButton>
-                                        
                                     {/if}
                                 </div>
                             </td>
@@ -375,7 +380,7 @@
                                 class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
                             >
                                 <span
-                                    class="text-center align-middle text-base font-normal relative"
+                                    class="relative text-center align-middle text-base font-normal"
                                 >
                                     {cell}
                                 </span>
@@ -398,7 +403,6 @@
                                     >
                                         <SvgEllipsisCircle></SvgEllipsisCircle>
                                     </IconButton>
-
                                 </div>
                             </td>
                         {/if}
@@ -414,7 +418,7 @@
     <!-- table control -->
 
     <div
-        class="flex  min-h-10 w-full flex-row items-center justify-between border-t border-ios-labelColors-separator-light p-2"
+        class="flex min-h-10 w-full flex-row items-center justify-between border-t border-ios-labelColors-separator-light p-2"
     >
         <!-- leading -->
         <div class="flex flex-row items-center gap-2">
