@@ -3,16 +3,12 @@
     import SvgChevronRight from '$lib/assets/svg/SvgChevronRight.svelte';
     import SvgDownload from '$lib/assets/svg/SvgDownload.svelte';
     import SvgEllipsisCircle from '$lib/assets/svg/SvgEllipsisCircle.svelte';
-    import SvgExcelAlt from '$lib/assets/svg/SvgExcelAlt.svelte';
     import SvgSortDown from '$lib/assets/svg/SvgSortDown.svelte';
     import SvgSortUp from '$lib/assets/svg/SvgSortUp.svelte';
-    import ExportButton from '$lib/components/buttons/ExportButton.svelte';
     import IconButton from '$lib/components/buttons/IconButton.svelte';
+    import { translate } from '$lib/config/dictionary';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
-    import { ComponentHelper } from '$lib/helper/core/component-helper/component.helper';
-    import { TranslationHelper } from '$lib/helper/core/translator-helper/translator-helper';
     import { Tooltip } from 'flowbite-svelte';
-    import { object, string } from 'zod';
 
     // =====================================================================
     // Variables
@@ -20,6 +16,8 @@
 
     // props: data for the table
     export let tableData: TableDTO;
+
+    export let passData: any = {};
 
     // props: callback functions to handle sort and pagination actions
     export let onUpdate = () => {};
@@ -104,7 +102,7 @@
 </script>
 
 <div
-    class="flex flex-col rounded-sm border border-ios-labelColors-separator-light"
+    class="mb-5 flex h-full w-full flex-col rounded-sm border border-ios-labelColors-separator-light"
 >
     <!-- table info -->
 
@@ -112,6 +110,7 @@
         class="flex min-h-10 w-full flex-row items-center justify-between border-b p-2"
     >
         <!-- leading -->
+        <div class="flex flex-row items-center gap-2"></div>
 
         <!-- trailing -->
         <div class="flex flex-row items-center gap-2">
@@ -154,7 +153,9 @@
         </div>
     </div>
 
-    <div class="max-h-[300px] min-h-[300px] w-full overflow-x-auto">
+    <div
+        class="max-h-[calc(100% - 500px)] min-h-[300px] w-full overflow-x-auto"
+    >
         <table class="table w-full table-auto border-collapse">
             <!-- table head starts -->
 
@@ -162,64 +163,77 @@
                 <!-- table head row starts -->
 
                 <tr class="h-10 bg-ios-systemColors-quaternarySystemFill-light">
-                    <!-- loop for each of the data key -->
-                    {#each Object.keys(tableData.data[0]) as columnHeading}
-                        <!-- return column header -->
-                        <th
-                            on:click={() => {
-                                // alert(Object.values({ columnHeading }));
-                                handleSort(
-                                    Object.values({ columnHeading }).toString(),
-                                );
+                    {#if tableData.data.length > 0}
+                        {#each Object.keys(tableData.data[0]) as columnHeading}
+                            <!-- return column header -->
+                            <th
+                                on:click={() => {
+                                    // alert(Object.values({ columnHeading }));
+                                    handleSort(
+                                        Object.values({
+                                            columnHeading,
+                                        }).toString(),
+                                    );
 
-                                onUpdate();
-                            }}
-                            class="h-full cursor-pointer border-r border-ios-labelColors-separator-light px-2.5"
+                                }}
+                                class="h-full cursor-pointer border-r border-ios-labelColors-separator-light px-2.5"
+                            >
+                                <div
+                                    class="flex h-full flex-row items-center justify-between"
+                                >
+                                    <span
+                                        class="select-none text-center align-middle text-sm font-semibold text-ios-labelColors-secondaryLabel-light"
+                                    >
+                                        {translate(columnHeading)}
+                                    </span>
+                                    <div
+                                        class="flex h-full max-h-full w-10 flex-col items-center justify-center gap-0"
+                                    >
+                                        <div
+                                            class="select-none {tableData.param
+                                                .orderBy ==
+                                            Object.values({
+                                                columnHeading,
+                                            }).toString()
+                                                ? ' text-ios-labelColors-label-light'
+                                                : ' text-ios-labelColors-tertiaryLabel-light'}"
+                                        >
+                                            {#if tableData.param.orderType == 'Ascending' && tableData.param.orderBy == Object.values( { columnHeading }, ).toString()}
+                                                <SvgSortUp size="18"
+                                                ></SvgSortUp>
+                                            {:else}
+                                                <SvgSortDown size="18"
+                                                ></SvgSortDown>
+                                            {/if}
+                                        </div>
+                                    </div>
+                                </div>
+                            </th>
+                        {/each}
+
+                        <!-- actions -->
+                        <th
+                            class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
                         >
                             <div
-                                class="flex h-full flex-row items-center justify-between"
+                                class="flex h-full flex-row items-center justify-center"
                             >
                                 <span
                                     class="select-none text-center align-middle text-sm font-semibold text-ios-labelColors-secondaryLabel-light"
                                 >
-                                    {TranslationHelper.toMalay(columnHeading)}
                                 </span>
-                                <div
-                                    class="flex h-full max-h-full w-10 flex-col items-center justify-center gap-0"
-                                >
-                                    <div
-                                        class="select-none {tableData.param.orderBy ==
-                                        Object.values({
-                                            columnHeading,
-                                        }).toString()
-                                            ? ' text-ios-labelColors-label-light'
-                                            : ' text-ios-labelColors-tertiaryLabel-light'}"
-                                    >
-                                        {#if tableData.param.orderType == 'Ascending' && tableData.param.orderBy == Object.values( { columnHeading }, ).toString()}
-                                            <SvgSortUp size="18"></SvgSortUp>
-                                        {:else}
-                                            <SvgSortDown size="18"
-                                            ></SvgSortDown>
-                                        {/if}
-                                    </div>
-                                </div>
                             </div>
                         </th>
-                    {/each}
-
-                    <!-- actions -->
-                    <th
-                        class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
-                    >
-                        <div
-                            class="flex h-full flex-row items-center justify-center"
-                        >
+                    {:else}
+                        <th>
                             <span
                                 class="select-none text-center align-middle text-sm font-semibold text-ios-labelColors-secondaryLabel-light"
                             >
+                                Tiada Rekod
                             </span>
-                        </div>
-                    </th>
+                        </th>
+                    {/if}
+                    <!-- loop for each of the data key -->
                 </tr>
 
                 <tr>
@@ -242,7 +256,6 @@
                     <tr
                         class=" h-10 border-b border-ios-labelColors-separator-light bg-ios-backgroundColors-systemBackground-light"
                     >
-
                         <!-- loop through each property -->
                         {#each Object.values(row) as cell}
                             <td
@@ -263,7 +276,12 @@
                             <div
                                 class="flex h-full flex-row items-center justify-center"
                             >
-                                <IconButton onClick={detailActions}>
+                                <IconButton
+                                    onClick={() => {
+                                        passData = row;
+                                        detailActions();
+                                    }}
+                                >
                                     <SvgEllipsisCircle></SvgEllipsisCircle>
                                 </IconButton>
                                 <Tooltip
@@ -285,7 +303,7 @@
     <!-- table control -->
 
     <div
-        class="flex min-h-10 w-full flex-row items-center justify-between border-t border-ios-labelColors-separator-light p-2"
+        class="flex h-10 min-h-10 w-full flex-row items-center justify-between border-t border-ios-labelColors-separator-light p-2"
     >
         <!-- leading -->
         <div class="flex flex-row items-center gap-2">
