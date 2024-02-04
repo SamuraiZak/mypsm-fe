@@ -65,9 +65,7 @@ export const _submit = async (formData: PwdUpdateRequestDTO) => {
     }
 };
 
-export async function _submitForm(
-    formData: PwdUpdateRequestDTO,
-){
+export async function _submitForm(formData: PwdUpdateRequestDTO) {
     const form = await superValidate(formData, _updatePasswordSchema);
 
     // check if form valid
