@@ -9,7 +9,7 @@
     let radioValueExSoldier: boolean | undefined = false;
     let radioValueRelationToStaff: boolean | undefined = true;
     let staffData: IntEmployees | undefined;
-    export let data: PageData;
+    // export let data: PageData;
     export let editable: boolean = false;
 
     const options: RadioOption[] = [

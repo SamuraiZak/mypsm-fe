@@ -1,29 +1,29 @@
 <script lang="ts">
     import { Badge } from 'flowbite-svelte';
 
-    export let disabled = false;
-    export let textCenter = false;
-    export let id = '';
-    export let name = '';
-    export let placeholder = '';
+    export const disabled = false;
+    export const textCenter = false;
+    export const id = '';
+    export const name = '';
+    export const placeholder = '';
     export let type = 'text';
-    export let onBlur = () => {};
-    export let value: any = null;
-    export let valueList: any = null;
+    export const onBlur = () => {};
+    export const value: any = null;
+    export const valueList: any = null;
     export let labelBlack = true;
     let fontBlack = 'text-txt-primary';
     let fontGray = 'text-txt-tertiary';
     export let label = 'Label';
     export let labelType = 'default';
-    export let labelFor = '';
-    export let onChange: any = null;
+    export const labelFor = '';
+    export const onChange: any = null;
     export let hasTooltip = false;
     export let toolTipID = '';
-    export let boldLabel = false;
-    export let onKeyDown: any = null;
-    export let onInput: any = null;
-    export let labelColor = 'txt-primary';
-    export let percentageVal = '';
+    export const boldLabel = false;
+    export const onKeyDown: any = null;
+    export const onInput: any = null;
+    export const labelColor = 'txt-primary';
+    export const percentageVal = '';
 
     // Function to set the type of the input field
     function typeAction(node: HTMLInputElement) {
