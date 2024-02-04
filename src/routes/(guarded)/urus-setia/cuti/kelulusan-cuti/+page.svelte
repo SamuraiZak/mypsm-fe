@@ -10,8 +10,11 @@
     import StaffSelector from '$lib/components/staff-selector/StaffSelector.svelte';
     import { Select } from 'flowbite-svelte';
     import ShortTextField from '$lib/components/input/ShortTextField.svelte';
+    import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
+    import type { LeaveHistoryListResponse } from '$lib/dto/mypsm/leave/report-leave/leave-history-list-response.dto';
 
     export let data: PageData;
+    let leaveInfo: LeaveHistoryListResponse;
     let selectedTahun = tahun[0].value;
 </script>
 
@@ -28,7 +31,9 @@
     class="flex h-full w-full flex-col items-center justify-start gap-2.5 overflow-y-auto p-2.5"
 >
     <FilterContainer>
-        <StaffSelector />
+        <FilterTextInput label="Nama Pekerja"></FilterTextInput>
+        <FilterTextInput label="No. Pekerja"></FilterTextInput>
+        <FilterTextInput label="No. Kad Pengenalan"></FilterTextInput>
         <div class="flex flex-row gap-x-2.5">
             <div class="flex flex-row items-center justify-center gap-x-2.5">
                 <p class="text-sm font-normal">Bulan Cuti</p>
@@ -119,22 +124,19 @@
         <ShortTextField label="Kod Jenis Cuti" type="text" />
     </FilterContainer>
 
-    <SectionHeader title="Senarai Cuti Yang Telah Diambil Mengikut Tahun"
-        ><DropdownSelect
-            id="tahun-dropdown"
-            label="Tahun"
-            dropdownType="label-left"
-            bind:index={selectedTahun}
-            options={tahun}
-        ></DropdownSelect>
-    </SectionHeader>
+    <SectionHeader
+        title="Senarai Cuti Yang Telah Diambil Mengikut Tahun"
+    ></SectionHeader>
     <div class="flex max-h-full w-full flex-col items-start justify-start">
         <DynamicTable
             tableItems={data.leaveHistoryList ?? undefined}
             withActions
+            bind:passData={leaveInfo}
             actionOptions={['edit']}
             editActions={() => {
-                goto('/urus-setia/cuti/kelulusan-cuti/butiran-kelulusan-cuti');
+                goto(
+                    `/urus-setia/cuti/kelulusan-cuti/butiran-kelulusan-cuti-${leaveInfo.leaveId}-${leaveInfo.leaveType}`,
+                );
             }}
         ></DynamicTable>
     </div>

@@ -13,6 +13,7 @@
     import IconButton from '$lib/components/buttons/IconButton.svelte';
     import SvgArrowRight from '$lib/assets/svg/SvgArrowRight.svelte';
     import type { PageData } from './$types';
+    import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
     export let data: PageData;
     let selectedTahun = tahun[0].value;
     let selectedJenisPengeluaran = jenisPengeluaran[0].value;
@@ -66,7 +67,9 @@
     </div>
 
     <FilterContainer>
-        <StaffSelector />
+        <FilterTextInput label="Nama Pekerja"></FilterTextInput>
+            <FilterTextInput label="No. Pekerja"></FilterTextInput>
+            <FilterTextInput label="No. Kad Pengenalan"></FilterTextInput>
         <DropdownSelect
             id="tahun-dropdown"
             label="Jenis Pengeluaran*"

@@ -202,11 +202,51 @@ export const _otherLeavesTertiarySchema = _otherLeavesSchema.required({
 // =============================================
 // load function
 // =============================================
-export const load = async () => {
-    // temp id request
+export const load = async ({ params }) => {
+    console.log(params.id);
     const leaveIdRequest: LeaveIDRequest = {
-        id: 1,
+        id: Number(params.id),
     };
+
+    const selectedLeaveType: string = String(params.type);
+
+    let currenLeaveDetailResponse: CommonResponseDTO;
+
+    if (selectedLeaveType === 'Gantian')
+        currenLeaveDetailResponse =
+            await LeaveServices.getReplacementLeaveDetail(leaveIdRequest);
+    else if (selectedLeaveType === 'Tanpa Rekod')
+        currenLeaveDetailResponse =
+            await LeaveServices.getUnrecordLeaveDetail(leaveIdRequest);
+    else if (selectedLeaveType === 'Separuh Gaji')
+        currenLeaveDetailResponse =
+            await LeaveServices.getHalfPayLeaveDetail(leaveIdRequest);
+    else if (selectedLeaveType === 'Tanpa Gaji')
+        currenLeaveDetailResponse =
+            await LeaveServices.getWithoutPayLeaveDetail(leaveIdRequest);
+    else if (
+        selectedLeaveType === 'Bersalin Awal' ||
+        selectedLeaveType === 'Bersalin Pegawai' ||
+        selectedLeaveType === 'Isteri Bersalin'
+    )
+        currenLeaveDetailResponse =
+            await LeaveServices.getMaternityLeaveDetail(leaveIdRequest);
+    else if (selectedLeaveType === 'Haji')
+        currenLeaveDetailResponse =
+            await LeaveServices.getHajiLeaveDetail(leaveIdRequest);
+    else if (
+        selectedLeaveType === 'Kuarantin' ||
+        selectedLeaveType === 'Menjaga Anak Tanpa Gaji' ||
+        selectedLeaveType === 'Kursus Sambilan' ||
+        selectedLeaveType === 'Perakuan Tidak Hadir Ke Pejabat' ||
+        selectedLeaveType === 'Sakit Lanjutan' ||
+        selectedLeaveType === 'Tanpa Gaji Mengikut Pasangan' ||
+        selectedLeaveType === 'Penyakit Barah Dan Kusta' ||
+        selectedLeaveType === 'Penyakit Tibi'
+    )
+        currenLeaveDetailResponse =
+            await LeaveServices.getOtherLeavesDetail(leaveIdRequest);
+
     // fetch functions
     const employeeResponse: CommonResponseDTO =
         await LeaveServices.getLeaveEmployeeDetail();
@@ -279,6 +319,8 @@ export const load = async () => {
     const otherLeavesForm = await superValidate(_otherLeavesSchema);
 
     return {
+        selectedLeaveType,
+        currenLeaveDetailResponse,
         employeeDetails,
         leaveList,
         untrackedLeaveList,

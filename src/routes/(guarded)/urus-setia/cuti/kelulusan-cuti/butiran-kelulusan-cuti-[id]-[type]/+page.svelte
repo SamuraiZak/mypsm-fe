@@ -47,7 +47,7 @@
     } from '$lib/constants/mypsm/radio-option-constants';
 
     export let data: PageData;
-    let selectedCuti = '';
+    let selectedCuti = data.selectedLeaveType;
 
     // ================ Stepper Control ==================
     let stepperIndex = 0;
@@ -123,19 +123,19 @@
         multipleSubmits: 'prevent',
         onSubmit() {
             if (
-                selectedCuti === 'Cuti Kuarantin' ||
-                selectedCuti === 'Cuti Menjaga Anak Tanpa Gaji' ||
-                selectedCuti === 'Cuti Penyakit Barah Dan Kusta' ||
-                selectedCuti === 'Cuti Penyakit Tibi'
+                selectedCuti === 'Kuarantin' ||
+                selectedCuti === 'Menjaga Anak Tanpa Gaji' ||
+                selectedCuti === 'Penyakit Barah Dan Kusta' ||
+                selectedCuti === 'Penyakit Tibi'
             ) {
                 _submitOtherLeaveForm($form);
             } else if (
-                selectedCuti === 'Cuti Perakuan Tidak Hadir Ke Pejabat' ||
-                selectedCuti === 'Cuti Sakit Lanjutan' ||
-                selectedCuti === 'Cuti Tanpa Gaji Mengikut Pasangan'
+                selectedCuti === 'Perakuan Tidak Hadir Ke Pejabat' ||
+                selectedCuti === 'Sakit Lanjutan' ||
+                selectedCuti === 'Tanpa Gaji Mengikut Pasangan'
             ) {
                 _submitOtherLeaveSecondaryForm($form);
-            } else if (selectedCuti === 'Cuti Kursus Sambilan') {
+            } else if (selectedCuti === 'Kursus Sambilan') {
                 _submitOtherLeaveTertiaryForm($form);
             }
         },
@@ -148,12 +148,12 @@
 
     $: {
         if (
-            selectedCuti === 'Cuti Perakuan Tidak Hadir Ke Pejabat' ||
-            selectedCuti === 'Cuti Sakit Lanjutan' ||
-            selectedCuti === 'Cuti Tanpa Gaji Mengikut Pasangan'
+            selectedCuti === 'Perakuan Tidak Hadir Ke Pejabat' ||
+            selectedCuti === 'Sakit Lanjutan' ||
+            selectedCuti === 'Tanpa Gaji Mengikut Pasangan'
         ) {
             options.validators = _otherLeavesSecondarySchema;
-        } else if (selectedCuti === 'Cuti Kursus Sambilan') {
+        } else if (selectedCuti === 'Kursus Sambilan') {
             options.validators = _otherLeavesTertiarySchema;
         }
 
@@ -163,8 +163,12 @@
 
 <ContentHeader
     title="Permohonan Cuti"
-    description="Sila isi borang permohonan cuti di bawah dengan butiran yang tepat dan lengkap."
-></ContentHeader>
+    description="Maklumat permohonan cuti kakitangan."
+    ><TextIconButton
+        label="Kembali"
+        onClick={() => goto('../kelulusan-cuti')}
+    /></ContentHeader
+>
 
 <Stepper bind:activeIndex={stepperIndex}>
     <StepperContent>
@@ -231,31 +235,23 @@
         </StepperContentHeader>
         <StepperContentBody>
             <div class="flex max-h-full w-full flex-col gap-2.5">
-                <DropdownSelect
-                    dropdownType="label-left-full"
-                    label="Jenis Cuti"
-                    options={data.leaveList}
-                    bind:value={selectedCuti}
-                    onSelect={() => {}}
-                ></DropdownSelect>
-
-                {#if selectedCuti === 'Cuti Gantian'}
+                {#if selectedCuti === 'Gantian'}
                     <CutiGantian {data}></CutiGantian>
-                {:else if selectedCuti === 'Cuti Tanpa Rekod'}
+                {:else if selectedCuti === 'Tanpa Rekod'}
                     <CutiTanpaRekod {data}></CutiTanpaRekod>
-                {:else if selectedCuti === 'Cuti Separuh Gaji'}
+                {:else if selectedCuti === 'Separuh Gaji'}
                     <CutiSeparuhGaji {data}></CutiSeparuhGaji>
-                {:else if selectedCuti === 'Cuti Tanpa Gaji'}
+                {:else if selectedCuti === 'Tanpa Gaji'}
                     <CutiTanpaGaji {data}></CutiTanpaGaji>
-                {:else if selectedCuti === 'Cuti Bersalin Awal'}
+                {:else if selectedCuti === 'Bersalin Awal'}
                     <CutiBersalinAwal {data}></CutiBersalinAwal>
-                {:else if selectedCuti === 'Cuti Bersalin Pegawai'}
+                {:else if selectedCuti === 'Bersalin Pegawai'}
                     <CutiBersalinPegawai {data}></CutiBersalinPegawai>
-                {:else if selectedCuti === 'Cuti Isteri Bersalin'}
+                {:else if selectedCuti === 'Isteri Bersalin'}
                     <CutiIsteriBersalin {data}></CutiIsteriBersalin>
-                {:else if selectedCuti === 'Cuti Haji'}
+                {:else if selectedCuti === 'Haji'}
                     <CutiHaji {data}></CutiHaji>
-                {:else if selectedCuti === 'Cuti Kuarantin' || selectedCuti === 'Cuti Menjaga Anak Tanpa Gaji' || selectedCuti === 'Cuti Kursus Sambilan' || selectedCuti === 'Cuti Perakuan Tidak Hadir Ke Pejabat' || selectedCuti === 'Cuti Sakit Lanjutan' || selectedCuti === 'Cuti Tanpa Gaji Mengikut Pasangan' || selectedCuti === 'Cuti Penyakit Barah Dan Kusta' || selectedCuti === 'Cuti Penyakit Tibi'}
+                {:else if selectedCuti === 'Kuarantin' || selectedCuti === 'Menjaga Anak Tanpa Gaji' || selectedCuti === 'Kursus Sambilan' || selectedCuti === 'Perakuan Tidak Hadir Ke Pejabat' || selectedCuti === 'Sakit Lanjutan' || selectedCuti === 'Tanpa Gaji Mengikut Pasangan' || selectedCuti === 'Penyakit Barah Dan Kusta' || selectedCuti === 'Penyakit Tibi'}
                     <section>
                         <div
                             class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
@@ -267,7 +263,7 @@
                                 use:enhance
                                 class="flex w-full flex-col gap-2"
                             >
-                                {#if selectedCuti === 'Cuti Perakuan Tidak Hadir Ke Pejabat' || selectedCuti === 'Cuti Sakit Lanjutan' || selectedCuti === 'Cuti Tanpa Gaji Mengikut Pasangan'}
+                                {#if selectedCuti === 'Perakuan Tidak Hadir Ke Pejabat' || selectedCuti === 'Sakit Lanjutan' || selectedCuti === 'Tanpa Gaji Mengikut Pasangan'}
                                     <LongTextField
                                         hasError={!!$errors.reason}
                                         name="reason"
@@ -324,7 +320,7 @@
                                         {/if}
                                     </div>
                                 </div>
-                                {#if selectedCuti === 'Cuti Kursus Sambilan'}
+                                {#if selectedCuti === 'Kursus Sambilan'}
                                     <DropdownSelect
                                         hasError={!!$errors.academicQualification}
                                         name="academicQualification"

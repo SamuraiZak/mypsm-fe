@@ -9,6 +9,7 @@
     import { tahun } from '$lib/mocks/ketua-seksyen/cuti/tahun';
     import { goto } from '$app/navigation';
     import { pengumpulanGcr } from '$lib/mocks/urus-setia/cuti/pengumpulan-gcr/pengumpulan-gcr';
+    import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
 
     let selectedTahun = tahun[0].value;
 </script>
@@ -26,7 +27,9 @@
 >
 
     <FilterContainer>
-        <StaffSelector />
+        <FilterTextInput label="Nama Pekerja"></FilterTextInput>
+            <FilterTextInput label="No. Pekerja"></FilterTextInput>
+            <FilterTextInput label="No. Kad Pengenalan"></FilterTextInput>
         <ShortTextField label="Jumlah Hari GCR" type="text" />
         <ShortTextField label="Award Wang Tunai (RM)" type="text" />
         <DropdownSelect

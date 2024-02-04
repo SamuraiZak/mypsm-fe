@@ -240,14 +240,14 @@ export const load = async () => {
     //     filter: {},
     // };
 
-    // const employeeListResponse: EmployeesListResponseViewModel =
-    //     await EmployeeService.getEmployeeList();
+    const employeeListResponse: EmployeesListResponseViewModel =
+        await EmployeeService.getEmployeeList();
 
-    // const employeeListLookup: DropdownOptionsInterface[] =
-    //     employeeListResponse.data.result.map((employee) => ({
-    //         value: String(employee.employeeId),
-    //         name: employee.name,
-    //     }));
+    const employeeListLookup: DropdownOptionsInterface[] =
+        employeeListResponse.data.result.map((employee) => ({
+            value: String(employee.employeeId),
+            name: employee.name,
+        }));
 
     // // stop editing here: hamiz
 
@@ -329,7 +329,7 @@ export const load = async () => {
         // positionLookup,
         // unitLookup,
         // employeeListResponse,
-        // employeeListLookup,
+        employeeListLookup,
         // identityCardColorLookup,
         // monthStringLookup,
         // retirementBenefitLookup,

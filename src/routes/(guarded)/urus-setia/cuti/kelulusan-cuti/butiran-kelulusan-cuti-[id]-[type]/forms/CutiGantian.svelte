@@ -18,16 +18,7 @@
     // ================ Form Validation ================
     const { form, errors, enhance } = superForm(data.replacementLeaveForm, {
         SPA: true,
-        validators: _replacementLeaveSchema,
-        invalidateAll: true,
-        validationMethod: 'oninput',
-        resetForm: false,
-        multipleSubmits: 'prevent',
-        onSubmit() {
-            _submitReplacementLeaveForm($form);
-        },
-        taintedMessage:
-            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+        validators: false,
     });
 
     const proxyStartDate = dateProxy(form, 'startDate', { format: 'date' });
@@ -39,11 +30,21 @@
         format: 'date',
     });
     const proxyDutyStartHour = dateProxy(form, 'dutyStartHour', {
-        format: 'time',
+        format: 'datetime-local',
     });
     const proxyDutyEndHour = dateProxy(form, 'dutyEndHour', {
-        format: 'time',
+        format: 'datetime-local',
     });
+
+    $proxyStartDate = data.currenLeaveDetailResponse.data?.details.startDate;
+    $proxyEndDate = data.currenLeaveDetailResponse.data?.details.proxyEndDate;
+    // $proxyLastLeaveDate =
+    //     data.currenLeaveDetailResponse.data?.details.proxyLastLeaveDate;
+    // $proxyDutyDate = data.currenLeaveDetailResponse.data?.details.proxyDutyDate;
+    // $proxyDutyStartHour =
+    //     data.currenLeaveDetailResponse.data?.details.proxyDutyStartHour;
+    // $proxyDutyEndHour =
+    //     data.currenLeaveDetailResponse.data?.details.proxyDutyEndHour;
 </script>
 
 <section
@@ -55,7 +56,14 @@
             class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
         >
             <div class="flex w-full flex-col gap-2">
-                <DropdownSelect
+                <TextField
+                    disabled
+                    name="employeeNumber"
+                    label={'No. Pekerja'}
+                    value={data.currenLeaveDetailResponse.data?.details
+                        .substituteName}
+                ></TextField>
+                <!-- <DropdownSelect
                     hasError={!!$errors.substituteName}
                     id="substituteName"
                     options={data.employeeListLookup}
@@ -68,13 +76,14 @@
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
                         >{$errors.substituteName}</span
                     >
-                {/if}
+                {/if} -->
                 <div
                     class="flex w-full flex-row items-center justify-start gap-2.5"
                 >
                     <div class="flex w-full flex-col">
                         <DateSelector
                             hasError={!!$errors.startDate}
+                            disabled
                             name="startDate"
                             handleDateChange
                             bind:selectedDate={$proxyStartDate}
@@ -123,6 +132,7 @@
                     <div class="flex w-full flex-col">
                         <DateSelector
                             hasError={!!$errors.endDate}
+                            disabled
                             name="endDate"
                             handleDateChange
                             label="Tarikh Tamat"
@@ -171,6 +181,7 @@
                 ></TextField> -->
                 <DateSelector
                     hasError={!!$errors.lastLeaveDate}
+                    disabled
                     name="lastLeaveDate"
                     handleDateChange
                     label="Cuti Gantian Terakhir Diambil Pada"
@@ -187,13 +198,13 @@
 
         <SectionHeader title="Jenis Gantian"></SectionHeader>
         <div class="flex max-h-full w-full flex-col items-start justify-start">
-            <DropdownSelect
+            <!-- <DropdownSelect
                 dropdownType="label-left-full"
                 label="Jenis Gantian"
                 options={jenisGantian.filter((cat) => cat.name != 'Semua')}
                 bind:value={$form.replacementType}
                 onSelect={() => {}}
-            ></DropdownSelect>
+            ></DropdownSelect> -->
 
             {#if !!$form.replacementType}
                 <!-- <BekerjaLebihMasa {data}></BekerjaLebihMasa> -->
