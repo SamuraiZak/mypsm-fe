@@ -41,6 +41,7 @@ export class EmployeeServices {
             }
         } catch (error) {
             // Add your code here
+            console.log(error);
 
             // change the return variable accordingly
             return CommonResponseConstant.httpError;
