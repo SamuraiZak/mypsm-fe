@@ -4,7 +4,7 @@
     import { page } from '$app/stores';
     import { Select } from 'flowbite-svelte';
     import { roles } from '$lib/config/roles';
-    import { activeRole } from '$lib/stores/globalState';
+    import { activeRole, loadingState } from '$lib/stores/globalState';
     import currentRole from '$lib/stores/activeRole';
     import type {
         EnumRole,
@@ -14,6 +14,14 @@
     import type { RoleOption } from '$lib/view-models/core/role-option/role-option.view-model';
     import { TextHelper } from '$lib/helper/core/text-helper/text-helper';
     import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key-constant';
+    import type { AuthRequestDTO } from '$lib/dto/core/auth/auth-request.dto';
+    import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+    import {
+        getLoadingToast,
+        getLoginSuccessToast,
+        getLoginErrorToast,
+    } from '$lib/services/core/toast/toast-service';
+    import toast from 'svelte-french-toast';
 
     export let roleOptionList: RoleOption[] = [];
     let currentUrl = $page.url.pathname;
@@ -55,6 +63,139 @@
             return 'urus-setia';
         } else {
             return currentRolePrefix;
+        }
+    }
+
+    async function _changeRole(newRole: string) {
+        let param: AuthRequestDTO = {
+            idType: localStorage.getItem(LocalStorageKeyConstant.idType) ?? "undefined",
+            userGroup: localStorage.getItem(LocalStorageKeyConstant.userGroup) ?? "undefined",
+            username: localStorage.getItem(LocalStorageKeyConstant.userName) ?? "undefined",
+            password: localStorage.getItem(LocalStorageKeyConstant.password) ?? "undefined",
+            currentRole: newRole ?? "undefined",
+        };
+        loadingState.set(true);
+        getLoadingToast();
+
+        const response: CommonResponseDTO = await AuthService.authenticateUser(
+            param,
+        ).finally(() => toast.dismiss());
+
+        console.log(response);
+
+        if (response.status == 'success') {
+            let accountRes = await AuthService.getFullName();
+            loadingState.set(false);
+            getLoginSuccessToast().finally(() =>
+                setTimeout(() => {
+                    switch (param.currentRole) {
+                        case 'admin':
+                            goto('/kakitangan/halaman-utama');
+                            break;
+
+                        case 'audit':
+                            goto('/kakitangan/halaman-utama');
+                            break;
+
+                        case 'kakitangan':
+                            goto('/kakitangan/halaman-utama');
+                            break;
+
+                        case 'ketua pengarah':
+                            goto('/ketua-pengarah/halaman-utama');
+                            break;
+
+                        case 'ketua seksyen':
+                            goto('/ketua-seksyen/halaman-utama');
+                            break;
+
+                        case 'klinik panel':
+                            goto('/kakitangan/halaman-utama');
+                            break;
+
+                        case 'pelulus':
+                            goto('/pelulus/halaman-utama');
+                            break;
+
+                        case 'pengarah audit':
+                            goto('/pengarah-audit/halaman-utama');
+                            break;
+
+                        case 'pengarah bahagian/negeri':
+                            goto('/pengarah-bahagian-negeri/halaman-utama');
+                            break;
+
+                        case 'penyokong':
+                            goto('/penyokong/halaman-utama');
+                            break;
+
+                        case 'super admin':
+                            goto('/super-admin/halaman-utama');
+                            break;
+
+                        case 'timbalan ketua seksyen':
+                            goto('/timbalan-ketua-seksyen/halaman-utama');
+                            break;
+
+                        case 'unit bahagian/negeri':
+                            goto('/kakitangan/halaman-utama');
+                            break;
+
+                        case 'unit pengurusan fasiliti':
+                            goto('/kakitangan/halaman-utama');
+                            break;
+
+                        case 'urus setia cuti':
+                            goto('/urus-setia/halaman-utama');
+                            break;
+
+                        case 'urus setia elaun-elaun perkhidmatan':
+                            goto('/urus-setia/halaman-utama');
+                            break;
+
+                        case 'urus setia gaji':
+                            goto('/urus-setia/halaman-utama');
+                            break;
+
+                        case 'urus setia integriti':
+                            goto('/urus-setia/halaman-utama');
+                            break;
+
+                        case 'urus setia kakitangan kontrak':
+                            goto('/urus-setia/halaman-utama');
+                            break;
+
+                        case 'urus setia latihan':
+                            goto('/urus-setia/halaman-utama');
+                            break;
+
+                        case 'urus setia lnpt':
+                            goto('/urus-setia/halaman-utama');
+                            break;
+
+                        case 'urus setia perjawatan':
+                            goto('/urus-setia/halaman-utama');
+                            break;
+
+                        case 'urus setia persaraan':
+                            goto('/urus-setia/halaman-utama');
+                            break;
+
+                        case 'urus setia perubatan':
+                            goto('/urus-setia/halaman-utama');
+                            break;
+
+                        case 'urus setia pinjaman & kuarters':
+                            goto('/urus-setia/halaman-utama');
+                            break;
+
+                        default:
+                            break;
+                    }
+                }, 2000),
+            );
+        } else {
+            getLoginErrorToast();
         }
     }
 </script>
@@ -101,10 +242,12 @@
                     activeRole.set(selected ?? 'kakitangan');
                     currentRole.set(selected ?? 'kakitangan');
 
-                    let rolePrefix = generateUrlPrefix(
-                        selected ?? 'kakitangan',
-                    );
-                    goto('/' + rolePrefix + '/halaman-utama');
+                    _changeRole(selected);
+
+                    // let rolePrefix = generateUrlPrefix(
+                    //     selected ?? 'kakitangan',
+                    // );
+                    // goto('/' + rolePrefix + '/halaman-utama');
                 }}
             />
         </div>
