@@ -12,10 +12,41 @@
     import ShortTextField from '$lib/components/input/ShortTextField.svelte';
     import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
     import type { LeaveHistoryListResponse } from '$lib/dto/mypsm/leave/report-leave/leave-history-list-response.dto';
+    import CustomTable from '$lib/components/table/CustomTable.svelte';
+    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import { _updateTable } from './+page';
+    import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 
     export let data: PageData;
     let leaveInfo: LeaveHistoryListResponse;
     let selectedTahun = tahun[0].value;
+
+    let param: CommonListRequestDTO = data.param;
+
+    let table: TableDTO = {
+        param: param,
+        meta: data.leaveHistoryListResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: data.leaveHistoryListResponse.data?.dataList ?? [],
+    };
+
+    async function _search() {
+        _updateTable(table.param).then((value) => {
+            table.data = value.props.response.data?.dataList ?? [];
+            table.meta = value.props.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            table.param.pageSize = table.meta.pageSize;
+            table.param.pageNum = table.meta.pageNum;
+        });
+    }
 </script>
 
 <!-- header section -->
@@ -30,7 +61,7 @@
 <section
     class="flex h-full w-full flex-col items-center justify-start gap-2.5 overflow-y-auto p-2.5"
 >
-    <FilterContainer>
+    <!-- <FilterContainer>
         <FilterTextInput label="Nama Pekerja"></FilterTextInput>
         <FilterTextInput label="No. Pekerja"></FilterTextInput>
         <FilterTextInput label="No. Kad Pengenalan"></FilterTextInput>
@@ -122,13 +153,26 @@
             </div>
         </div>
         <ShortTextField label="Kod Jenis Cuti" type="text" />
-    </FilterContainer>
+    </FilterContainer> -->
 
-    <SectionHeader
-        title="Senarai Cuti Yang Telah Diambil Mengikut Tahun"
+    <SectionHeader title="Senarai Cuti Yang Telah Diambil Mengikut Tahun"
     ></SectionHeader>
     <div class="flex max-h-full w-full flex-col items-start justify-start">
-        <DynamicTable
+        <CustomTable
+            bind:tableData={table}
+            bind:passData={leaveInfo}
+            enableDetail
+            onUpdate={_search}
+            detailActions={() => {
+                // const url =
+                //     '/urus-setia/lnpt/sejarah-apc/tambah-rekod-apc/butiran-' +
+                //     leaveInfo.employeeNumber;
+                goto(
+                    `/urus-setia/cuti/kelulusan-cuti/butiran-kelulusan-cuti-${leaveInfo.leaveId}-${leaveInfo.leaveType}`,
+                );
+            }}
+        ></CustomTable>
+        <!-- <DynamicTable
             tableItems={data.leaveHistoryList ?? undefined}
             withActions
             bind:passData={leaveInfo}
@@ -138,6 +182,6 @@
                     `/urus-setia/cuti/kelulusan-cuti/butiran-kelulusan-cuti-${leaveInfo.leaveId}-${leaveInfo.leaveType}`,
                 );
             }}
-        ></DynamicTable>
+        ></DynamicTable> -->
     </div>
 </section>
