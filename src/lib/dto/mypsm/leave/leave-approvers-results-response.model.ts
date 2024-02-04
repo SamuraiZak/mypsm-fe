@@ -1,5 +1,5 @@
 export interface LeaveApprovalResultResponse {
-    id: number;
+    // id: number;
     status: boolean;
     remark: string;
 }

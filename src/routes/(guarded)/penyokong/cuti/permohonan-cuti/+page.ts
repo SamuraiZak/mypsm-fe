@@ -5,9 +5,6 @@ import type { LeaveHistoryListResponse } from '$lib/dto/mypsm/leave/report-leave
 import { LeaveServices } from '$lib/services/implementations/mypsm/leave/leave.service';
 
 export const load = async () => {
-    // show loading screen
-    // showLoadingOverlay.set(true);
-
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
@@ -15,23 +12,20 @@ export const load = async () => {
         orderType: '',
     };
 
-    const leaveEntitlementListResponse: CommonResponseDTO =
-        await LeaveServices.getLeaveEntitlementList(param);
-
-    const leaveEntitlementList: LeaveEntitlementListResponse[] =
-        leaveEntitlementListResponse.data
-            ?.dataList as LeaveEntitlementListResponse[];
-
     const leaveHistoryListResponse: CommonResponseDTO =
         await LeaveServices.getLeaveHistoryList(param);
 
-    const leaveHistoryList: LeaveHistoryListResponse[] =
-        leaveHistoryListResponse.data?.dataList as LeaveHistoryListResponse[];
+    const replacementLeaveHistoryList: LeaveHistoryListResponse[] = (
+        leaveHistoryListResponse.data?.dataList as LeaveHistoryListResponse[]
+    ).filter((data) => data.leaveType === 'Gantian');
 
-    // setTimeout(() => showLoadingOverlay.set(false), 2500);
+    const untrackedLeaveHistoryList: LeaveHistoryListResponse[] = (
+        leaveHistoryListResponse.data?.dataList as LeaveHistoryListResponse[]
+    ).filter((data) => data.leaveType === 'Tanpa Rekod');
+
     return {
-        leaveEntitlementList,
-        leaveHistoryList,
+        replacementLeaveHistoryList,
+        untrackedLeaveHistoryList,
         param,
     };
 };

@@ -1,57 +1,34 @@
 <script lang="ts">
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import TextField from '$lib/components/input/TextField.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
-    import { jenisCtr } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/jenis-ctr';
-    import DynamicTable from '$lib/components/table/DynamicTable.svelte';
-    import { ctr } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/ctr';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
-    import { setengahHari } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/setengah-hari';
-    import { Checkbox } from 'flowbite-svelte';
-    import type { PageData } from './$types';
-    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from '../$types';
+    import { dateProxy, superForm } from 'sveltekit-superforms/client';
     import {
-        _leaveWithoutRecordSchema1,
-        _leaveWithoutRecordSchema2,
-        _leaveWithoutRecordSchema3,
-        _leaveWithoutRecordSchema4,
         _submitLeaveWithoutRecordForm,
+        _untrackedLeaveSchema,
     } from '../+page';
 
     export let data: PageData;
 
-    let hasHalfDayStartDate: boolean = false;
-    let hasHalfDayEndDate: boolean = false;
-
-    // ==================================
-    // Form Validation ==================
-    // ==================================
-    const { form, errors, enhance, options } = superForm(
-        data.leaveWithoutRecordForm,
-        {
-            SPA: true,
-            onSubmit() {
-                _submitLeaveWithoutRecordForm(
-                    $form,
-                    hasHalfDayStartDate,
-                    hasHalfDayEndDate,
-                );
-            },
-            taintedMessage:
-                'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    // ================ Form Validation ================
+    const { form, errors, enhance } = superForm(data.untrackedLeaveForm, {
+        SPA: true,
+        validators: _untrackedLeaveSchema,
+        invalidateAll: true,
+        validationMethod: 'oninput',
+        resetForm: false,
+        multipleSubmits: 'prevent',
+        onSubmit() {
+            _submitLeaveWithoutRecordForm($form);
         },
-    );
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
 
-    $: if (hasHalfDayStartDate && !hasHalfDayEndDate) {
-        options.validators = _leaveWithoutRecordSchema2;
-    } else if (hasHalfDayEndDate && !hasHalfDayStartDate) {
-        options.validators = _leaveWithoutRecordSchema3;
-    } else if (hasHalfDayEndDate && hasHalfDayStartDate) {
-        options.validators = _leaveWithoutRecordSchema4;
-    } else if (!hasHalfDayStartDate && !hasHalfDayEndDate) {
-        options.validators = _leaveWithoutRecordSchema1;
-    }
+    const proxyStartDate = dateProxy(form, 'startDate', { format: 'date' });
+    const proxyEndDate = dateProxy(form, 'endDate', { format: 'date' });
 </script>
 
 <section>
@@ -66,41 +43,41 @@
             class="flex w-full flex-col gap-2"
         >
             <DropdownSelect
-                hasError={$errors.ctrCategory ? true : false}
-                id="ctrCategory"
-                label="Jenis CTR"
+                hasError={!!$errors.untrackedLeaveType}
+                id="untrackedLeaveType"
+                label="Jenis Cuti Tanpa Rekod"
                 dropdownType="label-left-full"
-                bind:value={$form.ctrCategory}
-                options={jenisCtr}
+                bind:value={$form.untrackedLeaveType}
+                options={data.untrackedLeaveList}
             ></DropdownSelect>
-            {#if $errors.ctrCategory}
+            {#if $errors.untrackedLeaveType}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$errors.ctrCategory}</span
+                    >{$errors.untrackedLeaveType}</span
                 >
             {/if}
             <LongTextField
-                hasError={$errors.applicationReason ? true : false}
-                name="applicationReason"
+                hasError={!!$errors.reason}
+                name="reason"
                 label="Tujuan Permohonan"
-                bind:value={$form.applicationReason}
+                bind:value={$form.reason}
                 placeholder="Sila taip jawapan anda dalam ruangan ini"
             ></LongTextField>
-            {#if $errors.applicationReason}
+            {#if $errors.reason}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$errors.applicationReason}</span
+                    >{$errors.reason}</span
                 >
             {/if}
             <div
-                class="flex flex w-full w-full flex-row items-center justify-start gap-2.5"
+                class="flex w-full flex-row items-center justify-start gap-2.5"
             >
                 <div class="flex w-full flex-col">
                     <DateSelector
-                        hasError={$errors.startDate ? true : false}
+                        hasError={!!$errors.startDate}
                         name="startDate"
                         handleDateChange
-                        bind:selectedDate={$form.startDate}
+                        bind:selectedDate={$proxyStartDate}
                         label="Tarikh Mula"
                     ></DateSelector>
                     {#if $errors.startDate}
@@ -110,7 +87,7 @@
                         >
                     {/if}
                 </div>
-                <Checkbox
+                <!-- <Checkbox
                     name="hasHalfDayStartDate"
                     bind:checked={hasHalfDayStartDate}
                     class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
@@ -122,7 +99,7 @@
                 >
                 <div class="flex w-full flex-col">
                     <DropdownSelect
-                        hasError={$errors.halfDayStartDate ? true : false}
+                        hasError={!!$errors.halfDayStartDate}
                         id="halfDayStartDate"
                         disabled={!hasHalfDayStartDate}
                         options={setengahHari}
@@ -136,18 +113,18 @@
                             >{$errors.halfDayStartDate}</span
                         >
                     {/if}
-                </div>
+                </div> -->
             </div>
             <div
-                class="flex flex w-full w-full flex-row items-center justify-start gap-2.5"
+                class="flex w-full flex-row items-center justify-start gap-2.5"
             >
                 <div class="flex w-full flex-col">
                     <DateSelector
-                        hasError={$errors.endDate ? true : false}
+                        hasError={!!$errors.endDate}
                         name="endDate"
                         handleDateChange
                         label="Tarikh Tamat"
-                        bind:selectedDate={$form.endDate}
+                        bind:selectedDate={$proxyEndDate}
                     ></DateSelector>
                     {#if $errors.endDate}
                         <span
@@ -157,7 +134,7 @@
                     {/if}
                 </div>
 
-                <Checkbox
+                <!-- <Checkbox
                     name="hasHalfDayEndDate"
                     bind:checked={hasHalfDayEndDate}
                     class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
@@ -169,7 +146,7 @@
                 >
                 <div class="flex w-full flex-col">
                     <DropdownSelect
-                        hasError={$errors.halfDayEndDate ? true : false}
+                        hasError={!!$errors.halfDayEndDate}
                         id="halfDayEndDate"
                         disabled={!hasHalfDayEndDate}
                         options={setengahHari}
@@ -183,11 +160,11 @@
                             >{$errors.halfDayEndDate}</span
                         >
                     {/if}
-                </div>
+                </div> -->
             </div>
 
-            <TextField
-                hasError={$errors.totalDay ? true : false}
+            <!-- <TextField
+                hasError={!!$errors.totalDay}
                 name="totalDay"
                 label="Bilangan Hari"
                 bind:value={$form.totalDay}
@@ -197,13 +174,13 @@
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
                     >{$errors.totalDay}</span
                 >
-            {/if}
+            {/if} -->
         </form>
     </div>
-    <div class="flex max-h-full w-full flex-col items-start justify-start">
+    <!-- <div class="flex max-h-full w-full flex-col items-start justify-start">
         <SectionHeader
             title="Cuti Tanpa Rekod yang telah diambil dalam tahun semasa"
         ></SectionHeader>
         <DynamicTable tableItems={ctr}></DynamicTable>
-    </div>
+    </div> -->
 </section>

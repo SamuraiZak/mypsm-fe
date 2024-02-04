@@ -1,57 +1,34 @@
 <script lang="ts">
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import TextField from '$lib/components/input/TextField.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
-    import DynamicTable from '$lib/components/table/DynamicTable.svelte';
-    import { ctr } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/ctr';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
-    import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import { setengahHari } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/setengah-hari';
-    import FileInputField from '$lib/components/input/FileInputField.svelte';
-    import { Checkbox } from 'flowbite-svelte';
-    import { superForm } from 'sveltekit-superforms/client';
-    import type { PageData } from './$types';
+    import { dateProxy, superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from '../$types';
     import {
+        _halfPayLeaveSchema,
         _hasApplicationReasonSchema,
-        _halfSalaryLeaveSchema,
-        _halfSalaryLeaveSchema2,
-        _halfSalaryLeaveSchema3,
         _submitHalfSalaryLeaveForm,
     } from '../+page';
 
     export let data: PageData;
 
-    let hasHalfDayStartDate: boolean = false;
-    let hasHalfDayEndDate: boolean = false;
-
-    // ==================================
-    // Form Validation ==================
-    // ==================================
-    const { form, errors, enhance, options } = superForm(
-        data.halfSalaryLeaveForm,
-        {
-            SPA: true,
-            onSubmit() {
-                _submitHalfSalaryLeaveForm(
-                    $form,
-                    hasHalfDayStartDate,
-                    hasHalfDayEndDate,
-                );
-            },
-            taintedMessage:
-                'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    // ============== Form Validation
+    const { form, errors, enhance } = superForm(data.halfPayLeaveForm, {
+        SPA: true,
+        validators: _halfPayLeaveSchema,
+        invalidateAll: true,
+        validationMethod: 'oninput',
+        resetForm: false,
+        multipleSubmits: 'prevent',
+        onSubmit() {
+            _submitHalfSalaryLeaveForm($form);
         },
-    );
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
 
-    $: if (hasHalfDayStartDate && !hasHalfDayEndDate) {
-        options.validators = _halfSalaryLeaveSchema;
-    } else if (hasHalfDayEndDate && !hasHalfDayStartDate) {
-        options.validators = _halfSalaryLeaveSchema2;
-    } else if (hasHalfDayEndDate && hasHalfDayStartDate) {
-        options.validators = _halfSalaryLeaveSchema3;
-    } else if (!hasHalfDayStartDate && !hasHalfDayEndDate) {
-        options.validators = _hasApplicationReasonSchema;
-    }
+    const proxyStartDate = dateProxy(form, 'startDate', { format: 'date' });
+    const proxyEndDate = dateProxy(form, 'endDate', { format: 'date' });
 </script>
 
 <section>
@@ -66,16 +43,16 @@
             class="flex w-full flex-col gap-2"
         >
             <LongTextField
-                hasError={$errors.applicationReason ? true : false}
-                name="applicationReason"
+                hasError={$errors.reason ? true : false}
+                name="reason"
                 label="Tujuan Permohonan"
-                bind:value={$form.applicationReason}
+                bind:value={$form.reason}
                 placeholder="Sila taip jawapan anda dalam ruangan ini"
             ></LongTextField>
-            {#if $errors.applicationReason}
+            {#if $errors.reason}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$errors.applicationReason}</span
+                    >{$errors.reason}</span
                 >
             {/if}
             <div class="w-fullflex-row flex items-center justify-start gap-2.5">
@@ -84,7 +61,7 @@
                         hasError={$errors.startDate ? true : false}
                         name="startDate"
                         handleDateChange
-                        bind:selectedDate={$form.startDate}
+                        bind:selectedDate={$proxyStartDate}
                         label="Tarikh Mula"
                     ></DateSelector>
                     {#if $errors.startDate}
@@ -94,7 +71,7 @@
                         >
                     {/if}
                 </div>
-                <Checkbox
+                <!-- <Checkbox
                     name="hasHalfDayStartDate"
                     bind:checked={hasHalfDayStartDate}
                     class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
@@ -120,7 +97,7 @@
                             >{$errors.halfDayStartDate}</span
                         >
                     {/if}
-                </div>
+                </div> -->
             </div>
             <div
                 class="flex w-full flex-row items-center justify-start gap-2.5"
@@ -131,7 +108,7 @@
                         name="endDate"
                         handleDateChange
                         label="Tarikh Tamat"
-                        bind:selectedDate={$form.endDate}
+                        bind:selectedDate={$proxyEndDate}
                     ></DateSelector>
                     {#if $errors.endDate}
                         <span
@@ -140,7 +117,7 @@
                         >
                     {/if}
                 </div>
-                <Checkbox
+                <!-- <Checkbox
                     name="hasHalfDayEndDate"
                     bind:checked={hasHalfDayEndDate}
                     class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
@@ -166,9 +143,9 @@
                             >{$errors.halfDayEndDate}</span
                         >
                     {/if}
-                </div>
+                </div> -->
             </div>
-            <TextField
+            <!-- <TextField
                 hasError={$errors.totalDay ? true : false}
                 name="totalDay"
                 label="Bilangan Hari"
@@ -179,32 +156,13 @@
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
                     >{$errors.totalDay}</span
                 >
-            {/if}
+            {/if} -->
         </form>
     </div>
-
-    <div class="flex max-h-full w-full flex-col items-start justify-start">
-        <SectionHeader title="Keputusan Mesyuarat (Untuk melebihi 14 hari)"
-        ></SectionHeader>
-        <div
-            class="flex w-full flex-col items-center justify-center rounded-[3px] border border-system-primaryTint p-2.5"
-        >
-            <p class="text-base text-txt-secondary">
-                Seret dan lepas fail anda ke dalam ruangan ini atau pilih dari
-                peranti anda
-            </p>
-            <span>
-                <FileInputField />
-            </span>
-        </div>
-        <p class="justify-left flex w-full text-sm text-rose-500">
-            Sila muat naik dokumen sokongan pada ruangan yang disediakan
-        </p>
-    </div>
-    <div class="flex max-h-full w-full flex-col items-start justify-start">
+    <!-- <div class="flex max-h-full w-full flex-col items-start justify-start">
         <SectionHeader
             title="Cuti Separuh Gaji yang telah diambil dalam tahun semasa"
         ></SectionHeader>
         <DynamicTable tableItems={ctr}></DynamicTable>
-    </div>
+    </div> -->
 </section>

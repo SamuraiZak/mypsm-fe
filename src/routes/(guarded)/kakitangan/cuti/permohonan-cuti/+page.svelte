@@ -38,6 +38,13 @@
         _submitOtherLeaveSecondaryForm,
         _submitOtherLeaveTertiaryForm,
     } from './+page';
+    import RadioSingle from '$lib/components/input/RadioSingle.svelte';
+    import StepperOtherRolesResult from '$lib/components/stepper-conditional-rules/StepperOtherRolesResult.svelte';
+    import {
+        approveOptions,
+        certifyOptions,
+        supportOptions,
+    } from '$lib/constants/mypsm/radio-option-constants';
 
     export let data: PageData;
     let selectedCuti = '';
@@ -457,29 +464,106 @@
     </StepperContent>
 
     <!-- ========== STEPPER 4 ========== -->
-    <StepperContent>
-        <StepperContentHeader title="Pengesahan">
-            <TextIconButton
-                primary
-                label="Hantar"
-                onClick={() => {
-                    goto('/kakitangan/cuti/permohonan-cuti');
-                }}><SvgPaperAirplane /></TextIconButton
-            >
-        </StepperContentHeader>
+    <!-- <StepperContent>
+        <StepperContentHeader title="Keputusan daripada Peranan - Peranan Lain"
+        ></StepperContentHeader>
         <StepperContentBody>
-            <div class="flex w-full flex-col gap-2">
-                <div class="w-full py-5">
-                    <Checkbox checked disabled
-                        ><span class="font-semibold"
-                            >Saya dengan ini mengesahkan bahawa maklumat
-                            sebagaimana yang dinyatakan berikut adalah benar.</span
-                        ></Checkbox
-                    >
+            <div class="flex w-full flex-col gap-2.5">
+                <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                    <div class="mb-5">
+                        <b class="text-sm text-system-primary">Pelulus</b>
+                    </div>
+                    {#if data.appproverResult.status}
+                        <LongTextField
+                            disabled
+                            name="approverRemark"
+                            label="Tindakan/Ulasan"
+                            bind:value={data.appproverResult.remark}
+                        ></LongTextField>
+                        <RadioSingle
+                            disabled
+                            name="approverIsApproved"
+                            options={approveOptions}
+                            legend={'Keputusan'}
+                            bind:userSelected={data.appproverResult.status}
+                        ></RadioSingle>
+                    {:else}
+                        <StepperOtherRolesResult />
+                    {/if}
+                </div>
+                <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                    <div class="mb-5">
+                        <b class="text-sm text-system-primary">Penyokong</b>
+                    </div>
+                    {#if data.supporterResult.status}
+                        <LongTextField
+                            disabled
+                            name="supporterRemark"
+                            label="Tindakan/Ulasan"
+                            bind:value={data.supporterResult.remark}
+                        ></LongTextField>
+                        <RadioSingle
+                            disabled
+                            name="supporterIsApproved"
+                            options={supportOptions}
+                            legend={'Keputusan'}
+                            bind:userSelected={data.supporterResult.status}
+                        ></RadioSingle>
+                    {:else}
+                        <StepperOtherRolesResult />
+                    {/if}
+                </div>
+                <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                    <div class="mb-5">
+                        <b class="text-sm text-system-primary"
+                            >Urus Setia Cuti</b
+                        >
+                    </div>
+                    {#if !!data.verifierResult.status}
+                        <LongTextField
+                            disabled
+                            name="service-secretary-remark"
+                            label="Tindakan/Ulasan"
+                            bind:value={data.verifierResult.remark}
+                        ></LongTextField>
+                        <RadioSingle
+                            disabled
+                            name="supporterIsApproved"
+                            options={certifyOptions}
+                            legend={'Keputusan'}
+                            bind:userSelected={data.verifierResult.status}
+                        ></RadioSingle>
+                    {:else}
+                        <StepperOtherRolesResult />
+                    {/if}
+                </div>
+                <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                    <div class="mb-5">
+                        <b class="text-sm text-system-primary"
+                            >Pengarah Negeri/Bahagian</b
+                        >
+                    </div>
+                    {#if !!data.stateDirectorResult.status}
+                        <LongTextField
+                            disabled
+                            name="service-secretary-remark"
+                            label="Tindakan/Ulasan"
+                            bind:value={data.stateDirectorResult.remark}
+                        ></LongTextField>
+                        <RadioSingle
+                            disabled
+                            name="supporterIsApproved"
+                            options={supportOptions}
+                            legend={'Keputusan'}
+                            bind:userSelected={data.stateDirectorResult.status}
+                        ></RadioSingle>
+                    {:else}
+                        <StepperOtherRolesResult />
+                    {/if}
                 </div>
             </div>
         </StepperContentBody>
-    </StepperContent>
+    </StepperContent> -->
 </Stepper>
 
 <Toaster />

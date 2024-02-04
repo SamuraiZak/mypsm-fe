@@ -4,51 +4,40 @@
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import { tarikh } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/tarikh';
-    import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import { setengahHari } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/setengah-hari';
-    import { Checkbox } from 'flowbite-svelte';
-    import type { PageData } from './$types';
-    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from '../$types';
+    import { dateProxy, superForm } from 'sveltekit-superforms/client';
     import {
-        _submitEarlyMaternityLeaveOfficerForm,
-        _earlyMaternityLeaveOfficerSchema1,
-        _earlyMaternityLeaveOfficerSchema2,
-        _earlyMaternityLeaveOfficerSchema3,
-        _earlyMaternityLeaveOfficerSchema4,
+        _staffMaternityLeaveSchema,
+        _submitStaffMaternityLeaveForm,
     } from '../+page';
 
     export let data: PageData;
-    let hasHalfDayStartDate: boolean = false;
-    let hasHalfDayEndDate: boolean = false;
 
-    // ==================================
-    // Form Validation ==================
-    // ==================================
-    const { form, errors, enhance, options } = superForm(
-        data.officerMaternityLeaveForm,
+    // ============== Form Validation
+    const { form, errors, enhance } = superForm(
+        data.staffMaternityLeaveForm,
         {
             SPA: true,
+            validators: _staffMaternityLeaveSchema,
+            invalidateAll: true,
+            validationMethod: 'oninput',
+            resetForm: false,
+            multipleSubmits: 'prevent',
             onSubmit() {
-                _submitEarlyMaternityLeaveOfficerForm(
-                    $form,
-                    hasHalfDayStartDate,
-                    hasHalfDayEndDate,
-                );
+                _submitStaffMaternityLeaveForm($form);
             },
             taintedMessage:
                 'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
         },
     );
 
-    $: if (hasHalfDayStartDate && !hasHalfDayEndDate) {
-        options.validators = _earlyMaternityLeaveOfficerSchema2;
-    } else if (hasHalfDayEndDate && !hasHalfDayStartDate) {
-        options.validators = _earlyMaternityLeaveOfficerSchema3;
-    } else if (hasHalfDayEndDate && hasHalfDayStartDate) {
-        options.validators = _earlyMaternityLeaveOfficerSchema4;
-    } else if (!hasHalfDayStartDate && !hasHalfDayEndDate) {
-        options.validators = _earlyMaternityLeaveOfficerSchema1;
-    }
+    $form.leaveType = 'Cuti Bersalin Pegawai';
+
+    const proxyStartDate = dateProxy(form, 'startDate', { format: 'date' });
+    const proxyEndDate = dateProxy(form, 'endDate', { format: 'date' });
+    const proxyExpectedDeliveryDate = dateProxy(form, 'expectedDeliveryDate', {
+        format: 'date',
+    });
 </script>
 
 <section>
@@ -63,27 +52,27 @@
             class="flex w-full flex-col gap-2"
         >
             <LongTextField
-                hasError={$errors.applicationReason ? true : false}
-                name="applicationReason"
+                hasError={!!$errors.reason}
+                name="reason"
                 label="Tujuan Permohonan"
-                bind:value={$form.applicationReason}
+                bind:value={$form.reason}
                 placeholder="Sila taip jawapan anda dalam ruangan ini"
             ></LongTextField>
-            {#if $errors.applicationReason}
+            {#if $errors.reason}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$errors.applicationReason}</span
+                    >{$errors.reason}</span
                 >
             {/if}
             <div
-                class="flex flex w-full w-full flex-row items-center justify-start gap-2.5"
+                class="flex w-full flex-row items-center justify-start gap-2.5"
             >
                 <div class="flex w-full flex-col">
                     <DateSelector
-                        hasError={$errors.startDate ? true : false}
+                        hasError={!!$errors.startDate}
                         name="startDate"
                         handleDateChange
-                        bind:selectedDate={$form.startDate}
+                        bind:selectedDate={$proxyStartDate}
                         label="Tarikh Mula"
                     ></DateSelector>
                     {#if $errors.startDate}
@@ -93,7 +82,7 @@
                         >
                     {/if}
                 </div>
-                <Checkbox
+                <!-- <Checkbox
                     name="hasHalfDayStartDate"
                     bind:checked={hasHalfDayStartDate}
                     class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
@@ -105,7 +94,7 @@
                 >
                 <div class="flex w-full flex-col">
                     <DropdownSelect
-                        hasError={$errors.halfDayStartDate ? true : false}
+                        hasError={!!$errors.halfDayStartDate}
                         id="halfDayStartDate"
                         disabled={!hasHalfDayStartDate}
                         options={setengahHari}
@@ -119,18 +108,18 @@
                             >{$errors.halfDayStartDate}</span
                         >
                     {/if}
-                </div>
+                </div> -->
             </div>
             <div
-                class="flex flex w-full w-full flex-row items-center justify-start gap-2.5"
+                class="flex w-full flex-row items-center justify-start gap-2.5"
             >
                 <div class="flex w-full flex-col">
                     <DateSelector
-                        hasError={$errors.endDate ? true : false}
+                        hasError={!!$errors.endDate}
                         name="endDate"
                         handleDateChange
                         label="Tarikh Tamat"
-                        bind:selectedDate={$form.endDate}
+                        bind:selectedDate={$proxyEndDate}
                     ></DateSelector>
                     {#if $errors.endDate}
                         <span
@@ -139,7 +128,7 @@
                         >
                     {/if}
                 </div>
-                <Checkbox
+                <!-- <Checkbox
                     name="hasHalfDayEndDate"
                     bind:checked={hasHalfDayEndDate}
                     class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
@@ -151,7 +140,7 @@
                 >
                 <div class="flex w-full flex-col">
                     <DropdownSelect
-                        hasError={$errors.halfDayEndDate ? true : false}
+                        hasError={!!$errors.halfDayEndDate}
                         id="halfDayEndDate"
                         disabled={!hasHalfDayEndDate}
                         options={setengahHari}
@@ -165,40 +154,40 @@
                             >{$errors.halfDayEndDate}</span
                         >
                     {/if}
-                </div>
+                </div> -->
             </div>
             <DateSelector
-                hasError={$errors.expectedBirthDate ? true : false}
-                name="expectedBirthDate"
+                hasError={!!$errors.expectedDeliveryDate}
+                name="expectedDeliveryDate"
                 handleDateChange
                 label="Tarikh Dijangka Bersalin (EDD)"
-                bind:selectedDate={$form.expectedBirthDate}
+                bind:selectedDate={$proxyExpectedDeliveryDate}
             ></DateSelector>
-            {#if $errors.expectedBirthDate}
+            {#if $errors.expectedDeliveryDate}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$errors.expectedBirthDate}</span
+                    >{$errors.expectedDeliveryDate}</span
                 >
             {/if}
             <LongTextField
-                hasError={$errors.address ? true : false}
-                name="address"
+                hasError={!!$errors.currentAddress}
+                name="currentAddress"
                 label="Alamat Tempat Tinggal Semasa Cuti Bersalin"
                 placeholder="Sila taip jawapan anda dalam ruangan ini"
-                bind:value={$form.address}
+                bind:value={$form.currentAddress}
             ></LongTextField>
-            {#if $errors.address}
+            {#if $errors.currentAddress}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$errors.address}</span
+                    >{$errors.currentAddress}</span
                 >
             {/if}
         </form>
     </div>
-    <div class="flex max-h-full w-full flex-col items-start justify-start">
+    <!-- <div class="flex max-h-full w-full flex-col items-start justify-start">
         <SectionHeader
             title="Cuti Bersalin Pegawai yang telah diambil dalam tahun semasa"
         ></SectionHeader>
         <DynamicTable tableItems={tarikh}></DynamicTable>
-    </div>
+    </div> -->
 </section>

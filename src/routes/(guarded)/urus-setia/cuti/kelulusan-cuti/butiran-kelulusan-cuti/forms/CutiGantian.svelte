@@ -1,111 +1,93 @@
 <script lang="ts">
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import CustomTab from '$lib/components/tab/CustomTab.svelte';
-    import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
-    import { namaPengganti } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/nama-pengganti';
     import TextField from '$lib/components/input/TextField.svelte';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
-    import BekerjaLebihMasa from './BekerjaLebihMasa.svelte';
-    import TugasTugasRasmiYangJatuhPadaHariCuti from './TugasTugasRasmiYangJatuhPadaHariCuti.svelte';
-    import { jenisGantian } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/jenis-gantian';
-    import { setengahHari } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/setengah-hari';
-    import { Checkbox } from 'flowbite-svelte';
-    import type { PageData } from './$types';
-    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from '../$types';
+    import { dateProxy, superForm } from 'sveltekit-superforms/client';
     import {
-        _replacementLeaveSchema1,
-        _replacementLeaveSchema2,
-        _replacementLeaveSchema3,
-        _replacementLeaveSchema4,
+        _replacementLeaveSchema,
         _submitReplacementLeaveForm,
     } from '../+page';
+    import LongTextField from '$lib/components/input/LongTextField.svelte';
+    import { jenisGantian } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/jenis-gantian';
+    import { kategoriCuti } from '$lib/mocks/kakitangan/cuti/permohonan-cuti/kategori-cuti';
 
     export let data: PageData;
-    let selectedJenisGantian = '';
-    let hasHalfDayStartDate: boolean = false;
-    let hasHalfDayEndDate: boolean = false;
 
-    // ==================================
-    // Form Validation ==================
-    // ==================================
-    const { form, errors, enhance, options } = superForm(
-        data.replacementLeaveForm,
-        {
-            SPA: true,
-            onSubmit() {
-                _submitReplacementLeaveForm(
-                    $form,
-                    hasHalfDayStartDate,
-                    hasHalfDayEndDate,
-                );
-            },
-            taintedMessage:
-                'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    // ================ Form Validation ================
+    const { form, errors, enhance } = superForm(data.replacementLeaveForm, {
+        SPA: true,
+        validators: _replacementLeaveSchema,
+        invalidateAll: true,
+        validationMethod: 'oninput',
+        resetForm: false,
+        multipleSubmits: 'prevent',
+        onSubmit() {
+            _submitReplacementLeaveForm($form);
         },
-    );
+        taintedMessage:
+            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+    });
 
-    $: if (hasHalfDayStartDate && !hasHalfDayEndDate) {
-        options.validators = _replacementLeaveSchema2;
-    } else if (hasHalfDayEndDate && !hasHalfDayStartDate) {
-        options.validators = _replacementLeaveSchema3;
-    } else if (hasHalfDayEndDate && hasHalfDayStartDate) {
-        options.validators = _replacementLeaveSchema4;
-    } else if (!hasHalfDayStartDate && !hasHalfDayEndDate) {
-        options.validators = _replacementLeaveSchema1;
-    }
-
+    const proxyStartDate = dateProxy(form, 'startDate', { format: 'date' });
+    const proxyEndDate = dateProxy(form, 'endDate', { format: 'date' });
+    const proxyLastLeaveDate = dateProxy(form, 'lastLeaveDate', {
+        format: 'date',
+    });
+    const proxyDutyDate = dateProxy(form, 'dutyDate', {
+        format: 'date',
+    });
+    const proxyDutyStartHour = dateProxy(form, 'dutyStartHour', {
+        format: 'time',
+    });
+    const proxyDutyEndHour = dateProxy(form, 'dutyEndHour', {
+        format: 'time',
+    });
 </script>
 
 <section
-    class="flex h-full max-h-[100vh-172px] w-full flex-col items-start justify-start overflow-y-hidden"
+    class="flex h-full max-h-[100vh-172px] w-full flex-col items-start justify-start overflow-y-auto"
 >
-    <!-- start your content with this div and style it with your own preference -->
-    <CustomTab>
-        <CustomTabContent title="Maklumat Gantian">
-            <SectionHeader title="Cuti Gantian"></SectionHeader>
-            <div
-                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 pb-5"
-            >
-                <form
-                    id="formValidation"
-                    method="POST"
-                    use:enhance
-                    class="flex w-full flex-col gap-2"
-                >
-                    <DropdownSelect
-                        hasError={$errors.substituteName ? true : false}
-                        id="substituteName"
-                        options={namaPengganti}
-                        bind:value={$form.substituteName}
-                        dropdownType="label-left-full"
-                        label="Nama Pengganti / Gred"
-                    ></DropdownSelect>
-                    {#if $errors.substituteName}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$errors.substituteName}</span
-                        >
-                    {/if}
-                    <div
-                        class="flex w-full flex-row items-center justify-start gap-2.5"
+    <form id="formValidation" method="POST" use:enhance class="w-full">
+        <SectionHeader title="Maklumat Gantian"></SectionHeader>
+        <div
+            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+        >
+            <div class="flex w-full flex-col gap-2">
+                <DropdownSelect
+                    hasError={!!$errors.substituteName}
+                    id="substituteName"
+                    options={data.employeeListLookup}
+                    bind:value={$form.substituteName}
+                    dropdownType="label-left-full"
+                    label="Nama Pengganti / Gred"
+                ></DropdownSelect>
+                {#if $errors.substituteName}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.substituteName}</span
                     >
-                        <div class="flex w-full flex-col">
-                            <DateSelector
-                                hasError={$errors.startDate ? true : false}
-                                name="startDate"
-                                handleDateChange
-                                bind:selectedDate={$form.startDate}
-                                label="Tarikh Mula"
-                            ></DateSelector>
-                            {#if $errors.startDate}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$errors.startDate}</span
-                                >
-                            {/if}
-                        </div>
-                        <Checkbox
+                {/if}
+                <div
+                    class="flex w-full flex-row items-center justify-start gap-2.5"
+                >
+                    <div class="flex w-full flex-col">
+                        <DateSelector
+                            hasError={!!$errors.startDate}
+                            name="startDate"
+                            handleDateChange
+                            bind:selectedDate={$proxyStartDate}
+                            label="Tarikh Mula"
+                        ></DateSelector>
+                        {#if $errors.startDate}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$errors.startDate}</span
+                            >
+                        {/if}
+                    </div>
+                    <!-- <Checkbox
                             name="hasHalfDayStartDate"
                             bind:checked={hasHalfDayStartDate}
                             class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
@@ -117,7 +99,7 @@
                         >
                         <div class="flex w-full flex-col">
                             <DropdownSelect
-                                hasError={$errors.halfDayStartDate
+                                hasError={!!$errors.halfDayStartDate
                                     ? true
                                     : false}
                                 id="halfDayStartDate"
@@ -133,28 +115,28 @@
                                     >{$errors.halfDayStartDate}</span
                                 >
                             {/if}
-                        </div>
+                        </div> -->
+                </div>
+                <div
+                    class="flex w-full flex-row items-center justify-start gap-2.5"
+                >
+                    <div class="flex w-full flex-col">
+                        <DateSelector
+                            hasError={!!$errors.endDate}
+                            name="endDate"
+                            handleDateChange
+                            label="Tarikh Tamat"
+                            bind:selectedDate={$proxyEndDate}
+                        ></DateSelector>
+                        {#if $errors.endDate}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$errors.endDate}</span
+                            >
+                        {/if}
                     </div>
-                    <div
-                        class="flex w-full flex-row items-center justify-start gap-2.5"
-                    >
-                        <div class="flex w-full flex-col">
-                            <DateSelector
-                                hasError={$errors.endDate ? true : false}
-                                name="endDate"
-                                handleDateChange
-                                label="Tarikh Tamat"
-                                bind:selectedDate={$form.endDate}
-                            ></DateSelector>
-                            {#if $errors.endDate}
-                                <span
-                                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                    >{$errors.endDate}</span
-                                >
-                            {/if}
-                        </div>
 
-                        <Checkbox
+                    <!-- <Checkbox
                             name="hasHalfDayEndDate"
                             bind:checked={hasHalfDayEndDate}
                             class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
@@ -166,7 +148,7 @@
                         >
                         <div class="flex w-full flex-col">
                             <DropdownSelect
-                                hasError={$errors.halfDayEndDate ? true : false}
+                                hasError={!!$errors.halfDayEndDate}
                                 id="halfDayEndDate"
                                 disabled={!hasHalfDayEndDate}
                                 options={setengahHari}
@@ -180,49 +162,135 @@
                                     >{$errors.halfDayEndDate}</span
                                 >
                             {/if}
-                        </div>
-                    </div>
-                    <TextField
-                        disabled
-                        label="Jumlah Cuti Gantian Yang Telah Diambil Pada Tahun Semasa"
-                        value="2"
-                    ></TextField>
-                    <DateSelector
-                        hasError={$errors.latestReplacementLeave ? true : false}
-                        name="latestReplacementLeave"
-                        handleDateChange
-                        label="Cuti Gantian Terakhir Diambil Pada"
-                        bind:selectedDate={$form.latestReplacementLeave}
-                    ></DateSelector>
-                    {#if $errors.latestReplacementLeave}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$errors.latestReplacementLeave}</span
-                        >
-                    {/if}
-                </form>
-            </div>
-        </CustomTabContent>
-        <CustomTabContent title="Jenis Gantian">
-            <SectionHeader title="Jenis Gantian"></SectionHeader>
-            <div
-                class="flex max-h-full w-full flex-col items-start justify-start"
-            >
-                <DropdownSelect
-                    dropdownType="label-left-full"
-                    label="Jenis Gantian"
-                    options={jenisGantian.filter((cat) => cat.name != 'Semua')}
-                    bind:value={selectedJenisGantian}
-                    onSelect={() => {}}
-                ></DropdownSelect>
-
-                {#if selectedJenisGantian === 'Bekerja Lebih Masa'}
-                    <BekerjaLebihMasa {data}></BekerjaLebihMasa>
-                {:else if selectedJenisGantian === 'Tugas-tugas Rasmi Yang Jatuh Pada Hari Cuti'}
-                    <TugasTugasRasmiYangJatuhPadaHariCuti {data}
-                    ></TugasTugasRasmiYangJatuhPadaHariCuti>
+                        </div> -->
+                </div>
+                <!-- <TextField
+                    disabled
+                    label="Jumlah Cuti Gantian Yang Telah Diambil Pada Tahun Semasa"
+                    value="2"
+                ></TextField> -->
+                <DateSelector
+                    hasError={!!$errors.lastLeaveDate}
+                    name="lastLeaveDate"
+                    handleDateChange
+                    label="Cuti Gantian Terakhir Diambil Pada"
+                    bind:selectedDate={$proxyLastLeaveDate}
+                ></DateSelector>
+                {#if $errors.lastLeaveDate}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.lastLeaveDate}</span
+                    >
                 {/if}
             </div>
-        </CustomTabContent>
-    </CustomTab>
+        </div>
+
+        <SectionHeader title="Jenis Gantian"></SectionHeader>
+        <div class="flex max-h-full w-full flex-col items-start justify-start">
+            <DropdownSelect
+                dropdownType="label-left-full"
+                label="Jenis Gantian"
+                options={jenisGantian.filter((cat) => cat.name != 'Semua')}
+                bind:value={$form.replacementType}
+                onSelect={() => {}}
+            ></DropdownSelect>
+
+            {#if !!$form.replacementType}
+                <!-- <BekerjaLebihMasa {data}></BekerjaLebihMasa> -->
+                <section
+                    class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
+                >
+                    <SectionHeader
+                        title={$form.replacementType === 'Bekerja Lebih Masa'
+                            ? 'Bekerja Lebih Masa'
+                            : 'Tugas-tugas Rasmi Yang Jatuh Pada Hari Cuti'}
+                    ></SectionHeader>
+
+                    <div class="flex w-full flex-col gap-2">
+                        {#if $form.replacementType === 'Tugas-tugas Rasmi Yang Jatuh Pada Hari Cuti'}
+                            <DropdownSelect
+                                dropdownType="label-left-full"
+                                label="Jenis Cuti Gantian"
+                                options={kategoriCuti}
+                                bind:value={$form.leaveCategory}
+                                onSelect={() => {}}
+                            ></DropdownSelect>
+                        {/if}
+                        <LongTextField
+                            hasError={!!$errors.dutyDescription}
+                            name="dutyDescription"
+                            label="Tugas-Tugas Rasmi Yang Dijalankan"
+                            placeholder="Sila taip jawapan anda dalam ruangan ini"
+                            bind:value={$form.dutyDescription}
+                        ></LongTextField>
+                        {#if $errors.dutyDescription}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$errors.dutyDescription}</span
+                            >
+                        {/if}
+                        <DateSelector
+                            hasError={!!$errors.dutyDate}
+                            name="dutyDate"
+                            handleDateChange
+                            label="Tarikh"
+                            bind:selectedDate={$proxyDutyDate}
+                        ></DateSelector>
+                        {#if $errors.dutyDate}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$errors.dutyDate}</span
+                            >
+                        {/if}
+                        <TextField
+                            hasError={!!$errors.dutyLocation}
+                            name="dutyLocation"
+                            label="Tempat Bekerja"
+                            bind:value={$form.dutyLocation}
+                        ></TextField>
+                        {#if $errors.dutyLocation}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$errors.dutyLocation}</span
+                            >
+                        {/if}
+                        <div
+                            class="flex w-full flex-row items-center justify-start"
+                        >
+                            <TextField
+                                hasError={!!$errors.dutyStartHour}
+                                label="Waktu Mula"
+                                type="time"
+                                name="dutyStartHour"
+                                bind:value={$proxyDutyStartHour}
+                            />
+                        </div>
+                        {#if $errors.dutyStartHour}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$errors.dutyStartHour}</span
+                            >
+                        {/if}
+                        <div
+                            class="flex w-full flex-row items-center justify-start"
+                        >
+                            <TextField
+                                hasError={!!$errors.dutyEndHour}
+                                label="Waktu Tamat"
+                                type="time"
+                                name="dutyEndHour"
+                                bind:value={$proxyDutyEndHour}
+                            />
+                        </div>
+                        {#if $errors.dutyEndHour}
+                            <span
+                                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                                >{$errors.dutyEndHour}</span
+                            >
+                        {/if}
+                    </div>
+                </section>
+            {/if}
+        </div>
+    </form>
 </section>

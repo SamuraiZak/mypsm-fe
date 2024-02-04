@@ -9,14 +9,15 @@
     import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import { goto } from '$app/navigation';
     import { gcr } from '$lib/mocks/kakitangan/cuti/gcr/gcr';
-    import { awalGcr } from '$lib/mocks/kakitangan/cuti/gcr/awal-gcr';
     import { jenisPengeluaran } from '$lib/mocks/kakitangan/cuti/gcr/jenis-pengeluaran';
     import { tahun } from '$lib/mocks/ketua-seksyen/cuti/tahun';
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
+    import type { PageData } from './$types';
 
     let selectedJenisPengeluaran = jenisPengeluaran[0].value;
     let selectedTahun = tahun[0].value;
+    export let data: PageData;
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -55,14 +56,7 @@
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
-                <DynamicTable
-                    tableItems={gcr}
-                    withActions
-                    actionOptions={['detail']}
-                    detailActions={() => {
-                        goto('');
-                    }}
-                ></DynamicTable>
+                <DynamicTable tableItems={gcr}></DynamicTable>
             </div>
         </CustomTabContent>
         <CustomTabContent title="Pengeluaran Awal GCR">
@@ -88,13 +82,7 @@
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
-                <DynamicTable
-                    tableItems={awalGcr}
-                    withActions
-                    actionOptions={['detail']}
-                    detailActions={() => {
-                        goto('');
-                    }}
+                <DynamicTable tableItems={data.gcrWithdrawalAnnualLeaveList}
                 ></DynamicTable>
             </div>
         </CustomTabContent>

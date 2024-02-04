@@ -5,6 +5,7 @@
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { AddLeaveApprovalResultRequestBody } from '$lib/dto/mypsm/leave/add-leave-approvers-results-request.model';
+import type { AddGCRWithdrawalAnnualLeaveDetailRequest } from '$lib/dto/mypsm/leave/gcr/add-gcr-withdrawal-annual-leave-detail-request.dto';
 import type { AddHajiLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/haji-leave/add-haji-leave-request.dto';
 import type { AddHalfPayLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/halfpay-leave/add-halfpay-leave-request.dto';
 import type { AddMaternityLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/maternity-leave/add-maternity-leave-request.dto';
@@ -65,7 +66,7 @@ export class LeaveServices {
     static async getLeaveEntitlementList(param: CommonListRequestDTO) {
         // fetching data
         const response: CommonResponseDTO = await http
-            .post('leaves/leave-entitlements', {
+            .post('leaves/leaves/entitlement', {
                 body: JSON.stringify(param),
             })
             .json();
@@ -1006,6 +1007,65 @@ export class LeaveServices {
     static async getHrmisOutOfOfficeLeaves(param: CommonListRequestDTO) {
         const response: CommonResponseDTO = await http
             .post('leaves/leaves/hrmis-out-of-office', {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        if (response.status! === 'success') {
+            return response;
+        } else {
+            throw new Error('Unknown error');
+        }
+    }
+
+    // GCR Withdrawals
+    static async getGCRWithdrawalAnnualLeaves(param: CommonListRequestDTO) {
+        const response: CommonResponseDTO = await http
+            .post('leaves/withdrawal-annual-leaves', {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        if (response.status! === 'success') {
+            return response;
+        } else {
+            throw new Error('Unknown error');
+        }
+    }
+
+    static async getGCRWithdrawalEmployeeDetail(param: LeaveIDRequest) {
+        const response: CommonResponseDTO = await http
+            .post('leaves/get-withdrawal-annual-leave-personal-detail', {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        if (response.status! === 'success') {
+            return response;
+        } else {
+            throw new Error('Unknown error');
+        }
+    }
+
+    static async getGCRWithdrawalAnnualLeaveDetail(param: LeaveIDRequest) {
+        const response: CommonResponseDTO = await http
+            .post('leaves/get-withdrawal-annual-leave-detail', {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        if (response.status! === 'success') {
+            return response;
+        } else {
+            throw new Error('Unknown error');
+        }
+    }
+
+    static async createGCRWithdrawalAnnualLeaveDetail(
+        param: AddGCRWithdrawalAnnualLeaveDetailRequest,
+    ) {
+        const response: CommonResponseDTO = await http
+            .post('leaves/add-withdrawal-annual-leave-detail', {
                 body: JSON.stringify(param),
             })
             .json();
