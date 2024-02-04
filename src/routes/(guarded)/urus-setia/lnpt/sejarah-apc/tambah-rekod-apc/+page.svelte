@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { goto } from '$app/navigation';
     import SvgArrowLeft from '$lib/assets/svg/SvgArrowLeft.svelte';
 
     import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
@@ -18,6 +19,8 @@
 
     let param: CommonListRequestDTO = data.props.param;
 
+    let selectedDataRow: CommonEmployeeDTO = {};
+
     let table: TableDTO = {
         param: param,
         meta: data.props.response.data?.meta ?? {
@@ -31,15 +34,15 @@
 
     async function _search() {
         _updateTable(table.param).then((value) => {
-            table.data = value.props.response.data?.dataList ?? [];
-            table.meta = value.props.response.data?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            table.param.pageSize = table.meta.pageSize;
-            table.param.pageNum = table.meta.pageNum;
+                table.data = value.props.response.data?.dataList ?? [];
+                table.meta = value.props.response.data?.meta ?? {
+                    pageSize: 1,
+                    pageNum: 1,
+                    totalData: 1,
+                    totalPage: 1,
+                };
+                table.param.pageSize = table.meta.pageSize;
+                table.param.pageNum = table.meta.pageNum;
         });
     }
 </script>
@@ -73,13 +76,20 @@
 
         <div class="flex max-h-full w-full flex-col items-start justify-start">
             <SectionHeader title="Senarai Semua Kakitangan"></SectionHeader>
-            <CustomTable
-                bind:tableData={table}
-                onUpdate={_search}
-                detailActions={() => {
-                    alert('hello');
-                }}
-            ></CustomTable>
+            <div class="h-fit max-h-full w-full pb-5">
+                <CustomTable
+                    bind:tableData={table}
+                    bind:passData={selectedDataRow}
+                    onUpdate={_search}
+                    detailActions={() => {
+
+                        const url =
+                            '/urus-setia/lnpt/sejarah-apc/tambah-rekod-apc/butiran-' +
+                            selectedDataRow.employeeNumber;
+                        goto(url);
+                    }}
+                ></CustomTable>
+            </div>
         </div>
     </div>
 </section>

@@ -14,7 +14,13 @@ export async function load() {
         orderBy: '',
         orderType: '',
         filter: {
-            dataType: 2,
+            employeeNumber: '',
+            name: '',
+            identityCard: '',
+            program: '',
+            scheme: '',
+            grade: '',
+            position: '',
         },
     };
 
