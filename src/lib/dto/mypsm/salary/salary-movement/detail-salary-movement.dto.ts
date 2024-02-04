@@ -10,12 +10,12 @@ export interface DetailSalaryMovementDTO {
 
 
 // Converts JSON strings to/from your types
-export class Convert {
-    public static toDetailSalaryMovementDTO(json: string): DetailSalaryMovementDTO {
+export class DetailSalaryMovementDTOConvert {
+    public static fromJson(json: string): DetailSalaryMovementDTO {
         return JSON.parse(json);
     }
 
-    public static detailSalaryMovementDTOToJson(value: DetailSalaryMovementDTO): string {
+    public static toJson(value: DetailSalaryMovementDTO): string {
         return JSON.stringify(value);
     }
 }

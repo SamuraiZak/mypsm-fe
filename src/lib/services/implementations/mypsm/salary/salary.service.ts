@@ -5,6 +5,8 @@ import { AddSalaryMovementResponseDTOConvert, type AddSalaryMovementResponseDTO 
 import { AddSalaryMovementApprovalRequestDTOConvert ,type AddSalaryMovementApprovalRequestDTO } from "$lib/dto/mypsm/salary/salary-movement/add-salary-movement-approval-request.dto";
 import  { AddSalaryMovementApprovalResponseDTOConvert } from "$lib/dto/mypsm/salary/salary-movement/add-salary-movement-approval-response.dto";
 import http from "$lib/services/provider/service-provider.service";
+import { DetailSalaryMovementRequestDTOConvert, type DetailSalaryMovementRequestDTO } from "$lib/dto/mypsm/salary/salary-movement/detail-salary-movement-request.dto";
+import { EmployeeFinalSalaryDetailRequestDTOConvert, type EmployeeFinalSalaryDetailRequestDTO } from "$lib/dto/mypsm/salary/final-payslip/employee-final-salary-detail-request.dto";
 
 export class SalaryServices {
 
@@ -20,9 +22,9 @@ export class SalaryServices {
         return CommonResponseConvert.fromResponse(response)
     }
 
-    static async getSalaryMovementDetail(param: CommonListRequestDTO){
+    static async getSalaryMovementDetail(param: DetailSalaryMovementRequestDTO){
         const response: Response = await http.post('salaries/get-salary-movement', {
-            body: CommonListRequestConvert.toJson(param)
+            body: DetailSalaryMovementRequestDTOConvert.toJson(param)
         }).json();
         return CommonResponseConvert.fromResponse(response)
     }
@@ -66,5 +68,26 @@ export class SalaryServices {
     //     return AddSalaryMovementApprovalResponseDTOConvert.toAddSalaryMovementApprovalResponseDTO(response)
     // }
    
+    //============================ Salary Allowance
+
+
+
+    // =============================== Final Payslip
+    static async getFinalPayslipList(param: CommonListRequestDTO) {
     
+        const response: Response = await http.post('salaries/final-salaries', {
+            body: CommonListRequestConvert.toJson(param)
+        }).json();
+        // let result : CommonResponseDTO =  CommonResponseConvert.fromResponse(response);
+        // let salaryMovementList : SalaryMovementListDTO[] = result.data?.dataList as SalaryMovementListDTO[]
+        // return salaryMovementList;
+        return CommonResponseConvert.fromResponse(response)
+    }
+
+    static async getPayslipEmployeeDetail(param: EmployeeFinalSalaryDetailRequestDTO){
+        const response: Response = await http.post('salaries/get-final-salary-employee-detail', {
+            body: EmployeeFinalSalaryDetailRequestDTOConvert.toJson(param)
+        }).json();
+        return CommonResponseConvert.fromResponse(response)
+    }
 }

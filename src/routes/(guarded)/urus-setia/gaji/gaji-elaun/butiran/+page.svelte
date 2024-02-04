@@ -46,27 +46,9 @@
 
     export let noPekerja = '00001';
     let activeStepper = 3;
-    let currEmployee = mockEmployees;
-    let currEmployeeService = mockCurrentService;
 
     let disabled = false;
     let labelBlack = !disabled;
-    let errorData: any;
-    let jenisPenambahan: any;
-    let totalPayment: any;
-    let tempohBayaran: any;
-    let paymentType: any;
-    let endDate: string;
-    let startDate: string;
-    let effectiveDate: string;
-    let gred: any;
-    let salary: any;
-    let itka: any;
-    let housingSchemeType: any;
-    let totalHousingScheme: any;
-    let cola: any;
-    let month: any;
-    let total: any;
     let senaraiPemotongan: IntSalaryAndAllowanceDeduction[] =
         mockSalaryAndAllowanceDeduction;
     let openPelarasGajiModal: boolean = false;
@@ -126,6 +108,10 @@
         enhance: pemangkuanEnhance,
     } = superForm(data.pemangkuanForm, {
         SPA: true,
+        validationMethod: 'oninput',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'prevent',
         id: 'pemangkuanForm',
         validators: _pemangkuanFormSchema,
         onSubmit() {
@@ -146,6 +132,10 @@
     } = superForm(data.umumForm, {
         SPA: true,
         id: 'umumForm',
+        validationMethod: 'oninput',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'prevent',
         validators: _umumFormSchema,
         onSubmit() {
             _submitUmumForm($umumForm);
@@ -161,6 +151,10 @@
     } = superForm(data.modalForm, {
         SPA: true,
         id: 'modalForm',
+        validationMethod: 'oninput',
+        invalidateAll: true,
+        resetForm: true,
+        multipleSubmits: 'prevent',
         validators: _modalFormSchema,
         onSubmit() {
             _submitModalForm($modalForm);

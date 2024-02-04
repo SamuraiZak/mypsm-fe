@@ -4,6 +4,13 @@ import { fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
+import type { DetailSalaryMovementDTO } from '$lib/dto/mypsm/salary/salary-movement/detail-salary-movement.dto';
+import type { DetailSalaryMovementRequestDTO } from '$lib/dto/mypsm/salary/salary-movement/detail-salary-movement-request.dto';
+import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto.js';
+import { SalaryServices } from '$lib/services/implementations/mypsm/salary/salary.service';
+import type { ListSalaryMovementFilterDTO } from '$lib/dto/mypsm/salary/salary-movement/list-salary-movement-filter.dto';
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
+import type { SalaryMovementListDTO } from '$lib/dto/mypsm/salary/salary-movement/list-salary-movement.dto';
 
 // Meeting Result
 const dropdown = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
@@ -16,16 +23,6 @@ const date = z.coerce.date({
                 : defaultError,
     }),
 });
-
-const textField = z
-    .string({ required_error: 'Medan ini latihan tidak boleh kosong.' })
-    .min(4, {
-        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
-    })
-    .max(124, {
-        message: 'Medan ini tidak boleh melebihi 124 karakter.',
-    })
-    .trim();
 
 const numberScheme = z.union([z.string({
     invalid_type_error: "Medan ini tidak boleh dibiar kosong."
@@ -77,17 +74,42 @@ export const _submitFormStepperMeetingResult = async (formData: object) => {
 };
 export async function load({ params }) {
     const stepperMeetingResult = await superValidate(_stepperMeetingResult);
-    const currentEmployee: IntSalaryMovementRecord | undefined =
-        mockSalaryMovementRecord.find(
-            (staff) =>
-                staff.employeeNumber == params.id &&
-                staff.identityDocumentNumber == params.ic,
-        );
+    // const currentEmployee: IntSalaryMovementRecord | undefined =
+    //     mockSalaryMovementRecord.find(
+    //         (staff) =>
+    //             staff.employeeNumber == params.id &&
+    //             staff.identityDocumentNumber == params.ic,
+    //     );
 
-    if (!currentEmployee) throw new Error('Record not found');
+    // if (!currentEmployee) throw new Error('Record not found');
+
+    const meeetingId: DetailSalaryMovementRequestDTO = {
+        meetingId: Number(params.id),
+    }
+
+    const employeeNumber = params.no;
+    const response: CommonResponseDTO = await SalaryServices.getSalaryMovementDetail(meeetingId)
+    const detailSalaryMovement: DetailSalaryMovementDTO = response.data?.details;
+
+    const filter: ListSalaryMovementFilterDTO = {
+        month: 1,
+        year: 2024
+    }
+    const param: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: 'createdAt',
+        orderType: 'asc',
+        filter: filter,
+    };
+    const filterResponse: CommonResponseDTO = await SalaryServices.getSalaryMovementList(param)
+    const salaryMovementList: SalaryMovementListDTO[] = filterResponse.data?.dataList as SalaryMovementListDTO[];
+    const currentEmployee: SalaryMovementListDTO | undefined = salaryMovementList.find((staff) => staff.employeeNumber == params.no && staff.meetingId == params.id)
 
     return {
         stepperMeetingResult,
         currentEmployee,
+        employeeNumber,
+        detailSalaryMovement,
     };
 }

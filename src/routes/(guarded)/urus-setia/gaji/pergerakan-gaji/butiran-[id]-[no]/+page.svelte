@@ -27,10 +27,10 @@
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
 
     export let data: PageData;
-    export let noPekerja = data.currentEmployee?.employeeNumber;
+    // export let noPekerja = data.currentEmployee?.employeeNumber;
 
     let activeStepper = 0;
-    let salaryMovementData = data.currentEmployee;
+    // let salaryMovementData = data.currentEmployee;
     let disabled = true;
     let labelBlack = !disabled;
     let radioValue: any = 'sah';
@@ -61,6 +61,10 @@
         enhance: meetingResultEnhance,
     } = superForm(data.stepperMeetingResult, {
         SPA: true,
+        validationMethod: 'oninput',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'prevent',
         validators: _stepperMeetingResult,
         onSubmit() {
             _submitFormStepperMeetingResult($meetingResultForm);
@@ -80,8 +84,8 @@
 
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader
-        title="Rekod Pekerja {noPekerja}"
-        description="Maklumat - maklumat pergerakan gaji pekerja {noPekerja}"
+        title="Rekod Pekerja {data.employeeNumber}"
+        description="Maklumat - Maklumat Pergerakan Gaji - {data.currentEmployee.employeeName}"
     >
         <FormButton
             type="close"
@@ -123,38 +127,43 @@
                         {labelBlack}
                         disabled
                         label="Tarikh Pergerakan Gaji (TPG)"
-                        value={salaryMovementData.tpg}
+                        value={data.currentEmployee.tpg}
                     ></TextField>
                     <TextField
                         {labelBlack}
                         disabled
-                        label="Gaji Bulan Berkenaan - {salaryMovementData.tpg}"
+                        label="Gaji Bulan Berkenaan - {""}"
+                        value={data.currentEmployee.salary1}
                     ></TextField>
                     <TextField
                         {labelBlack}
                         disabled
                         label="Kenaikan Gaji Tahunan (KGT)"
+                        value={data.currentEmployee.kgt}
                     ></TextField>
-                    <TextField {labelBlack} disabled label="Elaun Wilayah (EW)"
+                    <TextField {labelBlack} disabled label="Elaun Wilayah (EW)" value={data.currentEmployee.wilayahAllowance1}
                     ></TextField>
                     <TextField
                         {labelBlack}
                         disabled
                         label="EL. Kritikal (5%) {currYear}"
+                        value={data.currentEmployee.criticalAllowance1}
                     ></TextField>
-                    <TextField {labelBlack} disabled label="KGT Khas {nextYear}"
+                    <TextField {labelBlack} disabled label="KGT Khas {nextYear}" value={data.currentEmployee.specialkgt}
                     ></TextField>
                     <TextField
                         {labelBlack}
                         disabled
                         label="Gaji Khas {nextYear}"
+                        value={data.currentEmployee.specialSalary}
                     ></TextField>
-                    <TextField {labelBlack} disabled label="EW Khas {nextYear}"
+                    <TextField {labelBlack} disabled label="EW Khas {nextYear}" value={data.currentEmployee.specialWilayahAllowance}
                     ></TextField>
                     <TextField
                         {labelBlack}
                         disabled
                         label="EL. Kritikal (5%) {nextYear}"
+                        value={data.currentEmployee.criticalAllowance2}
                     ></TextField>
                 </div>
                 <div

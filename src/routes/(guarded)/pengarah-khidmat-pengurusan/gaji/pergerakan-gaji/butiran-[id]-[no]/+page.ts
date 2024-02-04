@@ -1,4 +1,11 @@
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
+import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { DetailSalaryMovementRequestDTO } from '$lib/dto/mypsm/salary/salary-movement/detail-salary-movement-request.dto';
+import type { DetailSalaryMovementDTO } from '$lib/dto/mypsm/salary/salary-movement/detail-salary-movement.dto';
+import type { ListSalaryMovementApprovalFilterDTO } from '$lib/dto/mypsm/salary/salary-movement/list-salary-movement-approval-filter.dto';
+import type { ListSalaryMovementApprovalDTO } from '$lib/dto/mypsm/salary/salary-movement/list-salary-movement-approval.dto';
 import { getPromiseToast } from '$lib/services/core/toast/toast-service';
+import { SalaryServices } from '$lib/services/implementations/mypsm/salary/salary.service';
 import { fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
@@ -56,12 +63,36 @@ export const _submitFormStepperRevisionSalaryMovementSchedule = async (
 };
 
 //Async
-export const load = async () => {
+export async function load({params}) {
     const stepperRevisionSalaryMovementSchedule = await superValidate(
         _stepperRevisionSalaryMovementSchedule,
     );
 
+    const meeetingId: DetailSalaryMovementRequestDTO = {
+        meetingId: Number(params.id),
+    }
+
+    const response: CommonResponseDTO = await SalaryServices.getSalaryMovementDetail(meeetingId)
+    const detailSalaryMovement: DetailSalaryMovementDTO = response.data?.details;
+
+    const filter: ListSalaryMovementApprovalFilterDTO = {
+        month: 1,
+        year: 2024
+    }
+    const param: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: 'createdAt',
+        orderType: 'asc',
+        filter: filter,
+    };
+    const filterResponse: CommonResponseDTO = await SalaryServices.getSalaryMovementApprovalList(param)
+    const salaryMovementList: ListSalaryMovementApprovalDTO[] = filterResponse.data?.dataList as ListSalaryMovementApprovalDTO[];
+    const currentEmployee: ListSalaryMovementApprovalDTO | undefined = salaryMovementList.find((staff) => staff.employeeNumber == params.no && staff.meetingId == params.id)
+
     return {
         stepperRevisionSalaryMovementSchedule,
+        currentEmployee,
+        detailSalaryMovement,
     };
 };

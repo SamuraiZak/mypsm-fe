@@ -27,7 +27,6 @@
     } from './+page';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
 
-    export let noPekerja = '00001';
     export let data: PageData;
 
     let activeStepper = 0;
@@ -70,12 +69,14 @@
         taintedMessage:
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
+
+    let tempDate = new Date(data.detailSalaryMovement.meetingDate)
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader
-        title="Rekod Pekerja {noPekerja}"
-        description="Maklumat - maklumat pergerakan gaji pekerja {noPekerja}"
+        title="Rekod Pekerja {data.currentEmployee?.employeeNumber}"
+        description="Maklumat - Maklumat Pergerakan Gaji - {data.currentEmployee?.employeeName}"
     >
         <FormButton
             type="close"
@@ -104,7 +105,7 @@
                     {labelBlack}
                     disabled
                     label="Tarikh Pergerakan Gaji (TPG)"
-                    value={salaryMovementData.tpg}
+                    value={data.currentEmployee?.tpg}
                 ></TextField>
                 <TextField
                     {labelBlack}
@@ -115,52 +116,51 @@
                     {labelBlack}
                     disabled
                     label="Kenaikan Gaji Tahunan (KGT)"
+                    value={data.currentEmployee?.kgt}
                 ></TextField>
-                <TextField {labelBlack} disabled label="Elaun Wilayah (EW)"
+                <TextField {labelBlack} disabled label="Elaun Wilayah (EW)" value={data.currentEmployee?.wilayahAllowance1}
                 ></TextField>
                 <TextField
                     {labelBlack}
                     disabled
                     label="EL. Kritikal (5%) {currYear}"
+                    value={data.currentEmployee?.criticalAllowance1}
                 ></TextField>
-                <TextField {labelBlack} disabled label="KGT Khas {nextYear}"
+                <TextField {labelBlack} disabled label="KGT Khas {nextYear}" value={data.currentEmployee?.specialkgt}
                 ></TextField>
-                <TextField {labelBlack} disabled label="Gaji Khas {nextYear}"
+                <TextField {labelBlack} disabled label="Gaji Khas {nextYear}" value={data.currentEmployee?.specialSalary}
                 ></TextField>
-                <TextField {labelBlack} disabled label="EW Khas {nextYear}"
+                <TextField {labelBlack} disabled label="EW Khas {nextYear}" value={data.currentEmployee?.specialWilayahAllowance}
                 ></TextField>
                 <TextField
                     {labelBlack}
                     disabled
-                    label="EL. Kritikal (5%) {nextYear}"
+                    label="EL. Kritikal (5%) {nextYear}" value={data.currentEmployee?.criticalAllowance2}
                 ></TextField>
             </div>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
             >
-                <p class="h-[35px] text-sm text-system-primary">Urus Setia</p>
+                <p class="h-[35px] text-sm text-system-primary">Pergerakan Gaji Baru</p>
                 <TextField
                     {labelBlack}
                     disabled
-                    label="Nama"
-                    value={currSecratery.name}
+                    label="Nama Mesyuarat"
+                    value={data.detailSalaryMovement.meetingName}
                 ></TextField>
-                <DropdownField
+                <TextField
                     {labelBlack}
-                    dropdownType="label-left-full"
-                    label="Penempatan Baru"
-                    bind:index={selectedMeeting}
-                    id="dropdown"
-                    options={meetings}
-                    disabled
-                />
-                <DateSelector
-                    {labelBlack}
-                    handleDateChange
                     label="Tarikh Mesyuarat"
-                    selectedDate="2023-08-23"
+                    value={tempDate.toLocaleDateString('en-GB')}
                     disabled
-                ></DateSelector>
+                ></TextField>
+                <TextField
+                    {labelBlack}
+                    label="Bulan Pergerakan Gaji"
+                    value={data.detailSalaryMovement.salaryMovementMonth}
+                    disabled
+                
+                />
                 <DropdownField
                     {labelBlack}
                     dropdownType="label-left-full-optional-fields"
