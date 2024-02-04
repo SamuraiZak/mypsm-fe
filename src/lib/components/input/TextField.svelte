@@ -5,6 +5,7 @@
     export let name = '';
     export let placeholder = '';
     export let type = 'text';
+    export let dataType = 'text';
     export let onBlur = () => {};
     export let value: any = null;
     export let valueList: any = null;
@@ -44,40 +45,82 @@
 </script>
 
 {#if labelType === 'default'}
-    <div class="flex w-full flex-row items-center justify-between">
-        <div
-            class="w-[220px] min-w-[220px] flex-row gap-2 {label == ''
-                ? 'hidden'
-                : 'flex'}"
-        >
-            <label
-                for=""
-                class="text-sm {labelBlack ? fontBlack : fontGray} font-medium"
+    {#if dataType == 'number'}
+        <div class="flex w-full flex-row items-center justify-between">
+            <div
+                class="w-[220px] min-w-[220px] flex-row gap-2 {label == ''
+                    ? 'hidden'
+                    : 'flex'}"
             >
-                {label}</label
-            >
-            <div id={toolTipID} class="h-fit w-fit">
-                {@html hasTooltip ? questionMarkIcon : ''}
+                <label
+                    for=""
+                    class="text-sm {labelBlack
+                        ? fontBlack
+                        : fontGray} font-medium"
+                >
+                    {label}</label
+                >
+                <div id={toolTipID} class="h-fit w-fit">
+                    {@html hasTooltip ? questionMarkIcon : ''}
+                </div>
             </div>
+            <input
+                on:blur={onBlur}
+                on:change={onChange}
+                use:typeAction
+                type="number"
+                {disabled}
+                {id}
+                {name}
+                {placeholder}
+                bind:value={value}
+                class:text-center={textCenter}
+                class:font-bold={boldLabel}
+                class="
+            {hasError
+                    ? 'border-system-danger focus:border-system-danger'
+                    : 'hover:border-system-primary focus:border-system-primary'}
+            border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
+            />
         </div>
-        <input
-            on:blur={onBlur}
-            on:change={onChange}
-            use:typeAction
-            {disabled}
-            {id}
-            {name}
-            {placeholder}
-            bind:value
-            class:text-center={textCenter}
-            class:font-bold={boldLabel}
-            class="
-                {hasError
-                ? 'border-system-danger focus:border-system-danger'
-                : 'hover:border-system-primary focus:border-system-primary'}
-                border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
-        />
-    </div>
+    {:else}
+        <div class="flex w-full flex-row items-center justify-between">
+            <div
+                class="w-[220px] min-w-[220px] flex-row gap-2 {label == ''
+                    ? 'hidden'
+                    : 'flex'}"
+            >
+                <label
+                    for=""
+                    class="text-sm {labelBlack
+                        ? fontBlack
+                        : fontGray} font-medium"
+                >
+                    {label}</label
+                >
+                <div id={toolTipID} class="h-fit w-fit">
+                    {@html hasTooltip ? questionMarkIcon : ''}
+                </div>
+            </div>
+            <input
+                on:blur={onBlur}
+                on:change={onChange}
+                use:typeAction
+                {disabled}
+                {id}
+                {name}
+                {placeholder}
+                bind:value
+                class:text-center={textCenter}
+                class:font-bold={boldLabel}
+                class="
+            {hasError
+                    ? 'border-system-danger focus:border-system-danger'
+                    : 'hover:border-system-primary focus:border-system-primary'}
+            border-1 active:border-1 h-8 w-full rounded-[3px] border-bdr-primary text-sm placeholder:text-txt-tertiary focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-bgr-secondary disabled:text-txt-tertiary disabled:hover:border-bdr-primary"
+            />
+        </div>
+    {/if}
 {:else if labelType === 'auto-calculate-percentage'}
     <div class="flex w-full flex-row items-center justify-between">
         <div
