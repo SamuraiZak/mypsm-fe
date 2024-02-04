@@ -8,6 +8,8 @@ import { LNPTServices } from '$lib/services/implementations/mypsm/lnpt/lnpt.serv
 import { loadingState } from '$lib/stores/globalState';
 
 export async function load() {
+
+    
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
@@ -27,10 +29,13 @@ export async function load() {
     const response: CommonResponseDTO =
         await EmployeeServices.getEmployeeList(param);
 
+    const employeeList: CommonEmployeeDTO[] = response.data
+        ?.dataList as CommonEmployeeDTO[];
 
     return {
         props: {
             param,
+            employeeList,
             response,
         },
     };
