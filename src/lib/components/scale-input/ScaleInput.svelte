@@ -4,7 +4,7 @@
     export let userSelected = options[0].value;
     export let disabled: boolean = false;
     export let labelBlack: boolean = true;
-    export let onChange = () => {};
+    export const onChange = () => {};
 
     const uniqueID = Math.floor(
         Math.random() * 999999 * (Math.random() * 999999),

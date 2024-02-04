@@ -27,13 +27,10 @@ export async function load() {
     const response: CommonResponseDTO =
         await EmployeeServices.getEmployeeList(param);
 
-    const employeeList: CommonEmployeeDTO[] = response.data
-        ?.dataList as CommonEmployeeDTO[];
 
     return {
         props: {
             param,
-            employeeList,
             response,
         },
     };

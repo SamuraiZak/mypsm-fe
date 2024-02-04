@@ -1,8 +1,13 @@
-
 import { goto } from '$app/navigation';
-import { AuthRequestConvert, type AuthRequestDTO } from '$lib/dto/core/auth/auth-request.dto';
+import {
+    AuthRequestConvert,
+    type AuthRequestDTO,
+} from '$lib/dto/core/auth/auth-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
-import { getErrorToast, getLoginErrorToast } from '$lib/services/core/toast/toast-service';
+import {
+    getErrorToast,
+    getLoginErrorToast,
+} from '$lib/services/core/toast/toast-service';
 import { AuthService } from '$lib/services/implementations/core/auth/authentication.service';
 import http from '$lib/services/provider/service-provider.service';
 import { loadingState, showLoadingOverlay } from '$lib/stores/globalState';
@@ -25,18 +30,18 @@ export const load = async () => {
 };
 
 export const _submit = async (formData: AuthRequestDTO) => {
-
     const form = await superValidate(formData, _calonLoginSchema);
 
     // check if form valid
     if (form.valid) {
-
         // show loading screen
         loadingState.set(true);
 
-        const response : CommonResponseDTO = await AuthService.authenticateUser(formData);
+        const response: CommonResponseDTO =
+            await AuthService.authenticateUser(formData);
 
-        if (response.status == "success") {
+        if (response.status == 'success') {
+            let accountRes = await AuthService.getFullName();
             loadingState.set(false);
             goto('/calon/halaman-utama');
         } else {
@@ -47,4 +52,3 @@ export const _submit = async (formData: AuthRequestDTO) => {
         return fail(400, form);
     }
 };
- 

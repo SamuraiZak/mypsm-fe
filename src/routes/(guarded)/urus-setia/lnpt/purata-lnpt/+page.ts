@@ -8,26 +8,35 @@ import { LNPTServices } from '$lib/services/implementations/mypsm/lnpt/lnpt.serv
 import { loadingState } from '$lib/stores/globalState';
 
 export async function load() {
-    const LnptApcRecord: IntLnptApc[] = await mockLnptApc;
 
+    
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
         orderBy: '',
         orderType: '',
-        filter: {},
+        filter: {
+            employeeNumber: '',
+            name: '',
+            identityCard: '',
+            program: '',
+            scheme: '',
+            grade: '',
+            position: '',
+        },
     };
 
-    const response: CommonResponseDTO = await LNPTServices.getAPCHistory(param);
+    const response: CommonResponseDTO =
+        await EmployeeServices.getEmployeeList(param);
 
-    const apcHistory: ApcEmployeeDTO[] = response.data
-        ?.dataList as ApcEmployeeDTO[];
+    const employeeList: CommonEmployeeDTO[] = response.data
+        ?.dataList as CommonEmployeeDTO[];
 
     return {
         props: {
             param,
+            employeeList,
             response,
-            apcHistory,
         },
     };
 }
@@ -36,13 +45,17 @@ export async function _updateTable(param: CommonListRequestDTO) {
     loadingState.set(true);
 
     const response: CommonResponseDTO =
-    await LNPTServices.getAPCHistory(param);
+        await EmployeeServices.getEmployeeList(param);
+
+    const employeeList: CommonEmployeeDTO[] = response.data
+        ?.dataList as CommonEmployeeDTO[];
 
     loadingState.set(false);
 
     return {
         props: {
             param,
+            employeeList,
             response,
         },
     };
