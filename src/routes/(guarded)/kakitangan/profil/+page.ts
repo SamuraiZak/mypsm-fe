@@ -133,6 +133,8 @@ export const _stepperMaklumatPeribadi = z.object({
     religion: maklumatPeribadiSelectSchema,
     marital: maklumatPeribadiSelectSchema,
     gender: maklumatPeribadiSelectSchema,
+    ethnic: maklumatPeribadiSelectSchema,
+
 
     employeeNumber: shortTextSchema,
     identityCardNumber: shortTextSchema,

@@ -57,6 +57,7 @@
         _submitFormStepperMaklumatWaris,
         _submitAddExperienceModal,
     } from '../+page';
+    import StepperNextStep from '$lib/components/stepper-conditional-rules/StepperNextStep.svelte';
 
     export let disabled: boolean = true;
     export let data: PageData;
@@ -468,6 +469,8 @@
                     label="Simpan"
                     form="FormStepperMaklumatPeribadi"
                 />
+                {:else}
+                <StepperNextStep />
             {/if}
         </StepperContentHeader>
         <StepperContentBody
@@ -481,7 +484,7 @@
                 <p class={stepperFormTitleClass}>Maklumat Peribadi</p>
                 <TextField
                     {disabled}
-                    hasError={$errors.employeeNumber ? true : false}
+                    hasError={!!$errors.employeeNumber }
                     name="employeeNumber"
                     label={'No. Pekerja'}
                     type="text"
@@ -497,7 +500,7 @@
 
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.statusPekerjaan ? true : false}
+                    hasError={!!$errors.statusPekerjaan }
                     dropdownType="label-left-full"
                     id="statusPekerjaan"
                     label="Status Pekerjaan"
@@ -516,7 +519,7 @@
 
                 <TextField
                     {disabled}
-                    hasError={$errors.identityCardNumber ? true : false}
+                    hasError={!!$errors.identityCardNumber }
                     name="identityCardNumber"
                     label={'No. Kad Pengenalan'}
                     type="text"
@@ -532,7 +535,7 @@
 
                 <TextField
                     {disabled}
-                    hasError={$errors.fullName ? true : false}
+                    hasError={!!$errors.fullName }
                     name="fullName"
                     label={'Nama Penuh'}
                     type="text"
@@ -548,7 +551,7 @@
 
                 <TextField
                     {disabled}
-                    hasError={$errors.alternativeName ? true : false}
+                    hasError={!!$errors.alternativeName }
                     name="alternativeName"
                     label={'Nama Lain'}
                     type="text"
@@ -564,9 +567,10 @@
 
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.icColour ? true : false}
+                    hasError={!!$errors.icColour }
                     dropdownType="label-left-full"
                     id="icColour"
+                    name="icColour"
                     label="Warna Kad Pengenalan"
                     bind:value={$form.icColour}
                     options={[
@@ -583,23 +587,24 @@
 
                 <DateSelector
                     {disabled}
-                    hasError={$errors.birthDate ? true : false}
+                    hasError={!!$errors.birthDate }
                     name="birthDate"
                     handleDateChange
                     label="Tarikh Lahir"
                     bind:selectedDate={$form.birthDate}
                 ></DateSelector>
-                {#if $errors.birthDate}
+                {#if $errors?.birthDate}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.birthDate}</span
+                        >{$errors?.birthDate}</span
                     >
                 {/if}
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.birthplace ? true : false}
+                    hasError={!!$errors.birthplace }
                     dropdownType="label-left-full"
-                    id="tempatLahir"
+                    id="birthplace"
+                    name="birthplace"
                     label="Tempat Lahir"
                     bind:value={$form.birthplace}
                     options={[
@@ -616,9 +621,10 @@
 
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.nationality ? true : false}
+                    hasError={!!$errors.nationality }
                     dropdownType="label-left-full"
                     id="nationality"
+                    name="nationality"
                     label="Warganegara"
                     bind:value={$form.nationality}
                     options={[
@@ -635,9 +641,10 @@
 
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.race ? true : false}
+                    hasError={!!$errors.race}
                     dropdownType="label-left-full"
                     id="race"
+                    name="race"
                     label="Bangsa"
                     bind:value={$form.race}
                     options={[
@@ -653,8 +660,27 @@
                 {/if}
 
                 <DropdownSelect
+                {disabled}
+                hasError={!!$errors.ethnic}
+                dropdownType="label-left-full"
+                id="ethnic"
+                label="Etnik"
+                bind:value={$form.ethnic}
+                options={[
+                    { value: '1', name: 'Islam' },
+                    { value: '2', name: 'Kristen' },
+                ]}
+            ></DropdownSelect>
+            {#if $errors.ethnic}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.ethnic}</span
+                >
+            {/if}
+
+                <DropdownSelect
                     {disabled}
-                    hasError={$errors.religion ? true : false}
+                    hasError={!!$errors.religion }
                     dropdownType="label-left-full"
                     id="religion"
                     label="Agama"
@@ -673,9 +699,10 @@
 
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.gender ? true : false}
+                    hasError={!!$errors.gender}
                     dropdownType="label-left-full"
-                    id="jantina"
+                    id="gender"
+                    name="gender"
                     label="Jantina"
                     bind:value={$form.gender}
                     options={[
@@ -692,7 +719,7 @@
 
                 <DropdownSelect
                     {disabled}
-                    hasError={$errors.marital ? true : false}
+                    hasError={!!$errors.marital }
                     dropdownType="label-left-full"
                     id="marital"
                     label="Status"
@@ -711,7 +738,7 @@
 
                 <TextField
                     {disabled}
-                    hasError={$errors.email ? true : false}
+                    hasError={!!$errors.email}
                     name="email"
                     label={'Emel'}
                     type="text"
@@ -726,7 +753,7 @@
                 {/if}
 
                 <LongTextField
-                    hasError={$errors.homeAddress ? true : false}
+                    hasError={!!$errors.homeAddress}
                     {disabled}
                     name="homeAddress"
                     label="Alamat Rumah"
@@ -738,6 +765,68 @@
                         >{$errors.homeAddress}</span
                     >
                 {/if}
+
+                <!-- <DropdownSelect
+                    hasError={!!$errors.homeCountryId}
+                    disabled={$isReadonlyPersonalFormStepper}
+                    dropdownType="label-left-full"
+                    id="homeCountryId"
+                    name="homeCountryId"
+                    label="Negara"
+                    options={data.countryLookup}
+                    bind:value={$form.homeCountryId}
+                />
+                {#if $errors.homeCountryId}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.homeCountryId}</span
+                    >
+                {/if}
+                <DropdownSelect
+                    hasError={!!$errors.homeStateId}
+                    disabled={$isReadonlyPersonalFormStepper}
+                    dropdownType="label-left-full"
+                    id="homeStateId"
+                    name="homeStateId"
+                    label="Negeri"
+                    options={data.stateLookup}
+                    bind:value={$form.homeStateId}
+                />
+                {#if $errors.homeStateId}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.homeStateId}</span
+                    >
+                {/if}
+                <DropdownSelect
+                    hasError={!!$errors.homeCityId}
+                    disabled={$isReadonlyPersonalFormStepper}
+                    dropdownType="label-left-full"
+                    id="homeStateId"
+                    name="homeCityId"
+                    label="Bandar"
+                    options={data.cityLookup}
+                    bind:value={$form.homeCityId}
+                />
+                {#if $errors.homeCityId}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.homeCityId}</span
+                    >
+                {/if}
+                <TextField
+                    hasError={!!$errors.homePostcode}
+                    disabled={$isReadonlyPersonalFormStepper}
+                    name="homePostcode"
+                    label="Poskod Rumah"
+                    bind:value={$form.homePostcode}
+                />
+                {#if $errors.homePostcode}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$errors.homePostcode}</span
+                    >
+                {/if} -->
 
                 <LongTextField
                     hasError={!!$errors.mailAddress}
@@ -752,6 +841,98 @@
                         >{$errors.mailAddress}</span
                     >
                 {/if}
+                <!-- <DropdownSelect
+                hasError={!!$errors.mailCountryId}
+                disabled={$isReadonlyPersonalFormStepper}
+                dropdownType="label-left-full"
+                id="mailCountryId"
+                name="mailCountryId"
+                label="Negara Surat Menyurat"
+                options={data.countryLookup}
+                bind:value={$form.mailCountryId}
+            />
+            {#if $errors.mailCountryId}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.mailCountryId}</span
+                >
+            {/if}
+            <DropdownSelect
+                hasError={!!$errors.mailStateId}
+                disabled={$isReadonlyPersonalFormStepper}
+                dropdownType="label-left-full"
+                id="mailStateId"
+                name="mailStateId"
+                label="Negeri Surat Menyurat"
+                options={data.stateLookup}
+                bind:value={$form.mailStateId}
+            />
+            {#if $errors.mailStateId}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.mailStateId}</span
+                >
+            {/if}
+            <DropdownSelect
+                hasError={!!$errors.mailCityId}
+                disabled={$isReadonlyPersonalFormStepper}
+                dropdownType="label-left-full"
+                id="mailStateId"
+                name="mailCityId"
+                label="Bandar Surat Menyurat"
+                options={data.cityLookup}
+                bind:value={$form.mailCityId}
+            />
+            {#if $errors.mailCityId}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.mailCityId}</span
+                >
+            {/if}
+            <TextField
+                hasError={!!$errors.mailPostcode}
+                disabled={$isReadonlyPersonalFormStepper}
+                name="mailPostcode"
+                label="Poskod Surat Menyurat"
+                bind:value={$form.mailPostcode}
+            />
+            {#if $errors.mailPostcode}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.mailPostcode}</span
+                >
+            {/if}
+
+            <DropdownSelect
+                disabled={$isReadonlyPersonalFormStepper}
+                hasError={!!$errors.assetDeclarationStatusId}
+                dropdownType="label-left-full"
+                name="assetDeclarationStatusId"
+                label="Status Pengikstiharan Harta"
+                options={data.assetDeclarationLookup}
+                bind:value={$form.assetDeclarationStatusId}
+            ></DropdownSelect>
+            {#if $errors.assetDeclarationStatusId}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.assetDeclarationStatusId}</span
+                >
+            {/if}
+
+            <DateSelector
+                disabled={$isReadonlyPersonalFormStepper}
+                hasError={!!$errors.propertyDeclarationDate}
+                name="propertyDeclarationDate"
+                handleDateChange
+                label="Tarikh Pengikstiharan Harta"
+                bind:selectedDate={$proxyPersonalPropertyDeclarationDate}
+            ></DateSelector>
+            {#if $errors.propertyDeclarationDate}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$errors.propertyDeclarationDate}</span
+                >
+            {/if} -->
 
                 <TextField
                 hasError={!!$errors.houseLoanType}
@@ -835,7 +1016,7 @@
 
                         <TextField
                             {disabled}
-                            hasError={$errors.namaPasangan ? true : false}
+                            hasError={!!$errors.namaPasangan}
                             name="namaPasangan"
                             label={'Nama Kakitangan LKIM'}
                             type="text"
@@ -917,9 +1098,7 @@
 
                     <DropdownSelect
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.currentGrade
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.currentGrade}
                         dropdownType="label-left-full"
                         id="currentGrade"
                         label="Gred Semasa"
@@ -938,9 +1117,7 @@
 
                     <DropdownSelect
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.currentPosition
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.currentPosition}
                         dropdownType="label-left-full"
                         id="currentPosition"
                         label="Jawatan"
@@ -960,9 +1137,7 @@
 
                     <DropdownSelect
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.placement
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.placement}
                         dropdownType="label-left-full"
                         id="placement"
                         label="Penempatan"
@@ -980,9 +1155,7 @@
                     {/if}
                     <DropdownSelect
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.serviceType
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.serviceType}
                         dropdownType="label-left-full"
                         id="tarafPerkhidmatan"
                         label="Taraf Perkhidmatan"
@@ -1001,9 +1174,7 @@
 
                     <DateSelector
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.tarikhKuatkuasaLantikanSemasa
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.tarikhKuatkuasaLantikanSemasa}
                         name="tarikhKuatkuasaLantikanSemasa"
                         handleDateChange
                         label="Tarikh Kuatkuasa Lantikan Semasa"
@@ -1033,9 +1204,7 @@
 
                     <TextField
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.EPFNumber
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.EPFNumber}
                         name="EPFNumber"
                         label={'No. KWSP'}
                         type="text"
@@ -1050,9 +1219,7 @@
                     {/if}
                     <TextField
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.SOCSO
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.SOCSO}
                         name="noSOCSO"
                         label={'No. SOCSO'}
                         type="text"
@@ -1068,9 +1235,7 @@
 
                     <TextField
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.taxIncome
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.taxIncome}
                         name="taxIncome"
                         label={'No. Cukai (LHDN)'}
                         type="text"
@@ -1085,9 +1250,7 @@
                     {/if}
                     <TextField
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.bankName
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.bankName}
                         name="bankName"
                         label={'Bank'}
                         type="text"
@@ -1103,9 +1266,7 @@
 
                     <TextField
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.accountNumber
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.accountNumber}
                         name="accountNumber"
                         label={'No.Akaun'}
                         type="text"
@@ -1130,9 +1291,7 @@
 
                     <TextField
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.kelayakanCuti
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.kelayakanCuti}
                         name="kelayakanCuti"
                         label={'Kelayakan Cuti'}
                         type="text"
@@ -1149,9 +1308,7 @@
 
                     <DateSelector
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.civilServiceStartDate
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.civilServiceStartDate}
                         name="mulaDilantikPerkhidmatanKerajaan"
                         handleDateChange
                         label="Mula Dilantik Perkhidmatan Kerajaan"
@@ -1166,9 +1323,7 @@
                     {/if}
                     <DateSelector
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.firstEffectiveDate
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.firstEffectiveDate}
                         name="firstEffectiveDate"
                         handleDateChange
                         label="Mula Dilantik Perkhidmatan LKIM"
@@ -1183,9 +1338,7 @@
 
                     <DateSelector
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.confirmServiceDate
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.confirmServiceDate}
                         name="confirmServiceDate"
                         handleDateChange
                         label="Disahkan Dalam Jawatan Semasa LKIM"
@@ -1223,9 +1376,7 @@
 
                     <DateSelector
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.tarikhKelulusanPercantumanPerkhidmatanLepas
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.tarikhKelulusanPercantumanPerkhidmatanLepas}
                         name="tarikhKelulusanPercantumanPerkhidmatanLepas"
                         handleDateChange
                         label="Tarikh Kelulusan Percantuman Perkhidmatan Lepas"
@@ -1241,9 +1392,7 @@
 
                     <DateSelector
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.actingDate
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.actingDate}
                         name="actingDate"
                         handleDateChange
                         label="Pemangkuan Sekarang"
@@ -1258,9 +1407,7 @@
 
                     <DateSelector
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.interimDate
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.interimDate}
                         name="interimDate"
                         handleDateChange
                         label="Tanggung Kerja Sekarang"
@@ -1283,9 +1430,7 @@
 
                     <DateSelector
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.lastSalaryRaiseDate
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.lastSalaryRaiseDate}
                         name="lastSalaryRaiseDate"
                         handleDateChange
                         label="Kenaikan Gaji Akhir"
@@ -1301,9 +1446,7 @@
 
                     <DateSelector
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.kenaikanPangkatAkhir
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.kenaikanPangkatAkhir}
                         name="kenaikanPangkatAkhir"
                         handleDateChange
                         label="Kenaikan Pangkat Akhir"
@@ -1319,9 +1462,7 @@
 
                     <DropdownSelect
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.bulanKGT
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.bulanKGT}
                         dropdownType="label-left-full"
                         id="bulanKGT"
                         label="Bulan KGT"
@@ -1340,9 +1481,7 @@
 
                     <DateSelector
                         {disabled}
-                        hasError={$maklumatPerkhidmatanErrors.retirementDate
-                            ? true
-                            : false}
+                        hasError={!!$maklumatPerkhidmatanErrors.retirementDate}
                         name="retirementDate"
                         handleDateChange
                         label="Tarikh Bersara"
@@ -1363,9 +1502,7 @@
                         <div class="space-y-2.5">
                             <TextField
                                 {disabled}
-                                hasError={$maklumatPerkhidmatanErrors.tarikhBerkuatKuasa
-                                    ? true
-                                    : false}
+                                hasError={!!$maklumatPerkhidmatanErrors.tarikhBerkuatKuasa}
                                 name="tarikhBerkuatKuasa"
                                 label={'Tarikh Berkuatkuasa'}
                                 type="text"
@@ -1381,9 +1518,7 @@
                             {/if}
                             <TextField
                                 {disabled}
-                                hasError={$maklumatPerkhidmatanErrors.salaryMovementMonth
-                                    ? true
-                                    : false}
+                                hasError={!!$maklumatPerkhidmatanErrors.salaryMovementMonth}
                                 name="tanggaGaji"
                                 label={'Tangga Gaji'}
                                 type="text"
@@ -1400,9 +1535,7 @@
 
                             <TextField
                                 {disabled}
-                                hasError={$maklumatPerkhidmatanErrors.baseSalary
-                                    ? true
-                                    : false}
+                                hasError={!!$maklumatPerkhidmatanErrors.baseSalary}
                                 name="baseSalary"
                                 label={'Gaji Pokok'}
                                 type="text"
@@ -1423,9 +1556,7 @@
                                 {disabled}
                                 hasTooltip={true}
                                 toolTipID="type-itka"
-                                hasError={$maklumatPerkhidmatanErrors.ITKA
-                                    ? true
-                                    : false}
+                                hasError={!!$maklumatPerkhidmatanErrors.ITKA}
                                 name="ITKA"
                                 label={'ITKA'}
                                 type="text"
@@ -1442,9 +1573,7 @@
                                 {disabled}
                                 hasTooltip={true}
                                 toolTipID="type-itp"
-                                hasError={$maklumatPerkhidmatanErrors.ITP
-                                    ? true
-                                    : false}
+                                hasError={!!$maklumatPerkhidmatanErrors.ITP}
                                 name="ITP"
                                 label={'ITP'}
                                 type="text"
@@ -1462,9 +1591,7 @@
                                 {disabled}
                                 hasTooltip={true}
                                 toolTipID="type-epw"
-                                hasError={$maklumatPerkhidmatanErrors.EPW
-                                    ? true
-                                    : false}
+                                hasError={!!$maklumatPerkhidmatanErrors.EPW}
                                 name="EPW"
                                 label={'EPW'}
                                 type="text"
@@ -1482,9 +1609,7 @@
                                 {disabled}
                                 hasTooltip={true}
                                 toolTipID="type-cola"
-                                hasError={$maklumatPerkhidmatanErrors.COLA
-                                    ? true
-                                    : false}
+                                hasError={!!$maklumatPerkhidmatanErrors.COLA}
                                 name="COLA"
                                 label={'COLA'}
                                 type="text"
