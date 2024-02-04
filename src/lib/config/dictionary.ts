@@ -432,4 +432,8 @@ const dictionary: { [key: string]: string } = {
     dateOfEmployement: 'Tarikh Lantikan Semasa',
     inductionCourseServiceExamination:
         'Perperiksaan Perkhidmatan Kursus Induksi',
+
+    // apc
+    employeeIdentityNo: 'No. Kad Pengenalan',
+    excellenceAwardYear: 'Tahun APC',
 };
