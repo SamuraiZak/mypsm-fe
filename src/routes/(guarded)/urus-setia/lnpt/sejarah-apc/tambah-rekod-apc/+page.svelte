@@ -77,6 +77,7 @@
                 <CustomTable
                     bind:tableData={table}
                     bind:passData={selectedDataRow}
+                    enableDetail
                     onUpdate={_search}
                     detailActions={() => {
 

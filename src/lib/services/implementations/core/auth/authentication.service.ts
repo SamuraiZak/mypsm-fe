@@ -157,10 +157,22 @@ export class AuthService {
                     LocalStorageKeyConstant.accessToken,
                     authResponse.token,
                 );
+                localStorage.setItem(
+                    LocalStorageKeyConstant.idType,
+                    param.idType,
+                );
+                localStorage.setItem(
+                    LocalStorageKeyConstant.userGroup,
+                    param.userGroup,
+                );
 
                 localStorage.setItem(
                     LocalStorageKeyConstant.userName,
                     param.username,
+                );
+                localStorage.setItem(
+                    LocalStorageKeyConstant.password,
+                    param.password,
                 );
 
                 localStorage.setItem(
@@ -185,9 +197,7 @@ export class AuthService {
             // Change the url here
             let url: Input = 'personal-details/get-user-name';
 
-            const response: Response = await http
-                .get(url)
-                .json();
+            const response: Response = await http.get(url).json();
 
             const result = CommonResponseConvert.fromResponse(response);
 
