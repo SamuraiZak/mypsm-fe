@@ -1,5 +1,6 @@
 import { goto } from '$app/navigation';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { AddLeaveApprovalResultRequestBody } from '$lib/dto/mypsm/leave/add-leave-approvers-results-request.model';
 import type { AddHajiLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/haji-leave/add-haji-leave-request.dto';
 import type { AddHalfPayLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/halfpay-leave/add-halfpay-leave-request.dto';
 import type { AddMaternityLeaveRequest } from '$lib/dto/mypsm/leave/leave-applications/maternity-leave/add-maternity-leave-request.dto';
@@ -45,6 +46,16 @@ const generalSelectSchema = z
 const generalTextSchema = z
     .string()
     .min(1, { message: 'Medan ini perlu diisi. ' });
+
+const numberIdSchema = z.coerce.number({
+    required_error: 'Tidak tepat.',
+    invalid_type_error: 'Sila pastikan ID ditaip dengan angka',
+});
+
+const booleanSchema = z.boolean({
+    required_error: 'Sila tetapkan pilihan anda.',
+    invalid_type_error: 'Medan ini haruslah jenis boolean.',
+});
 
 export const _hasApplicationReasonSchema = z.object({
     applicationReason: generalSelectSchema,
@@ -199,6 +210,12 @@ export const _otherLeavesTertiarySchema = _otherLeavesSchema.required({
     institution: true,
 });
 
+export const _setApprovalSchema = z.object({
+    id: numberIdSchema,
+    remark: generalTextSchema.default(' '),
+    isApproved: booleanSchema,
+});
+
 // =============================================
 // load function
 // =============================================
@@ -225,9 +242,9 @@ export const load = async ({ params }) => {
         currenLeaveDetailResponse =
             await LeaveServices.getWithoutPayLeaveDetail(leaveIdRequest);
     else if (
-        selectedLeaveType === 'Bersalin Awal' ||
-        selectedLeaveType === 'Bersalin Pegawai' ||
-        selectedLeaveType === 'Isteri Bersalin'
+        selectedLeaveType === 'Cuti Bersalin Awal' ||
+        selectedLeaveType === 'Cuti Bersalin Pegawai' ||
+        selectedLeaveType === 'Cuti Isteri Bersalin'
     )
         currenLeaveDetailResponse =
             await LeaveServices.getMaternityLeaveDetail(leaveIdRequest);
@@ -235,14 +252,14 @@ export const load = async ({ params }) => {
         currenLeaveDetailResponse =
             await LeaveServices.getHajiLeaveDetail(leaveIdRequest);
     else if (
-        selectedLeaveType === 'Kuarantin' ||
-        selectedLeaveType === 'Menjaga Anak Tanpa Gaji' ||
-        selectedLeaveType === 'Kursus Sambilan' ||
-        selectedLeaveType === 'Perakuan Tidak Hadir Ke Pejabat' ||
-        selectedLeaveType === 'Sakit Lanjutan' ||
-        selectedLeaveType === 'Tanpa Gaji Mengikut Pasangan' ||
-        selectedLeaveType === 'Penyakit Barah Dan Kusta' ||
-        selectedLeaveType === 'Penyakit Tibi'
+        selectedLeaveType === 'Cuti Kuarantin' ||
+        selectedLeaveType === 'Cuti Menjaga Anak Tanpa Gaji' ||
+        selectedLeaveType === 'Cuti Kursus Sambilan' ||
+        selectedLeaveType === 'Cuti Perakuan Tidak Hadir Ke Pejabat' ||
+        selectedLeaveType === 'Cuti Sakit Lanjutan' ||
+        selectedLeaveType === 'Cuti Tanpa Gaji Mengikut Pasangan' ||
+        selectedLeaveType === 'Cuti Penyakit Barah Dan Kusta' ||
+        selectedLeaveType === 'Cuti Penyakit Tibi'
     )
         currenLeaveDetailResponse =
             await LeaveServices.getOtherLeavesDetail(leaveIdRequest);
@@ -318,6 +335,11 @@ export const load = async ({ params }) => {
 
     const otherLeavesForm = await superValidate(_otherLeavesSchema);
 
+    const verifierSetResultForm = await superValidate(
+        verifierResult,
+        _setApprovalSchema,
+    );
+
     return {
         selectedLeaveType,
         currenLeaveDetailResponse,
@@ -337,10 +359,11 @@ export const load = async ({ params }) => {
         verifierResult,
         supporterResult,
         appproverResult,
+        verifierSetResultForm,
     };
 };
 
-export const _submitReplacementLeaveForm = async (formData: object) => {
+export const _submitApprovalResult = async (formData: object) => {
     const form = await superValidate(formData, _replacementLeaveSchema);
     console.log(form);
 
@@ -357,6 +380,77 @@ export const _submitReplacementLeaveForm = async (formData: object) => {
             form.data as AddReplacementLeaveRequest,
         ).finally(() => toast.dismiss());
     console.log(response);
+
+    if (response.status !== 'success') {
+        // if error toast
+        getServerErrorToast();
+        // return error(400, { message: response.message });
+    }
+    // // if success toast
+    getSuccessToast().finally(() =>
+        setTimeout(() => {
+            goto('../cuti/laporan-cuti');
+        }, 2000),
+    );
+
+    return { form };
+};
+
+export const _submitReplacementLeaveForm = async (
+    formData: object,
+    selectedLeaveType: string,
+) => {
+    const form = await superValidate(formData, _setApprovalSchema);
+    console.log(form);
+
+    if (!form.valid) {
+        getErrorToast();
+        return fail(400, form);
+    }
+
+    const requestBody: AddLeaveApprovalResultRequestBody = {
+        id: form.data.id,
+        remark: form.data.remark,
+        status: form.data.isApproved,
+    };
+
+    // start by rendering loading toast
+    getLoadingToast();
+
+    let response: CommonResponseDTO;
+
+    if (selectedLeaveType === 'Gantian')
+        response = await LeaveServices.createOtherLeavesApproversResults(requestBody);
+    else if (selectedLeaveType === 'Tanpa Rekod')
+        response = await LeaveServices.createOtherLeavesApproversResults(requestBody);
+    else if (selectedLeaveType === 'Separuh Gaji')
+        response = await LeaveServices.createOtherLeavesApproversResults(requestBody);
+    else if (selectedLeaveType === 'Tanpa Gaji')
+        response = await LeaveServices.createOtherLeavesApproversResults(requestBody);
+    else if (
+        selectedLeaveType === 'Cuti Bersalin Awal' ||
+        selectedLeaveType === 'Cuti Bersalin Pegawai' ||
+        selectedLeaveType === 'Cuti Isteri Bersalin'
+    )
+        response = await LeaveServices.createOtherLeavesApproversResults(requestBody);
+    else if (selectedLeaveType === 'Haji')
+        response = await LeaveServices.createOtherLeavesApproversResults(requestBody);
+    else if (
+        selectedLeaveType === 'Cuti Kuarantin' ||
+        selectedLeaveType === 'Cuti Menjaga Anak Tanpa Gaji' ||
+        selectedLeaveType === 'Cuti Kursus Sambilan' ||
+        selectedLeaveType === 'Cuti Perakuan Tidak Hadir Ke Pejabat' ||
+        selectedLeaveType === 'Cuti Sakit Lanjutan' ||
+        selectedLeaveType === 'Cuti Tanpa Gaji Mengikut Pasangan' ||
+        selectedLeaveType === 'Cuti Penyakit Barah Dan Kusta' ||
+        selectedLeaveType === 'Cuti Penyakit Tibi'
+    )
+        response = await LeaveServices.createOtherLeavesApproversResults(requestBody);
+
+    // const response: CommonResponseDTO = await LeaveServices.createother(
+    //     form.data as AddReplacementLeaveRequest,
+    // ).finally(() => toast.dismiss());
+    // console.log(response);
 
     if (response.status !== 'success') {
         // if error toast

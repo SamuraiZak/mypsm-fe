@@ -34,6 +34,8 @@
         _otherLeavesSchema,
         _otherLeavesSecondarySchema,
         _otherLeavesTertiarySchema,
+        _setApprovalSchema,
+        _submitApprovalResult,
         _submitOtherLeaveForm,
         _submitOtherLeaveSecondaryForm,
         _submitOtherLeaveTertiaryForm,
@@ -116,46 +118,37 @@
     // ================ Form Validation ================
     const { form, errors, enhance, options } = superForm(data.otherLeavesForm, {
         SPA: true,
-        validators: _otherLeavesSchema,
-        invalidateAll: true,
-        validationMethod: 'oninput',
-        resetForm: false,
-        multipleSubmits: 'prevent',
-        onSubmit() {
-            if (
-                selectedCuti === 'Kuarantin' ||
-                selectedCuti === 'Menjaga Anak Tanpa Gaji' ||
-                selectedCuti === 'Penyakit Barah Dan Kusta' ||
-                selectedCuti === 'Penyakit Tibi'
-            ) {
-                _submitOtherLeaveForm($form);
-            } else if (
-                selectedCuti === 'Perakuan Tidak Hadir Ke Pejabat' ||
-                selectedCuti === 'Sakit Lanjutan' ||
-                selectedCuti === 'Tanpa Gaji Mengikut Pasangan'
-            ) {
-                _submitOtherLeaveSecondaryForm($form);
-            } else if (selectedCuti === 'Kursus Sambilan') {
-                _submitOtherLeaveTertiaryForm($form);
-            }
-        },
-        taintedMessage:
-            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+        validators: false,
     });
 
     const proxyStartDate = dateProxy(form, 'startDate', { format: 'date' });
     const proxyEndDate = dateProxy(form, 'endDate', { format: 'date' });
 
+    $proxyStartDate = data.currenLeaveDetailResponse.data?.details.startDate;
+    $proxyEndDate = data.currenLeaveDetailResponse.data?.details.endDate;
+
+    const {
+        form: secretaryApprovalInfoForm,
+        errors: secretaryApprovalInfoErrors,
+        enhance: secretaryApprovalInfoEnhance,
+    } = superForm(data.verifierSetResultForm, {
+        SPA: true,
+        validators: _setApprovalSchema,
+        onSubmit() {
+            _submitApprovalResult($secretaryApprovalInfoForm, selectedCuti);
+        },
+    });
+
     $: {
-        if (
-            selectedCuti === 'Perakuan Tidak Hadir Ke Pejabat' ||
-            selectedCuti === 'Sakit Lanjutan' ||
-            selectedCuti === 'Tanpa Gaji Mengikut Pasangan'
-        ) {
-            options.validators = _otherLeavesSecondarySchema;
-        } else if (selectedCuti === 'Kursus Sambilan') {
-            options.validators = _otherLeavesTertiarySchema;
-        }
+        // if (
+        //     selectedCuti === 'Perakuan Tidak Hadir Ke Pejabat' ||
+        //     selectedCuti === 'Sakit Lanjutan' ||
+        //     selectedCuti === 'Tanpa Gaji Mengikut Pasangan'
+        // ) {
+        //     options.validators = _otherLeavesSecondarySchema;
+        // } else if (selectedCuti === 'Kursus Sambilan') {
+        //     options.validators = _otherLeavesTertiarySchema;
+        // }
 
         $form.leaveType = selectedCuti;
     }
@@ -228,11 +221,7 @@
 
     <!-- ========== STEPPER 2 ========== -->
     <StepperContent>
-        <StepperContentHeader title="Maklumat Cuti">
-            <TextIconButton primary label="Hantar" form="formValidation"
-                ><SvgPaperAirplane /></TextIconButton
-            >
-        </StepperContentHeader>
+        <StepperContentHeader title="Maklumat Cuti"></StepperContentHeader>
         <StepperContentBody>
             <div class="flex max-h-full w-full flex-col gap-2.5">
                 {#if selectedCuti === 'Gantian'}
@@ -243,15 +232,15 @@
                     <CutiSeparuhGaji {data}></CutiSeparuhGaji>
                 {:else if selectedCuti === 'Tanpa Gaji'}
                     <CutiTanpaGaji {data}></CutiTanpaGaji>
-                {:else if selectedCuti === 'Bersalin Awal'}
+                {:else if selectedCuti === 'Cuti Bersalin Awal'}
                     <CutiBersalinAwal {data}></CutiBersalinAwal>
-                {:else if selectedCuti === 'Bersalin Pegawai'}
+                {:else if selectedCuti === 'Cuti Bersalin Pegawai'}
                     <CutiBersalinPegawai {data}></CutiBersalinPegawai>
-                {:else if selectedCuti === 'Isteri Bersalin'}
+                {:else if selectedCuti === 'Cuti Isteri Bersalin'}
                     <CutiIsteriBersalin {data}></CutiIsteriBersalin>
                 {:else if selectedCuti === 'Haji'}
                     <CutiHaji {data}></CutiHaji>
-                {:else if selectedCuti === 'Kuarantin' || selectedCuti === 'Menjaga Anak Tanpa Gaji' || selectedCuti === 'Kursus Sambilan' || selectedCuti === 'Perakuan Tidak Hadir Ke Pejabat' || selectedCuti === 'Sakit Lanjutan' || selectedCuti === 'Tanpa Gaji Mengikut Pasangan' || selectedCuti === 'Penyakit Barah Dan Kusta' || selectedCuti === 'Penyakit Tibi'}
+                {:else if selectedCuti === 'Cuti Kuarantin' || selectedCuti === 'Cuti Menjaga Anak Tanpa Gaji' || selectedCuti === 'Cuti Kursus Sambilan' || selectedCuti === 'Cuti Perakuan Tidak Hadir Ke Pejabat' || selectedCuti === 'Cuti Sakit Lanjutan' || selectedCuti === 'Cuti Tanpa Gaji Mengikut Pasangan' || selectedCuti === 'Cuti Penyakit Barah Dan Kusta' || selectedCuti === 'Cuti Penyakit Tibi'}
                     <section>
                         <div
                             class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
@@ -263,12 +252,14 @@
                                 use:enhance
                                 class="flex w-full flex-col gap-2"
                             >
-                                {#if selectedCuti === 'Perakuan Tidak Hadir Ke Pejabat' || selectedCuti === 'Sakit Lanjutan' || selectedCuti === 'Tanpa Gaji Mengikut Pasangan'}
+                                {#if selectedCuti === 'Cuti Perakuan Tidak Hadir Ke Pejabat' || selectedCuti === 'Cuti Sakit Lanjutan' || selectedCuti === 'Cuti Tanpa Gaji Mengikut Pasangan'}
                                     <LongTextField
+                                        disabled
                                         hasError={!!$errors.reason}
                                         name="reason"
                                         label="Tujuan Permohonan"
-                                        bind:value={$form.reason}
+                                        value={data.currenLeaveDetailResponse
+                                            .data?.details.reason}
                                         placeholder="Sila taip jawapan anda dalam ruangan ini"
                                     ></LongTextField>
                                     {#if $errors.reason}
@@ -283,6 +274,7 @@
                                 >
                                     <div class="flex w-full flex-col">
                                         <DateSelector
+                                            disabled
                                             hasError={$errors.startDate
                                                 ? true
                                                 : false}
@@ -304,6 +296,7 @@
                                 >
                                     <div class="flex w-full flex-col">
                                         <DateSelector
+                                            disabled
                                             hasError={$errors.endDate
                                                 ? true
                                                 : false}
@@ -320,40 +313,30 @@
                                         {/if}
                                     </div>
                                 </div>
-                                {#if selectedCuti === 'Kursus Sambilan'}
-                                    <DropdownSelect
-                                        hasError={!!$errors.academicQualification}
-                                        name="academicQualification"
-                                        dropdownType="label-left-full"
-                                        label={'Jenis Jurusan'}
-                                        options={data.majorMinorLookup}
-                                        bind:value={$form.academicQualification}
-                                    ></DropdownSelect>
-                                    {#if $errors.academicQualification}
-                                        <span
-                                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                            >{$errors.academicQualification}</span
-                                        >
-                                    {/if}
-                                    <DropdownSelect
-                                        hasError={!!$errors.institution}
-                                        name="institution"
-                                        dropdownType="label-left-full"
-                                        label={'Institusi'}
-                                        options={data.institutionLookup}
-                                        bind:value={$form.institution}
-                                    ></DropdownSelect>
-                                    {#if $errors.institution}
-                                        <span
-                                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                            >{$errors.institution}</span
-                                        >
-                                    {/if}
+                                {#if selectedCuti === 'Cuti Kursus Sambilan'}
                                     <TextField
+                                        disabled
+                                        name="academicQualification"
+                                        label={'Jenis Jurusan'}
+                                        value={data.currenLeaveDetailResponse
+                                            .data?.details
+                                            .academicQualification}
+                                    ></TextField>
+                                    <TextField
+                                        disabled
+                                        name="institution"
+                                        label={'Institusi'}
+                                        value={data.currenLeaveDetailResponse
+                                            .data?.details.institution}
+                                    ></TextField>
+                                    <TextField
+                                        disabled
                                         hasError={!!$errors.professionalQualification}
                                         name="professionalQualification"
                                         label={'Kelayakan Perfesional'}
-                                        bind:value={$form.professionalQualification}
+                                        value={data.currenLeaveDetailResponse
+                                            .data?.details
+                                            .professionalQualification}
                                     ></TextField>
                                     {#if $errors.professionalQualification}
                                         <span
@@ -362,10 +345,12 @@
                                         >
                                     {/if}
                                     <TextField
+                                        disabled
                                         hasError={!!$errors.courseTaken}
                                         name="courseTaken"
                                         label={'Khusus'}
-                                        bind:value={$form.courseTaken}
+                                        value={data.currenLeaveDetailResponse
+                                            .data?.details.courseTaken}
                                     ></TextField>
                                     {#if $errors.courseTaken}
                                         <span
@@ -386,7 +371,7 @@
     </StepperContent>
 
     <!-- ========== STEPPER 3 ========== -->
-    <StepperContent>
+    <!-- <StepperContent>
         <StepperContentHeader title="Dokumen Sokongan"
             ><TextIconButton
                 primary
@@ -429,7 +414,6 @@
                     >
                         Pilih fail dari peranti anda.
                     </p>
-                    <!-- svelte-ignore a11y-click-events-have-key-events -->
                     <div
                         class="text-txt-tertiary"
                         hidden={$fileSelectionList.length > 0}
@@ -457,13 +441,60 @@
                 </div>
             </div>
         </StepperContentBody>
-    </StepperContent>
+    </StepperContent> -->
 
     <!-- ========== STEPPER 4 ========== -->
     <StepperContent>
-        <StepperContentHeader title="Keputusan daripada Peranan - Peranan Lain"
-        ></StepperContentHeader>
+        <StepperContentHeader title="Keputusan daripada Peranan - Peranan Lain"></StepperContentHeader>
+            <TextIconButton
+                primary
+                label={'Simpan'}
+                form="leaveApprovalResultForm"
+            /></StepperContentHeader
+        >
         <StepperContentBody>
+            {#if !!!data.verifierResult.remark}
+                <form
+                    id="leaveApprovalResultForm"
+                    method="POST"
+                    use:secretaryApprovalInfoEnhance
+                    class="flex w-full flex-col gap-2.5"
+                >
+                    <div class="mb-5">
+                        <b class="text-sm text-system-primary"
+                            >Keputusan Urus Setia Cuti</b
+                        >
+                    </div>
+
+                    <input hidden bind:value={$secretaryApprovalInfoForm.id} />
+
+                    <LongTextField
+                        hasError={!!$secretaryApprovalInfoErrors.remark}
+                        name="remark"
+                        label="Tindakan/Ulasan"
+                        bind:value={$secretaryApprovalInfoForm.remark}
+                    ></LongTextField>
+                    {#if $secretaryApprovalInfoErrors.remark}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$secretaryApprovalInfoErrors.remark}</span
+                        >
+                    {/if}
+
+                    <RadioSingle
+                        name="isApproved"
+                        options={certifyOptions}
+                        legend={'Keputusan'}
+                        bind:userSelected={$secretaryApprovalInfoForm.isApproved}
+                    ></RadioSingle>
+                    {#if $secretaryApprovalInfoErrors.isApproved}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$secretaryApprovalInfoErrors.isApproved}</span
+                        >
+                    {/if}
+                </form>
+            {/if}
             <div class="flex w-full flex-col gap-2.5">
                 <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
                     <div class="mb-5">
@@ -509,30 +540,32 @@
                         <StepperOtherRolesResult />
                     {/if}
                 </div>
-                <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
-                    <div class="mb-5">
-                        <b class="text-sm text-system-primary"
-                            >Urus Setia Cuti</b
-                        >
+                {#if !!data.verifierResult.remark}
+                    <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                        <div class="mb-5">
+                            <b class="text-sm text-system-primary"
+                                >Urus Setia Cuti</b
+                            >
+                        </div>
+                        {#if !!data.verifierResult.status}
+                            <LongTextField
+                                disabled
+                                name="service-secretary-remark"
+                                label="Tindakan/Ulasan"
+                                bind:value={data.verifierResult.remark}
+                            ></LongTextField>
+                            <RadioSingle
+                                disabled
+                                name="supporterIsApproved"
+                                options={certifyOptions}
+                                legend={'Keputusan'}
+                                bind:userSelected={data.verifierResult.status}
+                            ></RadioSingle>
+                        {:else}
+                            <StepperOtherRolesResult />
+                        {/if}
                     </div>
-                    {#if !!data.verifierResult.status}
-                        <LongTextField
-                            disabled
-                            name="service-secretary-remark"
-                            label="Tindakan/Ulasan"
-                            bind:value={data.verifierResult.remark}
-                        ></LongTextField>
-                        <RadioSingle
-                            disabled
-                            name="supporterIsApproved"
-                            options={certifyOptions}
-                            legend={'Keputusan'}
-                            bind:userSelected={data.verifierResult.status}
-                        ></RadioSingle>
-                    {:else}
-                        <StepperOtherRolesResult />
-                    {/if}
-                </div>
+                {/if}
                 <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
                     <div class="mb-5">
                         <b class="text-sm text-system-primary"

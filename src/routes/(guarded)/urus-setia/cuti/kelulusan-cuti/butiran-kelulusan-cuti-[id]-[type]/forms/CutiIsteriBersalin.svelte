@@ -12,27 +12,18 @@
     export let data: PageData;
 
     // ============== Form Validation
-    const { form, errors, enhance } = superForm(
-        data.spouseMaternityLeaveForm,
-        {
-            SPA: true,
-            validators: _spouseMaternityLeaveSchema,
-            invalidateAll: true,
-            validationMethod: 'oninput',
-            resetForm: false,
-            multipleSubmits: 'prevent',
-            onSubmit() {
-                _submitSpouseMaternityLeaveForm($form);
-            },
-            taintedMessage:
-                'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
-        },
-    );
+    const { form, errors, enhance } = superForm(data.spouseMaternityLeaveForm, {
+        SPA: true,
+        validators: false,
+    });
 
     $form.leaveType = 'Cuti Isteri Bersalin';
 
     const proxyStartDate = dateProxy(form, 'startDate', { format: 'date' });
     const proxyEndDate = dateProxy(form, 'endDate', { format: 'date' });
+
+    $proxyStartDate = data.currenLeaveDetailResponse.data?.details.startDate;
+    $proxyEndDate = data.currenLeaveDetailResponse.data?.details.endDate;
 </script>
 
 <section>
@@ -51,6 +42,7 @@
             >
                 <div class="flex w-full flex-col">
                     <DateSelector
+                        disabled
                         hasError={!!$errors.startDate}
                         name="startDate"
                         handleDateChange
@@ -97,6 +89,7 @@
             >
                 <div class="flex w-full flex-col">
                     <DateSelector
+                        disabled
                         hasError={!!$errors.endDate}
                         name="endDate"
                         handleDateChange

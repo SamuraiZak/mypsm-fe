@@ -1,6 +1,5 @@
 <script lang="ts">
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import LongTextField from '$lib/components/input/LongTextField.svelte';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import type { PageData } from '../$types';
@@ -9,26 +8,21 @@
         _submitLeaveWithoutRecordForm,
         _untrackedLeaveSchema,
     } from '../+page';
+    import TextField from '$lib/components/input/TextField.svelte';
 
     export let data: PageData;
 
     // ================ Form Validation ================
     const { form, errors, enhance } = superForm(data.untrackedLeaveForm, {
         SPA: true,
-        validators: _untrackedLeaveSchema,
-        invalidateAll: true,
-        validationMethod: 'oninput',
-        resetForm: false,
-        multipleSubmits: 'prevent',
-        onSubmit() {
-            _submitLeaveWithoutRecordForm($form);
-        },
-        taintedMessage:
-            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+        validators: false,
     });
 
     const proxyStartDate = dateProxy(form, 'startDate', { format: 'date' });
     const proxyEndDate = dateProxy(form, 'endDate', { format: 'date' });
+
+    $proxyStartDate = data.currenLeaveDetailResponse.data?.details.startDate;
+    $proxyEndDate = data.currenLeaveDetailResponse.data?.details.endDate;
 </script>
 
 <section>
@@ -42,25 +36,19 @@
             use:enhance
             class="flex w-full flex-col gap-2"
         >
-            <DropdownSelect
-                hasError={!!$errors.untrackedLeaveType}
-                id="untrackedLeaveType"
-                label="Jenis Cuti Tanpa Rekod"
-                dropdownType="label-left-full"
-                bind:value={$form.untrackedLeaveType}
-                options={data.untrackedLeaveList}
-            ></DropdownSelect>
-            {#if $errors.untrackedLeaveType}
-                <span
-                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$errors.untrackedLeaveType}</span
-                >
-            {/if}
+            <TextField
+                disabled
+                name="untrackedLeaveType"
+                label={'Jenis Cuti Tanpa Rekod'}
+                value={data.currenLeaveDetailResponse.data?.details
+                    .untrackedLeaveType}
+            ></TextField>
             <LongTextField
+                disabled
                 hasError={!!$errors.reason}
                 name="reason"
                 label="Tujuan Permohonan"
-                bind:value={$form.reason}
+                value={data.currenLeaveDetailResponse.data?.details.reason}
                 placeholder="Sila taip jawapan anda dalam ruangan ini"
             ></LongTextField>
             {#if $errors.reason}
@@ -74,6 +62,7 @@
             >
                 <div class="flex w-full flex-col">
                     <DateSelector
+                        disabled
                         hasError={!!$errors.startDate}
                         name="startDate"
                         handleDateChange
@@ -120,6 +109,7 @@
             >
                 <div class="flex w-full flex-col">
                     <DateSelector
+                        disabled
                         hasError={!!$errors.endDate}
                         name="endDate"
                         handleDateChange

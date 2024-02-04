@@ -1,6 +1,5 @@
 <script lang="ts">
     import SectionHeader from '$lib/components/header/SectionHeader.svelte';
-    import DropdownSelect from '$lib/components/input/DropdownSelect.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import DateSelector from '$lib/components/input/DateSelector.svelte';
     import type { PageData } from '../$types';
@@ -20,6 +19,8 @@
         SPA: true,
         validators: false,
     });
+    $form.lastLeaveDate =
+        data.currenLeaveDetailResponse.data?.details.lastLeaveDate;
 
     const proxyStartDate = dateProxy(form, 'startDate', { format: 'date' });
     const proxyEndDate = dateProxy(form, 'endDate', { format: 'date' });
@@ -30,21 +31,19 @@
         format: 'date',
     });
     const proxyDutyStartHour = dateProxy(form, 'dutyStartHour', {
-        format: 'datetime-local',
+        format: 'datetime',
     });
     const proxyDutyEndHour = dateProxy(form, 'dutyEndHour', {
-        format: 'datetime-local',
+        format: 'datetime',
     });
 
     $proxyStartDate = data.currenLeaveDetailResponse.data?.details.startDate;
-    $proxyEndDate = data.currenLeaveDetailResponse.data?.details.proxyEndDate;
-    // $proxyLastLeaveDate =
-    //     data.currenLeaveDetailResponse.data?.details.proxyLastLeaveDate;
-    // $proxyDutyDate = data.currenLeaveDetailResponse.data?.details.proxyDutyDate;
-    // $proxyDutyStartHour =
-    //     data.currenLeaveDetailResponse.data?.details.proxyDutyStartHour;
-    // $proxyDutyEndHour =
-    //     data.currenLeaveDetailResponse.data?.details.proxyDutyEndHour;
+    $proxyEndDate = data.currenLeaveDetailResponse.data?.details.endDate;
+    $proxyDutyDate = data.currenLeaveDetailResponse.data?.details.dutyDate;
+    $proxyDutyStartHour =
+        data.currenLeaveDetailResponse.data?.details.dutyStartHour;
+    $proxyDutyEndHour =
+        data.currenLeaveDetailResponse.data?.details.dutyEndHour;
 </script>
 
 <section
@@ -59,7 +58,7 @@
                 <TextField
                     disabled
                     name="employeeNumber"
-                    label={'No. Pekerja'}
+                    label={'Nama Pengganti / Gred'}
                     value={data.currenLeaveDetailResponse.data?.details
                         .substituteName}
                 ></TextField>
@@ -206,102 +205,107 @@
                 onSelect={() => {}}
             ></DropdownSelect> -->
 
-            {#if !!$form.replacementType}
-                <!-- <BekerjaLebihMasa {data}></BekerjaLebihMasa> -->
-                <section
-                    class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
-                >
-                    <SectionHeader
-                        title={$form.replacementType === 'Bekerja Lebih Masa'
-                            ? 'Bekerja Lebih Masa'
-                            : 'Tugas-tugas Rasmi Yang Jatuh Pada Hari Cuti'}
-                    ></SectionHeader>
+            <!-- <BekerjaLebihMasa {data}></BekerjaLebihMasa> -->
+            <section
+                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
+            >
+                <SectionHeader
+                    title={$form.replacementType === 'Bekerja Lebih Masa'
+                        ? 'Bekerja Lebih Masa'
+                        : 'Tugas-tugas Rasmi Yang Jatuh Pada Hari Cuti'}
+                ></SectionHeader>
 
-                    <div class="flex w-full flex-col gap-2">
-                        {#if $form.replacementType === 'Tugas-tugas Rasmi Yang Jatuh Pada Hari Cuti'}
-                            <DropdownSelect
-                                dropdownType="label-left-full"
-                                label="Jenis Cuti Gantian"
-                                options={kategoriCuti}
-                                bind:value={$form.leaveCategory}
-                                onSelect={() => {}}
-                            ></DropdownSelect>
-                        {/if}
-                        <LongTextField
-                            hasError={!!$errors.dutyDescription}
-                            name="dutyDescription"
-                            label="Tugas-Tugas Rasmi Yang Dijalankan"
-                            placeholder="Sila taip jawapan anda dalam ruangan ini"
-                            bind:value={$form.dutyDescription}
-                        ></LongTextField>
-                        {#if $errors.dutyDescription}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$errors.dutyDescription}</span
-                            >
-                        {/if}
-                        <DateSelector
-                            hasError={!!$errors.dutyDate}
-                            name="dutyDate"
-                            handleDateChange
-                            label="Tarikh"
-                            bind:selectedDate={$proxyDutyDate}
-                        ></DateSelector>
-                        {#if $errors.dutyDate}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$errors.dutyDate}</span
-                            >
-                        {/if}
+                <div class="flex w-full flex-col gap-2">
+                    {#if $form.replacementType === 'Tugas-tugas Rasmi Yang Jatuh Pada Hari Cuti'}
                         <TextField
-                            hasError={!!$errors.dutyLocation}
-                            name="dutyLocation"
-                            label="Tempat Bekerja"
-                            bind:value={$form.dutyLocation}
+                            disabled
+                            name="leaveCategory"
+                            label={'Jenis Cuti Gantian'}
+                            value={data.currenLeaveDetailResponse.data?.details
+                                .leaveCategory}
                         ></TextField>
-                        {#if $errors.dutyLocation}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$errors.dutyLocation}</span
-                            >
-                        {/if}
-                        <div
-                            class="flex w-full flex-row items-center justify-start"
+                    {/if}
+                    <LongTextField
+                        disabled
+                        hasError={!!$errors.dutyDescription}
+                        name="dutyDescription"
+                        label="Tugas-Tugas Rasmi Yang Dijalankan"
+                        placeholder="Sila taip jawapan anda dalam ruangan ini"
+                        value={data.currenLeaveDetailResponse.data?.details
+                            .dutyDescription}
+                    ></LongTextField>
+                    {#if $errors.dutyDescription}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.dutyDescription}</span
                         >
-                            <TextField
-                                hasError={!!$errors.dutyStartHour}
-                                label="Waktu Mula"
-                                type="time"
-                                name="dutyStartHour"
-                                bind:value={$proxyDutyStartHour}
-                            />
-                        </div>
-                        {#if $errors.dutyStartHour}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$errors.dutyStartHour}</span
-                            >
-                        {/if}
-                        <div
-                            class="flex w-full flex-row items-center justify-start"
+                    {/if}
+                    <DateSelector
+                        disabled
+                        hasError={!!$errors.dutyDate}
+                        name="dutyDate"
+                        handleDateChange
+                        label="Tarikh"
+                        bind:selectedDate={$proxyDutyDate}
+                    ></DateSelector>
+                    {#if $errors.dutyDate}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.dutyDate}</span
                         >
-                            <TextField
-                                hasError={!!$errors.dutyEndHour}
-                                label="Waktu Tamat"
-                                type="time"
-                                name="dutyEndHour"
-                                bind:value={$proxyDutyEndHour}
-                            />
-                        </div>
-                        {#if $errors.dutyEndHour}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$errors.dutyEndHour}</span
-                            >
-                        {/if}
+                    {/if}
+                    <TextField
+                        disabled
+                        hasError={!!$errors.dutyLocation}
+                        name="dutyLocation"
+                        label="Tempat Bekerja"
+                        value={data.currenLeaveDetailResponse.data?.details
+                            .dutyLocation}
+                    ></TextField>
+                    {#if $errors.dutyLocation}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.dutyLocation}</span
+                        >
+                    {/if}
+                    <div
+                        class="flex w-full flex-row items-center justify-start"
+                    >
+                        <TextField
+                            disabled
+                            hasError={!!$errors.dutyStartHour}
+                            label="Waktu Mula"
+                            type="datetime-local"
+                            name="dutyStartHour"
+                            bind:value={$proxyDutyStartHour}
+                        />
                     </div>
-                </section>
-            {/if}
+                    {#if $errors.dutyStartHour}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.dutyStartHour}</span
+                        >
+                    {/if}
+                    <div
+                        class="flex w-full flex-row items-center justify-start"
+                    >
+                        <TextField
+                            disabled
+                            hasError={!!$errors.dutyEndHour}
+                            label="Waktu Tamat"
+                            type="datetime-local"
+                            name="dutyEndHour"
+                            bind:value={$proxyDutyEndHour}
+                        />
+                    </div>
+                    {#if $errors.dutyEndHour}
+                        <span
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
+                            >{$errors.dutyEndHour}</span
+                        >
+                    {/if}
+                </div>
+            </section>
         </div>
     </form>
 </section>

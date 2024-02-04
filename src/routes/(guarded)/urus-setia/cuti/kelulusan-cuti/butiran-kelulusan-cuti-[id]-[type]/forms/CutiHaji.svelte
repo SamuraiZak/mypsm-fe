@@ -11,20 +11,14 @@
     // ============== Form Validation
     const { form, errors, enhance } = superForm(data.hajiLeaveForm, {
         SPA: true,
-        validators: _hajiLeaveSchema,
-        validationMethod: 'oninput',
-        invalidateAll: true,
-        resetForm: false,
-        multipleSubmits: 'prevent',
-        onSubmit() {
-            _submitHajiLeaveForm($form);
-        },
-        taintedMessage:
-            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+        validators: false,
     });
 
     const proxyStartDate = dateProxy(form, 'startDate', { format: 'date' });
     const proxyEndDate = dateProxy(form, 'endDate', { format: 'date' });
+
+    $proxyStartDate = data.currenLeaveDetailResponse.data?.details.startDate;
+    $proxyEndDate = data.currenLeaveDetailResponse.data?.details.endDate;
 </script>
 
 <section>
@@ -43,6 +37,7 @@
             >
                 <div class="flex w-full flex-col">
                     <DateSelector
+                        disabled
                         hasError={$errors.startDate ? true : false}
                         name="startDate"
                         handleDateChange
@@ -89,6 +84,7 @@
             >
                 <div class="flex w-full flex-col">
                     <DateSelector
+                        disabled
                         hasError={$errors.endDate ? true : false}
                         name="endDate"
                         handleDateChange

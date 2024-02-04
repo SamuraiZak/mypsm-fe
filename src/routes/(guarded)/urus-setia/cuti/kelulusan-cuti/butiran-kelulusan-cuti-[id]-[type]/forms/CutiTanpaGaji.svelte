@@ -15,20 +15,14 @@
     // ============== Form Validation
     const { form, errors, enhance } = superForm(data.withoutPayLeaveForm, {
         SPA: true,
-        validators: _withoutPayLeaveSchema,
-        invalidateAll: true,
-        validationMethod: 'oninput',
-        resetForm: false,
-        multipleSubmits: 'prevent',
-        onSubmit() {
-            _submitWithoutPayLeaveForm($form);
-        },
-        taintedMessage:
-            'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
+        validators: false,
     });
 
     const proxyStartDate = dateProxy(form, 'startDate', { format: 'date' });
     const proxyEndDate = dateProxy(form, 'endDate', { format: 'date' });
+
+    $proxyStartDate = data.currenLeaveDetailResponse.data?.details.startDate;
+    $proxyEndDate = data.currenLeaveDetailResponse.data?.details.endDate;
 </script>
 
 <section>
@@ -46,7 +40,7 @@
                 hasError={$errors.reason ? true : false}
                 name="reason"
                 label="Tujuan Permohonan"
-                bind:value={$form.reason}
+                value={data.currenLeaveDetailResponse.data?.details.reason}
                 placeholder="Sila taip jawapan anda dalam ruangan ini"
             ></LongTextField>
             {#if $errors.reason}
@@ -60,6 +54,7 @@
             >
                 <div class="flex w-full flex-col">
                     <DateSelector
+                        disabled
                         hasError={$errors.startDate ? true : false}
                         name="startDate"
                         handleDateChange
@@ -106,6 +101,7 @@
             >
                 <div class="flex w-full flex-col">
                     <DateSelector
+                        disabled
                         hasError={$errors.endDate ? true : false}
                         name="endDate"
                         handleDateChange

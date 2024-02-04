@@ -14,22 +14,10 @@
     export let data: PageData;
 
     // ============== Form Validation
-    const { form, errors, enhance } = superForm(
-        data.staffMaternityLeaveForm,
-        {
-            SPA: true,
-            validators: _staffMaternityLeaveSchema,
-            invalidateAll: true,
-            validationMethod: 'oninput',
-            resetForm: false,
-            multipleSubmits: 'prevent',
-            onSubmit() {
-                _submitStaffMaternityLeaveForm($form);
-            },
-            taintedMessage:
-                'Terdapat maklumat yang belum dismpan. Adakah anda henda keluar dari laman ini?',
-        },
-    );
+    const { form, errors, enhance } = superForm(data.staffMaternityLeaveForm, {
+        SPA: true,
+        validators: false,
+    });
 
     $form.leaveType = 'Cuti Bersalin Pegawai';
 
@@ -38,6 +26,11 @@
     const proxyExpectedDeliveryDate = dateProxy(form, 'expectedDeliveryDate', {
         format: 'date',
     });
+
+    $proxyStartDate = data.currenLeaveDetailResponse.data?.details.startDate;
+    $proxyEndDate = data.currenLeaveDetailResponse.data?.details.endDate;
+    $proxyExpectedDeliveryDate =
+        data.currenLeaveDetailResponse.data?.details.expectedDeliveryDate;
 </script>
 
 <section>
@@ -52,10 +45,11 @@
             class="flex w-full flex-col gap-2"
         >
             <LongTextField
+                disabled
                 hasError={!!$errors.reason}
                 name="reason"
                 label="Tujuan Permohonan"
-                bind:value={$form.reason}
+                value={data.currenLeaveDetailResponse.data?.details.reason}
                 placeholder="Sila taip jawapan anda dalam ruangan ini"
             ></LongTextField>
             {#if $errors.reason}
@@ -69,6 +63,7 @@
             >
                 <div class="flex w-full flex-col">
                     <DateSelector
+                        disabled
                         hasError={!!$errors.startDate}
                         name="startDate"
                         handleDateChange
@@ -115,6 +110,7 @@
             >
                 <div class="flex w-full flex-col">
                     <DateSelector
+                        disabled
                         hasError={!!$errors.endDate}
                         name="endDate"
                         handleDateChange
@@ -157,6 +153,7 @@
                 </div> -->
             </div>
             <DateSelector
+                disabled
                 hasError={!!$errors.expectedDeliveryDate}
                 name="expectedDeliveryDate"
                 handleDateChange
@@ -170,11 +167,13 @@
                 >
             {/if}
             <LongTextField
+                disabled
                 hasError={!!$errors.currentAddress}
                 name="currentAddress"
                 label="Alamat Tempat Tinggal Semasa Cuti Bersalin"
                 placeholder="Sila taip jawapan anda dalam ruangan ini"
-                bind:value={$form.currentAddress}
+                value={data.currenLeaveDetailResponse.data?.details
+                    .currentAddress}
             ></LongTextField>
             {#if $errors.currentAddress}
                 <span
