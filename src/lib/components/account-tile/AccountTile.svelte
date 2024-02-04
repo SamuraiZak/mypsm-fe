@@ -6,13 +6,16 @@
     import { roles } from '$lib/config/roles';
     import { activeRole } from '$lib/stores/globalState';
     import currentRole from '$lib/stores/activeRole';
-    import type { EnumRole, EnumRoleResponseViewModel } from '$lib/view-models/core/lookup/role/role-enum-reponse.view-model';
+    import type {
+        EnumRole,
+        EnumRoleResponseViewModel,
+    } from '$lib/view-models/core/lookup/role/role-enum-reponse.view-model';
     import { AuthService } from '$lib/services/implementations/core/auth/authentication.service';
     import type { RoleOption } from '$lib/view-models/core/role-option/role-option.view-model';
     import { TextHelper } from '$lib/helper/core/text-helper/text-helper';
     import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key-constant';
 
-    export let roleOptionList:RoleOption[]=[];
+    export let roleOptionList: RoleOption[] = [];
     let currentUrl = $page.url.pathname;
     let pages = currentUrl.replace('/', '');
     let subs = pages.split('/');
@@ -22,10 +25,10 @@
         currentUrl = $page.url.pathname;
         pages = currentUrl.replace('/', '');
         subs = pages.split('/');
-
     }
 
-    let selected: string = localStorage.getItem(LocalStorageKeyConstant.currentRole) ?? "default";
+    let selected: string =
+        localStorage.getItem(LocalStorageKeyConstant.currentRole) ?? 'default';
 
     let open = false;
     let active = 'Inbox';
@@ -36,18 +39,21 @@
     }
 
     let currentUser = {
-        fullName: 'Mohd Irfan bin Abu',
-        adminEmail: 'irfan@lkim.com',
+        fullName: localStorage.getItem(LocalStorageKeyConstant.fullName),
+        adminEmail: '',
     };
 
-    function generateUrlPrefix(param:string) {
-        let currentRolePrefix = param.replaceAll(" ", "-");
+    function generateUrlPrefix(param: string) {
+        let currentRolePrefix = param.replaceAll(' ', '-');
 
-        currentRolePrefix = currentRolePrefix.replaceAll("/", "-");
+        currentRolePrefix = currentRolePrefix.replaceAll('/', '-');
 
-        if (currentRolePrefix.includes("urus-setia") || currentRolePrefix.includes("unit")) {
-            return "urus-setia"
-        } else{
+        if (
+            currentRolePrefix.includes('urus-setia') ||
+            currentRolePrefix.includes('unit')
+        ) {
+            return 'urus-setia';
+        } else {
             return currentRolePrefix;
         }
     }
@@ -92,10 +98,12 @@
                 items={roleOptionList}
                 bind:value={selected}
                 on:change={() => {
-                    activeRole.set(selected??"kakitangan");
-                    currentRole.set(selected??"kakitangan");
+                    activeRole.set(selected ?? 'kakitangan');
+                    currentRole.set(selected ?? 'kakitangan');
 
-                    let rolePrefix = generateUrlPrefix(selected ?? "kakitangan");
+                    let rolePrefix = generateUrlPrefix(
+                        selected ?? 'kakitangan',
+                    );
                     goto('/' + rolePrefix + '/halaman-utama');
                 }}
             />
