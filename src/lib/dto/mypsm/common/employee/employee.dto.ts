@@ -1,4 +1,5 @@
 export interface CommonEmployeeDTO {
+    employeeId? : string;
     employeeNumber?: string;
     name?:           string;
     identityCard?:   string;
