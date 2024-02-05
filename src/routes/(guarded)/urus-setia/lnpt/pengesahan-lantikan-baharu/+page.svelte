@@ -152,7 +152,7 @@
         console.log(lnptAverageRequest);
 
         const response: CommonResponseDTO =
-            await LNPTServices.generateAverageLNPTDefault(lnptAverageRequest);
+            await LNPTServices.generateAverageLNPTNewHire(lnptAverageRequest);
 
         if (response.status == 'success') {
             tableLNPT.data = response.data?.dataList ?? [];
