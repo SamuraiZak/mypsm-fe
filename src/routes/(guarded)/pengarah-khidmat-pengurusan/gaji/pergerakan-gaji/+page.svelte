@@ -12,9 +12,23 @@
     import { greds } from '$lib/mocks/gred/gred';
     import { Tooltip } from 'flowbite-svelte';
     import type { SalaryMovementListDTO } from '$lib/dto/mypsm/salary/salary-movement/list-salary-movement.dto';
-    let tempData: SalaryMovementListDTO;
+    import type { DropdownOptionsInterface } from '$lib/interfaces/common/dropdown-option';
+    import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
+    import SvgManifyingGlass from '$lib/assets/svg/SvgManifyingGlass.svelte';
+    import { _updateTable } from './+layout';
+    import type { PageData } from './$types';
+    import CustomTable from '$lib/components/table/CustomTable.svelte';
+    import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto.js';
+    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type { ListSalaryMovementApprovalDTO } from '$lib/dto/mypsm/salary/salary-movement/list-salary-movement-approval.dto';
+    import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+    import { loadingState } from '$lib/stores/globalState';
+    import { SalaryServices } from '$lib/services/implementations/mypsm/salary/salary.service';
+
+    let tempData: ListSalaryMovementApprovalDTO;
     export let data;
-    let selectedMonth = months[6].value;
+    let selectedDay: number = 1;
+    let selectedMonth: number;
     let tooltipContent: string = '';
     function assignContent(ev: CustomEvent<HTMLDivElement>) {
         {
@@ -28,7 +42,55 @@
         }
     }
 
+    const monthLookup: DropdownOptionsInterface[] = [
+        { value: 1, name: 'Januari' },
+        { value: 2, name: 'Februari' },
+        { value: 3, name: 'Mac' },
+        { value: 4, name: 'April' },
+        { value: 5, name: 'Mei' },
+        { value: 6, name: 'Jun' },
+        { value: 7, name: 'Julai' },
+        { value: 8, name: 'Ogos' },
+        { value: 9, name: 'September' },
+        { value: 10, name: 'Oktober' },
+        { value: 11, name: 'November' },
+        { value: 12, name: 'Disember' },
+    ];
     let selectedGrade = 'All';
+     
+    // table
+    let param: CommonListRequestDTO = data.props.param;
+    let table: TableDTO = {
+        param: param,
+        meta: data.props.response.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: data.props.response.data?.dataList ?? [],
+        selectedData: [],
+    };
+
+    console.log(table.data)
+    async function _search() {
+        _updateTable(table.param).then((value) => {
+            table.data = value.props.response.data?.dataList ?? [];
+            table.meta = value.props.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            table.param.pageSize = table.meta.pageSize;
+            table.param.pageNum = table.meta.pageNum;
+            table.param.filter = {
+                month: selectedDay,
+                year: 2024
+            }
+        });
+    }
+
 </script>
 
 <!-- content header starts here -->
@@ -56,9 +118,10 @@
                 id="bulan-dropdown"
                 label="Bulan Pergerakan Gaji"
                 dropdownType="label-top"
-                bind:index={selectedMonth}
-                options={months}
-            ></DropdownSelect>
+                bind:value={selectedMonth}
+                options={monthLookup}
+            />
+
             <FilterTextInput label="No. Pekerja"></FilterTextInput>
             <FilterTextInput label="KGT Pegawai"></FilterTextInput>
             <DropdownSelect
@@ -67,12 +130,14 @@
                 dropdownType="label-top"
                 bind:index={selectedGrade}
                 options={greds}
-            ></DropdownSelect>
+            />
         </FilterContainer>
-        <SectionHeader title="Luluskan semua medan yang dipilih dibawah"
-            ><FormButton type="approve"></FormButton>
+        <SectionHeader title="Tindakan: Lihat butiran mesyuarat untuk proses kelulusan pergerakan gaji.">
+            <TextIconButton label="Cari" primary onClick={() => {}}>
+                <SvgManifyingGlass />
+            </TextIconButton>
         </SectionHeader>
-        <div class="flex max-h-full w-full flex-col items-start justify-start">
+        <!-- <div class="flex max-h-full w-full flex-col items-start justify-start">
             <DynamicTable
                 hasCheckbox
                 onSelect={() => {}}
@@ -105,6 +170,20 @@
                     'status'
                 ]}
             ></DynamicTable>
+        </div> -->
+        <div class="h-full max-h-full w-full pb-5">
+            <CustomTable
+                bind:tableData={table}
+                enableDetail
+                detailActions={() => {
+                    const url =
+                        '/pengarah-khidmat-pengurusan/gaji/pergerakan-gaji/butiran-' +
+                        tempData.meetingId
+                    goto(url);
+                }}
+                bind:passData={tempData}
+                onUpdate={_search}
+            />
         </div>
     </div>
 </section>
