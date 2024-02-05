@@ -13,8 +13,8 @@ export async function load() {
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: '',
-        orderType: '',
+        orderBy: 'excellenceAwardYear',
+        orderType: 'Descending',
         filter: {},
     };
 
@@ -35,8 +35,7 @@ export async function load() {
 export async function _updateTable(param: CommonListRequestDTO) {
     loadingState.set(true);
 
-    const response: CommonResponseDTO =
-    await LNPTServices.getAPCHistory(param);
+    const response: CommonResponseDTO = await LNPTServices.getAPCHistory(param);
 
     loadingState.set(false);
 

@@ -43,7 +43,7 @@
     import { sidebarUrusSetiaElaun } from '$lib/config/sidebar/sidebar-urus-setia-elaun-elaun-perkhidmatan';
     import type { LayoutData } from './$types';
     import { sidebarUrusSetiaPersaraan } from '$lib/config/sidebar/sidebar-urus-setia-persaraan';
-    import { sidebarUnitPengurusanFasiliti} from '$lib/config/sidebar/sidebar-unit-pengurusan-fasiliti';
+    import { sidebarUnitPengurusanFasiliti } from '$lib/config/sidebar/sidebar-unit-pengurusan-fasiliti';
     import { sidebarUnitBahagianNegeri } from '$lib/config/sidebar/sidebar-unit-bahagian-negeri';
 
     $: activeUrl = $page.url.pathname;
@@ -59,7 +59,7 @@
         /* sidebarContent.set(sidebarNew); */
     }
 
-    export let data:LayoutData;
+    export let data: LayoutData;
     $: currentActiveRole = $currentRole;
 </script>
 
@@ -74,7 +74,6 @@
             <div
                 class="no-scrollbar flex h-full w-[200px] min-w-[200px] max-w-[200px] flex-col overflow-y-auto overflow-x-hidden border-r border-bdr-primary bg-bgr-secondary"
             >
-                
                 {#if currentActiveRole == 'kakitangan'}
                     <Sidebar sidebarItems={sidebarKakitangan} />
                 {:else if currentActiveRole == 'urus-setia'}
@@ -96,14 +95,18 @@
                 {:else if currentActiveRole == 'urus setia kakitangan kontrak'}
                     <Sidebar sidebarItems={sidebarUrusSetiaKakitanganKontrak} />
                 {:else if currentActiveRole == 'urus setia pinjaman & kuarters'}
-                    <Sidebar sidebarItems={sidebarUrusSetiaPinjamanDanKuarters} />
+                    <Sidebar
+                        sidebarItems={sidebarUrusSetiaPinjamanDanKuarters}
+                    />
                 {:else if currentActiveRole == 'urus setia perubatan'}
                     <Sidebar sidebarItems={sidebarUrusSetiaPerubatan} />
                 {:else if currentActiveRole == 'urus setia elaun-elaun perkhidmatan'}
                     <Sidebar sidebarItems={sidebarUrusSetiaElaun} />
                 {:else if currentActiveRole == 'unit pengurusan fasiliti'}
                     <Sidebar sidebarItems={sidebarUnitPengurusanFasiliti} />
-                {:else if currentActiveRole == 'unit bahagian/negeri'}
+                {:else if currentActiveRole == 'unit negeri'}
+                    <Sidebar sidebarItems={sidebarUnitBahagianNegeri} />
+                {:else if currentActiveRole == 'unit bahagian'}
                     <Sidebar sidebarItems={sidebarUnitBahagianNegeri} />
                 {:else if currentActiveRole == 'ketua pengarah'}
                     <Sidebar sidebarItems={sidebarKetuaPengarah} />
@@ -111,7 +114,9 @@
                     <Sidebar sidebarItems={sidebarPenyokong} />
                 {:else if currentActiveRole == 'pelulus'}
                     <Sidebar sidebarItems={sidebarPelulus} />
-                {:else if currentActiveRole == 'pengarah bahagian/negeri'}
+                {:else if currentActiveRole == 'pengarah bahagian'}
+                    <Sidebar sidebarItems={sidebarPengarahBahagianNegeri} />
+                {:else if currentActiveRole == 'pengarah negeri'}
                     <Sidebar sidebarItems={sidebarPengarahBahagianNegeri} />
                 {:else if currentActiveRole == 'ketua seksyen'}
                     <Sidebar sidebarItems={sidebarKetuaSeksyen} />

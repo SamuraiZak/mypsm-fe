@@ -17,6 +17,9 @@
     // Variables
     // =====================================================================
 
+    // table id
+    export let tableId = 'tableId';
+
     // props: data for the table
     export let tableData: TableDTO;
 
@@ -141,10 +144,11 @@
         }
     }
 
+    let prefix = '#' + tableId;
     let tableElement: any;
 
     onMount(async () => {
-        tableElement = document.querySelector('#customTable');
+        tableElement = document.querySelector(prefix);
     });
 
     function printDiv(elementId: any) {
@@ -192,10 +196,9 @@
 
         <!-- trailing -->
         <div class="flex flex-row items-center gap-2">
-
             <button
                 on:click={() => {
-                    printDiv('customTable');
+                    printDiv(prefix);
                 }}
                 class="flex h-7 min-h-7 flex-row items-center justify-center gap-1 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0"
             >
@@ -218,7 +221,7 @@
 
     <div class="h-full max-h-full min-h-[300px] w-full overflow-x-auto">
         <table
-            id="customTable"
+            id={prefix}
             class="table max-h-full w-full table-auto border-collapse"
         >
             <!-- table head starts -->
