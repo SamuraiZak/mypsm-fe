@@ -119,7 +119,7 @@
                             disabled
                             id="employeeNumber"
                             label={'Nombor Pekerja'}
-                            value={'Klinik Wee'}
+                            value={employeeDetails.employeeNumber}
                         ></TextField>
                     </div>
                     <div class="flex w-full flex-col gap-2">
@@ -127,7 +127,7 @@
                             disabled
                             id="identityCard"
                             label={'No. Kad Pengenalan'}
-                            value={'Klinik Wee'}
+                            value={employeeDetails.identityCard}
                         ></TextField>
                     </div>
                     <div class="flex w-full flex-col gap-2">
@@ -135,7 +135,7 @@
                             disabled
                             id="position"
                             label={'Jawatan'}
-                            value={'Klinik Wee'}
+                            value={employeeDetails.position}
                         ></TextField>
                     </div>
                     <div class="flex w-full flex-col gap-2">
@@ -143,7 +143,7 @@
                             disabled
                             id="grade"
                             label={'Gred'}
-                            value={'Klinik Wee'}
+                            value={employeeDetails.grade}
                         ></TextField>
                     </div>
                     <div class="flex w-full flex-col gap-2">
@@ -151,7 +151,7 @@
                             disabled
                             id="scheme"
                             label={'Skim'}
-                            value={'Klinik Wee'}
+                            value={employeeDetails.scheme}
                         ></TextField>
                     </div>
                     <div class="flex w-full flex-col gap-2">
@@ -159,7 +159,7 @@
                             disabled
                             id="program"
                             label={'Program'}
-                            value={'Klinik Wee'}
+                            value={employeeDetails.program}
                         ></TextField>
                     </div>
                     <div class="flex w-full flex-col gap-2">
