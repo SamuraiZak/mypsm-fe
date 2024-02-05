@@ -1,5 +1,8 @@
 <script lang="ts">
     import SvgManifyingGlass from '$lib/assets/svg/SvgManifyingGlass.svelte';
+    import TextIconButton from '../buttons/TextIconButton.svelte';
+
+    export let onClick = () => {};
 </script>
 
 <div
@@ -15,20 +18,9 @@
             </p>
         </div>
         <div class="flex h-full flex-row items-center justify-end">
-            <button
-                class="flex h-[28px] max-h-[28px] min-h-[28px] flex-row justify-center gap-1 rounded-[3px] bg-system-primary px-2.5"
+            <TextIconButton primary label="Cari" {onClick}
+                ><SvgManifyingGlass /></TextIconButton
             >
-                <!-- icon -->
-                <div class="flex h-full flex-row items-center justify-center">
-                    <span class=" text-txt-blend">
-                        <SvgManifyingGlass></SvgManifyingGlass>
-                    </span>
-                </div>
-                <!-- label -->
-                <div class="flex h-full flex-row items-center justify-center">
-                    <p class="text-sm font-normal text-txt-blend">Cari</p>
-                </div>
-            </button>
         </div>
     </div>
 
