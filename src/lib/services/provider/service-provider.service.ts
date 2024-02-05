@@ -13,6 +13,7 @@ const http = ky.create({
         Accept: 'application/json',
         'Content-type': 'application/json',
     },
+    timeout: 25000,
     credentials: 'include',
     hooks: {
         beforeRequest:[

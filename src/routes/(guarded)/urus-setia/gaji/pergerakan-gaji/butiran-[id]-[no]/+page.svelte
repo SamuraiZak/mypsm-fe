@@ -84,8 +84,8 @@
 
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader
-        title="Rekod Pekerja {data.employeeNumber}"
-        description="Maklumat - Maklumat Pergerakan Gaji - {data.currentEmployee.employeeName}"
+        title="Rekod Pergerakan Gaji Mesyuarat {data.employeeNumber}"
+        description="Maklumat - Maklumat Pergerakan Gaji Mesyuarat - {data.currentEmployee?.employeeName}"
     >
         <FormButton
             type="close"
@@ -98,12 +98,7 @@
 <Stepper activeIndex={activeStepper}>
     <StepperContent>
         <StepperContentHeader title="Keputusan Mesyuarat">
-            <FormButton
-                type="next"
-                onClick={() => {
-                    activeStepper = 1;
-                }}
-            /><TextIconButton
+            <TextIconButton
                 primary
                 label="Simpan"
                 form="FormStepperMeetingResult"
@@ -117,7 +112,7 @@
                 class="flex w-full flex-col gap-2"
                 use:meetingResultEnhance
                 method="POST"
-            >
+            > 
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
                 >
@@ -127,44 +122,44 @@
                         {labelBlack}
                         disabled
                         label="Tarikh Pergerakan Gaji (TPG)"
-                        value={data.currentEmployee.tpg}
-                    ></TextField>
+                        value={data.currentEmployee?.tpg}
+                    />
                     <TextField
                         {labelBlack}
                         disabled
                         label="Gaji Bulan Berkenaan - {""}"
-                        value={data.currentEmployee.salary1}
-                    ></TextField>
+                        value={data.currentEmployee?.salary1}
+                    />
                     <TextField
                         {labelBlack}
                         disabled
                         label="Kenaikan Gaji Tahunan (KGT)"
-                        value={data.currentEmployee.kgt}
-                    ></TextField>
-                    <TextField {labelBlack} disabled label="Elaun Wilayah (EW)" value={data.currentEmployee.wilayahAllowance1}
-                    ></TextField>
+                        value={data.currentEmployee?.kgt}
+                    />
+                    <TextField {labelBlack} disabled label="Elaun Wilayah (EW)" value={data.currentEmployee?.wilayahAllowance1}
+                    />
                     <TextField
                         {labelBlack}
                         disabled
                         label="EL. Kritikal (5%) {currYear}"
-                        value={data.currentEmployee.criticalAllowance1}
-                    ></TextField>
-                    <TextField {labelBlack} disabled label="KGT Khas {nextYear}" value={data.currentEmployee.specialkgt}
-                    ></TextField>
+                        value={data.currentEmployee?.criticalAllowance1}
+                    />
+                    <TextField {labelBlack} disabled label="KGT Khas {nextYear}" value={data.currentEmployee?.specialkgt}
+                    />
                     <TextField
                         {labelBlack}
                         disabled
                         label="Gaji Khas {nextYear}"
-                        value={data.currentEmployee.specialSalary}
-                    ></TextField>
-                    <TextField {labelBlack} disabled label="EW Khas {nextYear}" value={data.currentEmployee.specialWilayahAllowance}
-                    ></TextField>
+                        value={data.currentEmployee?.specialSalary}
+                    />
+                    <TextField {labelBlack} disabled label="EW Khas {nextYear}" value={data.currentEmployee?.specialWilayahAllowance}
+                    />
                     <TextField
                         {labelBlack}
                         disabled
                         label="EL. Kritikal (5%) {nextYear}"
-                        value={data.currentEmployee.criticalAllowance2}
-                    ></TextField>
+                        value={data.currentEmployee?.criticalAllowance2 }
+                    />
                 </div>
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
@@ -269,7 +264,7 @@
                                     ></Checkbox>
                                 </div>
                                 <div>
-                                    <LongTextField
+                                    <TextField
                                         disabled={!isSpecialFiAidTextChecked}
                                         hasError={!!$meetingResultErrors.specialFiAid && isSpecialFiAidTextChecked}
                                         name="specialFiAid"
@@ -293,7 +288,7 @@
                                     ></Checkbox>
                                 </div>
                                 <div>
-                                    <LongTextField
+                                    <TextField
                                         disabled={!isSpecialIncrementTextChecked}
                                         hasError={!!$meetingResultErrors.specialIncrement && isSpecialIncrementTextChecked}
                                         name="specialIncrement"

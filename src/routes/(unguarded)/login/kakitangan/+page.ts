@@ -1,18 +1,18 @@
 import { goto } from '$app/navigation';
 import type { AuthRequestDTO } from '$lib/dto/core/auth/auth-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
 import {
     getLoadingToast,
     getLoginErrorToast,
     getLoginSuccessToast,
 } from '$lib/services/core/toast/toast-service';
 import { AuthService } from '$lib/services/implementations/core/auth/authentication.service';
+import { LookupServices } from '$lib/services/implementations/core/lookup/lookup.service';
+import { loadingState } from '$lib/stores/globalState';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
-import { LookupServices } from '$lib/services/implementations/core/lookup/lookup.service';
-import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
-
 
 // creating schema
 export const _kakitanganLoginSchema = z.object({
@@ -27,23 +27,24 @@ export const load = async () => {
     const form = await superValidate(_kakitanganLoginSchema);
 
     // get role list
-    const roleResponse : LookupDTO[] = await LookupServices.getLookup("role");
+    const roleResponse: LookupDTO[] = await LookupServices.getLookup('role');
 
     return { form, roleResponse };
 };
 
 export const _submit = async (formData: AuthRequestDTO) => {
+    loadingState.set(true);
     getLoadingToast();
 
-    const response: CommonResponseDTO =
-        await AuthService.authenticateUser(formData).finally(() =>
-            toast.dismiss(),
-        );
+    const response: CommonResponseDTO = await AuthService.authenticateUser(
+        formData,
+    ).finally(() => toast.dismiss());
 
-        console.log(response);
+    console.log(response);
 
-    if (response.status == "success") {
-
+    if (response.status == 'success') {
+        let accountRes = await AuthService.getFullName();
+        loadingState.set(false);
         getLoginSuccessToast().finally(() =>
             setTimeout(() => {
                 switch (formData.currentRole) {
@@ -79,7 +80,10 @@ export const _submit = async (formData: AuthRequestDTO) => {
                         goto('/pengarah-audit/halaman-utama');
                         break;
 
-                    case 'pengarah bahagian/negeri':
+                    case 'pengarah bahagian':
+                        goto('/pengarah-bahagian-negeri/halaman-utama');
+                        break;
+                    case 'pengarah negeri':
                         goto('/pengarah-bahagian-negeri/halaman-utama');
                         break;
 

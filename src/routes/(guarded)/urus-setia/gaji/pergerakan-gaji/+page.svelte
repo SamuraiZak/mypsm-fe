@@ -24,8 +24,9 @@
         _submitFormAnnualSalaryIncrement,
     } from './+page';
     import type { SalaryMovementListDTO } from '$lib/dto/mypsm/salary/salary-movement/list-salary-movement.dto';
+    import type { CommonEmployeeDTO } from '$lib/dto/mypsm/common/employee/employee.dto';
     export let data: PageData;
-    let tempData: SalaryMovementListDTO;
+    let tempData: CommonEmployeeDTO;
     let isGredChecked: boolean = false;
     let isSpecialFiAidTextChecked: boolean = false;
     let isSpecialIncrementChecked: boolean = false;
@@ -33,6 +34,7 @@
     let selectedSalaryMovementMonth = ''; // Default selected filter
     let selectedGred = ''; // Default selected filter
     let specialAid: any;
+    let selectedEmployee: CommonEmployeeDTO[] = [];
     let tempUrl: IntSalaryMovementRecord;
     let tooltipContent: string = '';
 
@@ -40,7 +42,7 @@
         'Ditetapkan sekali sepanjang tahun pergerakan gaji';
     const percentFromGrossPay: string = 'Peratusan daripada jumlah gaji pokok';
     const kgtIncrease: string = 'Peratusan daripada KGT';
-
+    
     // function to assign the content  of the tooltip
     function assignContent(ev: CustomEvent<HTMLDivElement>) {
         {
@@ -90,7 +92,36 @@
         },
     );
 
-    console.log(data.salaryMovementList)
+
+    function pushSelected(data: CommonEmployeeDTO) {
+        let tempSelected = selectedEmployee;
+        if (!tempSelected.includes(data)) {
+            tempSelected.push(data);
+            selectedEmployee = tempSelected;
+        }
+
+        
+    }
+
+    function popSelected(data: CommonEmployeeDTO) {
+        let tempSelected = selectedEmployee;
+        tempSelected = tempSelected.filter((item) => item !== data);
+
+        selectedEmployee = tempSelected;
+    }
+
+    // function popSelected(data: CommonEmployeeDTO) {
+    //     let tempSelected = selectedEmployee;
+    //     tempSelected = tempSelected.filter((item) => item !== data);
+
+    //     selectedEmployee = tempSelected;
+    // }
+
+
+    // function selectEmployee(){
+    //     selectEmployee = [...selectEmployee, {selectEmpl}]
+    // }
+    
 </script>
 
 <!-- content header starts here -->
@@ -386,8 +417,11 @@
         <SectionHeader title="Senarai Rekod Layak Mengikut Bulan"
         ></SectionHeader>
 
-        
         <DynamicTable
+            tableItems={selectedEmployee}
+            
+        />
+        <!-- <DynamicTable
             hasCheckbox
             tableItems={data.salaryMovementList}
             withActions
@@ -417,33 +451,28 @@
                 'specialWilayahAllowance',
                 'specialAid',
             ]}
-        />
+        /> -->
     </div>
     <br />
     <div class="flex h-fit w-full flex-col items-start justify-center">
         <!-- Table for 'Tidak Layak' candidates -->
-        <ContentHeader title="Tindakan: Tetapkan kepada Layak" description=""
-            ><TextIconButton label="Pindah" onClick={() => {}}>
+        <ContentHeader title="Tindakan: Pilih kakitangan yang layak." description=""
+            ><TextIconButton label="Pindah" onClick={() => {() => console.log('here');pushSelected(tempData)}}>
                 <SvgArrowUp></SvgArrowUp>
             </TextIconButton></ContentHeader
         >
-        <SectionHeader title="Senarai Rekod Layak Mengikut Bulan"
-        ></SectionHeader>
+        <!-- <SectionHeader title="Senarai Rekod Layak Mengikut Bulan"
+        /> -->
+        <SectionHeader title="Senarai Kakitangan"
+        />
 
         <DynamicTable
-            tableItems={[]}
-            bind:passData={tempUrl}
-            withActions
-            actionOptions={['detail']}
-            detailActions={() => {
-                const url =
-                    './pergerakan-gaji/butiran-' +
-                    tempUrl.employeeNumber +
-                    '-' +
-                    tempUrl.identityDocumentNumber;
-                goto(url);
-            }}
-        ></DynamicTable>
+            tableItems={data.employeeList}
+            withRowSelection
+            selectAdd
+            bind:passData={tempData}
+            onSelect={() =>  pushSelected(tempData)}
+        />
     </div>
 </section>
 <!-- Tooltip body -->

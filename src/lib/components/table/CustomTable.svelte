@@ -2,17 +2,23 @@
     import SvgChevronLeft from '$lib/assets/svg/SvgChevronLeft.svelte';
     import SvgChevronRight from '$lib/assets/svg/SvgChevronRight.svelte';
     import SvgDownload from '$lib/assets/svg/SvgDownload.svelte';
+    import SvgReload from '$lib/assets/svg/SvgReload.svelte';
+    import SvgAddCircle from '$lib/assets/svg/SvgAddCircle.svelte';
+    import SvgMinusCircle from '$lib/assets/svg/SvgMinusCircle.svelte';
     import SvgEllipsisCircle from '$lib/assets/svg/SvgEllipsisCircle.svelte';
     import SvgSortDown from '$lib/assets/svg/SvgSortDown.svelte';
     import SvgSortUp from '$lib/assets/svg/SvgSortUp.svelte';
     import IconButton from '$lib/components/buttons/IconButton.svelte';
     import { translate } from '$lib/config/dictionary';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
-    import { Tooltip } from 'flowbite-svelte';
+    import { onMount } from 'svelte';
 
     // =====================================================================
     // Variables
     // =====================================================================
+
+    // table id
+    export let tableId = 'tableId';
 
     // props: data for the table
     export let tableData: TableDTO;
@@ -24,6 +30,10 @@
 
     // props: callback functions to handle view details
     export let detailActions = () => {};
+
+    export let enableAdd = false;
+
+    export let enableDetail = false;
 
     const pageSizeOption = [
         {
@@ -99,10 +109,66 @@
         tableData.param.pageNum = 1;
         onUpdate();
     }
+
+    function compareObject(objectRef: any) {
+        const objectRefKey = Object.keys(objectRef)[0];
+
+        const objectRefValue = objectRef[objectRefKey];
+        const objectTarget = tableData.selectedData?.filter(
+            (obj: any) => obj[objectRefKey] == objectRefValue,
+        );
+
+        if (objectTarget!.length > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // handle for add action
+    function handleAddSelectedData(item: any) {
+        let isExist = compareObject(item);
+
+        if (!isExist) {
+            tableData.selectedData?.push(item);
+            tableData = tableData;
+        } else {
+            const objectRefKey = Object.keys(item)[0];
+
+            const objectRefValue = item[objectRefKey];
+            const objectTarget = tableData.selectedData?.filter(
+                (obj: any) => obj[objectRefKey] !== objectRefValue,
+            );
+
+            tableData.selectedData = objectTarget;
+        }
+    }
+
+    let prefix = '#' + tableId;
+    let tableElement: any;
+
+    onMount(async () => {
+        tableElement = document.querySelector(prefix);
+    });
+
+    function printDiv(elementId: any) {
+        let printElement = document.getElementById(elementId);
+        let printWindow = window.open('', 'PRINT');
+        printWindow?.document.write(document.documentElement.innerHTML);
+        setTimeout(() => {
+            // Needed for large documents
+            printWindow!.document.body.style.margin = '0 0';
+            printWindow!.document.body.innerHTML = printElement!.outerHTML;
+            printWindow!.document.close(); // necessary for IE >= 10
+            printWindow!.focus(); // necessary for IE >= 10*/
+            printWindow!.print();
+            printWindow!.close();
+        }, 1000);
+    }
 </script>
 
 <div
-    class="mb-5 flex h-full w-full flex-col rounded-sm border border-ios-labelColors-separator-light"
+    class="flex h-full max-h-full w-full flex-col rounded-sm border border-ios-labelColors-separator-light"
 >
     <!-- table info -->
 
@@ -110,30 +176,30 @@
         class="flex min-h-10 w-full flex-row items-center justify-between border-b p-2"
     >
         <!-- leading -->
-        <div class="flex flex-row items-center gap-2"></div>
-
-        <!-- trailing -->
         <div class="flex flex-row items-center gap-2">
             <button
-                on:click={() => {}}
+                on:click={() => {
+                    onUpdate();
+                }}
                 class="flex h-7 min-h-7 flex-row items-center justify-center gap-1 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0"
             >
                 <!-- icon -->
                 <div class="flex h-full flex-row items-center justify-center">
                     <span class="leading-loose">
                         <!-- icon slot -->
-                        <SvgDownload></SvgDownload>
+                        <SvgReload size="12"></SvgReload>
                         <slot />
                     </span>
                 </div>
-
-                <!-- label -->
-                <div class="flex h-full flex-row items-center justify-center">
-                    <p class="text-sm font-normal leading-loose">XLS</p>
-                </div>
             </button>
+        </div>
+
+        <!-- trailing -->
+        <div class="flex flex-row items-center gap-2">
             <button
-                on:click={() => {}}
+                on:click={() => {
+                    printDiv(prefix);
+                }}
                 class="flex h-7 min-h-7 flex-row items-center justify-center gap-1 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0"
             >
                 <!-- icon -->
@@ -153,16 +219,31 @@
         </div>
     </div>
 
-    <div
-        class="max-h-[calc(100% - 500px)] min-h-[300px] w-full overflow-x-auto"
-    >
-        <table class="table w-full table-auto border-collapse">
+    <div class="h-full max-h-full min-h-[300px] w-full overflow-x-auto">
+        <table
+            id={prefix}
+            class="table max-h-full w-full table-auto border-collapse"
+        >
             <!-- table head starts -->
 
-            <thead class="sticky top-0">
+            <thead class="sticky top-0 z-10">
                 <!-- table head row starts -->
 
                 <tr class="h-10 bg-ios-systemColors-quaternarySystemFill-light">
+                    {#if enableAdd}
+                        <th
+                            class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
+                        >
+                            <div
+                                class="flex h-full flex-row items-center justify-center"
+                            >
+                                <span
+                                    class="select-none text-center align-middle text-sm font-semibold text-ios-labelColors-secondaryLabel-light"
+                                >
+                                </span>
+                            </div>
+                        </th>
+                    {/if}
                     {#if tableData.data.length > 0}
                         {#each Object.keys(tableData.data[0]) as columnHeading}
                             <!-- return column header -->
@@ -174,7 +255,6 @@
                                             columnHeading,
                                         }).toString(),
                                     );
-
                                 }}
                                 class="h-full cursor-pointer border-r border-ios-labelColors-separator-light px-2.5"
                             >
@@ -212,18 +292,21 @@
                         {/each}
 
                         <!-- actions -->
-                        <th
-                            class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
-                        >
-                            <div
-                                class="flex h-full flex-row items-center justify-center"
+
+                        {#if enableDetail}
+                            <th
+                                class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
                             >
-                                <span
-                                    class="select-none text-center align-middle text-sm font-semibold text-ios-labelColors-secondaryLabel-light"
+                                <div
+                                    class="flex h-full flex-row items-center justify-center"
                                 >
-                                </span>
-                            </div>
-                        </th>
+                                    <span
+                                        class="select-none text-center align-middle text-sm font-semibold text-ios-labelColors-secondaryLabel-light"
+                                    >
+                                    </span>
+                                </div>
+                            </th>
+                        {/if}
                     {:else}
                         <th>
                             <span
@@ -239,7 +322,7 @@
                 <tr>
                     <th
                         class="h-[1px] bg-ios-labelColors-separator-light p-0"
-                        colspan="10"
+                        colspan="15"
                     ></th>
                 </tr>
 
@@ -256,13 +339,51 @@
                     <tr
                         class=" h-10 border-b border-ios-labelColors-separator-light bg-ios-backgroundColors-systemBackground-light"
                     >
+                        {#if enableAdd}
+                            <td
+                                class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
+                            >
+                                <div
+                                    class="flex h-full flex-row items-center justify-center"
+                                >
+                                    {#if compareObject(row)}
+                                        <IconButton
+                                            onClick={() => {
+                                                passData = row;
+                                                handleAddSelectedData(row);
+                                            }}
+                                        >
+                                            <span
+                                                class=" text-ios-systemColors-systemRed-light"
+                                            >
+                                                <SvgMinusCircle
+                                                ></SvgMinusCircle>
+                                            </span>
+                                        </IconButton>
+                                    {:else}
+                                        <IconButton
+                                            onClick={() => {
+                                                passData = row;
+                                                handleAddSelectedData(row);
+                                            }}
+                                        >
+                                            <span
+                                                class="text-ios-activeColors-activeBlue-light"
+                                            >
+                                                <SvgAddCircle></SvgAddCircle>
+                                            </span>
+                                        </IconButton>
+                                    {/if}
+                                </div>
+                            </td>
+                        {/if}
                         <!-- loop through each property -->
                         {#each Object.values(row) as cell}
                             <td
                                 class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
                             >
                                 <span
-                                    class="text-center align-middle text-base font-normal"
+                                    class="relative text-center align-middle text-base font-normal"
                                 >
                                     {cell}
                                 </span>
@@ -270,27 +391,24 @@
                         {/each}
 
                         <!-- actions column starts -->
-                        <td
-                            class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
-                        >
-                            <div
-                                class="flex h-full flex-row items-center justify-center"
+                        {#if enableDetail}
+                            <td
+                                class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
                             >
-                                <IconButton
-                                    onClick={() => {
-                                        passData = row;
-                                        detailActions();
-                                    }}
+                                <div
+                                    class="flex h-full flex-row items-center justify-center"
                                 >
-                                    <SvgEllipsisCircle></SvgEllipsisCircle>
-                                </IconButton>
-                                <Tooltip
-                                    class="px-2 py-1 text-sm font-normal text-txt-blend"
-                                >
-                                    Butiran
-                                </Tooltip>
-                            </div>
-                        </td>
+                                    <IconButton
+                                        onClick={() => {
+                                            passData = row;
+                                            detailActions();
+                                        }}
+                                    >
+                                        <SvgEllipsisCircle></SvgEllipsisCircle>
+                                    </IconButton>
+                                </div>
+                            </td>
+                        {/if}
 
                         <!-- action columns ends -->
                     </tr>
@@ -303,7 +421,7 @@
     <!-- table control -->
 
     <div
-        class="flex h-10 min-h-10 w-full flex-row items-center justify-between border-t border-ios-labelColors-separator-light p-2"
+        class="flex min-h-10 w-full flex-row items-center justify-between border-t border-ios-labelColors-separator-light p-2"
     >
         <!-- leading -->
         <div class="flex flex-row items-center gap-2">

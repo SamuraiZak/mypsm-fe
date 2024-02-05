@@ -15,8 +15,6 @@
 
     export let data: PageData;
 
-    let employeeList: CommonEmployeeDTO[] = data.props.employeeList;
-
     let param: CommonListRequestDTO = data.props.param;
 
     let selectedDataRow: CommonEmployeeDTO = {};
@@ -55,8 +53,7 @@
         ><TextIconButton
             label="Kembali"
             onClick={() => {
-                // goto('../sejarah-apc');
-                _search();
+                goto('../sejarah-apc');
             }}
         >
             <SvgArrowLeft />
@@ -80,6 +77,7 @@
                 <CustomTable
                     bind:tableData={table}
                     bind:passData={selectedDataRow}
+                    enableDetail
                     onUpdate={_search}
                     detailActions={() => {
 

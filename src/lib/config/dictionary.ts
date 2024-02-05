@@ -49,7 +49,7 @@ const dictionary: { [key: string]: string } = {
     mailCity: 'Bandar Surat Menyurat',
 
     //currentService
-    employeeId: 'No. Pekerja',
+    employeeId: 'ID. Kakitangan',
     positionId: 'No. Jawatan',
     gradeId: 'No. Gred',
     serviceTypeId: 'No. Jenis Servis',

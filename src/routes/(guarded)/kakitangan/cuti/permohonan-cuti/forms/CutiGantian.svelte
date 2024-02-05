@@ -39,10 +39,10 @@
         format: 'date',
     });
     const proxyDutyStartHour = dateProxy(form, 'dutyStartHour', {
-        format: 'time',
+        format: 'datetime-local',
     });
     const proxyDutyEndHour = dateProxy(form, 'dutyEndHour', {
-        format: 'time',
+        format: 'datetime-local',
     });
 </script>
 
@@ -260,7 +260,7 @@
                             <TextField
                                 hasError={!!$errors.dutyStartHour}
                                 label="Waktu Mula"
-                                type="time"
+                                type="datetime-local"
                                 name="dutyStartHour"
                                 bind:value={$proxyDutyStartHour}
                             />
@@ -277,7 +277,7 @@
                             <TextField
                                 hasError={!!$errors.dutyEndHour}
                                 label="Waktu Tamat"
-                                type="time"
+                                type="datetime-local"
                                 name="dutyEndHour"
                                 bind:value={$proxyDutyEndHour}
                             />

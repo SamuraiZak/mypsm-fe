@@ -1,4 +1,6 @@
 export interface LeaveHistoryListResponse {
+    employeeId: number;
+    leaveId: number;
     employeeName: string;
     leaveType: string;
     leaveFrom: Date;

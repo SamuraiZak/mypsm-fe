@@ -7,6 +7,7 @@ import  { AddSalaryMovementApprovalResponseDTOConvert } from "$lib/dto/mypsm/sal
 import http from "$lib/services/provider/service-provider.service";
 import { DetailSalaryMovementRequestDTOConvert, type DetailSalaryMovementRequestDTO } from "$lib/dto/mypsm/salary/salary-movement/detail-salary-movement-request.dto";
 import { EmployeeFinalSalaryDetailRequestDTOConvert, type EmployeeFinalSalaryDetailRequestDTO } from "$lib/dto/mypsm/salary/final-payslip/employee-final-salary-detail-request.dto";
+import { GetSalaryMovementScheduleRequestDTOConvert, type GetSalaryMovementScheduleRequestDTO } from "$lib/dto/mypsm/salary/salary-movement/get-salary-movement-schedule-request.dto";
 
 export class SalaryServices {
 
@@ -37,9 +38,9 @@ export class SalaryServices {
     // }
 
     //salary movement schedule
-    static async getSalaryMovementSchedule(param: CommonListRequestDTO){
+    static async getSalaryMovementSchedule(param: GetSalaryMovementScheduleRequestDTO){
         const response: Response = await http.post('salaries/get-salary-movement-schedule', {
-            body: CommonListRequestConvert.toJson(param)
+            body: GetSalaryMovementScheduleRequestDTOConvert.toJson(param)
         }).json();
         return CommonResponseConvert.fromResponse(response)
     }
