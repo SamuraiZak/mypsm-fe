@@ -29,7 +29,18 @@
     let selectedDataRow: CommonEmployeeDTO = {};
 
     let selectedYearOne: number = 2024;
-    let selectedYearTwo: number = 2024;
+    let duration: number = 2;
+
+    const yearCount = [
+        {
+            value: 2,
+            name: '2',
+        },
+        {
+            value: 3,
+            name: '3',
+        },
+    ];
 
     const yearOption = [
         {
@@ -81,7 +92,8 @@
         orderType: '',
         filter: {
             employeeIds: [],
-            years: [],
+            years: selectedYearOne,
+            duration: 2,
         },
     };
 
@@ -134,8 +146,8 @@
         });
 
         lnptAverageRequest.filter.employeeIds = employeeIdList;
-        lnptAverageRequest.filter.years.push(selectedYearOne);
-        lnptAverageRequest.filter.years.push(selectedYearTwo);
+        lnptAverageRequest.filter.years = selectedYearOne;
+        lnptAverageRequest.filter.duration = duration;
 
         console.log(lnptAverageRequest);
 
@@ -173,7 +185,7 @@
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
-                <SectionHeader title="Senarai Semua Lantikan Baharu">
+                <SectionHeader title="Senarai Semua Kakitangan">
                     <span class="text-base">
                         {table.selectedData?.length} kakitangan dipilih
                     </span>
@@ -184,12 +196,6 @@
                         bind:passData={selectedDataRow}
                         enableAdd
                         onUpdate={_search}
-                        detailActions={() => {
-                            const url =
-                                '/urus-setia/lnpt/sejarah-apc/tambah-rekod-apc/butiran-' +
-                                selectedDataRow.employeeNumber;
-                            goto(url);
-                        }}
                     ></CustomTable>
                 </div>
             </div>
@@ -237,18 +243,19 @@
                             class="flex h-full flex-row items-center justify-center"
                         >
                             <p class="text-sm font-normal leading-loose">
-                                Tahun Kedua
+                                Bilangan Tahun
                             </p>
                         </div>
                         <div
                             class="flex h-full flex-row items-center justify-center"
                         >
                             <select
+                                disabled
                                 name="idType"
-                                bind:value={selectedYearTwo}
+                                bind:value={duration}
                                 class=" block h-7 w-full rounded-sm border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
                             >
-                                {#each yearOption as option}
+                                {#each yearCount as option}
                                     <option value={option.value}>
                                         {option.name}
                                     </option>
@@ -280,7 +287,7 @@
                     </SectionHeader>
                     <div class="h-full max-h-full w-full pb-5">
                         <CustomTable
-                            tableId="lnptNewHireAverage"
+                            tableId="lnptAverage"
                             bind:tableData={tableLNPT}
                             bind:passData={selectedDataRow}
                         ></CustomTable>
