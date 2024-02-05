@@ -7,9 +7,11 @@ import api from '$lib/services/core/ky.service';
 import type { ListSalaryMovementFilterDTO } from '$lib/dto/mypsm/salary/salary-movement/list-salary-movement-filter.dto';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { SalaryMovementListDTO } from '$lib/dto/mypsm/salary/salary-movement/list-salary-movement.dto';
-import  { SalaryServices } from '$lib/services/implementations/mypsm/salary/salary.service';
+import { SalaryServices } from '$lib/services/implementations/mypsm/salary/salary.service';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import { showLoadingOverlay } from '$lib/stores/globalState';
+import { EmployeeServices } from '$lib/services/implementations/mypsm/employee/employee.service';
+import type { CommonEmployeeDTO } from '$lib/dto/mypsm/common/employee/employee.dto';
 // import { showLoadingOverlay } from '$lib/stores/globalState';
 
 // Annual Salary Increment
@@ -86,6 +88,10 @@ export const _submitFormAnnualSalaryIncrement = async (formData: object) => {
 export async function load() {
 
     showLoadingOverlay.set(true)
+    // validate form
+    const annualSalaryIncrement = await superValidate(_annualSalaryIncrement);
+
+
     const filter: ListSalaryMovementFilterDTO = {
         month: 1,
         year: 2024
@@ -97,6 +103,23 @@ export async function load() {
         orderType: 'asc',
         filter: filter,
     };
+
+    //param for employee list
+    const employeeListParam: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: 'createdAt',
+        orderType: 'asc',
+        filter: {
+            "employeeNumber": "",
+            "name": "",
+            "identityCard": "",
+            "program": "",
+            "scheme": "",
+            "grade": "",
+            "position": ""
+        }
+    }
     // const getGredLookup: CommonListRequestDTO = {
     //     pageNum: 1,
     //     pageSize: 10,
@@ -105,7 +128,7 @@ export async function load() {
     //     filter: filter,
     // };
 
-    
+
 
     // console.log(JSON.stringify(getGredLookup));
 
@@ -122,10 +145,16 @@ export async function load() {
     //     name: element.code,
     // }));
     const salaryMovementRecord: IntSalaryMovementRecord[] =
-         mockSalaryMovementRecord;
+        mockSalaryMovementRecord;
 
 
-    const annualSalaryIncrement = await superValidate(_annualSalaryIncrement);
+
+    // get employeelist and display in table
+    const employeeListResponse: CommonResponseDTO =
+        await EmployeeServices.getEmployeeList(employeeListParam);
+    const employeeList: CommonEmployeeDTO[] = employeeListResponse.data?.dataList as CommonEmployeeDTO[];
+
+
 
     const response: CommonResponseDTO = await SalaryServices.getSalaryMovementList(param)
     const salaryMovementList: SalaryMovementListDTO[] = response.data?.dataList as SalaryMovementListDTO[];
@@ -136,7 +165,8 @@ export async function load() {
             gredLists,
             salaryMovementRecord,
         },
+        employeeList,
         annualSalaryIncrement,
-       salaryMovementList,
+        salaryMovementList,
     };
 };
