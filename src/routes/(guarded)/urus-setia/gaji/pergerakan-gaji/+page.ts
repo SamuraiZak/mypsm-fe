@@ -1,4 +1,4 @@
-import { getErrorToast, getPromiseToast } from '$lib/services/core/toast/toast-service';
+import { getErrorToast, getLoadingToast, getPromiseToast, getServerErrorToast, getSuccessToast } from '$lib/services/core/toast/toast-service';
 import { fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
@@ -12,6 +12,9 @@ import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto
 import { showLoadingOverlay } from '$lib/stores/globalState';
 import { EmployeeServices } from '$lib/services/implementations/mypsm/employee/employee.service';
 import type { CommonEmployeeDTO } from '$lib/dto/mypsm/common/employee/employee.dto';
+import type { AddSalaryMovementRequestDTO } from '$lib/dto/mypsm/salary/salary-movement/add-salary-movement-request.dto';
+import toast from 'svelte-french-toast';
+import { goto } from '$app/navigation';
 // import { showLoadingOverlay } from '$lib/stores/globalState';
 
 // Annual Salary Increment
@@ -31,7 +34,7 @@ const numberScheme = z.union([z.string({
     required_error: "Medan ini tidak boleh dibiar kosong.",
     invalid_type_error: "Hanya nombor sahaja dibenarkan. Contoh (500.40)",
     description: "Hanya nombor sahaja dibenarkan. Contoh (500.40)"
-}).default(0))
+}))
 
 const option = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
 
@@ -42,17 +45,18 @@ const date = z.coerce.date({
                 ? 'Tarikh tidak boleh dibiar kosong.'
                 : defaultError,
     }),
+}).max(new Date(), {
+    message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
 });
 
 export const _annualSalaryIncrement = z.object({
-    meetingTypeOption: option,
-    meetingDate: date.refine((data) => data <= new Date(), {
-        message: 'Tidak boleh lebih daripada tarikh semasa',
-    }),
-    salaryMovementMonth: option,
-    gred: numberScheme,
-    specialFiAid: numberScheme,
-    specialFiAidText: numberScheme,
+    meetingName: option,
+    meetingDate: date,
+    salaryMovementMonth: numberScheme,
+    specialAid: numberScheme.default(0),
+    specialRaiseType: z.string().default(''),
+    specialRaise: numberScheme.default(0),
+    employees: z.array(z.object({ employeeId: numberScheme }))
 }).partial();
 
 export const _submitFormAnnualSalaryIncrement = async (formData: object) => {
@@ -60,27 +64,32 @@ export const _submitFormAnnualSalaryIncrement = async (formData: object) => {
         formData,
         _annualSalaryIncrement,
     );
-
+    
+    console.log(annualSalaryIncrement)
     if (!annualSalaryIncrement.valid) {
         getErrorToast();
         console.log(annualSalaryIncrement)
         return fail(400, annualSalaryIncrement);
     }
-    const responsePromise = fetch(
-        'https://jsonplaceholder.typicode.com/posts',
-        {
-            method: 'POST',
-            body: JSON.stringify(_annualSalaryIncrement),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        },
-    )
-        .then((response) => response.json())
-        .then((json) => {
-            console.log('Response Returned: ', json);
-        });
-    getPromiseToast(responsePromise);
+
+    //start by rendering loading toast
+    getLoadingToast();
+
+    //add salary movement
+    const response: CommonResponseDTO = await SalaryServices.addSalaryMovement(
+        annualSalaryIncrement.data as AddSalaryMovementRequestDTO,
+    ).finally(() => toast.dismiss());
+    console.log(response)
+
+    if (response.status !== 'success') {
+        getServerErrorToast();
+    }
+    getSuccessToast().finally(() =>
+        setTimeout(() => { 
+            goto('../gaji/pergerakan-gaji/butiran-'+response.data?.details.meetingId)
+        }, 2000),
+    );
+    
     return { annualSalaryIncrement };
 };
 
@@ -120,24 +129,6 @@ export async function load() {
             "position": ""
         }
     }
-    // const getGredLookup: CommonListRequestDTO = {
-    //     pageNum: 1,
-    //     pageSize: 10,
-    //     orderBy: 'createdAt',
-    //     orderType: 'asc',
-    //     filter: filter,
-    // };
-
-
-
-    // console.log(JSON.stringify(getGredLookup));
-
-    // Gred lookup
-    // const gredResponse: Response = await api
-    //     .post('lookups/grades', {
-    //         body: JSON.stringify(getGredLookup),
-    //     })
-    //     .json();
 
     const gredLists = undefined
     //  = gredResponse.data.map((element) => ({
@@ -153,6 +144,7 @@ export async function load() {
     const employeeListResponse: CommonResponseDTO =
         await EmployeeServices.getEmployeeList(employeeListParam);
     const employeeList: CommonEmployeeDTO[] = employeeListResponse.data?.dataList as CommonEmployeeDTO[];
+
 
 
 

@@ -23,26 +23,28 @@
         _annualSalaryIncrement,
         _submitFormAnnualSalaryIncrement,
     } from './+page';
-    import type { SalaryMovementListDTO } from '$lib/dto/mypsm/salary/salary-movement/list-salary-movement.dto';
     import type { CommonEmployeeDTO } from '$lib/dto/mypsm/common/employee/employee.dto';
+    import type { DropdownOptionsInterface } from '$lib/interfaces/common/dropdown-option';
     export let data: PageData;
     let tempData: CommonEmployeeDTO;
+
     let isGredChecked: boolean = false;
     let isSpecialFiAidTextChecked: boolean = false;
     let isSpecialIncrementChecked: boolean = false;
     let selectedStatus = status.values; // Default selected filter
     let selectedSalaryMovementMonth = ''; // Default selected filter
     let selectedGred = ''; // Default selected filter
-    let specialAid: any;
+    // let specialAid: any;
     let selectedEmployee: CommonEmployeeDTO[] = [];
     let tempUrl: IntSalaryMovementRecord;
     let tooltipContent: string = '';
-
-    const specialFiAid: string =
+    import type { EmployeeSalaryMovementID } from '$lib/dto/mypsm/salary/salary-movement/add-salary-movement-request.dto';
+    import type { Employee } from '$lib/view-models/mypsm/perjawatan/pension/pension-personal-detail-response.view-model';
+    const specialAid: string =
         'Ditetapkan sekali sepanjang tahun pergerakan gaji';
-    const percentFromGrossPay: string = 'Peratusan daripada jumlah gaji pokok';
+    const specialByGrossPay: string = 'Peratusan daripada jumlah gaji pokok';
     const kgtIncrease: string = 'Peratusan daripada KGT';
-    
+
     // function to assign the content  of the tooltip
     function assignContent(ev: CustomEvent<HTMLDivElement>) {
         {
@@ -50,10 +52,10 @@
 
             switch (eventName) {
                 case 'special-fi-aid':
-                    tooltipContent = specialFiAid;
+                    tooltipContent = specialAid;
                     break;
                 case 'from-gross-pay':
-                    tooltipContent = percentFromGrossPay;
+                    tooltipContent = specialByGrossPay;
                     break;
                 case 'from-kgt':
                     tooltipContent = kgtIncrease;
@@ -78,6 +80,11 @@
         multipleSubmits: 'prevent',
         validators: _annualSalaryIncrement,
         onSubmit() {
+            let collectedId = selectedEmployee.map((item) => ({
+                employeeId: Number(item.employeeId),
+            }));
+            $annualSalaryIncrementForm.employees = collectedId;
+            // console.log(collectedId)
             _submitFormAnnualSalaryIncrement($annualSalaryIncrementForm);
         },
         taintedMessage:
@@ -92,15 +99,14 @@
         },
     );
 
-
     function pushSelected(data: CommonEmployeeDTO) {
         let tempSelected = selectedEmployee;
         if (!tempSelected.includes(data)) {
             tempSelected.push(data);
             selectedEmployee = tempSelected;
+            // let tempEmployeeID: EmployeeSalaryMovementID[] = selectedEmployee.map(item => ({employeeId: item.employeeId}));
+            // console.log(selectedEmployee)
         }
-
-        
     }
 
     function popSelected(data: CommonEmployeeDTO) {
@@ -110,18 +116,20 @@
         selectedEmployee = tempSelected;
     }
 
-    // function popSelected(data: CommonEmployeeDTO) {
-    //     let tempSelected = selectedEmployee;
-    //     tempSelected = tempSelected.filter((item) => item !== data);
-
-    //     selectedEmployee = tempSelected;
-    // }
-
-
-    // function selectEmployee(){
-    //     selectEmployee = [...selectEmployee, {selectEmpl}]
-    // }
-    
+    const monthLookup: DropdownOptionsInterface[] = [
+        { value: 1, name: 'Januari' },
+        { value: 2, name: 'Februari' },
+        { value: 3, name: 'Mac' },
+        { value: 4, name: 'April' },
+        { value: 5, name: 'Mei' },
+        { value: 6, name: 'Jun' },
+        { value: 7, name: 'Julai' },
+        { value: 8, name: 'Ogos' },
+        { value: 9, name: 'September' },
+        { value: 10, name: 'Oktober' },
+        { value: 11, name: 'November' },
+        { value: 12, name: 'Disember' },
+    ];
 </script>
 
 <!-- content header starts here -->
@@ -178,7 +186,6 @@
             options={status}
             bind:selectedVal={selectedStatus}
         ></FilterSelectInput>
-                
     </FilterContainer>
 
     <!-- area for setting for bulk salary movements -->
@@ -196,23 +203,21 @@
             <div class="flex flex-col gap-2.5 p-2.5">
                 <div class="flex w-1/2 flex-col gap-2.5">
                     <DropdownSelect
-                        hasError={!!$annualSalaryIncrementErrors.meetingTypeOption}
+                        hasError={!!$annualSalaryIncrementErrors.meetingName}
                         dropdownType="label-left-full"
-                        id="meetingTypeOption"
+                        id="meetingName"
                         label="Nama dan Bilangan Mesyuarat"
-                        bind:value={$annualSalaryIncrementForm.meetingTypeOption}
+                        bind:value={$annualSalaryIncrementForm.meetingName}
                         options={[
-                            { value: '1', name: 'Semua' },
-                            { value: '2', name: '1/12' },
-                            { value: '3', name: '1/102' },
-                            { value: '4', name: '2/101' },
+                            { value: '1/12', name: '1/12' },
+                            { value: '1/102', name: '1/102' },
+                            { value: '2/101', name: '2/101' },
                         ]}
-                    ></DropdownSelect>
-                    {#if $annualSalaryIncrementErrors.meetingTypeOption}
+                    />
+                    {#if $annualSalaryIncrementErrors.meetingName}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$annualSalaryIncrementErrors
-                                .meetingTypeOption[0]}</span
+                            >{$annualSalaryIncrementErrors.meetingName[0]}</span
                         >
                     {/if}
                     <DateSelector
@@ -234,18 +239,12 @@
                         id="salaryMovementMonth"
                         label="Bulan Pergerakan Gaji"
                         bind:value={$annualSalaryIncrementForm.salaryMovementMonth}
-                        options={[
-                            { value: '1', name: 'Januari' },
-                            { value: '2', name: 'April' },
-                            { value: '3', name: 'Julai' },
-                            { value: '4', name: 'Oktober' },
-                        ]}
+                        options={monthLookup}
                     ></DropdownSelect>
                     {#if $annualSalaryIncrementErrors.salaryMovementMonth}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$annualSalaryIncrementErrors
-                                .salaryMovementMonth}</span
+                            >{$annualSalaryIncrementErrors.salaryMovementMonth}</span
                         >
                     {/if}
                 </div>
@@ -256,30 +255,21 @@
                 <div class="flex flex-row justify-between gap-x-5">
                     <Checkbox name="gred" bind:checked={isGredChecked}>
                         <div class="flex flex-col">
-                            
                             <DropdownSelect
                                 disabled={!isGredChecked}
-                                hasError={!!$annualSalaryIncrementErrors.gred && isGredChecked}
                                 dropdownType="label-left"
                                 id="gred"
                                 label="Gred"
-                                bind:value={$annualSalaryIncrementForm.gred}
-                                options={[
-                                    { value: 1, name: 'Semua' },
-                                    { value: 2, name: 'N19' },
-                                    { value: 3, name: 'N21' },
-                                    { value: 4, name: 'N29' },
-                                    { value: 5, name: 'N32' },
-                                    { value: 6, name: 'N49' },
-                                    { value: 7, name: 'N52' },
-                                ]}
+                                value={1}
+                                options={data.gradeLookup}
                             ></DropdownSelect>
+                            <!-- hasError={!!$annualSalaryIncrementErrors.gred && isGredChecked}
                             {#if $annualSalaryIncrementErrors.gred && isGredChecked}
                                 <span
                                     class="ml-8 font-sans text-sm italic text-system-danger"
                                     >{$annualSalaryIncrementErrors.gred}</span
                                 >
-                            {/if}
+                            {/if} -->
                         </div>
                     </Checkbox>
 
@@ -287,21 +277,20 @@
                         name="specialFiAidText"
                         bind:checked={isSpecialFiAidTextChecked}
                         ><div class="flex flex-col">
-                            
                             <TextField
                                 labelType="label-fit"
                                 hasTooltip={true}
-                                toolTipID="type-special-fi-aid"
+                                toolTipID="specialAid"
                                 disabled={!isSpecialFiAidTextChecked}
-                                hasError={!!$annualSalaryIncrementErrors.specialFiAid}
+                                hasError={!!$annualSalaryIncrementErrors.specialAid}
                                 name="specialFiAid"
                                 label="Bantuan Khas Kewangan (RM)"
-                                bind:value={$annualSalaryIncrementForm.specialFiAid}
+                                bind:value={$annualSalaryIncrementForm.specialAid}
                             />
-                            {#if $annualSalaryIncrementErrors.specialFiAid}
+                            {#if $annualSalaryIncrementErrors.specialAid}
                                 <span
                                     class="ml-[115px] font-sans text-sm italic text-system-danger"
-                                    >{$annualSalaryIncrementErrors.specialFiAid}</span
+                                    >{$annualSalaryIncrementErrors.specialAid}</span
                                 >
                             {/if}
                         </div>
@@ -311,55 +300,64 @@
                         name="specialIncrement"
                         bind:checked={isSpecialIncrementChecked}
                     >
-                        <label for="specialIncrement">Kenaikan Khas (RM)</label>
-                        <div class="ml-2.5 flex flex-col gap-2.5">
+                        <div class="flex w-full flex-col">
+                            <label for="specialIncrement"
+                                >Kenaikan Khas (RM)</label
+                            >
+                            {#if $annualSalaryIncrementErrors.specialRaiseType}
+                                <span
+                                    class="font-sans text-sm italic text-system-danger"
+                                    >{$annualSalaryIncrementErrors.specialRaiseType}</span
+                                >
+                            {/if}
+                        </div>
+                        <div class="ml-2.5 w-full flex flex-col gap-2.5">
                             <Radio
                                 disabled={!isSpecialIncrementChecked}
-                                name="specialAid"
+                                name="specialRaiseType"
                                 legend={'Radio Button'}
-                                bind:group={specialAid}
-                                value={'specialByAmount'}
+                                bind:group={$annualSalaryIncrementForm.specialRaiseType}
+                                value={'fixed'}
                             >
-                                
                                 <TextField
-                                    disabled={specialAid !== 'specialByAmount'}
+                                    disabled={$annualSalaryIncrementForm.specialRaiseType !==
+                                        'fixed'}
                                     labelType="no-label"
-                                    hasError={!!$annualSalaryIncrementErrors.specialFiAidText}
-                                    name="specialFiAidText"
-                                    bind:value={$annualSalaryIncrementForm.specialFiAidText}
+                                    hasError={!!$annualSalaryIncrementErrors.specialRaise}
+                                    name="specialRaiseType"
+                                    bind:value={$annualSalaryIncrementForm.specialRaise}
                                 />
-                                {#if $annualSalaryIncrementErrors.specialFiAidText}
+                                <!-- {#if $annualSalaryIncrementErrors.specialRaiseType}
                                     <span
                                         class="font-sans text-sm italic text-system-danger"
-                                        >{$annualSalaryIncrementErrors.specialFiAidText}</span
+                                        >{$annualSalaryIncrementErrors.specialRaiseType}</span
                                     >
-                                {/if}
+                                {/if} -->
                             </Radio>
 
                             <Radio
                                 disabled={!isSpecialIncrementChecked}
-                                name="specialAid"
+                                name="specialRaiseType"
                                 legend={'Radio Button'}
                                 value={'specialByGrossPay'}
-                                bind:group={specialAid}
+                                bind:group={$annualSalaryIncrementForm.specialRaiseType}
                             >
                                 <TextField
-                                    disabled={specialAid !==
+                                    disabled={$annualSalaryIncrementForm.specialRaiseType !==
                                         'specialByGrossPay'}
                                     hasTooltip={true}
                                     toolTipID="type-from-gross-pay"
                                     labelType="no-label"
-                                    hasError={!!$annualSalaryIncrementErrors.specialFiAidText}
-                                    name="specialFiAidText"
-                                    type="text"
-                                    bind:value={$annualSalaryIncrementForm.specialFiAidText}
+                                    hasError={!!$annualSalaryIncrementErrors.specialRaise}
+                                    name="specialRaiseType"
+                                    bind:value={$annualSalaryIncrementForm.specialRaise}
                                 />
-                                {#if $annualSalaryIncrementErrors.specialFiAidText}
+                                <!-- {#if $annualSalaryIncrementErrors.specialRaiseType}
                                     <span
                                         class="font-sans text-sm italic text-system-danger"
-                                        >{$annualSalaryIncrementErrors.specialFiAidText}</span
+                                        >{$annualSalaryIncrementErrors.specialRaiseType}</span
                                     >
-                                {/if}
+                                {/if} -->
                             </Radio>
 
                             <Radio
@@ -367,27 +365,26 @@
                                 name="specialAid"
                                 legend={'Radio Button'}
                                 value={'specialByKgtPercent'}
-                                bind:group={specialAid}
+                                bind:group={$annualSalaryIncrementForm.specialRaiseType}
                             >
-                               
                                 <TextField
-                                    disabled={specialAid !==
+                                    disabled={$annualSalaryIncrementForm.specialRaiseType !==
                                         'specialByKgtPercent'}
                                     hasTooltip={true}
-                                    toolTipID="type-from-kgt"
+                                    toolTipID="kgtIncrease"
                                     labelType="no-label"
-                                    hasError={!!$annualSalaryIncrementErrors.specialFiAidText}
-                                    name="specialFiAidText"
-                                    type="text"
-                                    bind:value={$annualSalaryIncrementForm.specialFiAidText}
+                                    hasError={!!$annualSalaryIncrementErrors.specialRaise}
+                                    name="specialRaiseType"
+                                    bind:value={$annualSalaryIncrementForm.specialRaise}
                                 />
-                                {#if $annualSalaryIncrementErrors.specialFiAidText}
+                                <!-- {#if $annualSalaryIncrementErrors.specialRaiseType}
                                     <span
                                         class="font-sans text-sm italic text-system-danger"
-                                        >{$annualSalaryIncrementErrors.specialFiAidText}</span
+                                        >{$annualSalaryIncrementErrors.specialRaiseType}</span
                                     >
-                                {/if}</Radio
-                            >
+                                {/if}</Radio -->
+                                
+                            </Radio>
                         </div>
                     </Checkbox>
                 </div>
@@ -417,10 +414,7 @@
         <SectionHeader title="Senarai Rekod Layak Mengikut Bulan"
         ></SectionHeader>
 
-        <DynamicTable
-            tableItems={selectedEmployee}
-            
-        />
+        <DynamicTable tableItems={selectedEmployee} />
         <!-- <DynamicTable
             hasCheckbox
             tableItems={data.salaryMovementList}
@@ -456,22 +450,29 @@
     <br />
     <div class="flex h-fit w-full flex-col items-start justify-center">
         <!-- Table for 'Tidak Layak' candidates -->
-        <ContentHeader title="Tindakan: Pilih kakitangan yang layak." description=""
-            ><TextIconButton label="Pindah" onClick={() => {() => console.log('here');pushSelected(tempData)}}>
+        <ContentHeader
+            title="Tindakan: Pilih kakitangan yang layak."
+            description=""
+            ><TextIconButton
+                label="Pindah"
+                onClick={() => {
+                    () => console.log('here');
+                    pushSelected(tempData);
+                }}
+            >
                 <SvgArrowUp></SvgArrowUp>
             </TextIconButton></ContentHeader
         >
         <!-- <SectionHeader title="Senarai Rekod Layak Mengikut Bulan"
         /> -->
-        <SectionHeader title="Senarai Kakitangan"
-        />
+        <SectionHeader title="Senarai Kakitangan" />
 
         <DynamicTable
             tableItems={data.employeeList}
             withRowSelection
             selectAdd
             bind:passData={tempData}
-            onSelect={() =>  pushSelected(tempData)}
+            onSelect={() => pushSelected(tempData)}
         />
     </div>
 </section>
