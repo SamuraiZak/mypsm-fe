@@ -80,7 +80,10 @@ export const _submit = async (formData: AuthRequestDTO) => {
                         goto('/pengarah-audit/halaman-utama');
                         break;
 
-                    case 'pengarah bahagian/negeri':
+                    case 'pengarah bahagian':
+                        goto('/pengarah-bahagian-negeri/halaman-utama');
+                        break;
+                    case 'pengarah negeri':
                         goto('/pengarah-bahagian-negeri/halaman-utama');
                         break;
 
