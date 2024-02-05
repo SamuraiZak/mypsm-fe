@@ -280,6 +280,7 @@
                     </SectionHeader>
                     <div class="h-full max-h-full w-full pb-5">
                         <CustomTable
+                            tableId="lnptAverage"
                             bind:tableData={tableLNPT}
                             bind:passData={selectedDataRow}
                         ></CustomTable>
