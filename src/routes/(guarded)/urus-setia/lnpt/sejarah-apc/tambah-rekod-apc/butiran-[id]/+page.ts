@@ -1,7 +1,6 @@
 import { CommonResponseConstant } from '$lib/constants/core/common-response-constant.js';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto.js';
 import {
-    EmployeeDetailRequestConvert,
     type EmployeeDetailRequestDTO,
 } from '$lib/dto/mypsm/common/employee/employee-detail-request.dto.js';
 import type { AddAPCRequestDTO } from '$lib/dto/mypsm/lnpt/apc/add-apc-request.dto.js';

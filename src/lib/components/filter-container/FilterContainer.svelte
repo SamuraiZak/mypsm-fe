@@ -6,6 +6,7 @@
     import SvgManifyingGlass from '$lib/assets/svg/SvgManifyingGlass.svelte';
     import TextIconButton from '../buttons/TextIconButton.svelte';
     import CustomCardHeader from '../cards/CustomCardHeader.svelte';
+    export let onFilter = () => {};
 </script>
 
 <!-- <Card class="mb-[10px] min-w-full border-system-primary" shadow={false}>
@@ -30,7 +31,7 @@
 
 <CustomCard borderClass="border-system-primary">
     <CustomCardHeader title="Semua Tetapan Pencarian">
-        <TextIconButton label="Cari" primary onClick={() => {}}>
+        <TextIconButton label="Cari" primary onClick={onFilter}>
             <SvgManifyingGlass></SvgManifyingGlass>
         </TextIconButton>
     </CustomCardHeader>

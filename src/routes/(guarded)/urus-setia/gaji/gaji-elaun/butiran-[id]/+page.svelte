@@ -30,7 +30,7 @@
     import { mockSalaryAdjustmentWithKey } from '$lib/mocks/gaji/gaji-elaun/mockSalaryAdjustmentWithKey';
     import { Toaster } from 'svelte-french-toast';
     import { dateProxy, superForm } from 'sveltekit-superforms/client';
-    import type { PageData } from './$types';
+    import type { PageData } from '../butiran/$types';
     import {
         _pemangkuanFormSchema,
         _submitPemangkuanForm,
@@ -45,7 +45,7 @@
     export let data: PageData;
 
     export let noPekerja = '00001';
-    let activeStepper = 3;
+    let activeStepper = 0;
 
     let disabled = false;
     let labelBlack = !disabled;
@@ -195,43 +195,43 @@
                     {labelBlack}
                     disabled
                     label="No. Pekerja"
-                    value={data.props.salaryDetailData.employeeNo}
+                    value={data.props.employeeDetailData.employeeNo}
                 ></TextField>
                 <TextField
                     {labelBlack}
                     disabled
                     label="Nama"
-                    value={data.props.salaryDetailData.name}
+                    value={data.props.employeeDetailData.name}
                 ></TextField>
                 <TextField
                     {labelBlack}
                     disabled
                     label="No. K/P"
-                    value={data.props.salaryDetailData.identityCard}
+                    value={data.props.employeeDetailData.identityCard}
                 ></TextField>
                 <TextField
                     {labelBlack}
                     disabled
                     label="Gred"
-                    value={data.props.salaryDetailData.grade}
+                    value={data.props.employeeDetailData.grade}
                 ></TextField>
                 <TextField
                     {labelBlack}
                     disabled
                     label="Penempatan"
-                    value={data.props.salaryDetailData.currentPlacement}
+                    value={data.props.employeeDetailData.currentPlacement}
                 ></TextField>
                 <TextField
                     {labelBlack}
                     disabled
                     label="Kumpulan"
-                    value={mockLookupDepartments[2].name}
+                    value={data.props.employeeDetailData.group}
                 ></TextField>
                 <TextField
                     {labelBlack}
                     disabled
                     label="Status Semasa Kakitangan"
-                    value={mockLookupEmploymentStatus[1].name}
+                    value={data.props.employeeDetailData.status}
                 ></TextField>
             </div>
         </StepperContentBody>
@@ -268,13 +268,13 @@
                     {labelBlack}
                     disabled
                     label="Gred"
-                    value={data.props.salaryDetailData.grade}
+                    value={data.props.employeeDetailData.grade}
                 ></TextField>
                 <TextField
                     {labelBlack}
                     disabled
                     label="Gaji Pokok"
-                    value={data.props.salaryDetailData.currentPlacement}
+                    value={data.props.employeeSalariesData.baseSalary}
                 ></TextField>
                 <TextField
                     {labelBlack}
@@ -282,6 +282,7 @@
                     toolTipID="type-itka"
                     disabled
                     label="ITKA"
+                    value={data.props.employeeSalariesData.itka}
                 ></TextField>
                 <TextField
                     {labelBlack}
@@ -289,6 +290,7 @@
                     toolTipID="type-itp"
                     disabled
                     label="ITP"
+                    value={data.props.employeeSalariesData.itp}
                 ></TextField>
                 <TextField
                     {labelBlack}
@@ -296,6 +298,7 @@
                     toolTipID="type-cola"
                     disabled
                     label="COLA"
+                    value={data.props.employeeSalariesData.cola}
                 ></TextField>
                 <div class="flex w-full flex-row justify-evenly gap-2.5">
                     <label
@@ -308,13 +311,17 @@
                         {labelBlack}
                         disabled
                         label="Bulan"
-                        value={months[6].name}
+                        value={months[
+                            data.props.employeeSalariesData.salaryMovementMonth
+                        ].name}
                     ></TextField>
                     <TextField
                         labelType="label-fit"
                         {labelBlack}
                         disabled
                         label="Jumlah"
+                        value={data.props.employeeSalariesData
+                            .salaryMovementTotal}
                     ></TextField>
                 </div>
             </div>
@@ -336,30 +343,36 @@
             />
         </StepperContentHeader>
         <StepperContentBody>
-            <div
-                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
-            >
-                <p class="h-[35px] text-sm text-system-primary">
-                    Pinjaman Komputer
-                </p>
-                <TextField {labelBlack} disabled label="Jumlah (RM)"
-                ></TextField>
-                <DateSelector
-                    {labelBlack}
-                    handleDateChange
-                    disabled
-                    label="Tarikh Mula"
-                    selectedDate="2022-10-01"
-                ></DateSelector>
-                <DateSelector
-                    {labelBlack}
-                    handleDateChange
-                    disabled
-                    label="Tarikh Tamat"
-                    selectedDate="2023-11-01"
-                ></DateSelector>
-            </div>
-            <div
+            {#each data.props.employeeOtherData as otherData}
+                <div
+                    class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+                >
+                    <p class="h-[35px] text-sm text-system-primary">
+                        {otherData.name}
+                    </p>
+                    <TextField
+                        {labelBlack}
+                        disabled
+                        label="Jumlah (RM)"
+                        value={otherData.total}
+                    ></TextField>
+                    <DateSelector
+                        {labelBlack}
+                        handleDateChange
+                        disabled
+                        label="Tarikh Hantar"
+                        selectedDate={otherData.submittedDate}
+                    ></DateSelector>
+                    <DateSelector
+                        {labelBlack}
+                        handleDateChange
+                        disabled
+                        label="Tarikh Lulus"
+                        selectedDate={otherData.submittedDate}
+                    ></DateSelector>
+                </div>
+            {/each}
+            <!-- <div
                 class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
             >
                 <p class="h-[35px] text-sm text-system-primary">Kuarters</p>
@@ -455,7 +468,7 @@
                     label="Tarikh Tamat"
                     selectedDate="2023-11-01"
                 ></DateSelector>
-            </div>
+            </div> -->
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -490,16 +503,16 @@
                     <SectionHeader title="Rekod Cuti Kakitangan" />
                     <div class="w-full">
                         <DynamicTable
-                            tableItems={mockEmployeeLeaveRecord}
+                            tableItems={data.props.employeePublicData.leave}
                             columnKeys={[
-                                'leaveType',
-                                'leaveCode',
-                                'leaveApplicationDate',
-                                'leaveStartDate',
-                                'leaveEndDate',
-                                'leaveReason',
-                                'leaveStatus',
-                                'leaveAmount',
+                                'type',
+                                'appliedDate',
+                                'fromDate',
+                                'toDate',
+                                'reason',
+                                'status',
+                                'total',
+                                'amount',
                             ]}
                         ></DynamicTable>
                     </div>
@@ -544,61 +557,56 @@
                             {/if}
                         </form>
                     </div>
-                    <SectionHeader title="Senarai Pemotongan"
-                        ><TextIconButton
-                            primary
-                            label="Tambah"
-                            onClick={() => (openUmumModal = true)}
-                            ><SvgPlus /></TextIconButton
-                        ></SectionHeader
-                    >
-                    <!-- {#each senaraiPemotongan as item, index}
-                        <DynamicAccordionForm
-                            hasDelete
-                            header={item.deductionTitle}
-                            open
-                            > -->
-                    <div
-                        class="flex w-full flex-col gap-2 gap-2.5 border border-system-primary p-2.5 rounded"
-                    >
+                    <SectionHeader title="Senarai Pemotongan"></SectionHeader>
+                    {#each data.props.employeePublicData.loan as loanData}
                         <div
-                            class="flex w-full flex-row justify-evenly gap-2.5"
+                            class="flex w-full flex-col gap-2 gap-2.5 rounded border border-system-primary p-2.5"
                         >
-                            <DateSelector
-                                {labelBlack}
-                                handleDateChange
+                            {loanData.name}
+                            <div
+                                class="flex w-full flex-row justify-evenly gap-2.5"
+                            >
+                                <DateSelector
+                                    {labelBlack}
+                                    handleDateChange
+                                    disabled={false}
+                                    labelType="label-200"
+                                    label="Tarikh Mula"
+                                    selectedDate={$umumForm.tempohBayaran}
+                                ></DateSelector>
+                                <DateSelector
+                                    {labelBlack}
+                                    handleDateChange
+                                    disabled={false}
+                                    labelType="label-200"
+                                    label="Tarikh Tamat"
+                                    selectedDate={$umumForm.tempohBayaran}
+                                ></DateSelector>
+                            </div>
+                            <p class="h-[35px] text-sm text-txt-tertiary">
+                                Jumlah ansuran yang perlu dibayar setiap bulan
+                            </p>
+                            <DropdownSelect
                                 disabled={false}
+                                dropdownType="label-left-200"
+                                options={deductionType}
+                                label="Jenis Bayaran"
+                                labelBlack
+                                bind:value={$umumForm.tempohBayaran}
+                            ></DropdownSelect>
+                            <TextField
                                 labelType="label-200"
-                                label="Tarikh Mula"
-                                selectedDate={$umumForm.tempohBayaran}
-                            ></DateSelector>
-                            <DateSelector
                                 {labelBlack}
-                                handleDateChange
                                 disabled={false}
-                                labelType="label-200"
-                                label="Tarikh Tamat"
-                                selectedDate={$umumForm.tempohBayaran}
-                            ></DateSelector>
+                                label="Jumlah Bayaran"
+                            ></TextField>
                         </div>
-                        <p class="h-[35px] text-sm text-txt-tertiary">
-                            Jumlah ansuran yang perlu dibayar setiap bulan
-                        </p>
-                        <DropdownSelect
-                            disabled={false}
-                            dropdownType="label-left-200"
-                            options={deductionType}
-                            label="Jenis Bayaran"
-                            labelBlack
-                            bind:value={$umumForm.tempohBayaran}
-                        ></DropdownSelect>
-                        <TextField
-                            labelType="label-200"
-                            {labelBlack}
-                            disabled={false}
-                            label="Jumlah Bayaran"
-                        ></TextField>
-                    </div>
+                    {/each}
+                    {#if data.props.employeePublicData.loan.length == 0}
+                        <div class="w-full text-center text-base font-semibold">
+                            TIADA REKOD
+                        </div>
+                    {/if}
                     <!-- </DynamicAccordionForm>
                     {/each} -->
                 </CustomTabContent>
@@ -1081,7 +1089,7 @@
                     >{$modalError.endDate}</span
                 >
             {/if}
-            
+
             <TextField
                 hasError={!!$modalError.totalPayment}
                 name="totalPayment"

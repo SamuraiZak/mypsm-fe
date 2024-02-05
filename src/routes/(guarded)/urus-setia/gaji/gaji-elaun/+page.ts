@@ -1,128 +1,56 @@
-import http from '$lib/services/provider/service-provider.service';
-import { showLoadingOverlay } from '$lib/stores/globalState';
-import {
-    NewHireListRequestConvert,
-    type NewHireListRequest,
-} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-list-request.view-model';
-import {
-    NewHireListResponseConvert,
-    type NewHireListResponse,
-} from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-list-response.view-model';
-import { type SalaryAndAllowanceListResponse, SalaryAndAllowanceListResponseConvert } from '$lib/view-models/mypsm/salary/salary-and-allowance/salary-and-allowancs-list-response.view-model';
-
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
+import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { ListAllowanceDTO } from '$lib/dto/mypsm/salary/salary-allowance/list-allowance.dto';
+import { SalaryServices } from '$lib/services/implementations/mypsm/salary/salary.service';
+import { loadingState } from '$lib/stores/globalState';
 
 export async function load() {
-    showLoadingOverlay.set(true);
+    // const LnptApcRecord: IntLnptApc[] = await mockLnptApc;
 
-    const obj:unknown = {
-        "status": 201,
-        "message": "Record retrieved successfully.",
-        "data": {
-            "pageNum": 1,
-            "totalData": 1,
-            "totalPage": 1,
-            "allowances": [
-                {
-                    "employeeId": "2",
-                    "employeeName": "Jon Bovi",
-                    "baseSalary": 0,
-                    "allowance": 100,
-                    "salaryDeduction": 100,
-                    "status": "New"
-                }
-            ]
-        }
-    }
-
-    const response:JSON = <JSON>obj;
-
-    const data: SalaryAndAllowanceListResponse = SalaryAndAllowanceListResponseConvert.fromJson(
-        JSON.stringify(response),
-    );
-    setTimeout(() => showLoadingOverlay.set(false), 2500);
-    return {
-        props: {
-            salaryAllowanceResult: data,
-        },
-    };
-}
-export async function _nope() {
-    showLoadingOverlay.set(true);
-
-    const request: NewHireListRequest = {
+    const param: CommonListRequestDTO = {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 5,
         orderBy: '',
         orderType: '',
         filter: {
-            dataType: 'New',
-            identityCard: null,
-            staffNo: null,
-            staffName: null,
-            dateRequest: null,
-            dateHire: null,
-            status: null,
+            employeeNumber: '',
+            name: '',
+            identityCard: '',
+            allowance: null as number | null,
+            month: null as number | null,
+            status: '',
         },
     };
-    const response: Response = await http
-        .post('http://127.0.0.1:3333/api/v1/employments/new-hires', {
-            body: NewHireListRequestConvert.toJson(request),
-            headers: {
-                Accept: 'application/json',
-                'Content-type': 'application/json',
-            },
-            prefixUrl: '',
-        })
-        .json();
 
-    const data: NewHireListResponse = NewHireListResponseConvert.fromJson(
-        JSON.stringify(response),
-    );
-    setTimeout(() => showLoadingOverlay.set(false), 2500);
+    const response: CommonResponseDTO =
+        await SalaryServices.getSalaryAllowanceList(param);
+
+    const salaryAllowanceHistory: ListAllowanceDTO[] = response.data
+        ?.dataList as ListAllowanceDTO[];
+
     return {
         props: {
-            newHireLists: data,
+            param,
+            response,
+            salaryAllowanceHistory,
         },
     };
 }
+export async function _updateTable(param: CommonListRequestDTO) {
+    loadingState.set(true);
+    param.filter.allowance =
+        Number(param.filter.allowance) == 0
+            ? null
+            : Number(param.filter.allowance);
+    const response: CommonResponseDTO =
+        await SalaryServices.getSalaryAllowanceList(param);
 
-export async function _sort() {
-    showLoadingOverlay.set(true);
+    loadingState.set(false);
 
-    const request: NewHireListRequest = {
-        pageNum: 2,
-        pageSize: 10,
-        orderBy: '',
-        orderType: '',
-        filter: {
-            dataType: 'New',
-            identityCard: null,
-            staffNo: null,
-            staffName: null,
-            dateRequest: null,
-            dateHire: null,
-            status: null,
-        },
-    };
-    const response: Response = await http
-        .post('http://127.0.0.1:3333/api/v1/employments/new-hires', {
-            body: NewHireListRequestConvert.toJson(request),
-            headers: {
-                Accept: 'application/json',
-                'Content-type': 'application/json',
-            },
-            prefixUrl: '',
-        })
-        .json();
-
-    const data: NewHireListResponse = NewHireListResponseConvert.fromJson(
-        JSON.stringify(response),
-    );
-
-    showLoadingOverlay.set(false);
     return {
         props: {
-            newHireLists: data,
+            param,
+            response,
         },
     };
 }
