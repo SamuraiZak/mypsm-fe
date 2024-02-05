@@ -363,40 +363,7 @@ export const load = async ({ params }) => {
     };
 };
 
-export const _submitApprovalResult = async (formData: object) => {
-    const form = await superValidate(formData, _replacementLeaveSchema);
-    console.log(form);
-
-    if (!form.valid) {
-        getErrorToast();
-        return fail(400, form);
-    }
-
-    // start by rendering loading toast
-    getLoadingToast();
-
-    const response: CommonResponseDTO =
-        await LeaveServices.createReplacementLeave(
-            form.data as AddReplacementLeaveRequest,
-        ).finally(() => toast.dismiss());
-    console.log(response);
-
-    if (response.status !== 'success') {
-        // if error toast
-        getServerErrorToast();
-        // return error(400, { message: response.message });
-    }
-    // // if success toast
-    getSuccessToast().finally(() =>
-        setTimeout(() => {
-            goto('../cuti/laporan-cuti');
-        }, 2000),
-    );
-
-    return { form };
-};
-
-export const _submitReplacementLeaveForm = async (
+export const _submitApprovalResult = async (
     formData: object,
     selectedLeaveType: string,
 ) => {
@@ -417,40 +384,44 @@ export const _submitReplacementLeaveForm = async (
     // start by rendering loading toast
     getLoadingToast();
 
-    let response: CommonResponseDTO;
+    const response: CommonResponseDTO =
+        await LeaveServices.createOtherLeavesApproversResults(
+            requestBody,
+        ).finally(() => toast.dismiss());
+    console.log(response);
 
-    if (selectedLeaveType === 'Gantian')
-        response = await LeaveServices.createOtherLeavesApproversResults(requestBody);
-    else if (selectedLeaveType === 'Tanpa Rekod')
-        response = await LeaveServices.createOtherLeavesApproversResults(requestBody);
-    else if (selectedLeaveType === 'Separuh Gaji')
-        response = await LeaveServices.createOtherLeavesApproversResults(requestBody);
-    else if (selectedLeaveType === 'Tanpa Gaji')
-        response = await LeaveServices.createOtherLeavesApproversResults(requestBody);
-    else if (
-        selectedLeaveType === 'Cuti Bersalin Awal' ||
-        selectedLeaveType === 'Cuti Bersalin Pegawai' ||
-        selectedLeaveType === 'Cuti Isteri Bersalin'
-    )
-        response = await LeaveServices.createOtherLeavesApproversResults(requestBody);
-    else if (selectedLeaveType === 'Haji')
-        response = await LeaveServices.createOtherLeavesApproversResults(requestBody);
-    else if (
-        selectedLeaveType === 'Cuti Kuarantin' ||
-        selectedLeaveType === 'Cuti Menjaga Anak Tanpa Gaji' ||
-        selectedLeaveType === 'Cuti Kursus Sambilan' ||
-        selectedLeaveType === 'Cuti Perakuan Tidak Hadir Ke Pejabat' ||
-        selectedLeaveType === 'Cuti Sakit Lanjutan' ||
-        selectedLeaveType === 'Cuti Tanpa Gaji Mengikut Pasangan' ||
-        selectedLeaveType === 'Cuti Penyakit Barah Dan Kusta' ||
-        selectedLeaveType === 'Cuti Penyakit Tibi'
-    )
-        response = await LeaveServices.createOtherLeavesApproversResults(requestBody);
+    if (response.status !== 'success') {
+        // if error toast
+        getServerErrorToast();
+        // return error(400, { message: response.message });
+    }
+    // // if success toast
+    getSuccessToast().finally(() =>
+        setTimeout(() => {
+            goto('../cuti/laporan-cuti');
+        }, 2000),
+    );
 
-    // const response: CommonResponseDTO = await LeaveServices.createother(
-    //     form.data as AddReplacementLeaveRequest,
-    // ).finally(() => toast.dismiss());
-    // console.log(response);
+    return { form };
+};
+
+export const _submitReplacementLeaveForm = async (formData: object) => {
+    const form = await superValidate(formData, _replacementLeaveSchema);
+    console.log(form);
+
+    if (!form.valid) {
+        getErrorToast();
+        return fail(400, form);
+    }
+
+    // start by rendering loading toast
+    getLoadingToast();
+
+    const response: CommonResponseDTO =
+        await LeaveServices.createReplacementLeave(
+            form.data as AddReplacementLeaveRequest,
+        ).finally(() => toast.dismiss());
+    console.log(response);
 
     if (response.status !== 'success') {
         // if error toast
