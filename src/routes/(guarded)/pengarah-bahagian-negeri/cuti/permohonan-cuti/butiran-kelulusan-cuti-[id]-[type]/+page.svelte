@@ -135,7 +135,7 @@
         SPA: true,
         validators: _setApprovalSchema,
         onSubmit() {
-            _submitApprovalResult($secretaryApprovalInfoForm, selectedCuti);
+            _submitApprovalResult($secretaryApprovalInfoForm);
         },
     });
 
@@ -462,7 +462,7 @@
                 >
                     <div class="mb-5">
                         <b class="text-sm text-system-primary"
-                            >Keputusan Urus Setia Cuti</b
+                            >Keputusan Pengarah Bahagian/Negeri</b
                         >
                     </div>
 
@@ -540,7 +540,7 @@
                         <StepperOtherRolesResult />
                     {/if}
                 </div>
-                {#if !!data.verifierResult.remark}
+
                     <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
                         <div class="mb-5">
                             <b class="text-sm text-system-primary"
@@ -565,7 +565,8 @@
                             <StepperOtherRolesResult />
                         {/if}
                     </div>
-                {/if}
+
+                    {#if !!data.verifierResult.remark}
                 <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
                     <div class="mb-5">
                         <b class="text-sm text-system-primary"
@@ -590,6 +591,7 @@
                         <StepperOtherRolesResult />
                     {/if}
                 </div>
+                 {/if}
             </div>
         </StepperContentBody>
     </StepperContent>
