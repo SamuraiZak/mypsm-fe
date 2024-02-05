@@ -11,6 +11,8 @@ import { SalaryServices } from '$lib/services/implementations/mypsm/salary/salar
 import type { ListSalaryMovementFilterDTO } from '$lib/dto/mypsm/salary/salary-movement/list-salary-movement-filter.dto';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { SalaryMovementListDTO } from '$lib/dto/mypsm/salary/salary-movement/list-salary-movement.dto';
+import type { GetSalaryMovementScheduleRequestDTO } from '$lib/dto/mypsm/salary/salary-movement/get-salary-movement-schedule-request.dto.js';
+import type { GetSalaryMovementScheduleDTO } from '$lib/dto/mypsm/salary/salary-movement/get-salary-movement-schedule-response.dto.js';
 
 // Meeting Result
 const dropdown = z.string().min(1, { message: 'Sila tetapkan pilihan anda.' });
@@ -82,14 +84,19 @@ export async function load({ params }) {
     //     );
 
     // if (!currentEmployee) throw new Error('Record not found');
-
+    const employeeNumber: string = params.no;
     const meeetingId: DetailSalaryMovementRequestDTO = {
         meetingId: Number(params.id),
     }
 
-    const employeeNumber = params.no;
-    const response: CommonResponseDTO = await SalaryServices.getSalaryMovementDetail(meeetingId)
-    const detailSalaryMovement: DetailSalaryMovementDTO = response.data?.details;
+    const salaryMovementScheduleReq: GetSalaryMovementScheduleRequestDTO = {
+        meetingId: Number(params.id)
+    }
+
+
+
+    const detailSalaryResponse: CommonResponseDTO = await SalaryServices.getSalaryMovementDetail(meeetingId)
+    const detailSalaryMovement: DetailSalaryMovementDTO = detailSalaryResponse.data?.details as DetailSalaryMovementDTO;
 
     const filter: ListSalaryMovementFilterDTO = {
         month: 1,
@@ -102,14 +109,20 @@ export async function load({ params }) {
         orderType: 'asc',
         filter: filter,
     };
-    const filterResponse: CommonResponseDTO = await SalaryServices.getSalaryMovementList(param)
-    const salaryMovementList: SalaryMovementListDTO[] = filterResponse.data?.dataList as SalaryMovementListDTO[];
+    const filterDetailResponse: CommonResponseDTO = await SalaryServices.getSalaryMovementList(param)
+    const salaryMovementList: SalaryMovementListDTO[] = filterDetailResponse.data?.dataList as SalaryMovementListDTO[];
     const currentEmployee: SalaryMovementListDTO | undefined = salaryMovementList.find((staff) => staff.employeeNumber == params.no && staff.meetingId == params.id)
 
+    const salaryMovementScheduleResponse: CommonResponseDTO = await SalaryServices.getSalaryMovementSchedule(salaryMovementScheduleReq);
+    const currentEmployeeSalaryMovementSchedule: GetSalaryMovementScheduleDTO = salaryMovementScheduleResponse.data?.dataList as GetSalaryMovementScheduleDTO; 
+
+
+    console.log(currentEmployeeSalaryMovementSchedule)
     return {
         stepperMeetingResult,
         currentEmployee,
         employeeNumber,
         detailSalaryMovement,
+        currentEmployeeSalaryMovementSchedule,
     };
 }
