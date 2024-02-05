@@ -8,6 +8,7 @@ import http from "$lib/services/provider/service-provider.service";
 import { DetailSalaryMovementRequestDTOConvert, type DetailSalaryMovementRequestDTO } from "$lib/dto/mypsm/salary/salary-movement/detail-salary-movement-request.dto";
 import { EmployeeFinalSalaryDetailRequestDTOConvert, type EmployeeFinalSalaryDetailRequestDTO } from "$lib/dto/mypsm/salary/final-payslip/employee-final-salary-detail-request.dto";
 import { GetSalaryMovementScheduleRequestDTOConvert, type GetSalaryMovementScheduleRequestDTO } from "$lib/dto/mypsm/salary/salary-movement/get-salary-movement-schedule-request.dto";
+import { DetailSalaryMovementApprovalRequestDTOConvert, type DetailSalaryMovementApprovalRequestDTO } from "$lib/dto/mypsm/salary/salary-movement/detail-salary-movement-approval-request.dto";
 
 export class SalaryServices {
 
@@ -23,6 +24,7 @@ export class SalaryServices {
         return CommonResponseConvert.fromResponse(response)
     }
 
+    //detail
     static async getSalaryMovementDetail(param: DetailSalaryMovementRequestDTO){
         const response: Response = await http.post('salaries/get-salary-movement', {
             body: DetailSalaryMovementRequestDTOConvert.toJson(param)
@@ -30,12 +32,18 @@ export class SalaryServices {
         return CommonResponseConvert.fromResponse(response)
     }
 
-    // static async addSalaryMovement(param: AddSalaryMovementRequestDTO){
-    //     const response: Response = await http.post('salaries/add-salary-movement', {
-    //         body: AddSalaryMovementRequestDTOConvert.addSalaryMovementDTOToJson(param)
-    //     }).json();
-    //     return AddSalaryMovementResponseDTOConvert.toAddSalaryMovementResponseDTO(response)
-    // }
+    //add salary movement
+    static async addSalaryMovement(param: AddSalaryMovementRequestDTO){
+        const response: CommonResponseDTO = await http.post('salaries/add-salary-movement', {
+            body: JSON.stringify(param)
+        }).json();
+
+        if (response.status! === 'success') {
+            return response;
+        } else {
+            throw new Error('Unknown error');
+        }
+    }
 
     //salary movement schedule
     static async getSalaryMovementSchedule(param: GetSalaryMovementScheduleRequestDTO){
@@ -55,19 +63,28 @@ export class SalaryServices {
     }
 
 
-    static async getSalaryMovementApprovalDetail(param: CommonListRequestDTO){
+    static async getSalaryMovementApprovalDetail(param: DetailSalaryMovementApprovalRequestDTO){
         const response: Response = await http.post('salaries/get-salary-movement-approval', {
-            body: CommonListRequestConvert.toJson(param)
+            body: DetailSalaryMovementApprovalRequestDTOConvert.toJson(param)
         }).json();
         return CommonResponseConvert.fromResponse(response)
     }
 
-    // static async addSalaryMovement(param: AddSalaryMovementApprovalRequestDTO){
-    //     const response: Response = await http.post('salaries/add-salary-movement', {
-    //         body: AddSalaryMovementApprovalRequestDTOConvert.addSalaryMovementApprovalDTOToJson(param)
-    //     }).json();
-    //     return AddSalaryMovementApprovalResponseDTOConvert.toAddSalaryMovementApprovalResponseDTO(response)
-    // }
+    static async addSalaryMovementApproval(param: AddSalaryMovementApprovalRequestDTO){
+        // const response: Response = await http.post('salaries/add-salary-movement', {
+        //     body: AddSalaryMovementApprovalRequestDTOConvert.addSalaryMovementApprovalDTOToJson(param)
+        // }).json();
+        // return AddSalaryMovementApprovalResponseDTOConvert.toAddSalaryMovementApprovalResponseDTO(response)
+        const response: CommonResponseDTO = await http.post('salaries/add-salary-movement-approval', {
+            body: JSON.stringify(param)
+        }).json();
+
+        if (response.status! === 'success') {
+            return response;
+        } else {
+            throw new Error('Unknown error');
+        }
+    }
    
     //============================ Salary Allowance
 

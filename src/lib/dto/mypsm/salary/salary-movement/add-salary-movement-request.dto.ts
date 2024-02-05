@@ -5,10 +5,10 @@ export interface AddSalaryMovementRequestDTO {
     specialAid:          number;
     specialRaiseType:    string;
     specialRaise:        number;
-    employees:           EmployeeSalaryMovement[];
+    employees:           EmployeeSalaryMovementID[];
 }
 
-export interface EmployeeSalaryMovement {
+export interface EmployeeSalaryMovementID {
     employeeId: number;
 }
 

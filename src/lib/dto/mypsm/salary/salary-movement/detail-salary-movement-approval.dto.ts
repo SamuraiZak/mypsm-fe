@@ -1,8 +1,8 @@
 export interface DetailSalaryMovementApprovalDTO {
-    id:         string;
-    name:       null;
-    remark:     null;
-    isApproved: boolean;
+    id:     number;
+    name:   string;
+    remark: string;
+    status: boolean;
 }
 
 // Converts JSON strings to/from your types
