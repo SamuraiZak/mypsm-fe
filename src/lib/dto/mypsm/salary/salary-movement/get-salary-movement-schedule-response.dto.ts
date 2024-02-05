@@ -6,12 +6,12 @@ export interface GetSalaryMovementScheduleDTO {
 }
 
 // Converts JSON strings to/from your types
-export class Convert {
-    public static toGetSalaryMovementScheduleDTO(json: string): GetSalaryMovementScheduleDTO {
+export class GetSalaryMovementScheduleDTOConvert {
+    public static fromResponse(json: string): GetSalaryMovementScheduleDTO {
         return JSON.parse(json);
     }
 
-    public static getSalaryMovementScheduleDTOToJson(value: GetSalaryMovementScheduleDTO): string {
+    public static toJson(value: GetSalaryMovementScheduleDTO): string {
         return JSON.stringify(value);
     }
 }
