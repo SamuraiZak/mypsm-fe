@@ -67,19 +67,13 @@ export const _clinicDetailsSchema = z.object({
 
 export async function load({ params }) {
     const id: number = Number(params.id);
-
     const applicationForm = await superValidate(_addClinicApplicationScheme);
-
     const verificationForm = await superValidate(_verificationSchema);
-
     const addApproverSupporterForm = await superValidate(
         _addApproverSupporterSchema,
     );
-
     const supportForm = await superValidate(_supportSchema);
-
     const approvalForm = await superValidate(_approveSchema);
-    
     const addDetailForm = await superValidate(_clinicDetailsSchema);
 
     const request: CommonRequestDTO = {

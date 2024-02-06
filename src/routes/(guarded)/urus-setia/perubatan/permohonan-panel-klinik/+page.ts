@@ -15,8 +15,6 @@ export async function load() {
             name: '',
             state: '',
             status: '',
-            applicationDate: '',
-            panelAppointedDate: '',
         },
     };
 

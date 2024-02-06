@@ -60,13 +60,13 @@ export class MedicalServices {
     //  Add Panel Clinic Process Starts Here
     // =================================================================================
     // add clinic application
-    static async addClinicApplication(param: AddClinicAppRequestDTO) {
+    static async addClinicApplication(param: object) {
         try {
             let url: Input = 'medicals/add-clinic';
 
             const response: Response = await http
                 .post(url, {
-                    body: AddClinicAppRequestConvert.toJson(param),
+                    body: JSON.stringify(param),
                 })
                 .json();
 
@@ -88,7 +88,29 @@ export class MedicalServices {
             let url: Input = 'medicals/edit-clinic-process';
 
             const response: Response = await http
-                .post(url, {
+                .put(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    // verification
+    static async getVerifyClinicApp(param: object) {
+        try {
+            let url: Input = 'medicals/get-clinic-process';
+
+            const response: Response = await http
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -112,7 +134,7 @@ export class MedicalServices {
                 'medicals/edit-clinic-approve-process-verification';
 
             const response: Response = await http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -135,7 +157,7 @@ export class MedicalServices {
             let url: Input = 'medicals/edit-clinic-approve-process-approval';
 
             const response: Response = await http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -158,7 +180,7 @@ export class MedicalServices {
             let url: Input = 'medicals/edit-clinic-approve-process-support';
 
             const response: Response = await http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -181,7 +203,7 @@ export class MedicalServices {
             let url: Input = 'medicals/edit-clinic';
 
             const response: Response = await http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -207,7 +229,7 @@ export class MedicalServices {
             let url: Input = 'medicals/get-clinic';
 
             const response: Response = await http
-                .post(url, {
+                .put(url, {
                     body: CommonRequestConvert.toJson(param),
                 })
                 .json();
