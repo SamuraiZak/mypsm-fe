@@ -31,17 +31,20 @@
     import { Toaster } from 'svelte-french-toast';
     import { dateProxy, superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
+    import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import {
-        _confirmData,
-        _pemangkuanFormSchema,
-        _umumFormSchema,
+        _addApprovalScheme,_submitForm
     } from './+page';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import { readonly } from 'svelte/store';
     import { goto } from '$app/navigation';
-
+    import {
+        approveOptions,
+        certifyOptions,
+        supportOptions,
+    } from '$lib/constants/mypsm/radio-option-constants';
     export let data: PageData;
-
+    let result:string='';
     let activeStepper = 0;
 
     let disabled = false;
@@ -64,6 +67,24 @@
             }
         });
     }
+    const { form, errors, enhance } = superForm(data.approvalForm, {
+        SPA: true,
+        validators: _addApprovalScheme,
+        onUpdate(event) {},
+        onSubmit() {
+            _submitForm($form).then((value) => {
+                result = value.result;
+
+                if (result == 'success') {
+                    getLoginSuccessToast().then(() => {
+                        goto('/pengarah-khidmat-pengurusan/gaji/gaji-elaun-kakitangan');
+                    });
+                } else {
+                    getErrorToast();
+                }
+            });
+        },
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -546,14 +567,7 @@
                 </CustomTabContent>
                 <!-- Pelarasan Gaji -->
                 <CustomTabContent title="Pelarasan Gaji">
-                    <SectionHeader title="Senarai Penambahan"
-                        ><TextIconButton
-                            primary
-                            label="Selesai"
-                            onClick={() => confirm()}
-                            ><SvgCheck /></TextIconButton
-                        ></SectionHeader
-                    >
+                    <SectionHeader title="Senarai Penambahan"></SectionHeader>
                     {#each data.props.employeeAdjustmentData as adjustmentData}
                         <div
                             class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 rounded border border-system-primary p-2.5 text-black"
@@ -599,6 +613,61 @@
                     {/each}
                 </CustomTabContent>
             </CustomTab>
+        </StepperContentBody>
+    </StepperContent>
+    <StepperContent>
+        <StepperContentHeader title="Pengesahan" >
+            <button
+                    on:click={() => {
+                        console.log();
+                    }}
+                    type="submit"
+                    form="addApprovalForm"
+                    class="flex h-7 min-h-7 flex-row items-center justify-center gap-1 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-systemBlue-light px-2.5 py-0 text-ios-basic-white"
+                >
+                    <!-- icon -->
+                    <div
+                        class="flex h-full flex-row items-center justify-center"
+                    >
+                        <span class="leading-loose">
+                            <!-- icon slot -->
+
+                            <slot />
+                        </span>
+                    </div>
+
+                    <!-- label -->
+                    <div
+                        class="flex h-full flex-row items-center justify-center"
+                    >
+                        <p class="text-sm font-normal leading-loose">Simpan</p>
+                    </div>
+                </button>
+            </StepperContentHeader>
+        <StepperContentBody>
+
+                <form
+                    id="addApprovalForm"
+                    method="POST"
+                    use:enhance
+                    class="w-full space-y-2 p-2"
+                >
+                    <div class="flex w-full flex-col gap-2">
+                        <TextField
+                            id="Remark"
+                            label={'Remark'}
+                            bind:value={$form.remark}
+                        ></TextField>
+                    </div>
+                    <div class="flex w-full flex-col gap-2">
+                    <RadioSingle
+                        name="status"
+                        options={certifyOptions}
+                        legend={'Keputusan'}
+                        bind:userSelected={$form.status}
+                    ></RadioSingle>
+                    </div>
+                </form>
         </StepperContentBody>
     </StepperContent>
 </Stepper>

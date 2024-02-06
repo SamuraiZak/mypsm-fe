@@ -1,4 +1,5 @@
 import { CommonResponseConstant } from '$lib/constants/core/common-response-constant';
+import type { CommonApprovalDTO } from '$lib/dto/core/common/common-approval-request.dto';
 import {
     CommonListRequestConvert,
     type CommonListRequestDTO,
@@ -126,6 +127,29 @@ export class SalaryServices {
             return CommonResponseConstant.httpError;
         }
     }
+
+    static async getSalaryAllowancePengarahList(param: CommonListRequestDTO) {
+        try {
+            // Change the url here
+            const url: Input = 'salaries/allowance-approvals';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
     static async getSalaryAllowance(param: DetailAllowanceRequestDTO) {
         try {
             // Change the url here
@@ -200,6 +224,98 @@ export class SalaryServices {
             const response: Response = await http
                 .post(url, {
                     body: DetailAllowanceRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    static async getSalaryAllowanceActing(param: DetailAllowanceRequestDTO) {
+        try {
+            // Change the url here
+            const url: Input = 'salaries/get-allowance-acting';
+
+            const response: Response = await http
+                .post(url, {
+                    body: DetailAllowanceRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    static async getSalaryAllowanceAdjustment(
+        param: DetailAllowanceRequestDTO,
+    ) {
+        try {
+            // Change the url here
+            const url: Input = 'salaries/get-allowance-adjustment';
+
+            const response: Response = await http
+                .post(url, {
+                    body: DetailAllowanceRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    static async addSalaryAllowanceAdjustment(
+        param: DetailAllowanceRequestDTO,
+    ) {
+        try {
+            // Change the url here
+            const url: Input = 'salaries/add-allowance-adjustment';
+
+            const response: Response = await http
+                .post(url, {
+                    body: DetailAllowanceRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    static async addSalaryAllowanceApproval(param: CommonApprovalDTO) {
+        try {
+            // Change the url here
+            const url: Input = 'salaries/add-allowance-approval';
+
+            const response: Response = await http
+                .post(url, {
+                    body: JSON.stringify(param),
                 })
                 .json();
 
