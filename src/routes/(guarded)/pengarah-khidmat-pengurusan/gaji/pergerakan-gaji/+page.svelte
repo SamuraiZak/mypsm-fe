@@ -110,9 +110,9 @@
         class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
     >
         <!-- Table filter placeholder -->
-        <FilterContainer>
+        <!-- <FilterContainer> -->
             <!-- Select dropdowns -->
-            <DropdownSelect
+            <!-- <DropdownSelect
                 toolTipID="bulanTooltip"
                 hasTooltip={true}
                 id="bulan-dropdown"
@@ -136,7 +136,7 @@
             <TextIconButton label="Cari" primary onClick={() => {}}>
                 <SvgManifyingGlass />
             </TextIconButton>
-        </SectionHeader>
+        </SectionHeader> -->
         <!-- <div class="flex max-h-full w-full flex-col items-start justify-start">
             <DynamicTable
                 hasCheckbox

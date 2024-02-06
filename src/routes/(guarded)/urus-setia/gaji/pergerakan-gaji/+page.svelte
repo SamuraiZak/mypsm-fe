@@ -66,7 +66,7 @@
         }
     }
 
-    // Annual Salary Increment
+    // Anual Salary Increment
     const {
         form: annualSalaryIncrementForm,
         errors: annualSalaryIncrementErrors,
@@ -122,6 +122,8 @@
         { value: 7, name: 'Julai' },
         { value: 10, name: 'Oktober' },
     ];
+
+    console.log(selectedEmployee)
 </script>
 
 <!-- content header starts here -->

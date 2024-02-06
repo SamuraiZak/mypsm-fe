@@ -116,17 +116,17 @@ export async function load() {
     //param for employee list
     const employeeListParam: CommonListRequestDTO = {
         pageNum: 1,
-        pageSize: 5,
+        pageSize: 15,
         orderBy: 'createdAt',
         orderType: 'asc',
         filter: {
-            "employeeNumber": "",
-            "name": "",
-            "identityCard": "",
-            "program": "",
-            "scheme": "",
-            "grade": "",
-            "position": ""
+            employeeNumber: "",
+            name: "",
+            identityCard: "",
+            program: "",
+            scheme: "",
+            grade: "",
+            position: ""
         }
     }
 
