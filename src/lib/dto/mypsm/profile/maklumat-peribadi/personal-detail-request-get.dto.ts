@@ -28,3 +28,14 @@ export interface RelationDetail {
     position:       string;
     relationship:   string;
 }
+
+// Converts JSON strings to/from your types
+export class GetPersonalDetailRequestConvert {
+    public static fromJson(json: string): GetPersonalDetailRequest {
+        return JSON.parse(json);
+    }
+
+    public static toJson(value: GetPersonalDetailRequest): string {
+        return JSON.stringify(value);
+    }
+}

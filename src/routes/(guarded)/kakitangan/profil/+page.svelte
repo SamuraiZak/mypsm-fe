@@ -27,7 +27,6 @@
                 type="cancel"
                 onClick={() => {
                     isEditing = !isEditing;
-
                     disabled = !disabled;
                 }}
             />
@@ -61,7 +60,7 @@
 
         <!-- Gaji & Elaun Tab -->
         <TabContent paddingClass="p-0" title="Gaji & Elaun">
-            <GajiElaun></GajiElaun>
+            <GajiElaun {data}></GajiElaun>
         </TabContent>
 
         <!-- Rekod Kesihatan Tab -->

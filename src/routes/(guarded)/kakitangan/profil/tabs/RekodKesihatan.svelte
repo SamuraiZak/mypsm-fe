@@ -89,7 +89,7 @@
         taintedMessage:
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
-    let errorData: any;
+   console.log(data.personalMedicalAssessmentResponse)
 </script>
 
 <Stepper>
@@ -1291,7 +1291,7 @@
                         name="height"
                         label="Tinggi (cm)"
                         type="text"
-                        bind:value={$pemeriksaanDoktorForm.height}
+                        value={data.personalMedicalAssessmentResponse.height}
                     ></TextField>
 
                     {#if $pemeriksaanDoktorErrors.height}
@@ -1308,7 +1308,7 @@
                         name="weight"
                         label="berat (kg)"
                         type="text"
-                        bind:value={$pemeriksaanDoktorForm.weight}
+                        bind:value={data.personalMedicalAssessmentResponse.weight}
                     ></TextField>
                     {#if $pemeriksaanDoktorErrors.weight}
                         <span
@@ -1322,7 +1322,7 @@
                         name="BMI"
                         label="BMI"
                         type="text"
-                        bind:value={$pemeriksaanDoktorForm.BMI}
+                        bind:value={data.personalMedicalAssessmentResponse.BMI}
                     ></TextField>
 
                     {#if $pemeriksaanDoktorErrors.BMI}
@@ -1337,7 +1337,7 @@
                         name="BPM"
                         label="Denyutan Nadi (setiap minit )"
                         type="text"
-                        bind:value={$pemeriksaanDoktorForm.BPM}
+                        bind:value={data.personalMedicalAssessmentResponse.BPM}
                     ></TextField>
 
                     {#if $pemeriksaanDoktorErrors.BPM}
@@ -1352,7 +1352,7 @@
                         name="BP"
                         label="BP (mmHg)"
                         type="text"
-                        bind:value={$pemeriksaanDoktorForm.BP}
+                        bind:value={data.personalMedicalAssessmentResponse.BP}
                     ></TextField>
 
                     {#if $pemeriksaanDoktorErrors.BP}
@@ -1366,7 +1366,7 @@
                         {options}
                         name="paleSkin"
                         legend="Kulit pucat"
-                        bind:userSelected={$pemeriksaanDoktorForm.paleSkin}
+                        bind:userSelected={data.personalMedicalAssessmentResponse.paleSkin}
                     ></RadioSingle>
                     {#if $pemeriksaanDoktorErrors.paleSkin}
                         <span
@@ -1392,7 +1392,7 @@
                         {options}
                         name="edema"
                         legend="Edama"
-                        bind:userSelected={$pemeriksaanDoktorForm.edema}
+                        bind:userSelected={data.personalMedicalAssessmentResponse.edema}
                     ></RadioSingle>
                     {#if $pemeriksaanDoktorErrors.edema}
                         <span
@@ -1405,7 +1405,7 @@
                         {options}
                         name="jaundice"
                         legend="Penyakit kuning"
-                        bind:userSelected={$pemeriksaanDoktorForm.jaundice}
+                        bind:userSelected={data.personalMedicalAssessmentResponse.jaundice}
                     ></RadioSingle>
                     {#if $pemeriksaanDoktorErrors.jaundice}
                         <span
@@ -1418,7 +1418,7 @@
                         {options}
                         name="lymphGlands"
                         legend="Kelenjar limfa"
-                        bind:userSelected={$pemeriksaanDoktorForm.lymphGlands}
+                        bind:userSelected={data.personalMedicalAssessmentResponse.lymphGlands}
                     ></RadioSingle>
                     {#if $pemeriksaanDoktorErrors?.lymphGlands}
                         <span
@@ -1431,7 +1431,7 @@
                         {options}
                         name="skinDisease"
                         legend="Penyakit kulit"
-                        bind:userSelected={$pemeriksaanDoktorForm.skinDisease}
+                        bind:userSelected={data.personalMedicalAssessmentResponse.skinDisease}
                     ></RadioSingle>
                     {#if $pemeriksaanDoktorErrors.skinDisease}
                         <span
@@ -1478,7 +1478,7 @@
                                     name="unaidedVisionRight"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.unaidedVisionRight}
+                                    bind:value={data.personalMedicalAssessmentResponse.unaidedVisionRight}
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.unaidedVisionRight}
                                     <span
@@ -1579,7 +1579,7 @@
                                     name="aidedVisionLeft"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.aidedVisionLeft}
+                                    bind:value={data.personalMedicalAssessmentResponse.aidedVisionLeft}
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.aidedVisionLeft}
                                     <span
@@ -1598,7 +1598,7 @@
                                     name="aidedVisionRight"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.aidedVisionRight}
+                                    bind:value={data.personalMedicalAssessmentResponse.aidedVisionRight}
                                 ></TextField>
 
                                 {#if $pemeriksaanDoktorErrors.aidedVisionRight}
@@ -1659,7 +1659,7 @@
                                     name="colourVision"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.colourVision}
+                                    bind:value={data.personalMedicalAssessmentResponse.colourVision}
                                 ></TextField>
 
                                 {#if $pemeriksaanDoktorErrors.colourVision}
@@ -1699,7 +1699,7 @@
                                     name="fundoscopic"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.fundoscopic}
+                                    bind:value={data.personalMedicalAssessmentResponse.fundoscopic}
                                 ></TextField>
 
                                 {#if $pemeriksaanDoktorErrors.fundoscopic}
@@ -1747,7 +1747,7 @@
                                     name="ear"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.ear}
+                                    bind:value={data.personalMedicalAssessmentResponse.ear}
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.ear}
                                     <span
@@ -1789,7 +1789,7 @@
                                     name="dental"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.dental}
+                                    bind:value={data.personalMedicalAssessmentResponse.dental}
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.dental}
                                     <span
@@ -1828,7 +1828,7 @@
                                     name="neck"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.neck}
+                                    bind:value={data.personalMedicalAssessmentResponse.neck}
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.neck}
                                     <span
@@ -1871,7 +1871,7 @@
                                     name="cardiovascular"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.cardiovascular}
+                                    bind:value={data.personalMedicalAssessmentResponse.cardiovascular}
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.cardiovascular}
                                     <span
@@ -1919,7 +1919,7 @@
                                     name="breathingExam"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.breathingExam}
+                                    bind:value={data.personalMedicalAssessmentResponse.breathingExam}
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.breathingExam}
                                     <span
@@ -1958,7 +1958,7 @@
                                     name="xray"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.xray}
+                                    bind:value={data.personalMedicalAssessmentResponse.xray}
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.xray}
                                     <span
@@ -1979,7 +1979,7 @@
                         name="xrayTaken"
                         label="Tarikh pengambilan x-ray"
                         type="text"
-                        bind:value={$pemeriksaanDoktorForm.xrayTaken}
+                        bind:value={data.personalMedicalAssessmentResponse.xrayTaken}
                     ></TextField>
                     {#if $pemeriksaanDoktorErrors.xrayTaken}
                         <span
@@ -1996,7 +1996,7 @@
                         name="xrayLocation"
                         label="Lokasi pengambilan x-ray"
                         type="text"
-                        bind:value={$pemeriksaanDoktorForm.xrayLocation}
+                        bind:value={data.personalMedicalAssessmentResponse.xrayLocation}
                     ></TextField>
 
                     {#if $pemeriksaanDoktorErrors.xrayLocation}
@@ -2014,7 +2014,7 @@
                         name="xrayReference"
                         label="Nombor Rujukan x-ray"
                         type="text"
-                        bind:value={$pemeriksaanDoktorForm.xrayReference}
+                        bind:value={data.personalMedicalAssessmentResponse.xrayReference}
                     ></TextField>
 
                     {#if $pemeriksaanDoktorErrors.xrayReference}
@@ -2060,7 +2060,7 @@
                                     name="abdomenHernia"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.abdomenHernia}
+                                    bind:value={data.personalMedicalAssessmentResponse.abdomenHernia}
                                 ></TextField>
 
                                 {#if $pemeriksaanDoktorErrors.abdomenHernia}
@@ -2104,7 +2104,7 @@
                                     name="mentalState"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.mentalState}
+                                    bind:value={data.personalMedicalAssessmentResponse.mentalState}
                                 ></TextField>
 
                                 {#if $pemeriksaanDoktorErrors.mentalState}
@@ -2149,7 +2149,7 @@
                                     name="musculoskeletal"
                                     label=""
                                     type="text"
-                                    bind:value={$pemeriksaanDoktorForm.musculoskeletal}
+                                    bind:value={data.personalMedicalAssessmentResponse.musculoskeletal}
                                 ></TextField>
 
                                 {#if $pemeriksaanDoktorErrors.musculoskeletal}
@@ -2201,7 +2201,7 @@
                         name="microscopic"
                         label="Mikroskopi"
                         type="text"
-                        bind:value={$pemeriksaanDoktorForm.microscopic}
+                        bind:value={data.personalMedicalAssessmentResponse.microscopic}
                     ></TextField>
 
                     {#if $pemeriksaanDoktorErrors.microscopic}

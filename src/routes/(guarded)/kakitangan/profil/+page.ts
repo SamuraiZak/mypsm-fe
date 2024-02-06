@@ -12,13 +12,17 @@ import type {
     MedicalHistory,
     PersonalMedicalRecordResponseData,
 } from '$lib/view-models/mypsm/profile/profile-get-personal-medical-record-history-response.modal';
-import type { GetPersonalDetailResponse } from '$lib/view-models/mypsm/profile/proflle-get-personal-detail-response.modal';
+import type { GetPersonalDetailResponse } from '$lib/dto/mypsm/profile/maklumat-peribadi/personal-detail-response-get.dto';
 import type { PutPersonalDetailRequest } from '$lib/view-models/mypsm/profile/proflle-put-personal-detail-request.modal';
 import type { PutPersonalDetailResponse } from '$lib/view-models/mypsm/profile/proflle-put-personal-detail-response.modal.js';
 import { error, fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
+import type { GetPersonalServiceResponse } from '$lib/dto/mypsm/profile/maklumat-peribadi/personal-service-response-get.dto';
+import type { GetPersonalSalaryAllowencesResponse } from '$lib/dto/mypsm/profile/gaji-elaun/personal-salary-allowances-response-get.dto';
+import type { GetPersonalMedicalGeneralAssessmentResponse } from '$lib/dto/mypsm/profile/rekod-kesihatan/personal-medical-record-general-assessment-response-get.dto';
+
 
 // =========================================================================
 // z validation schema and submit function for the new employment form fields
@@ -216,7 +220,8 @@ export const _stepperMaklumatPerkhidmatan = z.object({
     placement: maklumatPerkhidmatanSelectSchema,
     serviceType: maklumatPerkhidmatanSelectSchema,
     bulanKGT: maklumatPerkhidmatanSelectSchema,
-    retirementBenefit: maklumatPerkhidmatanSelectSchema,
+    retirementBenefit: booleanSchema,
+    pensionScheme: shortTextSchema,
 
     EPFNumber: shortTextSchema,
     SOCSO: shortTextSchema,
@@ -232,7 +237,7 @@ export const _stepperMaklumatPerkhidmatan = z.object({
     EPW: shortTextSchema,
     COLA: shortTextSchema,
     eligibleLeaveCount: shortTextSchema,
-    pensionScheme: shortTextSchema,
+
     maximumSalary: shortTextSchema,
 
     civilServiceStartDate: dateStepper2max,
@@ -448,10 +453,10 @@ export const _stepperPemeriksaanDoktor = z.object({
     sugar: booleanSchema,
     albumin: booleanSchema,
 
-    height: numberIdSchema,
-    weight: numberIdSchema,
-    BMI: numberIdSchema,
-    BPM: numberIdSchema,
+    height:shortTextSchema ,
+    weight: shortTextSchema,
+    BMI: shortTextSchema,
+    BPM: shortTextSchema,
     BP: shortTextSchema,
     unaidedVisionLeft: shortTextSchema,
     unaidedVisionRight: shortTextSchema.nullable(),
@@ -604,6 +609,24 @@ export const _approverResultSchema = z.object({
 //=====================================================
 
 export const load = async () => {
+
+
+    const personalDetailResponse: GetPersonalDetailResponse =
+        await ProfileService.getPersonalDetail();
+
+        const personalServiceResponse: GetPersonalServiceResponse =
+        await ProfileService.getServiceDetail();
+
+    // salary
+    const personalSalaryResponse: GetPersonalSalaryAllowencesResponse[] =
+    await ProfileService.getPersonalSalary();
+
+    // Pemeriksaan Doktor
+
+    const personalMedicalAssessmentResponse: GetPersonalMedicalGeneralAssessmentResponse =
+    await ProfileService.getPersonalMedicalGenaralAssesment();
+
+
     // const personalDetailResponse: GetPersonalDetailResponse =
     // await EmployeeService.ProfileDetail(PutPersonalDetailRequest);
     // const personalDetailResponse.data.
@@ -668,7 +691,10 @@ export const load = async () => {
         addFamilyModal,
         addNonFamilyModal,
         addNextOfKinModal,
-
+        personalDetailResponse,
+        personalServiceResponse,
+        personalSalaryResponse,
+        personalMedicalAssessmentResponse,
     };
 };
 
