@@ -6,7 +6,10 @@ import http from '$lib/services/provider/service-provider.service';
 import type { AddApprovalResultRequestBody } from '$lib/view-models/mypsm/common/add-approval-results-request.model';
 import type { DocumentData } from '$lib/view-models/mypsm/common/add-documents-request.model';
 import type { CandidateIDRequestBody } from '$lib/view-models/mypsm/common/candidate-id-request.view-model';
-import { EmployeesListResponseConvert, type EmployeesListResponseViewModel } from '$lib/view-models/mypsm/employee/employee-list-response';
+import {
+    EmployeesListResponseConvert,
+    type EmployeesListResponseViewModel,
+} from '$lib/view-models/mypsm/employee/employee-list-response';
 import type { CandidateActivityRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-activity-request.view-model';
 import { type NewHireActivity } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-activity-response.view-model';
 import type { NewHireApproverTableListRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-approver-table-list-request.model';
@@ -36,6 +39,8 @@ import type { PensionTableFilter } from '$lib/view-models/mypsm/perjawatan/pensi
 import type { PensionTableResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-list-details-response.view-model';
 import type { RequestSuccessBody } from '$lib/view-models/mypsm/request-success.view-model';
 
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
+import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { CandidateDependenciesDetailRequestBody } from '$lib/view-models/mypsm/perjawatan/new-hire/new-hire-candidate-dependencies-details-request.model';
 import type { AddPensionDetailRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-add-pension-detail-request.view-model';
 import type { AddPensionDetailResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-add-pension-detail-response.view-model';
@@ -61,23 +66,26 @@ import type { PensionListSupportRequest } from '$lib/view-models/mypsm/perjawata
 import type { PensionListSupportResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-list-support-response.model';
 import type { PensionPersonalDetailRequest } from '$lib/view-models/mypsm/perjawatan/pension/pension-personal-detail-request.view-model';
 import type { PensionPersonalDetailResponse } from '$lib/view-models/mypsm/perjawatan/pension/pension-personal-detail-response.view-model';
-import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
-import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 
 export class EmployeeService {
     // get list of employee
     static async getEmployeeList() {
-        const response: EmployeesListResponseViewModel = await http.get('employees/list').json();
+        const response: CommonResponseDTO = await http
+            .get('employees/list')
+            .json();
 
         return response;
         // return EmployeesListResponseConvert.fromResponse(response);
     }
 
-    static async getNewHireList(param: CommonListRequestDTO): Promise<CommonResponseDTO> {
-        const response: CommonResponseDTO = await http.post('employments/new-hires', {
-            body: JSON.stringify(param),
-        })
-        .json()
+    static async getNewHireList(
+        param: CommonListRequestDTO,
+    ): Promise<CommonResponseDTO> {
+        const response: CommonResponseDTO = await http
+            .post('employments/new-hires', {
+                body: JSON.stringify(param),
+            })
+            .json();
 
         return response;
     }
