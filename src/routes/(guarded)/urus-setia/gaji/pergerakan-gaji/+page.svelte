@@ -109,26 +109,18 @@
         }
     }
 
-    function popSelected(data: CommonEmployeeDTO) {
-        let tempSelected = selectedEmployee;
-        tempSelected = tempSelected.filter((item) => item !== data);
+    // function popSelected(data: CommonEmployeeDTO) {
+    //     let tempSelected = selectedEmployee;
+    //     tempSelected = tempSelected.filter((item) => item !== data);
 
-        selectedEmployee = tempSelected;
-    }
+    //     selectedEmployee = tempSelected;
+    // }
 
     const monthLookup: DropdownOptionsInterface[] = [
         { value: 1, name: 'Januari' },
-        { value: 2, name: 'Februari' },
-        { value: 3, name: 'Mac' },
         { value: 4, name: 'April' },
-        { value: 5, name: 'Mei' },
-        { value: 6, name: 'Jun' },
         { value: 7, name: 'Julai' },
-        { value: 8, name: 'Ogos' },
-        { value: 9, name: 'September' },
         { value: 10, name: 'Oktober' },
-        { value: 11, name: 'November' },
-        { value: 12, name: 'Disember' },
     ];
 </script>
 
@@ -311,7 +303,7 @@
                                 >
                             {/if}
                         </div>
-                        <div class="ml-2.5 w-full flex flex-col gap-2.5">
+                        <div class="ml-2.5 flex w-full flex-col gap-2.5">
                             <Radio
                                 disabled={!isSpecialIncrementChecked}
                                 name="specialRaiseType"
@@ -383,7 +375,6 @@
                                         >{$annualSalaryIncrementErrors.specialRaiseType}</span
                                     >
                                 {/if}</Radio -->
-                                
                             </Radio>
                         </div>
                     </Checkbox>
@@ -405,14 +396,15 @@
     <div class="flex h-fit w-full flex-col items-start justify-center">
         <!-- Table for 'Layak' candidates -->
         <ContentHeader
-            title="Tindakan: Tetapkan kepada TIDAK Layak"
+            title="Senarai Kakitangan Yang Telah Dipilih"
             description=""
-            ><TextIconButton label="Pindah" onClick={() => {}}>
-                <SvgArrowDownTail />
-            </TextIconButton></ContentHeader
         >
-        <SectionHeader title="Senarai Rekod Layak Mengikut Bulan"
-        ></SectionHeader>
+            <!-- <TextIconButton label="Pindah" onClick={() => {}}>
+                <SvgArrowDownTail />
+            </TextIconButton> -->
+        </ContentHeader>
+        <!-- <SectionHeader title="Senarai Rekod Layak Mengikut Bulan"
+        ></SectionHeader> -->
 
         <DynamicTable tableItems={selectedEmployee} />
         <!-- <DynamicTable
@@ -453,7 +445,8 @@
         <ContentHeader
             title="Tindakan: Pilih kakitangan yang layak."
             description=""
-            ><TextIconButton
+            >
+            <!-- <TextIconButton
                 label="Pindah"
                 onClick={() => {
                     () => console.log('here');
@@ -461,8 +454,8 @@
                 }}
             >
                 <SvgArrowUp></SvgArrowUp>
-            </TextIconButton></ContentHeader
-        >
+            </TextIconButton> -->
+            </ContentHeader>
         <!-- <SectionHeader title="Senarai Rekod Layak Mengikut Bulan"
         /> -->
         <SectionHeader title="Senarai Kakitangan" />
