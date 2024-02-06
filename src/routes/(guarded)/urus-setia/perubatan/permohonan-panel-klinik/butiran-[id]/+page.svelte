@@ -1001,7 +1001,7 @@
                     <button
                         on:click={() => {}}
                         type="submit"
-                        form="addClinicForm"
+                        form="confirmationForm"
                         class="flex h-7 min-h-7 flex-row items-center justify-center gap-1 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-systemBlue-light px-2.5 py-0 text-ios-basic-white"
                     >
                         <!-- icon -->
@@ -1032,50 +1032,38 @@
                 ></SectionHeader>
                 <div class="flex w-full flex-col items-start justify-start">
                     <form
-                        id="approvalForm"
+                        id="confirmationForm"
                         method="POST"
                         use:approvalEnhance
                         class="w-full max-w-[800px] space-y-2 p-2"
                     >
-                        <!-- remarks -->
-                        <div class="flex w-full flex-col gap-2">
-                            <TextField
-                                disabled={data.props.step != 'approval' &&
-                                    data.props.result == 'success'}
-                                bind:value={$approvalForm.remark}
-                                id="remark"
-                                label={'Ulasan'}
-                            ></TextField>
-                        </div>
-                        <div class="h-5 w-full items-end justify-end">
-                            {#if $approvalErrors.remark}
-                                <p
-                                    class="text-end text-sm italic text-ios-basic-destructiveRed"
-                                >
-                                    {$approvalErrors.remark}
-                                </p>
-                            {/if}
-                        </div>
+                    <p class="text-base">Sila klik butang di bawah untuk mengesahkan permohonan ini dan sistem akan menghantar surat perlantikan melalui alamat emel yang didaftar.</p>
+                        <button
+                            on:click={() => {}}
+                            type="submit"
+                            form="confirmationForm"
+                            class="flex h-7 min-h-7 flex-row items-center justify-center gap-1 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-systemBlue-light px-2.5 py-0 text-ios-basic-white"
+                        >
+                            <!-- icon -->
+                            <div
+                                class="flex h-full flex-row items-center justify-center"
+                            >
+                                <span class="leading-loose">
+                                    <!-- icon slot -->
 
-                        <!-- verification -->
-                        <div class="flex w-full flex-col gap-2">
-                            <RadioSingle
-                                options={verificationOption}
-                                legend="Pelulusan Permohonan"
-                                bind:userSelected={$approvalForm.status}
-                                disabled={data.props.step != 'approval' &&
-                                    data.props.result == 'success'}
-                            />
-                        </div>
-                        <div class="h-5 w-full items-end justify-end">
-                            {#if $approvalErrors.status}
-                                <p
-                                    class="text-end text-sm italic text-ios-basic-destructiveRed"
-                                >
-                                    {$supportErrors.status}
+                                    <slot />
+                                </span>
+                            </div>
+
+                            <!-- label -->
+                            <div
+                                class="flex h-full flex-row items-center justify-center"
+                            >
+                                <p class="text-sm font-normal leading-loose">
+                                    Sahkan & Hantar Emel
                                 </p>
-                            {/if}
-                        </div>
+                            </div>
+                        </button>
                     </form>
                 </div>
             </StepperContentBody>

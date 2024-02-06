@@ -134,7 +134,7 @@ export class MedicalServices {
                 'medicals/edit-clinic-approve-process-verification';
 
             const response: Response = await http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -157,7 +157,7 @@ export class MedicalServices {
             let url: Input = 'medicals/edit-clinic-approve-process-approval';
 
             const response: Response = await http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -180,7 +180,7 @@ export class MedicalServices {
             let url: Input = 'medicals/edit-clinic-approve-process-support';
 
             const response: Response = await http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -203,7 +203,7 @@ export class MedicalServices {
             let url: Input = 'medicals/edit-clinic';
 
             const response: Response = await http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -229,7 +229,7 @@ export class MedicalServices {
             let url: Input = 'medicals/get-clinic';
 
             const response: Response = await http
-                .post(url, {
+                .put(url, {
                     body: CommonRequestConvert.toJson(param),
                 })
                 .json();
