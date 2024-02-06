@@ -90,7 +90,6 @@
     const isReadonlyDocumentFormStepper = writable<boolean>();
     const isSuccessServiceFormResponse = writable<boolean>();
     const isReadonlyServiceFormStepper = writable<boolean>();
-
     export let openAcademicInfoModal: boolean = false;
 
     $: {
@@ -586,70 +585,34 @@
                 <p class={stepperFormTitleClass}>Maklumat Peribadi</p>
                 <TextField
                     {disabled}
-                    hasError={!!$errors.employeeNumber}
                     name="employeeNumber"
                     label={'No. Pekerja'}
                     type="text"
-                    bind:value={$form.employeeNumber}
+                    value={data.personalDetailResponse.employeeNumber}
                 ></TextField>
-
-                {#if $errors.employeeNumber}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.employeeNumber}</span
-                    >
-                {/if}
-
-                <DropdownSelect
-                    {disabled}
-                    hasError={!!$errors.statusPekerjaan}
-                    dropdownType="label-left-full"
-                    id="statusPekerjaan"
-                    label="Status Pekerjaan"
-                    bind:value={$form.statusPekerjaan}
-                    options={[
-                        { value: '1', name: 'Aktif' },
-                        { value: '2', name: 'Tidak Aktif' },
-                    ]}
-                ></DropdownSelect>
-                {#if $errors.statusPekerjaan}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.statusPekerjaan}</span
-                    >
-                {/if}
 
                 <TextField
                     {disabled}
-                    hasError={!!$errors.identityCardNumber}
+                    id="statusPekerjaan"
+                    label="Status Pekerjaan"
+                    bind:value={data.personalDetailResponse.email}
+                ></TextField>
+
+                <TextField
+                    {disabled}
                     name="identityCardNumber"
                     label={'No. Kad Pengenalan'}
                     type="text"
-                    bind:value={$form.identityCardNumber}
+                    value={data.personalDetailResponse.identityCardNumber}
                 ></TextField>
-
-                {#if $errors.identityCardNumber}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.identityCardNumber}</span
-                    >
-                {/if}
 
                 <TextField
                     {disabled}
-                    hasError={!!$errors.fullName}
                     name="fullName"
                     label={'Nama Penuh'}
                     type="text"
-                    bind:value={$form.fullName}
+                    value={data.personalDetailResponse.fullName}
                 ></TextField>
-
-                {#if $errors.fullName}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.fullName}</span
-                    >
-                {/if}
 
                 <TextField
                     {disabled}
@@ -1012,18 +975,14 @@
                 >
                     <p class={stepperFormTitleClass}>Maklumat Perkhidmatan</p>
 
-                    <DropdownSelect
+                    <TextField
                         {disabled}
                         hasError={!!$maklumatPerkhidmatanErrors.currentGrade}
-                        dropdownType="label-left-full"
                         id="currentGrade"
                         label="Gred Semasa"
-                        bind:value={$maklumatPerkhidmatanForm.currentGrade}
-                        options={[
-                            { value: '1', name: '41' },
-                            { value: '2', name: '54' },
-                        ]}
-                    ></DropdownSelect>
+                        bind:value={data.personalServiceResponse.currentGrade}
+
+                    ></TextField>
                     {#if $maklumatPerkhidmatanErrors.currentGrade}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
@@ -1031,18 +990,13 @@
                         >
                     {/if}
 
-                    <DropdownSelect
+                    <TextField
                         {disabled}
                         hasError={!!$maklumatPerkhidmatanErrors.currentPosition}
-                        dropdownType="label-left-full"
                         id="currentPosition"
                         label="Jawatan"
-                        bind:value={$maklumatPerkhidmatanForm.currentPosition}
-                        options={[
-                            { value: '1', name: '41' },
-                            { value: '2', name: '54' },
-                        ]}
-                    ></DropdownSelect>
+                        bind:value={data.personalServiceResponse.currentPosition}
+                    ></TextField>
                     {#if $maklumatPerkhidmatanErrors.currentPosition}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
@@ -1050,36 +1004,26 @@
                         >
                     {/if}
 
-                    <DropdownSelect
+                    <TextField
                         {disabled}
                         hasError={!!$maklumatPerkhidmatanErrors.placement}
-                        dropdownType="label-left-full"
                         id="placement"
                         label="Penempatan"
-                        bind:value={$maklumatPerkhidmatanForm.placement}
-                        options={[
-                            { value: '1', name: 'Kuala Lumpur' },
-                            { value: '2', name: 'Sarawak' },
-                        ]}
-                    ></DropdownSelect>
+                        bind:value={data.personalServiceResponse.placement}
+                    ></TextField>
                     {#if $maklumatPerkhidmatanErrors.placement}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$maklumatPerkhidmatanErrors.placement}</span
                         >
                     {/if}
-                    <DropdownSelect
+                    <TextField
                         {disabled}
                         hasError={!!$maklumatPerkhidmatanErrors.serviceType}
-                        dropdownType="label-left-full"
                         id="tarafPerkhidmatan"
                         label="Taraf Perkhidmatan"
-                        bind:value={$maklumatPerkhidmatanForm.serviceType}
-                        options={[
-                            { value: '1', name: 'TETAP' },
-                            { value: '2', name: 'SEMENTARA' },
-                        ]}
-                    ></DropdownSelect>
+                        bind:value={data.personalServiceResponse.serviceType}
+                    ></TextField>
                     {#if $maklumatPerkhidmatanErrors.serviceType}
                         <span
                             class="ml-[220px] font-sans text-sm italic text-system-danger"
@@ -1093,7 +1037,7 @@
                         name="effectiveDate"
                         handleDateChange
                         label="Tarikh Kuatkuasa Lantikan Semasa"
-                        bind:selectedDate={$maklumatPerkhidmatanForm.effectiveDate}
+                        bind:selectedDate={data.personalServiceResponse.effectiveDate}
                     ></DateSelector>
                     {#if $maklumatPerkhidmatanErrors.effectiveDate}
                         <span
@@ -1122,7 +1066,7 @@
                         name="EPFNumber"
                         label={'No. KWSP'}
                         type="text"
-                        bind:value={$maklumatPerkhidmatanForm.EPFNumber}
+                        bind:value={data.personalServiceResponse.EPFNumber}
                     ></TextField>
 
                     {#if $maklumatPerkhidmatanErrors.EPFNumber}
@@ -1137,7 +1081,7 @@
                         name="SOCSO"
                         label={'No. SOCSO'}
                         type="text"
-                        bind:value={$maklumatPerkhidmatanForm.SOCSO}
+                        bind:value={data.personalServiceResponse.SOCSO}
                     ></TextField>
 
                     {#if $maklumatPerkhidmatanErrors.SOCSO}
@@ -1153,7 +1097,7 @@
                         name="taxIncome"
                         label={'No. Cukai (LHDN)'}
                         type="text"
-                        bind:value={$maklumatPerkhidmatanForm.taxIncome}
+                        bind:value={data.personalServiceResponse.taxIncome}
                     ></TextField>
 
                     {#if $maklumatPerkhidmatanErrors.taxIncome}
@@ -1168,7 +1112,7 @@
                         name="bankName"
                         label={'Bank'}
                         type="text"
-                        bind:value={$maklumatPerkhidmatanForm.bankName}
+                        bind:value={data.personalServiceResponse.bankName}
                     ></TextField>
 
                     {#if $maklumatPerkhidmatanErrors.bankName}
@@ -1184,7 +1128,7 @@
                         name="accountNumber"
                         label={'No.Akaun'}
                         type="text"
-                        bind:value={$maklumatPerkhidmatanForm.accountNumber}
+                        bind:value={data.personalServiceResponse.accountNumber}
                     ></TextField>
 
                     {#if $maklumatPerkhidmatanErrors.accountNumber}
@@ -1199,7 +1143,7 @@
                         name="program"
                         label={'Program'}
                         type="text"
-                        bind:value={$maklumatPerkhidmatanForm.program}
+                        bind:value={data.personalServiceResponse.program}
                         ></TextField>
                         {#if $maklumatPerkhidmatanErrors.program}
                         <span
@@ -1215,7 +1159,7 @@
                         name="eligibleLeaveCount"
                         label={'Kelayakan Cuti'}
                         type="text"
-                        bind:value={$maklumatPerkhidmatanForm.eligibleLeaveCount}
+                        bind:value={data.personalServiceResponse.eligibleLeaveCount}
                     ></TextField>
 
                     {#if $maklumatPerkhidmatanErrors.eligibleLeaveCount}
@@ -1349,6 +1293,9 @@
                                 >{$maklumatPerkhidmatanErrors.pensionScheme}</span
                             >
                         {/if}
+
+
+
                     <DateSelector
                         {disabled}
                         hasError={!!$maklumatPerkhidmatanErrors.lastSalaryRaiseDate}
@@ -1381,22 +1328,22 @@
 
                     <DropdownSelect
                         {disabled}
-                        hasError={!!$maklumatPerkhidmatanErrors.salaryMovementMonth}
+                        hasError={!!$maklumatPerkhidmatanErrors.bulanKGT}
                         dropdownType="label-left-full"
-                        id="salaryMovementMonth"
+                        id="bulanKGT"
                         label="Bulan KGT"
-                        bind:value={$maklumatPerkhidmatanForm.salaryMovementMonth}
+                        bind:value={$maklumatPerkhidmatanForm.bulanKGT}
                         options={[
                             { value: '1', name: 'Januari' },
                             { value: '2', name: 'Februari' },
                         ]}
                     ></DropdownSelect>
-                    {#if $maklumatPerkhidmatanErrors.salaryMovementMonth}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$maklumatPerkhidmatanErrors.salaryMovementMonth}</span
-                        >
-                    {/if}
+                    {#if $maklumatPerkhidmatanErrors.bulanKGT}
+                    <span
+                        class="ml-[220px] font-sans text-sm italic text-system-danger"
+                        >{$maklumatPerkhidmatanErrors.bulanKGT}</span
+                    >
+                {/if}
 
                     <DateSelector
                         {disabled}
@@ -1424,7 +1371,7 @@
                                 name="salaryEffectiveDate"
                                 label={'Tarikh Berkuatkuasa'}
                                 type="text"
-                                bind:value={$maklumatPerkhidmatanForm.salaryEffectiveDate}
+                                bind:value={data.personalServiceResponse.salaryEffectiveDate}
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.salaryEffectiveDate}
@@ -1439,7 +1386,7 @@
                                 name="tanggaGaji"
                                 label={'Tangga Gaji'}
                                 type="text"
-                                bind:value={$maklumatPerkhidmatanForm.maximumSalary}
+                                bind:value={data.personalServiceResponse.maximumSalary}
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.maximumSalary}
@@ -1455,7 +1402,7 @@
                                 name="baseSalary"
                                 label={'Gaji Pokok'}
                                 type="text"
-                                bind:value={$maklumatPerkhidmatanForm.baseSalary}
+                                bind:value={data.personalServiceResponse.baseSalary}
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.baseSalary}
@@ -1475,7 +1422,7 @@
                                 name="ITKA"
                                 label={'ITKA'}
                                 type="text"
-                                bind:value={$maklumatPerkhidmatanForm.ITKA}
+                                bind:value={data.personalServiceResponse.ITKA}
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.ITKA}
@@ -1492,7 +1439,7 @@
                                 name="ITP"
                                 label={'ITP'}
                                 type="text"
-                                bind:value={$maklumatPerkhidmatanForm.ITP}
+                                bind:value={data.personalServiceResponse.ITP}
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.ITP}
@@ -1510,7 +1457,7 @@
                                 name="EPW"
                                 label={'EPW'}
                                 type="text"
-                                bind:value={$maklumatPerkhidmatanForm.EPW}
+                                bind:value={data.personalServiceResponse.EPW}
                             ></TextField>
 
                             {#if $maklumatPerkhidmatanErrors.EPW}
@@ -1528,7 +1475,7 @@
                                 name="COLA"
                                 label={'COLA'}
                                 type="text"
-                                bind:value={$maklumatPerkhidmatanForm.COLA}
+                                bind:value={data.personalServiceResponse.COLA}
                             ></TextField>
                             {#if $maklumatPerkhidmatanErrors.COLA}
                                 <span
