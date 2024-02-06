@@ -133,6 +133,8 @@ export const _stepperMaklumatPeribadi = z.object({
     religion: maklumatPeribadiSelectSchema,
     marital: maklumatPeribadiSelectSchema,
     gender: maklumatPeribadiSelectSchema,
+    ethnic: maklumatPeribadiSelectSchema,
+
 
     employeeNumber: shortTextSchema,
     identityCardNumber: shortTextSchema,
@@ -214,31 +216,36 @@ export const _stepperMaklumatPerkhidmatan = z.object({
     placement: maklumatPerkhidmatanSelectSchema,
     serviceType: maklumatPerkhidmatanSelectSchema,
     bulanKGT: maklumatPerkhidmatanSelectSchema,
+    retirementBenefit: maklumatPerkhidmatanSelectSchema,
 
     EPFNumber: shortTextSchema,
     SOCSO: shortTextSchema,
     taxIncome: shortTextSchema,
     bankName: shortTextSchema,
     accountNumber: shortTextSchema,
-    tarikhBerkuatKuasa: shortTextSchema,
+    salaryEffectiveDate: shortTextSchema,
     salaryMovementMonth: shortTextSchema,
     baseSalary: shortTextSchema,
+    program: shortTextSchema,
     ITKA: shortTextSchema,
     ITP: shortTextSchema,
     EPW: shortTextSchema,
     COLA: shortTextSchema,
-    kelayakanCuti: shortTextSchema,
+    eligibleLeaveCount: shortTextSchema,
+    pensionScheme: shortTextSchema,
+    maximumSalary: shortTextSchema,
 
     civilServiceStartDate: dateStepper2max,
     firstEffectiveDate: dateStepper2max,
     confirmServiceDate: dateStepper2max,
-    tarikhKelulusanPercantumanPerkhidmatanLepas: dateStepper2max,
+    pastAttachmentDate: dateStepper2max,
     retirementDate: dateStepper2,
     tarikhKuatkuasaLantikanSemasa: dateStepper2max,
     actingDate: dateStepper2,
     interimDate: dateStepper2,
     lastSalaryRaiseDate: dateStepper2,
-    kenaikanPangkatAkhir: dateStepper2,
+    lastPromotionDate: dateStepper2,
+    effectiveDate: dateStepper2,
 });
 
 //==========================================================
@@ -269,6 +276,8 @@ export const _stepperMaklumatPengalaman = z.object({
     positionCode: shortTextSchema,
     duration: shortTextSchema,
     salary: shortTextSchema,
+    startDate:dateStepper2max,
+    endDate:dateStepper2,
 });
 
 //==========================================================
@@ -304,19 +313,24 @@ const maklumatWarisSelectSchema = z
     .min(1, { message: 'Sila tetapkan pilihan anda.' });
 
 export const _stepperMaklumatWaris = z.object({
-    warnaKP: maklumatWarisSelectSchema,
-    hubunganWaris: maklumatWarisSelectSchema,
+    identityDocumentColor: maklumatWarisSelectSchema,
+    relationship: maklumatWarisSelectSchema,
+    inSchool: booleanSchema,
 
-    namaWaris: shortTextSchema,
-    noKP: shortTextSchema,
-    telefonRumah: shortTextSchema,
-    telefonPeribadi: shortTextSchema,
-    pekerjaanWaris: shortTextSchema,
+    name: shortTextSchema,
+    alternativeName: shortTextSchema,
+    identityDocumentNumber: shortTextSchema,
+    birthCountry: shortTextSchema,
+    educationLevel: shortTextSchema,
+    birthState: shortTextSchema,
+    race: shortTextSchema,
+    phoneNumber: shortTextSchema,
+    workPostcode: shortTextSchema,
     namaMajikanWaris: shortTextSchema,
-    alamatMajikanWaris: shortTextSchema,
+    workAddress: shortTextSchema,
 
-    tarikhLahirWaris: dateStepper8,
-    tarikhKahwin: dateStepper8,
+    birthDate: dateStepper8,
+    marriageDate: dateStepper8,
 });
 
 // =========================================================================
