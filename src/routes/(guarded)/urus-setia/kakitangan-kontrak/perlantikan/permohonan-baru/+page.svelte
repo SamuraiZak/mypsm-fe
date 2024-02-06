@@ -39,8 +39,10 @@
         enhance: newAppointmentsEnhance,
     } = superForm(data.newAppointments, {
         SPA: true,
+        id: 'FormNewAppointments',
         validators: _newAppointments,
         onSubmit() {
+            console.log(newAppointmentsForm);
             _submitFormNewAppointments($newAppointmentsForm);
         },
         taintedMessage:
@@ -81,182 +83,145 @@
         <StepperContentHeader title="Maklumat kakitangan dan Kontrak" />
         <div class="my-5 space-y-2.5">
             <TextField
-                hasError={$newAppointmentsErrors.name ? true : false}
+                hasError={!!$newAppointmentsErrors.name}
                 name="name"
                 placeholder="contoh: Mohd Azizi Bin Othman"
                 label={'Nama'}
                 type="text"
                 bind:value={$newAppointmentsForm.name}
             ></TextField>
-
             {#if $newAppointmentsErrors.name}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
                     >{$newAppointmentsErrors.name[0]}</span
                 >
             {/if}
-            <TextField
-                hasError={$newAppointmentsErrors.candidateId ? true : false}
-                name="candidateId"
-                placeholder="contoh: 12345"
-                label={'ID Calon'}
-                type="text"
-                bind:value={$newAppointmentsForm.candidateId}
-            ></TextField>
 
-            {#if $newAppointmentsErrors.candidateId}
-                <span
-                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$newAppointmentsErrors.candidateId[0]}</span
-                >
-            {/if}
             <TextField
-                hasError={$newAppointmentsErrors.email ? true : false}
+                hasError={!!$newAppointmentsErrors.email}
                 name="email"
                 placeholder="contoh: azizi@lkim.com"
                 label={'Emel'}
                 type="email"
                 bind:value={$newAppointmentsForm.email}
             ></TextField>
-
             {#if $newAppointmentsErrors.email}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
                     >{$newAppointmentsErrors.email[0]}</span
                 >
             {/if}
+
             <DateSelector
-                hasError={$newAppointmentsErrors.contractStartDate
-                    ? true
-                    : false}
-                name="contractStartDate"
+                hasError={!!$newAppointmentsErrors.startContract}
+                name="startContract"
                 handleDateChange
                 label="Tarikh Mula Kontrak"
-                bind:selectedDate={$newAppointmentsForm.contractStartDate}
+                bind:selectedDate={$newAppointmentsForm.startContract}
             ></DateSelector>
-            {#if $newAppointmentsErrors.contractStartDate}
+            {#if $newAppointmentsErrors.startContract}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$newAppointmentsErrors.contractStartDate[0]}</span
+                    >{$newAppointmentsErrors.startContract[0]}</span
                 >
             {/if}
+
             <DateSelector
-                hasError={$newAppointmentsErrors.contractEndDate ? true : false}
-                name="contractEndDate"
+                hasError={!!$newAppointmentsErrors.endContract}
+                name="endContract"
                 handleDateChange
                 label="Tarikh Tamat Kontrak"
-                bind:selectedDate={$newAppointmentsForm.contractEndDate}
+                bind:selectedDate={$newAppointmentsForm.endContract}
             ></DateSelector>
-            {#if $newAppointmentsErrors.contractEndDate}
+            {#if $newAppointmentsErrors.endContract}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$newAppointmentsErrors.contractEndDate[0]}</span
+                    >{$newAppointmentsErrors.endContract[0]}</span
                 >
             {/if}
             <TextField
-                hasError={$newAppointmentsErrors.contractDuration
-                    ? true
-                    : false}
-                name="contractDuration"
+                hasError={!!$newAppointmentsErrors.contractPeriod}
+                name="contractPeriod"
                 label={'Tempoh Kontrak (Bulan)'}
                 type="number"
-                bind:value={$newAppointmentsForm.contractDuration}
+                bind:value={$newAppointmentsForm.contractPeriod}
             ></TextField>
 
-            {#if $newAppointmentsErrors.contractDuration}
+            {#if $newAppointmentsErrors.contractPeriod}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$newAppointmentsErrors.contractDuration[0]}</span
+                    >{$newAppointmentsErrors.contractPeriod[0]}</span
                 >
             {/if}
             <TextField
-                hasError={$newAppointmentsErrors.wageRates ? true : false}
-                name="wageRates"
+                hasError={!!$newAppointmentsErrors.wageRate}
+                name="wageRate"
                 label={'Kadar Upah (RM)'}
                 type="number"
-                bind:value={$newAppointmentsForm.wageRates}
+                bind:value={$newAppointmentsForm.wageRate}
             ></TextField>
+            {#if $newAppointmentsErrors.wageRate}
+                <span
+                    class="ml-[220px] font-sans text-sm italic text-system-danger"
+                    >{$newAppointmentsErrors.wageRate[0]}</span
+                >
+            {/if}
 
-            {#if $newAppointmentsErrors.wageRates}
-                <span
-                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$newAppointmentsErrors.wageRates[0]}</span
-                >
-            {/if}
-            <DropdownSelect
-                hasError={$newAppointmentsErrors.contractPlacementDropdown
-                    ? true
-                    : false}
-                dropdownType="label-left-full"
-                id="contractPlacementDropdown"
-                label="Penempatan"
-                bind:value={$newAppointmentsForm.contractPlacementDropdown}
-                options={[
-                    { value: 'selangor-lkim-01', name: 'LKIM Negeri Selangor' },
-                    { value: 'sarawak-lkim-01', name: 'LKIM Negeri Sarawak' },
-                ]}
-            ></DropdownSelect>
-            {#if $newAppointmentsErrors.contractPlacementDropdown}
-                <span
-                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$newAppointmentsErrors.contractPlacementDropdown[0]}</span
-                >
-            {/if}
             <TextField
-                hasError={$newAppointmentsErrors.jobTitle ? true : false}
-                name="jobTitle"
+                hasError={!!$newAppointmentsErrors.designation}
+                name="designation"
                 label={'Gelaran Tugas'}
                 type="text"
-                bind:value={$newAppointmentsForm.jobTitle}
+                bind:value={$newAppointmentsForm.designation}
             ></TextField>
 
-            {#if $newAppointmentsErrors.jobTitle}
+            {#if $newAppointmentsErrors.designation}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$newAppointmentsErrors.jobTitle[0]}</span
+                    >{$newAppointmentsErrors.designation[0]}</span
                 >
             {/if}
             <DateSelector
-                hasError={$newAppointmentsErrors.reportDate ? true : false}
-                name="reportDate"
+                hasError={!!$newAppointmentsErrors.reportDutyDate}
+                name="reportDutyDate"
                 handleDateChange
                 label="Tarikh Lapor Diri"
-                bind:selectedDate={$newAppointmentsForm.reportDate}
+                bind:selectedDate={$newAppointmentsForm.reportDutyDate}
             ></DateSelector>
-            {#if $newAppointmentsErrors.reportDate}
+            {#if $newAppointmentsErrors.reportDutyDate}
                 <span
                     class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$newAppointmentsErrors.reportDate[0]}</span
-                >
-            {/if}
-        </div>
-        <div class="mb-5 w-fit">
-            <FormButton
-                type="generate-link"
-                onClick={() => generateRandomString()}
-            />
-        </div>
-        <StepperContentHeader
-            title="Pautan bagi kegunaan kakitangan baru mengisi borang permohonan
-        secara atas talian:"
-        />
-        <div class="my-5 space-y-2.5">
-            <TextField
-                hasError={$newAppointmentsErrors.generatedLink ? true : false}
-                name="generatedLink"
-                label={'Pautan'}
-                placeholder="https://"
-                type="text"
-                bind:value={$newAppointmentsForm.generatedLink}
-            ></TextField>
-
-            {#if $newAppointmentsErrors.generatedLink}
-                <span
-                    class="ml-[220px] font-sans text-sm italic text-system-danger"
-                    >{$newAppointmentsErrors.generatedLink[0]}</span
+                    >{$newAppointmentsErrors.reportDutyDate[0]}</span
                 >
             {/if}
         </div>
     </form>
+    <!-- <div class="mb-5 w-fit">
+        <FormButton
+            type="generate-link"
+            onClick={() => generateRandomString()}
+        />
+    </div>
+    <StepperContentHeader
+        title="Pautan bagi kegunaan kakitangan baru mengisi borang permohonan
+    secara atas talian:"
+    />
+    <div class="my-5 space-y-2.5">
+        <TextField
+            hasError={$newAppointmentsErrors.generatedLink ? true : false}
+            name="generatedLink"
+            label={'Pautan'}
+            placeholder="https://"
+            type="text"
+            bind:value={$newAppointmentsForm.generatedLink}
+        ></TextField>
+
+        {#if $newAppointmentsErrors.generatedLink}
+            <span
+                class="ml-[220px] font-sans text-sm italic text-system-danger"
+                >{$newAppointmentsErrors.generatedLink[0]}</span
+            >
+        {/if}
+    </div> -->
 </section>
 <Toaster />
