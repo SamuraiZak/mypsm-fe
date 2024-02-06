@@ -1,6 +1,7 @@
 <script lang="ts">
     import { afterUpdate, onMount } from 'svelte';
     import StepperButton from './StepperButton.svelte';
+    export let onStepperChange = () => {};
 
     export let activeIndex = 0;
     export let dataId: string = '';
@@ -80,6 +81,7 @@
                     active={activeIndex == index}
                     onClick={() => {
                         setActiveStepper(index);
+                        onStepperChange();
                     }}
                 ></StepperButton>
             {/each}

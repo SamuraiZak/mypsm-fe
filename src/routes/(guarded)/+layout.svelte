@@ -45,6 +45,7 @@
     import { sidebarUrusSetiaPersaraan } from '$lib/config/sidebar/sidebar-urus-setia-persaraan';
     import { sidebarUnitPengurusanFasiliti } from '$lib/config/sidebar/sidebar-unit-pengurusan-fasiliti';
     import { sidebarUnitBahagianNegeri } from '$lib/config/sidebar/sidebar-unit-bahagian-negeri';
+    import { sidebarUnitBahagian } from '$lib/config/sidebar/sidebar-unit-bahagian';
 
     $: activeUrl = $page.url.pathname;
 
@@ -76,62 +77,89 @@
             >
                 {#if currentActiveRole == 'kakitangan'}
                     <Sidebar sidebarItems={sidebarKakitangan} />
+
                 {:else if currentActiveRole == 'urus-setia'}
                     <Sidebar sidebarItems={sidebarUrusSetia} />
+
                 {:else if currentActiveRole == 'urus setia perjawatan'}
                     <Sidebar sidebarItems={sidebarUrusSetiaPerjawatan} />
+
                 {:else if currentActiveRole == 'urus setia persaraan'}
                     <Sidebar sidebarItems={sidebarUrusSetiaPersaraan} />
+
                 {:else if currentActiveRole == 'urus setia cuti'}
                     <Sidebar sidebarItems={sidebarUrusSetiaCuti} />
+
                 {:else if currentActiveRole == 'urus setia gaji'}
                     <Sidebar sidebarItems={sidebarUrusSetiaGaji} />
+
                 {:else if currentActiveRole == 'urus setia integriti'}
                     <Sidebar sidebarItems={sidebarUrusSetiaIntegriti} />
+
                 {:else if currentActiveRole == 'urus setia lnpt'}
                     <Sidebar sidebarItems={sidebarUrusSetiaLNPT} />
+
                 {:else if currentActiveRole == 'urus setia latihan'}
                     <Sidebar sidebarItems={sidebarUrusSetiaLatihan} />
+
                 {:else if currentActiveRole == 'urus setia kakitangan kontrak'}
                     <Sidebar sidebarItems={sidebarUrusSetiaKakitanganKontrak} />
+
                 {:else if currentActiveRole == 'urus setia pinjaman & kuarters'}
                     <Sidebar
                         sidebarItems={sidebarUrusSetiaPinjamanDanKuarters}
                     />
                 {:else if currentActiveRole == 'urus setia perubatan'}
                     <Sidebar sidebarItems={sidebarUrusSetiaPerubatan} />
+
                 {:else if currentActiveRole == 'urus setia elaun-elaun perkhidmatan'}
                     <Sidebar sidebarItems={sidebarUrusSetiaElaun} />
+
                 {:else if currentActiveRole == 'unit pengurusan fasiliti'}
                     <Sidebar sidebarItems={sidebarUnitPengurusanFasiliti} />
+
                 {:else if currentActiveRole == 'unit negeri'}
                     <Sidebar sidebarItems={sidebarUnitBahagianNegeri} />
+
                 {:else if currentActiveRole == 'unit bahagian'}
-                    <Sidebar sidebarItems={sidebarUnitBahagianNegeri} />
+                    <Sidebar sidebarItems={sidebarUnitBahagian} />
+
                 {:else if currentActiveRole == 'ketua pengarah'}
                     <Sidebar sidebarItems={sidebarKetuaPengarah} />
+
                 {:else if currentActiveRole == 'penyokong'}
                     <Sidebar sidebarItems={sidebarPenyokong} />
+
                 {:else if currentActiveRole == 'pelulus'}
                     <Sidebar sidebarItems={sidebarPelulus} />
+
                 {:else if currentActiveRole == 'pengarah bahagian'}
                     <Sidebar sidebarItems={sidebarPengarahBahagianNegeri} />
+
                 {:else if currentActiveRole == 'pengarah negeri'}
                     <Sidebar sidebarItems={sidebarPengarahBahagianNegeri} />
+
                 {:else if currentActiveRole == 'ketua seksyen'}
                     <Sidebar sidebarItems={sidebarKetuaSeksyen} />
+
                 {:else if currentActiveRole == 'timbalan ketua seksyen'}
                     <Sidebar sidebarItems={sidebarTimbalanKetuaSeksyen} />
+
                 {:else if currentActiveRole == 'klinik panel'}
                     <Sidebar sidebarItems={sidebarKlinikPanel} />
+
                 {:else if currentActiveRole == 'pengarah khidmat pengurusan'}
                     <Sidebar sidebarItems={sidebarPengarahKhidmatPengurusan} />
+
                 {:else if currentActiveRole == 'audit'}
                     <Sidebar sidebarItems={sidebarAudit} />
+
                 {:else if currentActiveRole == 'calon'}
                     <Sidebar sidebarItems={sidebarCalon} />
+
                 {:else if currentActiveRole == 'pengarah integriti'}
                     <Sidebar sidebarItems={sidebarPengarahIntegriti} />
+
                 {:else if currentActiveRole == 'pengarah audit'}
                     <Sidebar sidebarItems={sidebarPengarahAudit} />
                 {/if}

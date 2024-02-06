@@ -168,7 +168,7 @@
 </script>
 
 <div
-    class="flex h-full max-h-full w-full flex-col rounded-sm border border-ios-labelColors-separator-light"
+    class="flex h-full max-h-full w-full flex-col rounded-md border border-ios-labelColors-separator-light"
 >
     <!-- table info -->
 
