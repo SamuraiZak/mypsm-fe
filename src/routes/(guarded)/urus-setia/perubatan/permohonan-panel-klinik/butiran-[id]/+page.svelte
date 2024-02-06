@@ -9,8 +9,22 @@
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import TextField from '$lib/components/input/TextField.svelte';
     import { superForm } from 'sveltekit-superforms/client';
+    import RadioSingle from '$lib/components/input/RadioSingle.svelte';
     import type { PageData } from './$types';
-    import { _addClinicApplicationScheme, _submitForm } from './+page';
+    import {
+        _addClinicApplicationScheme,
+        _verificationSchema,
+        _addApproverSupporterSchema,
+        _approveSchema,
+        _supportSchema,
+        _clinicDetailsSchema,
+        _submitForm,
+        _submitVerificationForm,
+        _submitAddApproverSupporterForm,
+        _submitApprovalForm,
+        _submitSupportForm,
+        _submitAddClinicDetailForm,
+    } from './+page';
 
     export let data: PageData;
 
@@ -21,6 +35,17 @@
     let formType: any;
 
     let formSubmitter = () => {};
+
+    const verificationOption: RadioOption[] = [
+        {
+            value: true,
+            label: 'Sah',
+        },
+        {
+            value: false,
+            label: 'Tidak Sah',
+        },
+    ];
 
     switch (data.props.step) {
         case 'application':
@@ -73,6 +98,95 @@
                 result = value.result;
 
                 alert(result);
+            });
+        },
+    });
+
+    const {
+        form: verificationForm,
+        errors: verificationErrors,
+        enhance: verificationEnhance,
+    } = superForm(data.verificationForm, {
+        SPA: true,
+        validators: _verificationSchema,
+        onUpdate(event) {},
+        onSubmit() {
+            $verificationForm.id = data.props.id;
+            _submitVerificationForm($verificationForm).then((value) => {
+                result = value.result;
+                console.log(value.result);
+            });
+        },
+    });
+
+    // add approver
+    const {
+        form: addApproverForm,
+        errors: addApproverErrors,
+        enhance: addApproverEnhance,
+    } = superForm(data.addApproverSupporterForm, {
+        SPA: true,
+        validators: _addApproverSupporterSchema,
+        onUpdate(event) {},
+        onSubmit() {
+            $addApproverForm.id = data.props.id;
+            _submitAddApproverSupporterForm($addApproverForm).then((value) => {
+                result = value.result;
+                console.log(value.result);
+            });
+        },
+    });
+
+    // approve
+    const {
+        form: approvalForm,
+        errors: approvalErrors,
+        enhance: approvalEnhance,
+    } = superForm(data.approvalForm, {
+        SPA: true,
+        validators: _approveSchema,
+        onUpdate(event) {},
+        onSubmit() {
+            $approvalForm.id = data.props.id;
+            _submitAddApproverSupporterForm($approvalForm).then((value) => {
+                result = value.result;
+                console.log(value.result);
+            });
+        },
+    });
+
+    // support
+    const {
+        form: supportForm,
+        errors: supportErrors,
+        enhance: supportEnhance,
+    } = superForm(data.supportForm, {
+        SPA: true,
+        validators: _supportSchema,
+        onUpdate(event) {},
+        onSubmit() {
+            $supportForm.id = data.props.id;
+            _submitSupportForm($supportForm).then((value) => {
+                result = value.result;
+                console.log(value.result);
+            });
+        },
+    });
+
+    // support
+    const {
+        form: addClinicDetailForm,
+        errors: addClinicDetailErrors,
+        enhance: addClinicDetailEnhance,
+    } = superForm(data.addDetailForm, {
+        SPA: true,
+        validators: _clinicDetailsSchema,
+        onUpdate(event) {},
+        onSubmit() {
+            $addClinicDetailForm.id = data.props.id;
+            _submitAddClinicDetailForm($addClinicDetailForm).then((value) => {
+                result = value.result;
+                console.log(value.result);
             });
         },
     });
@@ -430,257 +544,46 @@
                 ></SectionHeader>
                 <div class="flex w-full flex-col items-start justify-start">
                     <form
-                        id="addClinicForm"
+                        id="verificationForm"
                         method="POST"
-                        use:enhance
+                        use:verificationEnhance
                         class="w-full max-w-[800px] space-y-2 p-2"
                     >
-                        <!-- district -->
+                        <!-- remarks -->
                         <div class="flex w-full flex-col gap-2">
                             <TextField
-                                disabled={data.props.step != 'add'}
-                                bind:value={$form.district}
-                                id="district"
-                                label={'Daerah'}
+                                disabled={data.props.step != 'verification' &&
+                                    data.props.result == 'success'}
+                                bind:value={$verificationForm.remark}
+                                id="remarks"
+                                label={'Ulasan'}
                             ></TextField>
                         </div>
                         <div class="h-5 w-full items-end justify-end">
-                            {#if $errors.district}
+                            {#if $verificationErrors.remark}
                                 <p
                                     class="text-end text-sm italic text-ios-basic-destructiveRed"
                                 >
-                                    {$errors.district}
+                                    {$verificationErrors.remark}
                                 </p>
                             {/if}
                         </div>
 
-                        <!-- name -->
+                        <!-- verification -->
                         <div class="flex w-full flex-col gap-2">
-                            <TextField
-                                disabled={data.props.step != 'add'}
-                                bind:value={$form.name}
-                                id="name"
-                                label={'Nama Klinik'}
-                            ></TextField>
+                            <RadioSingle
+                                options={verificationOption}
+                                legend="Pengesahan Permohonan"
+                                bind:userSelected={$verificationForm.status}
+                                disabled={false}
+                            />
                         </div>
                         <div class="h-5 w-full items-end justify-end">
-                            {#if $errors.name}
+                            {#if $verificationErrors.status}
                                 <p
                                     class="text-end text-sm italic text-ios-basic-destructiveRed"
                                 >
-                                    {$errors.name}
-                                </p>
-                            {/if}
-                        </div>
-
-                        <!-- address -->
-                        <div class="flex w-full flex-col gap-2">
-                            <TextField
-                                disabled={data.props.step != 'add'}
-                                bind:value={$form.address}
-                                id="address"
-                                label={'Alamat'}
-                            ></TextField>
-                        </div>
-                        <div class="h-5 w-full items-end justify-end">
-                            {#if $errors.address}
-                                <p
-                                    class="text-end text-sm italic text-ios-basic-destructiveRed"
-                                >
-                                    {$errors.address}
-                                </p>
-                            {/if}
-                        </div>
-
-                        <!-- email -->
-                        <div class="flex w-full flex-col gap-2">
-                            <TextField
-                                disabled={data.props.step != 'add'}
-                                bind:value={$form.email}
-                                id="email"
-                                label={'Emel'}
-                            ></TextField>
-                        </div>
-                        <div class="h-5 w-full items-end justify-end">
-                            {#if $errors.email}
-                                <p
-                                    class="text-end text-sm italic text-ios-basic-destructiveRed"
-                                >
-                                    {$errors.email}
-                                </p>
-                            {/if}
-                        </div>
-
-                        <!-- contactNumber -->
-                        <div class="flex w-full flex-col gap-2">
-                            <TextField
-                                disabled={data.props.step != 'add'}
-                                bind:value={$form.contactNumber}
-                                id="contactNumber"
-                                label={'Nombor Telefon'}
-                            ></TextField>
-                        </div>
-                        <div class="h-5 w-full items-end justify-end">
-                            {#if $errors.contactNumber}
-                                <p
-                                    class="text-end text-sm italic text-ios-basic-destructiveRed"
-                                >
-                                    {$errors.contactNumber}
-                                </p>
-                            {/if}
-                        </div>
-
-                        <!-- foundationDate -->
-                        <div class="flex w-full flex-col gap-2">
-                            <TextField
-                                disabled={data.props.step != 'add'}
-                                bind:value={$form.foundationDate}
-                                id="foundationDate"
-                                label={'Tarikh Ditubuhkan'}
-                            ></TextField>
-                        </div>
-                        <div class="h-5 w-full items-end justify-end">
-                            {#if $errors.foundationDate}
-                                <p
-                                    class="text-end text-sm italic text-ios-basic-destructiveRed"
-                                >
-                                    {$errors.foundationDate}
-                                </p>
-                            {/if}
-                        </div>
-
-                        <!-- clinicType -->
-                        <div class="flex w-full flex-col gap-2">
-                            <TextField
-                                disabled={data.props.step != 'add'}
-                                bind:value={$form.clinicType}
-                                id="clinicType"
-                                label={'Jenis Klinik'}
-                            ></TextField>
-                        </div>
-                        <div class="h-5 w-full items-end justify-end">
-                            {#if $errors.clinicType}
-                                <p
-                                    class="text-end text-sm italic text-ios-basic-destructiveRed"
-                                >
-                                    {$errors.clinicType}
-                                </p>
-                            {/if}
-                        </div>
-
-                        <!-- ownershipStatus -->
-                        <div class="flex w-full flex-col gap-2">
-                            <TextField
-                                disabled={data.props.step != 'add'}
-                                bind:value={$form.ownershipStatus}
-                                id="ownershipStatus"
-                                label={'Status Pemilikan'}
-                            ></TextField>
-                        </div>
-                        <div class="h-5 w-full items-end justify-end">
-                            {#if $errors.ownershipStatus}
-                                <p
-                                    class="text-end text-sm italic text-ios-basic-destructiveRed"
-                                >
-                                    {$errors.ownershipStatus}
-                                </p>
-                            {/if}
-                        </div>
-
-                        <!-- registeredMedicalPractitioner -->
-                        <div class="flex w-full flex-col gap-2">
-                            <TextField
-                                disabled={data.props.step != 'add'}
-                                bind:value={$form.registeredMedicalPractitioner}
-                                id="registeredMedicalPractitioner"
-                                label={'Pengamal Perubatan Yang Berdaftar'}
-                            ></TextField>
-                        </div>
-                        <div class="h-5 w-full items-end justify-end">
-                            {#if $errors.registeredMedicalPractitioner}
-                                <p
-                                    class="text-end text-sm italic text-ios-basic-destructiveRed"
-                                >
-                                    {$errors.registeredMedicalPractitioner}
-                                </p>
-                            {/if}
-                        </div>
-
-                        <!-- branchCount -->
-                        <div class="flex w-full flex-col gap-2">
-                            <TextField
-                                disabled={data.props.step != 'add'}
-                                dataType="number"
-                                bind:value={$form.branchCount}
-                                id="branchCount"
-                                label={'Jumlah Cawangan'}
-                            ></TextField>
-                        </div>
-                        <div class="h-5 w-full items-end justify-end">
-                            {#if $errors.branchCount}
-                                <p
-                                    class="text-end text-sm italic text-ios-basic-destructiveRed"
-                                >
-                                    {$errors.branchCount}
-                                </p>
-                            {/if}
-                        </div>
-
-                        <!-- clinicOfficeDistance -->
-                        <div class="flex w-full flex-col gap-2">
-                            <TextField
-                                disabled={data.props.step != 'add'}
-                                dataType="number"
-                                bind:value={$form.clinicOfficeDistance}
-                                id="clinicOfficeDistance"
-                                label={'Jarak Dari Pejabat LKIM'}
-                            ></TextField>
-                        </div>
-                        <div class="h-5 w-full items-end justify-end">
-                            {#if $errors.clinicOfficeDistance}
-                                <p
-                                    class="text-end text-sm italic text-ios-basic-destructiveRed"
-                                >
-                                    {$errors.clinicOfficeDistance}
-                                </p>
-                            {/if}
-                        </div>
-
-                        <!-- nearestClinicDistance -->
-                        <div class="flex w-full flex-col gap-2">
-                            <TextField
-                                disabled={data.props.step != 'add'}
-                                dataType="number"
-                                bind:value={$form.nearestClinicDistance}
-                                id="nearestClinicDistance"
-                                label={'Jarak Klinik Terdekat Dari LKIM'}
-                            ></TextField>
-                        </div>
-                        <div class="h-5 w-full items-end justify-end">
-                            {#if $errors.nearestClinicDistance}
-                                <p
-                                    class="text-end text-sm italic text-ios-basic-destructiveRed"
-                                >
-                                    {$errors.nearestClinicDistance}
-                                </p>
-                            {/if}
-                        </div>
-
-                        <!-- operationHours -->
-                        <div class="flex w-full flex-col gap-2">
-                            <TextField
-                                disabled={data.props.step != 'add'}
-                                bind:value={$form.operationHours}
-                                id="operationHours"
-                                label={'Waktu Operasi'}
-                            ></TextField>
-                        </div>
-                        <div class="h-5 w-full items-end justify-end">
-                            {#if $errors.operationHours}
-                                <p
-                                    class="text-end text-sm italic text-ios-basic-destructiveRed"
-                                >
-                                    {$errors.operationHours}
+                                    {$verificationErrors.status}
                                 </p>
                             {/if}
                         </div>
@@ -735,7 +638,7 @@
                     <button
                         on:click={() => {}}
                         type="submit"
-                        form="addClinicForm"
+                        form="supportForm"
                         class="flex h-7 min-h-7 flex-row items-center justify-center gap-1 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-systemBlue-light px-2.5 py-0 text-ios-basic-white"
                     >
                         <!-- icon -->
@@ -764,6 +667,53 @@
                 <SectionHeader
                     title="Nota: Untuk diisi oleh Penyokong yang dipilih"
                 ></SectionHeader>
+                <div class="flex w-full flex-col items-start justify-start">
+                    <form
+                        id="supportForm"
+                        method="POST"
+                        use:supportEnhance
+                        class="w-full max-w-[800px] space-y-2 p-2"
+                    >
+                        <!-- remarks -->
+                        <div class="flex w-full flex-col gap-2">
+                            <TextField
+                                disabled={data.props.step != 'verification' &&
+                                    data.props.result == 'success'}
+                                bind:value={$supportForm.remark}
+                                id="remark"
+                                label={'Ulasan'}
+                            ></TextField>
+                        </div>
+                        <div class="h-5 w-full items-end justify-end">
+                            {#if $supportErrors.remark}
+                                <p
+                                    class="text-end text-sm italic text-ios-basic-destructiveRed"
+                                >
+                                    {$supportErrors.remark}
+                                </p>
+                            {/if}
+                        </div>
+
+                        <!-- verification -->
+                        <div class="flex w-full flex-col gap-2">
+                            <RadioSingle
+                                options={verificationOption}
+                                legend="Penyokongan Permohonan"
+                                bind:userSelected={$supportForm.status}
+                                disabled={false}
+                            />
+                        </div>
+                        <div class="h-5 w-full items-end justify-end">
+                            {#if $supportErrors.status}
+                                <p
+                                    class="text-end text-sm italic text-ios-basic-destructiveRed"
+                                >
+                                    {$supportErrors.status}
+                                </p>
+                            {/if}
+                        </div>
+                    </form>
+                </div>
             </StepperContentBody>
         </StepperContent>
 
@@ -774,7 +724,7 @@
                     <button
                         on:click={() => {}}
                         type="submit"
-                        form="addClinicForm"
+                        form="approvalForm"
                         class="flex h-7 min-h-7 flex-row items-center justify-center gap-1 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-systemBlue-light px-2.5 py-0 text-ios-basic-white"
                     >
                         <!-- icon -->
@@ -803,6 +753,54 @@
                 <SectionHeader
                     title="Nota: Untuk diisi oleh Pelulus yang dipilih"
                 ></SectionHeader>
+                <div class="flex w-full flex-col items-start justify-start">
+                    <form
+                        id="approvalForm"
+                        method="POST"
+                        use:approvalEnhance
+                        class="w-full max-w-[800px] space-y-2 p-2"
+                    >
+                        <!-- remarks -->
+                        <div class="flex w-full flex-col gap-2">
+                            <TextField
+                                disabled={data.props.step != 'approval' &&
+                                    data.props.result == 'success'}
+                                bind:value={$approvalForm.remark}
+                                id="remark"
+                                label={'Ulasan'}
+                            ></TextField>
+                        </div>
+                        <div class="h-5 w-full items-end justify-end">
+                            {#if $approvalErrors.remark}
+                                <p
+                                    class="text-end text-sm italic text-ios-basic-destructiveRed"
+                                >
+                                    {$approvalErrors.remark}
+                                </p>
+                            {/if}
+                        </div>
+
+                        <!-- verification -->
+                        <div class="flex w-full flex-col gap-2">
+                            <RadioSingle
+                                options={verificationOption}
+                                legend="Pelulusan Permohonan"
+                                bind:userSelected={$approvalForm.status}
+                                disabled={data.props.step != 'approval' &&
+                                data.props.result == 'success'}
+                            />
+                        </div>
+                        <div class="h-5 w-full items-end justify-end">
+                            {#if $approvalErrors.status}
+                                <p
+                                    class="text-end text-sm italic text-ios-basic-destructiveRed"
+                                >
+                                    {$supportErrors.status}
+                                </p>
+                            {/if}
+                        </div>
+                    </form>
+                </div>
             </StepperContentBody>
         </StepperContent>
 

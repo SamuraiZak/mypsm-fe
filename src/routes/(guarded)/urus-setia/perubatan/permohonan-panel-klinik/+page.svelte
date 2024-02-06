@@ -12,6 +12,8 @@
 
     export let data: PageData;
 
+    export let selectedRow: any;
+
     let table: TableDTO = {
         param: data.props.param,
         meta: data.props.response.data?.meta ?? {
@@ -78,7 +80,17 @@
         <SectionHeader title="Senarai Rekod Permohonan Klinik Panel"
         ></SectionHeader>
         <div class="h-fit max-h-full w-full pb-5">
-            <CustomTable tableData={table} onUpdate={_search} enableDetail detailActions={()=>{goto('/urus-setia/perubatan/permohonan-panel-klinik/butiran-1')}}
+            <CustomTable
+                bind:passData={selectedRow}
+                tableData={table}
+                onUpdate={_search}
+                enableDetail
+                detailActions={() => {
+                    goto(
+                        '/urus-setia/perubatan/permohonan-panel-klinik/butiran-' +
+                            selectedRow.id,
+                    );
+                }}
             ></CustomTable>
         </div>
     </section>

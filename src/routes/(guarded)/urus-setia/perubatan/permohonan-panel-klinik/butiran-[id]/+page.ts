@@ -64,6 +64,8 @@ export const _clinicDetailsSchema = z.object({
 // =================================================================================
 
 export async function load({ params }) {
+
+    const id:number = Number(params.id);
     const applicationForm = await superValidate(_addClinicApplicationScheme);
     const verificationForm = await superValidate(_verificationSchema);
     const addApproverSupporterForm = await superValidate(
@@ -89,6 +91,8 @@ export async function load({ params }) {
 
     const step: string = 'verification';
 
+    const result: string = 'pending';
+
     return {
         applicationForm,
         verificationForm,
@@ -97,13 +101,15 @@ export async function load({ params }) {
         approvalForm,
         addDetailForm,
         props: {
+            id,
             step,
             response,
+            result,
         },
     };
 }
 
-export async function _submitForm(formData: AddClinicAppRequestDTO) {
+export async function _submitForm(formData: object) {
     const form = await superValidate(formData, _addClinicApplicationScheme);
 
     if (form.valid) {
@@ -162,7 +168,7 @@ export async function _submitAddApproverSupporterForm(formData: object) {
         loadingState.set(true);
 
         const response: CommonResponseDTO =
-            await MedicalServices.verifyClinicApp(formData);
+            await MedicalServices.addClinicAppApproverSupporter(formData);
 
         if (response.status == 'success') {
             loadingState.set(false);
@@ -188,7 +194,7 @@ export async function _submitApprovalForm(formData: object) {
         loadingState.set(true);
 
         const response: CommonResponseDTO =
-            await MedicalServices.verifyClinicApp(formData);
+            await MedicalServices.approveClinicApp(formData);
 
         if (response.status == 'success') {
             loadingState.set(false);
@@ -214,7 +220,7 @@ export async function _submitSupportForm(formData: object) {
         loadingState.set(true);
 
         const response: CommonResponseDTO =
-            await MedicalServices.verifyClinicApp(formData);
+            await MedicalServices.supportClinicApp(formData);
 
         if (response.status == 'success') {
             loadingState.set(false);
@@ -240,7 +246,7 @@ export async function _submitAddClinicDetailForm(formData: object) {
         loadingState.set(true);
 
         const response: CommonResponseDTO =
-            await MedicalServices.verifyClinicApp(formData);
+            await MedicalServices.editClinicDetails(formData);
 
         if (response.status == 'success') {
             loadingState.set(false);

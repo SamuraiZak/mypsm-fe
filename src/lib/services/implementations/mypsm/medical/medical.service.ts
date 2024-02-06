@@ -60,13 +60,13 @@ export class MedicalServices {
     //  Add Panel Clinic Process Starts Here
     // =================================================================================
     // add clinic application
-    static async addClinicApplication(param: AddClinicAppRequestDTO) {
+    static async addClinicApplication(param: object) {
         try {
             let url: Input = 'medicals/add-clinic';
 
             const response: Response = await http
                 .post(url, {
-                    body: AddClinicAppRequestConvert.toJson(param),
+                    body: JSON.stringify(param),
                 })
                 .json();
 
@@ -88,7 +88,7 @@ export class MedicalServices {
             let url: Input = 'medicals/edit-clinic-process';
 
             const response: Response = await http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
