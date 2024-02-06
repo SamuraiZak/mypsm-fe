@@ -1,9 +1,6 @@
 import { CommonResponseConstant } from '$lib/constants/core/common-response-constant.js';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto.js';
-import {
-    EmployeeDetailRequestConvert,
-    type EmployeeDetailRequestDTO,
-} from '$lib/dto/mypsm/common/employee/employee-detail-request.dto.js';
+import { type EmployeeDetailRequestDTO } from '$lib/dto/mypsm/common/employee/employee-detail-request.dto.js';
 import type { AddAPCRequestDTO } from '$lib/dto/mypsm/lnpt/apc/add-apc-request.dto.js';
 import { EmployeeServices } from '$lib/services/implementations/mypsm/employee/employee.service.js';
 import { LNPTServices } from '$lib/services/implementations/mypsm/lnpt/lnpt.service.js';

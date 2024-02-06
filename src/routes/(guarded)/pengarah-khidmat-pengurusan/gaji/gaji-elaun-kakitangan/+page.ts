@@ -23,7 +23,7 @@ export async function load() {
     };
 
     const response: CommonResponseDTO =
-        await SalaryServices.getSalaryAllowanceList(param);
+        await SalaryServices.getSalaryAllowancePengarahList(param);
 
     const salaryAllowanceHistory: ListAllowanceDTO[] = response.data
         ?.dataList as ListAllowanceDTO[];
