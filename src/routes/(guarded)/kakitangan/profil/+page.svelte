@@ -55,7 +55,7 @@
 
         <!-- Agenda Semasa Tab -->
         <TabContent paddingClass="p-0" title="Agenda Semasa"
-            ><AgendaSemasa></AgendaSemasa></TabContent
+            ><AgendaSemasa {data}></AgendaSemasa></TabContent
         >
 
         <!-- Gaji & Elaun Tab -->
@@ -69,9 +69,9 @@
         </TabContent>
 
         <!-- Maklumat Kontrak Tab -->
-        <TabContent paddingClass="p-0" title="Maklumat Kontrak">
+        <!-- <TabContent paddingClass="p-0" title="Maklumat Kontrak">
             <MaklumatKontrak {data} {disabled}></MaklumatKontrak>
-        </TabContent>
+        </TabContent> -->
     </Tabs>
 </section>
 <Toaster />
