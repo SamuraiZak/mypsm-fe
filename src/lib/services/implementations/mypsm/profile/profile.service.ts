@@ -1,116 +1,178 @@
-import { CommonListRequestConvert } from '$lib/dto/core/common/common-list-request.dto';
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
+import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
-import { GetPersonalSalaryAllowencesResponseConvert, type GetPersonalSalaryAllowencesResponse } from '$lib/dto/mypsm/profile/gaji-elaun/personal-salary-allowances-response-get.dto';
-import { GetPersonalDetailRequestConvert, type GetPersonalDetailRequest } from '$lib/dto/mypsm/profile/maklumat-peribadi/personal-detail-request-get.dto';
-import { GetPersonalDetailResponseConvert, type GetPersonalDetailResponse } from '$lib/dto/mypsm/profile/maklumat-peribadi/personal-detail-response-get.dto';
-import type { GetPersonalServiceResponse } from '$lib/dto/mypsm/profile/maklumat-peribadi/personal-service-response-get.dto';
+import type { PostPersonalActivityRequest } from '$lib/dto/mypsm/profile/maklumat-peribadi/personal-activity-request-post.dto';
+import type { PostPersonalDependentRequest } from '$lib/dto/mypsm/profile/maklumat-peribadi/personal-dependent-request-post.dto';
+import type { PutPersonalDetailRequest } from '$lib/dto/mypsm/profile/maklumat-peribadi/personal-detail-request-put.dto';
+import { type GetPersonalDetailResponse } from '$lib/dto/mypsm/profile/maklumat-peribadi/personal-detail-response-get.dto';
+import type { PostPersonalExperiencesRequest } from '$lib/dto/mypsm/profile/maklumat-peribadi/personal-experiences-request-post.dto';
+import type { PostPersonalFamilyRequest } from '$lib/dto/mypsm/profile/maklumat-peribadi/personal-family-request-post.dto';
+import type { PostPersonalNextOfKinRequest } from '$lib/dto/mypsm/profile/maklumat-peribadi/personal-next-of-kin-request-post.dto';
 import type { GetPersonalMedicalGeneralAssessmentResponse } from '$lib/dto/mypsm/profile/rekod-kesihatan/personal-medical-record-general-assessment-response-get.dto';
-import type { GetPersonalMedicalRecordHistoryResponse } from '$lib/dto/mypsm/profile/rekod-kesihatan/personal-medical-record-history-response-get.dto';
 import http from '$lib/services/provider/service-provider.service';
-import type { GetPersonalAcademicResponse } from '$lib/view-models/mypsm/profile/profile-get-personal-academic-response.modal';
-import type { GetPersonalActivityResponse } from '$lib/view-models/mypsm/profile/profile-get-personal-activity-response.modal';
-import type { GetPersonalDependentResponse } from '$lib/view-models/mypsm/profile/profile-get-personal-dependent-response.modal';
-import type { GetPersonalExperiencesResponse } from '$lib/view-models/mypsm/profile/profile-get-personal-experiences-response.modal';
-import type { GetPersonalFamilyResponse } from '$lib/view-models/mypsm/profile/profile-get-personal-family-response.modal';
 import type { MedicalHistoryDiseaseNamesResponse } from '$lib/view-models/mypsm/profile/profile-get-personal-medical-history-name-response.modal';
-import type { GetPersonalMedicalRecordGeneralAssessmentResponse } from '$lib/view-models/mypsm/profile/profile-get-personal-medical-record-general-assessment-response.modal';
 import type { GetPersonalMedicalRecordResponse } from '$lib/view-models/mypsm/profile/profile-get-personal-medical-record-history-response.modal';
-import type { GetPersonalNextOfKinsRequest } from '$lib/view-models/mypsm/profile/profile-get-personal-next-of-kins-request.modal';
-
-import type { PutPersonalDetailRequest } from '$lib/view-models/mypsm/profile/proflle-put-personal-detail-request.modal';
-import type { PutPersonalDetailResponse } from '$lib/view-models/mypsm/profile/proflle-put-personal-detail-response.modal';
+import type { PostPersonalAcademicRequest } from '$lib/view-models/mypsm/profile/profile-post-personal-academic-request.modal';
 
 export class ProfileService {
     // maklumat Peribadi
-    // static async ProfileDetail(): Promise<GetPersonalDetailResponse> {
-    //     const response: GetPersonalDetailResponse = await http
-    //         .get(`personal-details/detail`, {})
-    //         .json();
+    static async ProfileDetail(): Promise<CommonResponseDTO> {
+        const response: CommonResponseDTO = await http
+            .get(`personal-details/detail`)
+            .json();
 
-    //     return response;
-    // }
-
-    //get personal detail
-    static async getPersonalDetail(
-    ) {
-
-        const response: Response = await http.get('personal-details/detail', {}).json();
-
-        const result = CommonResponseConvert.fromResponse(response);
-        const personalDetailResult: GetPersonalDetailResponse = result.data?.details as GetPersonalDetailResponse;
-
-        return personalDetailResult
+        return response;
     }
 
-    static async getServiceDetail(
-        ) {
+    //get personal detail
+    static async getPersonalDetail() {
+        const response: Response = await http
+            .get('personal-details/detail')
+            .json();
 
-            const response: Response = await http.get('personal-details/service', {}).json();
+        const result = CommonResponseConvert.fromResponse(response);
+        const personalDetailResult: GetPersonalDetailResponse = result.data
+            ?.details as GetPersonalDetailResponse;
 
-            const result = CommonResponseConvert.fromResponse(response);
-            const personalDetailResult: GetPersonalServiceResponse = result.data?.details as GetPersonalServiceResponse;
+        return personalDetailResult;
+    }
 
-            return personalDetailResult
-        }
+    static async editPersonalDetail(
+        param: PutPersonalDetailRequest,
+    ): Promise<CommonResponseDTO> {
+        const response: CommonResponseDTO = await http
+            .put('personal-details/detail', { body: JSON.stringify(param) })
+            .json();
+
+        return response;
+    }
+
+    static async createAcademicDetail(
+        param: PostPersonalAcademicRequest,
+    ): Promise<CommonResponseDTO> {
+        const response: CommonResponseDTO = await http
+            .post('personal-details/education', { body: JSON.stringify(param) })
+            .json();
+
+        return response;
+    }
+
+    static async createExperienceDetail(
+        param: PostPersonalExperiencesRequest,
+    ): Promise<CommonResponseDTO> {
+        const response: CommonResponseDTO = await http
+            .post('personal-details/education', { body: JSON.stringify(param) })
+            .json();
+
+        return response;
+    }
+    static async createActivityDetail(
+        param: PostPersonalActivityRequest,
+    ): Promise<CommonResponseDTO> {
+        const response: CommonResponseDTO = await http
+            .post('personal-details/activity', { body: JSON.stringify(param) })
+            .json();
+
+        return response;
+    }
+    static async createFamilyDetail(
+        param: PostPersonalFamilyRequest,
+    ): Promise<CommonResponseDTO> {
+        const response: CommonResponseDTO = await http
+            .post('personal-details/family', { body: JSON.stringify(param) })
+            .json();
+
+        return response;
+    }
+
+    static async createDependencyDetail(
+        param: PostPersonalDependentRequest,
+    ): Promise<CommonResponseDTO> {
+        const response: CommonResponseDTO = await http
+            .post('personal-details/dependent', { body: JSON.stringify(param) })
+            .json();
+
+        return response;
+    }
+
+    static async createNextOfKinDetail(
+        param: PostPersonalNextOfKinRequest,
+    ): Promise<CommonResponseDTO> {
+        const response: CommonResponseDTO = await http
+            .post('personal-details/next-of-kin', {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    static async getServiceDetail() {
+        const response: CommonResponseDTO = await http
+            .get('personal-details/service')
+            .json();
+
+        return response;
+    }
 
     // Maklumat Perkhidmatan
 
     // static async ProfileServiceDetail(): Promise<GetPersonalServiceResponse> {
     //     const response: GetPersonalServiceResponse = await http
-    //         .get(`personal-details/service`, {})
+    //         .get(`personal-details/service`)
     //         .json();
 
     //     return response;
     // }
 
     // Maklumat Akademik
-    static async ProfileEducationsDetail(): Promise<GetPersonalAcademicResponse> {
-        const response: GetPersonalAcademicResponse = await http
-            .get(`personal-details/educations`, {})
+    static async ProfileEducationsDetail(): Promise<CommonResponseDTO> {
+        const response: CommonResponseDTO = await http
+            .get(`personal-details/educations`)
             .json();
 
         return response;
     }
 
     // Maklumat Pengalaman
-    static async ProfileExperiencesDetail(): Promise<GetPersonalExperiencesResponse> {
-        const response: GetPersonalExperiencesResponse = await http
-            .get(`personal-details/experiences`, {})
+    static async ProfileExperiencesDetail(): Promise<CommonResponseDTO> {
+        const response: CommonResponseDTO = await http
+            .get(`personal-details/experiences`)
             .json();
 
         return response;
     }
     // Maklumat Kegiatan
-    static async ProfileActivitiesDetail(): Promise<GetPersonalActivityResponse> {
-        const response: GetPersonalActivityResponse = await http
-            .get(`personal-details/activities`, {})
+    static async ProfileActivitiesDetail(): Promise<CommonResponseDTO> {
+        const response: CommonResponseDTO = await http
+            .get(`personal-details/activities`)
             .json();
 
         return response;
     }
 
     // Maklumat Keluarga
-    static async ProfileFamilyDetail(): Promise<GetPersonalFamilyResponse> {
-        const response: GetPersonalFamilyResponse = await http
-            .get(`personal-details/families`, {})
+    static async ProfileFamilyDetail(): Promise<CommonResponseDTO> {
+        const response: CommonResponseDTO = await http
+            .get(`personal-details/families`)
             .json();
 
         return response;
     }
 
     // Maklumat Tanggungan
-    static async ProfileDependentDetail(): Promise<GetPersonalDependentResponse> {
-        const response: GetPersonalDependentResponse = await http
-            .get(`personal-details/dependents`, {})
+    static async ProfileDependentDetail(): Promise<CommonResponseDTO> {
+        const response: CommonResponseDTO = await http
+            .get(`personal-details/dependents`)
             .json();
 
         return response;
     }
 
     // Maklumat Waris
-    static async ProfileNextOfKinsDetail(): Promise<GetPersonalNextOfKinsRequest> {
-        const response: GetPersonalNextOfKinsRequest = await http
-            .get(`personal-details/next-of-kins`, {})
+    static async ProfileNextOfKinsDetail(): Promise<CommonResponseDTO> {
+        const response: CommonResponseDTO = await http
+            .get(`personal-details/next-of-kins`)
             .json();
 
         return response;
@@ -132,27 +194,33 @@ export class ProfileService {
     // Agenda semasa
     // ================
 
+    static async getEmployeeAgenda(param: CommonListRequestDTO) {
+        const response: CommonResponseDTO = await http
+            .post('personal-details/current-agendas', {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
+    static async getPersonalSalaryAllowance(param: CommonListRequestDTO) {
+        const response: CommonResponseDTO = await http
+            .post('personal-details/salary-allowances', {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+        return response;
+    }
+
     static async getPersonalSalary() {
+        const response: CommonResponseDTO = await http
+            .get('personal-details/salary-allowances')
+            .json();
 
-            const response: Response = await http.get('personal-details/salary-allowances').json();
-
-            const result = CommonResponseConvert.fromResponse(response);
-            const personalDetailResult: GetPersonalSalaryAllowencesResponse[] = result.data?.dataList as GetPersonalSalaryAllowencesResponse[];
-
-            return personalDetailResult
-        }
-
-
-        // static async getServiceDetail(
-        //     ) {
-
-        //         const response: Response = await http.get('personal-details/service', {}).json();
-
-        //         const result = CommonResponseConvert.fromResponse(response);
-        //         const personalDetailResult: GetPersonalServiceResponse = result.data?.details as GetPersonalServiceResponse;
-
-        //         return personalDetailResult
-        //     }
+        return response;
+    }
 
     // Rekod Kesihatan
     // ================
@@ -161,7 +229,7 @@ export class ProfileService {
 
     static async medicalHistory(): Promise<GetPersonalMedicalRecordResponse> {
         const response: GetPersonalMedicalRecordResponse = await http
-            .get(`personal-details/medical-record/history`, {})
+            .get(`personal-details/medical-record/history`)
             .json();
 
         return response;
@@ -169,7 +237,7 @@ export class ProfileService {
 
     static async getDiseases(): Promise<MedicalHistoryDiseaseNamesResponse> {
         const response: MedicalHistoryDiseaseNamesResponse = await http
-            .get(`personal-details/medical-record/list-diseases`, {})
+            .get(`personal-details/medical-record/list-diseases`)
             .json();
 
         return response;
@@ -177,31 +245,32 @@ export class ProfileService {
 
     //Pemeriksaan Doktor
 
-//     static async medicalGeneralAssessment(): Promise<GetPersonalMedicalRecordGeneralAssessmentResponse> {
-//         const response: GetPersonalMedicalRecordGeneralAssessmentResponse =
-//             await http
-//                 .get(`personal-details/medical-record/general-assessment`, {})
-//                 .json();
+    //     static async medicalGeneralAssessment(): Promise<GetPersonalMedicalRecordGeneralAssessmentResponse> {
+    //         const response: GetPersonalMedicalRecordGeneralAssessmentResponse =
+    //             await http
+    //                 .get(`personal-details/medical-record/general-assessment`)
+    //                 .json();
 
-//         return response;
-//     }
+    //         return response;
+    //     }
 
-// static async medicalGeneralAssessment(): Promise<GetPersonalMedicalGeneralAssessmentResponse> {
-//     const response: GetPersonalMedicalGeneralAssessmentResponse = await http
-//         .get(`personal-details/medical-record/history`, {})
-//         .json();
+    // static async medicalGeneralAssessment(): Promise<GetPersonalMedicalGeneralAssessmentResponse> {
+    //     const response: GetPersonalMedicalGeneralAssessmentResponse = await http
+    //         .get(`personal-details/medical-record/history`)
+    //         .json();
 
-//     return response;
-// }
+    //     return response;
+    // }
 
-static async getPersonalMedicalGenaralAssesment(
-    ) {
-
-        const response: Response = await http.get('personal-details/detail', {}).json();
+    static async getPersonalMedicalGenaralAssesment() {
+        const response: Response = await http
+            .get('personal-details/detail')
+            .json();
 
         const result = CommonResponseConvert.fromResponse(response);
-        const personalDetailResult: GetPersonalMedicalGeneralAssessmentResponse = result.data?.details as GetPersonalMedicalGeneralAssessmentResponse;
+        const personalDetailResult: GetPersonalMedicalGeneralAssessmentResponse =
+            result.data?.details as GetPersonalMedicalGeneralAssessmentResponse;
 
-        return personalDetailResult
+        return personalDetailResult;
     }
 }
