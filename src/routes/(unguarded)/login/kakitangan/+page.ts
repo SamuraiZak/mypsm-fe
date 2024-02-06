@@ -29,6 +29,8 @@ export const load = async () => {
     // get role list
     const roleResponse: LookupDTO[] = await LookupServices.getLookup('role');
 
+    roleResponse.sort((a, b) => (a.name! < b.name! ? -1 : 1));
+
     return { form, roleResponse };
 };
 
@@ -83,6 +85,7 @@ export const _submit = async (formData: AuthRequestDTO) => {
                     case 'pengarah bahagian':
                         goto('/pengarah-bahagian-negeri/halaman-utama');
                         break;
+
                     case 'pengarah negeri':
                         goto('/pengarah-bahagian-negeri/halaman-utama');
                         break;
@@ -99,7 +102,11 @@ export const _submit = async (formData: AuthRequestDTO) => {
                         goto('/timbalan-ketua-seksyen/halaman-utama');
                         break;
 
-                    case 'unit bahagian/negeri':
+                    case 'unit bahagian':
+                        goto('/unit-bahagian/halaman-utama');
+                        break;
+
+                    case 'unit negeri':
                         goto('/kakitangan/halaman-utama');
                         break;
 
