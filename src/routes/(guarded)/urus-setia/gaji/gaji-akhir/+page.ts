@@ -40,8 +40,7 @@ export async function load() {
 export async function _updateTable(param: CommonListRequestDTO) {
     loadingState.set(true);
 
-    const response: CommonResponseDTO =
-        await SalaryServices.getFinalPayslipList(param);
+    const response: CommonResponseDTO = await SalaryServices.getFinalPayslipList(param);
 
     loadingState.set(false);
 
