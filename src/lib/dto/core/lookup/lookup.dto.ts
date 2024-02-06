@@ -3,7 +3,7 @@
 // ===============================================================
 
 export interface LookupDTO {
-    id: number;
+    id?: number;
     code?: string;
     name?: string;
     description?: string;
@@ -11,6 +11,9 @@ export interface LookupDTO {
     minimumSalary?: number;
     maximumSalary?: number;
     annualIncrementRate?: number;
+    abbrevation?: string;
+    occSectorCode?: string;
+    occSectorName?: string;
 }
 
 // Converts JSON strings to/from your types
