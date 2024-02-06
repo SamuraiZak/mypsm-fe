@@ -104,6 +104,28 @@ export class MedicalServices {
             return CommonResponseConstant.httpError;
         }
     }
+    // verification
+    static async getVerifyClinicApp(param: object) {
+        try {
+            let url: Input = 'medicals/get-clinic-process';
+
+            const response: Response = await http
+                .put(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 
     // add approver and supporter
     static async addClinicAppApproverSupporter(param: object) {
