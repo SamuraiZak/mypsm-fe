@@ -1,17 +1,61 @@
-import { CommonListRequestConvert, type CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
-import { CommonResponseConvert, type CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
-import { AddSalaryMovementRequestDTOConvert ,type AddSalaryMovementRequestDTO } from "$lib/dto/mypsm/salary/salary-movement/add-salary-movement-request.dto";
-import { AddSalaryMovementResponseDTOConvert, type AddSalaryMovementResponseDTO } from "$lib/dto/mypsm/salary/salary-movement/add-salary-movement-response.dto";
-import { AddSalaryMovementApprovalRequestDTOConvert ,type AddSalaryMovementApprovalRequestDTO } from "$lib/dto/mypsm/salary/salary-movement/add-salary-movement-approval-request.dto";
-import  { AddSalaryMovementApprovalResponseDTOConvert } from "$lib/dto/mypsm/salary/salary-movement/add-salary-movement-approval-response.dto";
-import http from "$lib/services/provider/service-provider.service";
-import { DetailSalaryMovementRequestDTOConvert, type DetailSalaryMovementRequestDTO } from "$lib/dto/mypsm/salary/salary-movement/detail-salary-movement-request.dto";
-import { EmployeeFinalSalaryDetailRequestDTOConvert, type EmployeeFinalSalaryDetailRequestDTO } from "$lib/dto/mypsm/salary/final-payslip/employee-final-salary-detail-request.dto";
-import { GetSalaryMovementScheduleRequestDTOConvert, type GetSalaryMovementScheduleRequestDTO } from "$lib/dto/mypsm/salary/salary-movement/get-salary-movement-schedule-request.dto";
-import { DetailSalaryMovementApprovalRequestDTOConvert, type DetailSalaryMovementApprovalRequestDTO } from "$lib/dto/mypsm/salary/salary-movement/detail-salary-movement-approval-request.dto";
-import { type AddSalaryDTO, AddSalaryDTOConvert } from "$lib/dto/mypsm/salary/final-payslip/add-salary.dto";
-import { type FinalPayslipRequestDTO, FinalPayslipRequestDTOConvert } from "$lib/dto/mypsm/salary/final-payslip/final-payslip-request.dto";
-import { type SalaryDetailRequestDTO, SalaryDetailRequestDTOConvert } from "$lib/dto/mypsm/salary/final-payslip/salary-detail-request.dto";
+import {
+    CommonListRequestConvert,
+    type CommonListRequestDTO,
+} from '$lib/dto/core/common/common-list-request.dto';
+import {
+    CommonResponseConvert,
+    type CommonResponseDTO,
+} from '$lib/dto/core/common/common-response.dto';
+import {
+    AddSalaryMovementApprovalRequestDTOConvert,
+    type AddSalaryMovementApprovalRequestDTO,
+} from '$lib/dto/mypsm/salary/salary-movement/add-salary-movement-approval-request.dto';
+import { AddSalaryMovementApprovalResponseDTOConvert } from '$lib/dto/mypsm/salary/salary-movement/add-salary-movement-approval-response.dto';
+import {
+    AddSalaryMovementRequestDTOConvert,
+    type AddSalaryMovementRequestDTO,
+} from '$lib/dto/mypsm/salary/salary-movement/add-salary-movement-request.dto';
+import {
+    AddSalaryMovementResponseDTOConvert,
+    type AddSalaryMovementResponseDTO,
+} from '$lib/dto/mypsm/salary/salary-movement/add-salary-movement-response.dto';
+import http from '$lib/services/provider/service-provider.service';
+
+import { CommonResponseConstant } from '$lib/constants/core/common-response-constant';
+import type { CommonApprovalDTO } from '$lib/dto/core/common/common-approval-request.dto';
+import {
+    AddSalaryDTOConvert,
+    type AddSalaryDTO,
+} from '$lib/dto/mypsm/salary/final-payslip/add-salary.dto';
+import {
+    EmployeeFinalSalaryDetailRequestDTOConvert,
+    type EmployeeFinalSalaryDetailRequestDTO,
+} from '$lib/dto/mypsm/salary/final-payslip/employee-final-salary-detail-request.dto';
+import {
+    FinalPayslipRequestDTOConvert,
+    type FinalPayslipRequestDTO,
+} from '$lib/dto/mypsm/salary/final-payslip/final-payslip-request.dto';
+import {
+    SalaryDetailRequestDTOConvert,
+    type SalaryDetailRequestDTO,
+} from '$lib/dto/mypsm/salary/final-payslip/salary-detail-request.dto';
+import {
+    DetailAllowanceRequestConvert,
+    type DetailAllowanceRequestDTO,
+} from '$lib/dto/mypsm/salary/salary-allowance/detail-allowance-request.dto';
+import {
+    DetailSalaryMovementApprovalRequestDTOConvert,
+    type DetailSalaryMovementApprovalRequestDTO,
+} from '$lib/dto/mypsm/salary/salary-movement/detail-salary-movement-approval-request.dto';
+import {
+    DetailSalaryMovementRequestDTOConvert,
+    type DetailSalaryMovementRequestDTO,
+} from '$lib/dto/mypsm/salary/salary-movement/detail-salary-movement-request.dto';
+import {
+    GetSalaryMovementScheduleRequestDTOConvert,
+    type GetSalaryMovementScheduleRequestDTO,
+} from '$lib/dto/mypsm/salary/salary-movement/get-salary-movement-schedule-request.dto';
+import type { Input } from 'ky';
 
 export class SalaryServices {
     // default @ urus setia
@@ -40,10 +84,12 @@ export class SalaryServices {
     }
 
     //add salary movement
-    static async addSalaryMovement(param: AddSalaryMovementRequestDTO){
-        const response: CommonResponseDTO = await http.post('salaries/add-salary-movement', {
-            body: JSON.stringify(param)
-        }).json();
+    static async addSalaryMovement(param: AddSalaryMovementRequestDTO) {
+        const response: CommonResponseDTO = await http
+            .post('salaries/add-salary-movement', {
+                body: JSON.stringify(param),
+            })
+            .json();
 
         if (response.status! === 'success') {
             return response;
@@ -74,22 +120,31 @@ export class SalaryServices {
         return CommonResponseConvert.fromResponse(response);
     }
 
-
-    static async getSalaryMovementApprovalDetail(param: DetailSalaryMovementApprovalRequestDTO){
-        const response: Response = await http.post('salaries/get-salary-movement-approval', {
-            body: DetailSalaryMovementApprovalRequestDTOConvert.toJson(param)
-        }).json();
-        return CommonResponseConvert.fromResponse(response)
+    static async getSalaryMovementApprovalDetail(
+        param: DetailSalaryMovementApprovalRequestDTO,
+    ) {
+        const response: Response = await http
+            .post('salaries/get-salary-movement-approval', {
+                body: DetailSalaryMovementApprovalRequestDTOConvert.toJson(
+                    param,
+                ),
+            })
+            .json();
+        return CommonResponseConvert.fromResponse(response);
     }
 
-    static async addSalaryMovementApproval(param: AddSalaryMovementApprovalRequestDTO){
+    static async addSalaryMovementApproval(
+        param: AddSalaryMovementApprovalRequestDTO,
+    ) {
         // const response: Response = await http.post('salaries/add-salary-movement', {
         //     body: AddSalaryMovementApprovalRequestDTOConvert.addSalaryMovementApprovalDTOToJson(param)
         // }).json();
         // return AddSalaryMovementApprovalResponseDTOConvert.toAddSalaryMovementApprovalResponseDTO(response)
-        const response: CommonResponseDTO = await http.post('salaries/add-salary-movement-approval', {
-            body: JSON.stringify(param)
-        }).json();
+        const response: CommonResponseDTO = await http
+            .post('salaries/add-salary-movement-approval', {
+                body: JSON.stringify(param),
+            })
+            .json();
 
         if (response.status! === 'success') {
             return response;
@@ -97,7 +152,7 @@ export class SalaryServices {
             throw new Error('Unknown error');
         }
     }
-   
+
     //============================ Salary Allowance
 
     // =============================== Final Payslip
@@ -162,5 +217,231 @@ export class SalaryServices {
             })
             .json();
         return CommonResponseConvert.fromResponse(response);
+    }
+
+    static async getSalaryAllowanceList(param: CommonListRequestDTO) {
+        try {
+            // Change the url here
+            const url: Input = 'salaries/allowances';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async getSalaryAllowancePengarahList(param: CommonListRequestDTO) {
+        try {
+            // Change the url here
+            const url: Input = 'salaries/allowance-approvals';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    static async getSalaryAllowance(param: DetailAllowanceRequestDTO) {
+        try {
+            // Change the url here
+            const url: Input = 'salaries/get-allowance';
+
+            const response: Response = await http
+                .post(url, {
+                    body: DetailAllowanceRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    static async getSalaryAllowanceDetail(param: DetailAllowanceRequestDTO) {
+        try {
+            // Change the url here
+            const url: Input = 'salaries/get-allowance-detail';
+
+            const response: Response = await http
+                .post(url, {
+                    body: DetailAllowanceRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    static async getSalaryAllowanceOther(param: DetailAllowanceRequestDTO) {
+        try {
+            // Change the url here
+            const url: Input = 'salaries/get-allowance-other';
+
+            const response: Response = await http
+                .post(url, {
+                    body: DetailAllowanceRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    static async getSalaryAllowancePublic(param: DetailAllowanceRequestDTO) {
+        try {
+            // Change the url here
+            const url: Input = 'salaries/get-allowance-public';
+
+            const response: Response = await http
+                .post(url, {
+                    body: DetailAllowanceRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    static async getSalaryAllowanceActing(param: DetailAllowanceRequestDTO) {
+        try {
+            // Change the url here
+            const url: Input = 'salaries/get-allowance-acting';
+
+            const response: Response = await http
+                .post(url, {
+                    body: DetailAllowanceRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    static async getSalaryAllowanceAdjustment(
+        param: DetailAllowanceRequestDTO,
+    ) {
+        try {
+            // Change the url here
+            const url: Input = 'salaries/get-allowance-adjustment';
+
+            const response: Response = await http
+                .post(url, {
+                    body: DetailAllowanceRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    static async addSalaryAllowanceAdjustment(
+        param: DetailAllowanceRequestDTO,
+    ) {
+        try {
+            // Change the url here
+            const url: Input = 'salaries/add-allowance-adjustment';
+
+            const response: Response = await http
+                .post(url, {
+                    body: DetailAllowanceRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    static async addSalaryAllowanceApproval(param: CommonApprovalDTO) {
+        try {
+            // Change the url here
+            const url: Input = 'salaries/add-allowance-approval';
+
+            const response: Response = await http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
     }
 }
