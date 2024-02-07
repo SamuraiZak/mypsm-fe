@@ -97,16 +97,6 @@
     <!-- Sample table for testing purposes -->
     <div class="flex w-full flex-col items-start justify-center">
         <SectionHeader title="Senarai Rekod Pautan Belum Diisi"></SectionHeader>
-        <!-- <DynamicTable
-            withActions
-            actionOptions={['detail']}
-            detailActions={() => {
-                const url = './perlantikan/permohonan-baru';
-                goto(url);
-            }}
-            tableItems={newStaffUrl}
-            bind:passData={tempUrl}
-        ></DynamicTable> -->
         <CustomTable
                 bind:tableData={table}
                 onUpdate={_search}

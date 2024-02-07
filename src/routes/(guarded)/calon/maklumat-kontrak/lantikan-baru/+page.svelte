@@ -14,40 +14,15 @@
     import FilterTextInput from '$lib/components/filter/FilterTextInput.svelte';
     import FilterSelectInput from '$lib/components/filter/FilterSelectInput.svelte';
     import FilterDateSelector from '$lib/components/filter/FilterDateSelector.svelte';
-
-    let selectedStatus = status[0].value; // Default selected filter
-
-    // mock data
-    const lantikanBaru = [
-        {
-            namaKakitangan: 'Mohd  Irfan bin Abu',
-            idSementara: '01288',
-            noKadPengenalan: '889955-11-2244',
-            kategori: 'Tetap',
-            TarikhMohon: '23-08-2023',
-            TarikLantikan: '',
-            TarikhBersara: '',
-            emel: 'wee.ting@hrmis.com',
-            status: 'Baru',
-        },
-    ];
-
-    let tempStaff: any;
+    export let data;
 </script>
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader
-        title="Rekod Lantikan Baru (Kontrak)"
+        title="Lantikan Baru (Kontrak)"
         description="Hal-hal berkaitan Lantikan Kontrak Dalam Perkhidmatan"
     >
-        <!-- <FormButton
-            type="new"
-            addLabel="Lengkapkan Butiran Kakitangan Kontrak"
-            onClick={() => {
-                goto('./lantikan-baru/butiran-calon');
-            }}
-        /> -->
     </ContentHeader>
 </section>
 
@@ -57,7 +32,7 @@
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col justify-start overflow-y-auto bg-bgr-primary p-3"
 >
     <!-- Table filter placeholder -->
-    <FilterCard>
+    <!-- <FilterCard>
         <FilterDateSelector handleDateChange label="Tarikh Mohon"
         ></FilterDateSelector>
         <FilterDateSelector handleDateChange label="Tarikh Lantikan"
@@ -69,11 +44,11 @@
             options={status}
             selectedVal={selectedStatus}
         ></FilterSelectInput>
-    </FilterCard>
+    </FilterCard> -->
 
     <!-- Sample table for testing purposes -->
     <div class="flex w-full flex-col items-start justify-center">
-        <SectionHeader title="Senarai Permohonan"></SectionHeader>
+        <SectionHeader title="Maklumat Kontrak Yang Ditawarkan"></SectionHeader>
         <DynamicTable
             withActions
             actionOptions={['edit']}
@@ -82,8 +57,8 @@
                 // const url = './lantikan-baru/kemaskini-permohonan';
                 goto(url);
             }}
-            tableItems={lantikanBaru}
-            bind:passData={tempStaff}
+            tableItems={[data.contractList]}
+            bind:passData={data.contractList.email}
         ></DynamicTable>
     </div>
 </section>
