@@ -11,9 +11,10 @@ export interface Data {
 export interface ExperienceList {
     id:           string;
     company:      string;
-    position:     string;
-    positionCode: null;
     address:      string;
-    duration:     number;
+    position:     string;
+    positionCode: string;
+    startDate:    Date;
+    endDate:      Date;
     salary:       number;
 }

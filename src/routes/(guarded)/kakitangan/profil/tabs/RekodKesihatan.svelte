@@ -26,6 +26,7 @@
         _submitFormStepperPemeriksaanDoktor,
     } from '../+page';
     import { commonOptions } from '$lib/constants/mypsm/radio-option-constants';
+    import { getSuccessToast } from '$lib/services/core/toast/toast-service';
 
     export let disabled: boolean = false;
     export let data: PageData;
@@ -68,9 +69,11 @@
     } = superForm(data.stepperSejarahPenyakit, {
         dataType: 'json',
         SPA: true,
-        validators: _stepperSejarahPenyakit,
+        validators: false,
         onSubmit() {
-            _submitFormStepperSejarahPenyakit($sejarahPenyakitForm);
+            getSuccessToast();
+            disabled = true;
+            // _submitFormStepperSejarahPenyakit($sejarahPenyakitForm);
         },
         taintedMessage:
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
@@ -84,24 +87,19 @@
         SPA: true,
         validators: _stepperPemeriksaanDoktor,
         onSubmit() {
-            _submitFormStepperPemeriksaanDoktor($pemeriksaanDoktorForm);
+            getSuccessToast();
+            disabled = true;
+            // _submitFormStepperPemeriksaanDoktor($pemeriksaanDoktorForm);
         },
         taintedMessage:
             'Terdapat maklumat yang belum disimpan. Adakah anda hendak keluar dari laman ini?',
     });
-   console.log(data.personalMedicalAssessmentResponse)
+    console.log(data.personalMedicalAssessmentResponse);
 </script>
 
 <Stepper>
     <StepperContent>
-        <StepperContentHeader title="Sejarah Penyakit"
-            ><FormButton
-                type="close"
-                onClick={() => {
-                    goto('/kakitangan/profil');
-                }}
-            />
-
+        <StepperContentHeader title="Sejarah Penyakit">
             {#if !disabled}
                 <TextIconButton
                     primary
@@ -1249,13 +1247,7 @@
     <!---------- Pemeriksaan Doktor ------------->
     <!------------------------------------------->
     <StepperContent>
-        <StepperContentHeader title="Pemeriksaan Doktor"
-            ><FormButton
-                type="close"
-                onClick={() => {
-                    goto('/kakitangan/profil');
-                }}
-            />
+        <StepperContentHeader title="Pemeriksaan Doktor">
             <!-- <TextIconButton
                 primary
                 label="Hantar"
@@ -1280,7 +1272,7 @@
                 method="POST"
             >
                 <div
-                    class="border-bdr-primary flex w-full flex-col gap-2 border-b pb-5"
+                    class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
                 >
                     <p class="text-sm font-bold">Pemeriksaan Am</p>
                     <TextField
@@ -1296,7 +1288,7 @@
 
                     {#if $pemeriksaanDoktorErrors.height}
                         <span
-                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$pemeriksaanDoktorErrors.height[0]}</span
                         >
                     {/if}
@@ -1308,11 +1300,12 @@
                         name="weight"
                         label="berat (kg)"
                         type="text"
-                        bind:value={data.personalMedicalAssessmentResponse.weight}
+                        bind:value={data.personalMedicalAssessmentResponse
+                            .weight}
                     ></TextField>
                     {#if $pemeriksaanDoktorErrors.weight}
                         <span
-                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$pemeriksaanDoktorErrors.weight[0]}</span
                         >
                     {/if}
@@ -1327,7 +1320,7 @@
 
                     {#if $pemeriksaanDoktorErrors.BMI}
                         <span
-                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$pemeriksaanDoktorErrors.BMI[0]}</span
                         >
                     {/if}
@@ -1342,7 +1335,7 @@
 
                     {#if $pemeriksaanDoktorErrors.BPM}
                         <span
-                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$pemeriksaanDoktorErrors.BPM[0]}</span
                         >
                     {/if}
@@ -1357,7 +1350,7 @@
 
                     {#if $pemeriksaanDoktorErrors.BP}
                         <span
-                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$pemeriksaanDoktorErrors.BP[0]}</span
                         >
                     {/if}
@@ -1366,11 +1359,12 @@
                         {options}
                         name="paleSkin"
                         legend="Kulit pucat"
-                        bind:userSelected={data.personalMedicalAssessmentResponse.paleSkin}
+                        bind:userSelected={data
+                            .personalMedicalAssessmentResponse.paleSkin}
                     ></RadioSingle>
                     {#if $pemeriksaanDoktorErrors.paleSkin}
                         <span
-                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$pemeriksaanDoktorErrors.paleSkin[0]}</span
                         >
                     {/if}
@@ -1392,11 +1386,12 @@
                         {options}
                         name="edema"
                         legend="Edama"
-                        bind:userSelected={data.personalMedicalAssessmentResponse.edema}
+                        bind:userSelected={data
+                            .personalMedicalAssessmentResponse.edema}
                     ></RadioSingle>
                     {#if $pemeriksaanDoktorErrors.edema}
                         <span
-                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$pemeriksaanDoktorErrors.edema[0]}</span
                         >
                     {/if}
@@ -1405,11 +1400,12 @@
                         {options}
                         name="jaundice"
                         legend="Penyakit kuning"
-                        bind:userSelected={data.personalMedicalAssessmentResponse.jaundice}
+                        bind:userSelected={data
+                            .personalMedicalAssessmentResponse.jaundice}
                     ></RadioSingle>
                     {#if $pemeriksaanDoktorErrors.jaundice}
                         <span
-                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$pemeriksaanDoktorErrors.jaundice[0]}</span
                         >
                     {/if}
@@ -1418,11 +1414,12 @@
                         {options}
                         name="lymphGlands"
                         legend="Kelenjar limfa"
-                        bind:userSelected={data.personalMedicalAssessmentResponse.lymphGlands}
+                        bind:userSelected={data
+                            .personalMedicalAssessmentResponse.lymphGlands}
                     ></RadioSingle>
                     {#if $pemeriksaanDoktorErrors?.lymphGlands}
                         <span
-                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$pemeriksaanDoktorErrors?.lymphGlands[0]}</span
                         >
                     {/if}
@@ -1431,17 +1428,18 @@
                         {options}
                         name="skinDisease"
                         legend="Penyakit kulit"
-                        bind:userSelected={data.personalMedicalAssessmentResponse.skinDisease}
+                        bind:userSelected={data
+                            .personalMedicalAssessmentResponse.skinDisease}
                     ></RadioSingle>
                     {#if $pemeriksaanDoktorErrors.skinDisease}
                         <span
-                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$pemeriksaanDoktorErrors.skinDisease[0]}</span
                         >
                     {/if}
                 </div>
                 <div
-                    class="border-bdr-primary flex w-full flex-col gap-2.5 border-b pb-5"
+                    class="flex w-full flex-col gap-2.5 border-b border-bdr-primary pb-5"
                 >
                     <p class="text-sm font-bold">Mata</p>
                     <table class="text-left text-sm">
@@ -1462,7 +1460,7 @@
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.unaidedVisionLeft}
                                     <span
-                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
                                             .unaidedVisionLeft[0]}</span
                                     >
@@ -1478,18 +1476,20 @@
                                     name="unaidedVisionRight"
                                     label=""
                                     type="text"
-                                    bind:value={data.personalMedicalAssessmentResponse.unaidedVisionRight}
+                                    bind:value={data
+                                        .personalMedicalAssessmentResponse
+                                        .unaidedVisionRight}
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.unaidedVisionRight}
                                     <span
-                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
                                             .unaidedVisionRight[0]}</span
                                     >
                                 {/if}
                             </td>
                             <!-- <td> -->
-                                <!-- <TextField
+                            <!-- <TextField
                                     {disabled}
                                     hasError={$pemeriksaanDoktorErrors.penglihatanTanpaBantuan3
                                         ? true
@@ -1579,11 +1579,13 @@
                                     name="aidedVisionLeft"
                                     label=""
                                     type="text"
-                                    bind:value={data.personalMedicalAssessmentResponse.aidedVisionLeft}
+                                    bind:value={data
+                                        .personalMedicalAssessmentResponse
+                                        .aidedVisionLeft}
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.aidedVisionLeft}
                                     <span
-                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
                                             .aidedVisionLeft[0]}</span
                                     >
@@ -1598,12 +1600,14 @@
                                     name="aidedVisionRight"
                                     label=""
                                     type="text"
-                                    bind:value={data.personalMedicalAssessmentResponse.aidedVisionRight}
+                                    bind:value={data
+                                        .personalMedicalAssessmentResponse
+                                        .aidedVisionRight}
                                 ></TextField>
 
                                 {#if $pemeriksaanDoktorErrors.aidedVisionRight}
                                     <span
-                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
                                             .aidedVisionRight[0]}</span
                                     >
@@ -1659,12 +1663,14 @@
                                     name="colourVision"
                                     label=""
                                     type="text"
-                                    bind:value={data.personalMedicalAssessmentResponse.colourVision}
+                                    bind:value={data
+                                        .personalMedicalAssessmentResponse
+                                        .colourVision}
                                 ></TextField>
 
                                 {#if $pemeriksaanDoktorErrors.colourVision}
                                     <span
-                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
                                             .colourVision[0]}</span
                                     >
@@ -1699,12 +1705,14 @@
                                     name="fundoscopic"
                                     label=""
                                     type="text"
-                                    bind:value={data.personalMedicalAssessmentResponse.fundoscopic}
+                                    bind:value={data
+                                        .personalMedicalAssessmentResponse
+                                        .fundoscopic}
                                 ></TextField>
 
                                 {#if $pemeriksaanDoktorErrors.fundoscopic}
                                     <span
-                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
                                             .fundoscopic[0]}</span
                                     >
@@ -1714,7 +1722,7 @@
                     </table>
                 </div>
                 <div
-                    class="border-bdr-primary flex w-full flex-col gap-2.5 border-b pb-5"
+                    class="flex w-full flex-col gap-2.5 border-b border-bdr-primary pb-5"
                 >
                     <table class="text-left text-sm">
                         <tr>
@@ -1747,11 +1755,12 @@
                                     name="ear"
                                     label=""
                                     type="text"
-                                    bind:value={data.personalMedicalAssessmentResponse.ear}
+                                    bind:value={data
+                                        .personalMedicalAssessmentResponse.ear}
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.ear}
                                     <span
-                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors.ear[0]}</span
                                     >
                                 {/if}
@@ -1789,11 +1798,13 @@
                                     name="dental"
                                     label=""
                                     type="text"
-                                    bind:value={data.personalMedicalAssessmentResponse.dental}
+                                    bind:value={data
+                                        .personalMedicalAssessmentResponse
+                                        .dental}
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.dental}
                                     <span
-                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
                                             .dental[0]}</span
                                     >
@@ -1828,11 +1839,12 @@
                                     name="neck"
                                     label=""
                                     type="text"
-                                    bind:value={data.personalMedicalAssessmentResponse.neck}
+                                    bind:value={data
+                                        .personalMedicalAssessmentResponse.neck}
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.neck}
                                     <span
-                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
                                             .neck[0]}</span
                                     >
@@ -1871,11 +1883,13 @@
                                     name="cardiovascular"
                                     label=""
                                     type="text"
-                                    bind:value={data.personalMedicalAssessmentResponse.cardiovascular}
+                                    bind:value={data
+                                        .personalMedicalAssessmentResponse
+                                        .cardiovascular}
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.cardiovascular}
                                     <span
-                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
                                             .cardiovascular[0]}</span
                                     >
@@ -1885,7 +1899,7 @@
                     </table>
                 </div>
                 <div
-                    class="border-bdr-primary flex w-full flex-col gap-2.5 border-b pb-5"
+                    class="flex w-full flex-col gap-2.5 border-b border-bdr-primary pb-5"
                 >
                     <p class="text-sm font-bold">Sistem pernafasan</p>
                     <table class="text-left text-sm">
@@ -1919,11 +1933,13 @@
                                     name="breathingExam"
                                     label=""
                                     type="text"
-                                    bind:value={data.personalMedicalAssessmentResponse.breathingExam}
+                                    bind:value={data
+                                        .personalMedicalAssessmentResponse
+                                        .breathingExam}
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.breathingExam}
                                     <span
-                                        class="text-system-danger ml-[220px] font-sans text-sm italic"
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
                                             .breathingExam[0]}</span
                                     >
@@ -1958,11 +1974,12 @@
                                     name="xray"
                                     label=""
                                     type="text"
-                                    bind:value={data.personalMedicalAssessmentResponse.xray}
+                                    bind:value={data
+                                        .personalMedicalAssessmentResponse.xray}
                                 ></TextField>
                                 {#if $pemeriksaanDoktorErrors.xray}
                                     <span
-                                        class="text-system-danger ml-[220px] font-sans text-sm italic"
+                                        class="ml-[220px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
                                             .xray[0]}</span
                                     >
@@ -1979,11 +1996,12 @@
                         name="xrayTaken"
                         label="Tarikh pengambilan x-ray"
                         type="text"
-                        bind:value={data.personalMedicalAssessmentResponse.xrayTaken}
+                        bind:value={data.personalMedicalAssessmentResponse
+                            .xrayTaken}
                     ></TextField>
                     {#if $pemeriksaanDoktorErrors.xrayTaken}
                         <span
-                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$pemeriksaanDoktorErrors.xrayTaken[0]}</span
                         >
                     {/if}
@@ -1996,12 +2014,13 @@
                         name="xrayLocation"
                         label="Lokasi pengambilan x-ray"
                         type="text"
-                        bind:value={data.personalMedicalAssessmentResponse.xrayLocation}
+                        bind:value={data.personalMedicalAssessmentResponse
+                            .xrayLocation}
                     ></TextField>
 
                     {#if $pemeriksaanDoktorErrors.xrayLocation}
                         <span
-                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$pemeriksaanDoktorErrors.xrayLocation[0]}</span
                         >
                     {/if}
@@ -2014,18 +2033,19 @@
                         name="xrayReference"
                         label="Nombor Rujukan x-ray"
                         type="text"
-                        bind:value={data.personalMedicalAssessmentResponse.xrayReference}
+                        bind:value={data.personalMedicalAssessmentResponse
+                            .xrayReference}
                     ></TextField>
 
                     {#if $pemeriksaanDoktorErrors.xrayReference}
                         <span
-                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$pemeriksaanDoktorErrors.xrayReference[0]}</span
                         >
                     {/if}
                 </div>
                 <div
-                    class="border-bdr-primary flex w-full flex-col gap-2.5 border-b pb-5"
+                    class="flex w-full flex-col gap-2.5 border-b border-bdr-primary pb-5"
                 >
                     <table class="text-left text-sm">
                         <tr>
@@ -2060,12 +2080,14 @@
                                     name="abdomenHernia"
                                     label=""
                                     type="text"
-                                    bind:value={data.personalMedicalAssessmentResponse.abdomenHernia}
+                                    bind:value={data
+                                        .personalMedicalAssessmentResponse
+                                        .abdomenHernia}
                                 ></TextField>
 
                                 {#if $pemeriksaanDoktorErrors.abdomenHernia}
                                     <span
-                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
                                             .abdomenHernia[0]}</span
                                     >
@@ -2087,12 +2109,12 @@
                                     bind:userSelected={$pemeriksaanDoktorForm.sistemSarafRadio}
                                 ></RadioSingle>
                                 {#if $pemeriksaanDoktorErrors.sistemSarafRadio}
-                                <span
-                                    class="ml-[0px] font-sans text-sm italic text-system-danger"
-                                    >{$pemeriksaanDoktorErrors
-                                        .sistemSarafRadio[0]}</span
-                                >
-                            {/if}
+                                    <span
+                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
+                                        >{$pemeriksaanDoktorErrors
+                                            .sistemSarafRadio[0]}</span
+                                    >
+                                {/if}
                             </td>
 
                             <td colspan="2">
@@ -2104,12 +2126,14 @@
                                     name="mentalState"
                                     label=""
                                     type="text"
-                                    bind:value={data.personalMedicalAssessmentResponse.mentalState}
+                                    bind:value={data
+                                        .personalMedicalAssessmentResponse
+                                        .mentalState}
                                 ></TextField>
 
                                 {#if $pemeriksaanDoktorErrors.mentalState}
                                     <span
-                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
                                             .mentalState[0]}</span
                                     >
@@ -2123,7 +2147,6 @@
                                 </p></td
                             >
                             <td
-
                                 ><RadioSingle
                                     {disabled}
                                     options={normalAbnormalOptions}
@@ -2133,7 +2156,7 @@
                                 ></RadioSingle>
                                 {#if $pemeriksaanDoktorErrors.sistemMuskuloskeletalRadio}
                                     <span
-                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
                                             .sistemMuskuloskeletalRadio[0]}</span
                                     >
@@ -2149,12 +2172,14 @@
                                     name="musculoskeletal"
                                     label=""
                                     type="text"
-                                    bind:value={data.personalMedicalAssessmentResponse.musculoskeletal}
+                                    bind:value={data
+                                        .personalMedicalAssessmentResponse
+                                        .musculoskeletal}
                                 ></TextField>
 
                                 {#if $pemeriksaanDoktorErrors.musculoskeletal}
                                     <span
-                                        class="text-system-danger ml-[0px] font-sans text-sm italic"
+                                        class="ml-[0px] font-sans text-sm italic text-system-danger"
                                         >{$pemeriksaanDoktorErrors
                                             .musculoskeletal[0]}</span
                                     >
@@ -2164,7 +2189,7 @@
                     </table>
                 </div>
                 <div
-                    class="border-bdr-primary flex w-full flex-col gap-2.5 border-b pb-5"
+                    class="flex w-full flex-col gap-2.5 border-b border-bdr-primary pb-5"
                 >
                     <p class="text-sm font-bold">Kencing</p>
                     <RadioSingle
@@ -2176,7 +2201,7 @@
                     ></RadioSingle>
                     {#if $pemeriksaanDoktorErrors.sugar}
                         <span
-                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$pemeriksaanDoktorErrors.sugar[0]}</span
                         >
                     {/if}
@@ -2189,7 +2214,7 @@
                     ></RadioSingle>
                     {#if $pemeriksaanDoktorErrors.albumin}
                         <span
-                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$pemeriksaanDoktorErrors.albumin[0]}</span
                         >
                     {/if}
@@ -2201,12 +2226,13 @@
                         name="microscopic"
                         label="Mikroskopi"
                         type="text"
-                        bind:value={data.personalMedicalAssessmentResponse.microscopic}
+                        bind:value={data.personalMedicalAssessmentResponse
+                            .microscopic}
                     ></TextField>
 
                     {#if $pemeriksaanDoktorErrors.microscopic}
                         <span
-                            class="text-system-danger ml-[220px] font-sans text-sm italic"
+                            class="ml-[220px] font-sans text-sm italic text-system-danger"
                             >{$pemeriksaanDoktorErrors.microscopic[0]}</span
                         >
                     {/if}
