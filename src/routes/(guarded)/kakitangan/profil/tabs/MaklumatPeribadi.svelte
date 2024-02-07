@@ -803,7 +803,7 @@
                             id="fullName"
                             label="Jawatan Kakitangan LKIM"
                             bind:value={$form.fullName}
-                            options={data.employeeListLookupString}
+                            options={data.positionLookupString}
                         ></DropdownSelect>
                         {#if $errors.fullName}
                             <span

@@ -126,7 +126,7 @@
 
             <!-- remeber me & forgot password starts -->
 
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-start">
                 <div
                     class="flex flex-row items-start justify-center align-middle"
                 >
@@ -146,11 +146,6 @@
                         >
                     </div>
                 </div>
-                <a
-                    href="/forgot-password/form"
-                    class=" text-sm font-medium text-ios-labelColors-link-light hover:underline"
-                    >Terlupa Kata Laluan</a
-                >
             </div>
 
             <!-- remember me & forgot password ends -->
