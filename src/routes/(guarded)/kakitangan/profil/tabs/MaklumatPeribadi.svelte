@@ -1489,7 +1489,7 @@
                                 <DateSelector
                                     disabled
                                     name="startDate"
-                                    label="Tarikh Tamat Pembelajaran"
+                                    label="Tarikh Mula Bekerja"
                                     bind:selectedDate={$maklumatPengalamanForm
                                         .dataList[i].startDate}
                                 ></DateSelector>
@@ -1497,7 +1497,7 @@
                                 <DateSelector
                                     disabled
                                     name="endDate"
-                                    label="Tarikh Tamat Pembelajaran"
+                                    label="Tarikh Tamat Bekerja"
                                     bind:selectedDate={$maklumatPengalamanForm
                                         .dataList[i].endDate}
                                 ></DateSelector>

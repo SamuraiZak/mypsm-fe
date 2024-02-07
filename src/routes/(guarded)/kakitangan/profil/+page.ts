@@ -747,6 +747,7 @@ export const _submitFormStepperMaklumatPeribadi = async (formData: object) => {
     const form = await superValidate(formData, _stepperMaklumatPeribadi);
 
     if (!form.valid) {
+        console.log(formData);
         getErrorToast();
         return fail(400, form);
     }
