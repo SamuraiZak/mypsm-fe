@@ -3,6 +3,7 @@ import { CommonListRequestConvert, type CommonListRequestDTO } from "$lib/dto/co
 import { CommonResponseConvert, type CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
 import { AddNewContractRequestConvert, type AddNewContractRequest } from "$lib/dto/mypsm/contract-employment/add-new-contract-request.dto";
 import type { AddNewContractResponse } from "$lib/dto/mypsm/contract-employment/add-new-contract-response.dto";
+import { ListNewContractRequestConvert, type ListNewContractRequest } from "$lib/dto/mypsm/contract-employment/list-new-contract-request.dto";
 import http from "$lib/services/provider/service-provider.service";
 import type { Input } from "ky";
 
@@ -17,6 +18,30 @@ export class ContractEmploymentServices {
             const response: Response = await http
                 .post(url, {
                     body: AddNewContractRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // get the list of newly created contract
+    static async getNewContractList(param: CommonListRequestDTO){
+        try {
+            // Change the url here
+            const url: Input = 'contracts/new-contracts';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
                 })
                 .json();
 
