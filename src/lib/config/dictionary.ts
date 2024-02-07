@@ -448,4 +448,8 @@ const dictionary: { [key: string]: string } = {
     identityDocumentColor: 'Warna KP',
     workAddress: 'Alamat Majikan',
     workPostcode: 'Poskod Majikan',
+
+    // 
+    month: 'Bulan',
+    baseSalary: 'Gaji Pokok'
 };
