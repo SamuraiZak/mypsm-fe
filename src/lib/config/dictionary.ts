@@ -66,7 +66,7 @@ const dictionary: { [key: string]: string } = {
     //employeeDependants
     relationship: 'Hubungan',
     marriageDate: 'Tarikh Kahwin',
-    inSchool: '',
+    inSchool: 'Masih Bersekolah',
 
     //employeeDocumentLists
     documentName: '',
@@ -436,4 +436,16 @@ const dictionary: { [key: string]: string } = {
     // apc
     employeeIdentityNo: 'No. Kad Pengenalan',
     excellenceAwardYear: 'Tahun APC',
+
+    //
+    joinDate: 'Tarik penyertaan',
+    description: 'Nota',
+    birthCountry: 'Negara Kelahiran',
+    birthState: 'Negeri Kelahiran',
+    educationLevel: 'Taraf Pendidikan',
+    race: 'Bangsa',
+    nationality: 'Kewarganegaraan',
+    identityDocumentColor: 'Warna KP',
+    workAddress: 'Alamat Majikan',
+    workPostcode: 'Poskod Majikan',
 };
