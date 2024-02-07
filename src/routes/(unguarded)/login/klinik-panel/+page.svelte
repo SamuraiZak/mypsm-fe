@@ -4,8 +4,7 @@
 
     import { superForm, setMessage } from 'sveltekit-superforms/client';
 
-    import { _calonLoginSchema, _submit } from './+page';
-    import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
+    import { _cliniLoginSchema, _submit } from './+page';
 
     export let data: PageData;
 
@@ -18,7 +17,7 @@
         data.form,
         {
             SPA: true,
-            validators: _calonLoginSchema,
+            validators: _cliniLoginSchema,
             onUpdate({ form }) {
                 if (
                     form.data.idType.includes('Kad') &&

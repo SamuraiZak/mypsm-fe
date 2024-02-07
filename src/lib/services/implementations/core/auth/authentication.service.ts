@@ -10,6 +10,7 @@ import {
     type AuthRequestDTO,
 } from '$lib/dto/core/auth/auth-request.dto';
 import type { AuthResponseDTO } from '$lib/dto/core/auth/auth-response.dto';
+import { ForgotPasswordRequestConvert, type ForgotPasswordRequestDTO } from '$lib/dto/core/auth/forgot-password-request.dto';
 import {
     PwdUpdateRequestConvert,
     type PwdUpdateRequestDTO,
@@ -259,4 +260,27 @@ export class AuthService {
             return result;
         }
     }
+
+    // reset password
+    static async forgotPassword(param: ForgotPasswordRequestDTO) {
+            try {
+                let url: Input = 'authentication/reset-password';
+    
+                const response: Response = await http
+                    .post(url, {
+                        body: ForgotPasswordRequestConvert.toJson(param),
+                    })
+                    .json();
+    
+                const result = CommonResponseConvert.fromResponse(response);
+    
+                if (result.status == 'success') {
+                    return result;
+                } else {
+                    return CommonResponseConstant.httpError;
+                }
+            } catch (error) {
+                return CommonResponseConstant.httpError;
+            }
+        }
 }

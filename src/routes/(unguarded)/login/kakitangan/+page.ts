@@ -35,18 +35,14 @@ export const load = async () => {
 };
 
 export const _submit = async (formData: AuthRequestDTO) => {
-    loadingState.set(true);
     getLoadingToast();
 
     const response: CommonResponseDTO = await AuthService.authenticateUser(
         formData,
     ).finally(() => toast.dismiss());
 
-    console.log(response);
-
     if (response.status == 'success') {
         let accountRes = await AuthService.getFullName();
-        loadingState.set(false);
         getLoginSuccessToast().finally(() =>
             setTimeout(() => {
                 switch (formData.currentRole) {

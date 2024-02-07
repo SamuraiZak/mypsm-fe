@@ -55,8 +55,7 @@
                 }
             },
             onSubmit(input) {
-                showLoadingOverlay.set(true);
-                _submit($form).finally(() => (showLoadingOverlay.set(false)));
+                _submit($form);
             },
         },
     );

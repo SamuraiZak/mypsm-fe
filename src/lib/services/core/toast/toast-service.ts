@@ -7,9 +7,12 @@ export const getLoginSuccessToast = async () => {
 };
 
 export const getLoginErrorToast = async () => {
-    toast.error('Log Masuk Gagal! Sila pastikan maklumat adalah lengkap dengan tepat.', {
-        style: 'background: #333; color: #fff;',
-    });
+    toast.error(
+        'Log Masuk Gagal! Sila pastikan maklumat adalah lengkap dengan tepat.',
+        {
+            style: 'background: #333; color: #fff;',
+        },
+    );
 };
 
 export const getSuccessToast = async () => {
@@ -44,6 +47,28 @@ export const getPromiseToast = async (promise: Promise<unknown>) => {
             success: 'Berjaya disimpan!',
             error: 'Tidak dapat disimpan.',
         },
+        {
+            style: 'background: #333; color: #fff;',
+        },
+    );
+};
+
+// =======================================================
+// forgot password
+// =======================================================
+export const getPasswordResetSuccessToast = async () => {
+    console.log("toast success");
+    toast.success(
+        'Kata laluan berjaya ditukar! Sila semak emel anda untuk kata laluan baru anda.',
+        {
+            style: 'background: #333; color: #fff;',
+        },
+    );
+};
+
+export const getPasswordResetErroToast = async () => {
+    toast.error(
+        'Ralat! Sila pastikan maklumat diisi dengan lengkap dan tepat',
         {
             style: 'background: #333; color: #fff;',
         },
