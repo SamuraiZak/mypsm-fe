@@ -1,77 +1,60 @@
 
 
-import { mockEmployees } from '$lib/mocks/database/mockEmployees.js';
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
+import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { ListNewContractResponse } from '$lib/dto/mypsm/contract-employment/list-new-contract-response.dto';
+import { ContractEmploymentServices } from '$lib/services/implementations/mypsm/contract-employment/contract-employment.service';
+import { loadingState } from '$lib/stores/globalState';
 
 export async function load() {
 
+    const param: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 10,
+        orderBy: '',
+        orderType: '',
+        filter: {
+            dataType: "New",
+            identityCard: null,
+            staffNo: null,
+            staffName: null,
+            dateRequest: null,
+            dateHire: null,
+            status: null,
+        },
+    }
 
-    const candidateData: Candidate[] = [
-        {
-            namaKakitangan: 'Wee Ting',
-            idSementara: '01288',
-            noKadPengenalan: '889955-11-2244',
-            emel: 'wee.ting@hrmis.com',
-            pautan: 'https://www.myPSM.com.gov.my/lantikan-baru/kontrak/daftar-xyshskai.cosjk.mypsm.com',
-        },
-        {
-            namaKakitangan: 'Loh Huat Tang',
-            idSementara: '01254',
-            noKadPengenalan: '589955-11-1232',
-            emel: 'loh@hrmis.com',
-            pautan: 'https://www.myPSM.com.gov.my/lantikan-baru/kontrak/daftar-xyshskai.cosjk.mypsm.com',
-        },
-        {
-            namaKakitangan: 'Ali Bin Abu',
-            idSementara: '01212',
-            noKadPengenalan: '789955-11-5542',
-            emel: 'ali.abu@hrmis.com',
-            pautan: 'https://www.myPSM.com.gov.my/lantikan-baru/kontrak/daftar-xyshskai.cosjk.mypsm.com',
-        },
-    ];
+    const newContractResponse: CommonResponseDTO =
+        await ContractEmploymentServices.getNewContractList(param);
+        
+    const newHireList: ListNewContractResponse[] = newContractResponse.data?.dataList as ListNewContractResponse[];
 
-    const newHireData: NewHire[] = [
-        {
-            namaKakitangan: mockEmployees[0].name,
-            idSementara: mockEmployees[0].employeeNumber,
-            noKadPengenalan: mockEmployees[0].identityDocumentNumber,
-            kategori: 'Tetap',
-            TarikhMohon: '23-08-2023',
-            TarikLantikan: '',
-            TarikhBersara: '',
-            emel: 'wee.ting@hrmis.com',
-            status: 'Baru',
+    return {
+        prop: {
+            param,
+            newContractResponse,
+            newHireList,
         },
-        {
-            namaKakitangan: mockEmployees[1].name,
-            idSementara: mockEmployees[1].employeeNumber,
-            noKadPengenalan: mockEmployees[1].identityDocumentNumber,
-            kategori: 'Tetap',
-            TarikhMohon: '20-07-2023',
-            TarikLantikan: '',
-            TarikhBersara: '',
-            emel: 'loh@hrmis.com',
-            status: 'SAH - Urusetia Perjawatan',
-        },
-        {
-            namaKakitangan: mockEmployees[2].name,
-            idSementara: mockEmployees[2].employeeNumber,
-            noKadPengenalan: mockEmployees[2].identityDocumentNumber,
-            kategori: 'Tetap',
-            TarikhMohon: '12-07-2023',
-            TarikLantikan: '23-11-2023',
-            TarikhBersara: '23-08-2056',
-            emel: 'ali.abu@hrmis.com',
-            status: 'LULUS - Pelulus',
-        },
-    ];
+
+    };
+}
 
 
+export async function _updateTable(param: CommonListRequestDTO) {
+    loadingState.set(true);
+    param.filter.dataType =
+        param.filter.dataType == 'New'
+            ? 'Submitted'
+            : param.filter.allowance
+    const response: CommonResponseDTO =
+        await ContractEmploymentServices.getNewContractList(param);
+
+    loadingState.set(false);
 
     return {
         props: {
-            newHireLists: newHireData,
-            candidateLists: candidateData,
+            param,
+            response,
         },
-
     };
 }
