@@ -43,7 +43,7 @@ const minDateSchema = z.coerce
         message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
     });
 
-const generalNumberScheme = z.number().default(0).refine((value) => value > 0, {message: "Sila tetapkan pilihan anda."})
+const generalNumberScheme = z.number().default(0).refine((value) => value > 0, { message: "Sila tetapkan pilihan anda." })
 
 const maxDateSchema = z.coerce
     .date({
@@ -58,49 +58,42 @@ const maxDateSchema = z.coerce
         message: 'Tarikh lepas tidak boleh lebih dari tarikh semasa.',
     });
 
-// New employment - add academic section
-export const _addAcademicInfoSchema = z.object({
-    title: shortTextSchema,
-    institution: shortTextSchema,
-    year: shortTextSchema,
-    achievement: shortTextSchema,
-    remarks: longTextSchema,
-});
 
 
-    export const _personalInfoForm = z
+// ======================== Schema
+export const _personalInfoForm = z
     .object({
-        genderId:                 generalNumberScheme,
-    nationalityId:            generalNumberScheme,
-    religionId:               generalNumberScheme,
-    raceId:                   generalNumberScheme,
-    titleId:                  generalNumberScheme,
-    ethnicId:                 generalNumberScheme,
-    maritalId:                generalNumberScheme,
-    birthCountryId:           generalNumberScheme,
-    birthStateId:             generalNumberScheme,
-    assetDeclarationStatusId: generalNumberScheme,
-    name:                     shortTextSchema,
-    alternativeName:          shortTextSchema,
-    identityDocumentColor:    shortTextSchema,
-    identityDocumentNumber:   shortTextSchema,
-    email:                    shortTextSchema.email({message: "Sila nyatakan emel dalam format yang sah"}),
-    propertyDeclarationDate:  maxDateSchema,
-    birthDate:                maxDateSchema,
-    homeAddress:              shortTextSchema,
-    homeCountryId:            generalNumberScheme,
-    homeStateId:              generalNumberScheme,
-    homeCityId:               generalNumberScheme,
-    homePostcode:             shortTextSchema,
-    mailAddress:              shortTextSchema,
-    mailCountryId:            generalNumberScheme,
-    mailStateId:              generalNumberScheme,
-    mailCityId:               generalNumberScheme,
-    mailPostcode:             shortTextSchema,
-    isExPoliceOrSoldier:      z.boolean(),
-    isInternalRelationship:   z.boolean(),
-    employeeNumber:           shortTextSchema,
-    relationshipId:           generalNumberScheme,
+        genderId: generalNumberScheme,
+        nationalityId: generalNumberScheme,
+        religionId: generalNumberScheme,
+        raceId: generalNumberScheme,
+        titleId: generalNumberScheme,
+        ethnicId: generalNumberScheme,
+        maritalId: generalNumberScheme,
+        birthCountryId: generalNumberScheme,
+        birthStateId: generalNumberScheme,
+        assetDeclarationStatusId: generalNumberScheme,
+        name: shortTextSchema,
+        alternativeName: shortTextSchema,
+        identityDocumentColor: shortTextSchema,
+        identityDocumentNumber: shortTextSchema,
+        email: shortTextSchema.email({ message: "Sila nyatakan emel dalam format yang sah." }),
+        propertyDeclarationDate: maxDateSchema,
+        birthDate: maxDateSchema,
+        homeAddress: shortTextSchema,
+        homeCountryId: generalNumberScheme,
+        homeStateId: generalNumberScheme,
+        homeCityId: generalNumberScheme,
+        homePostcode: shortTextSchema,
+        mailAddress: shortTextSchema,
+        mailCountryId: generalNumberScheme,
+        mailStateId: generalNumberScheme,
+        mailCityId: generalNumberScheme,
+        mailPostcode: shortTextSchema,
+        isExPoliceOrSoldier: z.boolean(),
+        isInternalRelationship: z.boolean(),
+        employeeNumber: shortTextSchema,
+        relationshipId: generalNumberScheme,
     })
     .superRefine(
         (
@@ -135,6 +128,17 @@ export const _addAcademicInfoSchema = z.object({
             return true;
         },
     );
+
+    
+// New employment - add academic section
+export const _addAcademicInfoSchema = z.object({
+    title: shortTextSchema,
+    institution: shortTextSchema,
+    year: shortTextSchema,
+    achievement: shortTextSchema,
+    remarks: longTextSchema,
+});
+
 
 //==========================================================
 //================== Maklumat Akademik =====================
@@ -191,23 +195,23 @@ export const _kinInfoSchema = z.object({
 });
 
 
-    export const load = async () => {
-        const personalInfoForm = await superValidate(_personalInfoForm);
-        const academicInfoForm = await superValidate(_academicInfoSchema);
-        const experienceInfoForm = await superValidate(_experienceInfoSchema);
-        const kinInfoForm = await superValidate(_kinInfoSchema, {id: "formStepperWaris"});
+export const load = async () => {
+    const personalInfoForm = await superValidate(_personalInfoForm);
+    const academicInfoForm = await superValidate(_academicInfoSchema);
+    const experienceInfoForm = await superValidate(_experienceInfoSchema);
+    const kinInfoForm = await superValidate(_kinInfoSchema, { id: "formStepperWaris" });
 
-        return {
-            personalInfoForm,
-            academicInfoForm,
-            experienceInfoForm,
-            kinInfoForm,
+    return {
+        personalInfoForm,
+        academicInfoForm,
+        experienceInfoForm,
+        kinInfoForm,
 
 
-        };
     };
+};
 
-    // personal detail submit function
+// personal detail submit function
 export const _submitPersonalInfoForm = async (formData: object) => {
 
     const form = await superValidate(formData, _personalInfoForm);
@@ -225,7 +229,7 @@ export const _submitPersonalInfoForm = async (formData: object) => {
             'Content-type': 'application/json; charset=UTF-8',
         },
     })
-    .then((response) => response.json())
+        .then((response) => response.json())
         .then((json) => console.log('Response: ', json));
 
     getPromiseToast(responsePromise);
@@ -250,7 +254,7 @@ export const _submitAcademicInfoForm = async (formData: object) => {
             'Content-type': 'application/json; charset=UTF-8',
         },
     })
-    .then((response) => response.json())
+        .then((response) => response.json())
         .then((json) => console.log('Response: ', json));
 
     getPromiseToast(responsePromise);
@@ -274,7 +278,7 @@ export const _submitExperienceInfoForm = async (formData: object) => {
             'Content-type': 'application/json; charset=UTF-8',
         },
     })
-    .then((response) => response.json())
+        .then((response) => response.json())
         .then((json) => console.log('Response: ', json));
 
     getPromiseToast(responsePromise);
@@ -299,7 +303,7 @@ export const _submitKinInfoForm = async (formData: object) => {
             'Content-type': 'application/json; charset=UTF-8',
         },
     })
-    .then((response) => response.json())
+        .then((response) => response.json())
         .then((json) => console.log('Response: ', json));
 
     getPromiseToast(responsePromise);
