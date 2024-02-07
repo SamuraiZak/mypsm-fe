@@ -1,6 +1,8 @@
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
 import { LookupHelper } from '$lib/helper/core/lookup-helper/lookup-helper';
 import type { DropdownOptionsInterface } from '$lib/interfaces/common/dropdown-option';
+import { AccountService } from '$lib/services/implementations/core/account/account.service';
 import { LookupServices } from '$lib/services/implementations/core/lookup/lookup.service';
 import { EmployeeService } from '$lib/services/implementations/mypsm/employee/employee-services.service';
 import type { RoleOption } from '$lib/view-models/core/role-option/role-option.view-model';
@@ -276,16 +278,16 @@ export const load = async () => {
         await EmployeeService.getEmployeeList();
 
     const employeeListLookup: DropdownOptionsInterface[] =
-        employeeListResponse?.data?.result.map((employee) => ({
+        employeeListResponse?.data?.dataList?.map((employee) => ({
             value: String(employee.employeeId),
             name: employee.name,
-        }));
+        })) ?? [];
 
     const employeeListLookupString: DropdownOptionsInterface[] =
-        employeeListResponse.data.result.map((employee) => ({
+        employeeListResponse.data?.dataList?.map((employee) => ({
             value: employee.name,
             name: employee.name,
-        }));
+        })) ?? [];
 
     // // stop editing here: hamiz
 
@@ -390,7 +392,6 @@ export const load = async () => {
         monthStringLookup,
         kgtMonthStringLookup,
         retirementBenefitLookup,
-        employeeListLookup,
         employeeListLookupString,
         requestPlacementAmendmentLookup,
     };
