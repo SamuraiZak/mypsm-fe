@@ -43,6 +43,8 @@ const minDateSchema = z.coerce
         message: 'Tarikh lepas tidak boleh kurang dari tarikh semasa.',
     });
 
+const generalNumberScheme = z.number().default(0).refine((value) => value > 0, {message: "Sila tetapkan pilihan anda."})
+
 const maxDateSchema = z.coerce
     .date({
         errorMap: (issue, { defaultError }) => ({
@@ -65,30 +67,40 @@ export const _addAcademicInfoSchema = z.object({
     remarks: longTextSchema,
 });
 
+
     export const _personalInfoForm = z
     .object({
-        statusPekerjaan: generalSelectSchema,
-        staffNumber: shortTextSchema,
-        identityDocumentNumber: shortTextSchema,
-        name: shortTextSchema,
-        alternativeName: shortTextSchema,
-        identityDocumentColor: generalSelectSchema,
-        birthDate: maxDateSchema,
-        birthPlace: generalSelectSchema,
-        isMalaysia: generalSelectSchema,
-        raceId: generalSelectSchema,
-        religionId: generalSelectSchema,
-        gender: generalSelectSchema,
-        status: generalSelectSchema,
-        email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
-        homeAddress: shortTextSchema,
-        mailAddress: shortTextSchema,
-        isExPoliceOrSoldier: generalSelectSchema,
-        isInternalRelationship: generalSelectSchema,
-        employeeNumber: z.string(),
-        employeeName: z.string(),
-        employeePosition: z.string(),
-        relationship: z.string(),
+        genderId:                 generalNumberScheme,
+    nationalityId:            generalNumberScheme,
+    religionId:               generalNumberScheme,
+    raceId:                   generalNumberScheme,
+    titleId:                  generalNumberScheme,
+    ethnicId:                 generalNumberScheme,
+    maritalId:                generalNumberScheme,
+    birthCountryId:           generalNumberScheme,
+    birthStateId:             generalNumberScheme,
+    assetDeclarationStatusId: generalNumberScheme,
+    name:                     shortTextSchema,
+    alternativeName:          shortTextSchema,
+    identityDocumentColor:    shortTextSchema,
+    identityDocumentNumber:   shortTextSchema,
+    email:                    shortTextSchema.email({message: "Sila nyatakan emel dalam format yang sah"}),
+    propertyDeclarationDate:  maxDateSchema,
+    birthDate:                maxDateSchema,
+    homeAddress:              shortTextSchema,
+    homeCountryId:            generalNumberScheme,
+    homeStateId:              generalNumberScheme,
+    homeCityId:               generalNumberScheme,
+    homePostcode:             shortTextSchema,
+    mailAddress:              shortTextSchema,
+    mailCountryId:            generalNumberScheme,
+    mailStateId:              generalNumberScheme,
+    mailCityId:               generalNumberScheme,
+    mailPostcode:             shortTextSchema,
+    isExPoliceOrSoldier:      z.boolean(),
+    isInternalRelationship:   z.boolean(),
+    employeeNumber:           shortTextSchema,
+    relationshipId:           generalNumberScheme,
     })
     .superRefine(
         (
@@ -107,7 +119,7 @@ export const _addAcademicInfoSchema = z.object({
             //     jawatanPasangan,
             //     hubungan,
             // ];
-            if (isInternalRelationship === 'true') {
+            if (isInternalRelationship === true) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
                     message: `Sila isi medan ini.`,
@@ -202,7 +214,7 @@ export const _submitPersonalInfoForm = async (formData: object) => {
 
     if (!form.valid) {
         getErrorToast();
-        console.log("experience personal form")
+        console.log(form)
         return fail(400, form);
     }
 

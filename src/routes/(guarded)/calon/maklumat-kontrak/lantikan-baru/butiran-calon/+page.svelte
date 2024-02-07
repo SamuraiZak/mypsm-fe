@@ -435,10 +435,10 @@
         onClick={() => {
             goto('../lantikan-baru');
         }}
-    /></ContentHeader
+    /></ContentHeader   
 >
 <Stepper>
-    <StepperContent>
+    <!-- <StepperContent>
         <StepperContentHeader title="Maklumat Peribadi"
             ><TextIconButton
                 primary
@@ -448,9 +448,10 @@
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
-        <StepperContentBody
-            ><!-- Maklumat Peribadi -->
-            <form
+        <StepperContentBody -->
+            >
+            <!-- Maklumat Peribadi -->
+            <!-- <form
                 id="FormStepperMaklumatPeribadi"
                 class="flex w-full flex-col gap-2"
                 use:enhance
@@ -742,10 +743,12 @@
                 <div class="flex w-full flex-col gap-2">
                     <p class={stepperFormTitleClass}>
                         Maklumat Pertalian Dengan Kakitangan LKIM
-                    </p>
+                    </p> -->
 
                     <!-- kakitanganLKIM? -->
-                    <RadioSingle
+
+
+                    <!-- <RadioSingle
                         name="isInternalRelationship"
                         {options}
                         {disabled}
@@ -829,7 +832,7 @@
                 </div>
             </form>
         </StepperContentBody>
-    </StepperContent>
+    </StepperContent> -->
 
     <StepperContent>
         <StepperContentHeader
