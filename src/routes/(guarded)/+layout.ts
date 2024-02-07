@@ -285,11 +285,11 @@ export const load = async () => {
 
     // get role list
 
-    // const roleOptionsList: RoleOption[] =await AccountService.getRoles();
+    const roleOptionsList: RoleOption[] = await AccountService.getRoles();
 
-    const roles = await LookupServices.getLookup('role');
+    // const roles = await LookupServices.getLookup('role');
 
-    const roleOptionsList: RoleOption[] = LookupHelper.toRoleOption(roles);
+    // const roleOptionsList: RoleOption[] = LookupHelper.toRoleOption(roles);
 
     return {
         roleOptionsList,

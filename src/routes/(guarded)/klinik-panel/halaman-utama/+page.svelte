@@ -99,7 +99,10 @@
         <div
             class="flex h-full w-full flex-col justify-start gap-2.5 overflow-y-auto p-2.5"
         >
-            <NotificationCard
+        <span class="text-base text-center">
+            Tiada notifikasi baru
+        </span>
+            <!-- <NotificationCard
                 subject="Menunggu tindakan anda"
                 title="Permohonan Cuti"
                 user="Mohd Irfan Bin Abu"
@@ -128,7 +131,7 @@
                 title="Permohonan Cuti"
                 user="Mohd Irfan Bin Abu"
                 duration="2 hari yang lalu"
-            ></NotificationCard>
+            ></NotificationCard> -->
         </div>
     </div>
 </section>

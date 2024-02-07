@@ -5,6 +5,8 @@
     import { showLoadingOverlay } from '$lib/stores/globalState';
     import { _resetPasswordSchema, _submit } from './+page';
     import type { PageData } from './$types';
+    import { Toast } from 'flowbite-svelte';
+    import { Toaster } from 'svelte-french-toast';
 
     export let data: PageData;
 
@@ -151,3 +153,4 @@
         </form>
     </div>
 </div>
+<Toaster></Toaster>
