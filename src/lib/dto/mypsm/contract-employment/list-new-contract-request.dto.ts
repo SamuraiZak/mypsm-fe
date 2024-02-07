@@ -1,11 +1,11 @@
 export interface ListNewContractRequest {
-    dataType:     string;
-    identityCard: null;
-    staffNo:      null;
-    staffName:    null;
-    dateRequest:  null;
-    dateHire:     null;
-    status:       null;
+    dataType?:     string;
+    identityCard?: null;
+    staffNo?:      null;
+    staffName?:    null;
+    dateRequest?:  null;
+    dateHire?:     null;
+    status?:       null;
 }
 
 // Converts JSON strings to/from your types

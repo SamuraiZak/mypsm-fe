@@ -1,5 +1,5 @@
 export interface ListNewContractResponse {
-    candidateId:    string;
+    candidateId:    number;
     candidateName:  string;
     temporaryId:    string;
     identityCardNo: string;
