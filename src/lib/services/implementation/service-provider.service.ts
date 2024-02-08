@@ -3,7 +3,7 @@
 // ===============================================================
 
 import { env } from '$env/dynamic/public';
-import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key-constant';
+import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 
 import ky from 'ky';
 
