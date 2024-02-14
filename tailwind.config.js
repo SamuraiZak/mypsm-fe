@@ -1,20 +1,22 @@
 /** @type {import('tailwindcss').Config} */
+import { fontFamily } from 'tailwindcss/defaultTheme';
 export default {
     content: [
         './src/**/*.{html,js,svelte,ts}',
         './node_modules/flowbite-svelte/**/*.{html,js,svelte,ts}',
     ],
     theme: {
-        fontFamily: {
-            sans: ['"Inter var", sans-serif'],
-        },
         fontSize: {
             sm: '11px',
             base: '12px',
+            md: '14px',
             lg: '14px',
             xl: '16px',
         },
         extend: {
+            fontFamily:{
+                sans: ['Inter', ...fontFamily.sans]
+            },
             colors: {
                 system: {
                     primary: '#0070FF',
