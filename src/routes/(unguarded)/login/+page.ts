@@ -1,3 +1,4 @@
+import { goto } from '$app/navigation';
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { UserGroupConstant } from '$lib/constants/core/user-group.constant';
 import type { AuthenticationRequestDTO } from '$lib/dto/core/auth/authentication-request.dto';
@@ -104,6 +105,8 @@ export const _submit = async (formData: AuthenticationRequestDTO) => {
                 'Kakitangan',
             );
             localStorage.setItem(LocalStorageKeyConstant.fullName, 'Jon Bovi');
+
+            goto('/halaman-utama');
         }
     } else {
         return fail(400, form);

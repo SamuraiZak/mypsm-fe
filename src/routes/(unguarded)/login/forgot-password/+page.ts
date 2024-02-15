@@ -27,3 +27,26 @@ export const load = async () => {
     };
 };
 
+// on login form submit
+export const _submit = async (formData: object) => {
+    const form = await superValidate(formData, _forgotPasswordSchema);
+
+    if (form.valid) {
+        // post
+        // const response: CommonResponseDTO =
+        //     await AuthService.authenticateUser(formData);
+
+        // if (response.status == 'success') {
+        // } else {
+        //     localStorage.setItem(LocalStorageKeyConstant.userName, 'user01');
+        //     localStorage.setItem(LocalStorageKeyConstant.accessToken, 'token');
+        //     localStorage.setItem(
+        //         LocalStorageKeyConstant.currentRole,
+        //         'Kakitangan',
+        //     );
+        //     localStorage.setItem(LocalStorageKeyConstant.fullName, 'Jon Bovi');
+        // }
+    } else {
+        return fail(400, form);
+    }
+};
