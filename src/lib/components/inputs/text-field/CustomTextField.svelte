@@ -1,5 +1,9 @@
 <script lang="ts">
+    export let label: string = 'Label';
+    export let id: string;
     export let val: string;
+    export let placeholder: string = 'Taip jawapan anda di sini';
+    export let type: string = 'text' || 'number' || 'password' || 'email';
     export let errors: string[] | undefined = [''] ?? undefined;
 </script>
 
@@ -8,19 +12,50 @@
     <label
         for="password"
         class="block w-full text-start text-sm font-medium text-ios-labelColors-secondaryLabel-light"
-        >Kata Laluan</label
+        >{label}</label
     >
     <!-- input label ends here -->
 
     <!-- input field starts here -->
-    <input
-        bind:value={val}
-        placeholder="••••••••"
-        type="password"
-        name="password"
-        id="password"
-        class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light bg-ios-backgroundColors-systemBackground-light p-2 text-sm [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-    />
+
+    <!-- text input field -->
+    {#if type == 'number'}
+        <input
+            bind:value={val}
+            {placeholder}
+            type="number"
+            name={id}
+            {id}
+            class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light bg-ios-backgroundColors-systemBackground-light p-2 text-sm [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+        />
+    {:else if type == 'password'}
+        <input
+            bind:value={val}
+            {placeholder}
+            type="password"
+            name={id}
+            {id}
+            class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light bg-ios-backgroundColors-systemBackground-light p-2 text-sm [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
+        />
+    {:else if type == 'email'}
+        <input
+            bind:value={val}
+            {placeholder}
+            type="email"
+            name={id}
+            {id}
+            class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light bg-ios-backgroundColors-systemBackground-light p-2 text-sm [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+        />
+    {:else}
+        <input
+            bind:value={val}
+            {placeholder}
+            type="text"
+            name={id}
+            {id}
+            class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light bg-ios-backgroundColors-systemBackground-light p-2 text-sm [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+        />
+    {/if}
 
     <!-- input field ends here -->
 
