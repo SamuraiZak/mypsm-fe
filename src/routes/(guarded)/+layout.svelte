@@ -13,14 +13,27 @@
         DropdownHeader,
         DropdownDivider,
     } from 'flowbite-svelte';
+    import type { LayoutData } from './$types';
+    import Sidebar from '$lib/components/sidebar/Sidebar.svelte';
+    import { SidebarConstant } from '$lib/constants/core/sidebar.constant';
 
-    let currentFullname = 'Mohd Irfan bin Abu Nawas Haji Ismail Sbari Yakub';
-    let currentRole = 'Kakitangan';
+    export let data: LayoutData;
+
+    let currentFullname = data.props.currentFullName;
+    let currentRole = data.props.currentRole;
+
+    let sidebarItems = SidebarConstant.sidebar.find(
+        (item) => item.role == data.props.currentRole,
+    )?.navItems;
 </script>
 
-<section class="h-screen w-screen bg-ios-basic-white">
+<section
+    class="h-screen w-screen min-w-[100vw] overflow-x-auto bg-ios-basic-white"
+>
     <!-- wrapper starts here -->
-    <div class="flex h-screen w-screen flex-col items-start justify-start">
+    <div
+        class="flex h-screen w-full min-w-[100vw] flex-col items-start justify-start"
+    >
         <!-- header starts here -->
         <header
             class="flex h-10 max-h-10 min-h-10 w-full flex-row justify-between bg-system-primary"
@@ -47,32 +60,34 @@
                 >
                     <button
                         id="accountTile"
-                        class="flex h-full w-[250px] max-w-[250px] flex-row items-center justify-start overflow-hidden text-ios-basic-white hover:bg-ios-activeColors-activeBlue-dark"
+                        class="flex h-full w-fit min-w-[150px] max-w-[200px] flex-row items-center justify-start overflow-hidden text-ios-basic-white hover:bg-ios-activeColors-activeBlue-dark"
                     >
                         <!-- leading starts here -->
-                        <div
-                            class="flex h-full w-[40px] min-w-[40px] flex-row items-center justify-center"
-                        >
-                            <span class="">
-                                <SvgAccount size="22"></SvgAccount>
-                            </span>
-                        </div>
-                        <!-- leading ends here -->
 
-                        <!-- trailing starts here -->
                         <div
-                            class="flex h-full w-full max-w-[200px] flex-col items-start justify-center pr-2"
+                            class="flex h-full w-full max-w-[160px] flex-col items-start justify-center"
                         >
                             <p
-                                class="w-full truncate text-ellipsis text-start text-base leading-tight"
+                                class="w-full truncate text-ellipsis text-end text-sm font-semibold leading-tight"
                             >
                                 {currentFullname}
                             </p>
                             <p
-                                class="w-full truncate text-ellipsis text-start text-sm leading-tight"
+                                class="w-full truncate text-ellipsis text-end text-sm leading-tight"
                             >
                                 {currentRole}
                             </p>
+                        </div>
+                        <!-- leading ends here -->
+
+                        <!-- trailing starts here -->
+
+                        <div
+                            class="flex h-full w-[40px] min-w-[40px] flex-row items-center justify-center"
+                        >
+                            <span class="">
+                                <SvgAccount size="26"></SvgAccount>
+                            </span>
                         </div>
                         <!-- trailing ends here -->
                     </button>
@@ -95,12 +110,12 @@
                         <DropdownItem>Halaman Utama</DropdownItem>
                         <DropdownItem>Tetapan Akaun</DropdownItem>
                         <DropdownItem>Tukar Peranan</DropdownItem>
-                        <DropdownItem slot="footer">Log Keluar</DropdownItem>
+                        <DropdownItem slot="footer" href="/login"
+                            >Log Keluar</DropdownItem
+                        >
                     </Dropdown>
                 </div>
                 <!-- account button ends here -->
-
-
             </div>
 
             <!-- trailing ends here -->
@@ -114,7 +129,9 @@
             <!-- sidebar starts here -->
             <div
                 class="flex w-[200px] min-w-[200px] max-w-[200px] flex-col overflow-y-auto border-r bg-ios-basic-white"
-            ></div>
+            >
+                <Sidebar menu={sidebarItems}></Sidebar>
+            </div>
             <!-- sidebar ends here -->
 
             <!-- content wrapper starts here -->
