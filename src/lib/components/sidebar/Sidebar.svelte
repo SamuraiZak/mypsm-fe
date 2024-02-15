@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { page } from '$app/stores';
     import SvgChevronDown from '$lib/assets/svg/SvgChevronDown.svelte';
     import SvgChevronUp from '$lib/assets/svg/SvgChevronUp.svelte';
     import type { NavItem } from '$lib/dto/core/sidebar/sidebar.dto';
@@ -12,7 +13,7 @@
     } from 'flowbite-svelte';
 
     export let menu: NavItem[] = [];
-    let activeUrl = '';
+    $: activeUrl = $page.url.pathname;
 </script>
 
 <div
@@ -25,8 +26,13 @@
     </div>
 </div>
 
-<Sidebar class="h-full w-full max-w-full overflow-y-auto bg-ios-basic-white">
-    <SidebarWrapper class="m-0 rounded-none bg-ios-basic-white">
+<Sidebar
+    {activeUrl}
+    class="h-full max-h-full w-full max-w-full overflow-y-auto border-none bg-ios-basic-white"
+>
+    <SidebarWrapper
+        class="m-0 rounded-none border-none bg-ios-basic-white px-0"
+    >
         <SidebarGroup ulClass="space-y-0">
             {#each menu as item}
                 {#if item.subItems == undefined}
@@ -36,7 +42,7 @@
                         label={item.name}
                         href={item.path}
                         active={activeUrl.includes(item.path)}
-                        activeClass="flex items-center p-2 text-base font-normal text-ios-activeColors-activeBlue-light transition duration-75 group bg-ios-ui-sidebarItem-light-active border-l-4 border-ios-activeColors-activeBlue-light "
+                        activeClass="flex items-center p-2 text-base font-medium text-ios-activeColors-activeBlue-light transition duration-75 group bg-ios-ui-sidebarItem-light-active border-l-4 border-ios-activeColors-activeBlue-light "
                         data-sveltekit-preload-data="false"
                     />
                 {:else}
@@ -60,7 +66,7 @@
                                 href={dropdownItem.path}
                                 active={!!dropdownItem.path &&
                                     activeUrl.includes(dropdownItem.path)}
-                                activeClass="flex items-center p-2 pl-6 text-base font-normal text-ios-activeColors-activeBlue-light transition duration-75 group bg-ios-ui-sidebarItem-light-active border-l-4 border-ios-activeColors-activeBlue-light "
+                                activeClass="flex items-center p-2 pl-6 text-base font-medium text-ios-activeColors-activeBlue-light transition duration-75 group bg-ios-ui-sidebarItem-light-active border-l-4 border-ios-activeColors-activeBlue-light "
                                 data-sveltekit-preload-data="false"
                             />
                         {/each}

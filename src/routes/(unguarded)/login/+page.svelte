@@ -1,14 +1,11 @@
 <script lang="ts">
     import mypsmLogo from '$lib/assets/images/MyPSM.png';
-    import lkimLogo from '$lib/assets/images/logo.png';
     import SvgStethescope from '$lib/assets/svg/SvgStethescope.svelte';
     import SvgCandidate from '$lib/assets/svg/SvgCandidate.svelte';
     import SvgEmployee from '$lib/assets/svg/SvgEmployee.svelte';
     import UserGroupButton from '$lib/components/login/UserGroupButton.svelte';
     import type { PageData } from './$types';
     import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
-    import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
-    import { LookupHelper } from '$lib/helpers/core/lookup.helper';
     import { _loginSchema, _submit } from './+page';
     import { superForm, setMessage } from 'sveltekit-superforms/client';
     import type { UserGroupDTO } from '$lib/dto/core/user-group/user-group.dto';
@@ -19,6 +16,7 @@
 
     const { form, errors, enhance } = superForm(data.props.form, {
         SPA: true,
+        taintedMessage: false,
         validators: _loginSchema,
         onUpdate({ form }) {},
         onSubmit(input) {
@@ -51,7 +49,7 @@
 <div
     class="flex w-[350px] flex-col gap-2 rounded-md bg-ios-basic-white p-4 shadow-md"
 >
-    <div class="flex w-full flex-row items-center justify-center">
+    <div class="mt-4 flex w-full flex-row items-center justify-center">
         <img src={mypsmLogo} class="h-8 object-scale-down" alt="logo" />
     </div>
     <!-- card header starts here -->
@@ -143,56 +141,36 @@
             {/if}
 
             <!-- username input starts here -->
-            <div class="flex w-full flex-col items-center justify-start gap-1">
-                <!-- input label starts here -->
-                <label
-                    for="idType"
-                    class="block w-full text-start text-sm font-medium text-ios-labelColors-secondaryLabel-light"
-                >
-                    {#if $form.userGroup == UserGroupConstant.userGroup[2].value}
-                        ID Pengguna
-                    {:else}
-                        No. Kad Pengenalan
-                    {/if}
-                </label>
-                <!-- input label ends here -->
 
-                <!-- input field starts here -->
-                <input
-                    bind:value={$form.username}
-                    placeholder={$form.userGroup ==
-                    UserGroupConstant.userGroup[2].value
-                        ? '(Contoh: ahmad1234)'
-                        : '(Contoh: 850109125446)'}
-                    type="number"
-                    name="username"
-                    id="username"
-                    class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light bg-ios-backgroundColors-systemBackground-light p-2 text-sm [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                />
-                <!-- input field ends here -->
+            <CustomTextField
+                bind:val={$form.username}
+                errors={$errors.username}
+                label={$form.userGroup == UserGroupConstant.userGroup[2].value
+                    ? 'ID Pengguna'
+                    : 'No. Kad Pengenalan'}
+                id="username"
+                type={$form.userGroup == UserGroupConstant.userGroup[2].value
+                    ? 'text'
+                    : 'number'}
+                placeholder={$form.userGroup ==
+                UserGroupConstant.userGroup[2].value
+                    ? '(Contoh: ahmad1234)'
+                    : '(Contoh: 850109125446)'}
+            ></CustomTextField>
 
-                <!-- input error message starts here -->
-                <div class="flex h-3 w-full flex-row items-center justify-end">
-                    {#if $errors.username}
-                        <p
-                            class="text-end text-sm font-medium italic leading-tight text-ios-basic-destructiveRed"
-                        >
-                            {$errors.username}
-                        </p>
-                    {/if}
-                </div>
-                <!-- input error message ends here -->
-            </div>
             <!-- username input ends here -->
 
             <!-- password input starts here -->
-
-            <!-- password input ends here -->
-
             <CustomTextField
                 bind:val={$form.password}
-                bind:errors={$errors.password}
+                errors={$errors.password}
+                label="Kata Laluan"
+                id="password"
+                type="password"
+                placeholder="••••••••"
             ></CustomTextField>
+
+            <!-- password input ends here -->
 
             <!-- submit button section starts here -->
             <div class=" mt-2 flex w-full flex-col items-center justify-center">

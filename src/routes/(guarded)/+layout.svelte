@@ -28,11 +28,11 @@
 </script>
 
 <section
-    class="h-screen w-screen min-w-[100vw] overflow-x-auto bg-ios-basic-white"
+    class="h-screen max-h-screen w-screen min-w-[100vw] overflow-x-auto overflow-y-hidden bg-ios-basic-white"
 >
     <!-- wrapper starts here -->
     <div
-        class="flex h-screen w-full min-w-[100vw] flex-col items-start justify-start"
+        class="flex h-screen max-h-screen w-full min-w-[100vw] flex-col items-start justify-start"
     >
         <!-- header starts here -->
         <header
@@ -107,7 +107,7 @@
                                 {currentRole}
                             </p>
                         </div>
-                        <DropdownItem>Halaman Utama</DropdownItem>
+                        <DropdownItem href="/halaman-utama">Halaman Utama</DropdownItem>
                         <DropdownItem>Tetapan Akaun</DropdownItem>
                         <DropdownItem>Tukar Peranan</DropdownItem>
                         <DropdownItem slot="footer" href="/login"
@@ -145,11 +145,11 @@
                     <div
                         class="flex h-full flex-row items-center justify-center gap-2"
                     >
-                        <span
+                        <!-- <span
                             class="text text-ios-labelColors-secondaryLabel-light"
                         >
                             <SvgBookmark size="16"></SvgBookmark>
-                        </span>
+                        </span> -->
                         <Breadcrumb></Breadcrumb>
                     </div>
                 </div>
@@ -157,11 +157,10 @@
 
                 <!-- content body wrapper starts here -->
                 <div
-                    class="flex h-full w-full flex-col items-start justify-start overflow-hidden"
+                    class="flex h-full w-full flex-col items-start justify-start overflow-y-hidden"
                 >
                     <slot />
                 </div>
-
                 <!-- content body wrapper ends here -->
             </div>
             <!-- content wrapper ends here -->
@@ -170,4 +169,3 @@
     </div>
     <!-- wrapper ends here -->
 </section>
-<slot />
