@@ -35,9 +35,9 @@
 
 /* removed default field bg color when using autofill */
 input:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0px 1000px #f4f4f5 inset;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
 }
 
 input:focus:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0px 1000px #f4f4f5 inset;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
 }
