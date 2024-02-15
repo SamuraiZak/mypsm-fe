@@ -23,7 +23,7 @@ export class ExampleServices {
             // edit the endpoint url here without the prefix
             // e.g RAW URL = localhost:3333/api/v1/example/get-example
             // url: Input = example/get-example
-            let url: Input = '';
+            const url: Input = '';
 
             const response: Response = await http
                 .post(url, {
@@ -51,7 +51,7 @@ export class ExampleServices {
             // edit the endpoint url here without the prefix
             // e.g RAW URL = localhost:3333/api/v1/example/get-example
             // url: Input = example/get-example
-            let url: Input = '';
+            const url: Input = '';
 
             const response: Response = await http
                 .post(url, {
@@ -79,7 +79,7 @@ export class ExampleServices {
             // edit the endpoint url here without the prefix
             // e.g RAW URL = localhost:3333/api/v1/example/get-example
             // url: Input = example/get-example
-            let url: Input = '';
+            const url: Input = '';
 
             const response: Response = await http
                 .post(url, {
@@ -108,7 +108,7 @@ export class ExampleServices {
             // edit the endpoint url here without the prefix
             // e.g RAW URL = localhost:3333/api/v1/example/get-example
             // url: Input = example/get-example
-            let url: Input = '';
+            const url: Input = '';
 
             const response: Response = await http.post(url).json();
 
