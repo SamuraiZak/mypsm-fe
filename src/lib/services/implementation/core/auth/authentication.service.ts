@@ -6,7 +6,7 @@ import { CommonResponseConstant } from '$lib/constants/core/common-response.cons
 import {
     AuthenticationRequestConvert,
     type AuthenticationRequestDTO,
-} from '$lib/dto/core/auth/authentication-request.dto';
+} from '$lib/dto/core/authentication/authentication-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
 import type { Input } from 'ky';
 import http from '../../service-provider.service';
