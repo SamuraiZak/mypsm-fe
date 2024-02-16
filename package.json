@@ -45,6 +45,7 @@
     "dependencies": {
         "@fontsource/inter": "^5.0.16",
         "jspdf": "^2.5.1",
+        "puppeteer": "^22.0.0",
         "svelte-french-toast": "^1.2.0"
     }
 }
