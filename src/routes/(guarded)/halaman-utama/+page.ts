@@ -9,4 +9,8 @@ export const load = async () => {
     if (token == null) {
         throw redirect(300, '../../login');
     }
+
+    // TODO: get list of agendas
+
+    // TODO: get list 
 };
