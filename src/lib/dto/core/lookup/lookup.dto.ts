@@ -3,7 +3,7 @@
 // ===============================================================
 
 export interface LookupDTO {
-    id:          number;
+    id?:          number;
     code:        string;
     description: string;
 }
