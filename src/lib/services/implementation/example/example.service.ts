@@ -11,6 +11,7 @@ import {
     type CommonListRequestDTO,
 } from '$lib/dto/core/common/common-list-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
+import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
 
@@ -25,12 +26,17 @@ export class ExampleServices {
             // url: Input = example/get-example
             const url: Input = '';
 
-            const response: Response = await http
+            // get the promise response
+            const promiseRes: Promise<Response> = http
                 .post(url, {
                     body: CommonListRequestConvert.toJson(param),
                 })
                 .json();
 
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+
+            // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -53,12 +59,17 @@ export class ExampleServices {
             // url: Input = example/get-example
             const url: Input = '';
 
-            const response: Response = await http
+            // get the promise response
+            const promiseRes: Promise<Response> = http
                 .post(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
 
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+
+            // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -81,12 +92,17 @@ export class ExampleServices {
             // url: Input = example/get-example
             const url: Input = '';
 
-            const response: Response = await http
+            // get the promise response
+            const promiseRes: Promise<Response> = http
                 .post(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
 
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+
+            // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -110,8 +126,13 @@ export class ExampleServices {
             // url: Input = example/get-example
             const url: Input = '';
 
-            const response: Response = await http.post(url).json();
+            // get the promise response
+            const promiseRes: Promise<Response> = http.post(url).json();
 
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+
+            // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
