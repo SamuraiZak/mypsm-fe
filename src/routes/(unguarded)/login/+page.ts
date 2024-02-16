@@ -1,5 +1,6 @@
 import { goto } from '$app/navigation';
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
+import { RoleConstant } from '$lib/constants/core/role.constant';
 import { UserGroupConstant } from '$lib/constants/core/user-group.constant';
 import type { AuthenticationRequestDTO } from '$lib/dto/core/auth/authentication-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
@@ -102,7 +103,7 @@ export const _submit = async (formData: AuthenticationRequestDTO) => {
             localStorage.setItem(LocalStorageKeyConstant.accessToken, 'token');
             localStorage.setItem(
                 LocalStorageKeyConstant.currentRole,
-                'Kakitangan',
+                RoleConstant.kakitangan.code,
             );
             localStorage.setItem(LocalStorageKeyConstant.fullName, 'Jon Bovi');
 

@@ -1,6 +1,7 @@
 <script lang="ts">
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import mypsmLogo from '$lib/assets/images/MyPSM.png';
+    import SvgStethescope from '$lib/assets/svg/SvgStethescope.svelte';
 </script>
 
 <div class="flex w-full flex-col items-center h-[100vh] px-20">
@@ -15,10 +16,10 @@
         <!--    do not declare or just leave it as empty string (icon="") if you want to add custom icon. -->
         <!-- 2. to change button bg change the type, usable type: primary/danger/neutral (default is primary)-->
         <TextIconButton
-            icon="delete"
+            icon="next"
             type="danger"
             label="Buang"
-        />
+        ><SvgStethescope size="40"></SvgStethescope></TextIconButton>
         <!-- Button end here -->
     </div>
 </div>
