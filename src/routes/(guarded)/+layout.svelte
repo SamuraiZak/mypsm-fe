@@ -44,8 +44,8 @@
                 <div
                     class="flex w-[200px] flex-row items-center justify-center gap-2"
                 >
-                    <img class="h-6" src={group} alt="" />
-                    <img class="h-4" src={MyPSM} alt="" />
+                    
+                    <img class="h-5" src={MyPSM} alt="" />
                 </div>
                 <!-- logo wrapper starts here -->
             </div>
