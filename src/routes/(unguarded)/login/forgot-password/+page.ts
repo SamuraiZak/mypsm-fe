@@ -1,6 +1,6 @@
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { UserGroupConstant } from '$lib/constants/core/user-group.constant';
-import type { AuthenticationRequestDTO } from '$lib/dto/core/auth/authentication-request.dto';
+import type { AuthenticationRequestDTO } from '$lib/dto/core/authentication/authentication-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
@@ -35,7 +35,6 @@ export const _submit = async (formData: object) => {
         // post
         // const response: CommonResponseDTO =
         //     await AuthService.authenticateUser(formData);
-
         // if (response.status == 'success') {
         // } else {
         //     localStorage.setItem(LocalStorageKeyConstant.userName, 'user01');

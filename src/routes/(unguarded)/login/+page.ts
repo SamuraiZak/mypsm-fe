@@ -2,7 +2,7 @@ import { goto } from '$app/navigation';
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import { UserGroupConstant } from '$lib/constants/core/user-group.constant';
-import type { AuthenticationRequestDTO } from '$lib/dto/core/auth/authentication-request.dto';
+import type { AuthenticationRequestDTO } from '$lib/dto/core/authentication/authentication-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
