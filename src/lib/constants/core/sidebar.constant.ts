@@ -3,12 +3,13 @@
 // ===============================================================
 
 import type { SidebarDTO } from '$lib/dto/core/sidebar/sidebar.dto';
+import { RoleConstant } from './role.constant';
 
 export class SidebarConstant {
     public static sidebar: SidebarDTO[] = [
         // Kakitangan
         {
-            role: 'Kakitangan',
+            role: RoleConstant.kakitangan.code,
             navItems: [
                 {
                     name: 'Halaman Utama',
@@ -146,7 +147,7 @@ export class SidebarConstant {
 
         // Admin
         {
-            role: 'Admin',
+            role: RoleConstant.admin.code,
             navItems: [
                 {
                     name: 'Halaman Utama',
@@ -162,7 +163,7 @@ export class SidebarConstant {
 
         //Audit
         {
-            role: 'Audit',
+            role: RoleConstant.audit.code,
             navItems: [
                 {
                     name: 'Halaman Utama',
@@ -178,7 +179,7 @@ export class SidebarConstant {
 
         //Calon
         {
-            role: 'Calon',
+            role: RoleConstant.calon.code,
             navItems: [
                 {
                     name: 'Halaman Utama',
@@ -209,7 +210,7 @@ export class SidebarConstant {
 
         //Ketua Pengarah
         {
-            role: 'Ketua Pengarah',
+            role: RoleConstant.ketuaPengarah.code,
             navItems: [
                 {
                     name: 'Halaman Utama',
@@ -237,7 +238,7 @@ export class SidebarConstant {
 
         // Ketua Seksyen
         {
-            role: ' Ketua Seksyen',
+            role:RoleConstant.ketuaSeksyen.code,
             navItems: [
                 {
                     name: 'Halaman Utama',
@@ -280,7 +281,7 @@ export class SidebarConstant {
 
         // Klinik Panel
         {
-            role: ' Klinik Panel',
+            role: RoleConstant.klinikPanel.code,
             navItems: [
                 {
                     name: 'Halaman Utama',
@@ -313,7 +314,7 @@ export class SidebarConstant {
 
         // Pelulus
         {
-            role: 'Pelulus',
+            role: RoleConstant.pelulus.code,
             navItems: [
                 {
                     name: 'Halaman Utama',
@@ -420,7 +421,7 @@ export class SidebarConstant {
 
         // Pengarah Audit
         {
-            role: 'Pengarah Audit',
+            role: RoleConstant.pengarahAudit.code,
             navItems: [
                 {
                     name: 'Halaman Utama',
@@ -441,7 +442,7 @@ export class SidebarConstant {
 
         // Pengarah Bahagian Negeri
         {
-            role: 'Pengarah Bahagian Negeri',
+            role: RoleConstant.pengarahBahagian.code,
             navItems: [
                 {
                     name: 'Halaman Utama',
@@ -537,7 +538,7 @@ export class SidebarConstant {
 
         // Pengarah Pengarah Integriti
         {
-            role: 'Pengarah Integriti',
+            role: RoleConstant.pengarahIntegriti.code,
             navItems: [
                 {
                     name: 'Halaman Utama',
@@ -586,7 +587,7 @@ export class SidebarConstant {
 
         // Pengarah Perkhidmatan khidmat pengurusan
         {
-            role: 'Pengarah Perkhidmatan Khidmat Pengurusan',
+            role: RoleConstant.pengarahKhidmatPengurusan.code,
             navItems: [
                 {
                     name: 'Halaman Utama',
@@ -631,7 +632,7 @@ export class SidebarConstant {
 
         // Penyokong
         {
-            role: 'Penyokong',
+            role: RoleConstant.penyokong.code,
             navItems:[
                 {
                     name: 'Halaman Utama',
@@ -729,7 +730,7 @@ export class SidebarConstant {
         
         // Super Admin
         {
-            role: 'Super Admin',
+            role: RoleConstant.superAdmin.code,
             navItems: [
                 {
                     name: 'Halaman Utama',
@@ -744,7 +745,7 @@ export class SidebarConstant {
 
         // Timbalan Ketua Seksyen
         {
-            role: 'Timbalan Ketua Seksyen',
+            role: RoleConstant.timbalanKetuaSeksyen.code,
             navItems: [
                 {
                     name: 'Halaman Utama',
@@ -766,7 +767,7 @@ export class SidebarConstant {
 
         // Unit Bahagian
         {
-            role: 'Unit Bahagian',
+            role: RoleConstant.unitBahagian.code,
             navItems: [
                 {
                     name: 'Halaman Utama',
@@ -787,7 +788,7 @@ export class SidebarConstant {
 
         // Unit Bahagian Negeri
         {
-            role: 'Unit Bahagian Negeri',
+            role: RoleConstant.unitBahagian.code,
             navItems:[
                 {
                     name: 'Halaman Utama',
@@ -1002,7 +1003,7 @@ export class SidebarConstant {
         },
         // Unit Pengurusan Fasiliti
         {
-            role: 'Unit Pengurusan Fasiliti',
+            role: RoleConstant.unitPengurusanFasiliti.code,
             navItems:[
                 {
                     name: 'Halaman Utama',
@@ -1029,225 +1030,9 @@ export class SidebarConstant {
             ]
         },
 
-        // urus setia
-        {
-            role: 'Urus Setia',
-            navItems: [
-                {
-                    name: 'Halaman Utama',
-                    path: '/halaman-utama',
-                },
-                {
-                    name: 'Perjawatan',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Lantikan Baru',
-                            path: '/perjawatan/lantikan-baru',
-                        },
-                        {
-                            name: 'Tawaran Baru',
-                            path: '/perjawatan/tawaran-baru',   
-                        },
-                        {
-                            name: 'Pengesahan dalam Perkhidmatan',
-                            path:'/perjawatan/pengesahan-dalam-perkhidmatan',
-                        },
-                        {
-                            name: 'PTB dan KWAP',
-                            path: '/perjawatan/PTB-dan-KWAP',
-                        },
-                        {
-                            name: 'Pemangkuan',
-                            path: '/perjawatan/pemangkuan',
-                        },
-                        {
-                            name: 'Kenaikan Pangkat',
-                            path: '/perjawatan/kenaikan-pangkat',
-                        },
-                        {
-                            name: 'Pertukaran',
-                            path: '/perjawatan/pertukaran',
-                        },
-                        {
-                            name: 'Tanggung Kerja',
-                            path: '/perjawatan/tanggung-kerja',
-                        },
-                        {
-                            name: 'Persaraan',
-                            path: '/perjawatan/persaraan',
-                        },
-                    ]
-                },
-                {
-                    name: 'Cuti',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Cuti (Rehat, Kecemasan, Sakit)',
-                            path: '/cuti/cuti-rehat-kecemasan-sakit',
-                        },
-                        {
-                            name: 'Pengumpulan Gantian Cuti Rehat',
-                            path: '/cuti/pengumpulan-gantian-cuti-rehat',
-                        },
-                        {
-                            name: 'Pengeluaran Gantian Cuti Rehat Awal',
-                            path: '/cuti/pengeluaran-gantian-cuti-rehat-awal',
-                        },
-                        {
-                            name: 'Kelulusan Cuti',
-                            path: '/cuti/kelulusan-cuti',
-                        },
-
-                    ]
-                },
-                {
-                    name: 'Gaji',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Pergerakan Gaji',
-                            path: '/gaji/pergerakan-gaji',
-                        },
-                        {
-                            name: 'Gaji dan Elaun-elaun',
-                            path: '/gaji/gaji-elaun',
-                        },
-                        {
-                            name: 'Gaji Akhir',
-                            path: '/gaji/gaji-akhir',
-                        },
-                        {
-                            name: 'Sijil Gaji Akhir',
-                            path: '/gaji/sijil-gaji-akhir',
-                        },
-                    ]
-                },
-                {
-                    name: 'Integriti',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Surcaj',
-                            path: '/integriti/surcaj',
-                        },
-                        {
-                            name: 'Prosiding Tatatertib',
-                            path: '/integriti/prosiding',
-                        },
-                        {
-                            name: 'Prosiding Tatatertib - Rayuan',
-                            path: '/integriti/rayuan',
-                        },
-                    ]
-                },
-                {
-                    name: 'LNPT',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'LNPT (Purata LNPT)',
-                            path: '/lnpt/purata-lnpt',
-                        },
-                        {
-                            name: 'Purata LNPT (Pengesahan Lantikan Baharu)',
-                            path: '/lnpt/pengesahan-lantikan-baharu',
-                        },
-                        {
-                            name: 'LNPT (Sejarah APC)',
-                            path: '/lnpt/sejarah-apc',
-                        },
-                    ]
-                },
-                {
-                    name: 'Latihan',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Latihan (Kemaskini Peperiksaan dalam Jabatan LKIM)',
-                            path: '/latihan/kemaskini-peperiksaan',
-                        },
-                        {
-                            name: 'Latihan (Rekod Peperiksaan)',
-                            path: '/latihan/rekod-peperiksaan',
-                        },
-                        {
-                            name: 'Latihan (Permohonan Pembiayaan Pembelajaran)',
-                            path: '/latihan/pembiayaan',
-                        },
-                        {
-                            name: 'Latihan (Permohonan Tuntutan Pembiayaan Yuran Pengajian)',
-                            path: '/latihan/tuntutan-yuran',
-                        },
-                    ]
-                },
-                {
-                    name: 'Kakitangan Kontrak',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Perlantikan Baru (Kontrak)',
-                            path: '/kakitangan-kontrak/perlantikan',
-                        },
-                        {
-                            name: 'Pembaharuan Kontrak',
-                            path: '/kakitangan-kontrak/pembaharuan',
-                        },
-                    ]
-                },
-                {
-                    name: 'Pinjaman & Kuarters',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Pinjaman Komputer, Telefon Pintar dan Kenderaan',
-                            path: '/pinjaman-kuarters/pinjaman',
-                        },
-                        {
-                            name: 'Kuarters - Permohonan Menduduki Kuarter',
-                            path: '/pinjaman-kuarters/permohonan-menduduki-kuarter',
-                        },
-                        {
-                            name: 'Kuarters - Permohonan Keluar Kuarter',
-                            path: '/pinjaman-kuarters/permohonan-keluar-kuarter',
-                        },
-                    ]
-                },
-                {
-                    name: 'Perubatan',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Perkhidmatan (Permohonan Panel Klinik)',
-                            path: '/perubatan/permohonan-panel-klinik',
-                        },
-                        {
-                            name: 'Perkhidmatan (Bil Tuntutan Klinik)',
-                            path: '/perubatan/bil-tuntutan-klinik',
-                        },
-                        {
-                            name: 'Perkhidmatan (Bil Tuntutan Kakitangan)',
-                            path: '/perubatan/bil-tuntutan-kakitangan',
-                        },
-                    ],
-                },
-                {
-                    name: 'Elaun-elaun Perkhidmatan',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Senarai Permohonan Elaun-elaun',
-                            path: '/elaun/senarai-permohonan',
-                        },
-                    ]
-                }
-              
-            ]
-        },
         // Urus Setia Cuti
         {
-            role: 'Urus Setia Cuti',
+            role: RoleConstant.urusSetiaCuti.code,
             navItems:[
                 {
                     name: 'Halaman Utama',
@@ -1279,7 +1064,7 @@ export class SidebarConstant {
         },
         // Urus Setia Elaun
         {
-            role: 'Urus Setia Elaun',
+            role: RoleConstant.urusSetiaElaunElaunPerkhidmatan.code,
             navItems:[
                 {
                     name: 'Halaman Utama',
@@ -1299,7 +1084,7 @@ export class SidebarConstant {
         },
         // Urus Setia Gaji
         {
-            role: 'Urus Setia Gaji',
+            role: RoleConstant.urusSetiaGaji.code,
             navItems:[
                 {
                     name: 'Halaman Utama',
@@ -1331,7 +1116,7 @@ export class SidebarConstant {
         },
         // Urus Setia Integriti
         {
-            role: 'Urus Setia Integriti',
+            role: RoleConstant.urusSetiaIntegriti.code,
             navItems:[
                 {
                     name: 'Halaman Utama',
@@ -1546,33 +1331,10 @@ export class SidebarConstant {
 
             ]
         },
-        // Urus Setia Kakitangan Kontrak
-        {
-            role: 'Kakitangan Kontrak',
-            navItems: [
-                {
-                    name: 'Halaman Utama',
-                    path: '/halaman-utama',
-                },
-                {
-                    name: 'Kakitangan Kontrak',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Perlantikan Baru (Kontrak)',
-                            path: '/kakitangan-kontrak/perlantikan',
-                        },
-                        {
-                            name: 'Pembaharuan Kontrak',
-                            path: '/kakitangan-kontrak/pembaharuan',
-                        },
-                    ]
-                }
-            ]
-        },
+  
         // Urus Setia Latihan
         {
-            role: 'Urus Setia Latihan',
+            role: RoleConstant.urusSetiaLatihan.code,
             navItems: [
                 {
                     name: 'Halaman Utama',
@@ -1604,7 +1366,7 @@ export class SidebarConstant {
         },
         // Urus Setia LNPT
         {
-            role: 'Urus Setia LNPT',
+            role: RoleConstant.urusSetiaLnpt.code,
             navItems: [
                 {
                     name: 'Halaman Utama',
@@ -1632,7 +1394,7 @@ export class SidebarConstant {
         },
         // Urus Setia Perjawatan
         {
-            role: 'Urus Setia Perjawatn',
+            role: RoleConstant.urusSetiaPerjawatan.code,
             navItems: [
                 {
                     name: 'Halaman Utama',
@@ -1685,7 +1447,7 @@ export class SidebarConstant {
         },
         // Urus Setia Persaraan
         {
-            role: 'Urus Setia Persaraan',
+            role: RoleConstant.urusSetiaPersaraan.code,
             navItems:[
                 {
                     name: 'Halaman Utama',
@@ -1738,7 +1500,7 @@ export class SidebarConstant {
         },
         // Urus Setia Perubatan
         {
-            role: 'Urus Setia Perubatan',
+            role:RoleConstant.urusSetiaPerubatan.code,
             navItems: [
                 {
                     name: 'Halaman Utama',
@@ -1764,275 +1526,10 @@ export class SidebarConstant {
                 },
             ]
         },
-        // Urus Setia Pinjaman Dan Kuarters
-        {
-            role: 'Urus Setia Pinjaman Dan Kuarters',
-            navItems: [
-                {
-                    name: 'Halaman Utama',
-                    path: '/halaman-utama',
-                },
-                {
-                    name: 'Pinjaman & Kuarters',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Pinjaman Komputer, Telefon Pintar dan Kenderaan',
-                            path: '/pinjaman-kuarters/pinjaman',
-                        },
-                        {
-                            name: 'Kuarters - Permohonan Menduduki Kuarter',
-                            path:
-                                '/pinjaman-kuarters/permohonan-menduduki-kuarter',
-                        },
-                        {
-                            name: 'Kuarters - Permohonan Keluar Kuarter',
-                            path:
-                                '/pinjaman-kuarters/permohonan-keluar-kuarter',
-                        },
-                    ]
-                }
-            ]
-        },
-        // guest
-        {
-            role: 'Guest',
-            navItems: [
-                {
-                    name: "Halaman Utama",
-                    path: "/halaman-utama"
-                },
-                {
-                    name: 'Permohonan',
-                    path: '',
-                    subItems: [
-                        {
-                            name: "Klinik Panel",
-                            path: "/permohonan/klinik-panel"
-                        },
-                    ]
-                }
-            ]
-        },
-        // New
-        {
-            role: 'New',
-            navItems: [
-                {
-                    name: 'Halaman Utama',
-                    path: '/halaman-utama',
-                },
-                {
-                    name: 'Perjawatan',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Lantikan Baru',
-                            path: '/perjawatan/lantikan',
-                        },
-                        {
-                            name: 'Tawaran Baru',
-                            path: '/perjawatan/tawaran',
-                        },
-                        {
-                            name: 'Pengesahan dalam Perkhidmatan',
-                            path: '/perjawatan/pengesahan',
-                        },
-                        {
-                            name: 'PTB & KWAP',
-                            path: '/perjawatan/PTB-dan-KWAP',
-                        },
-                        {
-                            name: 'Pemangkuan',
-                            path: '/perjawatan/pemangkuan',
-                        },
-                        {
-                            name: 'Kenaikan Pangkat',
-                            path: '/perjawatan/naik-pangkat',
-                        },
-                        {
-                            name: 'Pertukaran',
-                            path: '/perjawatan/pertukaran',
-                        },
-                        {
-                            name: 'Tanggung Kerja',
-                            path: '/perjawatan/tanggung-kerja',
-                        },
-                        {
-                            name: 'Persaraan',
-                            path: '/perjawatan/persaraan',
-                        },
-                        {
-                            name: 'Kelayakan Gaji Baru',
-                            path: '/perjawatan/kelayakan',
-                        },
-                    ]
-                },
-                {
-                    name: 'Cuti',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Cuti Rehat, Kecemasan, Sakit',
-                            path: '/cuti/jenis-cuti',
-                        },
-                        {
-                            name: 'Pengumpulan Gantian Cuti Rehat',
-                            path: '/cuti/ganti',
-                        },
-                        {
-                            name: 'Pengumpulan Gantian Cuti Rehat Awal',
-                            path: '/cuti/pengumpulan',
-                        },
-                        {
-                            name: 'Pelulusan Cuti',
-                            path: '/cuti/pelulusan',
-                        },
-                    ]
-                },
-                {
-                    name: 'Gaji',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Pergerakan Gaji',
-                            path: '/cuti/pergerakan',
-                        },
-                        {
-                            name: 'Gaji & Elaun-elaun',
-                            path: '/cuti/gaji-elaun',
-                        },
-                        {
-                            name: 'Gaji Akhir',
-                            path: '/cuti/gaji-akhir',
-                        },
-                        {
-                            name: 'Sijil Gaji Akhir',
-                            path: '/cuti/sijil-gaji-akhir',
-                        },
-                    ]
-                },
-                {
-                    name: 'Integriti',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Surcaj',
-                            path: '/integriti/surcaj',
-                        },
-                        {
-                            name: 'Prosiding Tatatertib',
-                            path: '/integriti/prosiding',
-                        },
-                        {
-                            name: 'Prosiding Tatatertib - Rayuan',
-                            path: '/integriti/rayuan',
-                        },
-                    ]
-                },
-                {
-                    name: 'LNPT',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'LNPT (Purata LNPT)',
-                            path: '/lnpt/purata',
-                        },
-                        {
-                            name: 'Purata LNPT (Pengesahan Lantikan Baharu)',
-                            path: '/lnpt/purata-pengesahan',
-                        },
-                        {
-                            name: 'LNPT (Sejarah APC)',
-                            path: '/lnpt/sejarah-apc',
-                        },
-                    ]
-                },
-                {
-                    name: 'Latihan',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Latihan (Kemaskini Peperiksaan dalam Jabatan LKIM)',
-                            path: '/latihan/kemaskini-peperiksaan',
-                        },
-                        {
-                            name: 'Latihan (Rekod Peperiksaan)',
-                            path: '/latihan/rekod',
-                        },
-                        {
-                            name: 'Latihan (Pemohonan Pembiayaan Pembelajaran)',
-                            path: '/latihan/pemohonan-pembiayaan',
-                        },
-                        {
-                            name: 'Latihan (Pemohonan Tuntutan Pembiayaan Yuran Pengajian)',
-                            path: '/latihan/pemohonan-tuntutan',
-                        },
-                    ]
-                },
-                {
-                    name: 'Kakitangan Kontrak',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Pelantikan Baru (Kontrak)',
-                            path: '/kakitangan-kontrak/pelantikan-baru',
-                        },
-                        {
-                            name: 'Pembaharuan Kontrak',
-                            path: '/kakitangan-kontrak/pembaharuan',
-                        },
-                    ]
-                },
-                {
-                    name: 'Pinjaman & Kuarters',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Pinjaman Komputer, Telefon Pintar & Kenderaan',
-                            path: '/pinjaman-kuarters/pekakas-kenderaan',
-                        },
-                        {
-                            name: 'Kuarters - Pemohonan Menduduki Kuarter',
-                            path: '/pinjaman-kuarters/pemohonan-menduduki',
-                        },
-                        {
-                            name: 'Kuarters - Pemohonan Keluar Kuarter',
-                            path: '/pinjaman-kuarters/pemohonan-keluar',
-                        },
-                    ]
-                },
-                {
-                    name: 'Perubatan',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Perkhidmatan (Pemohonan Panel Klinik)',
-                            path: '/perubatan/pemohonan',
-                        },
-                        {
-                            name: 'Perkhidmatan (Bil Tuntutan Klinik)',
-                            path: '/perubatan/bil-klinik',
-                        },
-                        {
-                            name: 'Perkhidmatan (Bil Tuntutan Kakitangan)',
-                            path: '/perubatan/bil-kakitangan',
-                        },
-                    ]
-                },
-                {
-                    name: 'Elaun-elaun Perkhidmatan',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Senarai Pemohonan Elaun-elaun',
-                            path: '/elaun/senarai',
-                        },
-                    ]
-                }
-            ]
-        }
 
+        // Urus Setia Pentadbiran
+        // urus Seta Tatatertib
+        // unit negeri
 
 
     ];
