@@ -7,7 +7,7 @@
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
 
     export let form: string = '';
-    export let type: string = "primary" || "danger"|| "neutral";
+    export let type: string = 'primary' || 'danger' || 'neutral';
     export let disabled: boolean = false;
     export let icon: string = '';
     export let label: string = 'Label';
@@ -18,35 +18,35 @@
     {form}
     {disabled}
     on:click={onClick}
-    class="flex flex-row items-center justify-center gap-1 rounded px-2.5 {type==='primary'
+    class="flex flex-row items-center justify-center gap-1 rounded px-2 {type ===
+    'primary'
         ? 'bg-ios-systemColors-systemBlue-light hover:bg-ios-systemColors-systemBlue-dark'
-        : type==='danger'
+        : type === 'danger'
           ? 'bg-ios-systemColors-systemRed-light hover:bg-ios-systemColors-systemRed-dark'
-          : 'border bg-bgr-primary hover:bg-bgr-secondary'} h-8"
+          : 'border bg-bgr-primary hover:bg-bgr-secondary'} h-8 max-h-8 min-h-8"
 >
-
     <!-- icon -->
-    <div class="flex h-full flex-row items-center justify-center">
+    <div class="flex h-full max-h-full flex-row items-center justify-center">
         <span
-            class="leading-loose {type==='primary'
+            class="leading-tight {type === 'primary'
                 ? 'text-txt-blend '
-                : type==='danger'
+                : type === 'danger'
                   ? 'text-txt-blend'
                   : 'text-txt-secondary'}"
         >
             <!-- icon slot -->
             {#if icon == 'cancel'}
-                <SvgXMark />
+                <SvgXMark size="20" />
             {:else if icon == 'delete'}
-                <SvgTrash />
+                <SvgTrash size="20" />
             {:else if icon == 'check'}
-                <SvgCheck />
+                <SvgCheck size="20" />
             {:else if icon == 'next'}
-                <SvgChevronRight />
+                <SvgChevronRight size="20" />
             {:else if icon == 'previous'}
-                <SvgChevronLeft />
+                <SvgChevronLeft size="20" />
             {:else if icon == 'print'}
-                <SvgPrinter />
+                <SvgPrinter size="20" />
             {:else}
                 <slot />
             {/if}
@@ -56,9 +56,9 @@
     <!-- label -->
     <div class="flex h-full flex-row items-center justify-center">
         <p
-            class="text-sm font-normal leading-loose {type==='primary'
+            class="text-sm font-normal leading-loose {type === 'primary'
                 ? ' text-ios-basic-white'
-                : type==='danger'
+                : type === 'danger'
                   ? ' text-ios-basic-white'
                   : ' text-ios-labelColors-secondaryLabel-light'}"
         >
