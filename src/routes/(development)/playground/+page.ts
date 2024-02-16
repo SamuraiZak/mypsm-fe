@@ -1,4 +1,4 @@
-import { getErrorToast, getPromiseToast } from '$lib/helpers/core/toast.helper';
+import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import { ExampleServices } from '$lib/services/implementation/example/example.service';
 import { error } from '@sveltejs/kit';
 // import toast from 'svelte-french-toast';
@@ -51,9 +51,9 @@ export const _submit = async (param: object) => {
         error(400, { message: 'validation failed' });
     }
 
-    const response = ExampleServices.postExampleDetail(param);
+    const response = await ExampleServices.postExampleDetail(param);
 
-    getPromiseToast(response);
+    console.log('#RESULT:', response);
 
     return { response };
 };

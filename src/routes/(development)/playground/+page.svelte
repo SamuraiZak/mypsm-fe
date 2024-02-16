@@ -1,6 +1,6 @@
 <script lang="ts">
     import { dateProxy, superForm } from 'sveltekit-superforms/client';
-    import type { PageData } from './$types';
+    import type { PageData } from '../../(development-copy)/playground/$types';
     import { _playgroundUserSchema, _submit } from './+page';
     import { Toaster } from 'svelte-french-toast';
 
