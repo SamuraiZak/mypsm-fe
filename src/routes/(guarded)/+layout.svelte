@@ -21,9 +21,10 @@
 
     let currentFullname = data.props.currentFullName;
     let currentRole = data.props.currentRole;
+    let currentRoleCode = data.props.currentRoleCode;
 
     let sidebarItems = SidebarConstant.sidebar.find(
-        (item) => item.role == data.props.currentRole,
+        (item) => item.role == data.props.currentRoleCode,
     )?.navItems;
 </script>
 
@@ -44,7 +45,6 @@
                 <div
                     class="flex w-[200px] flex-row items-center justify-center gap-2"
                 >
-                    
                     <img class="h-5" src={MyPSM} alt="" />
                 </div>
                 <!-- logo wrapper starts here -->
@@ -107,7 +107,9 @@
                                 {currentRole}
                             </p>
                         </div>
-                        <DropdownItem href="/halaman-utama">Halaman Utama</DropdownItem>
+                        <DropdownItem href="/halaman-utama"
+                            >Halaman Utama</DropdownItem
+                        >
                         <DropdownItem>Tetapan Akaun</DropdownItem>
                         <DropdownItem>Tukar Peranan</DropdownItem>
                         <DropdownItem slot="footer" href="/login"

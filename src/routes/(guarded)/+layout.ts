@@ -13,6 +13,10 @@ export const load = async () => {
     // get current user's fullname
     let currentRole: string =
         localStorage.getItem(LocalStorageKeyConstant.currentRole) ?? 'unknown';
+    // get current user's fullname
+    let currentRoleCode: string =
+        localStorage.getItem(LocalStorageKeyConstant.currentRoleCode) ??
+        'unknown';
 
     if (token == null) {
         throw error(401, 'Unauthorised Access');
@@ -22,6 +26,7 @@ export const load = async () => {
         props: {
             currentFullName,
             currentRole,
+            currentRoleCode,
         },
     };
 };
