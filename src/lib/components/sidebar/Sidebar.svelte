@@ -31,7 +31,7 @@
     class="h-full max-h-full w-full max-w-full overflow-y-auto border-none bg-ios-basic-white"
 >
     <SidebarWrapper
-        class="m-0 rounded-none border-none bg-ios-basic-white px-0"
+        class="m-0 rounded-none border-none bg-ios-basic-white p-0"
     >
         <SidebarGroup ulClass="space-y-0">
             {#each menu as item}
