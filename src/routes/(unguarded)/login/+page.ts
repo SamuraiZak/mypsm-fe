@@ -41,6 +41,11 @@ export const load = async () => {
             description: 'Kakitangan',
         },
         {
+            id: 7,
+            code: '7',
+            description: 'Kakitangan Kontrak',
+        },
+        {
             id: 2,
             code: '2',
             description: 'Urus Setia',
@@ -103,6 +108,10 @@ export const _submit = async (formData: AuthenticationRequestDTO) => {
             localStorage.setItem(LocalStorageKeyConstant.accessToken, 'token');
             localStorage.setItem(
                 LocalStorageKeyConstant.currentRole,
+                RoleConstant.kakitangan.description,
+            );
+            localStorage.setItem(
+                LocalStorageKeyConstant.currentRoleCode,
                 RoleConstant.kakitangan.code,
             );
             localStorage.setItem(LocalStorageKeyConstant.fullName, 'Jon Bovi');

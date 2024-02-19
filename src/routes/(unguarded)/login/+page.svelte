@@ -47,7 +47,7 @@
 
 <!-- login card starts here -->
 <div
-    class="flex w-[350px] flex-col gap-2 rounded-md bg-ios-basic-white p-4 shadow-md"
+    class="flex w-[450px] flex-col gap-2 rounded-md bg-ios-basic-white p-4 shadow-md"
 >
     <div class="mt-4 flex w-full flex-row items-center justify-center">
         <img src={mypsmLogo} class="h-8 object-scale-down" alt="logo" />
@@ -72,6 +72,8 @@
             >
                 <span slot="icon">
                     {#if option.value == 'employee'}
+                        <SvgEmployee size="30"></SvgEmployee>
+                    {:else if option.value == 'contractor'}
                         <SvgEmployee size="30"></SvgEmployee>
                     {:else if option.value == 'candidate'}
                         <SvgCandidate size="30"></SvgCandidate>
@@ -145,15 +147,15 @@
             <CustomTextField
                 bind:val={$form.username}
                 errors={$errors.username}
-                label={$form.userGroup == UserGroupConstant.userGroup[2].value
+                label={$form.userGroup == UserGroupConstant.userGroup[3].value
                     ? 'ID Pengguna'
                     : 'No. Kad Pengenalan'}
                 id="username"
-                type={$form.userGroup == UserGroupConstant.userGroup[2].value
+                type={$form.userGroup == UserGroupConstant.userGroup[3].value
                     ? 'text'
                     : 'number'}
                 placeholder={$form.userGroup ==
-                UserGroupConstant.userGroup[2].value
+                UserGroupConstant.userGroup[3].value
                     ? '(Contoh: ahmad1234)'
                     : '(Contoh: 850109125446)'}
             ></CustomTextField>
