@@ -7,6 +7,7 @@ export default {
     ],
     theme: {
         fontSize: {
+            xs: '10px',
             sm: '11px',
             base: '12px',
             md: '14px',
