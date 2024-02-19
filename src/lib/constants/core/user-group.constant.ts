@@ -11,6 +11,10 @@ export class UserGroupConstant {
             name: 'Kakitangan',
         },
         {
+            value: 'contractor',
+            name: 'Kakitangan Kontrak',
+        },
+        {
             value: 'candidate',
             name: 'Calon',
         },
