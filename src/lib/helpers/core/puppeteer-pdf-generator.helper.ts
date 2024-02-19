@@ -4,25 +4,25 @@ export class PuppeteerService {
     // undefined error
     static async generatePDF<ContentType>(title: string, content: ContentType) {
         const tableContent = `
-    <title> ::-p-text(${title})</title>
-    <table border="1">
-      <tr>
-        <th>Column 1</th>
-        <th>Column 2</th>
-        <th>Column 3</th>
-        <th>Column 4</th>
-        </tr>
-        ::-p-text(${content})
-        content.forEach((row) => {
+            <title> ::-p-text(${title})</title>
+            <table border="1">
             <tr>
-            <td>{row.column1}</td>
-            <td>{row.column2}</td>
-            <td>{row.column3}</td>
-            <td>{row.column4}</td>
+                <th>Column 1</th>
+                <th>Column 2</th>
+                <th>Column 3</th>
+                <th>Column 4</th>
             </tr>
+            ::-p-text(${content})
+            content.forEach((row) => {
+                <tr>
+                    <td>{row.column1}</td>
+                    <td>{row.column2}</td>
+                    <td>{row.column3}</td>
+                    <td>{row.column4}</td>
+                </tr>
             {/each}
             </table>
-  `;
+        `;
 
         const browser = await puppeteer.launch();
         const page = await browser.newPage();

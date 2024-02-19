@@ -12,6 +12,7 @@
     import { translate } from '$lib/config/dictionary';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import { onMount } from 'svelte';
+    import generatePDF from '$lib/services/implementation/core/pdf-generator/puppeteer-pdf-generator.helper';
     // import { generatePDF } from '$lib/helpers/core/puppeteer-pdf-generator.helper';
 
     // =====================================================================
@@ -153,8 +154,9 @@
     });
 
     function printDiv(elementId: any) {
-        // generatePDF<object[]>('Title', tableData.data);
-        // let printElement = document.getElementById(elementId);
+        let printElement = document.getElementById(elementId);
+        generatePDF<HTMLElement | null>('Title Example', printElement);
+            
         // let printWindow = window.open('', 'PRINT');
         // printWindow?.document.write(document.documentElement.innerHTML);
         // setTimeout(() => {

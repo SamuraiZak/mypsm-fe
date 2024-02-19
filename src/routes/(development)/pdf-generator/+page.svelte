@@ -2,7 +2,7 @@
     import CustomTable from '$lib/components/table/CustomTable.svelte';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
-    import { PuppeteerService } from '$lib/helpers/core/puppeteer-pdf-generator.helper';
+    // import generatePDF from '$lib/services/implementation/core/pdf-generator/puppeteer-pdf-generator.helper';
     import type { PageData } from './$types';
     import { _updateTable } from './+page';
     export let data: PageData;
@@ -35,16 +35,18 @@
             table.param.pageNum = table.meta.pageNum;
         });
     }
-    const exportToPDF = async () => {
-        let a = await PuppeteerService.generatePDF<object[]>(title, table.data);
-    };
+    // const exportToPDF = async () => {
+    //     // console.log('HIIIIIII==========================');
+    //     // let a = await PuppeteerService.generatePDF<object[]>(title, table.data);
+    //     generatePDF<object[]>(title, table.data);
+    // };
 </script>
 
-<div class="flex h-fit w-full flex-col items-center justify-start px-2.5">
-    <button
+<div id="templatePDF" class="flex h-fit w-full flex-col items-center justify-start px-2.5">
+    <!-- <button
         type="button"
-        class="m-10 rounded-full bg-black px-4 text-sm text-white"
+        class="m-10 rounded-full bg-black px-4 text-sm text-white hover:scale-105"
         on:click={exportToPDF}>Export to PDF</button
-    >
+    > -->
     <CustomTable onUpdate={_search} bind:tableData={table}></CustomTable>
 </div>
