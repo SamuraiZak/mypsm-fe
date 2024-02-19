@@ -4,7 +4,7 @@
     import SvgMailSolid from '$lib/assets/svg/SvgMailSolid.svelte';
     import { goto } from '$app/navigation';
 </script>
-
+ 
 <section
     class="flex h-full max-h-full w-full flex-col gap-2 overflow-hidden p-10 pb-2"
 >
