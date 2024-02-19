@@ -43,7 +43,7 @@
             <div class="flex h-full w-fit flex-row items-center justify-center">
                 <!-- logo wrapper starts here -->
                 <div
-                    class="flex w-[200px] flex-row items-center justify-center gap-2"
+                    class="flex w-[200px] flex-row items-center justify-start gap-2 px-2.5"
                 >
                     <img class="h-5" src={MyPSM} alt="" />
                 </div>
