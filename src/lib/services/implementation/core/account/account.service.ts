@@ -2,16 +2,13 @@
 // Account Services
 // ===============================================================
 
-import { CommonResponseConstant } from '$lib/constants/core/common-response.constant';
-import {
-    CommonListRequestConvert,
-    type CommonListRequestDTO,
-} from '$lib/dto/core/common/common-list-request.dto';
-import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
+
 import type { Input } from 'ky';
 import http from '../../service-provider.service';
+import { CommonResponseConstant } from '$lib/constants/core/common-response.constant';
+import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
 
-export class AccountService {
+export class AccountServices {
 
     // update password service
     static async updatePassword(param: object) {
