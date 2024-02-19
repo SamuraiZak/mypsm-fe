@@ -8,5 +8,6 @@ export class LocalStorageKeyConstant {
     public static fullName = "fullName";
     public static userID = "userID";
     public static currentRole = "currentRole";
+    public static currentRoleCode = "currentRoleCode";
     public static userRoles = "userRoles";
 }
