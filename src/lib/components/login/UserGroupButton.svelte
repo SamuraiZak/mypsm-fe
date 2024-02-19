@@ -11,7 +11,7 @@
 
 <button
     on:click={handleSelect}
-    class="flex h-full max-h-24 w-full flex-col items-center justify-between overflow-hidden rounded border p-2 font-medium hover:border-ios-systemColors-systemBlue-light bg-ios-basic-white hover:text-ios-systemColors-systemBlue-light {active
+    class="flex h-full max-h-24 w-full flex-col items-center justify-start overflow-hidden rounded border p-2 font-medium hover:border-ios-systemColors-systemBlue-light bg-ios-basic-white hover:text-ios-systemColors-systemBlue-light {active
         ? 'border-ios-systemColors-systemBlue-light text-ios-systemColors-systemBlue-light'
         : 'text-ios-basic-inactiveGray'}"
 >
