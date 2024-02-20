@@ -5,6 +5,7 @@
     import { _submit, _updatePasswordSchema } from './+page';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
+    import { goto } from '$app/navigation';
 
     export let data: PageData;
 
@@ -42,12 +43,12 @@
 
         <!-- group body starts here -->
 
-        <div class="flex w-full flex-col items-center justify-start gap-2">
+        <div class="flex w-full flex-col items-start justify-start gap-2">
             <form
                 id="updatePasswordForm"
                 method="POST"
                 use:enhance
-                class="flex w-full flex-col items-center justify-start gap-2"
+                class="flex w-full max-w-[500px] flex-col items-center justify-start gap-2"
             >
                 <CustomTextField
                     bind:val={$form.oldPassword}
@@ -74,10 +75,21 @@
                     placeholder="••••••••"
                 ></CustomTextField>
 
-                <div class="flex w-full flex-col items-start justify-center">
-                    <TextIconButton icon="check" label="Hantar" form="updatePasswordForm"></TextIconButton>
+                <div class="flex w-full flex-row items-start justify-start gap-1.5 mt-2">
+                    <TextIconButton
+                        icon="previous"
+                        label="Kembali"
+                        type="neutral"
+                        onClick={() => {
+                            goto('/tetapan');
+                        }}
+                    ></TextIconButton>
+                    <TextIconButton
+                        icon="check"
+                        label="Hantar"
+                        form="updatePasswordForm"
+                    ></TextIconButton>
                 </div>
-
             </form>
         </div>
 
