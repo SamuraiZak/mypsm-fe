@@ -1,5 +1,3 @@
-<!-- Add your changes to the commented parts -->
-
 <script lang="ts">
     import { goto } from '$app/navigation';
 
@@ -52,6 +50,7 @@
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col justify-start overflow-y-auto bg-bgr-primary"
 >
     <Stepper bind:activeIndex={stepperIndex} dataId="#01" dataStatus="Draf">
+        <!-- Maklumat Kakitangan -->
         <StepperContent>
             <StepperContentHeader title="Maklumat Kakitangan"
             ></StepperContentHeader>
@@ -237,7 +236,7 @@
             <!-- {/if} -->
         </StepperContent>
 
-        <!-- Maklumat Perkhidmatan -->
+        <!-- Kemaskini Maklumat Pemangkuan -->
         <StepperContent>
             <StepperContentHeader title="Maklumat Perkhidmatan"
             ></StepperContentHeader>
@@ -245,7 +244,7 @@
                 <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
                 >
-                <div class="flex w-full flex-col gap-2.5">
+                    <div class="flex w-full flex-col gap-2.5">
                         <b class="text-sm text-system-primary"
                             >Maklumat Perkhidmatan</b
                         >
@@ -519,217 +518,141 @@
             >
         </StepperContent>
 
-        <!-- Kemaskini Maklumat PTB dan KWAP -->
+        <!-- Kemaskini Maklumat Temuduga -->
         <StepperContent>
-            <StepperContentHeader title="Kemaskini Maklumat PTB dan KWAP">
-                <TextIconButton
-                    type="primary"
-                    label="Simpan"
-                    form="meetingResultForm"
-                >
-                    <SvgCheck></SvgCheck>
-                </TextIconButton>
-            </StepperContentHeader>
+            <StepperContentHeader title="Maklumat PTB dan KWAP"
+            ></StepperContentHeader>
             <StepperContentBody>
-                <div
-                    class="flex max-h-full w-full flex-col items-start justify-start"
-                ></div>
+                <ContentHeader
+                    title="Semak dan kemaskini maklumat temuduga bagi calon-calon berikut untuk menjana surat tawaran temuduga"
+                ></ContentHeader>
+                <StepperContent>
+                    <StepperContentBody>
+                        <div
+                            class="flex max-h-full w-full flex-col items-start justify-start"
+                        ></div>
 
-                <CustomTextField
-                    id="PTBDate"
-                    type="date"
-                    label="Tarikh Diberi PTB"
-                    val=""
-                    placeholder=""
-                ></CustomTextField>
+                        <CustomTextField
+                            id="PTBDate"
+                            type="date"
+                            label="Tarikh Diberi PTB"
+                            val=""
+                            placeholder=""
+                        ></CustomTextField>
 
-                <CustomTextField
-                    id="referenceNumber"
-                    type="text"
-                    label="No. Rujukan Surat JPA"
-                    placeholder="contoh: 81672178"
-                    val=""
-                ></CustomTextField>
+                        <CustomTextField
+                            id="referenceNumber"
+                            type="text"
+                            label="No. Rujukan Surat JPA"
+                            placeholder="contoh: 81672178"
+                            val=""
+                        ></CustomTextField>
 
-                <CustomTextField
-                    id="referenceDate"
-                    type="date"
-                    label="Tarikh Rujukan"
-                    val=""
-                    placeholder=""
-                ></CustomTextField>
+                        <CustomTextField
+                            id="referenceDate"
+                            type="date"
+                            label="Tarikh Rujukan"
+                            val=""
+                            placeholder=""
+                        ></CustomTextField>
 
-                <CustomTextField
-                    id="pensionNumber"
-                    type="date"
-                    label="No. Pencen"
-                    val=""
-                    placeholder=""
-                ></CustomTextField>
+                        <CustomTextField
+                            id="pensionNumber"
+                            type="date"
+                            label="No. Pencen"
+                            val=""
+                            placeholder=""
+                        ></CustomTextField>
 
-                <CustomTextField
-                    id="KWAPEmailDate"
-                    type="date"
-                    label="Tarikh Emel (KWAP)"
-                    val=""
-                    placeholder=""
-                ></CustomTextField>
+                        <CustomTextField
+                            id="KWAPEmailDate"
+                            type="date"
+                            label="Tarikh Emel (KWAP)"
+                            val=""
+                            placeholder=""
+                        ></CustomTextField>
+                    </StepperContentBody>
+                </StepperContent>
             </StepperContentBody>
         </StepperContent>
 
-        <!-- Peranan -Peranan Berkaitan -->
+        <!-- keputusan Penyokong -->
         <StepperContent>
             <StepperContentHeader
-                title="Masukkan Maklumat Peranan - Peranan Berkaitan"
+                title="Sila Tetapkan Keputusan Anda - Penyokong"
             >
                 <TextIconButton
                     type="primary"
                     label="Simpan"
-                    form="newEmploymentAssignApproverSupporterForm"
+                    form="supporterResultForm"
                 >
                     <SvgCheck></SvgCheck>
                 </TextIconButton>
             </StepperContentHeader>
             <StepperContentBody>
                 <ContentHeader
-                    title="Masukkan nama Penyokong dan Pelulus (Jika Sah)"
+                    title="Keputusan akan dihantar ke peranan - peranan berkaitan."
                 ></ContentHeader>
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
-                ></div>
-                <!-- <DropdownSelect
-              
-                id="staffSupporter"
-                label="Nama Penyokong"
-                dropdownType="label-left-full"
-                options={employeeLists}
-               val = " "
-            />
-           
-            <DropdownSelect
-               
-                id="staffApprover"
-                label="Nama Pelulus"
-                dropdownType="label-left-full"
-                options={employeeLists}
-                val = " "
-                
-            /> -->
-            </StepperContentBody>
-        </StepperContent>
+                >
+                <form class="flex max-h-full w-full flex-col items-start justify-start">
+                    
+                    <div class="flex max-h-full w-full flex-col items-start justify-start">
+                    <!-- Penyokong Card -->
+                    
+                        <b class="text-sm text-system-primary"
+                            >Keputusan Penyokong</b
+                        >
+                    
+                    
+                        <CustomTextField
+                       
+                        id="supporterResult"
+                        label="Tindakan/Ulasan"
+                        val="Ali bin ABu"
+                    ></CustomTextField>
+                    <CustomTextField
+                       
+                        id="supporter-remark"
+                        label="Tindakan/Ulasan"
+                        val=""
+                    ></CustomTextField>
+                    <!-- <RadioSingle
+                        name="supporterResult"
+                        disabled={!editable}
+                        options={supportOptions}
+                        legend={'Keputusan'}
+                        bind:userSelected={isSupported}
+                        ></RadioSingle> -->
 
-        <!-- Keputusan Daripada Peranan - Peranan Berkaitan -->
-        <StepperContent>
-            <StepperContentHeader
-                title="Keputusan Daripada Peranan - Peranan Berkaitan"
-            ></StepperContentHeader>
-            <StepperContentBody>
-                <div
-                    class="flex max-h-full w-full flex-col items-start justify-start"
-                ></div>
+                    <hr />
 
-                <div class="flex w-full flex-col gap-2.5">
-                    {#if status === 'SOKONG'}
-                        <div
-                            class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                        >
-                            <div class="mb-5">
-                                <b class="text-sm text-system-primary"
-                                    >Penyokong</b
-                                >
-                            </div>
-                            <CustomTextField
-                                type="text"
-                                id="passer-name"
-                                label="Nama"
-                                val="Mohd Safwan Adam"
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="supporter-remark"
-                                label="Tindakan/Ulasan"
-                                val="Layak"
-                            ></CustomTextField>
-                            <div class="flex w-full flex-row text-sm">
-                                <label for="supporter-result" class="w-[220px]"
-                                    >Keputusan</label
-                                >
-                            </div>
+                    </div>
+                    <!-- Pelulus Card -->
+                    <div  class="flex max-h-full w-full flex-col items-start justify-start">
+                        <div  >
+                            <b class="text-sm text-system-primary">Pelulus</b>
                         </div>
-                        <div
-                            class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                        <CustomTextField
+                        type="text"
+                        id="passer-name"
+                        label="Nama"
+                        val="Mohd Safwan Adam"
+                    ></CustomTextField>
+                    <CustomTextField
+                        id="supporter-remark"
+                        label="Tindakan/Ulasan"
+                        val="Layak"
+                    ></CustomTextField>
+                    <div class="flex w-full flex-row text-sm">
+                        <label for="supporter-result" class="w-[220px]">Keputusan</label
                         >
-                            <div class="mb-5">
-                                <b class="text-sm text-system-primary"
-                                    >Pelulus</b
-                                >
-                            </div>
-                            <CustomTextField
-                                type="text"
-                                id="passer-name"
-                                label="Nama"
-                                val=""
-                            ></CustomTextField>
-                            <div class="text-sm text-system-primary">
-                                <i class=""
-                                    ><li>
-                                        ● Menunggu keputusan daripada PENYOKONG.
-                                    </li></i
-                                >
-                            </div>
+                    </div>
                         </div>
-                    {:else if status === 'LULUS'}
-                        <div
-                            class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                        >
-                            <div class="mb-5">
-                                <b class="text-sm text-system-primary"
-                                    >Penyokong</b
-                                >
-                            </div>
-                            <CustomTextField
-                                type="text"
-                                id="supporter-name"
-                                label="Nama"
-                                val="Mohd Safwan Adam"
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="supporter-remark"
-                                label="Tindakan/Ulasan"
-                                val="Layak"
-                            ></CustomTextField>
-                            <div class="flex w-full flex-row text-sm">
-                                <label for="supporter-result" class="w-[220px]"
-                                    >Keputusan</label
-                                >
-                            </div>
-                        </div>
-                        <div
-                            class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                        >
-                            <div class="mb-5">
-                                <b class="text-sm text-system-primary"
-                                    >Pelulus</b
-                                >
-                            </div>
-                            <CustomTextField
-                                type="text"
-                                id="approver-name"
-                                label="Nama"
-                                val="Mohd Safwan Adam"
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="approver-remark"
-                                label="Tindakan/Ulasan"
-                                val="Layak"
-                            ></CustomTextField>
-                            <div class="flex w-full flex-row text-sm">
-                                <label for="approver-result" class="w-[220px]"
-                                    >Keputusan</label
-                                >
-                            </div>
-                        </div>
-                    {/if}
-                </div>
+                    
+                </form>
+            </div>
             </StepperContentBody>
         </StepperContent>
     </Stepper>
