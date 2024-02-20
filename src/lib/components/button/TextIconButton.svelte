@@ -5,12 +5,15 @@
     import SvgChevronLeft from '$lib/assets/svg/SvgChevronLeft.svelte';
     import SvgPrinter from '$lib/assets/svg/SvgPrinter.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+    import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
+    import { DropdownItem, Dropdown } from 'flowbite-svelte';
 
     export let form: string = '';
     export let type: string = 'primary' || 'danger' || 'neutral';
     export let disabled: boolean = false;
     export let icon: string = '';
     export let label: string = 'Label';
+    export let options: IntDropdownOption[] = [];
     export let onClick = () => {};
 </script>
 
@@ -47,6 +50,8 @@
                 <SvgChevronLeft size="20" />
             {:else if icon == 'print'}
                 <SvgPrinter size="20" />
+            {:else if icon == 'add'}
+                <SvgPlus size="20" />
             {:else}
                 <slot />
             {/if}
@@ -66,3 +71,17 @@
         </p>
     </div>
 </button>
+
+{#if options.length !== 0}
+<Dropdown containerClass="z-50 border border-bdr-primary min-w-[200px]">
+    {#if options.length > 0}
+        {#each options as item}
+            <DropdownItem href={item.href}>
+                {item.name}
+            </DropdownItem>
+        {/each}
+    {:else}
+        <slot />
+    {/if}
+</Dropdown>
+{/if}
