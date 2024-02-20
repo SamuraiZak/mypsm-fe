@@ -1,5 +1,5 @@
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
-import { AccountService } from '$lib/services/implementation/core/account/account.service';
+import { AccountServices } from '$lib/services/implementation/core/account/account.service';
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
@@ -40,7 +40,7 @@ export const _submit = async (formData: object) => {
         error(400, { message: 'validation failed' });
     }
 
-    const response = await AccountService.updatePassword(formData);
+    const response = await AccountServices.updatePassword(formData);
 
     return {
         props: {

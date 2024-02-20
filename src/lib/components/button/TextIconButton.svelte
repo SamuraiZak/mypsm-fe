@@ -47,7 +47,7 @@
             {:else if icon == 'next'}
                 <SvgChevronRight size="20" />
             {:else if icon == 'previous'}
-                <SvgChevronLeft size="20" />
+                <SvgChevronLeft size="16" />
             {:else if icon == 'print'}
                 <SvgPrinter size="20" />
             {:else if icon == 'add'}
