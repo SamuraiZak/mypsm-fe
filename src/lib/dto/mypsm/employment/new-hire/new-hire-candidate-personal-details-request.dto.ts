@@ -1,0 +1,33 @@
+export interface CandidatePersonalDetailsRequestBody {
+    genderId: number;
+    nationalityId: number;
+    religionId: number;
+    raceId: number;
+    titleId: number;
+    ethnicId: number;
+    maritalId: number;
+    birthCountryId: number;
+    birthStateId: number;
+    assetDeclarationStatusId: number;
+    name: string;
+    alternativeName: string;
+    identityDocumentColor: string;
+    identityDocumentNumber: string;
+    email: string;
+    propertyDeclarationDate: Date;
+    birthDate: Date;
+    homeAddress: string;
+    homeCountryId: number;
+    homeStateId: number;
+    homeCityId: number;
+    homePostcode: string;
+    mailAddress: string;
+    mailCountryId: number;
+    mailStateId: number;
+    mailCityId: number;
+    mailPostcode: string;
+    isExPoliceOrSoldier: boolean;
+    isInternalRelationship: boolean;
+    employeeNumber: string;
+    relationshipId: number;
+}
