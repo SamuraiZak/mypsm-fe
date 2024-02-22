@@ -5,14 +5,22 @@
     import SvgEmployee from '$lib/assets/svg/SvgEmployee.svelte';
     import UserGroupButton from '$lib/components/login/UserGroupButton.svelte';
     import type { PageData } from './$types';
-    import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
     import { _loginSchema, _submit } from './+page';
     import { superForm, setMessage } from 'sveltekit-superforms/client';
-    import type { UserGroupDTO } from '$lib/dto/core/user-group/user-group.dto';
     import { UserGroupConstant } from '$lib/constants/core/user-group.constant';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
+    import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
+    import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
+    import { UserRoleConvert } from '$lib/dto/core/user-role/user-role.dto';
+    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
 
     export let data: PageData;
+
+    $: roleDropdown = UserRoleConvert.toDropdown(
+        data.props.roleList.filter(
+            (item) => item.userGroupCode == $form.userGroupCode,
+        ),
+    ).sort((a, b) => (a.name < b.name ? -1 : 1));
 
     const { form, errors, enhance } = superForm(data.props.form, {
         SPA: true,
@@ -24,24 +32,40 @@
         },
     });
 
-    // handle user group selection
-    function handleSelectUserGroup(selectedUserGroup: UserGroupDTO) {
-        // find the default role lookup for selected usergroup
-        let tempCurrentRole: LookupDTO | undefined =
-            data.props.roleLookupList.find(
-                (element) =>
-                    element.description == selectedUserGroup.name ?? undefined,
-            );
+    function _handleSelectGroup(selectedGroup: DropdownDTO) {
+        switch (selectedGroup.value) {
+            case UserGroupConstant.employee.code:
+                $form.userGroupCode = UserGroupConstant.employee.code;
+                $form.currentRoleCode = UserRoleConstant.kakitangan.code;
 
-        if (tempCurrentRole !== undefined) {
-            // set the current selected role
-            $form.currentRole = tempCurrentRole.code;
+                break;
 
-            // set the current selected user group
-            $form.userGroup = selectedUserGroup.value;
-        } else {
-            throw new Error('Something went wrong!');
+            case UserGroupConstant.contractor.code:
+                $form.userGroupCode = UserGroupConstant.contractor.code;
+                $form.currentRoleCode = UserRoleConstant.kakitanganKontrak.code;
+                break;
+
+            case UserGroupConstant.candidate.code:
+                $form.userGroupCode = UserGroupConstant.candidate.code;
+                $form.currentRoleCode = UserRoleConstant.calon.code;
+                break;
+
+            case UserGroupConstant.clinic.code:
+                $form.userGroupCode = UserGroupConstant.clinic.code;
+                $form.currentRoleCode = UserRoleConstant.klinikPanel.code;
+                break;
+
+            default:
+                $form.userGroupCode = UserGroupConstant.employee.code;
+                $form.currentRoleCode = UserRoleConstant.kakitangan.code;
+                break;
         }
+
+        roleDropdown = UserRoleConvert.toDropdown(
+            data.props.roleList.filter(
+                (item) => item.userGroupCode == $form.userGroupCode,
+            ),
+        ).sort((a, b) => (a.name < b.name ? -1 : 1));
     }
 </script>
 
@@ -62,26 +86,30 @@
     <div
         class="h-100 flex max-h-[100px] w-full flex-row items-center justify-center gap-2"
     >
-        {#each data.props.userGroupOptions as option}
+        {#each data.props.groupDropdown as group}
             <UserGroupButton
-                value={option.value}
-                bind:selectedValue={$form.userGroup}
+                value={group.value}
+                bind:selectedValue={$form.userGroupCode}
                 handleSelect={() => {
-                    handleSelectUserGroup(option);
+                    _handleSelectGroup(group);
                 }}
             >
                 <span slot="icon">
-                    {#if option.value == 'employee'}
+                    {#if group.value == '889f7c6d-7373-4edc-a3cb-c7be522ec41c'}
+                        <!-- employee -->
                         <SvgEmployee size="30"></SvgEmployee>
-                    {:else if option.value == 'contractor'}
+                    {:else if group.value == 'ff063e92-84be-45cb-bb27-7c0f96cfdc0'}
+                        <!-- contractor -->
                         <SvgEmployee size="30"></SvgEmployee>
-                    {:else if option.value == 'candidate'}
+                    {:else if group.value == 'f82fe23c-d4fd-4d61-9267-b16555c9db12'}
+                        <!-- candidate -->
                         <SvgCandidate size="30"></SvgCandidate>
-                    {:else if option.value == 'clinic'}
+                    {:else if group.value == '9428f85f-5bf0-4a7a-bd4c-261f3b25e491'}
+                        <!-- clinic -->
                         <SvgStethescope size="30"></SvgStethescope>
                     {/if}
                 </span>
-                {option.name}
+                {group.name}
             </UserGroupButton>
         {/each}
 
@@ -98,64 +126,32 @@
             use:enhance
             class="flex w-full flex-col items-center justify-start gap-2"
         >
-            {#if $form.userGroup == 'employee'}
-                <!-- role selection input starts here -->
-                <div
-                    class="flex w-full flex-col items-center justify-start gap-1"
-                >
-                    <!-- input label starts here -->
-                    <label
-                        for="role"
-                        class="block w-full text-start text-sm font-medium text-ios-labelColors-secondaryLabel-light"
-                        >Peranan</label
-                    >
-                    <!-- input label ends here -->
+            <!-- role selection input starts here -->
+            <CustomSelectField
+                id="role"
+                bind:val={$form.currentRoleCode}
+                errors={$errors.currentRoleCode}
+                disabled={$form.userGroupCode !==
+                    UserGroupConstant.employee.code}
+                options={roleDropdown}
+            ></CustomSelectField>
 
-                    <!-- input field starts here -->
-                    <select
-                        name="role"
-                        bind:value={$form.currentRole}
-                        class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light bg-ios-backgroundColors-systemBackground-light py-0 text-sm focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
-                    >
-                        {#each data.props.roleOptions as option}
-                            <option value={option.value}>
-                                {option.name}
-                            </option>
-                        {/each}
-                    </select>
-                    <!-- input field ends here -->
-
-                    <!-- input error message starts here -->
-                    <div
-                        class="flex h-3 w-full flex-row items-center justify-end"
-                    >
-                        {#if $errors.currentRole}
-                            <p
-                                class="text-end text-sm font-medium italic leading-tight text-ios-basic-destructiveRed"
-                            >
-                                {$errors.currentRole}
-                            </p>
-                        {/if}
-                    </div>
-                    <!-- input error message ends here -->
-                </div>
-                <!-- role selection input ends here -->
-            {/if}
+            <!-- role selection input ends here -->
 
             <!-- username input starts here -->
 
             <CustomTextField
                 bind:val={$form.username}
                 errors={$errors.username}
-                label={$form.userGroup == UserGroupConstant.userGroup[3].value
+                label={$form.userGroupCode == UserGroupConstant.clinic.code
                     ? 'ID Pengguna'
                     : 'No. Kad Pengenalan'}
                 id="username"
-                type={$form.userGroup == UserGroupConstant.userGroup[3].value
+                type={$form.userGroupCode == UserGroupConstant.clinic.code
                     ? 'text'
                     : 'number'}
-                placeholder={$form.userGroup ==
-                UserGroupConstant.userGroup[3].value
+                placeholder={$form.userGroupCode ==
+                UserGroupConstant.clinic.code
                     ? '(Contoh: ahmad1234)'
                     : '(Contoh: 850109125446)'}
             ></CustomTextField>

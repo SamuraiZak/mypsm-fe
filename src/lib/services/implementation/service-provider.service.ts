@@ -23,7 +23,7 @@ const http = ky.create({
                 );
 
                 if (token != null) {
-                    request.headers.set('Authorization', `${token}`);
+                    request.headers.set('Authorization', `Bearer ${token}`);
                 }
             },
         ],

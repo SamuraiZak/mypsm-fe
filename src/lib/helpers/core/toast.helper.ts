@@ -22,6 +22,20 @@ export const getLoginErrorToast = async () => {
     );
 };
 
+export const getLoginToast = async (promise: Promise<Response>) => {
+    return toast.promise(
+        promise,
+        {
+            loading: 'Cuba Log masuk...',
+            success: 'Log Masuk Berjaya!',
+            error: 'Log Masuk Gagal',
+        },
+        {
+            style: 'background: #333; color: #fff;',
+        },
+    );
+};
+
 // =======================================================
 // general promise toast using resolved and rejected state
 // =======================================================

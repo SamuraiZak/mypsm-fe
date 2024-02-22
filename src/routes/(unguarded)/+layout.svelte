@@ -1,5 +1,6 @@
 <!-- Unguarded Modules Layout -->
 <script lang="ts">
+    import { Toaster } from 'svelte-french-toast';
 </script>
 
 <!-- page section starts here -->
@@ -35,3 +36,5 @@
     </footer>
     <!-- footer ends here -->
 </section>
+
+<Toaster></Toaster>
