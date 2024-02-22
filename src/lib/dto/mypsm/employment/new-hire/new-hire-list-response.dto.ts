@@ -1,7 +1,7 @@
-export interface NewHireData {
-    candidateId:    number;
-    candidateName:  string;
-    temporaryId:    string;
+export type NewHireData = {
+    candidateId: number;
+    candidateName: string;
+    temporaryId: string;
     identityCardNo: string;
-    email:          string;
-}
+    email: string;
+};

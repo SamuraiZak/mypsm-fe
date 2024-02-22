@@ -1,10 +1,3 @@
-export interface ApproverTable {
-    pageNum: number;
-    totalData: number;
-    totalPage: number;
-    newHires: NewHire[];
-}
-
 export interface NewHire {
     candidateId: string;
     candidateName: string;
