@@ -5,7 +5,8 @@
 
     export let label: string = 'Label';
     export let id: string;
-    export let val: string;
+    export let disabled: boolean = false;
+    export let val: string | number;
     export let placeholder: string = 'Taip jawapan anda di sini';
     export let type: string = 'text' || 'number' || 'password' || 'email';
     export let errors: string[] | undefined = [] ?? undefined;
@@ -23,12 +24,14 @@
             >{label}</label
         >
         {#if type == 'password'}
-            <button type="button" class="text w-fit text-ios-activeColors-activeBlue-light"
+            <button
+                type="button"
+                class="text w-fit text-ios-activeColors-activeBlue-light"
                 on:click={() => {
                     showPassword = !showPassword;
                 }}
             >
-                <span class="text-sm w-fit text-nowrap leading-tight">
+                <span class="w-fit text-nowrap text-sm leading-tight">
                     {#if showPassword}
                         Sembunyi
                     {:else}
@@ -46,6 +49,7 @@
     {#if type == 'number'}
         <input
             bind:value={val}
+            {disabled}
             {placeholder}
             type="number"
             name={id}
@@ -56,6 +60,7 @@
         {#if showPassword}
             <input
                 bind:value={val}
+                {disabled}
                 {placeholder}
                 type="text"
                 name={id}
@@ -65,6 +70,7 @@
         {:else}
             <input
                 bind:value={val}
+                {disabled}
                 {placeholder}
                 type="password"
                 name={id}
@@ -75,6 +81,7 @@
     {:else if type == 'email'}
         <input
             bind:value={val}
+            {disabled}
             {placeholder}
             type="email"
             name={id}
@@ -84,6 +91,7 @@
     {:else}
         <input
             bind:value={val}
+            {disabled}
             {placeholder}
             type="text"
             name={id}
