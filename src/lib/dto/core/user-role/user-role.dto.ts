@@ -1,32 +1,34 @@
 // ===============================================================
-// User Group DTO
+// User Role DTO
 // ===============================================================
 
 import { TextAppearanceHelper } from '$lib/helpers/core/text-appearance.helper';
 import type { DropdownDTO } from '../dropdown/dropdown.dto';
 
-export interface UserGroupDTO {
-    id?: number;
+export interface UserRoleDTO {
+    id: number;
     code: string;
     description: string;
+    userGroupCode: string;
 }
 
 // Converts JSON strings to/from your types
-export class UserGroupConvert {
-    public static fromJson(json: string): UserGroupDTO {
+export class UserRoleConvert {
+    public static fromJson(json: string): UserRoleDTO {
         return JSON.parse(json);
     }
 
-    public static toJson(value: UserGroupDTO): string {
+    public static toJson(value: UserRoleDTO): string {
         return JSON.stringify(value);
     }
 
-    // convert list of groups to dropdown
-    static toDropdown(groupList: UserGroupDTO[]) {
-        const dropdownList: DropdownDTO[] = groupList.map((group) => ({
-            value: group.code,
-            name: TextAppearanceHelper.toCamelCase(group.description),
+    // convert list of roles to dropdown
+    static toDropdown(roleList: UserRoleDTO[]) {
+        const dropdownList: DropdownDTO[] = roleList.map((role) => ({
+            value: role.code,
+            name: TextAppearanceHelper.toCamelCase(role.description),
         }));
+
         return dropdownList;
     }
 }
