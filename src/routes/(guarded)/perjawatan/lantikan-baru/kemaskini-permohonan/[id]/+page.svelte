@@ -1,4 +1,26 @@
 <script lang="ts">
+    import type { CandidatePersonalDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto';
+    import {
+        _activityInfoSchema,
+        _dependencyListSchema,
+        _familyListSchema,
+        _nextOfKinListSchema,
+        _experienceInfoSchema,
+        _setApproversSchema,
+        _approvalResultSchema,
+    } from '$lib/schemas/mypsm/employment/new-hire/schema';
+    import {
+        _submitAcademicForm,
+        _submitActivityForm,
+        _submitDependencyForm,
+        _submitExperienceForm,
+        _submitFamilyForm,
+        _submitNextOfKinForm,
+        _submitPersonalForm,
+        _submitSecretaryApprovalForm,
+        _submitSecretarySetApproverForm,
+        _submitServiceForm,
+    } from './+page';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
@@ -9,28 +31,17 @@
     import type { PageData } from './$types';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
-    import type { CandidatePersonalData } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto';
-    import {
-        _addAcademicInfoSchema,
-        _addActivityModalSchema,
-        _addExperienceInfoSchema,
-        _addRelationModalSchema,
-        _secretaryApprovalInfoSchema,
-        _secretarySetApproversSchema,
-        _serviceInfoSchema,
-        _stepperMaklumatPengalaman,
-        _stepperMaklumatWaris,
-        _submitSecretaryApprovalForm,
-        _submitSecretarySetApproverForm,
-        _submitServiceInfoForm,
-    } from './+page';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
     import { Checkbox, Modal, Tooltip } from 'flowbite-svelte';
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
+    import {
+        _academicInfoSchema,
+        _serviceInfoSchema,
+    } from '$lib/schemas/mypsm/employment/new-hire/schema';
     export let data: PageData;
 
-    const personalDetails: CandidatePersonalData =
+    const personalDetails: CandidatePersonalDTO =
         data.personalDetailResponse.data?.details;
 
     let isSuccessPersonalFormResponse: boolean =
@@ -127,12 +138,7 @@
     }
 
     // Superforms
-    const {
-        form,
-        errors,
-        enhance,
-        options: stepperMaklumatPeribadiOption,
-    } = superForm(data.stepperMaklumatPeribadi, {
+    const { form, errors, enhance } = superForm(data.personalInfoForm, {
         SPA: true,
         dataType: 'json',
         invalidateAll: true,
@@ -140,75 +146,7 @@
         validators: false,
         multipleSubmits: 'prevent',
         onSubmit() {
-            _submitFormStepperMaklumatPeribadi($form);
-        },
-        taintedMessage: false,
-    });
-
-    const {
-        form: maklumatPerkhidmatanForm,
-        errors: maklumatPerkhidmatanErrors,
-        enhance: maklumatPerkhidmatanEnhance,
-    } = superForm(data.stepperMaklumatPerkhidmatan, {
-        SPA: true,
-        dataType: 'json',
-        invalidateAll: true,
-        resetForm: false,
-        validators: false,
-        multipleSubmits: 'prevent',
-        onSubmit() {
-            _submitFormStepperMaklumatPerkhidmatan($maklumatPerkhidmatanForm);
-        },
-        taintedMessage: false,
-    });
-
-    const {
-        form: maklumatAkademikForm,
-        errors: maklumatAkademikErrors,
-        enhance: maklumatAkademikEnhance,
-        options: maklumatAkademikOption,
-    } = superForm(data.stepperMaklumatAkademik, {
-        SPA: true,
-        validators: false,
-        dataType: 'json',
-        invalidateAll: true,
-        resetForm: false,
-        multipleSubmits: 'prevent',
-        onSubmit() {
-            _submitFormStepperMaklumatAkademik($maklumatAkademikForm);
-        },
-        taintedMessage: false,
-    });
-    const {
-        form: maklumatPengalamanForm,
-        errors: maklumatPengalamanErrors,
-        enhance: maklumatPengalamanEnhance,
-    } = superForm(data.stepperMaklumatPengalaman, {
-        SPA: true,
-        validators: _stepperMaklumatPengalaman,
-        dataType: 'json',
-        invalidateAll: true,
-        resetForm: false,
-        multipleSubmits: 'prevent',
-        onSubmit() {
-            _submitFormStepperMaklumatPengalaman($maklumatPengalamanForm);
-        },
-
-        taintedMessage: false,
-    });
-    const {
-        form: maklumatWarisForm,
-        errors: maklumatWarisErrors,
-        enhance: maklumatWarisEnhance,
-    } = superForm(data.stepperMaklumatWaris, {
-        SPA: true,
-        validators: _stepperMaklumatWaris,
-        dataType: 'json',
-        invalidateAll: true,
-        resetForm: false,
-        multipleSubmits: 'prevent',
-        onSubmit() {
-            _submitFormStepperMaklumatWaris($maklumatWarisForm);
+            _submitPersonalForm($form);
         },
         taintedMessage: false,
     });
@@ -219,9 +157,14 @@
         enhance: serviceInfoEnhance,
     } = superForm(data.serviceInfoForm, {
         SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        taintedMessage: false,
+        resetForm: false,
+        multipleSubmits: 'prevent',
         validators: _serviceInfoSchema,
         onSubmit() {
-            _submitServiceInfoForm($serviceInfoForm);
+            _submitServiceForm($serviceInfoForm);
         },
     });
 
@@ -231,7 +174,12 @@
         enhance: secretaryApprovalInfoEnhance,
     } = superForm(data.secretaryApprovalInfoForm, {
         SPA: true,
-        validators: _secretaryApprovalInfoSchema,
+        dataType: 'json',
+        invalidateAll: true,
+        taintedMessage: false,
+        resetForm: false,
+        multipleSubmits: 'prevent',
+        validators: _approvalResultSchema,
         onSubmit() {
             _submitSecretaryApprovalForm($secretaryApprovalInfoForm);
         },
@@ -243,27 +191,32 @@
         enhance: secretarySetApproverEnhance,
     } = superForm(data.secretarySetApproversForm, {
         SPA: true,
-        validators: _secretarySetApproversSchema,
+        dataType: 'json',
+        invalidateAll: true,
+        taintedMessage: false,
+        resetForm: false,
+        multipleSubmits: 'prevent',
+        validators: _setApproversSchema,
         onSubmit() {
             _submitSecretarySetApproverForm($secretarySetApproverForm);
         },
     });
 
-    // modal superforms
-
+    // modal
     const {
         form: addAcademicInfoModal,
         errors: addAcademicInfoErrors,
         enhance: addAcademicInfoEnhance,
     } = superForm(data.addAcademicModal, {
         SPA: true,
-        validators: _addAcademicInfoSchema,
         dataType: 'json',
         invalidateAll: true,
+        taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
+        validators: _academicInfoSchema,
         async onSubmit() {
-            _submitCreateAcademicForm($form);
+            _submitAcademicForm($form);
             // openAcademicInfoModal = false;
         },
     });
@@ -274,13 +227,14 @@
         enhance: addExperienceModalEnhance,
     } = superForm(data.addExperienceModal, {
         SPA: true,
-        validators: _addExperienceInfoSchema,
         dataType: 'json',
         invalidateAll: true,
+        taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
+        validators: _experienceInfoSchema,
         async onSubmit() {
-            _submitCreateExperienceForm($addExperienceModalForm);
+            _submitExperienceForm($addExperienceModalForm);
             // openExperienceInfoModal = false;
         },
     });
@@ -291,13 +245,14 @@
         enhance: addActivityModalEnhance,
     } = superForm(data.addActivityModal, {
         SPA: true,
-        validators: _addActivityModalSchema,
         dataType: 'json',
         invalidateAll: true,
+        taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
+        validators: _activityInfoSchema,
         async onSubmit() {
-            _submitCreateActivityForm($addActivityModal);
+            _submitActivityForm($addActivityModal);
             // openMembershipInfoModal = false;
         },
     });
@@ -308,13 +263,14 @@
         enhance: addNonFamilyEnhance,
     } = superForm(data.addNonFamilyModal, {
         SPA: true,
-        validators: _addRelationModalSchema,
         dataType: 'json',
         invalidateAll: true,
+        taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
+        validators: _dependencyListSchema,
         async onSubmit() {
-            _submitCreateDependencyForm($addNonFamilyModal);
+            _submitDependencyForm($addNonFamilyModal);
             // openNonFamilyInfoModal = false;
         },
     });
@@ -325,13 +281,14 @@
         enhance: addFamilyEnhance,
     } = superForm(data.addFamilyModal, {
         SPA: true,
-        validators: _addRelationModalSchema,
         dataType: 'json',
         invalidateAll: true,
+        taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
+        validators: _familyListSchema,
         async onSubmit() {
-            _submitCreateFamilyForm($addFamilyModal);
+            _submitFamilyForm($addFamilyModal);
             // openFamilyInfoModal = false;
         },
     });
@@ -341,13 +298,14 @@
         enhance: addNextOfKinEnhance,
     } = superForm(data.addNextOfKinModal, {
         SPA: true,
-        validators: _addRelationModalSchema,
         dataType: 'json',
         invalidateAll: true,
+        taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
+        validators: _nextOfKinListSchema,
         async onSubmit() {
-            _submitCreateNextOfKinForm($addNextOfKinModal);
+            _submitNextOfKinForm($addNextOfKinModal);
             // openFamilyInfoModal = false;
         },
     });
@@ -363,58 +321,50 @@
         },
     );
 
-    const proxyEffectiveDate = dateProxy(
-        maklumatPerkhidmatanForm,
-        'effectiveDate',
-        { format: 'date' },
-    );
+    const proxyEffectiveDate = dateProxy(serviceInfoForm, 'effectiveDate', {
+        format: 'date',
+    });
     const proxyCivilServiceStartDate = dateProxy(
-        maklumatPerkhidmatanForm,
+        serviceInfoForm,
         'civilServiceStartDate',
         { format: 'date' },
     );
     const proxyConfirmServiceDate = dateProxy(
-        maklumatPerkhidmatanForm,
+        serviceInfoForm,
         'confirmServiceDate',
         { format: 'date' },
     );
     const proxyFirstEffectiveDate = dateProxy(
-        maklumatPerkhidmatanForm,
+        serviceInfoForm,
         'firstEffectiveDate',
         { format: 'date' },
     );
     const proxyPastAttachmentDate = dateProxy(
-        maklumatPerkhidmatanForm,
+        serviceInfoForm,
         'pastAttachmentDate',
         { format: 'date' },
     );
-    const proxyActingDate = dateProxy(maklumatPerkhidmatanForm, 'actingDate', {
+    const proxyActingDate = dateProxy(serviceInfoForm, 'actingDate', {
         format: 'date',
     });
-    const proxyInterimDate = dateProxy(
-        maklumatPerkhidmatanForm,
-        'interimDate',
-        {
-            format: 'date',
-        },
-    );
+    const proxyInterimDate = dateProxy(serviceInfoForm, 'interimDate', {
+        format: 'date',
+    });
     const proxyLastSalaryRaiseDate = dateProxy(
-        maklumatPerkhidmatanForm,
+        serviceInfoForm,
         'lastSalaryRaiseDate',
         { format: 'date' },
     );
     const proxyLastPromotionDate = dateProxy(
-        maklumatPerkhidmatanForm,
+        serviceInfoForm,
         'lastPromotionDate',
         { format: 'date' },
     );
-    const proxyRetirementDate = dateProxy(
-        maklumatPerkhidmatanForm,
-        'retirementDate',
-        { format: 'date' },
-    );
+    const proxyRetirementDate = dateProxy(serviceInfoForm, 'retirementDate', {
+        format: 'date',
+    });
     const proxySalaryEffectiveDate = dateProxy(
-        maklumatPerkhidmatanForm,
+        serviceInfoForm,
         'salaryEffectiveDate',
         { format: 'date' },
     );
@@ -518,18 +468,18 @@
 
                 <CustomTextField
                     disabled
-                    id="identityCardNumber"
+                    id="identityDocumentNumber"
                     label={'No. Kad Pengenalan'}
                     type="text"
-                    bind:val={$form.identityCardNumber}
+                    bind:val={$form.identityDocumentNumber}
                 ></CustomTextField>
 
                 <CustomTextField
                     disabled
-                    id="fullName"
+                    id="name"
                     label={'Nama Penuh'}
                     type="text"
-                    bind:val={$form.fullName}
+                    bind:val={$form.name}
                 ></CustomTextField>
 
                 <CustomTextField
@@ -547,13 +497,7 @@
                     bind:val={$form.email}
                 ></CustomTextField>
 
-                {#if $errors.email}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.email}</span
-                    >
-                {/if}
-
+                <!-- 
                 <DropdownSelect
                     disabled
                     errors={$errors.icColour}
@@ -563,12 +507,6 @@
                     bind:val={$form.icColour}
                     options={data.identityCardColorLookup}
                 ></DropdownSelect>
-                {#if $errors.icColour}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.icColour}</span
-                    >
-                {/if}
 
                 <DateSelector
                     disabled
@@ -577,12 +515,6 @@
                     label="Tarikh Lahir"
                     bind:val={$proxyBirthDate}
                 ></DateSelector>
-                {#if $errors?.birthDate}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors?.birthDate}</span
-                    >
-                {/if}
                 <DropdownSelect
                     disabled
                     errors={$errors.birthplace}
@@ -592,12 +524,6 @@
                     bind:val={$form.birthplace}
                     options={data.stateLookupString}
                 ></DropdownSelect>
-                {#if $errors.birthplace}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.birthplace}</span
-                    >
-                {/if}
 
                 <DropdownSelect
                     disabled
@@ -608,12 +534,6 @@
                     bind:val={$form.nationality}
                     options={data.nationalityLookupString}
                 ></DropdownSelect>
-                {#if $errors.nationality}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.nationality}</span
-                    >
-                {/if}
 
                 <DropdownSelect
                     disabled
@@ -624,12 +544,6 @@
                     bind:val={$form.race}
                     options={data.raceLookupString}
                 ></DropdownSelect>
-                {#if $errors.race}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.race}</span
-                    >
-                {/if}
 
                 <DropdownSelect
                     disabled
@@ -640,12 +554,6 @@
                     bind:val={$form.ethnic}
                     options={data.ethnicityLookupString}
                 ></DropdownSelect>
-                {#if $errors.ethnic}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.ethnic}</span
-                    >
-                {/if}
 
                 <DropdownSelect
                     disabled
@@ -656,12 +564,6 @@
                     bind:val={$form.religion}
                     options={data.religionLookupString}
                 ></DropdownSelect>
-                {#if $errors.religion}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.religion}</span
-                    >
-                {/if}
 
                 <DropdownSelect
                     disabled
@@ -672,12 +574,6 @@
                     bind:val={$form.gender}
                     options={data.genderLookupString}
                 ></DropdownSelect>
-                {#if $errors.gender}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.gender}</span
-                    >
-                {/if}
 
                 <DropdownSelect
                     disabled
@@ -687,13 +583,7 @@
                     label="Status"
                     bind:val={$form.marital}
                     options={data.maritalLookupString}
-                ></DropdownSelect>
-                {#if $errors.marital}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.marital}</span
-                    >
-                {/if}
+                ></DropdownSelect> -->
 
                 <CustomTextField
                     disabled
@@ -704,26 +594,13 @@
                     bind:val={$form.email}
                 ></CustomTextField>
 
-                {#if $errors?.email}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors?.email}</span
-                    >
-                {/if}
-
-                <LongTextField
+                <!-- <LongTextField
                     errors={$errors.homeAddress}
                     disabled
                     id="homeAddress"
                     label="Alamat Rumah"
                     bind:val={$form.homeAddress}
                 />
-                {#if $errors.homeAddress}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.homeAddress}</span
-                    >
-                {/if}
 
                 <LongTextField
                     errors={$errors.mailAddress}
@@ -731,15 +608,9 @@
                     id="mailAddress"
                     label="Alamat Surat Menyurat (jika berlainan dari alamat rumah)"
                     bind:val={$form.mailAddress}
-                />
-                {#if $errors.mailAddress}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.mailAddress}</span
-                    >
-                {/if}
+                /> -->
 
-                <CustomTextField
+                <!-- <CustomTextField
                     disabled
                     id="houseLoanType"
                     label={'Perumahan'}
@@ -752,36 +623,30 @@
                     label={'Pinjaman Perumahan'}
                     type="text"
                     bind:val={$form.houseLoan}
-                ></CustomTextField>
+                ></CustomTextField> -->
 
-                <RadioSingle
+                <!-- <RadioSingle
                     id="isExPolice"
                     disabled
                     options={approveOptions}
                     legend={'Bekas Polis / Tentera'}
                     bind:userSelected={$form.isExPolice}
-                ></RadioSingle>
-                {#if $errors.isExPolice}
-                    <span
-                        class="ml-[220px] font-sans text-sm italic text-system-danger"
-                        >{$errors.isExPolice}</span
-                    >
-                {/if}
+                ></RadioSingle> -->
 
                 <div class="flex w-full flex-col gap-2">
                     <p class={stepperFormTitleClass}>
                         Maklumat Pertalian Dengan Kakitangan LKIM
                     </p>
 
-                    <RadioSingle
+                    <!-- <RadioSingle
                         id="isRelatedToLKIM"
                         {options}
                         disabled
                         legend={'Perhubungan Dengan Kakitangan LKIM'}
                         bind:userSelected={$form.isRelatedToLKIM}
-                    ></RadioSingle>
+                    ></RadioSingle> -->
 
-                    {#if $form.isRelatedToLKIM}
+                    {#if $form.isInternalRelationship}
                         <CustomTextField
                             disabled
                             errors={$errors.employeeNumber}
@@ -791,29 +656,17 @@
                             bind:val={$form.employeeNumber}
                         ></CustomTextField>
 
-                        {#if $errors.employeeNumber}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$errors.employeeNumber}</span
-                            >
-                        {/if}
-                        <DropdownSelect
+                        <!-- <DropdownSelect
                             disabled
-                            errors={$errors.relationDetail?.fullName}
+                            errors={$errors.name}
                             dropdownType="label-left-full"
-                            id="fullName"
+                            id="name"
                             label="Jawatan Kakitangan LKIM"
-                            bind:val={$form.fullName}
+                            bind:val={$form.name}
                             options={data.positionLookupString}
                         ></DropdownSelect>
-                        {#if $errors.fullName}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$errors.fullName}</span
-                            >
-                        {/if}
 
-                        <!-- <DropdownSelect
+                         <DropdownSelect
                             disabled
                             errors={$errors.relationDetail?.position}
                             dropdownType="label-left-full"
@@ -822,12 +675,6 @@
                             bind:val={$form.position}
                             options={data.positionLookupString}
                         ></DropdownSelect>
-                        {#if $errors.position}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$errors.position}</span
-                            >
-                        {/if}
 
                         <DropdownSelect
                             disabled
@@ -837,13 +684,7 @@
                             label="Hubungan"
                             bind:val={$form.relationship}
                             options={data.relationshipLookupString}
-                        ></DropdownSelect>
-                        {#if $errors.relationship}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$errors.relationship}</span
-                            >
-                        {/if} -->
+                        ></DropdownSelect> -->
                     {/if}
                 </div>
             </form>
@@ -864,44 +705,44 @@
                 <form
                     id="FormStepperMaklumatPerkhidmatan"
                     class="flex w-full flex-col gap-2"
-                    use:maklumatPerkhidmatanEnhance
+                    use:serviceInfoEnhance
                     method="POST"
                 >
                     <p class={stepperFormTitleClass}>Maklumat Perkhidmatan</p>
-
+                    <!-- 
                     <CustomTextField
                         disabled
                         id="currentGrade"
                         label="Gred Semasa"
-                        bind:val={$maklumatPerkhidmatanForm.currentGrade}
-                    ></CustomTextField>
-
+                        bind:val={$serviceInfoForm.currentGrade}
+                    ></CustomTextField> -->
+                    <!-- 
                     <CustomTextField
                         disabled
                         id="currentPosition"
                         label="Jawatan"
-                        bind:val={$maklumatPerkhidmatanForm.currentPosition}
-                    ></CustomTextField>
+                        bind:val={$serviceInfoForm.currentPosition}
+                    ></CustomTextField> -->
 
                     <CustomTextField
                         disabled
-                        id="placement"
+                        id="placementId"
                         label="Penempatan"
-                        bind:val={$maklumatPerkhidmatanForm.placement}
+                        bind:val={$serviceInfoForm.placementId}
                     ></CustomTextField>
                     <CustomTextField
                         disabled
-                        id="tarafPerkhidmatan"
+                        id="serviceTypeId"
                         label="Taraf Perkhidmatan"
-                        bind:val={$maklumatPerkhidmatanForm.serviceType}
+                        bind:val={$serviceInfoForm.serviceTypeId}
                     ></CustomTextField>
 
-                    <DateSelector
+                    <!-- <DateSelector
                         disabled
                         id="effectiveDate"
                         label="Tarikh Kuatkuasa Lantikan Semasa"
                         bind:val={$proxyEffectiveDate}
-                    ></DateSelector>
+                    ></DateSelector> -->
 
                     <!-- <DropdownSelect
                         disabled
@@ -909,7 +750,7 @@
                         id="retirementBenefit"
                         label={'Faedah Persaraan'}
                         options={data.retirementBenefitLookupString}
-                        bind:val={$maklumatPerkhidmatanForm.retirementBenefit}
+                        bind:val={$serviceInfoForm.retirementBenefit}
                     ></DropdownSelect> -->
 
                     <CustomTextField
@@ -917,31 +758,31 @@
                         id="retirementBenefit"
                         label={'Faedah Persaraan'}
                         type="text"
-                        bind:val={$maklumatPerkhidmatanForm.retirementBenefit}
+                        bind:val={$serviceInfoForm.retirementBenefit}
                     ></CustomTextField>
 
                     <CustomTextField
                         disabled
-                        id="EPFNumber"
+                        id="epfNumber"
                         label={'No. KWSP'}
                         type="text"
-                        bind:val={$maklumatPerkhidmatanForm.EPFNumber}
+                        bind:val={$serviceInfoForm.epfNumber}
                     ></CustomTextField>
 
                     <CustomTextField
                         disabled
-                        id="SOCSO"
+                        id="socsoNumber"
                         label={'No. SOCSO'}
                         type="text"
-                        bind:val={$maklumatPerkhidmatanForm.SOCSO}
+                        bind:val={$serviceInfoForm.socsoNumber}
                     ></CustomTextField>
 
                     <CustomTextField
                         disabled
-                        id="taxIncome"
+                        id="incomeNumber"
                         label={'No. Cukai (LHDN)'}
                         type="text"
-                        bind:val={$maklumatPerkhidmatanForm.taxIncome}
+                        bind:val={$serviceInfoForm.incomeNumber}
                     ></CustomTextField>
 
                     <CustomTextField
@@ -949,23 +790,23 @@
                         id="bankName"
                         label={'Bank'}
                         type="text"
-                        bind:val={$maklumatPerkhidmatanForm.bankName}
+                        bind:val={$serviceInfoForm.bankName}
                     ></CustomTextField>
 
                     <CustomTextField
                         disabled
-                        id="accountNumber"
+                        id="bankAccount"
                         label={'No.Akaun'}
                         type="text"
-                        bind:val={$maklumatPerkhidmatanForm.accountNumber}
+                        bind:val={$serviceInfoForm.bankAccount}
                     ></CustomTextField>
 
                     <CustomTextField
                         disabled
-                        id="program"
+                        id="programId"
                         label={'Program'}
                         type="text"
-                        bind:val={$maklumatPerkhidmatanForm.program}
+                        bind:val={$serviceInfoForm.programId}
                     ></CustomTextField>
 
                     <CustomTextField
@@ -973,10 +814,10 @@
                         id="eligibleLeaveCount"
                         label={'Kelayakan Cuti'}
                         type="number"
-                        bind:val={$maklumatPerkhidmatanForm.eligibleLeaveCount}
+                        bind:val={$serviceInfoForm.eligibleLeaveCount}
                     ></CustomTextField>
 
-                    <DateSelector
+                    <!-- <DateSelector
                         disabled
                         id="mulaDilantikPerkhidmatanKerajaan"
                         label="Mula Dilantik Perkhidmatan Kerajaan"
@@ -994,9 +835,8 @@
                         id="confirmServiceDate"
                         label="Disahkan Dalam Jawatan Semasa LKIM"
                         bind:val={$proxyConfirmServiceDate}
-                    ></DateSelector>
-                    <!--
-                    <AccordianField
+                    ></DateSelector> -->
+                    <!--<AccordianField
                         disabled={!disabled}
                         label="Sejarah Lantikan Jawatan LKIM"
                         header="Gred, Jawatan, Tarikh Disahkan Jawatan, Tarikh Lantikan"
@@ -1018,7 +858,7 @@
                         {/each}
                     </AccordianField> -->
 
-                    <DateSelector
+                    <!-- <DateSelector
                         disabled
                         id="pastAttachmentDate"
                         label="Tarikh Kelulusan Percantuman Perkhidmatan Lepas"
@@ -1044,7 +884,7 @@
                         id="pensionScheme"
                         label={'Skim Pencen'}
                         type="text"
-                        bind:val={$maklumatPerkhidmatanForm.pensionScheme}
+                        bind:val={$serviceInfoForm.pensionScheme}
                     ></CustomTextField>
 
                     <DateSelector
@@ -1066,7 +906,7 @@
                         dropdownType="label-left-full"
                         id="salaryMovementMonth"
                         label="Bulan KGT"
-                        bind:val={$maklumatPerkhidmatanForm.salaryMovementMonth}
+                        bind:val={$serviceInfoForm.salaryMovementMonth}
                         options={data.monthStringLookup}
                     ></DropdownSelect>
 
@@ -1075,25 +915,25 @@
                         id="retirementDate"
                         label="Tarikh Bersara"
                         bind:val={$proxyRetirementDate}
-                    ></DateSelector>
+                    ></DateSelector> -->
 
                     <p class={stepperFormTitleClass}>
                         Maklumat Gaji dan Elaun - Elaun
                     </p>
                     <div class="grid grid-cols-2 gap-10">
                         <div class="space-y-2.5">
-                            <DateSelector
+                            <!-- <DateSelector
                                 disabled
                                 id="salaryEffectiveDate"
                                 label="Tarikh Berkuatkuasa"
                                 bind:val={$proxySalaryEffectiveDate}
-                            ></DateSelector>
+                            ></DateSelector> -->
                             <CustomTextField
                                 disabled
                                 id="tanggaGaji"
                                 label={'Tangga Gaji'}
                                 type="text"
-                                bind:val={$maklumatPerkhidmatanForm.maximumSalary}
+                                bind:val={$serviceInfoForm.maximumSalary}
                             ></CustomTextField>
 
                             <CustomTextField
@@ -1101,49 +941,41 @@
                                 id="baseSalary"
                                 label={'Gaji Pokok'}
                                 type="text"
-                                bind:val={$maklumatPerkhidmatanForm.baseSalary}
+                                bind:val={$serviceInfoForm.baseSalary}
                             ></CustomTextField>
                         </div>
 
                         <div class="space-y-2.5">
                             <CustomTextField
                                 disabled
-                                hasTooltip={true}
-                                toolTipID="type-itka"
-                                id="ITKA"
-                                label={'ITKA'}
+                                id="itka"
+                                label={'itka'}
                                 type="text"
-                                bind:val={$maklumatPerkhidmatanForm.ITKA}
+                                bind:val={$serviceInfoForm.itka}
                             ></CustomTextField>
 
                             <CustomTextField
                                 disabled
-                                hasTooltip={true}
-                                toolTipID="type-itp"
-                                id="ITP"
-                                label={'ITP'}
+                                id="itp"
+                                label={'itp'}
                                 type="text"
-                                bind:val={$maklumatPerkhidmatanForm.ITP}
+                                bind:val={$serviceInfoForm.itp}
                             ></CustomTextField>
 
                             <CustomTextField
                                 disabled
-                                hasTooltip={true}
-                                toolTipID="type-epw"
-                                id="EPW"
-                                label={'EPW'}
+                                id="epw"
+                                label={'epw'}
                                 type="text"
-                                bind:val={$maklumatPerkhidmatanForm.EPW}
+                                bind:val={$serviceInfoForm.epw}
                             ></CustomTextField>
 
                             <CustomTextField
                                 disabled
-                                hasTooltip={true}
-                                toolTipID="type-cola"
-                                id="COLA"
-                                label={'COLA'}
+                                id="cola"
+                                label={'cola'}
                                 type="text"
-                                bind:val={$maklumatPerkhidmatanForm.COLA}
+                                bind:val={$serviceInfoForm.cola}
                             ></CustomTextField>
                             <!-- Tooltip body -->
                             <Tooltip
@@ -1482,13 +1314,14 @@
         ></StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
-                <DynamicTable tableItems={data.personalActivityList}
+                <DynamicTable
+                    tableItems={data.activityInfoResponse.data?.dataList}
                 ></DynamicTable>
             </div>
             {#if !disabled}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
-                        primary
+                        type="primary"
                         label="Tambah Kegiatan/Keahlian"
                         onClick={() => {
                             openMembershipInfoModal = true;
@@ -1524,7 +1357,7 @@
             {#if !disabled}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
-                        primary
+                        type="primary"
                         label="Tambah Maklumat Keluarga"
                         onClick={() => {
                             openFamilyInfoModal = true;
@@ -1558,7 +1391,7 @@
             {#if !disabled}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
-                        primary
+                        type="primary"
                         label="Tambah Tanggungan Selain Isteri dan Anak"
                         onClick={() => {
                             openNonFamilyInfoModal = true;
@@ -1594,7 +1427,7 @@
             {#if !disabled}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
-                        primary
+                        type="primary"
                         label="Tambah Waris"
                         onClick={() => {
                             openNextOfKinInfoModal = true;
