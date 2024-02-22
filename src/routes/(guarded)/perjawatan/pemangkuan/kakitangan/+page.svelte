@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
@@ -50,7 +51,7 @@
             title="Senarai Tawaran Pemangkuan"
             borderClass="border-none"
         />
-        <CustomTable enableDetail onUpdate={_search} tableData={table}
+        <CustomTable enableDetail detailActions={() => goto('./kakitangan/butiran')} onUpdate={_search} tableData={table}
         ></CustomTable>
     </div>
 </section>
