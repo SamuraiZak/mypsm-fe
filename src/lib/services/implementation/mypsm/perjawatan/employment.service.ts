@@ -8,26 +8,26 @@ import {
     type CommonListRequestDTO,
 } from '$lib/dto/core/common/common-list-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
+import type { CandidateActivityDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-activity.dto';
+import type { CandidateAcademicDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-academic-details.dto';
+import type { CandidateDependenciesDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-dependencies-details.dto';
+import type { CandidateExperiencesDetailDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-experience-details.dto';
+import type { CandidateFamilyDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-family-details.dto';
+import type { CandidateNextOfKinDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto';
+import type { CandidatePersonalDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto';
+import type { NewHireSecretaryServiceUpdateDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-secretary-service-update.dto';
+import type { NewHireSetApproversDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-set-approvers.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
+import type { CandidateIDRequestBody } from '$lib/dto/core/common/candidate-id-request.view-dto';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
-import type { CandidateIDRequestBody } from '$lib/services/implementation/mypsm/common/candidate-id-request.view-dto';
-import type { CandidatePersonalDetailsRequestBody } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details-request.dto';
-import type { AddApprovalResultRequestBody } from '../common/add-approval-results-request.dto';
-import type { CandidateExperienceDetailsRequestBody } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-experience-details-request.dto';
-import type { CandidateAcademiceDetailsRequestBody } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-academic-details-request.dto';
-import type { CandidateActivityRequestBody } from '$lib/dto/mypsm/employment/new-hire/new-hire-activity-request.dto';
-import type { CandidateFamilyDetailsRequestBody } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-family-details-request.dto';
-import type { CandidateDependenciesDetailRequestBody } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-dependencies-details-request.dto';
-import type { CandidateNextOfKinDetailsRequestBody } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details-request.dto';
-import type { DocumentData } from '../common/add-documents-request.dto';
-import type { NewHireSecretaryAddUpdateRequestBody } from '$lib/dto/mypsm/employment/new-hire/new-hire-secretary-add-update-request.dto';
-import type { NewHireSetApproversRequestBody } from '$lib/dto/mypsm/employment/new-hire/new-hire-set-approvers-request.dto';
+import type { AddApprovalResultRequestBody } from '../../../../dto/core/common/add-approval-results-request.dto';
+import type { DocumentData } from '../../../../dto/core/common/add-documents-request.dto';
 
 export class EmploymentServices {
     static async method(param: CommonListRequestDTO) {
         try {
-            let url: Input = '';
+            const url: Input = '';
 
             const response: Response = await http
                 .post(url, {
@@ -47,9 +47,7 @@ export class EmploymentServices {
         }
     }
 
-    static async getNewHireList(
-        param: CommonListRequestDTO,
-    ) {
+    static async getNewHireList(param: CommonListRequestDTO) {
         try {
             const url: Input = 'employments/new-hires';
 
@@ -80,7 +78,6 @@ export class EmploymentServices {
     static async getCurrentCandidatePersonalDetails(
         param: CandidateIDRequestBody,
     ) {
-
         try {
             const url: Input = 'employments/get-new-hire-personal-detail';
 
@@ -109,8 +106,8 @@ export class EmploymentServices {
 
     // create employee personal details
     static async createCurrentCandidatePersonalDetails(
-        param: CandidatePersonalDetailsRequestBody,
-    ){
+        param: CandidatePersonalDTO,
+    ) {
         try {
             const url: Input = 'employments/add-new-hire-personal-detail';
 
@@ -138,10 +135,8 @@ export class EmploymentServices {
     }
 
     // get list of employee's academic details
-    static async getCurrentCandidateAcademic(
-        param: CandidateIDRequestBody,
-    ){
-          try {
+    static async getCurrentCandidateAcademic(param: CandidateIDRequestBody) {
+        try {
             const url: Input = 'employments/get-new-hire-academic';
 
             // get the promise response
@@ -169,9 +164,9 @@ export class EmploymentServices {
 
     // create employee academic details
     static async createCurrentCandidateAcademicDetails(
-        param: CandidateAcademiceDetailsRequestBody,
-    ){
-          try {
+        param: CandidateAcademicDetailsDTO,
+    ) {
+        try {
             const url: Input = 'employments/add-new-hire-academic';
 
             // get the promise response
@@ -198,10 +193,8 @@ export class EmploymentServices {
     }
 
     // get list of employee's experience details
-    static async getCurrentCandidateExperience(
-        param: CandidateIDRequestBody,
-    ){
-          try {
+    static async getCurrentCandidateExperience(param: CandidateIDRequestBody) {
+        try {
             const url: Input = 'employments/get-new-hire-experience';
 
             // get the promise response
@@ -229,9 +222,9 @@ export class EmploymentServices {
 
     // create employee academic details
     static async createCurrentCandidateExperienceDetails(
-        param: CandidateExperienceDetailsRequestBody,
-    ){
-          try {
+        param: CandidateExperiencesDetailDTO,
+    ) {
+        try {
             const url: Input = 'employments/add-new-hire-experience';
 
             // get the promise response
@@ -258,10 +251,8 @@ export class EmploymentServices {
     }
 
     // get list of employee's activity
-    static async getCurrentCandidateActivities(
-        param: CandidateIDRequestBody,
-    ){
-          try {
+    static async getCurrentCandidateActivities(param: CandidateIDRequestBody) {
+        try {
             const url: Input = 'employments/get-new-hire-activity';
 
             // get the promise response
@@ -289,9 +280,9 @@ export class EmploymentServices {
 
     // create employee activity details
     static async createCurrentCandidateActivityDetails(
-        param: CandidateActivityRequestBody,
-    ){
-          try {
+        param: CandidateActivityDetailsDTO,
+    ) {
+        try {
             const url: Input = 'employments/add-new-hire-activity';
 
             // get the promise response
@@ -318,10 +309,8 @@ export class EmploymentServices {
     }
 
     // get employee family details
-    static async getCurrentCandidateFamily(
-        param: CandidateIDRequestBody,
-    ){
-          try {
+    static async getCurrentCandidateFamily(param: CandidateIDRequestBody) {
+        try {
             const url: Input = 'employments/get-new-hire-family';
 
             // get the promise response
@@ -349,9 +338,9 @@ export class EmploymentServices {
 
     // create employee family details
     static async createCurrentCandidateFamilyDetails(
-        param: CandidateFamilyDetailsRequestBody,
-    ){
-          try {
+        param: CandidateFamilyDetailsDTO,
+    ) {
+        try {
             const url: Input = 'employments/add-new-hire-family';
 
             // get the promise response
@@ -380,8 +369,8 @@ export class EmploymentServices {
     // get employee dependencies details
     static async getCurrentCandidateDependencies(
         param: CandidateIDRequestBody,
-    ){
-          try {
+    ) {
+        try {
             const url: Input = 'employments/get-new-hire-dependent';
 
             // get the promise response
@@ -409,9 +398,9 @@ export class EmploymentServices {
 
     // create employee dependencies details
     static async createCurrentCandidateDependenciesDetails(
-        param: CandidateDependenciesDetailRequestBody,
-    ){
-          try {
+        param: CandidateDependenciesDetailsDTO,
+    ) {
+        try {
             const url: Input = 'employments/add-new-hire-dependent';
 
             // get the promise response
@@ -438,10 +427,8 @@ export class EmploymentServices {
     }
 
     // get employee next of kin details
-    static async getCurrentCandidateNextOfKin(
-        param: CandidateIDRequestBody,
-    ){
-          try {
+    static async getCurrentCandidateNextOfKin(param: CandidateIDRequestBody) {
+        try {
             const url: Input = 'employments/get-new-hire-next-of-kin';
 
             // get the promise response
@@ -469,9 +456,9 @@ export class EmploymentServices {
 
     // create employee next of kin details
     static async createCurrentCandidateNextOfKinDetails(
-        param: CandidateNextOfKinDetailsRequestBody,
-    ){
-          try {
+        param: CandidateNextOfKinDetailsDTO,
+    ) {
+        try {
             const url: Input = 'employments/add-new-hire-next-of-kin';
 
             // get the promise response
@@ -498,10 +485,8 @@ export class EmploymentServices {
     }
 
     // get employee documents
-    static async getCurrentCandidateDocuments(
-        param: CandidateIDRequestBody,
-    ){
-          try {
+    static async getCurrentCandidateDocuments(param: CandidateIDRequestBody) {
+        try {
             const url: Input = 'employments/get-new-hire-document';
 
             // get the promise response
@@ -528,10 +513,8 @@ export class EmploymentServices {
     }
 
     // create employee documents
-    static async createCurrentCandidateDocuments(
-        param: DocumentData,
-    ){
-          try {
+    static async createCurrentCandidateDocuments(param: DocumentData) {
+        try {
             const url: Input = 'employments/add-new-hire-document';
 
             // get the promise response
@@ -560,8 +543,8 @@ export class EmploymentServices {
     // get new hire get secretary update
     static async getCurrentCandidateSecretaryUpdate(
         param: CandidateIDRequestBody,
-    ){
-          try {
+    ) {
+        try {
             const url: Input = 'employments/get-new-hire-secretary-update';
 
             // get the promise response
@@ -589,9 +572,9 @@ export class EmploymentServices {
 
     // create new hire secretary update
     static async createCurrentCandidateSecretaryUpdate(
-        param: NewHireSecretaryAddUpdateRequestBody,
-    ){
-          try {
+        param: NewHireSecretaryServiceUpdateDTO,
+    ) {
+        try {
             const url: Input = 'employments/add-new-hire-secretary-update';
 
             // get the promise response
@@ -620,8 +603,8 @@ export class EmploymentServices {
     // create new hire secretary result
     static async createCurrentCandidateSecretaryApproval(
         param: AddApprovalResultRequestBody,
-    ){
-          try {
+    ) {
+        try {
             const url: Input = 'employments/add-new-hire-secretary-approval';
 
             // get the promise response
@@ -650,8 +633,8 @@ export class EmploymentServices {
     //  get chosen approvers
     static async getCurrentCandidateSecretaryApproval(
         param: CandidateIDRequestBody,
-    ){
-          try {
+    ) {
+        try {
             const url: Input = 'employments/get-new-hire-secretary-approval';
 
             // get the promise response
@@ -678,11 +661,10 @@ export class EmploymentServices {
     }
 
     // get new hire approvers
-    static async getCurrentCandidateApprovers(
-        param: CandidateIDRequestBody,
-    ){
-          try {
-            const url: Input = 'employments/get-new-hire-set-supporter-approver';
+    static async getCurrentCandidateApprovers(param: CandidateIDRequestBody) {
+        try {
+            const url: Input =
+                'employments/get-new-hire-set-supporter-approver';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -709,10 +691,11 @@ export class EmploymentServices {
 
     // create employee set approvers
     static async createCurrentCandidateApprovers(
-        param: NewHireSetApproversRequestBody,
-    ){
-          try {
-            const url: Input = 'employments/add-new-hire-set-supporter-approver';
+        param: NewHireSetApproversDTO,
+    ) {
+        try {
+            const url: Input =
+                'employments/add-new-hire-set-supporter-approver';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -738,10 +721,8 @@ export class EmploymentServices {
     }
 
     //  get supporter list of candidates
-    static async getSupporterListOfCandidates(
-        param: CommonListRequestDTO,
-    ){
-          try {
+    static async getSupporterListOfCandidates(param: CommonListRequestDTO) {
+        try {
             const url: Input = 'employments/new-hire-supporter-approvals';
 
             // get the promise response
@@ -770,8 +751,8 @@ export class EmploymentServices {
     //  get chosen supporter
     static async getCurrentCandidateSupporterApproval(
         param: CandidateIDRequestBody,
-    ){
-          try {
+    ) {
+        try {
             const url: Input = 'employments/get-new-hire-supporter-approval';
 
             // get the promise response
@@ -800,8 +781,8 @@ export class EmploymentServices {
     // create supporter approval
     static async createCurrentCandidateSupporterApproval(
         param: AddApprovalResultRequestBody,
-    ){
-          try {
+    ) {
+        try {
             const url: Input = 'employments/add-new-hire-supporter-approval';
 
             // get the promise response
@@ -828,10 +809,8 @@ export class EmploymentServices {
     }
 
     //  get approver list of candidates
-    static async getApproverListOfCandidates(
-        param: CommonListRequestDTO,
-    ){
-          try {
+    static async getApproverListOfCandidates(param: CommonListRequestDTO) {
+        try {
             const url: Input = 'employments/new-hire-approver-approvals';
 
             // get the promise response
@@ -860,8 +839,8 @@ export class EmploymentServices {
     //  get chosen approver
     static async getCurrentCandidateApproverApproval(
         param: CandidateIDRequestBody,
-    ){
-          try {
+    ) {
+        try {
             const url: Input = 'employments/get-new-hire-approver-approval';
 
             // get the promise response
@@ -890,8 +869,8 @@ export class EmploymentServices {
     // create approver approval
     static async createCurrentCandidateApproverApproval(
         param: AddApprovalResultRequestBody,
-    ){
-          try {
+    ) {
+        try {
             const url: Input = 'employments/add-new-hire-approver-approval';
 
             // get the promise response
