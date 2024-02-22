@@ -23,7 +23,7 @@
         {
             value: 'Gred Utama',
             name: 'Gred Utama',
-            href: './urus-setia/baru',
+            href: './urus-setia/baru-gred_utama',
         },
     ];
     let param: CommonListRequestDTO = data.param;
@@ -82,6 +82,7 @@
                 <CustomTable
                     onUpdate={_search}
                     enableDetail
+                    detailActions={() => goto('./')}
                     bind:tableData={table}
                 ></CustomTable>
             </div>

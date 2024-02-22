@@ -24,18 +24,6 @@
         selectedData: [],
     };
 
-    // let table2: TableDTO = {
-    //     param: param,
-    //     meta: {
-    //         pageSize: 5,
-    //         pageNum: 1,
-    //         totalData: 4,
-    //         totalPage: 1,
-    //     },
-    //     data: data.recordsflexi.dataList2 ?? [],
-    //     selectedData: [],
-    // };
-
     let selectedStaffTable: TableDTO = {
         param: param,
         meta: {
