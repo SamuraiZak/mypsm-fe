@@ -31,7 +31,16 @@ import { EmploymentServices } from '$lib/services/implementation/mypsm/perjawata
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/client';
 
+//==================================================
+//=============== Load Function ====================
+//==================================================
+
+// const authorisedRoleCode : string[] = [
+//     UserRoleConstants.calon
+// ];
 export async function load({ params }) {
+    // const currentLoggedInUser = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode);
+
     const candidateIdRequestBody = {
         candidateId: Number(params.id),
     };
@@ -201,145 +210,89 @@ export async function load({ params }) {
 }
 
 //==================================================
-//=============== Maklumat Peribadi ================
+//=============== Submit Functions =================
 //==================================================
-// export const _submitFormStepperMaklumatPeribadi = async (formData: object) => {
-//     const form = await superValidate(formData, _stepperMaklumatPeribadi);
+export const _submitPersonalForm = async (formData: object) => {
+    const form = await superValidate(formData, _personalInfoSchema);
 
-//     if (!form.valid) {
-//         getErrorToast();
-//         return fail(400, form);
-//     }
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
 
-//     // start by rendering loading toast
-//     getLoadingToast();
+    const response: CommonResponseDTO =
+        await EmploymentServices.createCurrentCandidatePersonalDetails(
+            form.data as CandidatePersonalDTO,
+        );
 
-//     const response: CommonResponseDTO = await ProfileService.editPersonalDetail(
-//         form.data as PutPersonalDetailRequest,
-//     ).finally(() => toast.dismiss());
-//     console.log(response);
+    return { response };
+};
 
-//     if (response.status !== 'success') {
-//         // if error toast
-//         getServerErrorToast();
-//         // return error(400, { message: response.message });
-//     }
-//     // if success toast
-//     getSuccessToast();
-//     invalidateAll();
-//     return { form };
-// };
+export const _submitAcademicForm = async (formData: object) => {
+    const form = await superValidate(formData, _academicListSchema);
 
-//==================================================
-//=============== Create Academic ================
-//==================================================
-// export const _submitCreateAcademicForm = async (formData: object) => {
-//     const form = await superValidate(formData, _addAcademicInfoSchema);
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
 
-//     if (!form.valid) {
-//         getErrorToast();
-//         return fail(400, form);
-//     }
+    const response: CommonResponseDTO =
+        await EmploymentServices.createCurrentCandidateAcademicDetails(
+            form.data as CandidateAcademicDetailsDTO,
+        );
 
-//     // start by rendering loading toast
-//     getLoadingToast();
+    return { response };
+};
 
-//     const response: CommonResponseDTO =
-//         await ProfileService.createAcademicDetail(
-//             form.data as PostPersonalAcademicRequest,
-//         ).finally(() => toast.dismiss());
+export const _submitExperienceForm = async (formData: object) => {
+    const form = await superValidate(formData, _experienceListSchema);
 
-//     if (response.status !== 'success') {
-//         // if error toast
-//         getServerErrorToast();
-//     }
-//     // if success toast
-//     getSuccessToast();
-//     invalidateAll();
-//     return { form };
-// };
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
 
-// export const _submitCreateExperienceForm = async (formData: object) => {
-//     const form = await superValidate(formData, _addExperienceInfoSchema);
+    const response: CommonResponseDTO =
+        await EmploymentServices.createCurrentCandidateExperienceDetails(
+            form.data as CandidateExperiencesDetailDTO,
+        );
 
-//     if (!form.valid) {
-//         getErrorToast();
-//         return fail(400, form);
-//     }
+    return { response };
+};
 
-//     // start by rendering loading toast
-//     getLoadingToast();
+export const _submitActivityForm = async (formData: object) => {
+    const form = await superValidate(formData, _activityListSchema);
 
-//     const response: CommonResponseDTO =
-//         await ProfileService.createExperienceDetail(
-//             form.data as PostPersonalExperiencesRequest,
-//         ).finally(() => toast.dismiss());
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
 
-//     if (response.status !== 'success') {
-//         // if error toast
-//         getServerErrorToast();
-//     }
-//     // if success toast
-//     getSuccessToast();
-//     invalidateAll();
-//     return { form };
-// };
+    const response: CommonResponseDTO =
+        await EmploymentServices.createCurrentCandidateActivityDetails(
+            form.data as CandidateActivityDetailsDTO,
+        );
 
-// export const _submitCreateActivityForm = async (formData: object) => {
-//     const form = await superValidate(formData, _addActivityModalSchema);
+    return { response };
+};
 
-//     console.log(form);
+export const _submitFamilyForm = async (formData: object) => {
+    const form = await superValidate(formData, _familyListSchema);
 
-//     if (!form.valid) {
-//         getErrorToast();
-//         return fail(400, form);
-//     }
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
 
-//     // start by rendering loading toast
-//     getLoadingToast();
+    const response: CommonResponseDTO =
+        await EmploymentServices.createCurrentCandidateFamilyDetails(
+            form.data as CandidateFamilyDetailsDTO,
+        );
 
-//     const response: CommonResponseDTO =
-//         await ProfileService.createActivityDetail(
-//             form.data as PostPersonalActivityRequest,
-//         ).finally(() => toast.dismiss());
+    return { response };
+};
 
-//     if (response.status !== 'success') {
-//         // if error toast
-//         getServerErrorToast();
-//     }
-//     // if success toast
-//     getSuccessToast();
-//     invalidateAll();
-
-//     return { form };
-// };
-
-// export const _submitCreateFamilyForm = async (formData: object) => {
-//     const form = await superValidate(formData, _addRelationModalSchema);
-
-//     if (!form.valid) {
-//         getErrorToast();
-//         return fail(400, form);
-//     }
-
-//     // start by rendering loading toast
-//     getLoadingToast();
-
-//     const response: CommonResponseDTO = await ProfileService.createFamilyDetail(
-//         form.data as PostPersonalFamilyRequest,
-//     ).finally(() => toast.dismiss());
-
-//     if (response.status !== 'success') {
-//         // if error toast
-//         getServerErrorToast();
-//     }
-//     // if success toast
-//     getSuccessToast();
-//     invalidateAll();
-//     return { form };
-// };
-
-export const _submitCreateDependencyForm = async (formData: object) => {
+export const _submitDependencyForm = async (formData: object) => {
     const form = await superValidate(formData, _dependencyListSchema);
 
     if (!form.valid) {
