@@ -59,7 +59,7 @@ export const _personalInfoSchema = z
             'employeeNumber',
             'employeeName',
             'employeePosition',
-            'relationship',
+            'relationshipId',
         ],
     });
 
@@ -122,7 +122,7 @@ export const _activityListSchema = z.object({
 });
 
 //==========================================================
-//================== Realtions Schema =====================
+//================== Realations Schema =====================
 //==========================================================
 
 export const _relationsSchema = z.object({
@@ -176,6 +176,7 @@ export const _serviceInfoSchema = z.object({
     serviceTypeId: numberIdSchema,
     serviceGroupId: numberIdSchema,
     unitId: numberIdSchema,
+    programId: numberIdSchema,
     employmentStatusId: numberIdSchema,
     effectiveDate: minDateSchema,
     retirementBenefit: codeSchema,
