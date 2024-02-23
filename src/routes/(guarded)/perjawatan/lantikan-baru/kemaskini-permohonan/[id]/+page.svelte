@@ -1,4 +1,5 @@
 <script lang="ts">
+    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import type { CandidatePersonalDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto';
     import {
         _activityInfoSchema,
@@ -476,6 +477,7 @@
 
                 <CustomTextField
                     disabled
+                    errors={$errors.name}
                     id="name"
                     label={'Nama Penuh'}
                     type="text"
@@ -497,93 +499,93 @@
                     bind:val={$form.email}
                 ></CustomTextField>
 
-                <!-- 
-                <DropdownSelect
+                <CustomSelectField
                     disabled
-                    errors={$errors.icColour}
-                    dropdownType="label-left-full"
-                    id="icColour"
+                    errors={$errors.identityDocumentColor}
+                    id="identityDocumentColor"
                     label="Warna Kad Pengenalan"
-                    bind:val={$form.icColour}
+                    bind:val={$form.identityDocumentColor}
                     options={data.identityCardColorLookup}
-                ></DropdownSelect>
+                ></CustomSelectField>
 
-                <DateSelector
+                <!-- <DateSelector
                     disabled
                     errors={$errors.birthDate}
                     id="birthDate"
                     label="Tarikh Lahir"
                     bind:val={$proxyBirthDate}
-                ></DateSelector>
-                <DropdownSelect
+                ></DateSelector> -->
+                <CustomSelectField
                     disabled
-                    errors={$errors.birthplace}
-                    dropdownType="label-left-full"
-                    id="birthplace"
+                    errors={$errors.birthStateId}
+                    id="birthStateId"
                     label="Tempat Lahir"
-                    bind:val={$form.birthplace}
+                    bind:val={$form.birthStateId}
                     options={data.stateLookupString}
-                ></DropdownSelect>
+                ></CustomSelectField>
 
-                <DropdownSelect
+                <CustomSelectField
                     disabled
-                    errors={$errors.nationality}
-                    dropdownType="label-left-full"
-                    id="nationality"
+                    errors={$errors.birthCountryId}
+                    id="birthCountryId"
+                    label="Tempat Lahir"
+                    bind:val={$form.birthCountryId}
+                    options={data.countryLookupString}
+                ></CustomSelectField>
+
+                <CustomSelectField
+                    disabled
+                    errors={$errors.nationalityId}
+                    id="nationalityId"
                     label="Warganegara"
-                    bind:val={$form.nationality}
+                    bind:val={$form.nationalityId}
                     options={data.nationalityLookupString}
-                ></DropdownSelect>
+                ></CustomSelectField>
 
-                <DropdownSelect
+                <CustomSelectField
                     disabled
-                    errors={$errors.race}
-                    dropdownType="label-left-full"
-                    id="race"
+                    errors={$errors.raceId}
+                    id="raceId"
                     label="Bangsa"
-                    bind:val={$form.race}
+                    bind:val={$form.raceId}
                     options={data.raceLookupString}
-                ></DropdownSelect>
+                ></CustomSelectField>
 
-                <DropdownSelect
+                <CustomSelectField
                     disabled
-                    errors={$errors.ethnic}
-                    dropdownType="label-left-full"
-                    id="ethnic"
+                    errors={$errors.ethnicId}
+                    id="ethnicId"
                     label="Etnik"
-                    bind:val={$form.ethnic}
+                    bind:val={$form.ethnicId}
                     options={data.ethnicityLookupString}
-                ></DropdownSelect>
+                ></CustomSelectField>
 
-                <DropdownSelect
+                <CustomSelectField
                     disabled
-                    errors={$errors.religion}
-                    dropdownType="label-left-full"
-                    id="religion"
+                    errors={$errors.religionId}
+                    id="religionId"
                     label="Agama"
-                    bind:val={$form.religion}
+                    bind:val={$form.religionId}
                     options={data.religionLookupString}
-                ></DropdownSelect>
+                ></CustomSelectField>
 
-                <DropdownSelect
+                <CustomSelectField
                     disabled
-                    errors={$errors.gender}
-                    dropdownType="label-left-full"
-                    id="gender"
+                    errors={$errors.genderId}
+                    id="genderId"
                     label="Jantina"
-                    bind:val={$form.gender}
+                    bind:val={$form.genderId}
                     options={data.genderLookupString}
-                ></DropdownSelect>
+                ></CustomSelectField>
 
-                <DropdownSelect
+                <CustomSelectField
                     disabled
-                    errors={$errors.marital}
-                    dropdownType="label-left-full"
-                    id="marital"
+                    errors={$errors.maritalId}
+                    id="maritalId"
                     label="Status"
-                    bind:val={$form.marital}
+                    bind:val={$form.maritalId}
                     options={data.maritalLookupString}
-                ></DropdownSelect> -->
+                ></CustomSelectField>
 
                 <CustomTextField
                     disabled
@@ -656,35 +658,32 @@
                             bind:val={$form.employeeNumber}
                         ></CustomTextField>
 
-                        <!-- <DropdownSelect
+                        <CustomSelectField
                             disabled
                             errors={$errors.name}
-                            dropdownType="label-left-full"
                             id="name"
                             label="Jawatan Kakitangan LKIM"
                             bind:val={$form.name}
                             options={data.positionLookupString}
-                        ></DropdownSelect>
+                        ></CustomSelectField>
 
-                         <DropdownSelect
+                        <CustomSelectField
                             disabled
-                            errors={$errors.relationDetail?.position}
-                            dropdownType="label-left-full"
+                            errors={$errors.employeePosition}
                             id="relationDetailPosition"
                             label="Jawatan Kakitangan LKIM"
-                            bind:val={$form.position}
+                            bind:val={$form.employeePosition}
                             options={data.positionLookupString}
-                        ></DropdownSelect>
+                        ></CustomSelectField>
 
-                        <DropdownSelect
+                        <CustomSelectField
                             disabled
-                            errors={$errors.relationship}
-                            dropdownType="label-left-full"
+                            errors={$errors.relationshipId}
                             id="relationDetailRelationship"
                             label="Hubungan"
-                            bind:val={$form.relationship}
+                            bind:val={$form.relationshipId}
                             options={data.relationshipLookupString}
-                        ></DropdownSelect> -->
+                        ></CustomSelectField>
                     {/if}
                 </div>
             </form>
@@ -744,14 +743,13 @@
                         bind:val={$proxyEffectiveDate}
                     ></DateSelector> -->
 
-                    <!-- <DropdownSelect
+                    <!-- <CustomSelectField
                         disabled
-                        dropdownType="label-left-full"
                         id="retirementBenefit"
                         label={'Faedah Persaraan'}
                         options={data.retirementBenefitLookupString}
                         bind:val={$serviceInfoForm.retirementBenefit}
-                    ></DropdownSelect> -->
+                    ></CustomSelectField> -->
 
                     <CustomTextField
                         disabled
@@ -901,14 +899,13 @@
                         bind:val={$proxyLastPromotionDate}
                     ></DateSelector>
 
-                    <DropdownSelect
+                    <CustomSelectField
                         disabled
-                        dropdownType="label-left-full"
                         id="salaryMovementMonth"
                         label="Bulan KGT"
                         bind:val={$serviceInfoForm.salaryMovementMonth}
                         options={data.monthStringLookup}
-                    ></DropdownSelect>
+                    ></CustomSelectField>
 
                     <DateSelector
                         disabled
@@ -1055,45 +1052,41 @@
                                         .minor}
                                 ></CustomTextField>
 
-                                <DropdownSelect
+                                <CustomSelectField
                                     disabled
                                     id="country"
                                     options={data.countryLookupString}
                                     label={'Negara'}
-                                    dropdownType="label-left-fit"
                                     bind:val={$maklumatAkademikForm.dataList[i]
                                         .country}
-                                ></DropdownSelect>
+                                ></CustomSelectField>
 
-                                <DropdownSelect
+                                <CustomSelectField
                                     disabled
                                     id="institution"
                                     options={data.institutionLookupString}
                                     label={'Institusi'}
-                                    dropdownType="label-left-fit"
                                     bind:val={$maklumatAkademikForm.dataList[i]
                                         .institution}
-                                ></DropdownSelect>
+                                ></CustomSelectField>
 
-                                <DropdownSelect
+                                <CustomSelectField
                                     disabled
                                     id="educationLevel"
                                     options={data.educationLookupString}
                                     label={'Taraf Pendidikan'}
-                                    dropdownType="label-left-fit"
                                     bind:val={$maklumatAkademikForm.dataList[i]
                                         .educationLevel}
-                                ></DropdownSelect>
+                                ></CustomSelectField>
 
-                                <DropdownSelect
+                                <CustomSelectField
                                     disabled
                                     id="sponsorship"
                                     options={data.sponsorshipLookupString}
                                     label={'Penajaan'}
-                                    dropdownType="label-left-fit"
                                     bind:val={$maklumatAkademikForm.dataList[i]
                                         .sponsorship}
-                                ></DropdownSelect>
+                                ></CustomSelectField>
 
                                 <CustomTextField
                                     disabled
@@ -1481,82 +1474,74 @@
                 use:serviceInfoEnhance
                 class="flex w-full flex-col gap-2.5"
             >
-                <!-- <input hidden bind:val={$serviceInfoForm.candidateId} /> -->
-                <!-- <DropdownSelect
+                <!-- <input hidden bind:value={$serviceInfoForm.candidateId} /> -->
+                <!-- <CustomSelectField
                     disabled={isReadonlyServiceFormStepper}
                     errors={$serviceInfoErrors.gradeId}
-                    dropdownType="label-left-full"
                     id="gradeId"
                     label="Gred Semasa"
                     bind:val={$serviceInfoForm.gradeId}
                     options={data.gradeLookup}
-                ></DropdownSelect>
-                <DropdownSelect
+                ></CustomSelectField>
+                <CustomSelectField
                     disabled={isReadonlyServiceFormStepper}
                     errors={$serviceInfoErrors.maxGradeId}
-                    dropdownType="label-left-full"
                     id="maxGradeId"
                     label="Gred Maksimum"
                     bind:val={$serviceInfoForm.maxGradeId}
                     options={data.gradeLookup}
-                ></DropdownSelect>
-                <DropdownSelect
+                ></CustomSelectField>
+                <CustomSelectField
                     disabled={isReadonlyServiceFormStepper}
                     errors={$serviceInfoErrors.positionId}
-                    dropdownType="label-left-full"
                     id="positionId"
                     label="Jawatan"
                     bind:val={$serviceInfoForm.positionId}
                     options={data.positionLookup}
-                ></DropdownSelect>
-                <DropdownSelect
+                ></CustomSelectField>
+                <CustomSelectField
                     disabled={isReadonlyServiceFormStepper}
                     errors={$serviceInfoErrors.placementId}
-                    dropdownType="label-left-full"
                     id="placementId"
                     label="Penempatan"
                     bind:val={$serviceInfoForm.placementId}
                     options={data.placementLookup}
-                ></DropdownSelect>
-                <DropdownSelect
+                ></CustomSelectField>
+                <CustomSelectField
                     disabled={isReadonlyServiceFormStepper}
                     errors={$serviceInfoErrors.serviceTypeId}
-                    dropdownType="label-left-full"
                     id="serviceTypeId"
                     label="Taraf Perkhidmatan"
                     bind:val={$serviceInfoForm.serviceTypeId}
                     options={data.educationLookup}
-                ></DropdownSelect>
+                ></CustomSelectField>
 
-                <DropdownSelect
+                <CustomSelectField
                     disabled={isReadonlyServiceFormStepper}
                     errors={$serviceInfoErrors.serviceGroupId}
-                    dropdownType="label-left-full"
                     id="serviceGroupId"
                     label="Kumpulan Perkhidmatan"
                     bind:val={$serviceInfoForm.serviceGroupId}
                     options={data.serviceGroupLookup}
-                ></DropdownSelect>
+                ></CustomSelectField>
 
-                <DropdownSelect
+                <CustomSelectField
                     disabled={isReadonlyServiceFormStepper}
                     errors={$serviceInfoErrors.unitId}
-                    dropdownType="label-left-full"
                     id="unitId"
                     label="Unit Perkhidmatan"
                     bind:val={$serviceInfoForm.unitId}
                     options={data.unitLookup}
-                ></DropdownSelect>
+                ></CustomSelectField>
 
-                <DropdownSelect
+                <CustomSelectField
                     disabled={isReadonlyServiceFormStepper}
                     errors={$serviceInfoErrors.employmentStatusId}
-                    dropdownType="label-left-full"
                     id="employmentStatusId"
                     label="Status Perkhidmatan"
                     bind:val={$serviceInfoForm.employmentStatusId}
                     options={data.serviceTypeLookup}
-                ></DropdownSelect>
+                ></CustomSelectField>
 
                 <DateSelector
                     disabled={isReadonlyServiceFormStepper}
@@ -1566,15 +1551,14 @@
                     bind:val={$serviceInfoForm.effectiveDate}
                 ></DateSelector>
 
-                <DropdownSelect
+                <CustomSelectField
                     disabled={isReadonlyServiceFormStepper}
                     errors={$serviceInfoErrors.retirementBenefit}
-                    dropdownType="label-left-full"
                     id="retirementBenefit"
                     label="Faedah Persaraan"
                     bind:val={$serviceInfoForm.retirementBenefit}
                     options={data.retirementBenefitLookup}
-                ></DropdownSelect>
+                ></CustomSelectField>
                 {#if $serviceInfoErrors.retirementBenefit}
                     <span
                         class="ml-[220px] font-sans text-sm italic text-system-danger"
@@ -1688,15 +1672,14 @@
                     bind:val={$serviceInfoForm.pensionNumber}
                 ></CustomTextField>
 
-                <!-- <DropdownSelect
+                <!-- <CustomSelectField
                     disabled={isReadonlyServiceFormStepper}
                     errors={$serviceInfoErrors.revisionMonth}
-                    dropdownType="label-left-full"
                     id="revisionMonth"
                     label="Bulan KGT"
                     bind:val={$serviceInfoForm.revisionMonth}
                     options={data.monthStringLookup}
-                ></DropdownSelect> -->
+                ></CustomSelectField> -->
 
                 <CustomTextField
                     disabled={isReadonlyServiceFormStepper}
@@ -1816,7 +1799,7 @@
                     >
                 </div>
 
-                <input hidden bind:val={$secretaryApprovalInfoForm.id} />
+                <input hidden bind:value={$secretaryApprovalInfoForm.id} />
 
                 <!-- <LongTextField
                     disabled={data.secretaryApprovalResponse.data?.details
@@ -1859,14 +1842,13 @@
             >
                 <input
                     hidden
-                    bind:val={$secretarySetApproverForm.candidateId}
+                    bind:value={$secretarySetApproverForm.candidateId}
                 />
-                <!-- <DropdownSelect
+                <!-- <CustomSelectField
                     disabled={isReadonlySetApproversFormStepper}
                     errors={$secretarySetApproverErrors.supporterId}
                     id="supporterId"
                     label="Nama Penyokong"
-                    dropdownType="label-left-full"
                     options={[
                         {
                             value: 1,
@@ -1875,12 +1857,11 @@
                     ]}
                     bind:val={$secretarySetApproverForm.supporterId}
                 /> -->
-                <!-- <DropdownSelect
+                <!-- <CustomSelectField
                     disabled={isReadonlySetApproversFormStepper}
                     errors={$secretarySetApproverErrors.approverId}
                     id="approverId"
                     label="Nama Pelulus"
-                    dropdownType="label-left-full"
                     options={[
                         {
                             value: 2,
@@ -1906,8 +1887,7 @@
                         type="text"
                         id="supporterName"
                         label="Nama"
-                        bind:val={data.supporterResultResponse.data.details
-                            .name}
+                        val={data.supporterResultResponse.data?.details.name}
                     ></CustomTextField>
                     {#if data.supporterResultResponse.data?.details.isApproved}
                         <!-- <LongTextField
@@ -1938,8 +1918,7 @@
                         type="text"
                         id="approverName"
                         label="Nama"
-                        bind:val={data.approverResultResponse.data?.details
-                            .name}
+                        val={data.approverResultResponse.data?.details.name}
                     ></CustomTextField>
                     {#if data.approverResultResponse.data?.details.isApproved}
                         <!-- <LongTextField
@@ -1972,8 +1951,7 @@
                         type="text"
                         id="serviceSecretaryName"
                         label="Nama"
-                        bind:val={data.secretaryApprovalResponse.data?.details
-                            .name}
+                        val={data.secretaryApprovalResponse.data?.details.name}
                     ></CustomTextField>
                     {#if !!data.secretaryApprovalResponse.data?.details.isApproved}
                         <!-- <LongTextField
@@ -2013,50 +1991,45 @@
         use:addAcademicInfoEnhance
         class="flex h-fit w-full flex-col gap-y-2"
     >
-        <DropdownSelect
+        <CustomSelectField
             errors={$addAcademicInfoErrors.majorMinor}
             id="majorMinor"
-            dropdownType="label-left-full"
             label={'Jenis Jurusan'}
             options={data.majorMinorLookupString}
             bind:val={$addAcademicInfoModal.majorMinor}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <!-- <CustomSelectField
             errors={$addAcademicInfoErrors.country}
             id="country"
-            dropdownType="label-left-full"
             label={'Negara'}
             options={data.countryLookupString}
             bind:val={$addAcademicInfoModal.country}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addAcademicInfoErrors.institution}
             id="institution"
-            dropdownType="label-left-full"
             label={'Institusi'}
             options={data.institutionLookupString}
             bind:val={$addAcademicInfoModal.institution}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addAcademicInfoErrors.educationLevel}
             id="educationLevel"
-            dropdownType="label-left-full"
             label={'Taraf Pembelajaran'}
             options={data.educationLookupString}
             bind:val={$addAcademicInfoModal.educationLevel}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addAcademicInfoErrors.sponsorship}
             id="sponsorship"
-            dropdownType="label-left-full"
             label={'Penajaan'}
             options={data.sponsorshipLookupString}
             bind:val={$addAcademicInfoModal.sponsorship}
-        ></DropdownSelect>
+        ></CustomSelectField> -->
 
         <CustomTextField
             errors={$addAcademicInfoErrors.name}
@@ -2064,12 +2037,12 @@
             label={'Nama Pencapaian/Sijil'}
             bind:val={$addAcademicInfoModal.name}
         ></CustomTextField>
-        <DateSelector
+        <!-- <DateSelector
             errors={$addAcademicInfoErrors.completionDate}
             id="completionDate"
             label={'Tarikh Kelulusan'}
             bind:val={$proxyAcademicCompletionDate}
-        ></DateSelector>
+        ></DateSelector> -->
         <CustomTextField
             errors={$addAcademicInfoErrors.finalGrade}
             id="finalGrade"
@@ -2082,7 +2055,11 @@
             label={'Catatan'}
             bind:val={$addAcademicInfoModal.field}
         ></CustomTextField>
-        <TextIconButton primary label={'Simpan'} form="addAcademicModalForm" />
+        <TextIconButton
+            type="primary"
+            label={'Simpan'}
+            form="addAcademicModalForm"
+        />
     </form>
 </Modal>
 
@@ -2126,7 +2103,7 @@
             bind:val={$addExperienceModalForm.positionCode}
         ></CustomTextField>
 
-        <DateSelector
+        <!-- <DateSelector
             errors={$addExperienceModalErrors.startDate}
             id="addStartDate"
             label={'Dari (tahun)'}
@@ -2137,7 +2114,7 @@
             id="addEndDate"
             label={'Hingga (tahun)'}
             bind:val={$proxyAddAcademiEndDate}
-        ></DateSelector>
+        ></DateSelector> -->
 
         <CustomTextField
             errors={$addExperienceModalErrors.salary}
@@ -2226,14 +2203,13 @@
             type="text"
             bind:val={$addFamilyModal.alternativeName}
         ></CustomTextField>
-        <DropdownSelect
+        <CustomSelectField
             errors={$addFamilyErrors.identityDocumentColor}
             id="addIdentityDocumentColor"
             label={'Warna Kad Pengenalan'}
-            dropdownType="label-left-full"
             options={data.identityCardColorLookup}
             bind:val={$addFamilyModal.identityDocumentColor}
-        ></DropdownSelect>
+        ></CustomSelectField>
         <CustomTextField
             errors={$addFamilyErrors.identityDocumentNumber}
             id="addIdentityDocumentNumber"
@@ -2264,77 +2240,69 @@
             bind:val={$proxyAddFamilyBirthDate}
         ></DateSelector>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addFamilyErrors.birthCountry}
             id="addBirthCountryId"
             label={'Negara Kelahiran'}
-            dropdownType="label-left-full"
             options={data.countryLookupString}
             bind:val={$addFamilyModal.birthCountry}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addFamilyErrors.birthState}
             id="addBirthStateId"
             label={'Negeri Kelahiran'}
-            dropdownType="label-left-full"
             options={data.stateLookupString}
             bind:val={$addFamilyModal.birthState}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addFamilyErrors.relationship}
             id="addRelationshipId"
             label={'Hubungan'}
-            dropdownType="label-left-full"
             options={data.relationshipLookupString}
             bind:val={$addFamilyModal.relationship}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addFamilyErrors.educationLevel}
             id="addEducationLevelId"
             label={'Taraf Pendidikan'}
-            dropdownType="label-left-full"
             options={data.educationLookupString}
             bind:val={$addFamilyModal.educationLevel}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addFamilyErrors.race}
             id="addRaceId"
             label={'Bangsa'}
-            dropdownType="label-left-full"
             options={data.raceLookupString}
             bind:val={$addFamilyModal.race}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addFamilyErrors.nationality}
             id="addNationalityId"
             label={'Kewarganegaraan'}
-            dropdownType="label-left-full"
             options={data.nationalityLookupString}
             bind:val={$addFamilyModal.nationality}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addFamilyErrors.marital}
             id="addMaritalId"
             label={'Status Perkhahwinan'}
-            dropdownType="label-left-full"
             options={data.maritalLookupString}
             bind:val={$addFamilyModal.marital}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addFamilyErrors.gender}
             id="addGenderId"
             label={'Jantina'}
-            dropdownType="label-left-full"
             options={data.genderLookupString}
             bind:val={$addFamilyModal.gender}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
         <CustomTextField
             errors={$addFamilyErrors.workAddress}
@@ -2378,7 +2346,11 @@
         </div>
         <br />
 
-        <TextIconButton primary label={'Simpan'} form="addFamilyInfoModal" />
+        <TextIconButton
+            type="primary"
+            label={'Simpan'}
+            form="addFamilyInfoModal"
+        />
     </form>
 </Modal>
 
@@ -2408,14 +2380,13 @@
             type="text"
             bind:val={$addNonFamilyModal.alternativeName}
         ></CustomTextField>
-        <DropdownSelect
+        <CustomSelectField
             errors={$addNonFamilyErrors.identityDocumentColor}
             id="addIdentityDocumentColor"
             label={'Warna Kad Pengenalan'}
-            dropdownType="label-left-full"
             options={data.identityCardColorLookup}
             bind:val={$addNonFamilyModal.identityDocumentColor}
-        ></DropdownSelect>
+        ></CustomSelectField>
         <CustomTextField
             errors={$addNonFamilyErrors.identityDocumentNumber}
             id="addIdentityDocumentNumber"
@@ -2446,77 +2417,69 @@
             bind:val={$proxyAddDependencyBirthDate}
         ></DateSelector>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addNonFamilyErrors.birthCountry}
             id="addBirthCountryId"
             label={'Negara Kelahiran'}
-            dropdownType="label-left-full"
             options={data.countryLookupString}
             bind:val={$addNonFamilyModal.birthCountry}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addNonFamilyErrors.birthState}
             id="addBirthStateId"
             label={'Negeri Kelahiran'}
-            dropdownType="label-left-full"
             options={data.stateLookupString}
             bind:val={$addNonFamilyModal.birthState}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addNonFamilyErrors.relationship}
             id="addRelationshipId"
             label={'Hubungan'}
-            dropdownType="label-left-full"
             options={data.relationshipLookupString}
             bind:val={$addNonFamilyModal.relationship}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addNonFamilyErrors.educationLevel}
             id="addEducationLevelId"
             label={'Taraf Pendidikan'}
-            dropdownType="label-left-full"
             options={data.educationLookupString}
             bind:val={$addNonFamilyModal.educationLevel}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addNonFamilyErrors.race}
             id="addRaceId"
             label={'Bangsa'}
-            dropdownType="label-left-full"
             options={data.raceLookupString}
             bind:val={$addNonFamilyModal.race}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addNonFamilyErrors.nationality}
             id="addNationalityId"
             label={'Kewarganegaraan'}
-            dropdownType="label-left-full"
             options={data.nationalityLookupString}
             bind:val={$addNonFamilyModal.nationality}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addNonFamilyErrors.marital}
             id="addMaritalId"
             label={'Status Perkhahwinan'}
-            dropdownType="label-left-full"
             options={data.maritalLookupString}
             bind:val={$addNonFamilyModal.marital}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addNonFamilyErrors.gender}
             id="addGenderId"
             label={'Jantina'}
-            dropdownType="label-left-full"
             options={data.genderLookupString}
             bind:val={$addNonFamilyModal.gender}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
         <CustomTextField
             errors={$addNonFamilyErrors.workAddress}
@@ -2560,7 +2523,11 @@
         </div>
         <br />
 
-        <TextIconButton primary label={'Simpan'} form="addNonFamilyInfoModal" />
+        <TextIconButton
+            type="primary"
+            label={'Simpan'}
+            form="addNonFamilyInfoModal"
+        />
     </form>
 </Modal>
 
@@ -2587,14 +2554,13 @@
             type="text"
             bind:val={$addNextOfKinModal.alternativeName}
         ></CustomTextField>
-        <DropdownSelect
+        <CustomSelectField
             errors={$addNextOfKinErrors.identityDocumentColor}
             id="addIdentityDocumentColor"
             label={'Warna Kad Pengenalan'}
-            dropdownType="label-left-full"
             options={data.identityCardColorLookup}
             bind:val={$addNextOfKinModal.identityDocumentColor}
-        ></DropdownSelect>
+        ></CustomSelectField>
         <CustomTextField
             errors={$addNextOfKinErrors.identityDocumentNumber}
             id="addIdentityDocumentNumber"
@@ -2625,77 +2591,69 @@
             bind:val={$proxyAddNextOfKinBirthDate}
         ></DateSelector>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addNextOfKinErrors.birthCountry}
             id="addBirthCountryId"
             label={'Negara Kelahiran'}
-            dropdownType="label-left-full"
             options={data.countryLookupString}
             bind:val={$addNextOfKinModal.birthCountry}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addNextOfKinErrors.birthState}
             id="addBirthStateId"
             label={'Negeri Kelahiran'}
-            dropdownType="label-left-full"
             options={data.stateLookupString}
             bind:val={$addNextOfKinModal.birthState}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addNextOfKinErrors.relationship}
             id="addRelationshipId"
             label={'Hubungan'}
-            dropdownType="label-left-full"
             options={data.relationshipLookupString}
             bind:val={$addNextOfKinModal.relationship}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addNextOfKinErrors.educationLevel}
             id="addEducationLevelId"
             label={'Taraf Pendidikan'}
-            dropdownType="label-left-full"
             options={data.educationLookupString}
             bind:val={$addNextOfKinModal.educationLevel}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addNextOfKinErrors.race}
             id="addRaceId"
             label={'Bangsa'}
-            dropdownType="label-left-full"
             options={data.raceLookupString}
             bind:val={$addNextOfKinModal.race}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addNextOfKinErrors.nationality}
             id="addNationalityId"
             label={'Kewarganegaraan'}
-            dropdownType="label-left-full"
             options={data.nationalityLookupString}
             bind:val={$addNextOfKinModal.nationality}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addNextOfKinErrors.marital}
             id="addMaritalId"
             label={'Status Perkhahwinan'}
-            dropdownType="label-left-full"
             options={data.maritalLookupString}
             bind:val={$addNextOfKinModal.marital}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
-        <DropdownSelect
+        <CustomSelectField
             errors={$addNextOfKinErrors.gender}
             id="addGenderId"
             label={'Jantina'}
-            dropdownType="label-left-full"
             options={data.genderLookupString}
             bind:val={$addNextOfKinModal.gender}
-        ></DropdownSelect>
+        ></CustomSelectField>
 
         <CustomTextField
             errors={$addNextOfKinErrors.workAddress}
@@ -2738,6 +2696,10 @@
             />
         </div>
 
-        <TextIconButton primary label={'Simpan'} form="addNextOfKinInfoModal" />
+        <TextIconButton
+            type="primary"
+            label={'Simpan'}
+            form="addNextOfKinInfoModal"
+        />
     </form>
 </Modal>

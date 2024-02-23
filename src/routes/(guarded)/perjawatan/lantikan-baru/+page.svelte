@@ -1,10 +1,11 @@
 <script lang="ts">
+    // import { CustomTextField } from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
-
+    // import { Toaster } from 'svelte-french-toast';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
@@ -15,7 +16,7 @@
     export let data: PageData;
     let param: CommonListRequestDTO = data.param;
 
-    let table: TableDTO = {
+    let newCandidateTable: TableDTO = {
         param: param,
         meta: {
             pageNum: 1,
@@ -23,10 +24,10 @@
             totalData: 4,
             totalPage: 1,
         },
-        data: data.dataList ?? [],
+        data: data.newCandidateList ?? [],
     };
 
-    let tableNewHire: TableDTO = {
+    let submittedListTable: TableDTO = {
         param: param,
         meta: {
             pageNum: 1,
@@ -34,19 +35,31 @@
             totalData: 4,
             totalPage: 1,
         },
-        data: data.dataListNewHire ?? [],
+        data: data.submittedFormList ?? [],
     };
+
+    let candidateViewTable: TableDTO = {
+        param: param,
+        meta: {
+            pageNum: 1,
+            pageSize: 5,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: data.candidateViewTable ?? [],
+    };
+
     async function _search() {
-        _updateTable(table.param).then((value) => {
-            table.data = value.response?.dataList ?? [];
-            table.meta = value.response?.meta ?? {
+        _updateTable(newCandidateTable.param).then((value) => {
+            newCandidateTable.data = value.response?.dataList ?? [];
+            newCandidateTable.meta = value.response?.meta ?? {
                 pageSize: 1,
                 pageNum: 1,
                 totalData: 1,
                 totalPage: 1,
             };
-            table.param.pageSize = table.meta.pageSize;
-            table.param.pageNum = table.meta.pageNum;
+            newCandidateTable.param.pageSize = newCandidateTable.meta.pageSize;
+            newCandidateTable.param.pageNum = newCandidateTable.meta.pageNum;
         });
     }
 </script>
@@ -61,8 +74,29 @@
 <section
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
+    {#if data.isCandidateRole}
+        <div
+            class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
+        >
+            <ContentHeader title="Senarai Lantikan Baru"></ContentHeader>
+            <div
+                class="flex max-h-full w-full flex-col items-start justify-start"
+            >
+                <CustomTable
+                    onUpdate={_search}
+                    enableDetail
+                    bind:tableData={candidateViewTable}
+                ></CustomTable>
+            </div>
+        </div>
+    {:else}
     <CustomTab>
         <CustomTabContent title="Senarai Rekod Selesai Diisi">
+            <!-- Table filter placeholder -->
+            <!-- <FilterContainer>
+                <CustomTextField label="TNo. Kad Pengenalan" type="text" />
+                <CustomTextField label="ID Calon" type="text" />
+            </FilterContainer> -->
             <div
                 class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
             >
@@ -73,7 +107,7 @@
                     <CustomTable
                         onUpdate={_search}
                         enableDetail
-                        bind:tableData={table}
+                        bind:tableData={submittedListTable}
                     ></CustomTable>
                 </div>
             </div>
@@ -97,10 +131,13 @@
                 >
                     <CustomTable
                         onUpdate={_search}
-                        bind:tableData={tableNewHire}
+                        bind:tableData={newCandidateTable}
                     ></CustomTable>
                 </div>
             </div>
         </CustomTabContent>
     </CustomTab>
+    {/if}
 </section>
+
+<!-- <Toaster /> -->

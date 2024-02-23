@@ -1,90 +1,73 @@
+import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant.js';
+import { RoleConstant } from '$lib/constants/core/role.constant.js';
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
+import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import { EmploymentServices } from '$lib/services/implementation/mypsm/perjawatan/employment.service';
+// import { redirect } from '@sveltejs/kit';
+
+// guard code WIP
+
 export const load = async () => {
-    const param = {
+    const currentRoleCode = localStorage.getItem(
+        LocalStorageKeyConstant.currentRoleCode,
+    );
+
+    const isCandidateRole = currentRoleCode === RoleConstant.calon.code;
+
+    // const authorised =
+    //     currentRoleCode === RoleConstant.urusSetiaPerjawatan.code ||
+    //     currentRoleCode === RoleConstant.calon.code;
+
+    // if (!authorised) throw redirect(303, `/login?redirectTo=${url.pathname}`);
+
+    const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: '',
-        orderType: 'Descending',
+        orderBy: null,
+        orderType: null,
+        filter: {
+            dataType: 0, // 0: New | 1: Other | null
+            identityCard: null, //string | null | undefined;
+            temporaryId: null, //string | null | undefined;
+            status: null, // status code from lookup | null | undefined;
+        },
     };
 
-    const dataList = [
-        {
-            id: '0001',
-            name: 'calvin',
-            noKadPengenalan: '999999999999',
-            Kategori: 'Tetap',
-            tarikhMemohon: '30/2/2024',
-            tarikhLantikan: '30/2/2024',
-            tarikhBersara: '30/2/2024',
-            status: ' baru',
-            Tindakan: '',
+    const submittedTableParam: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: null,
+        orderType: null,
+        filter: {
+            dataType: 1, // 0: New | 1: Other | null
+            identityCard: null, //string | null | undefined;
+            temporaryId: null, //string | null | undefined;
+            status: null, // status code from lookup | null | undefined;
         },
-        {
-            id: '0002',
-            name: 'didi',
-            noKadPengenalan: '888888888888',
-            Kategori: 'Tetap',
-            tarikhMemohon: '30/2/2024',
-            tarikhLantikan: '30/2/2024',
-            tarikhBersara: '30/2/2024',
-            status: ' baru',
-            Tindakan: '',
-        },
-        {
-            id: '0003',
-            name: 'zulhaimie',
-            noKadPengenalan: '777777777777',
-            Kategori: 'Tetap',
-            tarikhMemohon: '30/2/2024',
-            tarikhLantikan: '30/2/2024',
-            tarikhBersara: '30/2/2024',
-            status: ' baru',
-            Tindakan: '',
-        },
-        {
-            id: '0004',
-            name: 'edwin',
-            noKadPengenalan: '666666666666',
-            Kategori: 'Tetap',
-            tarikhMemohon: '30/2/2024',
-            tarikhLantikan: '30/2/2024',
-            tarikhBersara: '30/2/2024',
-            status: ' baru',
-            Tindakan: '',
-        },
-    ];
+    };
 
-    const dataListNewHire = [
-        {
-            id: '0001',
-            name: 'calvin',
-            noKadPengenalan: '999999999999',
-            Emel: 'emel@mail.com',
-            tarikhMohon: '30/2/2024',
-        },
-        {
-            id: '0002',
-            name: 'didi',
-            noKadPengenalan: '888888888888',
-            Emel: 'emel@mail.com',
-            tarikhMohon: '30/2/2024',
-        },
-        {
-            id: '0003',
-            name: 'zulhaimie',
-            noKadPengenalan: '777777777777',
-            Emel: 'emel@mail.com',
-            tarikhMohon: '30/2/2024',
-        },
-        {
-            id: '0004',
-            name: 'edwin',
-            noKadPengenalan: '666666666666',
-            Emel: 'emel@mail.com',
-            tarikhMohon: '30/2/2024',
-        },
-    ];
+    const newCandidateResponse: CommonResponseDTO =
+        await EmploymentServices.getNewHireList(param);
 
-    return { param, dataList, dataListNewHire };
+    const newCandidateList = newCandidateResponse.data?.dataList;
+
+    const submittedFormResponse: CommonResponseDTO =
+        await EmploymentServices.getNewHireList(submittedTableParam);
+
+    const submittedFormList = submittedFormResponse.data?.dataList;
+
+    const candidateViewResponse: CommonResponseDTO =
+        await EmploymentServices.getCandidateListView();
+
+    const candidateViewTable = candidateViewResponse.data?.dataList;
+
+    return {
+        param,
+        submittedFormList,
+        newCandidateList,
+        isCandidateRole,
+        candidateViewTable,
+    };
 };
 
 export const _updateTable = async (param: unknown) => {

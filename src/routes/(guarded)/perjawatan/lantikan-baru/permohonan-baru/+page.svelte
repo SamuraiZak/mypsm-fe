@@ -3,6 +3,34 @@
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
+    import { _addNewHireSchema } from '$lib/schemas/mypsm/employment/new-hire/schema';
+    import { superForm } from 'sveltekit-superforms/client';
+    import { _submitCandidateForm } from './+page';
+    import type { PageData } from './$types';
+    import { Toaster } from 'svelte-french-toast';
+
+    // =============================================================================
+    // Variables
+    // =============================================================================
+
+    export let data: PageData;
+
+    // =============================================================================
+    // Functions
+    // =============================================================================
+
+    const { form, errors, enhance } = superForm(data.candidateForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        taintedMessage: false,
+        resetForm: false,
+        multipleSubmits: 'prevent',
+        validators: _addNewHireSchema,
+        onSubmit() {
+            _submitCandidateForm($form);
+        },
+    });
 </script>
 
 <!-- content header starts here -->
@@ -32,29 +60,39 @@
             <TextIconButton
                 label="Simpan"
                 type="primary"
-                onClick={() => goto('../lantikan-baru')}
+                form="createCandidateForm"
             ></TextIconButton>
         </ContentHeader>
-        <div class="flex max-h-full w-full flex-col items-start justify-start">
+        <form
+            id="createCandidateForm"
+            method="POST"
+            use:enhance
+            class="flex max-h-full w-full flex-col items-start justify-start"
+        >
             <CustomTextField
+                errors={$errors.name}
                 id="name"
                 label="Nama Penuh"
                 placeholder="Contoh: Nur Haszmidah Binti Karim"
-                val=""
+                bind:val={$form.name}
             />
             <CustomTextField
-                id="identityCardNumber"
-                type="number"
+                errors={$errors.identityDocumentNumber}
+                id="identityDocumentNumber"
+                type="text"
                 label="No. Kad Pengenalan"
                 placeholder="Contoh: 850109125446"
-                val=""
+                bind:val={$form.identityDocumentNumber}
             />
             <CustomTextField
+                errors={$errors.email}
                 id="email"
                 label="Emel"
                 placeholder="Contoh: ali@lkim.com"
-                val=""
+                bind:val={$form.email}
             />
-        </div>
+        </form>
     </div>
 </section>
+
+<Toaster />
