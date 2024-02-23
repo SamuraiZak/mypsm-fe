@@ -55,8 +55,8 @@
             value: 20,
         },
         {
-            key: 100,
-            value: 100,
+            key: 50,
+            value: 50,
         },
     ];
 
@@ -68,21 +68,21 @@
     function handleSort(columnName: string) {
         if (tableData.param.orderBy == columnName) {
             switch (tableData.param.orderType) {
-                case 'Ascending':
-                    tableData.param.orderType = 'Descending';
+                case 0:
+                    tableData.param.orderType = 1;
                     break;
 
-                case 'Descending':
-                    tableData.param.orderType = 'Ascending';
+                case 1:
+                    tableData.param.orderType = 0;
                     break;
 
                 default:
-                    tableData.param.orderType = 'Ascending';
+                    tableData.param.orderType = 0;
                     break;
             }
         } else {
             tableData.param.orderBy = columnName;
-            tableData.param.orderType = 'Ascending';
+            tableData.param.orderType = 0;
         }
 
         onUpdate();
@@ -156,7 +156,7 @@
     function printDiv(elementId: any) {
         let printElement = document.getElementById(elementId);
         generatePDF<HTMLElement | null>('Title Example', printElement);
-            
+
         // let printWindow = window.open('', 'PRINT');
         // printWindow?.document.write(document.documentElement.innerHTML);
         // setTimeout(() => {
@@ -230,7 +230,7 @@
         >
             <!-- table head starts -->
 
-            <thead class="sticky top-0 z-10">
+            <thead class="sticky top-0 z-[1]">
                 <!-- table head row starts -->
 
                 <tr class="h-10 bg-ios-systemColors-quaternarySystemFill-light">
@@ -282,7 +282,7 @@
                                                 ? ' text-ios-labelColors-label-light'
                                                 : ' text-ios-labelColors-tertiaryLabel-light'}"
                                         >
-                                            {#if tableData.param.orderType == 'Ascending' && tableData.param.orderBy == Object.values( { columnHeading }, ).toString()}
+                                            {#if tableData.param.orderType == 0 && tableData.param.orderBy == Object.values( { columnHeading }, ).toString()}
                                                 <SvgSortUp size="18"
                                                 ></SvgSortUp>
                                             {:else}
