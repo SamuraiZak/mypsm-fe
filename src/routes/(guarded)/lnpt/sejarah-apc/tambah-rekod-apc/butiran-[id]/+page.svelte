@@ -26,12 +26,13 @@
         validators: _addApcSchema,
         onUpdate(event) {},
         onSubmit() {
+            $form.employeeId = data.props.employeeDetails.employeeId;
             _submitForm($form).then((value) => {
                 result = value.result;
 
                 if (result == 'success') {
                     getLoginSuccessToast().then(() => {
-                        goto('/urus-setia/lnpt/sejarah-apc');
+                        goto('/lnpt/sejarah-apc');
                     });
                 } else {
                     getErrorToast();
@@ -108,8 +109,7 @@
                             disabled
                             id="employeeNumber"
                             label={'Nombor Pekerja'}
-                            val={data.props.employeeDetails
-                                .employeeNumber}
+                            val={data.props.employeeDetails.employeeNumber}
                         ></CustomTextField>
                     </div>
                     <div class="flex w-full flex-col gap-2">
@@ -118,8 +118,7 @@
                             type=""
                             id="identityCard"
                             label={'No. Kad Pengenalan'}
-                            val={data.props.employeeDetails
-                                .identityCard}
+                            val={data.props.employeeDetails.identityCard}
                         ></CustomTextField>
                     </div>
                     <div class="flex w-full flex-col gap-2">

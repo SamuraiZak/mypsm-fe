@@ -79,7 +79,7 @@
                     detailActions={() => {
                         const url =
                             '/lnpt/sejarah-apc/tambah-rekod-apc/butiran-' +
-                            selectedDataRow?.employeeId;
+                            selectedDataRow?.employeeNumber;
                         goto(url);
                     }}
                 ></CustomTable>

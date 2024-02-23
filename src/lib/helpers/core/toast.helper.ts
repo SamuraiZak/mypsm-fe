@@ -62,10 +62,16 @@ export const getLoadingToast = async () => {
     });
 };
 
-export const getErrorToast = async () => {
-    toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
-        style: 'background: #333; color: #fff;',
-    });
+export const getErrorToast = async (message?: string) => {
+    if (message !== undefined) {
+        toast.error(message, {
+            style: 'background: #333; color: #fff;',
+        });
+    } else {
+        toast.error('Sila pastikan maklumat adalah lengkap dengan tepat.', {
+            style: 'background: #333; color: #fff;',
+        });
+    }
 };
 
 export const getSuccessToast = async () => {

@@ -1,4 +1,6 @@
-import { getErrorToast } from '$lib/helpers/core/toast.helper';
+import type { UpdatePasswordRequestDTO } from '$lib/dto/core/account/update-password.dto';
+import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import { getErrorToast, getSuccessToast } from '$lib/helpers/core/toast.helper';
 import { AccountServices } from '$lib/services/implementation/core/account/account.service';
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/client';
@@ -32,19 +34,31 @@ export const load = async () => {
     return { props: { form } };
 };
 
-export const _submit = async (formData: object) => {
+export const _submit = async (formData: UpdatePasswordRequestDTO) => {
     const form = await superValidate(formData, _updatePasswordSchema);
 
-    if (!form.valid) {
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await AccountServices.updatePassword(formData);
+
+        if (response.status == 'success') {
+            getSuccessToast();
+            return {
+                props: {
+                    response,
+                },
+            };
+        } else {
+            getErrorToast(response.message);
+            return {
+                props: {
+                    response,
+                },
+            };
+        }
+    } else {
         getErrorToast();
-        error(400, { message: 'validation failed' });
     }
 
-    const response = await AccountServices.updatePassword(formData);
-
-    return {
-        props: {
-            response,
-        },
-    };
+    // const response = await AccountServices.updatePassword(formData);
 };

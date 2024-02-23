@@ -4,10 +4,17 @@
 
 import { CommonResponseConstant } from '$lib/constants/core/common-response.constant';
 import {
+    UpdatePasswordRequestConvert,
+    type UpdatePasswordRequestDTO,
+} from '$lib/dto/core/account/update-password.dto';
+import {
     CommonListRequestConvert,
     type CommonListRequestDTO,
 } from '$lib/dto/core/common/common-list-request.dto';
-import { CommonResponseConvert, type CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import {
+    CommonResponseConvert,
+    type CommonResponseDTO,
+} from '$lib/dto/core/common/common-response.dto';
 import type { Input } from 'ky';
 import http from '../../service-provider.service';
 
@@ -19,7 +26,8 @@ export class AccountServices {
 
             const response: Response = await http.get(url, {}).json();
 
-            const result: CommonResponseDTO = CommonResponseConvert.fromResponse(response);
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
                 return result;
@@ -32,13 +40,13 @@ export class AccountServices {
     }
 
     // update password service
-    static async updatePassword(param: object) {
+    static async updatePassword(param: UpdatePasswordRequestDTO) {
         try {
-            let url: Input = 'account/updatePassword';
+            let url: Input = 'account/update_password';
 
             const response: Response = await http
                 .post(url, {
-                    body: JSON.stringify(param),
+                    body: UpdatePasswordRequestConvert.toJson(param),
                 })
                 .json();
 
@@ -47,7 +55,15 @@ export class AccountServices {
             if (result.status == 'success') {
                 return result;
             } else {
-                return CommonResponseConstant.httpError;
+                let errorResult: CommonResponseConstant = {
+                    status: 'error',
+                    message: result.message,
+                    data: {
+                        details: {},
+                        dataList: [],
+                    },
+                };
+                return errorResult;
             }
         } catch (error) {
             return CommonResponseConstant.httpError;

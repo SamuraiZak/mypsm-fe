@@ -117,7 +117,7 @@ export const _submit = async (formData: AuthenticationRequestDTO) => {
                 localStorage.setItem(
                     LocalStorageKeyConstant.currentRole,
                     TextAppearanceHelper.toCamelCase(
-                        UserRoleConstant.calon.code,
+                        UserRoleConstant.calon.description,
                     ),
                 );
                 goto('/halaman-utama');
