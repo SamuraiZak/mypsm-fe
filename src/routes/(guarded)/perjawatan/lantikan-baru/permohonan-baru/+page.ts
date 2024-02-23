@@ -1,5 +1,6 @@
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { NewHireAddCandidateDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-create-candidate.dto';
+import { goto } from '$app/navigation';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import { _addNewHireSchema } from '$lib/schemas/mypsm/employment/new-hire/schema';
 import { EmploymentServices } from '$lib/services/implementation/mypsm/perjawatan/employment.service';
@@ -18,6 +19,8 @@ export const load = async () => {
 export const _submitCandidateForm = async (formData: object) => {
     const form = await superValidate(formData, _addNewHireSchema);
 
+    console.log(form.data);
+
     if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
@@ -27,6 +30,8 @@ export const _submitCandidateForm = async (formData: object) => {
         await EmploymentServices.createNewHireCandidate(
             form.data as NewHireAddCandidateDTO,
         );
+
+    setTimeout(() => goto('../lantikan-baru'), 2000);
 
     return { response };
 };

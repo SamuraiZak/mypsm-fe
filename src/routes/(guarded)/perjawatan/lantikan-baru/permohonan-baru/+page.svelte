@@ -7,6 +7,7 @@
     import { superForm } from 'sveltekit-superforms/client';
     import { _submitCandidateForm } from './+page';
     import type { PageData } from './$types';
+    import { Toaster } from 'svelte-french-toast';
 
     // =============================================================================
     // Variables
@@ -27,7 +28,7 @@
         multipleSubmits: 'prevent',
         validators: _addNewHireSchema,
         onSubmit() {
-            _submitCandidateForm($form).finally(() => goto('../lantikan-baru'));
+            _submitCandidateForm($form);
         },
     });
 </script>
@@ -76,9 +77,9 @@
                 bind:val={$form.name}
             />
             <CustomTextField
-            errors={$errors.identityDocumentNumber}
-                id="identityCardNumber"
-                type="number"
+                errors={$errors.identityDocumentNumber}
+                id="identityDocumentNumber"
+                type="text"
                 label="No. Kad Pengenalan"
                 placeholder="Contoh: 850109125446"
                 bind:val={$form.identityDocumentNumber}
@@ -93,3 +94,5 @@
         </form>
     </div>
 </section>
+
+<Toaster />
