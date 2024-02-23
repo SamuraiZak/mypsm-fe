@@ -26,10 +26,10 @@ export const _addNewHireSchema = z.object({
     identityDocumentNumber: z
         .string()
         .min(12, {
-            message: 'Ruangan ini harus diisi tidak kurang dari 52 aksara',
+            message: 'Ruangan ini harus diisi tidak kurang dari 12 aksara',
         })
         .max(12, {
-            message: 'Ruangan ini harus diisi tidak kurang dari 52 aksara',
+            message: 'Ruangan ini harus diisi tidak kurang dari 12 aksara',
         }),
     email: z
         .string()
