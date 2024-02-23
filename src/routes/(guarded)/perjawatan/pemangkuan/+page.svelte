@@ -24,17 +24,17 @@
         {
             value: 'Gred 1-54',
             name: 'Gred 1-54',
-            href: './urus-setia/baru-1_54',
+            href: './pemangkuan/baru-1_54',
         },
         {
             value: 'Gred Flexi 41',
             name: 'Gred Flexi 41',
-            href: './urus-setia/baru-flexi_41',
+            href: './pemangkuan/baru-flexi_41',
         },
         {
             value: 'Gred Utama',
             name: 'Gred Utama',
-            href: './urus-setia/baru-gred_utama',
+            href: './pemangkuan/baru-gred_utama',
         },
     ];
 
