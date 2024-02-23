@@ -1,4 +1,11 @@
+import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant";
+import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
+
 export const load = async () => {
+    let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
+
+    console.log(currentRoleCode)
+    console.log(UserRoleConstant.kakitangan.code)
     const param = {
         pageNum: 1,
         pageSize: 5,
@@ -6,29 +13,26 @@ export const load = async () => {
         orderType: 'Descending',
     };
 
-    const dataList = [
-        { noPekerja: 28339, name: 'David Beckham', noKadPengenalan: 990122136443, program: '-', skim: '-', gred: '-', namaJawatan: '-', penempatanSekarang: '-', pengisytiahranHarta: '-', akuanPinjamanPendidikan: '-' },
-        { noPekerja: 28340, name: 'Cristiano Ronaldo', noKadPengenalan: 990122136443, program: '-', skim: '-', gred: '-', namaJawatan: '-', penempatanSekarang: '-', pengisytiahranHarta: '-', akuanPinjamanPendidikan: '-' },
-        { noPekerja: 28341, name: 'Gareth Bale', noKadPengenalan: 990122136443, program: '-', skim: '-', gred: '-', namaJawatan: '-', penempatanSekarang: '-', pengisytiahranHarta: '-', akuanPinjamanPendidikan: '-' },
-        { noPekerja: 28342, name: 'Karim Benzema', noKadPengenalan: 990122136443, program: '-', skim: '-', gred: '-', namaJawatan: '-', penempatanSekarang: '-', pengisytiahranHarta: '-', akuanPinjamanPendidikan: '-' },
-    ];
+    let dataList;
+    if (currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code) {
+        dataList = [
+        { idPemangkuan: 'PMGK-1234', date: '19/02/2024', jumlahCalon: 10, status: 'Sedang Diproses' },
+        { idPemangkuan: 'PMGK-1234', date: '19/02/2024', jumlahCalon: 10, status: 'Sedang Diproses' },
+        { idPemangkuan: 'PMGK-1234', date: '19/02/2024', jumlahCalon: 10, status: 'Sedang Diproses' },
+        { idPemangkuan: 'PMGK-1234', date: '19/02/2024', jumlahCalon: 10, status: 'Sedang Diproses' },
+    ]}
+    //   else if (currentRoleCode === UserRoleConstant.penyokong.code || UserRoleConstant.pengarahBahagian.code || UserRoleConstant.pengarahNegeri.code || UserRoleConstant.pelulus.code) { 
+    //     [
+    //         { noPekerja: 28339, name: 'David Beckham', noKadPengenalan: 990122136443, program: '-', skim: '-', gred: '-', status: 'Menunggu Kelulusan Dari Urus Setia' },
+    //         { noPekerja: 28340, name: 'Cristiano Ronaldo', noKadPengenalan: 990122136443, program: '-', skim: '-', gred: '-', status: 'Menunggu Kelulusan Dari Urus Setia' },
+    //         { noPekerja: 28341, name: 'Gareth Bale', noKadPengenalan: 990122136443, program: '-', skim: '-', gred: '-', status: 'Menunggu Kelulusan Dari Urus Setia' },
+    //         { noPekerja: 28342, name: 'Karim Benzema', noKadPengenalan: 990122136443, program: '-', skim: '-', gred: '-', status: 'Menunggu Kelulusan Dari Urus Setia' },
+    //     ] else if (currentRoleCode === UserRoleConstant.kakitangan.code) { 
+    //         [
+    //         { idPemangkuan: 'PMGK-1234', tarikhTawaran: '19/02/2024', gred: 'N32', position: 'Setiausaha Pejabat', keputusanPemangkuan: 'Belum Dikemaskini' },
+    //     ] 
 
-    //5th Stepper
-    const dataList2 = [
-        { noPekerja: 28339, name: 'David Beckham', noKadPengenalan: 990122136443, suratSetujuTerima: '-', borangLaporDiri: '-', notaSerahTugas: '-', keputusanPemangkuanKakitangan: '-'},
-        { noPekerja: 28340, name: 'Cristiano Ronaldo', noKadPengenalan: 990122136443, suratSetujuTerima: '-', borangLaporDiri: '-', notaSerahTugas: '-', keputusanPemangkuanKakitangan: '-'},
-    ];
-
-    const dataList3 = [
-        { noPekerja: 28339, name: 'David Beckham', noKadPengenalan: 990122136443, gred: '-', namaJawatan: '-', penempatanSekarang: 'Bahagian Teknologi', permohonanPindaanPenempatan: 'Ada', keputusanPermohonanPindaanPenempatan: 'Lulus'},
-        { noPekerja: 28340, name: 'Cristiano Ronaldo', noKadPengenalan: 990122136443, gred: '-', namaJawatan: '-', penempatanSekarang: '-', permohonanPindaanPenempatan: 'Ada', keputusanPermohonanPindaanPenempatan: 'Lulus'},
-        { noPekerja: 28340, name: 'Kylian Mbapper', noKadPengenalan: 990122136443, gred: '-', namaJawatan: '-', penempatanSekarang: 'Bahagian Sains', permohonanPindaanPenempatan: 'Ada', keputusanPermohonanPindaanPenempatan: 'Lulus'},
-    ];
-
-    return {
-        dataList, dataList2, dataList3, param,
-    };
-
+    return { param, dataList, currentRoleCode };
 };
 
 export const _updateTable = async (param: unknown) => {
@@ -41,11 +45,10 @@ export const _updateTable = async (param: unknown) => {
             totalPage: 1,
         },
         dataList: [
-            { noPekerja: 28339, name: 'David Beckham', noKadPengenalan: 990122136443, program: '-', skim: '-', gred: '-', namaJawatan: '-', penempatanSekarang: '-', pengisytiahranHarta: '-', akuanPinjamanPendidikan: '-' },
-            { noPekerja: 28340, name: 'Cristiano Ronaldo', noKadPengenalan: 990122136443, program: '-', skim: '-', gred: '-', namaJawatan: '-', penempatanSekarang: '-', pengisytiahranHarta: '-', akuanPinjamanPendidikan: '-' },
-            { noPekerja: 28341, name: 'Gareth Bale', noKadPengenalan: 990122136443, program: '-', skim: '-', gred: '-', namaJawatan: '-', penempatanSekarang: '-', pengisytiahranHarta: '-', akuanPinjamanPendidikan: '-' },
-            { noPekerja: 28342, name: 'Karim Benzema', noKadPengenalan: 990122136443, program: '-', skim: '-', gred: '-', namaJawatan: '-', penempatanSekarang: '-', pengisytiahranHarta: '-', akuanPinjamanPendidikan: '-' },
-            { noPekerja: 28343, name: 'Robin Van Persie', noKadPengenalan: 990122136443, program: '-', skim: '-', gred: '-', namaJawatan: '-', penempatanSekarang: '-', pengisytiahranHarta: '-', akuanPinjamanPendidikan: '-' },
+            { idPemangkuan: 'PMGK-1234', date: '19/02/2024', jumlahCalon: 10, status: 'Lulus' },
+            { idPemangkuan: 'PMGK-1234', date: '19/02/2024', jumlahCalon: 10, status: 'Tidak Lulus' },
+            { idPemangkuan: 'PMGK-1234', date: '19/02/2024', jumlahCalon: 10, status: 'Sedang Diproses' },
+            { idPemangkuan: 'PMGK-1234', date: '19/02/2024', jumlahCalon: 10, status: 'Sedang Diproses' },
         ],
     };
 
