@@ -15,6 +15,27 @@ import {
 } from '$lib/schemas/common/schema-type';
 import { z } from 'zod';
 
+// creating schema
+export const _addNewHireSchema = z.object({
+    name: z.coerce
+        .string({
+            required_error: 'Sila tetapkan ID sementara calon',
+            invalid_type_error: 'Id hendaklah terdiri daripada nombor sahaja',
+        })
+        .min(1, { message: 'ID hendaklah lebih daripada 1 angka' }),
+    identityDocumentNumber: z
+        .string()
+        .min(12, {
+            message: 'Ruangan ini harus diisi tidak kurang dari 52 aksara',
+        })
+        .max(12, {
+            message: 'Ruangan ini harus diisi tidak kurang dari 52 aksara',
+        }),
+    email: z
+        .string()
+        .email({ message: 'Pastikan emel adalah betul dan lengkap' }),
+});
+
 export const _personalInfoSchema = z
     .object({
         id: z.number().readonly(),
