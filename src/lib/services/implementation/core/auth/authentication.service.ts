@@ -20,9 +20,11 @@ export class AuthService {
 
             const response: Response = await http
                 .post(url, {
-                    body: JSON.stringify(param),
+                    body: AuthenticationRequestConvert.toJson(param),
                 })
                 .json();
+
+            console.log(response);
 
             const result = CommonResponseConvert.fromResponse(response);
 
