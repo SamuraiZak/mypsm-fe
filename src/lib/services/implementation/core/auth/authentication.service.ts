@@ -8,13 +8,13 @@ import {
     type AuthenticationRequestDTO,
 } from '$lib/dto/core/authentication/authentication-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
+import { AuthenticationHelper } from '$lib/helpers/core/authentication.helper';
 import type { Input } from 'ky';
 import http from '../../service-provider.service';
-import { AuthenticationHelper } from '$lib/helpers/core/authentication.helper';
 
 export class AuthService {
     // login
-    static async authenticateUser(param: object) {
+    static async authenticateUser(param: AuthenticationRequestDTO) {
         try {
             let url: Input = 'auth/login';
 

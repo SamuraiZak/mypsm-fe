@@ -94,7 +94,7 @@ export const load = async () => {
 };
 
 // on login form submit
-export const _submit = async (formData: object) => {
+export const _submit = async (formData: AuthenticationRequestDTO) => {
     const form = await superValidate(formData, _loginSchema);
 
     if (form.valid) {
@@ -103,33 +103,54 @@ export const _submit = async (formData: object) => {
 
         // if login successful
         if (response.status == 'success') {
-            // get account details
-            const accountDetailsResponse: CommonResponseDTO =
-                (await AccountServices.getAccountDetails()) as CommonResponseDTO;
-
-            // if get account details successful
-            if (accountDetailsResponse.status == 'success') {
-                const accountDetails: AccountDetailDTO = accountDetailsResponse
-                    .data?.details as AccountDetailDTO;
-
+            if (formData.userGroupCode == UserGroupConstant.candidate.code) {
                 localStorage.setItem(
                     LocalStorageKeyConstant.fullName,
-                    accountDetails.fullName,
+                    'Tiada maklumat',
                 );
 
                 localStorage.setItem(
                     LocalStorageKeyConstant.currentRoleCode,
-                    accountDetails.currentRole.code,
+                    UserRoleConstant.calon.code,
                 );
 
                 localStorage.setItem(
                     LocalStorageKeyConstant.currentRole,
                     TextAppearanceHelper.toCamelCase(
-                        accountDetails.currentRole.description,
+                        UserRoleConstant.calon.code,
                     ),
                 );
                 goto('/halaman-utama');
             } else {
+                // get account details
+                const accountDetailsResponse: CommonResponseDTO =
+                    (await AccountServices.getAccountDetails()) as CommonResponseDTO;
+
+                // if get account details successful
+                if (accountDetailsResponse.status == 'success') {
+                    const accountDetails: AccountDetailDTO =
+                        accountDetailsResponse.data
+                            ?.details as AccountDetailDTO;
+
+                    localStorage.setItem(
+                        LocalStorageKeyConstant.fullName,
+                        accountDetails.fullName,
+                    );
+
+                    localStorage.setItem(
+                        LocalStorageKeyConstant.currentRoleCode,
+                        accountDetails.currentRole.code,
+                    );
+
+                    localStorage.setItem(
+                        LocalStorageKeyConstant.currentRole,
+                        TextAppearanceHelper.toCamelCase(
+                            accountDetails.currentRole.description,
+                        ),
+                    );
+                    goto('/halaman-utama');
+                } else {
+                }
             }
         } else {
         }

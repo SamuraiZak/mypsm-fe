@@ -1,5 +1,5 @@
 // ===============================================================
-// LNPT Services
+// Employee Services
 // ===============================================================
 
 import { CommonResponseConstant } from '$lib/constants/core/common-response.constant';
@@ -8,14 +8,17 @@ import {
     type CommonListRequestDTO,
 } from '$lib/dto/core/common/common-list-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
-import { ApcAddConvert, type ApcAddDTO } from '$lib/dto/mypsm/lnpt/apc-add.dto';
+import {
+    EmployeeDetailRequestConvert,
+    type EmployeeDetailRequestDTO,
+} from '$lib/dto/core/common/employee/employee-detail-request.dto';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
 
-export class LNPTServices {
-    static async getApcHistory(param: CommonListRequestDTO) {
+export class EmployeeServices {
+    static async getEmployeeList(param: CommonListRequestDTO) {
         try {
-            let url: Input = 'performance/apc/histories';
+            let url: Input = 'employee/list';
 
             const response: Response = await http
                 .post(url, {
@@ -35,13 +38,13 @@ export class LNPTServices {
         }
     }
 
-    static async addApcRecord(param: ApcAddDTO) {
+    static async getEmployeeDetail(param: EmployeeDetailRequestDTO) {
         try {
-            let url: Input = 'performance/apc/add';
+            let url: Input = 'employee/detail';
 
             const response: Response = await http
                 .post(url, {
-                    body: ApcAddConvert.toJson(param),
+                    body: EmployeeDetailRequestConvert.toJson(param),
                 })
                 .json();
 
