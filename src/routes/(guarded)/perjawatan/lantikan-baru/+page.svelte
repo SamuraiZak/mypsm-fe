@@ -1,4 +1,5 @@
 <script lang="ts">
+    // import { CustomTextField } from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
@@ -48,7 +49,6 @@
         data: data.candidateViewTable ?? [],
     };
 
-    // WIP
     async function _search() {
         _updateTable(newCandidateTable.param).then((value) => {
             newCandidateTable.data = value.response?.dataList ?? [];
@@ -90,52 +90,53 @@
             </div>
         </div>
     {:else}
-        <CustomTab>
-            <CustomTabContent title="Senarai Rekod Selesai Diisi">
-                <div
-                    class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
-                >
-                    <ContentHeader title="Senarai Lantikan Baru"
-                    ></ContentHeader>
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start"
-                    >
-                        <CustomTable
-                            onUpdate={_search}
-                            enableDetail
-                            bind:tableData={submittedListTable}
-                        ></CustomTable>
-                    </div>
-                </div>
-            </CustomTabContent>
-            <CustomTabContent
-                title="Senarai Rekod Penambahan Calon Lantikan Baru"
+    <CustomTab>
+        <CustomTabContent title="Senarai Rekod Selesai Diisi">
+            <!-- Table filter placeholder -->
+            <!-- <FilterContainer>
+                <CustomTextField label="TNo. Kad Pengenalan" type="text" />
+                <CustomTextField label="ID Calon" type="text" />
+            </FilterContainer> -->
+            <div
+                class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
             >
+                <ContentHeader title="Senarai Lantikan Baru"></ContentHeader>
                 <div
-                    class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
+                    class="flex max-h-full w-full flex-col items-start justify-start"
                 >
-                    <ContentHeader
-                        title="Senarai Calon Yang Belum Melengkapkan Maklumat"
-                        borderClass="border-none"
-                    >
-                        <TextIconButton
-                            label="Tambah Lantikan Baru"
-                            type="primary"
-                            onClick={() =>
-                                goto('./lantikan-baru/permohonan-baru')}
-                        ></TextIconButton>
-                    </ContentHeader>
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start"
-                    >
-                        <CustomTable
-                            onUpdate={_search}
-                            bind:tableData={newCandidateTable}
-                        ></CustomTable>
-                    </div>
+                    <CustomTable
+                        onUpdate={_search}
+                        enableDetail
+                        bind:tableData={submittedListTable}
+                    ></CustomTable>
                 </div>
-            </CustomTabContent>
-        </CustomTab>
+            </div>
+        </CustomTabContent>
+        <CustomTabContent title="Senarai Rekod Penambahan Calon Lantikan Baru">
+            <div
+                class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
+            >
+                <ContentHeader
+                    title="Senarai Calon Yang Belum Melengkapkan Maklumat"
+                    borderClass="border-none"
+                >
+                    <TextIconButton
+                        label="Tambah Lantikan Baru"
+                        type="primary"
+                        onClick={() => goto('./lantikan-baru/permohonan-baru')}
+                    ></TextIconButton>
+                </ContentHeader>
+                <div
+                    class="flex max-h-full w-full flex-col items-start justify-start"
+                >
+                    <CustomTable
+                        onUpdate={_search}
+                        bind:tableData={newCandidateTable}
+                    ></CustomTable>
+                </div>
+            </div>
+        </CustomTabContent>
+    </CustomTab>
     {/if}
 </section>
 
