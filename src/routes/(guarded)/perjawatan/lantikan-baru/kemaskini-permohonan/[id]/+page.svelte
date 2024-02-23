@@ -331,9 +331,9 @@
         'civilServiceStartDate',
         { format: 'date' },
     );
-    const proxyConfirmServiceDate = dateProxy(
+    const proxynewRecruitEffectiveDate = dateProxy(
         serviceInfoForm,
-        'confirmServiceDate',
+        'newRecruitEffectiveDate',
         { format: 'date' },
     );
     const proxyFirstEffectiveDate = dateProxy(
@@ -341,35 +341,51 @@
         'firstEffectiveDate',
         { format: 'date' },
     );
-    const proxyPastAttachmentDate = dateProxy(
+    const proxyServiceDate = dateProxy(
         serviceInfoForm,
-        'pastAttachmentDate',
+        'serviceDate',
         { format: 'date' },
     );
-    const proxyActingDate = dateProxy(serviceInfoForm, 'actingDate', {
-        format: 'date',
-    });
-    const proxyInterimDate = dateProxy(serviceInfoForm, 'interimDate', {
-        format: 'date',
-    });
-    const proxyLastSalaryRaiseDate = dateProxy(
+    
+    const proxyFirstServiceDate = dateProxy(
         serviceInfoForm,
-        'lastSalaryRaiseDate',
+        'firstServiceDate',
         { format: 'date' },
     );
-    const proxyLastPromotionDate = dateProxy(
+    const proxyFirstConfirmServiceDate = dateProxy(
         serviceInfoForm,
-        'lastPromotionDate',
+        'firstConfirmServiceDate',
+        { format: 'date' },
+    );
+    const proxyConfirmDate = dateProxy(
+        serviceInfoForm,
+        'confirmDate',
         { format: 'date' },
     );
     const proxyRetirementDate = dateProxy(serviceInfoForm, 'retirementDate', {
         format: 'date',
     });
-    const proxySalaryEffectiveDate = dateProxy(
-        serviceInfoForm,
-        'salaryEffectiveDate',
-        { format: 'date' },
-    );
+    // const proxyActingDate = dateProxy(serviceInfoForm, 'actingDate', {
+    //     format: 'date',
+    // });
+    // const proxyInterimDate = dateProxy(serviceInfoForm, 'interimDate', {
+    //     format: 'date',
+    // });
+    // const proxyLastSalaryRaiseDate = dateProxy(
+    //     serviceInfoForm,
+    //     'lastSalaryRaiseDate',
+    //     { format: 'date' },
+    // );
+    // const proxyLastPromotionDate = dateProxy(
+    //     serviceInfoForm,
+    //     'lastPromotionDate',
+    //     { format: 'date' },
+    // );
+    // const proxySalaryEffectiveDate = dateProxy(
+    //     serviceInfoForm,
+    //     'salaryEffectiveDate',
+    //     { format: 'date' },
+    // );
 
     const proxyAddAcademiStartDate = dateProxy(
         addExperienceModalForm,

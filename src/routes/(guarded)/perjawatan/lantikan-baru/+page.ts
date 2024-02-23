@@ -73,18 +73,9 @@ export const load = async () => {
     };
 };
 
-export const _updateTable = async (param: unknown) => {
-    const response = {
-        status: 'success',
-        meta: {
-            pageSize: 5,
-            pageNum: 1,
-            totalData: 4,
-            totalPage: 1,
-        },
-        dataList: [],
-    };
-
+export const _updateTable = async (param: CommonListRequestDTO) => {
+    const response: CommonResponseDTO =
+        await EmploymentServices.getNewHireList(param);
     return {
         param,
         response,

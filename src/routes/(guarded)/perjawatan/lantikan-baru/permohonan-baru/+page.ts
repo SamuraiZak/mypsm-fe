@@ -30,9 +30,9 @@ export const _submitCandidateForm = async (formData: object) => {
         await EmploymentServices.createNewHireCandidate(
             form.data as NewHireAddCandidateDTO,
         );
-        
-    if (response.status === 'success') {
-        goto('../lantikan-baru');
+
+    if (response.status !== 'success') {
+        setTimeout(() => goto('../lantikan-baru'), 1500);
     }
 
     return { response };
