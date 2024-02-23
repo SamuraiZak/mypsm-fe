@@ -3,22 +3,22 @@ import { RoleConstant } from '$lib/constants/core/role.constant.js';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import { EmploymentServices } from '$lib/services/implementation/mypsm/perjawatan/employment.service';
-import { redirect } from '@sveltejs/kit';
+// import { redirect } from '@sveltejs/kit';
 
 // guard code WIP
 
-export const load = async ({ url }) => {
+export const load = async () => {
     const currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
     );
 
     const isCandidateRole = currentRoleCode === RoleConstant.calon.code;
 
-    const authorised =
-        currentRoleCode === RoleConstant.urusSetiaPerjawatan.code ||
-        currentRoleCode === RoleConstant.calon.code;
+    // const authorised =
+    //     currentRoleCode === RoleConstant.urusSetiaPerjawatan.code ||
+    //     currentRoleCode === RoleConstant.calon.code;
 
-    if (!authorised) throw redirect(303, `/login?redirectTo=${url.pathname}`);
+    // if (!authorised) throw redirect(303, `/login?redirectTo=${url.pathname}`);
 
     const param: CommonListRequestDTO = {
         pageNum: 1,
