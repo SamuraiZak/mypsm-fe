@@ -3,6 +3,7 @@
 // ===============================================================
 
 import { CommonResponseConstant } from '$lib/constants/core/common-response.constant';
+import type { CandidateIDRequestBody } from '$lib/dto/core/common/candidate-id-request.view-dto';
 import {
     CommonListRequestConvert,
     type CommonListRequestDTO,
@@ -15,10 +16,10 @@ import type { CandidateExperiencesDetailDTO } from '$lib/dto/mypsm/employment/ne
 import type { CandidateFamilyDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-family-details.dto';
 import type { CandidateNextOfKinDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto';
 import type { CandidatePersonalDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto';
+import type { NewHireAddCandidateDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-create-candidate.dto';
 import type { NewHireSecretaryServiceUpdateDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-secretary-service-update.dto';
 import type { NewHireSetApproversDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-set-approvers.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
-import type { CandidateIDRequestBody } from '$lib/dto/core/common/candidate-id-request.view-dto';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
 import type { AddApprovalResultRequestBody } from '../../../../dto/core/common/add-approval-results-request.dto';
@@ -47,9 +48,36 @@ export class EmploymentServices {
         }
     }
 
+    static async createNewHireCandidate(param: NewHireAddCandidateDTO) {
+        try {
+            const url: Input = 'employment/new_hire/add';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     static async getNewHireList(param: CommonListRequestDTO) {
         try {
-            const url: Input = 'employments/new-hires';
+            const url: Input = 'employment/new_hire/list';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -57,6 +85,29 @@ export class EmploymentServices {
                     body: CommonListRequestConvert.toJson(param),
                 })
                 .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async getCandidateListView() {
+        try {
+            const url: Input = 'employment/new_hire/personal_detail/list';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http.get(url).json();
 
             // await toast for resolved or rejected state
             const response: Response = await getPromiseToast(promiseRes);
