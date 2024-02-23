@@ -3,10 +3,10 @@
 // ===============================================================
 
 export interface AuthenticationRequestDTO {
-    userGroup: string;
-    currentRole: string;
+    userGroupCode: string;
     username: string;
     password: string;
+    currentRoleCode: string;
 }
 
 // Converts JSON strings to/from your types

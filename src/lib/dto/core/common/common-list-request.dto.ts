@@ -3,11 +3,11 @@
 // ===============================================================
 
 export interface CommonListRequestDTO {
-    pageNum?: number;
-    pageSize?: number;
-    orderBy?: string;
-    orderType?: string;
-    filter?: any;
+    pageNum?: number | null;
+    pageSize?: number | null;
+    orderBy?: string | null;
+    orderType?: number | null;
+    filter?: any | null;
 }
 
 // Converts JSON strings to/from your types
