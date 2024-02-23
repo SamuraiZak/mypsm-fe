@@ -25,7 +25,7 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Pemangkuan',
-                            path: '/perjawatan/pemangkuan/kakitangan',
+                            path: '/perjawatan/pemangkuan',
                         },
                         {
                             name: 'Kenaikan Pangkat',
@@ -349,7 +349,7 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Pemangkuan',
-                            path: '/perjawatan/pemangkuan/rekod',
+                            path: '/perjawatan/pemangkuan',
                         },
                         {
                             name: 'Kenaikan Pangkat',
@@ -473,7 +473,7 @@ export class SidebarConstant {
                     subItems: [
                         {
                             name: 'Pemangkuan',
-                            path: '/perjawatan/pemangkuan/rekod',
+                            path: '/perjawatan/pemangkuan',
                         },
                         {
                             name: 'Pengesahan dalam Perkhidmatan',
@@ -686,7 +686,7 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Pemangkuan',
-                            path: '/perjawatan/pemangkuan/rekod',
+                            path: '/perjawatan/pemangkuan',
                         },
                         {
                             name: 'Kenaikan Pangkat',
@@ -1494,7 +1494,7 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Pemangkuan',
-                            path: '/perjawatan/pemangkuan/urus-setia',
+                            path: '/perjawatan/pemangkuan',
                         },
                         {
                             name: 'Kenaikan Pangkat',
