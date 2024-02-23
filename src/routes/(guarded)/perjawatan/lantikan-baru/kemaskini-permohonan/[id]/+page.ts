@@ -2,10 +2,19 @@ import type { AddApprovalResultRequestBody } from '$lib/dto/core/common/add-appr
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { CandidateActivityDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-activity.dto.js';
 import type { CandidateAcademicDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-academic-details.dto.js';
-import type { CandidateDependenciesDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-dependencies-details.dto.js';
+import type {
+    CandidateDependenciesDetailsDTO,
+    Dependency,
+} from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-dependencies-details.dto.js';
 import type { CandidateExperiencesDetailDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-experience-details.dto.js';
-import type { CandidateFamilyDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-family-details.dto.js';
-import type { CandidateNextOfKinDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto.js';
+import type {
+    CandidateFamilyDetailsDTO,
+    Family,
+} from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-family-details.dto.js';
+import type {
+    CandidateNextOfKinDetailsDTO,
+    NextOfKin,
+} from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto.js';
 import type { CandidatePersonalDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto.js';
 import type { CandidateNewHireApproverResultDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-get-approver-result.dto';
 import type { NewHireGetApproversDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-get-approvers.dto.js';
@@ -24,6 +33,7 @@ import {
     _familyListSchema,
     _nextOfKinListSchema,
     _personalInfoSchema,
+    _relationsSchema,
     _serviceInfoSchema,
     _setApproversSchema,
 } from '$lib/schemas/mypsm/employment/new-hire/schema.js';
@@ -153,9 +163,9 @@ export async function load({ params }) {
     const addAcademicModal = await superValidate(_academicInfoSchema);
     const addExperienceModal = await superValidate(_experienceInfoSchema);
     const addActivityModal = await superValidate(_activityInfoSchema);
-    const addFamilyModal = await superValidate(_familyListSchema);
-    const addNonFamilyModal = await superValidate(_dependencyListSchema);
-    const addNextOfKinModal = await superValidate(_nextOfKinListSchema);
+    const addFamilyModal = await superValidate(_relationsSchema);
+    const addNonFamilyModal = await superValidate(_relationsSchema);
+    const addNextOfKinModal = await superValidate(_relationsSchema);
 
     const serviceInfoForm = await superValidate(
         serviceDetails,
@@ -245,7 +255,7 @@ export const _submitAcademicForm = async (formData: object) => {
 };
 
 export const _submitExperienceForm = async (formData: object) => {
-    const form = await superValidate(formData, _experienceListSchema);
+    const form = await superValidate(formData, _experienceInfoSchema);
 
     if (!form.valid) {
         getErrorToast();
@@ -277,7 +287,7 @@ export const _submitActivityForm = async (formData: object) => {
 };
 
 export const _submitFamilyForm = async (formData: object) => {
-    const form = await superValidate(formData, _familyListSchema);
+    const form = await superValidate(formData, _relationsSchema);
 
     if (!form.valid) {
         getErrorToast();
@@ -286,14 +296,14 @@ export const _submitFamilyForm = async (formData: object) => {
 
     const response: CommonResponseDTO =
         await EmploymentServices.createCurrentCandidateFamilyDetails(
-            form.data as CandidateFamilyDetailsDTO,
+            form.data as Family,
         );
 
     return { response };
 };
 
 export const _submitDependencyForm = async (formData: object) => {
-    const form = await superValidate(formData, _dependencyListSchema);
+    const form = await superValidate(formData, _relationsSchema);
 
     if (!form.valid) {
         getErrorToast();
@@ -302,14 +312,14 @@ export const _submitDependencyForm = async (formData: object) => {
 
     const response: CommonResponseDTO =
         await EmploymentServices.createCurrentCandidateDependenciesDetails(
-            form.data as CandidateDependenciesDetailsDTO,
+            form.data as Dependency,
         );
 
     return { response };
 };
 
 export const _submitNextOfKinForm = async (formData: object) => {
-    const form = await superValidate(formData, _nextOfKinListSchema);
+    const form = await superValidate(formData, _relationsSchema);
 
     if (!form.valid) {
         getErrorToast();
@@ -318,7 +328,7 @@ export const _submitNextOfKinForm = async (formData: object) => {
 
     const response: CommonResponseDTO =
         await EmploymentServices.createCurrentCandidateNextOfKinDetails(
-            form.data as CandidateNextOfKinDetailsDTO,
+            form.data as NextOfKin,
         );
 
     return { response };

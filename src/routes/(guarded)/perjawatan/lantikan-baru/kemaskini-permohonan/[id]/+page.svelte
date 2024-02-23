@@ -9,6 +9,7 @@
         _experienceInfoSchema,
         _setApproversSchema,
         _approvalResultSchema,
+        _relationsSchema,
     } from '$lib/schemas/mypsm/employment/new-hire/schema';
     import {
         _submitAcademicForm,
@@ -269,7 +270,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
-        validators: _dependencyListSchema,
+        validators: _relationsSchema,
         async onSubmit() {
             _submitDependencyForm($addNonFamilyModal);
             // openNonFamilyInfoModal = false;
@@ -287,7 +288,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
-        validators: _familyListSchema,
+        validators: _relationsSchema,
         async onSubmit() {
             _submitFamilyForm($addFamilyModal);
             // openFamilyInfoModal = false;
@@ -304,7 +305,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
-        validators: _nextOfKinListSchema,
+        validators: _relationsSchema,
         async onSubmit() {
             _submitNextOfKinForm($addNextOfKinModal);
             // openFamilyInfoModal = false;
@@ -1992,44 +1993,52 @@
         class="flex h-fit w-full flex-col gap-y-2"
     >
         <CustomSelectField
-            errors={$addAcademicInfoErrors.majorMinor}
-            id="majorMinor"
+            errors={$addAcademicInfoErrors.majorId}
+            id="majorId"
             label={'Jenis Jurusan'}
             options={data.majorMinorLookupString}
-            bind:val={$addAcademicInfoModal.majorMinor}
+            bind:val={$addAcademicInfoModal.majorId}
         ></CustomSelectField>
 
-        <!-- <CustomSelectField
-            errors={$addAcademicInfoErrors.country}
-            id="country"
+        <CustomSelectField
+            errors={$addAcademicInfoErrors.minorId}
+            id="minorId"
+            label={'Jenis Bidang'}
+            options={data.majorMinorLookupString}
+            bind:val={$addAcademicInfoModal.minorId}
+        ></CustomSelectField>
+
+        <CustomSelectField
+            errors={$addAcademicInfoErrors.countryId}
+            id="countryId"
             label={'Negara'}
             options={data.countryLookupString}
-            bind:val={$addAcademicInfoModal.country}
+            bind:val={$addAcademicInfoModal.countryId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addAcademicInfoErrors.institution}
-            id="institution"
+            errors={$addAcademicInfoErrors.institutionId}
+            id="institutionId"
             label={'Institusi'}
             options={data.institutionLookupString}
-            bind:val={$addAcademicInfoModal.institution}
+            bind:val={$addAcademicInfoModal.institutionId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addAcademicInfoErrors.educationLevel}
-            id="educationLevel"
+            errors={$addAcademicInfoErrors.educationLevelId}
+            id="educationLevelId"
             label={'Taraf Pembelajaran'}
             options={data.educationLookupString}
-            bind:val={$addAcademicInfoModal.educationLevel}
+            bind:val={$addAcademicInfoModal.educationLevelId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addAcademicInfoErrors.sponsorship}
-            id="sponsorship"
+            errors={$addAcademicInfoErrors.sponsorshipId}
+            id="sponsorshipId"
             label={'Penajaan'}
             options={data.sponsorshipLookupString}
-            bind:val={$addAcademicInfoModal.sponsorship}
-        ></CustomSelectField> -->
+            bind:val={$addAcademicInfoModal.sponsorshipId}
+        ></CustomSelectField>
 
         <CustomTextField
             errors={$addAcademicInfoErrors.name}
@@ -2124,7 +2133,7 @@
             bind:val={$addExperienceModalForm.salary}
         ></CustomTextField>
         <TextIconButton
-            primary
+            type="primary"
             label={'Simpan'}
             form="addExperienceInfoModal"
         />
@@ -2147,12 +2156,12 @@
             bind:val={$addActivityModal.name}
         ></CustomTextField>
 
-        <DateSelector
+        <!-- <DateSelector
             errors={$addActivityModalErrors.joinDate}
             id="addJoinDate"
             label={'Tarikh Keahlian'}
             bind:val={$proxyAddActivityJoinDate}
-        ></DateSelector>
+        ></DateSelector> -->
 
         <CustomTextField
             errors={$addActivityModalErrors.position}
@@ -2171,7 +2180,7 @@
         ></CustomTextField>
 
         <TextIconButton
-            primary
+            type="primary"
             label={'Simpan'}
             form="addMembershipInfoModal"
         />
