@@ -8,6 +8,9 @@ import { EmploymentServices } from '$lib/services/implementation/mypsm/perjawata
 // guard code WIP
 
 export const load = async () => {
+    let candidateViewResponse: CommonResponseDTO;
+    let candidateViewTable = undefined;
+
     const currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
     );
@@ -56,10 +59,10 @@ export const load = async () => {
 
     const submittedFormList = submittedFormResponse.data?.dataList;
 
-    const candidateViewResponse: CommonResponseDTO =
-        await EmploymentServices.getCandidateListView();
-
-    const candidateViewTable = candidateViewResponse.data?.dataList;
+    if (isCandidateRole) {
+        candidateViewResponse = await EmploymentServices.getCandidateListView();
+        candidateViewTable = candidateViewResponse.data?.dataList;
+    }
 
     return {
         param,

@@ -11,10 +11,10 @@ import {
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
 import type { CandidateActivityDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-activity.dto';
 import type { CandidateAcademicDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-academic-details.dto';
-import type { CandidateDependenciesDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-dependencies-details.dto';
-import type { CandidateExperiencesDetailDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-experience-details.dto';
-import type { CandidateFamilyDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-family-details.dto';
-import type { CandidateNextOfKinDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto';
+// import type { CandidateDependenciesDetailsDTO, Dependency } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-dependencies-details.dto';
+import type { CandidateExperiencesDetailDTO, Dependency } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-experience-details.dto';
+// import type { CandidateFamilyDetailsDTO, Family, Family } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-family-details.dto';
+// import type { CandidateNextOfKinDetailsDTO, NextOfKin } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto';
 import type { CandidatePersonalDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto';
 import type { NewHireAddCandidateDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-create-candidate.dto';
 import type { NewHireSecretaryServiceUpdateDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-secretary-service-update.dto';
@@ -24,6 +24,8 @@ import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
 import type { AddApprovalResultRequestBody } from '../../../../dto/core/common/add-approval-results-request.dto';
 import type { DocumentData } from '../../../../dto/core/common/add-documents-request.dto';
+import type { Family } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-family-details.dto';
+import type { NextOfKin } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto';
 
 export class EmploymentServices {
     static async method(param: CommonListRequestDTO) {
@@ -87,7 +89,8 @@ export class EmploymentServices {
                 .json();
 
             // await toast for resolved or rejected state
-            const response: Response = await getPromiseToast(promiseRes);
+            // const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await promiseRes;
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
@@ -110,7 +113,8 @@ export class EmploymentServices {
             const promiseRes: Promise<Response> = http.get(url).json();
 
             // await toast for resolved or rejected state
-            const response: Response = await getPromiseToast(promiseRes);
+            // const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await promiseRes;
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
@@ -389,7 +393,7 @@ export class EmploymentServices {
 
     // create employee family details
     static async createCurrentCandidateFamilyDetails(
-        param: CandidateFamilyDetailsDTO,
+        param: Family,
     ) {
         try {
             const url: Input = 'employments/add-new-hire-family';
@@ -449,7 +453,7 @@ export class EmploymentServices {
 
     // create employee dependencies details
     static async createCurrentCandidateDependenciesDetails(
-        param: CandidateDependenciesDetailsDTO,
+        param: Dependency,
     ) {
         try {
             const url: Input = 'employments/add-new-hire-dependent';
@@ -507,7 +511,7 @@ export class EmploymentServices {
 
     // create employee next of kin details
     static async createCurrentCandidateNextOfKinDetails(
-        param: CandidateNextOfKinDetailsDTO,
+        param: NextOfKin,
     ) {
         try {
             const url: Input = 'employments/add-new-hire-next-of-kin';
