@@ -4,7 +4,7 @@
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
-
+    // import { Toaster } from 'svelte-french-toast';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
@@ -15,7 +15,7 @@
     export let data: PageData;
     let param: CommonListRequestDTO = data.param;
 
-    let table: TableDTO = {
+    let newCandidateTable: TableDTO = {
         param: param,
         meta: {
             pageNum: 1,
@@ -23,10 +23,10 @@
             totalData: 4,
             totalPage: 1,
         },
-        data: data.dataList ?? [],
+        data: data.newCandidateList ?? [],
     };
 
-    let tableNewHire: TableDTO = {
+    let submittedListTable: TableDTO = {
         param: param,
         meta: {
             pageNum: 1,
@@ -34,19 +34,32 @@
             totalData: 4,
             totalPage: 1,
         },
-        data: data.dataListNewHire ?? [],
+        data: data.submittedFormList ?? [],
     };
+
+    let candidateViewTable: TableDTO = {
+        param: param,
+        meta: {
+            pageNum: 1,
+            pageSize: 5,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: data.candidateViewTable ?? [],
+    };
+
+    // WIP
     async function _search() {
-        _updateTable(table.param).then((value) => {
-            table.data = value.response?.dataList ?? [];
-            table.meta = value.response?.meta ?? {
+        _updateTable(newCandidateTable.param).then((value) => {
+            newCandidateTable.data = value.response?.dataList ?? [];
+            newCandidateTable.meta = value.response?.meta ?? {
                 pageSize: 1,
                 pageNum: 1,
                 totalData: 1,
                 totalPage: 1,
             };
-            table.param.pageSize = table.meta.pageSize;
-            table.param.pageNum = table.meta.pageNum;
+            newCandidateTable.param.pageSize = newCandidateTable.meta.pageSize;
+            newCandidateTable.param.pageNum = newCandidateTable.meta.pageNum;
         });
     }
 </script>
@@ -61,46 +74,69 @@
 <section
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
-    <CustomTab>
-        <CustomTabContent title="Senarai Rekod Selesai Diisi">
+    {#if data.isCandidateRole}
+        <div
+            class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
+        >
+            <ContentHeader title="Senarai Lantikan Baru"></ContentHeader>
             <div
-                class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
+                class="flex max-h-full w-full flex-col items-start justify-start"
             >
-                <ContentHeader title="Senarai Lantikan Baru"></ContentHeader>
-                <div
-                    class="flex max-h-full w-full flex-col items-start justify-start"
-                >
-                    <CustomTable
-                        onUpdate={_search}
-                        enableDetail
-                        bind:tableData={table}
-                    ></CustomTable>
-                </div>
+                <CustomTable
+                    onUpdate={_search}
+                    enableDetail
+                    bind:tableData={candidateViewTable}
+                ></CustomTable>
             </div>
-        </CustomTabContent>
-        <CustomTabContent title="Senarai Rekod Penambahan Calon Lantikan Baru">
-            <div
-                class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
+        </div>
+    {:else}
+        <CustomTab>
+            <CustomTabContent title="Senarai Rekod Selesai Diisi">
+                <div
+                    class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
+                >
+                    <ContentHeader title="Senarai Lantikan Baru"
+                    ></ContentHeader>
+                    <div
+                        class="flex max-h-full w-full flex-col items-start justify-start"
+                    >
+                        <CustomTable
+                            onUpdate={_search}
+                            enableDetail
+                            bind:tableData={submittedListTable}
+                        ></CustomTable>
+                    </div>
+                </div>
+            </CustomTabContent>
+            <CustomTabContent
+                title="Senarai Rekod Penambahan Calon Lantikan Baru"
             >
-                <ContentHeader
-                    title="Senarai Calon Yang Belum Melengkapkan Maklumat"
-                    borderClass="border-none"
-                >
-                    <TextIconButton
-                        label="Tambah Lantikan Baru"
-                        type="primary"
-                        onClick={() => goto('./lantikan-baru/permohonan-baru')}
-                    ></TextIconButton>
-                </ContentHeader>
                 <div
-                    class="flex max-h-full w-full flex-col items-start justify-start"
+                    class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
                 >
-                    <CustomTable
-                        onUpdate={_search}
-                        bind:tableData={tableNewHire}
-                    ></CustomTable>
+                    <ContentHeader
+                        title="Senarai Calon Yang Belum Melengkapkan Maklumat"
+                        borderClass="border-none"
+                    >
+                        <TextIconButton
+                            label="Tambah Lantikan Baru"
+                            type="primary"
+                            onClick={() =>
+                                goto('./lantikan-baru/permohonan-baru')}
+                        ></TextIconButton>
+                    </ContentHeader>
+                    <div
+                        class="flex max-h-full w-full flex-col items-start justify-start"
+                    >
+                        <CustomTable
+                            onUpdate={_search}
+                            bind:tableData={newCandidateTable}
+                        ></CustomTable>
+                    </div>
                 </div>
-            </div>
-        </CustomTabContent>
-    </CustomTab>
+            </CustomTabContent>
+        </CustomTab>
+    {/if}
 </section>
+
+<!-- <Toaster /> -->
