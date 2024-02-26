@@ -2,8 +2,8 @@ export const load = async () => {
     const param = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
-        orderType: null,
+        orderBy: '',
+        orderType: 'Descending',
     };
 
     const dataList = [

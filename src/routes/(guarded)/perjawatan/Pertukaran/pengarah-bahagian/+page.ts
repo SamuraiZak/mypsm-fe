@@ -15,13 +15,10 @@ export const load = async () => {
         { IdPermohonan:'0002', JenisPertukaran: 'Pertukaran Dalam Ibu pejabat', TarikhPermohonan:'11/12/2023', KeputusanPermohonan:'Sedang Diproses',  },
        
     ];
-    const dataList3 = [
-        { IdPermohonan:'0003', JenisPertukaran: 'Pertukaran Dalam Ibu pejabat', TarikhPermohonan:'12/12/2023', KeputusanPermohonan:'Sedang Diproses',  },
-       
-    ];
 
 
-    return { param, dataList,dataList2,dataList3};
+
+    return { param, dataList,dataList2,};
 };
 
 export const _updateTable = async (param: unknown) => {
@@ -39,10 +36,6 @@ export const _updateTable = async (param: unknown) => {
         ],
 
         dataList2: [
-            { IdPermohonan:'0002', JenisPertukaran: 'Pertukaran Dalam Ibu pejabat', TarikhPermohonan:'10/12/2023', KeputusanPermohonan:'Sedang Diproses',  },
-        
-        ],
-        dataList3: [
             { IdPermohonan:'0002', JenisPertukaran: 'Pertukaran Dalam Ibu pejabat', TarikhPermohonan:'10/12/2023', KeputusanPermohonan:'Sedang Diproses',  },
         
         ],
