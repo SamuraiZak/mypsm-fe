@@ -16,12 +16,15 @@
     import type { LayoutData } from './$types';
     import Sidebar from '$lib/components/sidebar/Sidebar.svelte';
     import { SidebarConstant } from '$lib/constants/core/sidebar.constant';
+    import { TextAppearanceHelper } from '$lib/helpers/core/text-appearance.helper';
+    import { _logout } from './+layout';
 
     export let data: LayoutData;
 
-    let currentFullname = data.props.currentFullName;
-    let currentRole = data.props.currentRole;
-    let currentRoleCode = data.props.currentRoleCode;
+    let currentFullname = TextAppearanceHelper.toCamelCase(
+        data.props.currentFullName,
+    );
+    let currentRole = TextAppearanceHelper.toCamelCase(data.props.currentRole);
 
     let sidebarItems = SidebarConstant.sidebar.find(
         (item) => item.role == data.props.currentRoleCode,
@@ -60,12 +63,12 @@
                 >
                     <button
                         id="accountTile"
-                        class="flex h-full w-fit min-w-[150px] max-w-[200px] flex-row items-center justify-start overflow-hidden text-ios-basic-white hover:bg-ios-activeColors-activeBlue-dark"
+                        class="flex h-full w-fit min-w-[150px] flex-row items-center justify-start overflow-hidden px-2.5 text-ios-basic-white hover:bg-ios-activeColors-activeBlue-dark"
                     >
                         <!-- leading starts here -->
 
                         <div
-                            class="flex h-full w-full max-w-[160px] flex-col items-start justify-center"
+                            class="flex h-full w-fit flex-col items-start justify-center"
                         >
                             <p
                                 class="w-full truncate text-ellipsis text-end text-sm font-semibold leading-tight"
@@ -112,8 +115,12 @@
                         >
                         <DropdownItem>Tetapan Akaun</DropdownItem>
                         <DropdownItem>Tukar Peranan</DropdownItem>
-                        <DropdownItem slot="footer" href="/login"
-                            >Log Keluar</DropdownItem
+                        <DropdownItem
+                            slot="footer"
+                            href="/login"
+                            on:click={() => {
+                                localStorage.clear();
+                            }}>Log Keluar</DropdownItem
                         >
                     </Dropdown>
                 </div>

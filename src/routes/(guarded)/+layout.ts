@@ -1,4 +1,7 @@
+import { goto } from '$app/navigation';
+import { page } from '$app/stores';
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
+import { AuthService } from '$lib/services/implementation/core/auth/authentication.service';
 import { error, redirect } from '@sveltejs/kit';
 
 export const load = async () => {
@@ -30,3 +33,13 @@ export const load = async () => {
         },
     };
 };
+
+export const _logout = async ()=> {
+    const isLogout = await AuthService.logout();
+
+    if (isLogout) {
+        goto('/login');
+    } else {
+        return error(500);
+    }
+}
