@@ -12,12 +12,17 @@
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import type { PageData } from './$types';
 
-    import { _updateTable } from './+page';
+    import {
+        _updateCandidateViewTable,
+        _updateSubmittedListTable,
+        _updateTable,
+    } from './+page';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
 
     export let data: PageData;
     export let filterByICNumber: string;
     export let filterByTemporaryID: string;
+    let rowData: any;
     let param: CommonListRequestDTO = data.param;
 
     let newCandidateTable: TableDTO = {
@@ -53,8 +58,36 @@
         data: data.candidateViewTable ?? [],
     };
 
-    async function _search() {
+    async function _searchNewCandidate() {
         _updateTable(newCandidateTable.param).then((value) => {
+            newCandidateTable.data = value.response.data?.dataList ?? [];
+            newCandidateTable.meta = value.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            newCandidateTable.param.pageSize = newCandidateTable.meta.pageSize;
+            newCandidateTable.param.pageNum = newCandidateTable.meta.pageNum;
+        });
+    }
+
+    async function _searchSubmittedList() {
+        _updateSubmittedListTable(newCandidateTable.param).then((value) => {
+            newCandidateTable.data = value.response.data?.dataList ?? [];
+            newCandidateTable.meta = value.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            newCandidateTable.param.pageSize = newCandidateTable.meta.pageSize;
+            newCandidateTable.param.pageNum = newCandidateTable.meta.pageNum;
+        });
+    }
+
+    async function _searchCandidateView() {
+        _updateCandidateViewTable(newCandidateTable.param).then((value) => {
             newCandidateTable.data = value.response.data?.dataList ?? [];
             newCandidateTable.meta = value.response.data?.meta ?? {
                 pageSize: 1,
@@ -82,14 +115,37 @@
         <div
             class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
         >
+            <!-- Table filter placeholder -->
+            <FilterContainer>
+                <form class="flex w-full flex-row gap-3">
+                    <CustomTextField
+                        id="filterByICNumber"
+                        label="No. Kad Pengenalan"
+                        type="text"
+                        bind:val={filterByICNumber}
+                    />
+                    <CustomTextField
+                        id="filterByTemporaryID"
+                        label="ID Calon"
+                        type="text"
+                        bind:val={filterByTemporaryID}
+                    />
+                </form>
+            </FilterContainer>
             <ContentHeader title="Senarai Lantikan Baru"></ContentHeader>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
                 <CustomTable
-                    onUpdate={_search}
+                    onUpdate={_searchCandidateView}
                     enableDetail
                     bind:tableData={candidateViewTable}
+                    bind:passData={rowData}
+                    detailActions={() => {
+                        const route = `./lantikan-baru/kemaskini-permohonan/${rowData.candidateId}`;
+
+                        goto(route);
+                    }}
                 ></CustomTable>
             </div>
         </div>
@@ -120,7 +176,7 @@
                         class="flex max-h-full w-full flex-col items-start justify-start"
                     >
                         <CustomTable
-                            onUpdate={_search}
+                            onUpdate={_searchSubmittedList}
                             enableDetail
                             bind:tableData={submittedListTable}
                         ></CustomTable>
@@ -148,7 +204,7 @@
                         class="flex max-h-full w-full flex-col items-start justify-start"
                     >
                         <CustomTable
-                            onUpdate={_search}
+                            onUpdate={_searchNewCandidate}
                             bind:tableData={newCandidateTable}
                         ></CustomTable>
                     </div>
