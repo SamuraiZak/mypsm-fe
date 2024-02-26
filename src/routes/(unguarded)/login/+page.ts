@@ -19,9 +19,14 @@ import {
 import { AuthenticationHelper } from '$lib/helpers/core/authentication.helper';
 import { LookupHelper } from '$lib/helpers/core/lookup.helper';
 import { TextAppearanceHelper } from '$lib/helpers/core/text-appearance.helper';
+import {
+    getLoginErrorToast,
+    getLoginSuccessToast,
+} from '$lib/helpers/core/toast.helper';
 import { AccountServices } from '$lib/services/implementation/core/account/account.service';
 import { AuthService } from '$lib/services/implementation/core/auth/authentication.service';
 import { fail } from '@sveltejs/kit';
+import toast from 'svelte-french-toast';
 import { message, superValidate } from 'sveltekit-superforms/client';
 import { Schema, z } from 'zod';
 
@@ -98,62 +103,73 @@ export const _submit = async (formData: AuthenticationRequestDTO) => {
     const form = await superValidate(formData, _loginSchema);
 
     if (form.valid) {
-        const response: CommonResponseDTO =
-            await AuthService.authenticateUser(formData);
+        const login: boolean = await AuthService.loginProcess(formData);
 
-        // if login successful
-        if (response.status == 'success') {
-            if (formData.userGroupCode == UserGroupConstant.candidate.code) {
-                localStorage.setItem(
-                    LocalStorageKeyConstant.fullName,
-                    'Tiada maklumat',
-                );
-
-                localStorage.setItem(
-                    LocalStorageKeyConstant.currentRoleCode,
-                    UserRoleConstant.calon.code,
-                );
-
-                localStorage.setItem(
-                    LocalStorageKeyConstant.currentRole,
-                    TextAppearanceHelper.toCamelCase(
-                        UserRoleConstant.calon.description,
-                    ),
-                );
-                goto('/halaman-utama');
-            } else {
-                // get account details
-                const accountDetailsResponse: CommonResponseDTO =
-                    (await AccountServices.getAccountDetails()) as CommonResponseDTO;
-
-                // if get account details successful
-                if (accountDetailsResponse.status == 'success') {
-                    const accountDetails: AccountDetailDTO =
-                        accountDetailsResponse.data
-                            ?.details as AccountDetailDTO;
-
-                    localStorage.setItem(
-                        LocalStorageKeyConstant.fullName,
-                        accountDetails.fullName,
-                    );
-
-                    localStorage.setItem(
-                        LocalStorageKeyConstant.currentRoleCode,
-                        accountDetails.currentRole.code,
-                    );
-
-                    localStorage.setItem(
-                        LocalStorageKeyConstant.currentRole,
-                        TextAppearanceHelper.toCamelCase(
-                            accountDetails.currentRole.description,
-                        ),
-                    );
-                    goto('/halaman-utama');
-                } else {
-                }
-            }
+        if (login) {
+            getLoginSuccessToast();
+            toast.dismiss();
+            goto('/halaman-utama');
         } else {
+            getLoginErrorToast();
+            toast.dismiss();
+            goto('/error');
         }
+        // const response: CommonResponseDTO =
+        //     await AuthService.authenticateUser(formData);
+
+        // // if login successful
+        // if (response.status == 'success') {
+        //     if (formData.userGroupCode == UserGroupConstant.candidate.code) {
+        //         localStorage.setItem(
+        //             LocalStorageKeyConstant.fullName,
+        //             'Tiada maklumat',
+        //         );
+
+        //         localStorage.setItem(
+        //             LocalStorageKeyConstant.currentRoleCode,
+        //             UserRoleConstant.calon.code,
+        //         );
+
+        //         localStorage.setItem(
+        //             LocalStorageKeyConstant.currentRole,
+        //             TextAppearanceHelper.toCamelCase(
+        //                 UserRoleConstant.calon.description,
+        //             ),
+        //         );
+        //         goto('/halaman-utama');
+        //     } else {
+        //         // get account details
+        //         const accountDetailsResponse: CommonResponseDTO =
+        //             (await AccountServices.getAccountDetails()) as CommonResponseDTO;
+
+        //         // if get account details successful
+        //         if (accountDetailsResponse.status == 'success') {
+        //             const accountDetails: AccountDetailDTO =
+        //                 accountDetailsResponse.data
+        //                     ?.details as AccountDetailDTO;
+
+        //             localStorage.setItem(
+        //                 LocalStorageKeyConstant.fullName,
+        //                 accountDetails.fullName,
+        //             );
+
+        //             localStorage.setItem(
+        //                 LocalStorageKeyConstant.currentRoleCode,
+        //                 accountDetails.currentRole.code,
+        //             );
+
+        //             localStorage.setItem(
+        //                 LocalStorageKeyConstant.currentRole,
+        //                 TextAppearanceHelper.toCamelCase(
+        //                     accountDetails.currentRole.description,
+        //                 ),
+        //             );
+        //             goto('/halaman-utama');
+        //         } else {
+        //         }
+        //     }
+        // } else {
+        // }
 
         // if (response.status == 'success') {
         //     const getAccountDetails: CommonResponseDTO =
