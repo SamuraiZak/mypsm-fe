@@ -56,4 +56,48 @@ export class LNPTServices {
             return CommonResponseConstant.httpError;
         }
     }
+
+    static async getAveragePermanent(param: CommonListRequestDTO) {
+        try {
+            let url: Input = 'performance/average/permanent';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async getAverageProbation(param: CommonListRequestDTO) {
+        try {
+            let url: Input = 'performance/average/probation';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 }

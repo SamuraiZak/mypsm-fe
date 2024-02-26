@@ -28,4 +28,14 @@ export class TableHelper {
         };
         return compareFn;
     }
+
+    // get the value by key
+    static getKey(obj: any, key: string) {
+        return obj[key];
+    }
+
+    // check if data is hidden
+    static isHidden(hiddenData: string[], key: string) {
+        return hiddenData.includes(key);
+    }
 }

@@ -6,4 +6,5 @@ export interface TableDTO{
     meta: Meta;
     data: object[];
     selectedData?: object[];
+    hiddenData?: string[];
 }

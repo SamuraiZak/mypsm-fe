@@ -4,7 +4,6 @@
 
 export interface AuthenticationResponseDTO {
     token: string;
-    currentRole: string;
 }
 
 // Converts JSON strings to/from your types
