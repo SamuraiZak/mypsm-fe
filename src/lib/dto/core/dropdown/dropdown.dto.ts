@@ -2,7 +2,7 @@
 // Dropdown DTO
 // ===============================================================
 
-export interface DropdownDTO{
-    value: string;
+export interface DropdownDTO {
+    value: any;
     name: string;
 }
