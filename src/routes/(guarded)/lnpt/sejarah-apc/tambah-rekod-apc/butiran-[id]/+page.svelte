@@ -49,7 +49,7 @@
         ><TextIconButton
             label="Kembali"
             onClick={() => {
-                goto('/urus-setia/lnpt/sejarah-apc/tambah-rekod-apc');
+                goto('/lnpt/sejarah-apc/tambah-rekod-apc');
             }}
         >
             <SvgChevronLeft />
