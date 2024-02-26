@@ -34,7 +34,7 @@
         },
         data: table.selectedData ?? [],
     };
-
+    
     async function _search() {
         _updateTable(table.param).then((value) => {
             table.data = value.response?.dataList ?? [];
@@ -71,7 +71,7 @@
                     alert('Senarai calon pemangkuan tidak boleh kosong.')
                 }
                 else{
-                    goto('/perjawatan/pemangkuan/butiran');
+                    goto('/perjawatan/pemangkuan/butiran-'+data.actingTypes);
                 }
             }}
         />

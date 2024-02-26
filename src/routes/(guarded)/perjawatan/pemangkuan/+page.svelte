@@ -12,7 +12,7 @@
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     export let data: PageData;
 
-    // 
+    // Role Code
     let employeeRoleCode: string = UserRoleConstant.kakitangan.code;
     let secretaryRoleCode: string = UserRoleConstant.urusSetiaPerjawatan.code 
     let supporterRoleCode: string = UserRoleConstant.penyokong.code;
@@ -34,7 +34,7 @@
         {
             value: 'Gred Utama',
             name: 'Gred Utama',
-            href: './pemangkuan/baru-gred_utama',
+            href: './pemangkuan/butiran-gred_utama',
         },
     ];
 
@@ -76,7 +76,7 @@
             />
         </ContentHeader>
     {:else}
-        <ContentHeader title="Rekod Pemangkuan" />
+        <ContentHeader title="Rekod Pemangkuan"/>
     {/if}
 </section>
 
@@ -99,7 +99,7 @@
                     <CustomTable
                         onUpdate={_search}
                         enableDetail
-                        detailActions={() => goto('./')}
+                        detailActions={() => goto('./pemangkuan/butiran-1_54')}
                         bind:tableData={table}
                     ></CustomTable>
                 </div>
@@ -118,6 +118,7 @@
                     <CustomTable
                         onUpdate={_search}
                         enableDetail
+                        detailActions={() => goto('./pemangkuan/butiran-flexi_41')}
                         bind:tableData={table}
                     ></CustomTable>
                 </div>
@@ -136,6 +137,7 @@
                     <CustomTable
                         onUpdate={_search}
                         enableDetail
+                        detailActions={() => goto('./pemangkuan/butiran-gred_utama')}
                         bind:tableData={table}
                     ></CustomTable>
                 </div>
@@ -151,7 +153,7 @@
             />
             <CustomTable
                 enableDetail
-                detailActions={() => goto('./kakitangan/butiran')}
+                detailActions={() => goto('./pemangkuan/butiran-rekod')}
                 onUpdate={_search}
                 tableData={table}
             ></CustomTable>
@@ -205,6 +207,7 @@
                     <CustomTable
                         onUpdate={_search}
                         enableDetail
+                        detailActions={() => goto('./pemangkuan/butiran-1_54')}
                         bind:tableData={table}
                     ></CustomTable>
                 </div>
@@ -223,6 +226,7 @@
                     <CustomTable
                         onUpdate={_search}
                         enableDetail
+                        detailActions={() => goto('./pemangkuan/butiran-flexi_41')}
                         bind:tableData={table}
                     ></CustomTable>
                 </div>
@@ -243,6 +247,7 @@
                         <CustomTable
                             onUpdate={_search}
                             enableDetail
+                            detailActions={() => goto('./pemangkuan/butiran-gred_utama')}
                             bind:tableData={table}
                         ></CustomTable>
                     </div>
