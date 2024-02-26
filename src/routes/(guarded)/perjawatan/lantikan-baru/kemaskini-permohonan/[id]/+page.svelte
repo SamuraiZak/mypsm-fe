@@ -10,6 +10,8 @@
         _setApproversSchema,
         _approvalResultSchema,
         _relationsSchema,
+        _academicListSchema,
+        _experienceListSchema,
     } from '$lib/schemas/mypsm/employment/new-hire/schema';
     import {
         _submitAcademicForm,
@@ -41,6 +43,7 @@
         _academicInfoSchema,
         _serviceInfoSchema,
     } from '$lib/schemas/mypsm/employment/new-hire/schema';
+    import { goto } from '$app/navigation';
     export let data: PageData;
 
     const personalDetails: CandidatePersonalDTO =
@@ -49,52 +52,52 @@
     let isSuccessPersonalFormResponse: boolean =
         data.personalDetailResponse.status === 'success';
     let isReadonlyPersonalFormStepper: boolean =
-        data.personalDetailResponse?.data?.details.isReadonly;
+        data.personalDetailResponse?.data?.details?.isReadonly;
 
     let isSuccessAcademicFormResponse: boolean =
         data.academicInfoResponse.status === 'success';
     let isReadonlyAcademicFormStepper: boolean =
-        data.academicInfoResponse?.data?.details.isReadonly;
+        data.academicInfoResponse?.data?.details?.isReadonly;
 
     let isSuccessExperienceFormResponse: boolean =
         data.experienceInfoResponse.status === 'success';
     let isReadonlyExperienceFormStepper: boolean =
-        data.experienceInfoResponse?.data?.details.isReadonly;
+        data.experienceInfoResponse?.data?.details?.isReadonly;
 
     let isSuccessActivityFormResponse: boolean =
         data.activityInfoResponse.status === 'success';
     let isReadonlyActivityFormStepper: boolean =
-        data.activityInfoResponse?.data?.details.isReadonly;
+        data.activityInfoResponse?.data?.details?.isReadonly;
 
     let isSuccessFamilyFormResponse: boolean =
         data.familyInfoResponse.status === 'success';
     let isReadonlyFamilyFormStepper: boolean =
-        data.familyInfoResponse?.data?.details.isReadonly;
+        data.familyInfoResponse?.data?.details?.isReadonly;
 
     let isSuccessDependencyFormResponse: boolean =
         data.dependencyInfoResponse.status === 'success';
     let isReadonlyDependencyFormStepper: boolean =
-        data.dependencyInfoResponse?.data?.details.isReadonly;
+        data.dependencyInfoResponse?.data?.details?.isReadonly;
 
     let isSuccessNextOfKinFormResponse: boolean =
         data.nextOfKinInfoResponse.status === 'success';
     let isReadonlyNextOfKinFormStepper: boolean =
-        data.nextOfKinInfoResponse?.data?.details.isReadonly;
+        data.nextOfKinInfoResponse?.data?.details?.isReadonly;
 
     let isSuccessDocumentFormResponse: boolean =
         data.documentInfoResponse.status === 'success';
     let isReadonlyDocumentFormStepper: boolean =
-        data.documentInfoResponse?.data?.details.isReadonly;
+        data.documentInfoResponse?.data?.details?.isReadonly;
 
     let isSuccessServiceFormResponse: boolean =
         data.serviceResponse.status === 'success';
     let isReadonlyServiceFormStepper: boolean =
-        data.serviceResponse?.data?.details.isReadonly;
+        data.serviceResponse?.data?.details?.isReadonly;
 
     let isSuccessSetApproversResponse: boolean =
         data.secretaryGetApproversResponse.status === 'success';
     let isReadonlySetApproversFormStepper: boolean =
-        data.secretaryGetApproversResponse?.data?.details.isReadonly;
+        data.secretaryGetApproversResponse?.data?.details?.isReadonly;
 
     export let openExperienceInfoModal: boolean = false;
     export let openMembershipInfoModal: boolean = false;
@@ -106,6 +109,8 @@
     // Stepper Classes
     let stepperFormTitleClass =
         'w-full h-fit mt-2 bg-bgr-primary text-system-primary text-sm font-medium';
+
+    // let disabled = false;
 
     // =========================================================================
     // function to assign the content  of the tooltip
@@ -202,6 +207,40 @@
         onSubmit() {
             _submitSecretarySetApproverForm($secretarySetApproverForm);
         },
+    });
+
+    const {
+        form: academicInfoForm,
+        errors: academicInfoErrors,
+        enhance: academicInfoEnhance,
+    } = superForm(data.academicInfoForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        taintedMessage: false,
+        resetForm: true,
+        multipleSubmits: 'prevent',
+        validators: _academicListSchema,
+        // async onSubmit() {
+        //     _submitAcademicForm($form);
+        // },
+    });
+
+    const {
+        form: experienceInfoForm,
+        errors: experienceInfoErrors,
+        enhance: experienceInfoEnhance,
+    } = superForm(data.experienceInfoForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        taintedMessage: false,
+        resetForm: true,
+        multipleSubmits: 'prevent',
+        validators: _experienceListSchema,
+        // async onSubmit() {
+        //     _submitExperienceForm($addExperienceModalForm);
+        // },
     });
 
     // modal
@@ -331,9 +370,9 @@
         'civilServiceStartDate',
         { format: 'date' },
     );
-    const proxyConfirmServiceDate = dateProxy(
+    const proxynewRecruitEffectiveDate = dateProxy(
         serviceInfoForm,
-        'confirmServiceDate',
+        'newRecruitEffectiveDate',
         { format: 'date' },
     );
     const proxyFirstEffectiveDate = dateProxy(
@@ -341,35 +380,47 @@
         'firstEffectiveDate',
         { format: 'date' },
     );
-    const proxyPastAttachmentDate = dateProxy(
-        serviceInfoForm,
-        'pastAttachmentDate',
-        { format: 'date' },
-    );
-    const proxyActingDate = dateProxy(serviceInfoForm, 'actingDate', {
+    const proxyServiceDate = dateProxy(serviceInfoForm, 'serviceDate', {
         format: 'date',
     });
-    const proxyInterimDate = dateProxy(serviceInfoForm, 'interimDate', {
+
+    const proxyFirstServiceDate = dateProxy(
+        serviceInfoForm,
+        'firstServiceDate',
+        { format: 'date' },
+    );
+    const proxyFirstConfirmServiceDate = dateProxy(
+        serviceInfoForm,
+        'firstConfirmServiceDate',
+        { format: 'date' },
+    );
+    const proxyConfirmDate = dateProxy(serviceInfoForm, 'confirmDate', {
         format: 'date',
     });
-    const proxyLastSalaryRaiseDate = dateProxy(
-        serviceInfoForm,
-        'lastSalaryRaiseDate',
-        { format: 'date' },
-    );
-    const proxyLastPromotionDate = dateProxy(
-        serviceInfoForm,
-        'lastPromotionDate',
-        { format: 'date' },
-    );
     const proxyRetirementDate = dateProxy(serviceInfoForm, 'retirementDate', {
         format: 'date',
     });
-    const proxySalaryEffectiveDate = dateProxy(
-        serviceInfoForm,
-        'salaryEffectiveDate',
-        { format: 'date' },
-    );
+    // const proxyActingDate = dateProxy(serviceInfoForm, 'actingDate', {
+    //     format: 'date',
+    // });
+    // const proxyInterimDate = dateProxy(serviceInfoForm, 'interimDate', {
+    //     format: 'date',
+    // });
+    // const proxyLastSalaryRaiseDate = dateProxy(
+    //     serviceInfoForm,
+    //     'lastSalaryRaiseDate',
+    //     { format: 'date' },
+    // );
+    // const proxyLastPromotionDate = dateProxy(
+    //     serviceInfoForm,
+    //     'lastPromotionDate',
+    //     { format: 'date' },
+    // );
+    // const proxySalaryEffectiveDate = dateProxy(
+    //     serviceInfoForm,
+    //     'salaryEffectiveDate',
+    //     { format: 'date' },
+    // );
 
     const proxyAddAcademiStartDate = dateProxy(
         addExperienceModalForm,
@@ -430,9 +481,10 @@
 
 <ContentHeader title="Maklumat Lantikan Baru"
     ><TextIconButton
-        type="cancel"
+        label="Kembali"
+        type="neutral"
         onClick={() => {
-            // goto('../lantikan-baru');
+            goto('./lantikan-baru');
         }}
     /></ContentHeader
 >
@@ -443,9 +495,9 @@
 
     <StepperContent>
         <StepperContentHeader title="Maklumat Peribadi">
-            {#if !disabled}
+            {#if !isReadonlyPersonalFormStepper}
                 <TextIconButton
-                    primary
+                    type="primary"
                     label="Simpan"
                     form="FormStepperMaklumatPeribadi"
                 />
@@ -465,6 +517,7 @@
                     id="employeeNumber"
                     label={'No. Pekerja'}
                     type="text"
+                    placeholder="-"
                     bind:val={$form.employeeNumber}
                 ></CustomTextField>
 
@@ -485,8 +538,17 @@
                     bind:val={$form.name}
                 ></CustomTextField>
 
+                <CustomSelectField
+                    disabled={isReadonlyPersonalFormStepper}
+                    errors={$errors.titleId}
+                    id="titleId"
+                    label={'Gelaran Nama'}
+                    bind:val={$form.titleId}
+                    options={data.selectionOptions.titleLookup}
+                ></CustomSelectField>
+
                 <CustomTextField
-                    disabled
+                    disabled={isReadonlyPersonalFormStepper}
                     id="alternativeName"
                     label={'Nama Lain'}
                     type="text"
@@ -494,102 +556,102 @@
                 ></CustomTextField>
 
                 <CustomTextField
-                    disabled
+                    disabled={isReadonlyPersonalFormStepper}
                     id="statusPekerjaan"
                     label="Emel Pekerja"
                     bind:val={$form.email}
                 ></CustomTextField>
 
-                <CustomSelectField
-                    disabled
+                <!-- <CustomSelectField
+                    disabled={isReadonlyPersonalFormStepper}
                     errors={$errors.identityDocumentColor}
                     id="identityDocumentColor"
                     label="Warna Kad Pengenalan"
                     bind:val={$form.identityDocumentColor}
-                    options={data.identityCardColorLookup}
-                ></CustomSelectField>
+                    options={data.selectionOptions.identityCardColorLookup}
+                ></CustomSelectField> -->
 
                 <!-- <DateSelector
-                    disabled
+                    disabled={isReadonlyPersonalFormStepper}
                     errors={$errors.birthDate}
                     id="birthDate"
                     label="Tarikh Lahir"
                     bind:val={$proxyBirthDate}
                 ></DateSelector> -->
                 <CustomSelectField
-                    disabled
+                    disabled={isReadonlyPersonalFormStepper}
                     errors={$errors.birthStateId}
                     id="birthStateId"
                     label="Tempat Lahir"
                     bind:val={$form.birthStateId}
-                    options={data.stateLookupString}
+                    options={data.selectionOptions.stateLookup}
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled
+                    disabled={isReadonlyPersonalFormStepper}
                     errors={$errors.birthCountryId}
                     id="birthCountryId"
                     label="Tempat Lahir"
                     bind:val={$form.birthCountryId}
-                    options={data.countryLookupString}
+                    options={data.selectionOptions.countryLookup}
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled
+                    disabled={isReadonlyPersonalFormStepper}
                     errors={$errors.nationalityId}
                     id="nationalityId"
                     label="Warganegara"
                     bind:val={$form.nationalityId}
-                    options={data.nationalityLookupString}
+                    options={data.selectionOptions.nationalityLookup}
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled
+                    disabled={isReadonlyPersonalFormStepper}
                     errors={$errors.raceId}
                     id="raceId"
                     label="Bangsa"
                     bind:val={$form.raceId}
-                    options={data.raceLookupString}
+                    options={data.selectionOptions.raceLookup}
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled
+                    disabled={isReadonlyPersonalFormStepper}
                     errors={$errors.ethnicId}
                     id="ethnicId"
                     label="Etnik"
                     bind:val={$form.ethnicId}
-                    options={data.ethnicityLookupString}
+                    options={data.selectionOptions.ethnicityLookup}
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled
+                    disabled={isReadonlyPersonalFormStepper}
                     errors={$errors.religionId}
                     id="religionId"
                     label="Agama"
                     bind:val={$form.religionId}
-                    options={data.religionLookupString}
+                    options={data.selectionOptions.religionLookup}
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled
+                    disabled={isReadonlyPersonalFormStepper}
                     errors={$errors.genderId}
                     id="genderId"
                     label="Jantina"
                     bind:val={$form.genderId}
-                    options={data.genderLookupString}
+                    options={data.selectionOptions.genderLookup}
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled
+                    disabled={isReadonlyPersonalFormStepper}
                     errors={$errors.maritalId}
                     id="maritalId"
-                    label="Status"
+                    label="Status Perkahwinan"
                     bind:val={$form.maritalId}
-                    options={data.maritalLookupString}
+                    options={data.selectionOptions.maritalLookup}
                 ></CustomSelectField>
 
                 <CustomTextField
-                    disabled
+                    disabled={isReadonlyPersonalFormStepper}
                     errors={$errors.email}
                     id="email"
                     label={'Emel'}
@@ -599,7 +661,7 @@
 
                 <!-- <LongTextField
                     errors={$errors.homeAddress}
-                    disabled
+                    disabled={isReadonlyPersonalFormStepper}
                     id="homeAddress"
                     label="Alamat Rumah"
                     bind:val={$form.homeAddress}
@@ -607,21 +669,21 @@
 
                 <LongTextField
                     errors={$errors.mailAddress}
-                    disabled
+                    disabled={isReadonlyPersonalFormStepper}
                     id="mailAddress"
                     label="Alamat Surat Menyurat (jika berlainan dari alamat rumah)"
                     bind:val={$form.mailAddress}
                 /> -->
 
                 <!-- <CustomTextField
-                    disabled
+                    disabled={isReadonlyPersonalFormStepper}
                     id="houseLoanType"
                     label={'Perumahan'}
                     type="text"
                     bind:val={$form.houseLoanType}
                 ></CustomTextField>
                 <CustomTextField
-                    disabled
+                    disabled={isReadonlyPersonalFormStepper}
                     id="houseLoan"
                     label={'Pinjaman Perumahan'}
                     type="text"
@@ -630,7 +692,7 @@
 
                 <!-- <RadioSingle
                     id="isExPolice"
-                    disabled
+                    disabled={isReadonlyPersonalFormStepper}
                     options={approveOptions}
                     legend={'Bekas Polis / Tentera'}
                     bind:userSelected={$form.isExPolice}
@@ -644,14 +706,14 @@
                     <!-- <RadioSingle
                         id="isRelatedToLKIM"
                         {options}
-                        disabled
+                        disabled={isReadonlyPersonalFormStepper}
                         legend={'Perhubungan Dengan Kakitangan LKIM'}
                         bind:userSelected={$form.isRelatedToLKIM}
                     ></RadioSingle> -->
 
                     {#if $form.isInternalRelationship}
                         <CustomTextField
-                            disabled
+                            disabled={isReadonlyPersonalFormStepper}
                             errors={$errors.employeeNumber}
                             id="employeeNumber"
                             label={'No. Pekerja LKIM'}
@@ -659,31 +721,31 @@
                             bind:val={$form.employeeNumber}
                         ></CustomTextField>
 
-                        <CustomSelectField
-                            disabled
+                        <!-- <CustomSelectField
+                            disabled={isReadonlyPersonalFormStepper}
                             errors={$errors.name}
                             id="name"
                             label="Jawatan Kakitangan LKIM"
                             bind:val={$form.name}
-                            options={data.positionLookupString}
-                        ></CustomSelectField>
+                            options={data.selectionOptions.employeeLookup}
+                        ></CustomSelectField> -->
 
                         <CustomSelectField
-                            disabled
+                            disabled={isReadonlyPersonalFormStepper}
                             errors={$errors.employeePosition}
                             id="relationDetailPosition"
                             label="Jawatan Kakitangan LKIM"
                             bind:val={$form.employeePosition}
-                            options={data.positionLookupString}
+                            options={data.selectionOptions.positionLookup}
                         ></CustomSelectField>
 
                         <CustomSelectField
-                            disabled
+                            disabled={isReadonlyPersonalFormStepper}
                             errors={$errors.relationshipId}
                             id="relationDetailRelationship"
                             label="Hubungan"
                             bind:val={$form.relationshipId}
-                            options={data.relationshipLookupString}
+                            options={data.selectionOptions.relationshipLookup}
                         ></CustomSelectField>
                     {/if}
                 </div>
@@ -748,7 +810,7 @@
                         disabled
                         id="retirementBenefit"
                         label={'Faedah Persaraan'}
-                        options={data.retirementBenefitLookupString}
+                        options={data.selectionOptions.retirementBenefitLookup}
                         bind:val={$serviceInfoForm.retirementBenefit}
                     ></CustomSelectField> -->
 
@@ -905,7 +967,7 @@
                         id="salaryMovementMonth"
                         label="Bulan KGT"
                         bind:val={$serviceInfoForm.salaryMovementMonth}
-                        options={data.monthStringLookup}
+                        options={data.selectionOptions.monthStringLookup}
                     ></CustomSelectField>
 
                     <DateSelector
@@ -997,30 +1059,30 @@
         <StepperContentHeader
             title="Maklumat Akademik / Kelayakan / Latihan yang Lalu"
         >
-            <!-- {#if !disabled}
+            {#if !isReadonlyAcademicFormStepper}
                 <TextIconButton
-                    primary
+                    type="primary"
                     label="Simpan"
                     form="FormStepperAkademik"
                 />
-            {/if} -->
+            {/if}
         </StepperContentHeader>
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2.5">
                 <form
                     id="FormStepperAkademik"
                     class="flex w-full flex-col gap-2"
-                    use:maklumatAkademikEnhance
+                    use:academicInfoEnhance
                     method="POST"
                 >
-                    {#if $maklumatAkademikForm.dataList.length < 1}
+                    {#if $academicInfoForm.academicList.length < 1}
                         <div
                             class="text-center text-sm italic text-system-primary"
                         >
                             Tiada data dijumpai. Sila tambah.
                         </div>
                     {:else}
-                        {#each $maklumatAkademikForm.dataList as _, i}
+                        {#each $academicInfoForm.academicList as _, i}
                             <div class="space-y-2.5 rounded-[3px] border p-2.5">
                                 <div
                                     class="mb-5 mt-2.5 text-sm text-system-primary"
@@ -1028,108 +1090,108 @@
                                     <p>Maklumat Akademik #{i + 1}</p>
                                 </div>
 
-                                <CustomTextField
+                                <CustomSelectField
                                     disabled
-                                    id="major"
+                                    id="majorId"
                                     label={'Jurusan'}
-                                    type="text"
-                                    bind:val={$maklumatAkademikForm.dataList[i]
-                                        .major}
-                                ></CustomTextField>
+                                    options={data.selectionOptions
+                                        .majorMinorLookup}
+                                    bind:val={$academicInfoForm.academicList[i]
+                                        .majorId}
+                                ></CustomSelectField>
 
-                                <!-- {#if $maklumatAkademikErrors?.dataList[i]?.major}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatAkademikErrors?.dataList[i]
-                                    ?.major}</span
-                            >
-                        {/if} -->
-                                <CustomTextField
+                                <CustomSelectField
                                     disabled
-                                    id="minor"
+                                    id="minorId"
                                     label={'Bidang'}
-                                    type="text"
-                                    bind:val={$maklumatAkademikForm.dataList[i]
-                                        .minor}
-                                ></CustomTextField>
+                                    options={data.selectionOptions
+                                        .majorMinorLookup}
+                                    bind:val={$academicInfoForm.academicList[i]
+                                        .minorId}
+                                ></CustomSelectField>
 
                                 <CustomSelectField
                                     disabled
-                                    id="country"
-                                    options={data.countryLookupString}
+                                    id="countryId"
+                                    options={data.selectionOptions
+                                        .countryLookup}
                                     label={'Negara'}
-                                    bind:val={$maklumatAkademikForm.dataList[i]
-                                        .country}
+                                    bind:val={$academicInfoForm.academicList[i]
+                                        .countryId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
                                     disabled
-                                    id="institution"
-                                    options={data.institutionLookupString}
+                                    id="institutionId"
+                                    options={data.selectionOptions
+                                        .institutionLookup}
                                     label={'Institusi'}
-                                    bind:val={$maklumatAkademikForm.dataList[i]
-                                        .institution}
+                                    bind:val={$academicInfoForm.academicList[i]
+                                        .institutionId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
                                     disabled
-                                    id="educationLevel"
-                                    options={data.educationLookupString}
+                                    id="educationLevelId"
+                                    options={data.selectionOptions
+                                        .educationLookup}
                                     label={'Taraf Pendidikan'}
-                                    bind:val={$maklumatAkademikForm.dataList[i]
-                                        .educationLevel}
+                                    bind:val={$academicInfoForm.academicList[i]
+                                        .educationLevelId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
                                     disabled
-                                    id="sponsorship"
-                                    options={data.sponsorshipLookupString}
+                                    id="sponsorshipId"
+                                    options={data.selectionOptions
+                                        .sponsorshipLookup}
                                     label={'Penajaan'}
-                                    bind:val={$maklumatAkademikForm.dataList[i]
-                                        .sponsorship}
+                                    bind:val={$academicInfoForm.academicList[i]
+                                        .sponsorshipId}
                                 ></CustomSelectField>
 
                                 <CustomTextField
                                     disabled
+                                    id="certName"
                                     label={'Nama Sijil/Pencapaian'}
                                     type="text"
-                                    bind:val={$maklumatAkademikForm.dataList[i]
+                                    bind:val={$academicInfoForm.academicList[i]
                                         .name}
                                 ></CustomTextField>
 
-                                <DateSelector
+                                <!-- <DateSelector
                                     disabled
                                     id="completionDate"
                                     label="Tarikh Tamat Pembelajaran"
-                                    bind:val={$maklumatAkademikForm.dataList[i]
+                                    bind:val={$academicInfoForm.academicList[i]
                                         .completionDate}
-                                ></DateSelector>
+                                ></DateSelector> -->
 
                                 <CustomTextField
                                     disabled
                                     id="finalGrade"
                                     label={'Ijazah/ CGPA/ Gred'}
                                     type="text"
-                                    bind:val={$maklumatAkademikForm.dataList[i]
+                                    bind:val={$academicInfoForm.academicList[i]
                                         .finalGrade}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     disabled
-                                    id="remark"
+                                    id="field"
                                     label={'Catatan'}
                                     type="text"
-                                    bind:val={$maklumatAkademikForm.dataList[i]
-                                        .remark}
+                                    bind:val={$academicInfoForm.academicList[i]
+                                        .field}
                                 ></CustomTextField>
                             </div>
                         {/each}
                     {/if}
                 </form>
-                {#if !disabled}
+                {#if !isReadonlyAcademicFormStepper}
                     <div class="w-full rounded-[3px] border-b border-t p-2.5">
                         <TextIconButton
-                            primary
+                            type="primary"
                             label="Tambah Akademik/Kelayakan/Latihan yang Lalu"
                             onClick={() => (openAcademicInfoModal = true)}
                         >
@@ -1146,30 +1208,30 @@
     <!------------------------------------------------------->
     <StepperContent>
         <StepperContentHeader title="Maklumat Pengalaman">
-            <!-- {#if !disabled}
+            {#if !isReadonlyExperienceFormStepper}
                 <TextIconButton
-                    primary
+                    type="primary"
                     label="Simpan"
                     form="FormStepperPengalaman"
                 />
-            {/if} -->
+            {/if}
         </StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2.5">
                 <form
                     id="FormStepperPengalaman"
                     class="flex w-full flex-col gap-2"
-                    use:maklumatPengalamanEnhance
+                    use:experienceInfoEnhance
                     method="POST"
                 >
-                    {#if $maklumatPengalamanForm.dataList.length < 1}
+                    {#if $experienceInfoForm.experienceList.length < 1}
                         <div
                             class="text-center text-sm italic text-system-primary"
                         >
                             Tiada data dijumpai. Sila tambah.
                         </div>
                     {:else}
-                        {#each $maklumatPengalamanForm.dataList as _, i}
+                        {#each $experienceInfoForm.experienceList as _, i}
                             <div class="space-y-2.5 rounded-[3px] border p-2.5">
                                 <p class={stepperFormTitleClass}>
                                     Maklumat Pengalaman #{i + 1}
@@ -1180,112 +1242,68 @@
                                     id="company"
                                     label={'Nama Majikan'}
                                     type="text"
-                                    bind:val={$maklumatPengalamanForm.dataList[
-                                        i
-                                    ].company}
+                                    bind:val={$experienceInfoForm
+                                        .experienceList[i].company}
                                 ></CustomTextField>
-                                <!-- {#if $maklumatPengalamanErrors.company}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatPengalamanErrors.company}</span
-                            >
-                        {/if} -->
 
                                 <CustomTextField
                                     disabled
                                     id="address"
                                     label={'Alamat Majikan'}
                                     type="text"
-                                    bind:val={$maklumatPengalamanForm.dataList[
-                                        i
-                                    ].address}
+                                    bind:val={$experienceInfoForm
+                                        .experienceList[i].address}
                                 ></CustomTextField>
-                                <!-- {#if $maklumatPengalamanErrors.address}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatPengalamanErrors.address}</span
-                            >
-                        {/if} -->
 
                                 <CustomTextField
                                     disabled
                                     id="position"
                                     label={'Jawatan'}
                                     type="text"
-                                    bind:val={$maklumatPengalamanForm.dataList[
-                                        i
-                                    ].position}
+                                    bind:val={$experienceInfoForm
+                                        .experienceList[i].position}
                                 ></CustomTextField>
-                                <!-- {#if $maklumatPengalamanErrors.position}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatPengalamanErrors.position}</span
-                            >
-                        {/if} -->
 
                                 <CustomTextField
                                     disabled
                                     id="positionCode"
                                     label={'Kod Jawatan (jika ada)'}
                                     type="text"
-                                    bind:val={$maklumatPengalamanForm.dataList[
-                                        i
-                                    ].positionCode}
+                                    bind:val={$experienceInfoForm
+                                        .experienceList[i].positionCode}
                                 ></CustomTextField>
-                                <!-- {#if $maklumatPengalamanErrors.positionCode}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatPengalamanErrors.positionCode}</span
-                            >
-                        {/if} -->
-                                <DateSelector
+                                <!-- <DateSelector
                                     disabled
                                     id="startDate"
                                     label="Tarikh Mula Bekerja"
-                                    bind:val={$maklumatPengalamanForm.dataList[
-                                        i
-                                    ].startDate}
+                                    bind:val={$experienceInfoForm
+                                        .experienceList[i].startDate}
                                 ></DateSelector>
 
                                 <DateSelector
                                     disabled
                                     id="endDate"
                                     label="Tarikh Tamat Bekerja"
-                                    bind:val={$maklumatPengalamanForm.dataList[
-                                        i
-                                    ].endDate}
-                                ></DateSelector>
-
-                                <!-- {#if $maklumatPengalamanErrors.duration}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatPengalamanErrors.duration}</span
-                            >
-                        {/if} -->
+                                    bind:val={$experienceInfoForm
+                                        .experienceList[i].endDate}
+                                ></DateSelector> -->
 
                                 <CustomTextField
                                     disabled
                                     id="salary"
                                     label={'Gaji'}
                                     type="number"
-                                    bind:val={$maklumatPengalamanForm.dataList[
-                                        i
-                                    ].salary}
+                                    bind:val={$experienceInfoForm
+                                        .experienceList[i].salary}
                                 ></CustomTextField>
-                                <!-- {#if $maklumatPengalamanErrors.salary}
-                            <span
-                                class="ml-[220px] font-sans text-sm italic text-system-danger"
-                                >{$maklumatPengalamanErrors.salary}</span
-                            >
-                        {/if} -->
                             </div>
                         {/each}
                     {/if}
                 </form>
-                {#if !disabled}
+                {#if !isReadonlyExperienceFormStepper}
                     <div class="w-full rounded-[3px] border-b border-t p-2.5">
                         <TextIconButton
-                            primary
+                            type="primary"
                             label="Tambah Pengalaman"
                             onClick={() => {
                                 openExperienceInfoModal = true;
@@ -1309,10 +1327,11 @@
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
                 <DynamicTable
-                    tableItems={data.activityInfoResponse.data?.dataList}
+                    tableItems={data.activityInfoResponse.data?.details
+                        .activityList}
                 ></DynamicTable>
             </div>
-            {#if !disabled}
+            {#if !isReadonlyActivityFormStepper}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
                         type="primary"
@@ -1345,10 +1364,12 @@
         </StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
-                <DynamicTable tableItems={data.personalFamilyList}
+                <DynamicTable
+                    tableItems={data.familyInfoResponse.data?.details
+                        .dependenciesList}
                 ></DynamicTable>
             </div>
-            {#if !disabled}
+            {#if !isReadonlyFamilyFormStepper}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
                         type="primary"
@@ -1379,10 +1400,12 @@
         </StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
-                <DynamicTable tableItems={data.personalDependencyList}
+                <DynamicTable
+                    tableItems={data.dependencyInfoResponse.data?.details
+                        .dependenciesList}
                 ></DynamicTable>
             </div>
-            {#if !disabled}
+            {#if !isReadonlyDependencyFormStepper}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
                         type="primary"
@@ -1406,7 +1429,7 @@
         <StepperContentHeader title="Maklumat Waris">
             <!-- {#if !disabled}
                 <TextIconButton
-                    primary
+                    type="primary"
                     label="Simpan"
                     form="FormStepperWaris"
                 />
@@ -1415,10 +1438,12 @@
 
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
-                <DynamicTable tableItems={data.personalNextOfKinList}
+                <DynamicTable
+                    tableItems={data.nextOfKinInfoResponse.data?.details
+                        .dependenciesList}
                 ></DynamicTable>
             </div>
-            {#if !disabled}
+            {#if !isReadonlyNextOfKinFormStepper}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
                         type="primary"
@@ -1438,8 +1463,13 @@
         ></StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
+                {#if !isReadonlyDocumentFormStepper}
+                    <div class="text-center text-sm italic text-system-primary">
+                        Tiada data dijumpai. Sila tambah.
+                    </div>
+                {/if}
                 <p class={stepperFormTitleClass}>Fail-fail yang dimuat naik:</p>
-                {#each currentEmployeeUploadedDocuments as item, i}
+                <!-- {#each currentEmployeeUploadedDocuments as item, i}
                     <div
                         class="flex w-full flex-row items-center justify-between"
                     >
@@ -1451,7 +1481,101 @@
                         <DownloadAttachment fileName={item.documentPath}
                         ></DownloadAttachment>
                     </div>
-                {/each}
+                {/each} -->
+
+                <p class="text-sm">
+                    Sila muat turun, isi dengan lengkap dokumen berikut,
+                    kemudian muat naik dokumen pada ruangan yang disediakan.
+                </p>
+
+                <ul
+                    class="cursor-pointer space-y-1 text-sm italic text-system-primary underline"
+                >
+                    <li>Surat Setuju Terima Tawaran</li>
+                    <li>Surat Sumpah Bukan Penagih Dadah</li>
+                    <li>Akuan Berkanun</li>
+                    <li>Surat Aku Janji</li>
+                    <li>Borang Perubatan</li>
+                    <li>
+                        Perkuan Untuk Ditandatangani Oleh Penjawat Awam
+                        Berkenaan Dengan Akta Rahsia Rasmi, 1972
+                    </li>
+                </ul>
+                {#if !isReadonlyDocumentFormStepper}
+                    <!-- <div
+                    class="flex flex-col items-center justify-center rounded-[3px] border border-system-primaryTint p-2.5"
+                >
+                    <p class="text-base text-txt-secondary">
+                        Seret dan lepas fail anda ke dalam ruangan ini atau
+                        pilih fail dari peranti anda
+                    </p>
+                    <span>
+                        <FileInputField id="fileInput" {handleOnChange}
+                        ></FileInputField>
+                    </span>
+                </div> -->
+                    <ContentHeader title="Dokumen Sokongan"
+                        >
+                        <!-- <div hidden={$fileSelectionList.length == 0}>
+                            <FileInputField id="fileInput" {handleOnChange}
+                            ></FileInputField>
+                        </div> -->
+                        </ContentHeader
+                    >
+                    {#if $fileSelectionList.length === 0}
+                        <span
+                            class="font-sans text-sm italic text-system-danger"
+                            >Sila muat naik dokumen barkaitan.</span
+                        >
+                    {/if}
+                    <div
+                        class="border-bdr-primaryp-5 flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border p-2.5"
+                    >
+                        <div class="flex flex-wrap gap-3">
+                            <!-- {#each $fileSelectionList as item, index}
+                                <FileInputFieldChildren
+                                    childrenType="grid"
+                                    handleDelete={() => handleDelete(index)}
+                                    fileName={item.name}
+                                />
+                            {/each} -->
+                        </div>
+                        <div
+                            class="flex flex-col items-center justify-center gap-2.5"
+                        >
+                            <!-- <p
+                                class=" text-sm text-txt-tertiary"
+                                hidden={$fileSelectionList.length > 0}
+                            >
+                                Pilih fail dari peranti anda.
+                            </p> -->
+                            <div
+                                class="text-txt-tertiary"
+                                hidden={$fileSelectionList.length > 0}
+                            >
+                                <svg
+                                    width={40}
+                                    height={40}
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                                    />
+                                </svg>
+                            </div>
+                            <!-- <div hidden={$fileSelectionList.length > 0}>
+                                <FileInputField id="fileInput" {handleOnChange}
+                                ></FileInputField>
+                            </div> -->
+                        </div>
+                    </div>
+                {/if}
             </div></StepperContentBody
         >
     </StepperContent>
@@ -1482,7 +1606,7 @@
                     id="gradeId"
                     label="Gred Semasa"
                     bind:val={$serviceInfoForm.gradeId}
-                    options={data.gradeLookup}
+                    options={data.selectionOptions.gradeLookup}
                 ></CustomSelectField>
                 <CustomSelectField
                     disabled={isReadonlyServiceFormStepper}
@@ -1490,7 +1614,7 @@
                     id="maxGradeId"
                     label="Gred Maksimum"
                     bind:val={$serviceInfoForm.maxGradeId}
-                    options={data.gradeLookup}
+                    options={data.selectionOptions.gradeLookup}
                 ></CustomSelectField>
                 <CustomSelectField
                     disabled={isReadonlyServiceFormStepper}
@@ -1498,7 +1622,7 @@
                     id="positionId"
                     label="Jawatan"
                     bind:val={$serviceInfoForm.positionId}
-                    options={data.positionLookup}
+                    options={data.selectionOptions.positionLookup}
                 ></CustomSelectField>
                 <CustomSelectField
                     disabled={isReadonlyServiceFormStepper}
@@ -1506,7 +1630,7 @@
                     id="placementId"
                     label="Penempatan"
                     bind:val={$serviceInfoForm.placementId}
-                    options={data.placementLookup}
+                    options={data.selectionOptions.placementLookup}
                 ></CustomSelectField>
                 <CustomSelectField
                     disabled={isReadonlyServiceFormStepper}
@@ -1514,7 +1638,7 @@
                     id="serviceTypeId"
                     label="Taraf Perkhidmatan"
                     bind:val={$serviceInfoForm.serviceTypeId}
-                    options={data.educationLookup}
+                    options={data.selectionOptions.educationLookup}
                 ></CustomSelectField>
 
                 <CustomSelectField
@@ -1523,7 +1647,7 @@
                     id="serviceGroupId"
                     label="Kumpulan Perkhidmatan"
                     bind:val={$serviceInfoForm.serviceGroupId}
-                    options={data.serviceGroupLookup}
+                    options={data.selectionOptions.serviceGroupLookup}
                 ></CustomSelectField>
 
                 <CustomSelectField
@@ -1532,7 +1656,7 @@
                     id="unitId"
                     label="Unit Perkhidmatan"
                     bind:val={$serviceInfoForm.unitId}
-                    options={data.unitLookup}
+                    options={data.selectionOptions.unitLookup}
                 ></CustomSelectField>
 
                 <CustomSelectField
@@ -1541,7 +1665,7 @@
                     id="employmentStatusId"
                     label="Status Perkhidmatan"
                     bind:val={$serviceInfoForm.employmentStatusId}
-                    options={data.serviceTypeLookup}
+                    options={data.selectionOptions.serviceTypeLookup}
                 ></CustomSelectField>
 
                 <DateSelector
@@ -1558,7 +1682,7 @@
                     id="retirementBenefit"
                     label="Faedah Persaraan"
                     bind:val={$serviceInfoForm.retirementBenefit}
-                    options={data.retirementBenefitLookup}
+                    options={data.selectionOptions.retirementBenefitLookup}
                 ></CustomSelectField>
                 {#if $serviceInfoErrors.retirementBenefit}
                     <span
@@ -1679,7 +1803,7 @@
                     id="revisionMonth"
                     label="Bulan KGT"
                     bind:val={$serviceInfoForm.revisionMonth}
-                    options={data.monthStringLookup}
+                    options={data.selectionOptions.monthStringLookup}
                 ></CustomSelectField> -->
 
                 <CustomTextField
@@ -1996,7 +2120,7 @@
             errors={$addAcademicInfoErrors.majorId}
             id="majorId"
             label={'Jenis Jurusan'}
-            options={data.majorMinorLookupString}
+            options={data.selectionOptions.majorMinorLookup}
             bind:val={$addAcademicInfoModal.majorId}
         ></CustomSelectField>
 
@@ -2004,7 +2128,7 @@
             errors={$addAcademicInfoErrors.minorId}
             id="minorId"
             label={'Jenis Bidang'}
-            options={data.majorMinorLookupString}
+            options={data.selectionOptions.majorMinorLookup}
             bind:val={$addAcademicInfoModal.minorId}
         ></CustomSelectField>
 
@@ -2012,7 +2136,7 @@
             errors={$addAcademicInfoErrors.countryId}
             id="countryId"
             label={'Negara'}
-            options={data.countryLookupString}
+            options={data.selectionOptions.countryLookup}
             bind:val={$addAcademicInfoModal.countryId}
         ></CustomSelectField>
 
@@ -2020,7 +2144,7 @@
             errors={$addAcademicInfoErrors.institutionId}
             id="institutionId"
             label={'Institusi'}
-            options={data.institutionLookupString}
+            options={data.selectionOptions.institutionLookup}
             bind:val={$addAcademicInfoModal.institutionId}
         ></CustomSelectField>
 
@@ -2028,7 +2152,7 @@
             errors={$addAcademicInfoErrors.educationLevelId}
             id="educationLevelId"
             label={'Taraf Pembelajaran'}
-            options={data.educationLookupString}
+            options={data.selectionOptions.educationLookup}
             bind:val={$addAcademicInfoModal.educationLevelId}
         ></CustomSelectField>
 
@@ -2036,7 +2160,7 @@
             errors={$addAcademicInfoErrors.sponsorshipId}
             id="sponsorshipId"
             label={'Penajaan'}
-            options={data.sponsorshipLookupString}
+            options={data.selectionOptions.sponsorshipLookup}
             bind:val={$addAcademicInfoModal.sponsorshipId}
         ></CustomSelectField>
 
@@ -2216,7 +2340,7 @@
             errors={$addFamilyErrors.identityDocumentColor}
             id="addIdentityDocumentColor"
             label={'Warna Kad Pengenalan'}
-            options={data.identityCardColorLookup}
+            options={data.selectionOptions.identityCardColorLookup}
             bind:val={$addFamilyModal.identityDocumentColor}
         ></CustomSelectField>
         <CustomTextField
@@ -2227,12 +2351,12 @@
             bind:val={$addFamilyModal.identityDocumentNumber}
         ></CustomTextField>
 
-        <LongTextField
+        <!-- <LongTextField
             errors={$addFamilyErrors.address}
             id="addAddress"
             label={'Alamat'}
             bind:val={$addFamilyModal.address}
-        ></LongTextField>
+        ></LongTextField> -->
 
         <CustomTextField
             errors={$addFamilyErrors.postcode}
@@ -2242,75 +2366,75 @@
             bind:val={$addFamilyModal.postcode}
         ></CustomTextField>
 
-        <DateSelector
+        <!-- <DateSelector
             errors={$addFamilyErrors.birthDate}
             id="addBirthDate"
             label={'Tarikh Lahir'}
             bind:val={$proxyAddFamilyBirthDate}
-        ></DateSelector>
+        ></DateSelector> -->
 
         <CustomSelectField
-            errors={$addFamilyErrors.birthCountry}
+            errors={$addFamilyErrors.birthCountryId}
             id="addBirthCountryId"
             label={'Negara Kelahiran'}
-            options={data.countryLookupString}
-            bind:val={$addFamilyModal.birthCountry}
+            options={data.selectionOptions.countryLookup}
+            bind:val={$addFamilyModal.birthCountryId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addFamilyErrors.birthState}
+            errors={$addFamilyErrors.birthStateId}
             id="addBirthStateId"
             label={'Negeri Kelahiran'}
-            options={data.stateLookupString}
-            bind:val={$addFamilyModal.birthState}
+            options={data.selectionOptions.stateLookup}
+            bind:val={$addFamilyModal.birthStateId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addFamilyErrors.relationship}
+            errors={$addFamilyErrors.relationshipId}
             id="addRelationshipId"
             label={'Hubungan'}
-            options={data.relationshipLookupString}
-            bind:val={$addFamilyModal.relationship}
+            options={data.selectionOptions.relationshipLookup}
+            bind:val={$addFamilyModal.relationshipId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addFamilyErrors.educationLevel}
+            errors={$addFamilyErrors.educationLevelId}
             id="addEducationLevelId"
             label={'Taraf Pendidikan'}
-            options={data.educationLookupString}
-            bind:val={$addFamilyModal.educationLevel}
+            options={data.selectionOptions.educationLookup}
+            bind:val={$addFamilyModal.educationLevelId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addFamilyErrors.race}
+            errors={$addFamilyErrors.raceId}
             id="addRaceId"
             label={'Bangsa'}
-            options={data.raceLookupString}
-            bind:val={$addFamilyModal.race}
+            options={data.selectionOptions.raceLookup}
+            bind:val={$addFamilyModal.raceId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addFamilyErrors.nationality}
+            errors={$addFamilyErrors.nationalityId}
             id="addNationalityId"
             label={'Kewarganegaraan'}
-            options={data.nationalityLookupString}
-            bind:val={$addFamilyModal.nationality}
+            options={data.selectionOptions.nationalityLookup}
+            bind:val={$addFamilyModal.nationalityId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addFamilyErrors.marital}
+            errors={$addFamilyErrors.maritalId}
             id="addMaritalId"
             label={'Status Perkhahwinan'}
-            options={data.maritalLookupString}
-            bind:val={$addFamilyModal.marital}
+            options={data.selectionOptions.maritalLookup}
+            bind:val={$addFamilyModal.maritalId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addFamilyErrors.gender}
+            errors={$addFamilyErrors.genderId}
             id="addGenderId"
             label={'Jantina'}
-            options={data.genderLookupString}
-            bind:val={$addFamilyModal.gender}
+            options={data.selectionOptions.genderLookup}
+            bind:val={$addFamilyModal.genderId}
         ></CustomSelectField>
 
         <CustomTextField
@@ -2337,12 +2461,12 @@
             bind:val={$addFamilyModal.phoneNumber}
         ></CustomTextField>
 
-        <DateSelector
+        <!-- <DateSelector
             errors={$addFamilyErrors.marriageDate}
             id="addMarriageDate"
             label={'Tarikh Kahwin'}
             bind:val={$proxyAddFamilyMarriageDate}
-        ></DateSelector>
+        ></DateSelector> -->
 
         <div class="flex flex-row">
             <label for="addInSchool" class="w-[220px] text-sm text-black"
@@ -2393,7 +2517,7 @@
             errors={$addNonFamilyErrors.identityDocumentColor}
             id="addIdentityDocumentColor"
             label={'Warna Kad Pengenalan'}
-            options={data.identityCardColorLookup}
+            options={data.selectionOptions.identityCardColorLookup}
             bind:val={$addNonFamilyModal.identityDocumentColor}
         ></CustomSelectField>
         <CustomTextField
@@ -2404,12 +2528,12 @@
             bind:val={$addNonFamilyModal.identityDocumentNumber}
         ></CustomTextField>
 
-        <LongTextField
+        <!-- <LongTextField
             errors={$addNonFamilyErrors.address}
             id="addAddress"
             label={'Alamat'}
             bind:val={$addNonFamilyModal.address}
-        ></LongTextField>
+        ></LongTextField> -->
 
         <CustomTextField
             errors={$addNonFamilyErrors.postcode}
@@ -2419,75 +2543,75 @@
             bind:val={$addNonFamilyModal.postcode}
         ></CustomTextField>
 
-        <DateSelector
+        <!-- <DateSelector
             errors={$addNonFamilyErrors.birthDate}
             id="addBirthDate"
             label={'Tarikh Lahir'}
             bind:val={$proxyAddDependencyBirthDate}
-        ></DateSelector>
+        ></DateSelector> -->
 
         <CustomSelectField
-            errors={$addNonFamilyErrors.birthCountry}
-            id="addBirthCountryId"
+            errors={$addNonFamilyErrors.birthCountryId}
+            id="birthCountryId"
             label={'Negara Kelahiran'}
-            options={data.countryLookupString}
-            bind:val={$addNonFamilyModal.birthCountry}
+            options={data.selectionOptions.countryLookup}
+            bind:val={$addNonFamilyModal.birthCountryId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNonFamilyErrors.birthState}
-            id="addBirthStateId"
+            errors={$addNonFamilyErrors.birthStateId}
+            id="birthStateId"
             label={'Negeri Kelahiran'}
-            options={data.stateLookupString}
-            bind:val={$addNonFamilyModal.birthState}
+            options={data.selectionOptions.stateLookup}
+            bind:val={$addNonFamilyModal.birthStateId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNonFamilyErrors.relationship}
+            errors={$addNonFamilyErrors.relationshipId}
             id="addRelationshipId"
             label={'Hubungan'}
-            options={data.relationshipLookupString}
-            bind:val={$addNonFamilyModal.relationship}
+            options={data.selectionOptions.relationshipLookup}
+            bind:val={$addNonFamilyModal.relationshipId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNonFamilyErrors.educationLevel}
+            errors={$addNonFamilyErrors.educationLevelId}
             id="addEducationLevelId"
             label={'Taraf Pendidikan'}
-            options={data.educationLookupString}
-            bind:val={$addNonFamilyModal.educationLevel}
+            options={data.selectionOptions.educationLookup}
+            bind:val={$addNonFamilyModal.educationLevelId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNonFamilyErrors.race}
+            errors={$addNonFamilyErrors.raceId}
             id="addRaceId"
             label={'Bangsa'}
-            options={data.raceLookupString}
-            bind:val={$addNonFamilyModal.race}
+            options={data.selectionOptions.raceLookup}
+            bind:val={$addNonFamilyModal.raceId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNonFamilyErrors.nationality}
+            errors={$addNonFamilyErrors.nationalityId}
             id="addNationalityId"
             label={'Kewarganegaraan'}
-            options={data.nationalityLookupString}
-            bind:val={$addNonFamilyModal.nationality}
+            options={data.selectionOptions.nationalityLookup}
+            bind:val={$addNonFamilyModal.nationalityId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNonFamilyErrors.marital}
+            errors={$addNonFamilyErrors.maritalId}
             id="addMaritalId"
             label={'Status Perkhahwinan'}
-            options={data.maritalLookupString}
-            bind:val={$addNonFamilyModal.marital}
+            options={data.selectionOptions.maritalLookup}
+            bind:val={$addNonFamilyModal.maritalId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNonFamilyErrors.gender}
+            errors={$addNonFamilyErrors.genderId}
             id="addGenderId"
             label={'Jantina'}
-            options={data.genderLookupString}
-            bind:val={$addNonFamilyModal.gender}
+            options={data.selectionOptions.genderLookup}
+            bind:val={$addNonFamilyModal.genderId}
         ></CustomSelectField>
 
         <CustomTextField
@@ -2514,12 +2638,12 @@
             bind:val={$addNonFamilyModal.phoneNumber}
         ></CustomTextField>
 
-        <DateSelector
+        <!-- <DateSelector
             errors={$addNonFamilyErrors.marriageDate}
             id="addMarriageDate"
             label={'Tarikh Kahwin'}
             bind:val={$proxyAddDependencyMarriageDate}
-        ></DateSelector>
+        ></DateSelector> -->
 
         <div class="flex flex-row">
             <label for="addInSchool" class="w-[220px] text-sm text-black"
@@ -2567,7 +2691,7 @@
             errors={$addNextOfKinErrors.identityDocumentColor}
             id="addIdentityDocumentColor"
             label={'Warna Kad Pengenalan'}
-            options={data.identityCardColorLookup}
+            options={data.selectionOptions.identityCardColorLookup}
             bind:val={$addNextOfKinModal.identityDocumentColor}
         ></CustomSelectField>
         <CustomTextField
@@ -2578,12 +2702,12 @@
             bind:val={$addNextOfKinModal.identityDocumentNumber}
         ></CustomTextField>
 
-        <LongTextField
+        <!-- <LongTextField
             errors={$addNextOfKinErrors.address}
             id="addAddress"
             label={'Alamat'}
             bind:val={$addNextOfKinModal.address}
-        ></LongTextField>
+        ></LongTextField> -->
 
         <CustomTextField
             errors={$addNextOfKinErrors.postcode}
@@ -2593,75 +2717,75 @@
             bind:val={$addNextOfKinModal.postcode}
         ></CustomTextField>
 
-        <DateSelector
+        <!-- <DateSelector
             errors={$addNextOfKinErrors.birthDate}
             id="addBirthDate"
             label={'Tarikh Lahir'}
             bind:val={$proxyAddNextOfKinBirthDate}
-        ></DateSelector>
+        ></DateSelector> -->
 
         <CustomSelectField
-            errors={$addNextOfKinErrors.birthCountry}
+            errors={$addNextOfKinErrors.birthCountryId}
             id="addBirthCountryId"
             label={'Negara Kelahiran'}
-            options={data.countryLookupString}
-            bind:val={$addNextOfKinModal.birthCountry}
+            options={data.selectionOptions.countryLookup}
+            bind:val={$addNextOfKinModal.birthCountryId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNextOfKinErrors.birthState}
+            errors={$addNextOfKinErrors.birthStateId}
             id="addBirthStateId"
             label={'Negeri Kelahiran'}
-            options={data.stateLookupString}
-            bind:val={$addNextOfKinModal.birthState}
+            options={data.selectionOptions.stateLookup}
+            bind:val={$addNextOfKinModal.birthStateId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNextOfKinErrors.relationship}
+            errors={$addNextOfKinErrors.relationshipId}
             id="addRelationshipId"
             label={'Hubungan'}
-            options={data.relationshipLookupString}
-            bind:val={$addNextOfKinModal.relationship}
+            options={data.selectionOptions.relationshipLookup}
+            bind:val={$addNextOfKinModal.relationshipId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNextOfKinErrors.educationLevel}
+            errors={$addNextOfKinErrors.educationLevelId}
             id="addEducationLevelId"
             label={'Taraf Pendidikan'}
-            options={data.educationLookupString}
-            bind:val={$addNextOfKinModal.educationLevel}
+            options={data.selectionOptions.educationLookup}
+            bind:val={$addNextOfKinModal.educationLevelId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNextOfKinErrors.race}
+            errors={$addNextOfKinErrors.raceId}
             id="addRaceId"
             label={'Bangsa'}
-            options={data.raceLookupString}
-            bind:val={$addNextOfKinModal.race}
+            options={data.selectionOptions.raceLookup}
+            bind:val={$addNextOfKinModal.raceId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNextOfKinErrors.nationality}
+            errors={$addNextOfKinErrors.nationalityId}
             id="addNationalityId"
             label={'Kewarganegaraan'}
-            options={data.nationalityLookupString}
-            bind:val={$addNextOfKinModal.nationality}
+            options={data.selectionOptions.nationalityLookup}
+            bind:val={$addNextOfKinModal.nationalityId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNextOfKinErrors.marital}
+            errors={$addNextOfKinErrors.maritalId}
             id="addMaritalId"
             label={'Status Perkhahwinan'}
-            options={data.maritalLookupString}
-            bind:val={$addNextOfKinModal.marital}
+            options={data.selectionOptions.maritalLookup}
+            bind:val={$addNextOfKinModal.maritalId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNextOfKinErrors.gender}
+            errors={$addNextOfKinErrors.genderId}
             id="addGenderId"
             label={'Jantina'}
-            options={data.genderLookupString}
-            bind:val={$addNextOfKinModal.gender}
+            options={data.selectionOptions.genderLookup}
+            bind:val={$addNextOfKinModal.genderId}
         ></CustomSelectField>
 
         <CustomTextField
@@ -2688,12 +2812,12 @@
             bind:val={$addNextOfKinModal.phoneNumber}
         ></CustomTextField>
 
-        <DateSelector
+        <!-- <DateSelector
             errors={$addNextOfKinErrors.marriageDate}
             id="addMarriageDate"
             label={'Tarikh Kahwin'}
             bind:val={$proxyAddNextOfKinMarriageDate}
-        ></DateSelector>
+        ></DateSelector> -->
 
         <div class="flex flex-row">
             <label for="addInSchool" class="w-[220px] text-sm text-black"

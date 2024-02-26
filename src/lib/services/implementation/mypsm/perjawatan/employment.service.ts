@@ -9,12 +9,17 @@ import {
     type CommonListRequestDTO,
 } from '$lib/dto/core/common/common-list-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
-import type { CandidateActivityDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-activity.dto';
+import type { Activity } from '$lib/dto/mypsm/employment/new-hire/new-hire-activity.dto';
 import type { CandidateAcademicDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-academic-details.dto';
 // import type { CandidateDependenciesDetailsDTO, Dependency } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-dependencies-details.dto';
-import type { CandidateExperiencesDetailDTO, Dependency } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-experience-details.dto';
+import type { Experience } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-experience-details.dto';
 // import type { CandidateFamilyDetailsDTO, Family, Family } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-family-details.dto';
 // import type { CandidateNextOfKinDetailsDTO, NextOfKin } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto';
+import type { AddApprovalResultRequestBody } from '$lib/dto/core/common/add-approval-results-request.dto';
+import type { DocumentData } from '$lib/dto/core/common/add-documents-request.dto';
+import type { Dependency } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-dependencies-details.dto';
+import type { Family } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-family-details.dto';
+import type { NextOfKin } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto';
 import type { CandidatePersonalDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto';
 import type { NewHireAddCandidateDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-create-candidate.dto';
 import type { NewHireSecretaryServiceUpdateDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-secretary-service-update.dto';
@@ -22,10 +27,6 @@ import type { NewHireSetApproversDTO } from '$lib/dto/mypsm/employment/new-hire/
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
-import type { AddApprovalResultRequestBody } from '../../../../dto/core/common/add-approval-results-request.dto';
-import type { DocumentData } from '../../../../dto/core/common/add-documents-request.dto';
-import type { Family } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-family-details.dto';
-import type { NextOfKin } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto';
 
 export class EmploymentServices {
     static async method(param: CommonListRequestDTO) {
@@ -134,7 +135,7 @@ export class EmploymentServices {
         param: CandidateIDRequestBody,
     ) {
         try {
-            const url: Input = 'employments/get-new-hire-personal-detail';
+            const url: Input = 'employment/new_hire/personal_detail/detail';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -144,7 +145,7 @@ export class EmploymentServices {
                 .json();
 
             // await toast for resolved or rejected state
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await promiseRes;
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
@@ -164,7 +165,7 @@ export class EmploymentServices {
         param: CandidatePersonalDTO,
     ) {
         try {
-            const url: Input = 'employments/add-new-hire-personal-detail';
+            const url: Input = 'employment/new_hire/personal_detail/add';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -192,7 +193,7 @@ export class EmploymentServices {
     // get list of employee's academic details
     static async getCurrentCandidateAcademic(param: CandidateIDRequestBody) {
         try {
-            const url: Input = 'employments/get-new-hire-academic';
+            const url: Input = 'employment/new_hire/academic/detail';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -202,7 +203,7 @@ export class EmploymentServices {
                 .json();
 
             // await toast for resolved or rejected state
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await promiseRes;
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
@@ -222,7 +223,7 @@ export class EmploymentServices {
         param: CandidateAcademicDetailsDTO,
     ) {
         try {
-            const url: Input = 'employments/add-new-hire-academic';
+            const url: Input = 'employment/new_hire/academic/add';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -250,7 +251,7 @@ export class EmploymentServices {
     // get list of employee's experience details
     static async getCurrentCandidateExperience(param: CandidateIDRequestBody) {
         try {
-            const url: Input = 'employments/get-new-hire-experience';
+            const url: Input = 'employment/new_hire/experience/detail';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -260,7 +261,7 @@ export class EmploymentServices {
                 .json();
 
             // await toast for resolved or rejected state
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await promiseRes;
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
@@ -276,11 +277,9 @@ export class EmploymentServices {
     }
 
     // create employee academic details
-    static async createCurrentCandidateExperienceDetails(
-        param: CandidateExperiencesDetailDTO,
-    ) {
+    static async createCurrentCandidateExperienceDetails(param: Experience) {
         try {
-            const url: Input = 'employments/add-new-hire-experience';
+            const url: Input = 'employment/new_hire/experience/add';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -308,7 +307,7 @@ export class EmploymentServices {
     // get list of employee's activity
     static async getCurrentCandidateActivities(param: CandidateIDRequestBody) {
         try {
-            const url: Input = 'employments/get-new-hire-activity';
+            const url: Input = 'employment/new_hire/activity/detail';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -318,7 +317,7 @@ export class EmploymentServices {
                 .json();
 
             // await toast for resolved or rejected state
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await promiseRes;
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
@@ -334,11 +333,9 @@ export class EmploymentServices {
     }
 
     // create employee activity details
-    static async createCurrentCandidateActivityDetails(
-        param: CandidateActivityDetailsDTO,
-    ) {
+    static async createCurrentCandidateActivityDetails(param: Activity) {
         try {
-            const url: Input = 'employments/add-new-hire-activity';
+            const url: Input = 'employment/new_hire/activity/add';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -366,7 +363,7 @@ export class EmploymentServices {
     // get employee family details
     static async getCurrentCandidateFamily(param: CandidateIDRequestBody) {
         try {
-            const url: Input = 'employments/get-new-hire-family';
+            const url: Input = 'employment/new_hire/family/detail';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -376,7 +373,7 @@ export class EmploymentServices {
                 .json();
 
             // await toast for resolved or rejected state
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await promiseRes;
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
@@ -392,11 +389,9 @@ export class EmploymentServices {
     }
 
     // create employee family details
-    static async createCurrentCandidateFamilyDetails(
-        param: Family,
-    ) {
+    static async createCurrentCandidateFamilyDetails(param: Family) {
         try {
-            const url: Input = 'employments/add-new-hire-family';
+            const url: Input = 'employment/new_hire/family/add';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -426,7 +421,7 @@ export class EmploymentServices {
         param: CandidateIDRequestBody,
     ) {
         try {
-            const url: Input = 'employments/get-new-hire-dependent';
+            const url: Input = 'employment/new_hire/dependant/detail';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -436,7 +431,7 @@ export class EmploymentServices {
                 .json();
 
             // await toast for resolved or rejected state
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await promiseRes;
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
@@ -452,11 +447,9 @@ export class EmploymentServices {
     }
 
     // create employee dependencies details
-    static async createCurrentCandidateDependenciesDetails(
-        param: Dependency,
-    ) {
+    static async createCurrentCandidateDependenciesDetails(param: Dependency) {
         try {
-            const url: Input = 'employments/add-new-hire-dependent';
+            const url: Input = 'employment/new_hire/dependant/add';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -484,7 +477,7 @@ export class EmploymentServices {
     // get employee next of kin details
     static async getCurrentCandidateNextOfKin(param: CandidateIDRequestBody) {
         try {
-            const url: Input = 'employments/get-new-hire-next-of-kin';
+            const url: Input = 'employment/new_hire/next_of_kin/detail';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -494,7 +487,7 @@ export class EmploymentServices {
                 .json();
 
             // await toast for resolved or rejected state
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await promiseRes;
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
@@ -510,11 +503,9 @@ export class EmploymentServices {
     }
 
     // create employee next of kin details
-    static async createCurrentCandidateNextOfKinDetails(
-        param: NextOfKin,
-    ) {
+    static async createCurrentCandidateNextOfKinDetails(param: NextOfKin) {
         try {
-            const url: Input = 'employments/add-new-hire-next-of-kin';
+            const url: Input = 'employment/new_hire/next_of_kin/add';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -542,7 +533,7 @@ export class EmploymentServices {
     // get employee documents
     static async getCurrentCandidateDocuments(param: CandidateIDRequestBody) {
         try {
-            const url: Input = 'employments/get-new-hire-document';
+            const url: Input = 'employment/new_hire/document/detail';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -552,7 +543,7 @@ export class EmploymentServices {
                 .json();
 
             // await toast for resolved or rejected state
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await promiseRes;
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
@@ -567,10 +558,10 @@ export class EmploymentServices {
         }
     }
 
-    // create employee documents
+    // create employee documents //multipart form
     static async createCurrentCandidateDocuments(param: DocumentData) {
         try {
-            const url: Input = 'employments/add-new-hire-document';
+            const url: Input = 'employment/new_hire/document/add';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -600,7 +591,7 @@ export class EmploymentServices {
         param: CandidateIDRequestBody,
     ) {
         try {
-            const url: Input = 'employments/get-new-hire-secretary-update';
+            const url: Input = 'employment/new_hire/secretary_update/detail';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -610,7 +601,7 @@ export class EmploymentServices {
                 .json();
 
             // await toast for resolved or rejected state
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await promiseRes;
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
@@ -630,7 +621,7 @@ export class EmploymentServices {
         param: NewHireSecretaryServiceUpdateDTO,
     ) {
         try {
-            const url: Input = 'employments/add-new-hire-secretary-update';
+            const url: Input = 'employment/new_hire/secretary_update/add';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -641,6 +632,36 @@ export class EmploymentServices {
 
             // await toast for resolved or rejected state
             const response: Response = await getPromiseToast(promiseRes);
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //  get secretary approval status
+    static async getCurrentCandidateSecretaryApproval(
+        param: CandidateIDRequestBody,
+    ) {
+        try {
+            const url: Input = 'employment/new_hire/secretary_approval/detail';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
@@ -660,37 +681,7 @@ export class EmploymentServices {
         param: AddApprovalResultRequestBody,
     ) {
         try {
-            const url: Input = 'employments/add-new-hire-secretary-approval';
-
-            // get the promise response
-            const promiseRes: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            // await toast for resolved or rejected state
-            const response: Response = await getPromiseToast(promiseRes);
-
-            // parse the json response to object
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    //  get chosen approvers
-    static async getCurrentCandidateSecretaryApproval(
-        param: CandidateIDRequestBody,
-    ) {
-        try {
-            const url: Input = 'employments/get-new-hire-secretary-approval';
+            const url: Input = 'employment/new_hire/secretary_approval/add';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -719,7 +710,7 @@ export class EmploymentServices {
     static async getCurrentCandidateApprovers(param: CandidateIDRequestBody) {
         try {
             const url: Input =
-                'employments/get-new-hire-set-supporter-approver';
+                'employment/new_hire/set_supporter_approver/detail';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -729,7 +720,7 @@ export class EmploymentServices {
                 .json();
 
             // await toast for resolved or rejected state
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await promiseRes;
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
@@ -749,8 +740,7 @@ export class EmploymentServices {
         param: NewHireSetApproversDTO,
     ) {
         try {
-            const url: Input =
-                'employments/add-new-hire-set-supporter-approver';
+            const url: Input = 'employment/new_hire/set_supporter_approver/add';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -778,7 +768,8 @@ export class EmploymentServices {
     //  get supporter list of candidates
     static async getSupporterListOfCandidates(param: CommonListRequestDTO) {
         try {
-            const url: Input = 'employments/new-hire-supporter-approvals';
+            const url: Input =
+                'employment/new_hire/get_supporter_approval/list';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -788,7 +779,7 @@ export class EmploymentServices {
                 .json();
 
             // await toast for resolved or rejected state
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await promiseRes;
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
@@ -803,12 +794,13 @@ export class EmploymentServices {
         }
     }
 
-    //  get chosen supporter
+    //  get supporter approval status
     static async getCurrentCandidateSupporterApproval(
         param: CandidateIDRequestBody,
     ) {
         try {
-            const url: Input = 'employments/get-new-hire-supporter-approval';
+            const url: Input =
+                'employment/new_hire/get_supporter_approval/detail';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -818,7 +810,7 @@ export class EmploymentServices {
                 .json();
 
             // await toast for resolved or rejected state
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await promiseRes;
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
@@ -838,7 +830,7 @@ export class EmploymentServices {
         param: AddApprovalResultRequestBody,
     ) {
         try {
-            const url: Input = 'employments/add-new-hire-supporter-approval';
+            const url: Input = 'employment/new_hire/get_supporter_approval/add';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -876,7 +868,7 @@ export class EmploymentServices {
                 .json();
 
             // await toast for resolved or rejected state
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await promiseRes;
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
@@ -891,12 +883,13 @@ export class EmploymentServices {
         }
     }
 
-    //  get chosen approver
+    //  get approver approval status
     static async getCurrentCandidateApproverApproval(
         param: CandidateIDRequestBody,
     ) {
         try {
-            const url: Input = 'employments/get-new-hire-approver-approval';
+            const url: Input =
+                'employment/new_hire/get_approver_approval/detail';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -906,7 +899,7 @@ export class EmploymentServices {
                 .json();
 
             // await toast for resolved or rejected state
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await promiseRes;
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
@@ -926,7 +919,7 @@ export class EmploymentServices {
         param: AddApprovalResultRequestBody,
     ) {
         try {
-            const url: Input = 'employments/add-new-hire-approver-approval';
+            const url: Input = 'employment/new_hire/get_approver_approval/add';
 
             // get the promise response
             const promiseRes: Promise<Response> = http

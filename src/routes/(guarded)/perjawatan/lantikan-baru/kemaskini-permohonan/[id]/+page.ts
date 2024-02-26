@@ -1,12 +1,20 @@
 import type { AddApprovalResultRequestBody } from '$lib/dto/core/common/add-approval-results-request.dto';
+import type { CandidateIDRequestBody } from '$lib/dto/core/common/candidate-id-request.view-dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
-import type { CandidateActivityDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-activity.dto.js';
+import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto.js';
+import type {
+    Activity,
+    CandidateActivityDetailsDTO,
+} from '$lib/dto/mypsm/employment/new-hire/new-hire-activity.dto.js';
 import type { CandidateAcademicDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-academic-details.dto.js';
 import type {
     CandidateDependenciesDetailsDTO,
     Dependency,
 } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-dependencies-details.dto.js';
-import type { CandidateExperiencesDetailDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-experience-details.dto.js';
+import type {
+    CandidateExperiencesDetailDTO,
+    Experience,
+} from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-experience-details.dto.js';
 import type {
     CandidateFamilyDetailsDTO,
     Family,
@@ -37,6 +45,7 @@ import {
     _serviceInfoSchema,
     _setApproversSchema,
 } from '$lib/schemas/mypsm/employment/new-hire/schema.js';
+import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service.js';
 import { EmploymentServices } from '$lib/services/implementation/mypsm/perjawatan/employment.service';
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/client';
@@ -51,8 +60,8 @@ import { superValidate } from 'sveltekit-superforms/client';
 export async function load({ params }) {
     // const currentLoggedInUser = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode);
 
-    const candidateIdRequestBody = {
-        candidateId: Number(params.id),
+    const candidateIdRequestBody: CandidateIDRequestBody = {
+        id: Number(params.id),
     };
 
     const personalDetailResponse: CommonResponseDTO =
@@ -126,7 +135,9 @@ export async function load({ params }) {
             candidateIdRequestBody,
         );
 
+    // ============================================================
     // Superformed the data
+    // ============================================================
     const personalInfoForm = await superValidate(
         personalDetailResponse.data?.details as CandidatePersonalDTO,
         _personalInfoSchema,
@@ -182,9 +193,151 @@ export async function load({ params }) {
         _setApproversSchema,
     );
 
-    serviceInfoForm.data.candidateId = candidateIdRequestBody.candidateId;
-    secretarySetApproversForm.data.candidateId =
-        candidateIdRequestBody.candidateId;
+    // serviceInfoForm.data.candidateId = candidateIdRequestBody.candidateId;
+    // secretarySetApproversForm.data.candidateId =
+    //     candidateIdRequestBody.candidateId;
+
+    // ==========================================================================
+    // Get Lookup Functions
+    // ==========================================================================
+    const identityCardColorLookupResponse: CommonResponseDTO =
+        await LookupServices.getICTypeEnums();
+
+    const identityCardColorLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(identityCardColorLookupResponse);
+
+    // ===========================================================================
+
+    const stateLookupResponse: CommonResponseDTO =
+        await LookupServices.getStateEnums();
+
+    const stateLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(stateLookupResponse);
+
+    // ===========================================================================
+
+    const countryLookupResponse: CommonResponseDTO =
+        await LookupServices.getCountryEnums();
+
+    const countryLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        countryLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const nationalityLookupResponse: CommonResponseDTO =
+        await LookupServices.getNationalityEnums();
+
+    const nationalityLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        nationalityLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const raceLookupResponse: CommonResponseDTO =
+        await LookupServices.getRaceEnums();
+
+    const raceLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(raceLookupResponse);
+
+    // ===========================================================================
+
+    const ethnicityLookupResponse: CommonResponseDTO =
+        await LookupServices.getEthnicEnums();
+
+    const ethnicityLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        ethnicityLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const religionLookupResponse: CommonResponseDTO =
+        await LookupServices.getReligionEnums();
+
+    const religionLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        religionLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const genderLookupResponse: CommonResponseDTO =
+        await LookupServices.getGenderEnums();
+
+    const genderLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(genderLookupResponse);
+
+    // ===========================================================================
+
+    const maritalLookupResponse: CommonResponseDTO =
+        await LookupServices.getMaritalEnums();
+
+    const maritalLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        maritalLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const positionLookupResponse: CommonResponseDTO =
+        await LookupServices.getPositionEnums();
+
+    const positionLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        positionLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const relationshipLookupResponse: CommonResponseDTO =
+        await LookupServices.getRelationshipEnums();
+
+    const relationshipLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        relationshipLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const institutionLookupResponse: CommonResponseDTO =
+        await LookupServices.getInstitutionEnums();
+
+    const institutionLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        institutionLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const educationLookupResponse: CommonResponseDTO =
+        await LookupServices.getHighestEducationEnums();
+
+    const educationLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        educationLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const sponsorshipLookupResponse: CommonResponseDTO =
+        await LookupServices.getSponsorshipEnums();
+
+    const sponsorshipLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        sponsorshipLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const majorMinorLookupResponse: CommonResponseDTO =
+        await LookupServices.getMajorMinorEnums();
+
+    const majorMinorLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        majorMinorLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const titleLookupResponse: CommonResponseDTO =
+        await LookupServices.getTitleEnums();
+
+    const titleLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(titleLookupResponse);
+
+    // ===========================================================================
 
     return {
         personalDetailResponse,
@@ -216,6 +369,24 @@ export async function load({ params }) {
         addFamilyModal,
         addNonFamilyModal,
         addNextOfKinModal,
+        selectionOptions: {
+            identityCardColorLookup,
+            stateLookup,
+            countryLookup,
+            nationalityLookup,
+            raceLookup,
+            ethnicityLookup,
+            religionLookup,
+            genderLookup,
+            maritalLookup,
+            positionLookup,
+            relationshipLookup,
+            institutionLookup,
+            educationLookup,
+            sponsorshipLookup,
+            majorMinorLookup,
+            titleLookup,
+        },
     };
 }
 
@@ -264,14 +435,14 @@ export const _submitExperienceForm = async (formData: object) => {
 
     const response: CommonResponseDTO =
         await EmploymentServices.createCurrentCandidateExperienceDetails(
-            form.data as CandidateExperiencesDetailDTO,
+            form.data as Experience,
         );
 
     return { response };
 };
 
 export const _submitActivityForm = async (formData: object) => {
-    const form = await superValidate(formData, _activityListSchema);
+    const form = await superValidate(formData, _activityInfoSchema);
 
     if (!form.valid) {
         getErrorToast();
@@ -280,7 +451,7 @@ export const _submitActivityForm = async (formData: object) => {
 
     const response: CommonResponseDTO =
         await EmploymentServices.createCurrentCandidateActivityDetails(
-            form.data as CandidateActivityDetailsDTO,
+            form.data as Activity,
         );
 
     return { response };

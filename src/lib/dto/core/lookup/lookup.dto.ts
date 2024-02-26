@@ -3,9 +3,10 @@
 // ===============================================================
 
 export interface LookupDTO {
-    id?:          number;
-    code:        string;
+    id?: number;
+    code: string;
     description: string;
+    year?: number;
 }
 
 // Converts JSON strings to/from your types
