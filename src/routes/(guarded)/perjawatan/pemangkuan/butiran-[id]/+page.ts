@@ -1,4 +1,5 @@
-export const load = async () => {
+export const load = async ({params}) => {
+    let actingType: string = params.id
     const param = {
         pageNum: 1,
         pageSize: 5,
@@ -25,8 +26,9 @@ export const load = async () => {
         { noPekerja: 28340, name: 'Kylian Mbapper', noKadPengenalan: 990122136443, gred: '-', namaJawatan: '-', penempatanSekarang: 'Bahagian Sains', permohonanPindaanPenempatan: 'Ada', keputusanPermohonanPindaanPenempatan: 'Lulus'},
     ];
 
+    
     return {
-        dataList, dataList2, dataList3, param,
+        dataList, dataList2, dataList3, param, actingType,
     };
 
 };

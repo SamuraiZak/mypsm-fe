@@ -14,6 +14,7 @@ export const load = async () => {
     };
 
     let dataList;
+    //table for urus setia
     if (currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code) {
         dataList = [
             { idPemangkuan: 'PMGK-1234', date: '19/02/2024', jumlahCalon: 10, status: 'Sedang Diproses' },
@@ -22,6 +23,7 @@ export const load = async () => {
             { idPemangkuan: 'PMGK-1234', date: '19/02/2024', jumlahCalon: 10, status: 'Sedang Diproses' },
         ]
     }
+    //table for penyokong, pengarah bahagian/negeri and pelulus
     else if ((currentRoleCode === UserRoleConstant.penyokong.code) || (currentRoleCode === UserRoleConstant.pengarahBahagian.code) ||
         (currentRoleCode === UserRoleConstant.pengarahNegeri.code) || (currentRoleCode === UserRoleConstant.pelulus.code)) {
         dataList = [
@@ -30,7 +32,9 @@ export const load = async () => {
             { noPekerja: 28341, name: 'Gareth Bale', noKadPengenalan: 990122136443, program: '-', skim: '-', gred: '-', status: 'Menunggu Kelulusan Dari Urus Setia' },
             { noPekerja: 28342, name: 'Karim Benzema', noKadPengenalan: 990122136443, program: '-', skim: '-', gred: '-', status: 'Menunggu Kelulusan Dari Urus Setia' },
         ]
-    } else if (currentRoleCode === UserRoleConstant.kakitangan.code) {
+    }
+    //table for kakitangan 
+    else if (currentRoleCode === UserRoleConstant.kakitangan.code) {
         dataList = [
             { idPemangkuan: 'PMGK-1234', tarikhTawaran: '19/02/2024', gred: 'N32', position: 'Setiausaha Pejabat', keputusanPemangkuan: 'Belum Dikemaskini' },
         ]
