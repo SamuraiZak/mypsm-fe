@@ -115,23 +115,6 @@
         <div
             class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
         >
-            <!-- Table filter placeholder -->
-            <FilterContainer>
-                <form class="flex w-full flex-row gap-3">
-                    <CustomTextField
-                        id="filterByICNumber"
-                        label="No. Kad Pengenalan"
-                        type="text"
-                        bind:val={filterByICNumber}
-                    />
-                    <CustomTextField
-                        id="filterByTemporaryID"
-                        label="ID Calon"
-                        type="text"
-                        bind:val={filterByTemporaryID}
-                    />
-                </form>
-            </FilterContainer>
             <ContentHeader title="Senarai Lantikan Baru"></ContentHeader>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
