@@ -89,7 +89,7 @@ export const _personalInfoSchema = z
 //==========================================================
 
 export const _academicInfoSchema = z.object({
-    // id: numberIdSchema,
+    id: numberIdSchema,
     majorId: numberIdSchema,
     minorId: numberIdSchema,
     countryId: numberIdSchema,
