@@ -7,4 +7,4 @@ import type { z } from 'zod';
 export type CandidateExperiencesDetailDTO = z.infer<
     typeof _experienceListSchema
 >;
-export type Dependency = z.infer<typeof _experienceInfoSchema>;
+export type Experience = z.infer<typeof _experienceInfoSchema>;
