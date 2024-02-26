@@ -37,6 +37,8 @@
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
+    import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
+    import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import { Checkbox, Modal, Tooltip } from 'flowbite-svelte';
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import {
@@ -238,6 +240,23 @@
         resetForm: true,
         multipleSubmits: 'prevent',
         validators: _experienceListSchema,
+        // async onSubmit() {
+        //     _submitExperienceForm($addExperienceModalForm);
+        // },
+    });
+
+    const {
+        form: familyInfoForm,
+        errors: familyInfoErrors,
+        enhance: familyInfoEnhance,
+    } = superForm(data.familyInfoForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        taintedMessage: false,
+        resetForm: true,
+        multipleSubmits: 'prevent',
+        validators: _familyListSchema,
         // async onSubmit() {
         //     _submitExperienceForm($addExperienceModalForm);
         // },
@@ -484,7 +503,7 @@
         label="Kembali"
         type="neutral"
         onClick={() => {
-            goto('./lantikan-baru');
+            goto('../../lantikan-baru');
         }}
     /></ContentHeader
 >
@@ -1362,13 +1381,225 @@
                 <SvgCheck></SvgCheck>
             </TextIconButton> -->
         </StepperContentHeader>
-        <StepperContentBody
-            ><div class="flex w-full flex-col gap-2">
-                <DynamicTable
-                    tableItems={data.familyInfoResponse.data?.details
-                        .dependenciesList}
-                ></DynamicTable>
-            </div>
+        <StepperContentBody>
+            <form
+                id="familyInfoForm"
+                class="flex w-full flex-col gap-2"
+                use:familyInfoEnhance
+                method="POST"
+            >
+            <!-- <ContentHeader title="Senarai Ahli Keluarga" borderClass="border-none"/> -->
+                <CustomTab>
+                    {#if $familyInfoForm.dependenciesList.length < 1}
+                        <div
+                            class="text-center text-sm italic text-system-primary"
+                        >
+                            Tiada data dijumpai. Sila tambah.
+                        </div>
+                    {:else}
+                        {#each $familyInfoForm.dependenciesList as _, i}
+                            <CustomTabContent
+                                title={$familyInfoForm.dependenciesList[i].name}
+                            >
+                                <CustomTextField
+                                    id="addName"
+                                    label={'Nama'}
+                                    type="text"
+                                    disabled={isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependenciesList[
+                                        i
+                                    ].name}
+                                ></CustomTextField>
+
+                                <CustomTextField
+                                    id="addAlternativeName"
+                                    label={'Nama Lain'}
+                                    type="text"
+                                    disabled={isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependenciesList[
+                                        i
+                                    ].alternativeName}
+                                ></CustomTextField>
+                                <!-- <CustomSelectField
+                                    id="addIdentityDocumentColor"
+                                    label={'Warna Kad Pengenalan'}
+                                    options={data.selectionOptions
+                                        .identityCardColorLookup}
+                                    disabled={isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependenciesList[
+                                        i
+                                    ].identityDocumentColor}
+                                ></CustomSelectField> -->
+                                <CustomTextField
+                                    id="addIdentityDocumentNumber"
+                                    type="number"
+                                    label={'Nombor Kad Pengenalan'}
+                                    disabled={isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependenciesList[
+                                        i
+                                    ].identityDocumentNumber}
+                                ></CustomTextField>
+
+                                <!-- <LongTextField
+                id="addAddress"
+                label={'Alamat'}
+                disabled={isReadonlyFamilyFormStepper}
+                bind:val={$familyInfoForm.dependenciesList[i].address}
+            ></LongTextField> -->
+
+                                <CustomTextField
+                                    id="addPostcode"
+                                    label={'Poskod'}
+                                    type="text"
+                                    disabled={isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependenciesList[
+                                        i
+                                    ].postcode}
+                                ></CustomTextField>
+
+                                <!-- <DateSelector
+                id="addBirthDate"
+                label={'Tarikh Lahir'}
+                bind:val={$proxyAddFamilyBirthDate}
+            ></DateSelector> -->
+
+                                <CustomSelectField
+                                    id="addBirthCountryId"
+                                    label={'Negara Kelahiran'}
+                                    options={data.selectionOptions
+                                        .countryLookup}
+                                    disabled={isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependenciesList[
+                                        i
+                                    ].birthCountryId}
+                                ></CustomSelectField>
+
+                                <CustomSelectField
+                                    id="addBirthStateId"
+                                    label={'Negeri Kelahiran'}
+                                    options={data.selectionOptions.stateLookup}
+                                    disabled={isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependenciesList[
+                                        i
+                                    ].birthStateId}
+                                ></CustomSelectField>
+
+                                <CustomSelectField
+                                    id="addRelationshipId"
+                                    label={'Hubungan'}
+                                    options={data.selectionOptions
+                                        .relationshipLookup}
+                                    disabled={isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependenciesList[
+                                        i
+                                    ].relationshipId}
+                                ></CustomSelectField>
+
+                                <CustomSelectField
+                                    id="addEducationLevelId"
+                                    label={'Taraf Pendidikan'}
+                                    options={data.selectionOptions
+                                        .educationLookup}
+                                    disabled={isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependenciesList[
+                                        i
+                                    ].educationLevelId}
+                                ></CustomSelectField>
+
+                                <CustomSelectField
+                                    id="addRaceId"
+                                    label={'Bangsa'}
+                                    options={data.selectionOptions.raceLookup}
+                                    disabled={isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependenciesList[
+                                        i
+                                    ].raceId}
+                                ></CustomSelectField>
+
+                                <CustomSelectField
+                                    id="addNationalityId"
+                                    label={'Kewarganegaraan'}
+                                    options={data.selectionOptions
+                                        .nationalityLookup}
+                                    disabled={isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependenciesList[
+                                        i
+                                    ].nationalityId}
+                                ></CustomSelectField>
+
+                                <CustomSelectField
+                                    id="addMaritalId"
+                                    label={'Status Perkhahwinan'}
+                                    options={data.selectionOptions
+                                        .maritalLookup}
+                                    disabled={isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependenciesList[
+                                        i
+                                    ].maritalId}
+                                ></CustomSelectField>
+
+                                <CustomSelectField
+                                    id="addGenderId"
+                                    label={'Jantina'}
+                                    options={data.selectionOptions.genderLookup}
+                                    disabled={isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependenciesList[
+                                        i
+                                    ].genderId}
+                                ></CustomSelectField>
+
+                                <CustomTextField
+                                    id="addWorkAddress"
+                                    label={'Alamat Majikan'}
+                                    type="text"
+                                    disabled={isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependenciesList[
+                                        i
+                                    ].workAddress}
+                                ></CustomTextField>
+
+                                <CustomTextField
+                                    id="addWorkPostcode"
+                                    label={'Poskod Majikan'}
+                                    type="text"
+                                    disabled={isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependenciesList[
+                                        i
+                                    ].workPostcode}
+                                ></CustomTextField>
+
+                                <CustomTextField
+                                    id="addPhoneNumber"
+                                    label={'Nombor Mobil'}
+                                    type="text"
+                                    disabled={isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependenciesList[
+                                        i
+                                    ].phoneNumber}
+                                ></CustomTextField>
+
+                                <!-- <DateSelector
+                id="addMarriageDate"
+                label={'Tarikh Kahwin'}
+                bind:val={$proxyAddFamilyMarriageDate}
+            ></DateSelector> -->
+
+                                <CustomSelectField
+                                    id="inSchool"
+                                    label={'Bersekolah'}
+                                    options={data.selectionOptions
+                                        .generalLookup}
+                                    disabled={isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependenciesList[
+                                        i
+                                    ].inSchool}
+                                ></CustomSelectField>
+                            </CustomTabContent>
+                        {/each}
+                    {/if}
+                </CustomTab>
+            </form>
+
             {#if !isReadonlyFamilyFormStepper}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
@@ -1514,20 +1745,18 @@
                         ></FileInputField>
                     </span>
                 </div> -->
-                    <ContentHeader title="Dokumen Sokongan"
-                        >
+                    <ContentHeader title="Dokumen Sokongan">
                         <!-- <div hidden={$fileSelectionList.length == 0}>
                             <FileInputField id="fileInput" {handleOnChange}
                             ></FileInputField>
                         </div> -->
-                        </ContentHeader
-                    >
-                    {#if $fileSelectionList.length === 0}
+                    </ContentHeader>
+                    <!-- {#if $fileSelectionList.length === 0}
                         <span
                             class="font-sans text-sm italic text-system-danger"
                             >Sila muat naik dokumen barkaitan.</span
                         >
-                    {/if}
+                    {/if} -->
                     <div
                         class="border-bdr-primaryp-5 flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border p-2.5"
                     >
@@ -1549,7 +1778,7 @@
                             >
                                 Pilih fail dari peranti anda.
                             </p> -->
-                            <div
+                            <!-- <div
                                 class="text-txt-tertiary"
                                 hidden={$fileSelectionList.length > 0}
                             >
@@ -1568,7 +1797,7 @@
                                         d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
                                     />
                                 </svg>
-                            </div>
+                            </div> -->
                             <!-- <div hidden={$fileSelectionList.length > 0}>
                                 <FileInputField id="fileInput" {handleOnChange}
                                 ></FileInputField>
