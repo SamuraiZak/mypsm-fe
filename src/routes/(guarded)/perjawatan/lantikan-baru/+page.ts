@@ -81,3 +81,21 @@ export const _updateTable = async (param: CommonListRequestDTO) => {
         response,
     };
 };
+
+export const _updateSubmittedListTable = async (param: CommonListRequestDTO) => {
+    const response: CommonResponseDTO =
+        await EmploymentServices.getNewHireList(param);
+    return {
+        param,
+        response,
+    };
+};
+
+export const _updateCandidateViewTable = async (param: CommonListRequestDTO) => {
+    const response: CommonResponseDTO =
+        await EmploymentServices.getCandidateListView();
+    return {
+        param,
+        response,
+    };
+};
