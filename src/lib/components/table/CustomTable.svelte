@@ -13,6 +13,12 @@
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import { onMount } from 'svelte';
     import generatePDF from '$lib/services/implementation/core/pdf-generator/puppeteer-pdf-generator.helper';
+    import { TableHelper } from '$lib/helpers/table-helper/table-helper';
+    import { TextAppearanceHelper } from '$lib/helpers/core/text-appearance.helper';
+    import { string } from 'zod';
+    import TextIconButton from '../button/TextIconButton.svelte';
+    import TableCellButton from '../button/TableCellButton.svelte';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     // import { generatePDF } from '$lib/helpers/core/puppeteer-pdf-generator.helper';
 
     // =====================================================================
@@ -21,6 +27,8 @@
 
     // table id
     export let tableId = 'tableId';
+
+    export let title = 'Table title';
 
     // props: data for the table
     export let tableData: TableDTO;
@@ -33,9 +41,13 @@
     // props: callback functions to handle view details
     export let detailActions = () => {};
 
+    export let selectActions = () => {};
+
     export let enableAdd = false;
 
     export let enableDetail = false;
+
+    export let enableSelect = false;
 
     const pageSizeOption = [
         {
@@ -174,6 +186,30 @@
 <div
     class="flex h-full max-h-full w-full flex-col rounded-md border border-ios-labelColors-separator-light"
 >
+    <div
+        class="flex h-10 min-h-10 w-full flex-row items-center justify-between px-2"
+    >
+        <!-- leading starts here -->
+        <div
+            class="flex h-full max-h-full min-h-full w-fit flex-row items-center justify-start"
+        >
+            <span class="text-base font-medium"> {title} </span>
+        </div>
+        <!-- leading ends here -->
+
+        <!-- trailing starts here -->
+        <div
+            class="flex h-full max-h-full min-h-full w-fit flex-row items-center justify-end gap-2"
+        >
+            {#if tableData.selectedData?.length ?? 0 > 0}
+                <span class="text-base font-normal">
+                    {tableData.selectedData?.length} item dipilih
+                </span>
+            {/if}
+        </div>
+
+        <!-- trailing ends here -->
+    </div>
     <!-- table info -->
 
     <div
@@ -248,56 +284,85 @@
                             </div>
                         </th>
                     {/if}
+                    <th
+                        class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
+                    >
+                        <div
+                            class="flex h-full flex-row items-center justify-center"
+                        >
+                            <span
+                                class="select-none text-center align-middle text-sm font-semibold text-ios-labelColors-secondaryLabel-light"
+                            >
+                                Bil.
+                            </span>
+                        </div>
+                    </th>
                     {#if tableData.data.length > 0}
                         {#each Object.keys(tableData.data[0]) as columnHeading}
-                            <!-- return column header -->
-                            <th
-                                on:click={() => {
-                                    // alert(Object.values({ columnHeading }));
-                                    handleSort(
-                                        Object.values({
-                                            columnHeading,
-                                        }).toString(),
-                                    );
-                                }}
-                                class="h-full cursor-pointer border-r border-ios-labelColors-separator-light px-2.5"
-                            >
-                                <div
-                                    class="flex h-full flex-row items-center justify-between"
-                                >
-                                    <span
-                                        class="select-none text-center align-middle text-sm font-semibold text-ios-labelColors-secondaryLabel-light"
-                                    >
-                                        {translate(columnHeading)}
-                                    </span>
-                                    <div
-                                        class="flex h-full max-h-full w-10 flex-col items-center justify-center gap-0"
-                                    >
-                                        <div
-                                            class="select-none {tableData.param
-                                                .orderBy ==
+                            {#if !tableData.hiddenData?.includes(columnHeading)}
+                                <!-- return column header -->
+                                <th
+                                    on:click={() => {
+                                        // alert(Object.values({ columnHeading }));
+                                        handleSort(
                                             Object.values({
                                                 columnHeading,
-                                            }).toString()
-                                                ? ' text-ios-labelColors-label-light'
-                                                : ' text-ios-labelColors-tertiaryLabel-light'}"
+                                            }).toString(),
+                                        );
+                                    }}
+                                    class="h-full cursor-pointer border-r border-ios-labelColors-separator-light px-2.5"
+                                >
+                                    <div
+                                        class="flex h-full flex-row items-center justify-between"
+                                    >
+                                        <span
+                                            class="select-none text-center align-middle text-sm font-semibold text-ios-labelColors-secondaryLabel-light"
                                         >
-                                            {#if tableData.param.orderType == 0 && tableData.param.orderBy == Object.values( { columnHeading }, ).toString()}
-                                                <SvgSortUp size="18"
-                                                ></SvgSortUp>
-                                            {:else}
-                                                <SvgSortDown size="18"
-                                                ></SvgSortDown>
-                                            {/if}
+                                            {translate(columnHeading)}
+                                        </span>
+                                        <div
+                                            class="flex h-full max-h-full w-10 flex-col items-center justify-center gap-0"
+                                        >
+                                            <div
+                                                class="select-none {tableData
+                                                    .param.orderBy ==
+                                                Object.values({
+                                                    columnHeading,
+                                                }).toString()
+                                                    ? ' text-ios-labelColors-label-light'
+                                                    : ' text-ios-labelColors-tertiaryLabel-light'}"
+                                            >
+                                                {#if tableData.param.orderType == 0 && tableData.param.orderBy == Object.values( { columnHeading }, ).toString()}
+                                                    <SvgSortUp size="18"
+                                                    ></SvgSortUp>
+                                                {:else}
+                                                    <SvgSortDown size="18"
+                                                    ></SvgSortDown>
+                                                {/if}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </th>
+                                </th>
+                            {/if}
                         {/each}
 
                         <!-- actions -->
 
                         {#if enableDetail}
+                            <th
+                                class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
+                            >
+                                <div
+                                    class="flex h-full flex-row items-center justify-center"
+                                >
+                                    <span
+                                        class="select-none text-center align-middle text-sm font-semibold text-ios-labelColors-secondaryLabel-light"
+                                    >
+                                    </span>
+                                </div>
+                            </th>
+                        {/if}
+                        {#if enableSelect}
                             <th
                                 class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
                             >
@@ -339,7 +404,7 @@
 
             <tbody>
                 <!-- loop trough all entries -->
-                {#each Object.values(tableData.data) as row}
+                {#each Object.values(tableData.data) as row, index}
                     <tr
                         class=" h-10 border-b border-ios-labelColors-separator-light bg-ios-backgroundColors-systemBackground-light"
                     >
@@ -381,8 +446,36 @@
                                 </div>
                             </td>
                         {/if}
+                        <td
+                            class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
+                        >
+                            <span
+                                class="relative text-center align-middle text-base font-normal"
+                            >
+                                {index + 1}
+                            </span>
+                        </td>
                         <!-- loop through each property -->
-                        {#each Object.values(row) as cell}
+                        {#each Object.keys(row) as key}
+                            {#if !TableHelper.isHidden(tableData.hiddenData ?? [], key)}
+                                <td
+                                    class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
+                                >
+                                    <span
+                                        class="relative text-center align-middle text-base font-normal"
+                                    >
+                                        {#if typeof TableHelper.getKey(row, key) == 'string'}
+                                            {TextAppearanceHelper.toProper(
+                                                TableHelper.getKey(row, key),
+                                            )}
+                                        {:else}
+                                            {TableHelper.getKey(row, key)}
+                                        {/if}
+                                    </span>
+                                </td>
+                            {/if}
+                        {/each}
+                        <!-- {#each Object.values(row) as cell}
                             <td
                                 class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
                             >
@@ -392,7 +485,7 @@
                                     {cell}
                                 </span>
                             </td>
-                        {/each}
+                        {/each} -->
 
                         <!-- actions column starts -->
                         {#if enableDetail}
@@ -410,6 +503,25 @@
                                     >
                                         <SvgEllipsisCircle></SvgEllipsisCircle>
                                     </IconButton>
+                                </div>
+                            </td>
+                        {/if}
+                        {#if enableSelect}
+                            <td
+                                class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
+                            >
+                                <div
+                                    class="flex h-full flex-row items-center justify-center"
+                                >
+                                    <TableCellButton
+                                        label="Pilih"
+                                        onClick={() => {
+                                            passData = row;
+                                            selectActions();
+                                        }}
+                                    >
+                                        <SvgCheck slot="icon"></SvgCheck>
+                                    </TableCellButton>
                                 </div>
                             </td>
                         {/if}
