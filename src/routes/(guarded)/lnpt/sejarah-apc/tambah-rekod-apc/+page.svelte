@@ -9,6 +9,7 @@
     import SvgChevronLeft from '$lib/assets/svg/SvgChevronLeft.svelte';
     import { goto } from '$app/navigation';
     import type { CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
+    import SvgInfoSolid from '$lib/assets/svg/SvgInfoSolid.svelte';
 
     export let data: PageData;
 
@@ -65,18 +66,40 @@
     >
         <!-- Table filter placeholder -->
 
-        <div class="flex max-h-full w-full flex-col items-start justify-start">
-            <ContentHeader
-                borderClass="border-none"
-                title="Senarai Semua Kakitangan"
-            ></ContentHeader>
+        <div
+            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
+        >
+            <div
+                class="flex h-fit min-h-5 w-full flex-row gap-2 rounded bg-blue-100 p-2"
+            >
+                <div
+                    class="flex h-5 max-h-5 min-h-5 w-5 min-w-5 max-w-5 flex-col items-center justify-start"
+                >
+                    <span
+                        class="flex h-5 w-full flex-col items-center justify-center text-center align-middle text-ios-systemColors-systemBlue-light"
+                    >
+                        <SvgInfoSolid></SvgInfoSolid>
+                    </span>
+                </div>
+                <div
+                    class="flex h-fit min-h-5 w-full flex-col items-start justify-start gap-2"
+                >
+                    <span
+                        class="flex h-5 w-full flex-col items-start justify-center text-center align-middle text-sm font-semibold text-ios-systemColors-systemBlue-light"
+                    >
+                        Sila pilih kakitangan yang terpilih untuk diberikan
+                        Anugerah Pekerja Cemerlang
+                    </span>
+                </div>
+            </div>
             <div class="h-fit max-h-full w-full pb-5">
                 <CustomTable
+                    title="Senarai Semua Kakitangan"
                     bind:tableData={table}
                     bind:passData={selectedDataRow}
-                    enableDetail
+                    enableSelect
                     onUpdate={_search}
-                    detailActions={() => {
+                    selectActions={() => {
                         const url =
                             '/lnpt/sejarah-apc/tambah-rekod-apc/butiran-' +
                             selectedDataRow?.employeeNumber;

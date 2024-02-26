@@ -4,6 +4,7 @@
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
+    import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import type { PageData } from './$types';
@@ -22,6 +23,7 @@
             totalPage: 1,
         },
         data: data.props.response.data?.dataList ?? [],
+        hiddenData: ['employeeId'],
     };
 
     async function _search() {
@@ -59,13 +61,15 @@
     <div
         class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
     >
-        <div class="flex max-h-full w-full flex-col items-start justify-start">
-            <ContentHeader
-                borderClass="border-none"
-                title="Senarai Sejarah APC Mengikut Tahun"
-            ></ContentHeader>
+        <div
+            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
+        >
+            <FilterCard></FilterCard>
             <div class="h-fit max-h-full w-full pb-5">
-                <CustomTable bind:tableData={table} onUpdate={_search}
+                <CustomTable
+                    title="Senarai Sejarah APC"
+                    bind:tableData={table}
+                    onUpdate={_search}
                 ></CustomTable>
             </div>
         </div>
