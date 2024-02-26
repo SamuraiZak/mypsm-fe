@@ -339,6 +339,19 @@ export async function load({ params }) {
 
     // ===========================================================================
 
+    const generalLookup: DropdownDTO[] = [
+        {
+            value: true,
+            name: 'Ya',
+        },
+        {
+            value: false,
+            name: 'Tidak',
+        },
+    ];
+
+    // ===========================================================================
+
     return {
         personalDetailResponse,
         personalInfoForm,
@@ -386,6 +399,7 @@ export async function load({ params }) {
             sponsorshipLookup,
             majorMinorLookup,
             titleLookup,
+            generalLookup,
         },
     };
 }
