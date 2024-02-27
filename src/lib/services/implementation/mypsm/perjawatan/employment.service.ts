@@ -11,17 +11,13 @@ import {
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
 import type { Activity } from '$lib/dto/mypsm/employment/new-hire/new-hire-activity.dto';
 import type { CandidateAcademicDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-academic-details.dto';
-// import type { CandidateDependenciesDetailsDTO, Dependency } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-dependencies-details.dto';
-import type { Experience } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-experience-details.dto';
-// import type { CandidateFamilyDetailsDTO, Family, Family } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-family-details.dto';
-// import type { CandidateNextOfKinDetailsDTO, NextOfKin } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto';
-import type { AddApprovalResultRequestBody } from '$lib/dto/core/common/add-approval-results-request.dto';
-import type { DocumentData } from '$lib/dto/core/common/add-documents-request.dto';
 import type { Dependency } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-dependencies-details.dto';
+import type { Experience } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-experience-details.dto';
 import type { Family } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-family-details.dto';
 import type { NextOfKin } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto';
 import type { CandidatePersonalDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto';
 import type { NewHireAddCandidateDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-create-candidate.dto';
+import type { CandidateNewHireApproverResultDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-get-approver-result.dto';
 import type { NewHireSecretaryServiceUpdateDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-secretary-service-update.dto';
 import type { NewHireSetApproversDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-set-approvers.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
@@ -559,14 +555,17 @@ export class EmploymentServices {
     }
 
     // create employee documents //multipart form
-    static async createCurrentCandidateDocuments(param: DocumentData) {
+    static async createCurrentCandidateDocuments(param: FormData) {
         try {
             const url: Input = 'employment/new_hire/document/add';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
                 .post(url, {
-                    body: JSON.stringify(param),
+                    body: param,
+                    headers: {
+                        'Content-type': '',
+                    },
                 })
                 .json();
 
@@ -678,7 +677,7 @@ export class EmploymentServices {
 
     // create new hire secretary result
     static async createCurrentCandidateSecretaryApproval(
-        param: AddApprovalResultRequestBody,
+        param: CandidateNewHireApproverResultDTO,
     ) {
         try {
             const url: Input = 'employment/new_hire/secretary_approval/add';
@@ -827,7 +826,7 @@ export class EmploymentServices {
 
     // create supporter approval
     static async createCurrentCandidateSupporterApproval(
-        param: AddApprovalResultRequestBody,
+        param: CandidateNewHireApproverResultDTO,
     ) {
         try {
             const url: Input = 'employment/new_hire/get_supporter_approval/add';
@@ -916,7 +915,7 @@ export class EmploymentServices {
 
     // create approver approval
     static async createCurrentCandidateApproverApproval(
-        param: AddApprovalResultRequestBody,
+        param: CandidateNewHireApproverResultDTO,
     ) {
         try {
             const url: Input = 'employment/new_hire/get_approver_approval/add';
