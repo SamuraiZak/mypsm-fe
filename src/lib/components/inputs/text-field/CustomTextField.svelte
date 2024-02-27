@@ -55,7 +55,7 @@
             name={id}
             {id}
             class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
-                ? 'bg-ios-systemColors-quaternarySystemFill-light'
+                ? 'bg-ios-systemColors-quaternarySystemFill-light text-ios-labelColors-secondaryLabel-light'
                 : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-sm [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
     {:else if type == 'password'}
@@ -68,7 +68,7 @@
                 name={id}
                 {id}
                 class="autofill:hide-default-inner-shadow block {disabled
-                    ? 'bg-ios-systemColors-quaternarySystemFill-light'
+                    ? 'bg-ios-systemColors-quaternarySystemFill-light text-ios-labelColors-secondaryLabel-light'
                     : 'bg-ios-backgroundColors-systemBackground-light'} h-8 w-full rounded border border-ios-labelColors-separator-light p-2 text-sm [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
             />
         {:else}
@@ -80,7 +80,7 @@
                 name={id}
                 {id}
                 class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
-                    ? 'bg-ios-systemColors-quaternarySystemFill-light'
+                    ? 'bg-ios-systemColors-quaternarySystemFill-light text-ios-labelColors-secondaryLabel-light'
                     : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-sm [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
             />
         {/if}
@@ -93,7 +93,7 @@
             name={id}
             {id}
             class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
-                ? 'bg-ios-systemColors-quaternarySystemFill-light'
+                ? 'bg-ios-systemColors-quaternarySystemFill-light text-ios-labelColors-secondaryLabel-light'
                 : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-sm [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
     {:else}
@@ -105,7 +105,7 @@
             name={id}
             {id}
             class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
-                ? 'bg-ios-systemColors-quaternarySystemFill-light'
+                ? 'bg-ios-systemColors-quaternarySystemFill-light text-ios-labelColors-secondaryLabel-light'
                 : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-sm [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
     {/if}
