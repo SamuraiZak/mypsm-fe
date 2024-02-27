@@ -235,7 +235,7 @@ export const _approvalResultSchema = z.object({
     id: numberIdSchema,
     name: z.string().readonly(),
     remark: longTextSchema,
-    isApproved: booleanSchema.default(true),
+    status: booleanSchema.default(true),
 });
 
 //==========================================================
@@ -263,5 +263,14 @@ export const _getNewHireApproversSchema = z.object({
 //==========================================================
 
 export const _documentsSchema = z.object({
+    template: z.string().readonly(),
+    attachment: z.string().readonly(),
     isReadonly: z.boolean().readonly(),
+});
+
+export const _uploadDocumentsSchema = z.object({
+    document: z
+        .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
+        .refine((f) => f.size < 1_000_000, 'Maximum 1 MB saiz muat naik.')
+        .array(),
 });
