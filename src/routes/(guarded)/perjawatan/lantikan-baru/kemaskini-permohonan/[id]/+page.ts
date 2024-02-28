@@ -422,6 +422,57 @@ export async function load({ params }) {
 
     // ===========================================================================
 
+    const gradeLookupResponse: CommonResponseDTO =
+        await LookupServices.getServiceGradeEnums();
+
+    const gradeLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsNameIsCode(gradeLookupResponse);
+
+    // ===========================================================================
+
+    const placementLookupResponse: CommonResponseDTO =
+        await LookupServices.getPlacementEnums();
+
+    const placementLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        placementLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const serviceGroupLookupResponse: CommonResponseDTO =
+        await LookupServices.getServiceGroupEnums();
+
+    const serviceGroupLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        serviceGroupLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const unitLookupResponse: CommonResponseDTO =
+        await LookupServices.getUnitEnums();
+
+    const unitLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(unitLookupResponse);
+
+    // ===========================================================================
+
+    const serviceTypeLookupResponse: CommonResponseDTO =
+        await LookupServices.getServiceTypeEnums();
+
+    const serviceTypeLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        serviceTypeLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const retirementBenefitLookupResponse: CommonResponseDTO =
+        await LookupServices.getRetirementTypeEnums();
+
+    const retirementBenefitLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(retirementBenefitLookupResponse);
+
+    // ===========================================================================
+
     const generalLookup: DropdownDTO[] = [
         {
             value: true,
@@ -492,6 +543,12 @@ export async function load({ params }) {
             generalLookup,
             employeeLookup,
             assetDeclarationLookup,
+            gradeLookup,
+            placementLookup,
+            serviceGroupLookup,
+            unitLookup,
+            serviceTypeLookup,
+            retirementBenefitLookup,
         },
     };
 }
@@ -707,8 +764,8 @@ export const _submitDocumentsForm = async (formData: FormData) => {
     return { response };
 };
 
-    export const _downloadDocument = async (param: string) => {
-        const response = await EmploymentServices.downloadAttachment(param);
+export const _downloadDocument = async (param: string) => {
+    const response = await EmploymentServices.downloadAttachment(param);
 
-        return { response };
-    };
+    return { response };
+};
