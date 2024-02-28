@@ -19,6 +19,7 @@
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import { goto } from '$app/navigation';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
+    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
 
     // import TextIconButton from '$lib/components/buttons/TextIconButton.svelte';
     // import ContentHeader from '$lib/components/header/ContentHeader.svelte';
@@ -291,20 +292,22 @@
         ></StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
-                <!-- <DropdownSelect
-                    dropdownType="label-left-full"
+                <CustomSelectField
+                    id="namaMesyuarat"
                     label="Nama Mesyuarat"
-                    options={meetings}
+                    val=""
                 />
+                <!--
                 <DateSelector label="Tarikh Mesyuarat" {handleDateChange}
                 ></DateSelector>
                 <RadioSingle legend="Keputusan" {options}></RadioSingle>
-                <DropdownSelect
-                    dropdownType="label-left-full"
+                -->
+                <CustomSelectField
+                    id="penempatanDiluluskan"
                     label="Penempatan Diluluskan (Jika Lulus)"
-                    options={meetings}
+                    val=""
                 />
-                <DateSelector label="Tarikh Mesyuarat" {handleDateChange}
+                <!--  <DateSelector label="Tarikh Mesyuarat" {handleDateChange}
                 ></DateSelector> -->
                 <CustomTextField
                     id="noRujukan"
@@ -313,12 +316,12 @@
                     val=""
                 />
                 <!-- <DateSelector label="Tarikh Surat" {handleDateChange}
-                ></DateSelector>
-                <DropdownSelect
-                    dropdownType="label-left-full"
+                ></DateSelector>-->
+                <CustomSelectField
+                    id="laporDiriKepada"
                     label="Lapor Diri Kepada"
-                    options={meetings}
-                /> -->
+                    val=""
+                />
             </div></StepperContentBody
         >
     </StepperContent>
@@ -328,7 +331,10 @@
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
                 <ContentHeader title="Butiran Penangguhan" />
-                <CustomTextField id="tarikhAsalPertukaran" label="Tarikh Asal Pertukaran" val="dd/mm/yyyy"
+                <CustomTextField
+                    id="tarikhAsalPertukaran"
+                    label="Tarikh Asal Pertukaran"
+                    val="dd/mm/yyyy"
                 ></CustomTextField>
                 <CustomTextField
                     id="tarikhPertukaranYangDipohon"
@@ -336,7 +342,7 @@
                     val="dd/mm/yyyy"
                 ></CustomTextField>
                 <CustomTextField
-                id="alasanPenangguhan"
+                    id="alasanPenangguhan"
                     label="Alasan Penangguhan"
                     val="Sedang Diproses"
                 ></CustomTextField>
@@ -355,7 +361,7 @@
             ><div class="flex w-full flex-col gap-2">
                 <ContentHeader title="Butiran Penangguhan" />
                 <CustomTextField
-                id="tarikhAsalPertukaran"
+                    id="tarikhAsalPertukaran"
                     label="Tarikh Asal Pertukaran"
                     val="dd/mm/yyyy"
                 />
@@ -365,7 +371,7 @@
                     val="dd/mm/yyyy"
                 />
                 <CustomTextField
-                id="alasanPenangguhan"
+                    id="alasanPenangguhan"
                     label="Alasan Penangguhan"
                     val="Sedang Diproses"
                 />
@@ -381,8 +387,12 @@
                     label="Keputusan"
                     options={meetings}
                 /> -->
-                <CustomTextField id="namaPelulus"
-                label="Nama Pelulus" placeholder="-" val="" />
+                <CustomTextField
+                    id="namaPelulus"
+                    label="Nama Pelulus"
+                    placeholder="-"
+                    val=""
+                />
             </div></StepperContentBody
         >
     </StepperContent>
@@ -392,33 +402,44 @@
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
                 <!-- <DateSelector label="Tarikh Lapor Diri" handleDateChange /> -->
-                <CustomTextField id="penempatanBaru" label="Penempatan Baru" placeholder="-" val='' />
+                <CustomTextField
+                    id="penempatanBaru"
+                    label="Penempatan Baru"
+                    placeholder="-"
+                    val=""
+                />
                 <div class="my-2.5 text-base font-semibold">
                     Masukkan Nama Penyokong dan Pelulus
                 </div>
-                <CustomTextField id="namaPenyokong" label="Name Penyokong" placeholder="-" val=""/>
-                <CustomTextField id="namPelulus" label="Name Pelulus" placeholder="-" val=""/>
+                <CustomTextField
+                    id="namaPenyokong"
+                    label="Name Penyokong"
+                    placeholder="-"
+                    val=""
+                />
+                <CustomTextField
+                    id="namPelulus"
+                    label="Name Pelulus"
+                    placeholder="-"
+                    val=""
+                />
             </div></StepperContentBody
         >
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Keputusan Pertukaran"
             ><TextIconButton
-                type=primary
+                type="primary"
                 label="Hantar"
                 onClick={() => {
                     goto('../');
-                }}></TextIconButton
-            ></StepperContentHeader
+                }}
+            ></TextIconButton></StepperContentHeader
         >
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
                 <ContentHeader title="Keputusan Permohonan Pertukaran" />
-                <!-- <DropdownSelect
-                    dropdownType="label-left-full"
-                    label="Keputusan"
-                    options={meetings}
-                /> -->
+                <CustomSelectField id="keputusan" label="Keputusan" val="" />
             </div></StepperContentBody
         >
     </StepperContent>
