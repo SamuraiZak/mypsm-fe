@@ -963,4 +963,9 @@ export class LookupServices {
         const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
         return LookupHelper.toDropdownId(lookupItems);
     };
+
+    static setSelectOptionsInString = (param: CommonResponseDTO): DropdownDTO[] => {
+        const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
+        return LookupHelper.toDropdown(lookupItems);
+    };
 }

@@ -38,13 +38,14 @@ export const _addNewHireSchema = z.object({
 
 export const _personalInfoSchema = z
     .object({
-        id: z.number().readonly(),
+        id: z.number().readonly().nullable(),
         name: shortTextSchema,
         alternativeName: z.string(),
         identityDocumentNumber: shortTextSchema,
         identityDocumentColor: codeSchema,
         email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
-        propertyDeclarationDate: maxDateSchema,
+        assetDeclarationStatusId: numberIdSchema,
+        propertyDeclarationDate: z.date().nullable(),
         birthDate: maxDateSchema,
         birthStateId: numberIdSchema,
         birthCountryId: numberIdSchema,
@@ -55,7 +56,6 @@ export const _personalInfoSchema = z
         titleId: numberIdSchema,
         ethnicId: numberIdSchema,
         maritalId: numberIdSchema,
-        assetDeclarationStatusId: numberIdSchema,
         homeAddress: shortTextSchema,
         homeCountryId: numberIdSchema,
         homeStateId: numberIdSchema,
@@ -68,28 +68,43 @@ export const _personalInfoSchema = z
         mailPostcode: shortTextSchema,
         isExPoliceOrSoldier: booleanSchema,
         isInternalRelationship: booleanSchema,
-        employeeNumber: z.string(),
-        employeeName: z.string(),
-        employeePosition: z.string(),
-        relationshipId: z.number(),
-        isReadOnly: z.boolean().readonly(),
+        employeeNumber: z.string().nullable(),
+        employeeName: z.string().nullable(),
+        employeePosition: z.string().nullable(),
+        relationshipId: z.number().nullable(),
+        isReadOnly: z.boolean().readonly().nullable(),
     })
-    .refine((data) => !data.isInternalRelationship, {
-        message: 'Sila isi medan ini.',
-        path: [
-            'employeeNumber',
-            'employeeName',
-            'employeePosition',
-            'relationshipId',
-        ],
-    });
+    .superRefine(
+        ({ assetDeclarationStatusId, isInternalRelationship }, ctx) => {
+            if (assetDeclarationStatusId !== 0) {
+                ctx.addIssue({
+                    code: 'custom',
+                    message: 'Tarikh tidak boleh kosong.',
+                    path: ['propertyDeclarationDate'],
+                });
+            }
+
+            if (isInternalRelationship) {
+                ctx.addIssue({
+                    code: 'custom',
+                    message: 'Sila isi medan ini.',
+                    path: [
+                        'employeeNumber',
+                        'employeeName',
+                        'employeePosition',
+                        'relationshipId',
+                    ],
+                });
+            }
+        },
+    );
 
 //==========================================================
 //================== Academic Schema =====================
 //==========================================================
 
 export const _academicInfoSchema = z.object({
-    id: numberIdSchema,
+    id: z.number().readonly().nullable(),
     majorId: numberIdSchema,
     minorId: numberIdSchema,
     countryId: numberIdSchema,
@@ -104,7 +119,7 @@ export const _academicInfoSchema = z.object({
 
 export const _academicListSchema = z.object({
     academicList: z.array(_academicInfoSchema),
-    isReadOnly: z.boolean().readonly(),
+    isReadOnly: z.boolean().readonly().nullable(),
 });
 
 //==========================================================
@@ -123,7 +138,7 @@ export const _experienceInfoSchema = z.object({
 
 export const _experienceListSchema = z.object({
     experienceList: z.array(_experienceInfoSchema),
-    isReadOnly: z.boolean().readonly(),
+    isReadOnly: z.boolean().readonly().nullable(),
 });
 
 //==========================================================
@@ -139,7 +154,7 @@ export const _activityInfoSchema = z.object({
 
 export const _activityListSchema = z.object({
     activityList: z.array(_activityInfoSchema),
-    isReadOnly: z.boolean().readonly(),
+    isReadOnly: z.boolean().readonly().nullable(),
 });
 
 //==========================================================
@@ -171,17 +186,17 @@ export const _relationsSchema = z.object({
 
 export const _familyListSchema = z.object({
     dependenciesList: z.array(_relationsSchema),
-    isReadOnly: z.boolean().readonly(),
+    isReadOnly: z.boolean().readonly().nullable(),
 });
 
 export const _dependencyListSchema = z.object({
     dependenciesList: z.array(_relationsSchema),
-    isReadOnly: z.boolean().readonly(),
+    isReadOnly: z.boolean().readonly().nullable(),
 });
 
 export const _nextOfKinListSchema = z.object({
     nextOfKinsList: z.array(_relationsSchema),
-    isReadOnly: z.boolean().readonly(),
+    isReadOnly: z.boolean().readonly().nullable(),
 });
 
 //==========================================================
@@ -224,7 +239,7 @@ export const _serviceInfoSchema = z.object({
     itp: numberSchema,
     epw: numberSchema,
     cola: numberSchema,
-    isReadOnly: z.boolean().readonly(),
+    isReadOnly: z.boolean().readonly().nullable(),
 });
 
 //==========================================================
@@ -232,10 +247,10 @@ export const _serviceInfoSchema = z.object({
 //==========================================================
 
 export const _approvalResultSchema = z.object({
-    id: numberIdSchema,
+    id: z.number().readonly().nullable(),
     name: z.string().readonly(),
     remark: longTextSchema,
-    isApproved: booleanSchema.default(true),
+    status: booleanSchema.default(true),
 });
 
 //==========================================================
@@ -253,7 +268,7 @@ export const _setApproversSchema = z.object({
 //==========================================================
 
 export const _getNewHireApproversSchema = z.object({
-    isReadonly: z.boolean().readonly(),
+    isReadonly: z.boolean().readonly().nullable(),
     supporterId: z.number().readonly(),
     approverId: z.number().readonly(),
 });
@@ -263,5 +278,14 @@ export const _getNewHireApproversSchema = z.object({
 //==========================================================
 
 export const _documentsSchema = z.object({
-    isReadonly: z.boolean().readonly(),
+    template: z.string().readonly(),
+    attachment: z.string().readonly(),
+    isReadonly: z.boolean().readonly().nullable(),
+});
+
+export const _uploadDocumentsSchema = z.object({
+    document: z
+        .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
+        .refine((f) => f.size < 1_000_000, 'Maximum 1 MB saiz muat naik.')
+        .array(),
 });

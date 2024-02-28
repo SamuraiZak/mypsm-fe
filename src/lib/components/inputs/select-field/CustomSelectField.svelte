@@ -5,7 +5,7 @@
 
     export let label: string = 'Label';
     export let id: string;
-    export let val: string | number;
+    export let val: string | number | boolean | null;
     export let errors: string[] | undefined = [] ?? undefined;
     export let disabled: boolean = false;
 

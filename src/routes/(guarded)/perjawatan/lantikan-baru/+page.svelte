@@ -10,21 +10,21 @@
     import CustomTable from '$lib/components/table/CustomTable.svelte';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
-    import type { PageData } from './$types';
+    import type { LayoutData } from './$types';
 
     import {
+        _updateApproverViewTable,
         _updateCandidateViewTable,
         _updateSubmittedListTable,
+        _updateSupporterViewTable,
         _updateTable,
-    } from './+page';
-    import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
+    } from './+layout';
 
-    export let data: PageData;
-    export let filterByICNumber: string;
-    export let filterByTemporaryID: string;
+    export let data: LayoutData;
     let rowData: any;
     let param: CommonListRequestDTO = data.param;
 
+    // Table list - new application view for secretary role
     let newCandidateTable: TableDTO = {
         param: param,
         meta: {
@@ -34,28 +34,7 @@
             totalPage: 1,
         },
         data: data.newCandidateList ?? [],
-    };
-
-    let submittedListTable: TableDTO = {
-        param: param,
-        meta: {
-            pageNum: 1,
-            pageSize: 5,
-            totalData: 4,
-            totalPage: 1,
-        },
-        data: data.submittedFormList ?? [],
-    };
-
-    let candidateViewTable: TableDTO = {
-        param: param,
-        meta: {
-            pageNum: 1,
-            pageSize: 5,
-            totalData: 4,
-            totalPage: 1,
-        },
-        data: data.candidateViewTable ?? [],
+        hiddenData: ['candidateId'],
     };
 
     async function _searchNewCandidate() {
@@ -72,31 +51,114 @@
         });
     }
 
+    // Table list - submitted view for secretary role
+    let submittedListTable: TableDTO = {
+        param: param,
+        meta: {
+            pageNum: 1,
+            pageSize: 5,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: data.submittedFormList ?? [],
+        hiddenData: ['candidateId'],
+    };
+
     async function _searchSubmittedList() {
-        _updateSubmittedListTable(newCandidateTable.param).then((value) => {
-            newCandidateTable.data = value.response.data?.dataList ?? [];
-            newCandidateTable.meta = value.response.data?.meta ?? {
+        _updateSubmittedListTable(submittedListTable.param).then((value) => {
+            submittedListTable.data = value.response.data?.dataList ?? [];
+            submittedListTable.meta = value.response.data?.meta ?? {
                 pageSize: 1,
                 pageNum: 1,
                 totalData: 1,
                 totalPage: 1,
             };
-            newCandidateTable.param.pageSize = newCandidateTable.meta.pageSize;
-            newCandidateTable.param.pageNum = newCandidateTable.meta.pageNum;
+            submittedListTable.param.pageSize =
+                submittedListTable.meta.pageSize;
+            submittedListTable.param.pageNum = submittedListTable.meta.pageNum;
         });
     }
 
+    // Table list - for candidate role
+    let candidateViewTable: TableDTO = {
+        param: param,
+        meta: {
+            pageNum: 1,
+            pageSize: 5,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: data.candidateViewTable ?? [],
+        hiddenData: ['candidateId'],
+    };
+
     async function _searchCandidateView() {
-        _updateCandidateViewTable(newCandidateTable.param).then((value) => {
-            newCandidateTable.data = value.response.data?.dataList ?? [];
-            newCandidateTable.meta = value.response.data?.meta ?? {
+        _updateCandidateViewTable(candidateViewTable.param).then((value) => {
+            candidateViewTable.data = value.response.data?.dataList ?? [];
+            candidateViewTable.meta = value.response.data?.meta ?? {
                 pageSize: 1,
                 pageNum: 1,
                 totalData: 1,
                 totalPage: 1,
             };
-            newCandidateTable.param.pageSize = newCandidateTable.meta.pageSize;
-            newCandidateTable.param.pageNum = newCandidateTable.meta.pageNum;
+            candidateViewTable.param.pageSize =
+                candidateViewTable.meta.pageSize;
+            candidateViewTable.param.pageNum = candidateViewTable.meta.pageNum;
+        });
+    }
+
+    // Table list - for supporter role
+    let supporterViewTable: TableDTO = {
+        param: param,
+        meta: {
+            pageNum: 1,
+            pageSize: 5,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: data.supporterViewList ?? [],
+        hiddenData: ['candidateId'],
+    };
+
+    async function _searchSupporterView() {
+        _updateSupporterViewTable(supporterViewTable.param).then((value) => {
+            supporterViewTable.data = value.response.data?.dataList ?? [];
+            supporterViewTable.meta = value.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            supporterViewTable.param.pageSize =
+                supporterViewTable.meta.pageSize;
+            supporterViewTable.param.pageNum = supporterViewTable.meta.pageNum;
+        });
+    }
+
+    // Table list - for approver role
+    let approverViewTable: TableDTO = {
+        param: param,
+        meta: {
+            pageNum: 1,
+            pageSize: 5,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: data.approverViewList ?? [],
+        hiddenData: ['candidateId'],
+    };
+
+    async function _searchApproverView() {
+        _updateApproverViewTable(approverViewTable.param).then((value) => {
+            approverViewTable.data = value.response.data?.dataList ?? [];
+            approverViewTable.meta = value.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            approverViewTable.param.pageSize = approverViewTable.meta.pageSize;
+            approverViewTable.param.pageNum = approverViewTable.meta.pageNum;
         });
     }
 </script>
@@ -115,24 +177,10 @@
         <div
             class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
         >
-            <!-- Table filter placeholder -->
-            <FilterContainer>
-                <form class="flex w-full flex-row gap-3">
-                    <CustomTextField
-                        id="filterByICNumber"
-                        label="No. Kad Pengenalan"
-                        type="text"
-                        bind:val={filterByICNumber}
-                    />
-                    <CustomTextField
-                        id="filterByTemporaryID"
-                        label="ID Calon"
-                        type="text"
-                        bind:val={filterByTemporaryID}
-                    />
-                </form>
-            </FilterContainer>
-            <ContentHeader title="Senarai Lantikan Baru"></ContentHeader>
+            <ContentHeader
+                title="Senarai Lantikan Baru"
+                borderClass="border-none"
+            ></ContentHeader>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
@@ -149,24 +197,11 @@
                 ></CustomTable>
             </div>
         </div>
-    {:else}
+    {:else if data.isEmploymentSecretaryRole}
         <CustomTab>
             <CustomTabContent title="Senarai Rekod Selesai Diisi">
                 <!-- Table filter placeholder -->
-                <FilterContainer>
-                    <CustomTextField
-                        id="filterByICNumber"
-                        label="No. Kad Pengenalan"
-                        type="text"
-                        bind:val={filterByICNumber}
-                    />
-                    <CustomTextField
-                        id="filterByTemporaryID"
-                        label="ID Calon"
-                        type="text"
-                        bind:val={filterByTemporaryID}
-                    />
-                </FilterContainer>
+                <FilterContainer>filter to be in here..</FilterContainer>
                 <div
                     class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
                 >
@@ -211,6 +246,54 @@
                 </div>
             </CustomTabContent>
         </CustomTab>
+    {:else if data.isSupporterRole}
+        <div
+            class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
+        >
+            <ContentHeader
+                title="Senarai Lantikan Baru"
+                borderClass="border-none"
+            ></ContentHeader>
+            <div
+                class="flex max-h-full w-full flex-col items-start justify-start"
+            >
+                <CustomTable
+                    onUpdate={_searchSupporterView}
+                    enableDetail
+                    bind:tableData={supporterViewTable}
+                    bind:passData={rowData}
+                    detailActions={() => {
+                        const route = `./lantikan-baru/kemaskini-permohonan/${rowData.candidateId}`;
+
+                        goto(route);
+                    }}
+                ></CustomTable>
+            </div>
+        </div>
+    {:else if data.isApproverRole}
+        <div
+            class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
+        >
+            <ContentHeader
+                title="Senarai Lantikan Baru"
+                borderClass="border-none"
+            ></ContentHeader>
+            <div
+                class="flex max-h-full w-full flex-col items-start justify-start"
+            >
+                <CustomTable
+                    onUpdate={_searchApproverView}
+                    enableDetail
+                    bind:tableData={approverViewTable}
+                    bind:passData={rowData}
+                    detailActions={() => {
+                        const route = `./lantikan-baru/kemaskini-permohonan/${rowData.candidateId}`;
+
+                        goto(route);
+                    }}
+                ></CustomTable>
+            </div>
+        </div>
     {/if}
 </section>
 
