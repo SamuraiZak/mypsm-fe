@@ -34,6 +34,7 @@
             totalPage: 1,
         },
         data: data.newCandidateList ?? [],
+        hiddenData: ['candidateId'],
     };
 
     async function _searchNewCandidate() {
@@ -60,6 +61,7 @@
             totalPage: 1,
         },
         data: data.submittedFormList ?? [],
+        hiddenData: ['candidateId'],
     };
 
     async function _searchSubmittedList() {
@@ -87,6 +89,7 @@
             totalPage: 1,
         },
         data: data.candidateViewTable ?? [],
+        hiddenData: ['candidateId'],
     };
 
     async function _searchCandidateView() {
@@ -114,6 +117,7 @@
             totalPage: 1,
         },
         data: data.supporterViewList ?? [],
+        hiddenData: ['candidateId'],
     };
 
     async function _searchSupporterView() {
@@ -141,6 +145,7 @@
             totalPage: 1,
         },
         data: data.approverViewList ?? [],
+        hiddenData: ['candidateId'],
     };
 
     async function _searchApproverView() {
