@@ -1,6 +1,6 @@
 <script lang="ts">
     export let id = 'target';
-    export let handleOnInput = () => {};
+    export let handleOnInput = (e: Event) => {e};
     export let label: string = '';
 </script>
 
