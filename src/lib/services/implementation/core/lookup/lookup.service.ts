@@ -964,8 +964,17 @@ export class LookupServices {
         return LookupHelper.toDropdownId(lookupItems);
     };
 
-    static setSelectOptionsInString = (param: CommonResponseDTO): DropdownDTO[] => {
+    static setSelectOptionsInString = (
+        param: CommonResponseDTO,
+    ): DropdownDTO[] => {
         const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
         return LookupHelper.toDropdown(lookupItems);
+    };
+
+    static setSelectOptionsNameIsCode = (
+        param: CommonResponseDTO,
+    ): DropdownDTO[] => {
+        const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
+        return LookupHelper.toDropdownNameIsCode(lookupItems);
     };
 }
