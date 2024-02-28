@@ -126,6 +126,34 @@ export class EmploymentServices {
         }
     }
 
+    // get new hire status
+    static async getNewHireStatus(param: CandidateIDRequestBody) {
+        try {
+            const url: Input = 'employment/new_hire/detail';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     // get list of employee's personal details
     static async getCurrentCandidatePersonalDetails(
         param: CandidateIDRequestBody,
@@ -554,6 +582,31 @@ export class EmploymentServices {
         }
     }
 
+    // download documents
+    static async downloadAttachment(param: string) {
+        try {
+            const url: Input = param;
+
+            // get the promise response
+            const promiseRes = await http.get(url, {
+                prefixUrl: '',
+                headers: {
+                    Accept: 'application/pdf',
+                    'Content-type': 'application/pdf',
+                },
+            });
+
+            if (promiseRes.status == 200) {
+                window.open(promiseRes.url);
+                return promiseRes.url;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     // create employee documents //multipart form
     static async createCurrentCandidateDocuments(param: FormData) {
         try {
@@ -929,6 +982,34 @@ export class EmploymentServices {
 
             // await toast for resolved or rejected state
             const response: Response = await getPromiseToast(promiseRes);
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // get mypsm ID
+    static async getCurrentCandidateMypsmID(param: CandidateIDRequestBody) {
+        try {
+            const url: Input = 'employment/new_hire/employee/detail';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
