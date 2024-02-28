@@ -857,7 +857,7 @@ export class EmploymentServices {
     //  get approver list of candidates
     static async getApproverListOfCandidates(param: CommonListRequestDTO) {
         try {
-            const url: Input = 'employments/new-hire-approver-approvals';
+            const url: Input = 'employment/new_hire/get_approver_approval/list';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
