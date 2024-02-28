@@ -86,53 +86,34 @@
 <section
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
 >
-    <CustomTab>
-        <!-- Gred 1-54 -->
-        <CustomTabContent title="Kenaikan Gred 1-54">
-            <ContentHeader
-                borderClass="border-none"
-                title="Senarai rekod kenaikan pangkat bagi Gred 1-54"
-            />
-            <div
-                class="flex max-h-full w-full flex-col items-start justify-start"
-            >
-                <CustomTable
-                    onUpdate={_search}
-                    enableDetail
-                    detailActions={() =>
-                        goto('/perjawatan/kenaikan-pangkat/butiran-1_54')}
-                    bind:tableData={table}
-                ></CustomTable>
-            </div>
-        </CustomTabContent>
-
-        <!-- TBK 1&2 - Kumpulan Sokongan -->
-        <CustomTabContent title="Kenaikan Pangkat TBK 1&2 - Kumpulan Sokongan">
-            <ContentHeader
-                borderClass="border-none"
-                title="Senarai rekod kenaikan pangkat bagi TBK 1&2 - Kumpulan Sokongan"
-            />
-            <div
-                class="flex max-h-full w-full flex-col items-start justify-start"
-            >
-                <!-- Table Here -->
-                <CustomTable
-                    onUpdate={_search}
-                    enableDetail
-                    detailActions={() =>
-                        goto('/perjawatan/kenaikan-pangkat/butiran-tbk_1dan2')}
-                    bind:tableData={table}
-                ></CustomTable>
-            </div>
-        </CustomTabContent>
-
-        <!-- pengarah bahagian/negeri should not view this particular tab -->
-        {#if data.currentRoleCode !== depDirectorRoleCode && data.currentRoleCode !== stateDirectorRoleCode}
-            <!-- Gred Utama -->
-            <CustomTabContent title="Kenaikan Pangkat Gred Utama">
+    {#if data.currentRoleCode !== employeeRoleCode}
+        <CustomTab>
+            <!-- Gred 1-54 -->
+            <CustomTabContent title="Kenaikan Gred 1-54">
                 <ContentHeader
                     borderClass="border-none"
-                    title="Senarai rekod kenaikan pangkat bagi Gred Utama"
+                    title="Senarai rekod kenaikan pangkat bagi Gred 1-54"
+                />
+                <div
+                    class="flex max-h-full w-full flex-col items-start justify-start"
+                >
+                    <CustomTable
+                        onUpdate={_search}
+                        enableDetail
+                        detailActions={() =>
+                            goto('/perjawatan/kenaikan-pangkat/butiran-1_54')}
+                        bind:tableData={table}
+                    ></CustomTable>
+                </div>
+            </CustomTabContent>
+
+            <!-- TBK 1&2 - Kumpulan Sokongan -->
+            <CustomTabContent
+                title="Kenaikan Pangkat TBK 1&2 - Kumpulan Sokongan"
+            >
+                <ContentHeader
+                    borderClass="border-none"
+                    title="Senarai rekod kenaikan pangkat bagi TBK 1&2 - Kumpulan Sokongan"
                 />
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
@@ -143,12 +124,51 @@
                         enableDetail
                         detailActions={() =>
                             goto(
-                                '/perjawatan/kenaikan-pangkat/butiran-gred_utama',
+                                '/perjawatan/kenaikan-pangkat/butiran-tbk_1dan2',
                             )}
                         bind:tableData={table}
                     ></CustomTable>
                 </div>
             </CustomTabContent>
-        {/if}
-    </CustomTab>
+
+            <!-- pengarah bahagian/negeri should not view this particular tab -->
+            {#if data.currentRoleCode !== depDirectorRoleCode && data.currentRoleCode !== stateDirectorRoleCode}
+                <!-- Gred Utama -->
+                <CustomTabContent title="Kenaikan Pangkat Gred Utama">
+                    <ContentHeader
+                        borderClass="border-none"
+                        title="Senarai rekod kenaikan pangkat bagi Gred Utama"
+                    />
+                    <div
+                        class="flex max-h-full w-full flex-col items-start justify-start"
+                    >
+                        <!-- Table Here -->
+                        <CustomTable
+                            onUpdate={_search}
+                            enableDetail
+                            detailActions={() =>
+                                goto(
+                                    '/perjawatan/kenaikan-pangkat/butiran-gred_utama',
+                                )}
+                            bind:tableData={table}
+                        ></CustomTable>
+                    </div>
+                </CustomTabContent>
+            {/if}
+        </CustomTab>
+    {:else if data.currentRoleCode === employeeRoleCode}
+        <div class="w-full flex flex-col justify-start px-5 py-2">
+            <ContentHeader
+                borderClass="border-none"
+                title="Senarai Rekod Kenaikan Pangkat"
+            />
+            <CustomTable
+                title=""
+                tableData={table}
+                enableDetail
+                detailActions={() =>
+                    goto('/perjawatan/kenaikan-pangkat/butiran-rekod')}
+            />
+        </div>
+    {/if}
 </section>

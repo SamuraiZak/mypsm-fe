@@ -14,7 +14,7 @@
 
     // Role Code
     let employeeRoleCode: string = UserRoleConstant.kakitangan.code;
-    let secretaryRoleCode: string = UserRoleConstant.urusSetiaPerjawatan.code 
+    let secretaryRoleCode: string = UserRoleConstant.urusSetiaPerjawatan.code;
     let supporterRoleCode: string = UserRoleConstant.penyokong.code;
     let approverRoleCode: string = UserRoleConstant.pelulus.code;
     let stateDirectorRoleCode: string = UserRoleConstant.pengarahNegeri.code;
@@ -76,7 +76,7 @@
             />
         </ContentHeader>
     {:else}
-        <ContentHeader title="Rekod Pemangkuan"/>
+        <ContentHeader title="Rekod Pemangkuan" />
     {/if}
 </section>
 
@@ -97,6 +97,7 @@
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
                     <CustomTable
+                        title=""
                         onUpdate={_search}
                         enableDetail
                         detailActions={() => goto('./pemangkuan/butiran-1_54')}
@@ -116,9 +117,11 @@
                 >
                     <!-- Table Here -->
                     <CustomTable
+                        title=""
                         onUpdate={_search}
                         enableDetail
-                        detailActions={() => goto('./pemangkuan/butiran-flexi_41')}
+                        detailActions={() =>
+                            goto('./pemangkuan/butiran-flexi_41')}
                         bind:tableData={table}
                     ></CustomTable>
                 </div>
@@ -135,9 +138,11 @@
                 >
                     <!-- Table Here -->
                     <CustomTable
+                        title=""
                         onUpdate={_search}
                         enableDetail
-                        detailActions={() => goto('./pemangkuan/butiran-gred_utama')}
+                        detailActions={() =>
+                            goto('./pemangkuan/butiran-gred_utama')}
                         bind:tableData={table}
                     ></CustomTable>
                 </div>
@@ -152,13 +157,14 @@
                 borderClass="border-none"
             />
             <CustomTable
+                title=""
                 enableDetail
                 detailActions={() => goto('./pemangkuan/butiran-rekod')}
                 onUpdate={_search}
                 tableData={table}
             ></CustomTable>
         </div>
-    {:else if data.currentRoleCode === approverRoleCode}
+    <!-- {:else if data.currentRoleCode === approverRoleCode}
         <CustomTab>
             <CustomTabContent title="Permohonan Penangguhan/Pindaan Penempatan">
                 <ContentHeader
@@ -169,8 +175,10 @@
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
                     <CustomTable
+                        title=""
                         onUpdate={_search}
                         enableDetail
+                        detailActions={() => {}}
                         bind:tableData={table}
                     ></CustomTable>
                 </div>
@@ -184,15 +192,16 @@
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
-                    <!-- Table Here -->
+                    
                     <CustomTable
+                        title=""
                         onUpdate={_search}
                         enableDetail
                         bind:tableData={table}
                     ></CustomTable>
                 </div>
             </CustomTabContent>
-        </CustomTab>
+        </CustomTab> -->
     {:else if data.currentRoleCode === supporterRoleCode || stateDirectorRoleCode || depDirectorRoleCode}
         <CustomTab>
             <!-- Gred 1-54 -->
@@ -205,6 +214,7 @@
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
                     <CustomTable
+                        title=""
                         onUpdate={_search}
                         enableDetail
                         detailActions={() => goto('./pemangkuan/butiran-1_54')}
@@ -224,9 +234,11 @@
                 >
                     <!-- Table Here -->
                     <CustomTable
+                        title=""
                         onUpdate={_search}
                         enableDetail
-                        detailActions={() => goto('./pemangkuan/butiran-flexi_41')}
+                        detailActions={() =>
+                            goto('./pemangkuan/butiran-flexi_41')}
                         bind:tableData={table}
                     ></CustomTable>
                 </div>
@@ -234,7 +246,7 @@
 
             <!-- pengarah bahagian/negeri should not view this particular tab -->
             <!-- Gred Utama -->
-            {#if data.currentRoleCode === supporterRoleCode}
+            {#if data.currentRoleCode === supporterRoleCode || data.currentRoleCode === approverRoleCode}
                 <CustomTabContent title="Gred Utama">
                     <ContentHeader
                         borderClass="border-none"
@@ -245,9 +257,11 @@
                     >
                         <!-- Table Here -->
                         <CustomTable
+                            title=""
                             onUpdate={_search}
                             enableDetail
-                            detailActions={() => goto('./pemangkuan/butiran-gred_utama')}
+                            detailActions={() =>
+                                goto('./pemangkuan/butiran-gred_utama')}
                             bind:tableData={table}
                         ></CustomTable>
                     </div>

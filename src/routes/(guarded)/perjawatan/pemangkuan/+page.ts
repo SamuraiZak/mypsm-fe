@@ -4,8 +4,6 @@ import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
 export const load = async () => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
 
-    console.log(currentRoleCode)
-    console.log(UserRoleConstant.kakitangan.code)
     const param = {
         pageNum: 1,
         pageSize: 5,
