@@ -6,10 +6,17 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
+    import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
+    import FilterNumberField from '$lib/components/table/filter/FilterNumberField.svelte';
+    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
-    import { _updateTable } from './+page';
+    import {
+        _submitVerifyMeetingResultDetailForm,
+        _updateTable,
+        _verifyMeetingResultDetailSchema,
+    } from './+page';
     import type { PageData } from './$types';
     export let data: PageData;
     import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
@@ -17,6 +24,11 @@
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
+    import {
+        getErrorToast,
+        getLoginSuccessToast,
+    } from '$lib/helpers/core/toast.helper';
+    import { superForm } from 'sveltekit-superforms/client';
 
     let currentRoleCode: string | null;
     let employeeRoleCode: string = UserRoleConstant.kakitangan.code;
@@ -91,6 +103,7 @@
 
     async function _search() {
         _updateTable(table.param).then((value) => {
+            console.log(value);
             table.data = value.response?.dataList ?? [];
             table.meta = value.response?.meta ?? {
                 pageSize: 1,
@@ -127,6 +140,34 @@
     ];
 
     let dropdownVal: string;
+
+    // validation
+
+    const {
+        form: verifyMeetingResultDetailForm,
+        errors: verifyMeetingResultDetailError,
+        enhance: verifyMeetingResultDetailEnhance,
+    } = superForm(data.verifyMeetingResultDetailForm, {
+        SPA: true,
+        validators: _verifyMeetingResultDetailSchema,
+        onUpdate(event) {},
+        onSubmit() {
+            _submitVerifyMeetingResultDetailForm(
+                $verifyMeetingResultDetailForm,
+            );
+            // .then((value) => {
+            //     result = value.result;
+
+            //     if (result == 'success') {
+            //         getLoginSuccessToast().then(() => {
+            //             goto('/lnpt/sejarah-apc');
+            //         });
+            //     } else {
+            //         getErrorToast();
+            //     }
+            // });
+        },
+    });
 </script>
 
 <!-- content header starts here -->
@@ -593,7 +634,28 @@
                     />
                 </StepperContentHeader>
                 <StepperContentBody>
-                    <CustomTable bind:tableData={selectedStaffTable} />
+                    <FilterCard onSearch={_search}>
+                        <FilterTextField
+                            bind:inputValue={table.param.filter.grade}
+                            label="Gred"
+                        ></FilterTextField>
+                        <FilterTextField
+                            bind:inputValue={table.param.filter.position}
+                            label="Jawatan"
+                        ></FilterTextField>
+                        <FilterTextField
+                            bind:inputValue={table.param.filter.name}
+                            label="Nama"
+                        ></FilterTextField>
+                        <FilterTextField
+                            bind:inputValue={table.param.filter.identityCard}
+                            label="No. Kad Pengenalan"
+                        ></FilterTextField>
+                    </FilterCard>
+                    <CustomTable
+                        title="Senarai Kakitangan Yang Dipilih"
+                        bind:tableData={selectedStaffTable}
+                    />
                 </StepperContentBody>
             </StepperContent>
 
@@ -611,12 +673,15 @@
                         label="Seterusnya"
                         icon="next"
                         type="primary"
-                        onClick={() => goNext()}
+                        form="verifyMeetingResultDetailForm"
                     />
                 </StepperContentHeader>
                 <StepperContentBody>
                     <form
                         class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                        id="verifyMeetingResultDetailForm"
+                        method="POST"
+                        use:verifyMeetingResultDetailEnhance
                     >
                         <!-- Director Only -->
                         {#if currentRoleCode === stateDirectorRoleCode || currentRoleCode === depDirectorRoleCode}
@@ -650,13 +715,15 @@
                             <CustomSelectField
                                 label="Nama Urus Setia Integriti"
                                 id="integritySecretaryName"
-                                bind:val={dropdownVal}
+                                errors={$verifyMeetingResultDetailError.integritySecretaryName}
+                                bind:val={$verifyMeetingResultDetailForm.integritySecretaryName}
                                 options={dropdownOptions}
                             />
                             <CustomSelectField
                                 label="Nama Pengarah Bahagian / Negeri"
                                 id="directorName"
-                                bind:val={dropdownVal}
+                                errors={$verifyMeetingResultDetailError.directorName}
+                                bind:val={$verifyMeetingResultDetailForm.directorName}
                                 options={dropdownOptions}
                             />
 
@@ -664,24 +731,48 @@
                                 title="Kemaskini Senarai Calon Yang Terpilih Mengikut Keputusan Mesyuarat"
                                 borderClass="border-none"
                             />
+                            <FilterCard onSearch={_search}>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter.grade}
+                                    label="Gred"
+                                ></FilterTextField>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter
+                                        .position}
+                                    label="Jawatan"
+                                ></FilterTextField>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter.name}
+                                    label="Nama"
+                                ></FilterTextField>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter
+                                        .identityCard}
+                                    label="No. Kad Pengenalan"
+                                ></FilterTextField>
+                            </FilterCard>
                             <ContentHeader
                                 title="Tindakan: Tetapkan untuk semua calon yang berkaitan."
                                 borderClass="border-none"
                             >
-                                <TextIconButton
-                                    type="primary"
-                                    label="Lulus"
-                                    icon="check"
-                                    onClick={() => {}}
-                                />
                                 <TextIconButton
                                     type="danger"
                                     label="Tidak Lulus"
                                     icon="cancel"
                                     onClick={() => {}}
                                 />
+                                <TextIconButton
+                                    type="primary"
+                                    label="Lulus"
+                                    icon="check"
+                                    onClick={() => {}}
+                                />
                             </ContentHeader>
-                            <CustomTable bind:tableData={table} />
+                            <CustomTable
+                                onUpdate={_search}
+                                title=""
+                                bind:tableData={table}
+                            />
                         {/if}
                     </form>
                 </StepperContentBody>
@@ -763,7 +854,7 @@
                             title="Kemaskini Senarai Calon Yang Terpilih Mengikut Keputusan Mesyuarat"
                             borderClass="border-none"
                         />
-                        <CustomTable bind:tableData={table} />
+                        <CustomTable title="" bind:tableData={table} />
                     </form>
                 </StepperContentBody>
             </StepperContent>
@@ -813,16 +904,60 @@
                                 type="text"
                                 val="79%"
                             />
+                            <FilterCard onSearch={_search}>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter.grade}
+                                    label="Gred"
+                                ></FilterTextField>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter
+                                        .position}
+                                    label="Jawatan"
+                                ></FilterTextField>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter.name}
+                                    label="Nama"
+                                ></FilterTextField>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter
+                                        .identityCard}
+                                    label="No. Kad Pengenalan"
+                                ></FilterTextField>
+                            </FilterCard>
                             <ContentHeader
                                 title="Tindakan: Tetapkan untuk semua kakitangan berkaitan"
                                 borderClass="border-none"
                             />
-                            <CustomTable enableDetail bind:tableData={table} />
+                            <CustomTable
+                                title=""
+                                enableDetail
+                                bind:tableData={table}
+                            />
                         {:else if !detailOpen}
                             <ContentHeader
                                 title="Senarai Calon Yang Terpilih"
                                 borderClass="border-none"
                             />
+                            <FilterCard onSearch={_search}>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter.grade}
+                                    label="Gred"
+                                ></FilterTextField>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter
+                                        .position}
+                                    label="Jawatan"
+                                ></FilterTextField>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter.name}
+                                    label="Nama"
+                                ></FilterTextField>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter
+                                        .identityCard}
+                                    label="No. Kad Pengenalan"
+                                ></FilterTextField>
+                            </FilterCard>
                             <CustomTable
                                 enableDetail
                                 detailActions={() => (detailOpen = true)}
@@ -915,40 +1050,62 @@
                         class="flex w-full flex-col justify-start gap-2.5 pb-10"
                     >
                         {#if !detailOpen}
-                            <CustomTextField
-                                label="Nama Mesyuarat"
-                                id="meetingName"
-                                type="text"
-                                val="Mesyuarat 1/2"
-                            />
-                            <CustomTextField
-                                label="Tarikh Mesyuarat"
-                                id="meetingDate"
-                                type="text"
-                                val="21/02/2024"
-                            />
-                            <CustomTextField
-                                label="Keputusan Mesyuarat"
-                                id="meetingResult"
-                                type="text"
-                                val="Berjaya"
-                            />
-                            <CustomTextField
-                                label="Jawatan Pemangkuan"
-                                id="actingPosition"
-                                type="text"
-                                val="Setiausaha Pejabat"
-                            />
-                            <CustomTextField
-                                label="Gred Pemangkuan"
-                                id="actingGrade"
-                                type="text"
-                                val="N32"
-                            />
+                            {#if data.actingType === '1_54'}
+                                <CustomTextField
+                                    label="Nama Mesyuarat"
+                                    id="meetingName"
+                                    type="text"
+                                    val="Mesyuarat 1/2"
+                                />
+                                <CustomTextField
+                                    label="Tarikh Mesyuarat"
+                                    id="meetingDate"
+                                    type="text"
+                                    val="21/02/2024"
+                                />
+                                <CustomTextField
+                                    label="Keputusan Mesyuarat"
+                                    id="meetingResult"
+                                    type="text"
+                                    val="Berjaya"
+                                />
+                                <CustomTextField
+                                    label="Jawatan Pemangkuan"
+                                    id="actingPosition"
+                                    type="text"
+                                    val="Setiausaha Pejabat"
+                                />
+                                <CustomTextField
+                                    label="Gred Pemangkuan"
+                                    id="actingGrade"
+                                    type="text"
+                                    val="N32"
+                                />
+                            {/if}
                             <ContentHeader
                                 title="Senarai Calon Yang Terpilih"
                                 borderClass="border-none"
                             />
+                            <FilterCard onSearch={_search}>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter.grade}
+                                    label="Gred"
+                                ></FilterTextField>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter
+                                        .position}
+                                    label="Jawatan"
+                                ></FilterTextField>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter.name}
+                                    label="Nama"
+                                ></FilterTextField>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter
+                                        .identityCard}
+                                    label="No. Kad Pengenalan"
+                                ></FilterTextField>
+                            </FilterCard>
                             <CustomTable
                                 enableDetail
                                 detailActions={() => (detailOpen = true)}
@@ -961,18 +1118,21 @@
                             />
                             <CustomTextField
                                 label="No. Pekerja"
+                                disabled
                                 id="employeeNumber"
                                 type="text"
                                 val="4701"
                             />
                             <CustomTextField
                                 label="Nama"
+                                disabled
                                 id="employeeName"
                                 type="text"
                                 val="Cristiano Ronaldo"
                             />
                             <CustomTextField
                                 label="No. Kad Pengenalan"
+                                disabled
                                 id="identificationNumber"
                                 type="text"
                                 val="901222-13-6445"
@@ -1045,7 +1205,28 @@
                                 type="text"
                                 val="21/02/2024"
                             />
+                            <FilterCard onSearch={_search}>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter.grade}
+                                    label="Gred"
+                                ></FilterTextField>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter
+                                        .position}
+                                    label="Jawatan"
+                                ></FilterTextField>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter.name}
+                                    label="Nama"
+                                ></FilterTextField>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter
+                                        .identityCard}
+                                    label="No. Kad Pengenalan"
+                                ></FilterTextField>
+                            </FilterCard>
                             <CustomTable
+                                title=""
                                 bind:tableData={table}
                                 enableDetail
                                 detailActions={() => (detailOpen = true)}
@@ -1057,18 +1238,21 @@
                             />
                             <CustomTextField
                                 label="No. Pekerja"
+                                disabled
                                 id="employeeNumber"
                                 type="text"
                                 val="4701"
                             />
                             <CustomTextField
                                 label="Nama"
+                                disabled
                                 id="employeeName"
                                 type="text"
                                 val="Gareth Bale"
                             />
                             <CustomTextField
                                 label="No. Kad Pengenalan"
+                                disabled
                                 id="identificationNumber"
                                 type="text"
                                 val="950626-13-6445"
@@ -1141,6 +1325,22 @@
                                 title="Senarai Calon Yang Terpilih"
                                 borderClass="border-none"
                             />
+                            <FilterCard onSearch={_search}>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter
+                                        .employeeNumber}
+                                    label="No. Pekerja"
+                                ></FilterTextField>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter.name}
+                                    label="Nama"
+                                ></FilterTextField>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter
+                                        .identityCard}
+                                    label="No. Kad Pengenalan"
+                                ></FilterTextField>
+                            </FilterCard>
                             <CustomTable
                                 enableDetail
                                 detailActions={() => {
@@ -1155,6 +1355,7 @@
                             />
                             <CustomTextField
                                 label="Kakitangan Memerlukan Penangguhan/Pindaan Penempatan?"
+                                disabled
                                 id="amendmentRequest"
                                 type="text"
                                 val="Ya"
@@ -1192,24 +1393,28 @@
                             {#if data.actingType === '1_54'}
                                 <CustomTextField
                                     label="Tarikh Asal Lapor Diri"
+                                    disabled
                                     id="originalReportingDate"
                                     type="text"
                                     val="21/02/2024"
                                 />
                                 <CustomTextField
                                     label="Penempatan Asal"
+                                    disabled
                                     id="originalPlacement"
                                     type="text"
                                     val="Bahagian Pengurusan"
                                 />
                                 <CustomTextField
                                     label="Tarikh Lapor Diri Baru Dipohon"
+                                    disabled
                                     id="requestedReportingDate"
                                     type="text"
                                     val="22/02/2024"
                                 />
                                 <CustomTextField
                                     label="Pindaan Penempatan Dipohon"
+                                    disabled
                                     id="requestedPlacementAmendment"
                                     type="text"
                                     val="Bahagian Teknologi"
@@ -1288,7 +1493,26 @@
                             title="Senarai Calon Terpilih"
                             borderClass="border-none"
                         />
-                        <CustomTable bind:tableData={actingResultTable} />
+                        <FilterCard onSearch={_search}>
+                            <FilterTextField
+                                bind:inputValue={table.param.filter
+                                    .employeeNumber}
+                                label="No. Pekerja"
+                            ></FilterTextField>
+                            <FilterTextField
+                                bind:inputValue={table.param.filter.name}
+                                label="Nama"
+                            ></FilterTextField>
+                            <FilterTextField
+                                bind:inputValue={table.param.filter
+                                    .identityCard}
+                                label="No. Kad Pengenalan"
+                            ></FilterTextField>
+                        </FilterCard>
+                        <CustomTable
+                            title=""
+                            bind:tableData={actingResultTable}
+                        />
                     </form>
                 </StepperContentBody>
             </StepperContent>
@@ -1332,6 +1556,22 @@
                                 title="Senarai Calon Terpilih"
                                 borderClass="border-none"
                             />
+                            <FilterCard onSearch={_search}>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter
+                                        .employeeNumber}
+                                    label="No. Pekerja"
+                                ></FilterTextField>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter.name}
+                                    label="Nama"
+                                ></FilterTextField>
+                                <FilterTextField
+                                    bind:inputValue={table.param.filter
+                                        .identityCard}
+                                    label="No. Kad Pengenalan"
+                                ></FilterTextField>
+                            </FilterCard>
                             <CustomTable
                                 enableDetail
                                 detailActions={() => (detailOpen = true)}
@@ -1344,18 +1584,21 @@
                             />
                             <CustomTextField
                                 label="No. Pekerja"
+                                disabled
                                 id="employeeNumber"
                                 type="text"
                                 val="4701"
                             />
                             <CustomTextField
                                 label="Nama"
+                                disabled
                                 id="employeeName"
                                 type="text"
                                 val="Gareth Bale"
                             />
                             <CustomTextField
                                 label="No. Kad Pengenalan"
+                                disabled
                                 id="identificationNumber"
                                 type="text"
                                 val="920625-13-6447"
@@ -1372,6 +1615,9 @@
                             <CustomSelectField
                                 label="Keputusan Pemangkuan"
                                 id="actingResult"
+                                disabled={currentRoleCode !== secretaryRoleCode
+                                    ? true
+                                    : false}
                                 bind:val={dropdownVal}
                                 options={meetingResultOption}
                             />
@@ -1420,140 +1666,12 @@
                 </StepperContentBody>
             </StepperContent>
 
-            <StepperContent>
-                <StepperContentHeader
-                    title="Semak Pengesahan Keputusan Pemangkuan"
-                >
-                    {#if !detailOpen}
-                        <TextIconButton
-                            label="Kembali"
-                            icon="previous"
-                            type="neutral"
-                            onClick={() => goPrevious()}
-                        />
-                        <TextIconButton
-                            label="Selesai"
-                            icon="check"
-                            type="primary"
-                            onClick={() => goto('./pemangkuan/urus-setia')}
-                        />
-                    {:else}
-                        <TextIconButton
-                            label="Tutup"
-                            icon="cancel"
-                            type="neutral"
-                            onClick={() => (detailOpen = false)}
-                        />
-                    {/if}
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <form
-                        class="flex w-full flex-col justify-start gap-2.5 pb-10"
-                    >
-                        {#if !detailOpen}
-                            <ContentHeader
-                                title="Senarai Calon Yang Terpilih"
-                                borderClass="border-none"
-                            />
-                            <CustomTable
-                                bind:tableData={table}
-                                enableDetail
-                                detailActions={() => (detailOpen = true)}
-                            />
-                        {:else}
-                            <ContentHeader
-                                title="Maklumat Calon"
-                                borderClass="border-none"
-                            />
-                            <CustomTextField
-                                label="No. Pekerja"
-                                id="employeeNumber"
-                                type="text"
-                                val="4701"
-                            />
-                            <CustomTextField
-                                label="Nama"
-                                id="employeeName"
-                                type="text"
-                                val="Gareth Bale"
-                            />
-                            <CustomTextField
-                                label="No. Kad Pengenalan"
-                                id="identificationNumber"
-                                type="text"
-                                val="920625-13-6447"
-                            />
-                            <ContentHeader
-                                title="Butiran Pemangkuan"
-                                borderClass="border-none"
-                            />
-                            <CustomTextField
-                                label="Nama Jawatan Baru"
-                                id="newPosition"
-                                type="text"
-                                val="Jurutera"
-                            />
-                            <CustomTextField
-                                label="Gred Baru"
-                                id="newGrade"
-                                type="text"
-                                val="E24"
-                            />
-                            <CustomTextField
-                                label="Penempatan Baru"
-                                id="newPlacement"
-                                type="text"
-                                val="LKIM SARAWAK - KUCHING"
-                            />
-                            <CustomTextField
-                                label="Pengarah Baru"
-                                id="newDirector"
-                                type="text"
-                                val="Pep Guardiola"
-                            />
-                            <CustomTextField
-                                label="Tarikh Lapor Diri"
-                                id="reportingDate"
-                                type="text"
-                                val="23/02/2024"
-                            />
-                            <ContentHeader
-                                title="Pengesah Keputusan"
-                                borderClass="border-none"
-                            />
-                            <CustomTextField
-                                label="Nama Penyokong"
-                                id="supporterName"
-                                type="text"
-                                val="Taylor Swift"
-                            />
-                            <CustomTextField
-                                label="Keputusan"
-                                id="supporterResult"
-                                type="text"
-                                val="Sokong"
-                            />
-                            <CustomTextField
-                                label="Nama Pelulus"
-                                id="approverName"
-                                type="text"
-                                val="Luis Suarez"
-                            />
-                            <CustomTextField
-                                label="Keputusan"
-                                id="approverResult"
-                                type="text"
-                                val="Lulus"
-                            />
-                        {/if}
-                    </form>
-                </StepperContentBody>
-            </StepperContent>
-
-            <!-- Stepper for supporter only -->
-            {#if currentRoleCode === supporterRoleCode}
+            <!-- Stepper for supporter and approver only -->
+            {#if currentRoleCode === supporterRoleCode || currentRoleCode === approverRoleCode}
                 <StepperContent>
-                    <StepperContentHeader title="Penyokongan Pemangkuan">
+                    <StepperContentHeader
+                        title="Penyokongan & Pelulusan Pemangkuan"
+                    >
                         <TextIconButton
                             label="Hantar"
                             icon="check"
@@ -1565,22 +1683,201 @@
                         <form
                             class="flex w-full flex-col justify-start gap-2.5 pb-10"
                         >
-                            <ContentHeader
-                                title="Keputusan daripada Penyokong"
-                                borderClass="border-none"
-                            />
                             <span
                                 class="pb-2 text-sm italic text-ios-activeColors-activeBlue-light"
                             >
                                 Keputusan akan dihantar ke emel klinik dan Urus
                                 Setia berkaitan.
                             </span>
+                            <ContentHeader
+                                title="Keputusan daripada Penyokong"
+                                borderClass="border-none"
+                            />
                             <CustomTextField
                                 label="Tindakan/Ulasan"
                                 id="supporterRemark"
                                 type="text"
                                 val="Butiran lengkap.."
                             />
+                            <span>radio here</span>
+                        </form>
+                        {#if currentRoleCode === approverRoleCode}
+                            <form
+                                class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                            >
+                                <ContentHeader
+                                    title="Keputusan daripada Penyokong"
+                                    borderClass="border-none"
+                                />
+                                <CustomTextField
+                                    label="Tindakan/Ulasan"
+                                    id="approverRemark"
+                                    type="text"
+                                    val="Butiran lengkap.."
+                                />
+                                <span>radio here</span>
+                            </form>
+                        {/if}
+                    </StepperContentBody>
+                </StepperContent>
+            {/if}
+
+            {#if currentRoleCode === secretaryRoleCode}
+                <StepperContent>
+                    <StepperContentHeader
+                        title="Semak Pengesahan Keputusan Pemangkuan"
+                    >
+                        {#if !detailOpen}
+                            <TextIconButton
+                                label="Kembali"
+                                icon="previous"
+                                type="neutral"
+                                onClick={() => goPrevious()}
+                            />
+                            <TextIconButton
+                                label="Selesai"
+                                icon="check"
+                                type="primary"
+                                onClick={() => goto('./pemangkuan/urus-setia')}
+                            />
+                        {:else}
+                            <TextIconButton
+                                label="Tutup"
+                                icon="cancel"
+                                type="neutral"
+                                onClick={() => (detailOpen = false)}
+                            />
+                        {/if}
+                    </StepperContentHeader>
+                    <StepperContentBody>
+                        <form
+                            class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                        >
+                            {#if !detailOpen}
+                                <ContentHeader
+                                    title="Senarai Calon Yang Terpilih"
+                                    borderClass="border-none"
+                                />
+                                <FilterCard onSearch={_search}>
+                                    <FilterTextField
+                                        bind:inputValue={table.param.filter
+                                            .employeeNumber}
+                                        label="No. Pekerja"
+                                    ></FilterTextField>
+                                    <FilterTextField
+                                        bind:inputValue={table.param.filter
+                                            .name}
+                                        label="Nama"
+                                    ></FilterTextField>
+                                    <FilterTextField
+                                        bind:inputValue={table.param.filter
+                                            .identityCard}
+                                        label="No. Kad Pengenalan"
+                                    ></FilterTextField>
+                                </FilterCard>
+                                <CustomTable
+                                    bind:tableData={table}
+                                    enableDetail
+                                    detailActions={() => (detailOpen = true)}
+                                />
+                            {:else}
+                                <ContentHeader
+                                    title="Maklumat Calon"
+                                    borderClass="border-none"
+                                />
+                                <CustomTextField
+                                    label="No. Pekerja"
+                                    disabled
+                                    id="employeeNumber"
+                                    type="text"
+                                    val="4701"
+                                />
+                                <CustomTextField
+                                    label="Nama"
+                                    disabled
+                                    id="employeeName"
+                                    type="text"
+                                    val="Gareth Bale"
+                                />
+                                <CustomTextField
+                                    label="No. Kad Pengenalan"
+                                    disabled
+                                    id="identificationNumber"
+                                    type="text"
+                                    val="920625-13-6447"
+                                />
+                                <ContentHeader
+                                    title="Butiran Pemangkuan"
+                                    borderClass="border-none"
+                                />
+                                <CustomTextField
+                                    label="Nama Jawatan Baru"
+                                    disabled
+                                    id="newPosition"
+                                    type="text"
+                                    val="Jurutera"
+                                />
+                                <CustomTextField
+                                    label="Gred Baru"
+                                    disabled
+                                    id="newGrade"
+                                    type="text"
+                                    val="E24"
+                                />
+                                <CustomTextField
+                                    label="Penempatan Baru"
+                                    disabled
+                                    id="newPlacement"
+                                    type="text"
+                                    val="LKIM SARAWAK - KUCHING"
+                                />
+                                <CustomTextField
+                                    label="Pengarah Baru"
+                                    disabled
+                                    id="newDirector"
+                                    type="text"
+                                    val="Pep Guardiola"
+                                />
+                                <CustomTextField
+                                    label="Tarikh Lapor Diri"
+                                    disabled
+                                    id="reportingDate"
+                                    type="text"
+                                    val="23/02/2024"
+                                />
+                                <ContentHeader
+                                    title="Pengesah Keputusan"
+                                    borderClass="border-none"
+                                />
+                                <CustomTextField
+                                    label="Nama Penyokong"
+                                    disabled
+                                    id="supporterName"
+                                    type="text"
+                                    val="Taylor Swift"
+                                />
+                                <CustomTextField
+                                    label="Keputusan"
+                                    disabled
+                                    id="supporterResult"
+                                    type="text"
+                                    val="Sokong"
+                                />
+                                <CustomTextField
+                                    label="Nama Pelulus"
+                                    disabled
+                                    id="approverName"
+                                    type="text"
+                                    val="Luis Suarez"
+                                />
+                                <CustomTextField
+                                    label="Keputusan"
+                                    disabled
+                                    id="approverResult"
+                                    type="text"
+                                    val="Lulus"
+                                />
+                            {/if}
                         </form>
                     </StepperContentBody>
                 </StepperContent>
@@ -1665,24 +1962,28 @@
                         />
                         <CustomTextField
                             label="Gred"
+                            disabled
                             id="grade"
                             type="text"
                             val="N32"
                         />
                         <CustomTextField
                             label="Jawatan"
+                            disabled
                             id="position"
                             type="text"
                             val="Setiausaha Pejabat"
                         />
                         <CustomTextField
                             label="Tarikh Berkuatkuasa"
+                            disabled
                             id="effectiveDate"
                             type="text"
                             val="23/02/2024"
                         />
                         <CustomTextField
                             label="Penempatan Baru"
+                            disabled
                             id="newPlacement"
                             type="text"
                             val="LKIM SARAWAK - KUCHING"
@@ -1721,7 +2022,9 @@
             </StepperContent>
 
             <StepperContent>
-                <StepperContentHeader title="Keputusan Mesyuarat">
+                <StepperContentHeader
+                    title="Permohonan Penangguhan/Pindaan Penempatan"
+                >
                     <TextIconButton
                         type="neutral"
                         label="Kembali"
@@ -1741,11 +2044,11 @@
                             title="Permohonan Penangguhan/Pindaan Penempatan"
                             borderClass="border-none"
                         />
-                        <CustomTextField
+                        <CustomSelectField
                             label="Adakah anda memerlukan penangguhan/pindaan penempatan?"
                             id="amendmentRequest"
-                            type="text"
-                            val="Ya"
+                            options={meetingResultOption}
+                            bind:val={dropdownVal}
                         />
                         <CustomTextField
                             label="Tarikh Lapor Diri yang Dipohon"
@@ -1753,11 +2056,11 @@
                             type="text"
                             val="23/02/2024"
                         />
-                        <CustomTextField
+                        <CustomSelectField
                             label="Pindaan Penempatan Dipohon"
                             id="requestedPlacementAmendment"
-                            type="text"
-                            val="dropdown here"
+                            options={meetingResultOption}
+                            bind:val={dropdownVal}
                         />
                         <ContentHeader
                             title="Dokumen-Dokumen yang Berkaitan"
@@ -1793,24 +2096,28 @@
                         />
                         <CustomTextField
                             label="Adakah Anak Memerlukan Penangguhan?"
+                            disabled
                             id="amendmentRequest"
                             type="text"
                             val="Ya"
                         />
                         <CustomTextField
                             label="Alasan Penangguhan"
+                            disabled
                             id="postponeReason"
                             type="text"
                             val="Urusan pindah rumah dan hantar anak ke klinik"
                         />
                         <CustomTextField
                             label="Tarikh Lapor Diri Yang Dipohon"
+                            disabled
                             id="requestedReportingDate"
                             type="text"
                             val="22/02/2024"
                         />
                         <CustomTextField
                             label="Pindaan Penempatan Dipohon"
+                            disabled
                             id="requestedPlacementAmendment"
                             type="text"
                             val="Bahagian Teknologi"
@@ -1821,24 +2128,28 @@
                         />
                         <CustomTextField
                             label="Keputusan"
+                            disabled
                             id="postponeResult"
                             type="text"
                             val="Lulus"
                         />
                         <CustomTextField
                             label="Kelulusan Pindaan Penempatan Dipohon"
+                            disabled
                             id="approvedRequestedPlacementAmendment"
                             type="text"
                             val="Bahagian Teknologi"
                         />
                         <CustomTextField
                             label="Kelulusan Tarikh Lapor Diri Baru"
+                            disabled
                             id="approvedNewReportingDate"
                             type="text"
                             val="22/02/2024"
                         />
                         <CustomTextField
                             label="Surat Penangguhan Rayuan"
+                            disabled
                             id="postponeAppealLetter"
                             type="text"
                             val="surat_kelulusan_penangguhan_rayuan.pdf"
@@ -1870,36 +2181,42 @@
                         />
                         <CustomTextField
                             label="Gred"
+                            disabled
                             id="grade"
                             type="text"
                             val="N32"
                         />
                         <CustomTextField
                             label="Jawatan"
+                            disabled
                             id="position"
                             type="text"
                             val="Setiausaha Pejabat"
                         />
                         <CustomTextField
                             label="Tarikh Berkuatkuasa"
+                            disabled
                             id="effectiveDate"
                             type="text"
                             val="22/02/2024"
                         />
                         <CustomTextField
                             label="Penempatan Baru"
+                            disabled
                             id="newPlacem,ent"
                             type="text"
                             val="LKIM SARAWAK - KUCHING"
                         />
                         <CustomTextField
                             label="Pengarah Baru"
+                            disabled
                             id="newDirector"
                             type="text"
                             val="Lionel Messi"
                         />
                         <CustomTextField
                             label="Tarikh Lapor Diri"
+                            disabled
                             id="reportingDate"
                             type="text"
                             val="23/02/2024"
@@ -1910,24 +2227,28 @@
                         />
                         <CustomTextField
                             label="Nama Penyokong"
+                            disabled
                             id="supporterName"
                             type="text"
                             val="Cristiano Ronaldo"
                         />
                         <CustomTextField
                             label="Keputusan"
+                            disabled
                             id="supporterResult"
                             type="text"
                             val="Disokong"
                         />
                         <CustomTextField
                             label="Nama Pelulus"
+                            disabled
                             id="approverName"
                             type="text"
                             val="Gareth Bale"
                         />
                         <CustomTextField
                             label="Keputusan"
+                            disabled
                             id="approverResult"
                             type="text"
                             val="Diluluskan"
@@ -1945,3 +2266,5 @@
         {/if}
     </Stepper>
 </section>
+
+
