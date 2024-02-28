@@ -1,6 +1,8 @@
-import type { AddApprovalResultRequestBody } from '$lib/dto/core/common/add-approval-results-request.dto';
 import type { CandidateIDRequestBody } from '$lib/dto/core/common/candidate-id-request.view-dto';
+import type { CommonFilterDTO } from '$lib/dto/core/common/common-filter.dto';
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto.js';
 import type {
     Activity,
@@ -24,6 +26,7 @@ import type {
     NextOfKin,
 } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto.js';
 import type { CandidatePersonalDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto.js';
+import type { NewHireDocumentsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-documents.dto.js';
 import type { CandidateNewHireApproverResultDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-get-approver-result.dto';
 import type { NewHireGetApproversDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-get-approvers.dto.js';
 import type { NewHireSecretaryServiceUpdateDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-secretary-service-update.dto.js';
@@ -36,6 +39,7 @@ import {
     _activityListSchema,
     _approvalResultSchema,
     _dependencyListSchema,
+    _documentsSchema,
     _experienceInfoSchema,
     _experienceListSchema,
     _familyListSchema,
@@ -44,9 +48,11 @@ import {
     _relationsSchema,
     _serviceInfoSchema,
     _setApproversSchema,
+    _uploadDocumentsSchema,
 } from '$lib/schemas/mypsm/employment/new-hire/schema.js';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service.js';
 import { EmploymentServices } from '$lib/services/implementation/mypsm/perjawatan/employment.service';
+import { EmployeeServices } from '$lib/services/implementation/mypsm/shared/employee.service';
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/client';
 
@@ -63,6 +69,9 @@ export async function load({ params }) {
     const candidateIdRequestBody: CandidateIDRequestBody = {
         id: Number(params.id),
     };
+
+    const newHireStatusResponse: CommonResponseDTO =
+        await EmploymentServices.getNewHireStatus(candidateIdRequestBody);
 
     const personalDetailResponse: CommonResponseDTO =
         await EmploymentServices.getCurrentCandidatePersonalDetails(
@@ -116,7 +125,7 @@ export async function load({ params }) {
             candidateIdRequestBody,
         );
 
-    const secretaryApprovalDetails: CandidateNewHireApproverResultDTO =
+    const secretaryApprovalDetailResponse: CandidateNewHireApproverResultDTO =
         secretaryApprovalResponse.data
             ?.details as CandidateNewHireApproverResultDTO;
 
@@ -134,6 +143,46 @@ export async function load({ params }) {
         await EmploymentServices.getCurrentCandidateApproverApproval(
             candidateIdRequestBody,
         );
+
+    const mypsmIDResponse: CommonResponseDTO =
+        await EmploymentServices.getCurrentCandidateMypsmID(
+            candidateIdRequestBody,
+        );
+
+    // temp employee list dropdown
+
+    // filter
+    const filter: CommonFilterDTO = {
+        program: 'SEMUA',
+        identityCard: null,
+        employeeNumber: null,
+        name: null,
+        position: null,
+        status: null,
+        grade: null,
+        scheme: null,
+    };
+
+    // request body
+    const param: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: null,
+        orderType: null,
+        filter: filter,
+    };
+
+    // fetch apc history
+    const response: CommonResponseDTO =
+        await EmployeeServices.getEmployeeList(param);
+
+    // convert to apcdto
+    const employeeLookup: DropdownDTO[] = (
+        response.data?.dataList as CommonEmployeeDTO[]
+    ).map((data) => ({
+        value: data.employeeId,
+        name: data.name,
+    }));
 
     // ============================================================
     // Superformed the data
@@ -184,7 +233,17 @@ export async function load({ params }) {
     );
 
     const secretaryApprovalInfoForm = await superValidate(
-        secretaryApprovalDetails,
+        secretaryApprovalDetailResponse,
+        _approvalResultSchema,
+    );
+    const supporterApprovalForm = await superValidate(
+        supporterResultResponse.data
+            ?.details as CandidateNewHireApproverResultDTO,
+        _approvalResultSchema,
+    );
+    const approverApprovalForm = await superValidate(
+        approverResultResponse.data
+            ?.details as CandidateNewHireApproverResultDTO,
         _approvalResultSchema,
     );
 
@@ -192,6 +251,12 @@ export async function load({ params }) {
         secretaryGetApproversResponse.data?.details as NewHireGetApproversDTO,
         _setApproversSchema,
     );
+
+    const submittedDocuments = await superValidate(
+        documentInfoResponse.data?.details as NewHireDocumentsDTO,
+        _documentsSchema,
+    );
+    const newHireDocumentForm = await superValidate(_uploadDocumentsSchema);
 
     // serviceInfoForm.data.candidateId = candidateIdRequestBody.candidateId;
     // secretarySetApproversForm.data.candidateId =
@@ -204,7 +269,9 @@ export async function load({ params }) {
         await LookupServices.getICTypeEnums();
 
     const identityCardColorLookup: DropdownDTO[] =
-        LookupServices.setSelectOptions(identityCardColorLookupResponse);
+        LookupServices.setSelectOptionsInString(
+            identityCardColorLookupResponse,
+        );
 
     // ===========================================================================
 
@@ -213,6 +280,14 @@ export async function load({ params }) {
 
     const stateLookup: DropdownDTO[] =
         LookupServices.setSelectOptions(stateLookupResponse);
+
+    // ===========================================================================
+
+    const cityLookupResponse: CommonResponseDTO =
+        await LookupServices.getCityEnums();
+
+    const cityLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(cityLookupResponse);
 
     // ===========================================================================
 
@@ -339,6 +414,14 @@ export async function load({ params }) {
 
     // ===========================================================================
 
+    const assetDeclarationLookupResponse: CommonResponseDTO =
+        await LookupServices.getPropertyDeclarationEnums();
+
+    const assetDeclarationLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(assetDeclarationLookupResponse);
+
+    // ===========================================================================
+
     const generalLookup: DropdownDTO[] = [
         {
             value: true,
@@ -353,6 +436,7 @@ export async function load({ params }) {
     // ===========================================================================
 
     return {
+        newHireStatusResponse,
         personalDetailResponse,
         personalInfoForm,
         academicInfoResponse,
@@ -376,14 +460,20 @@ export async function load({ params }) {
         secretaryApprovalInfoForm,
         secretaryGetApproversResponse,
         secretarySetApproversForm,
+        supporterApprovalForm,
+        approverApprovalForm,
         addAcademicModal,
         addExperienceModal,
         addActivityModal,
         addFamilyModal,
         addNonFamilyModal,
         addNextOfKinModal,
+        newHireDocumentForm,
+        submittedDocuments,
+        mypsmIDResponse,
         selectionOptions: {
             identityCardColorLookup,
+            cityLookup,
             stateLookup,
             countryLookup,
             nationalityLookup,
@@ -400,6 +490,8 @@ export async function load({ params }) {
             majorMinorLookup,
             titleLookup,
             generalLookup,
+            employeeLookup,
+            assetDeclarationLookup,
         },
     };
 }
@@ -407,20 +499,22 @@ export async function load({ params }) {
 //==================================================
 //=============== Submit Functions =================
 //==================================================
-export const _submitPersonalForm = async (formData: object) => {
+export const _submitPersonalForm = async (formData: FormData) => {
     const form = await superValidate(formData, _personalInfoSchema);
+
+    console.log(form);
 
     if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    const response: CommonResponseDTO =
-        await EmploymentServices.createCurrentCandidatePersonalDetails(
-            form.data as CandidatePersonalDTO,
-        );
+    // const response: CommonResponseDTO =
+    //     await EmploymentServices.createCurrentCandidatePersonalDetails(
+    //         form.data as CandidatePersonalDTO,
+    //     );
 
-    return { response };
+    return { form };
 };
 
 export const _submitAcademicForm = async (formData: object) => {
@@ -545,7 +639,39 @@ export const _submitSecretaryApprovalForm = async (formData: object) => {
 
     const response: CommonResponseDTO =
         await EmploymentServices.createCurrentCandidateSecretaryApproval(
-            form.data as AddApprovalResultRequestBody,
+            form.data as CandidateNewHireApproverResultDTO,
+        );
+
+    return { response };
+};
+
+export const _submitSupporterApprovalForm = async (formData: object) => {
+    const form = await superValidate(formData, _approvalResultSchema);
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await EmploymentServices.createCurrentCandidateSupporterApproval(
+            form.data as CandidateNewHireApproverResultDTO,
+        );
+
+    return { response };
+};
+
+export const _submitApproverApprovalForm = async (formData: object) => {
+    const form = await superValidate(formData, _approvalResultSchema);
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await EmploymentServices.createCurrentCandidateApproverApproval(
+            form.data as CandidateNewHireApproverResultDTO,
         );
 
     return { response };
@@ -566,3 +692,23 @@ export const _submitSecretarySetApproverForm = async (formData: object) => {
 
     return { response };
 };
+
+export const _submitDocumentsForm = async (formData: FormData) => {
+    const form = await superValidate(formData, _uploadDocumentsSchema);
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await EmploymentServices.createCurrentCandidateDocuments(formData);
+
+    return { response };
+};
+
+    export const _downloadDocument = async (param: string) => {
+        const response = await EmploymentServices.downloadAttachment(param);
+
+        return { response };
+    };
