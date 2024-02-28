@@ -182,7 +182,7 @@
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
 >
     <Stepper bind:activeIndex={stepperIndex} dataId="ID Kumpulan #77699">
-        {#if currentRoleCode !== depDirectorRoleCode && currentRoleCode !== stateDirectorRoleCode}
+        {#if currentRoleCode !== depDirectorRoleCode && currentRoleCode !== stateDirectorRoleCode && currentRoleCode !== employeeRoleCode}
             {#if currentRoleCode === secretaryRoleCode}
                 <StepperContent>
                     <StepperContentHeader title="Pemilihan Kakitangan">
@@ -749,9 +749,17 @@
                         />
                         <TextIconButton
                             type="primary"
-                            label={currentRoleCode !== secretaryRoleCode ? "Seterusnya" : "Simpan"}
-                            icon={currentRoleCode !== secretaryRoleCode ? "next" : "check"}
-                            onClick={() => {currentRoleCode !== secretaryRoleCode ? goNext() : {} }}
+                            label={currentRoleCode !== secretaryRoleCode
+                                ? 'Seterusnya'
+                                : 'Simpan'}
+                            icon={currentRoleCode !== secretaryRoleCode
+                                ? 'next'
+                                : 'check'}
+                            onClick={() => {
+                                currentRoleCode !== secretaryRoleCode
+                                    ? goNext()
+                                    : {};
+                            }}
                         />
                     {:else}
                         <TextIconButton
@@ -849,7 +857,9 @@
                             </span>
                             <CustomTextField
                                 label="Tindakan/Ulasan"
-                                disabled={currentRoleCode === approverRoleCode ? true : false}
+                                disabled={currentRoleCode === approverRoleCode
+                                    ? true
+                                    : false}
                                 id="supporterRemark"
                                 type="text"
                                 placeholder="Butiran lengkap..."
@@ -986,6 +996,123 @@
                             />
                         </form>
                     {/if}
+                </StepperContentBody>
+            </StepperContent>
+        {:else if currentRoleCode === employeeRoleCode}
+            <StepperContent>
+                <StepperContentHeader title="Butiran Kenaikan Pangkat">
+                    <TextIconButton
+                        type="primary"
+                        label="Seterusnya"
+                        icon="next"
+                        onClick={() => goNext()}
+                    />
+                </StepperContentHeader>
+                <StepperContentBody>
+                    <div
+                        class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                    >
+                        <CustomTextField
+                            label="No. Pekerja"
+                            disabled
+                            id="employeeNumber"
+                            type="text"
+                            val="28339"
+                        />
+                        <CustomTextField
+                            label="Nama Pekerja"
+                            disabled
+                            id="employeeName"
+                            type="text"
+                            val="David Beckham"
+                        />
+                        <CustomTextField
+                            label="Tarikh Kenaikan Pangkat"
+                            disabled
+                            id="promotionDate"
+                            type="text"
+                            val="27/02/2024"
+                        />
+                        <CustomTextField
+                            label="Tarikh Pergerakan Gaji Asal"
+                            disabled
+                            id="originalSalaryMovementDate"
+                            type="text"
+                            val="JULAI"
+                        />
+                        <CustomTextField
+                            label="Tarikh Pergerakan Gaji Baru"
+                            disabled
+                            id="newSalaryMovementDate"
+                            type="text"
+                            val="APRIL"
+                        />
+                        <CustomTextField
+                            label="Gaji Minimum - Gaji Maksimum E19 (RM)"
+                            disabled
+                            id="oldMinMaxSalary"
+                            type="text"
+                            val="RM 1,335.00 - RM 4,005.00"
+                        />
+                        <CustomTextField
+                            label="Kenaikan Gaji Tahunan (RM)"
+                            disabled
+                            id="oldAnnualSalaryIncrement"
+                            type="text"
+                            val="RM 100.00"
+                        />
+                        <CustomTextField
+                            label="Gaji Minimum - Gaji Maksimum E22 (RM)"
+                            disabled
+                            id="newMinMaxSalary"
+                            type="text"
+                            val="RM 1,335.00 - RM 4,005.00"
+                        />
+                        <CustomTextField
+                            label="Kenaikan Gaji Tahunan (RM)"
+                            disabled
+                            id="newAnnualSalaryIncrement"
+                            type="text"
+                            val="RM 100.00"
+                        />
+                        <CustomTextField
+                            label="Penempatan Sekarang"
+                            disabled
+                            id="currentPlacement"
+                            type="text"
+                            val="Pejabat Ketua Pengarah"
+                        />
+                        <CustomTextField
+                            label="Penempatan Baru"
+                            disabled
+                            id="newPlacement"
+                            type="text"
+                            val="Setiausaha Pejabat Gred N32"
+                        />
+                    </div>
+                </StepperContentBody>
+            </StepperContent>
+
+            <StepperContent>
+                <StepperContentHeader title="Jadual Pergerakan Gaji">
+                    <TextIconButton
+                        type="neutral"
+                        label="Kembali"
+                        icon="previous"
+                        onClick={() => goPrevious()}
+                    />
+                    <TextIconButton
+                        type="primary"
+                        label="Selesai"
+                        icon="check"
+                        onClick={() => {}}
+                    />
+                </StepperContentHeader>
+                <StepperContentBody>
+                    <CustomTable
+                        tableData={salaryMovementRecordTable}
+                        title="Senarai Rekod Kenaikan Gaji"
+                    />
                 </StepperContentBody>
             </StepperContent>
         {/if}

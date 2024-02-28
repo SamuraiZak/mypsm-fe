@@ -29,6 +29,12 @@ export const load = async () => {
             { noPekerja: 28342, name: 'Karim Benzema', noKadPengenalan: 990122136443, skim: 'Sementara', gred: 'Gred 1-54', penempatanSekarang: '-', status: 'SAH - Urus Setia', tindakan: '-' },
         ];
     }
+    //Table for kakitangan
+    else if (currentRoleCode === UserRoleConstant.kakitangan.code) {
+        dataList = [
+            { noPekerja: 28339, name: 'David Beckham', noKadPengenalan: 990122136443, gredBaharu: 'Gred 1-54', jawatanBaharu:'Setiausaha Pejabat', penempatanBaharu: 'Pejabat Ketua Pengarah LKIM', tarikhBerkuatkuasa: '27/02/2024'},
+        ];
+    }
 
     return { param, currentRoleCode, dataList, };
 };
