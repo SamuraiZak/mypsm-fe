@@ -9,16 +9,15 @@ import {
     type CommonListRequestDTO,
 } from '$lib/dto/core/common/common-list-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
-import type { Activity } from '$lib/dto/mypsm/employment/new-hire/new-hire-activity.dto';
-import type { CandidateAcademicDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-academic-details.dto';
+import type { CandidateAcademicDetailRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-academic-details.dto';
 import type { Dependency } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-dependencies-details.dto';
 import type { Experience } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-experience-details.dto';
 import type { Family } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-family-details.dto';
 import type { NextOfKin } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto';
-import type { CandidatePersonalDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto';
+import type { CandidatePersonalRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto';
 import type { NewHireAddCandidateDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-create-candidate.dto';
 import type { CandidateNewHireApproverResultDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-get-approver-result.dto';
-import type { NewHireSecretaryServiceUpdateDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-secretary-service-update.dto';
+import type { NewHireSecretaryServiceUpdateRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-secretary-service-update.dto';
 import type { NewHireSetApproversDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-set-approvers.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
@@ -186,7 +185,7 @@ export class EmploymentServices {
 
     // create employee personal details
     static async createCurrentCandidatePersonalDetails(
-        param: CandidatePersonalDTO,
+        param: CandidatePersonalRequestDTO,
     ) {
         try {
             const url: Input = 'employment/new_hire/personal_detail/add';
@@ -244,7 +243,7 @@ export class EmploymentServices {
 
     // create employee academic details
     static async createCurrentCandidateAcademicDetails(
-        param: CandidateAcademicDetailsDTO,
+        param: CandidateAcademicDetailRequestDTO,
     ) {
         try {
             const url: Input = 'employment/new_hire/academic/add';
@@ -357,7 +356,7 @@ export class EmploymentServices {
     }
 
     // create employee activity details
-    static async createCurrentCandidateActivityDetails(param: Activity) {
+    static async createCurrentCandidateActivityDetails(param: CandidateAcademicDetailRequestDTO) {
         try {
             const url: Input = 'employment/new_hire/activity/add';
 
@@ -670,7 +669,7 @@ export class EmploymentServices {
 
     // create new hire secretary update
     static async createCurrentCandidateSecretaryUpdate(
-        param: NewHireSecretaryServiceUpdateDTO,
+        param: NewHireSecretaryServiceUpdateRequestDTO,
     ) {
         try {
             const url: Input = 'employment/new_hire/secretary_update/add';
