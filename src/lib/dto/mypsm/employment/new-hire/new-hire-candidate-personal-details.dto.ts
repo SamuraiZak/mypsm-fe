@@ -1,9 +1,13 @@
-import type { _personalInfoSchema } from '$lib/schemas/mypsm/employment/new-hire/schema';
+import type {
+    _personalInfoRequestSchema,
+    _personalInfoResponseSchema,
+} from '$lib/schemas/mypsm/employment/new-hire/schema';
 import type { z } from 'zod';
 
-export type CandidatePersonalResponseDTO = z.infer<typeof _personalInfoSchema>;
+export type CandidatePersonalResponseDTO = z.infer<
+    typeof _personalInfoResponseSchema
+>;
 
-export type CandidatePersonalRequestDTO = Omit<
-    CandidatePersonalResponseDTO,
-    'id' | 'isReadOnly'
+export type CandidatePersonalRequestDTO = z.infer<
+    typeof _personalInfoRequestSchema
 >;
