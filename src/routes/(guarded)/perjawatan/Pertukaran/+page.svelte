@@ -86,8 +86,9 @@
 <!-- notes: you may change the flex directions but do not change the height and max height of this section -->
 <section
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
->
+>   
     <CustomTab>
+        
         <CustomTabContent title="Permohonan Sendiri">
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
@@ -98,7 +99,7 @@
                     enableDetail
                     detailActions={() =>
                         goto(
-                            '/perjawatan/Pertukaran/butiran-permohonan_sendiri',
+                            '/perjawatan/pertukaran/butiran-permohonan_sendiri',
                         )}
                     bind:tableData={table}
                 ></CustomTable>
@@ -111,10 +112,11 @@
             >
                 <CustomTable title="" enableDetail  detailActions={() =>
                     goto(
-                        '/perjawatan/Pertukaran/butiran-arahan_pengurusan',
+                        '/perjawatan/pertukaran/butiran-arahan_pengarah',
                     )} bind:tableData={table2}
                 ></CustomTable>
             </div>
+            
         </CustomTabContent>
         {#if currentRoleCode !== pengarahBahagian}
             <CustomTabContent title="Arahan Pihak Pengurusan">
@@ -135,7 +137,7 @@
                         enableDetail
                         detailActions={() =>
                             goto(
-                                '/perjawatan/Pertukaran/butiran-arahan_pengarah',
+                                '/perjawatan/pertukaran/butiran-arahan_pengurusan',
                             )}
                         bind:tableData={table3}
                     ></CustomTable>
