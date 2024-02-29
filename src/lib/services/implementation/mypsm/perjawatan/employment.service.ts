@@ -10,10 +10,11 @@ import {
 } from '$lib/dto/core/common/common-list-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
 import type { CandidateAcademicDetailRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-academic-details.dto';
-import type { Dependency } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-dependencies-details.dto';
-import type { Experience } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-experience-details.dto';
-import type { Family } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-family-details.dto';
-import type { NextOfKin } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto';
+import type { CandidateActivityDetailRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-activity.dto';
+import type { CandidateDependenciesDetailRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-dependencies-details.dto';
+import type { CandidateExperiencesDetailRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-experience-details.dto';
+import type { CandidateFamilyDetailRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-family-details.dto';
+import type { CandidateNextOfKinDetailRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto';
 import type { CandidatePersonalRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto';
 import type { NewHireAddCandidateDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-create-candidate.dto';
 import type { CandidateNewHireApproverResultDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-get-approver-result.dto';
@@ -300,7 +301,9 @@ export class EmploymentServices {
     }
 
     // create employee academic details
-    static async createCurrentCandidateExperienceDetails(param: Experience) {
+    static async createCurrentCandidateExperienceDetails(
+        param: CandidateExperiencesDetailRequestDTO,
+    ) {
         try {
             const url: Input = 'employment/new_hire/experience/add';
 
@@ -356,7 +359,9 @@ export class EmploymentServices {
     }
 
     // create employee activity details
-    static async createCurrentCandidateActivityDetails(param: CandidateAcademicDetailRequestDTO) {
+    static async createCurrentCandidateActivityDetails(
+        param: CandidateActivityDetailRequestDTO,
+    ) {
         try {
             const url: Input = 'employment/new_hire/activity/add';
 
@@ -412,7 +417,9 @@ export class EmploymentServices {
     }
 
     // create employee family details
-    static async createCurrentCandidateFamilyDetails(param: Family) {
+    static async createCurrentCandidateFamilyDetails(
+        param: CandidateFamilyDetailRequestDTO,
+    ) {
         try {
             const url: Input = 'employment/new_hire/family/add';
 
@@ -470,7 +477,9 @@ export class EmploymentServices {
     }
 
     // create employee dependencies details
-    static async createCurrentCandidateDependenciesDetails(param: Dependency) {
+    static async createCurrentCandidateDependenciesDetails(
+        param: CandidateDependenciesDetailRequestDTO,
+    ) {
         try {
             const url: Input = 'employment/new_hire/dependant/add';
 
@@ -526,7 +535,9 @@ export class EmploymentServices {
     }
 
     // create employee next of kin details
-    static async createCurrentCandidateNextOfKinDetails(param: NextOfKin) {
+    static async createCurrentCandidateNextOfKinDetails(
+        param: CandidateNextOfKinDetailRequestDTO,
+    ) {
         try {
             const url: Input = 'employment/new_hire/next_of_kin/add';
 
