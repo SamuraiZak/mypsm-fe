@@ -1,32 +1,52 @@
 <script lang="ts">
+    import type { Dependency } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-dependencies-details.dto';
+    import type { NextOfKin } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto';
+    import type { Family } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-family-details.dto';
+    import type { Activity } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-activity.dto';
+    import type { Academic } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-academic-details.dto';
+    import type { Experience } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-experience-details.dto';
+    import type { CandidatePersonalResponseDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto';
     import { EmploymentServices } from '$lib/services/implementation/mypsm/perjawatan/employment.service';
     import FileInputField from '$lib/components/inputs/file-input-field/FileInputField.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
-    import type { CandidatePersonalDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto';
     import {
+        _personalInfoResponseSchema,
         _activityInfoSchema,
-        _dependencyListSchema,
-        _familyListSchema,
-        _nextOfKinListSchema,
+        _dependencyListRequestSchema,
+        _familyListRequestSchema,
+        _nextOfKinListRequestSchema,
         _experienceInfoSchema,
         _setApproversSchema,
         _approvalResultSchema,
         _relationsSchema,
-        _academicListSchema,
-        _experienceListSchema,
-        _activityListSchema,
+        _academicListRequestSchema,
+        _experienceListRequestSchema,
+        _activityListRequestSchema,
         _documentsSchema,
         _uploadDocumentsSchema,
+        _nextOfKinListResponseSchema,
+        _dependencyListResponseSchema,
+        _familyListResponseSchema,
+        _activityListResponseSchema,
+        _experienceListResponseSchema,
+        _academicListResponseSchema,
+        _serviceInfoResponseSchema,
     } from '$lib/schemas/mypsm/employment/new-hire/schema';
     import {
         _submitAcademicForm,
+        _submitAcademicInfoForm,
         _submitActivityForm,
+        _submitActivityInfoForm,
         _submitApproverApprovalForm,
         _submitDependencyForm,
+        _submitDependencyInfoForm,
         _submitDocumentsForm,
         _submitExperienceForm,
+        _submitExperienceInfoForm,
         _submitFamilyForm,
+        _submitFamilyInfoForm,
         _submitNextOfKinForm,
+        _submitNextOfKinInfoForm,
         _submitPersonalForm,
         _submitSecretaryApprovalForm,
         _submitSecretarySetApproverForm,
@@ -39,7 +59,11 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import { Toaster } from 'svelte-french-toast';
-    import { dateProxy, superForm } from 'sveltekit-superforms/client';
+    import {
+        dateProxy,
+        superForm,
+        superValidate,
+    } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
@@ -51,7 +75,7 @@
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import {
         _academicInfoSchema,
-        _serviceInfoSchema,
+        _serviceInfoRequestSchema,
     } from '$lib/schemas/mypsm/employment/new-hire/schema';
     import { goto } from '$app/navigation';
     import StepperOtherRolesResult from '$lib/components/stepper/StepperOtherRolesResult.svelte';
@@ -63,9 +87,11 @@
         supportOptions,
     } from '$lib/constants/core/radio-option-constants';
     import { monthLookup } from '$lib/constants/core/dropdown.constant';
+    import { getErrorToast } from '$lib/helpers/core/toast.helper.js';
+    import { fail } from '@sveltejs/kit';
     export let data: PageData;
 
-    const personalDetails: CandidatePersonalDTO =
+    const personalDetails: CandidatePersonalResponseDTO =
         data.personalDetailResponse.data?.details;
     let isReadonlyPersonalFormStepper: boolean =
         data.personalDetailResponse?.data?.details?.isReadonly;
@@ -101,6 +127,15 @@
     export let openNonFamilyInfoModal: boolean = false;
     export let openAcademicInfoModal: boolean = false;
 
+    // temporay arrays for list details
+    let tempAcademicRecord: Academic[] = [];
+    let tempExperienceRecord: Experience[] = [];
+    let tempActivityRecord: Activity[] = [];
+    let tempFamilyRecord: Family[] = [];
+    let tempNonFamilyRecord: Dependency[] = [];
+    let tempNextOfKinRecord: NextOfKin[] = [];
+    let tempNextOfKinFromFamily: NextOfKin[] = [];
+
     let isStatusNew: boolean;
 
     if (data.isCandidateRole) {
@@ -113,50 +148,17 @@
     let stepperFormTitleClass =
         'w-full h-fit mt-2 bg-bgr-primary text-system-primary text-sm font-medium';
 
-    // let disabled = false;
-
-    // =========================================================================
-    // function to assign the content  of the tooltip
-    // =========================================================================
-    let tooltipContent: string = '';
-    const itkaTooltip: string = 'ITKA bermaksud ...';
-    const itpTooltip: string = 'ITP bermaksud ...';
-    const epwTooltip: string = 'EPW bermaksud ...';
-    const colaTooltip: string = 'COLA bermaksud ...';
-
-    function assignContent(ev: CustomEvent<HTMLDivElement>) {
-        {
-            let eventName = (ev.target as HTMLDivElement).id.split('-')[1];
-
-            switch (eventName) {
-                case 'itka':
-                    tooltipContent = itkaTooltip;
-                    break;
-                case 'itp':
-                    tooltipContent = itpTooltip;
-                    break;
-                case 'epw':
-                    tooltipContent = epwTooltip;
-                    break;
-                case 'cola':
-                    tooltipContent = colaTooltip;
-                    break;
-                default:
-                    tooltipContent = 'no tooltip available';
-            }
-        }
-    }
-
     // Superforms
     const { form, errors, enhance } = superForm(data.personalInfoForm, {
         SPA: true,
         dataType: 'json',
         invalidateAll: true,
         resetForm: false,
-        validators: false,
         multipleSubmits: 'prevent',
-        onSubmit(formData) {
-            _submitPersonalForm(formData.formData);
+        validationMethod: 'oninput',
+        validators: _personalInfoResponseSchema,
+        onSubmit() {
+            _submitPersonalForm($form);
         },
         taintedMessage: false,
     });
@@ -172,9 +174,10 @@
         taintedMessage: false,
         resetForm: false,
         multipleSubmits: 'prevent',
-        validators: _serviceInfoSchema,
-        onSubmit() {
-            _submitServiceForm($serviceInfoForm);
+        validationMethod: 'oninput',
+        validators: _serviceInfoResponseSchema,
+        onSubmit(formData) {
+            _submitServiceForm(formData.formData);
         },
     });
 
@@ -189,9 +192,10 @@
         taintedMessage: false,
         resetForm: false,
         multipleSubmits: 'prevent',
+        validationMethod: 'oninput',
         validators: _approvalResultSchema,
-        onSubmit() {
-            _submitSecretaryApprovalForm($secretaryApprovalInfoForm);
+        onSubmit(formData) {
+            _submitSecretaryApprovalForm(formData.formData);
         },
     });
 
@@ -206,9 +210,10 @@
         taintedMessage: false,
         resetForm: false,
         multipleSubmits: 'prevent',
+        validationMethod: 'oninput',
         validators: _approvalResultSchema,
-        onSubmit() {
-            _submitSupporterApprovalForm($supporterApprovalForm);
+        onSubmit(formData) {
+            _submitSupporterApprovalForm(formData.formData);
         },
     });
 
@@ -223,9 +228,10 @@
         taintedMessage: false,
         resetForm: false,
         multipleSubmits: 'prevent',
+        validationMethod: 'oninput',
         validators: _approvalResultSchema,
-        onSubmit() {
-            _submitApproverApprovalForm($approverApprovalForm);
+        onSubmit(formData) {
+            _submitApproverApprovalForm(formData.formData);
         },
     });
 
@@ -240,9 +246,10 @@
         taintedMessage: false,
         resetForm: false,
         multipleSubmits: 'prevent',
+        validationMethod: 'oninput',
         validators: _setApproversSchema,
-        onSubmit() {
-            _submitSecretarySetApproverForm($secretarySetApproverForm);
+        onSubmit(formData) {
+            _submitSecretarySetApproverForm(formData.formData);
         },
     });
 
@@ -257,10 +264,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
-        validators: _academicListSchema,
-        // async onSubmit() {
-        //     _submitAcademicForm($form);
-        // },
+        validators: _academicListResponseSchema,
     });
 
     const {
@@ -274,7 +278,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
-        validators: _experienceListSchema,
+        validators: _experienceListResponseSchema,
     });
 
     const {
@@ -288,7 +292,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
-        validators: _activityListSchema,
+        validators: _activityListResponseSchema,
     });
 
     const {
@@ -302,7 +306,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
-        validators: _familyListSchema,
+        validators: _familyListResponseSchema,
     });
 
     const {
@@ -316,7 +320,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
-        validators: _dependencyListSchema,
+        validators: _dependencyListResponseSchema,
     });
 
     const {
@@ -330,7 +334,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
-        validators: _nextOfKinListSchema,
+        validators: _nextOfKinListResponseSchema,
     });
 
     const {
@@ -362,14 +366,26 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
+        validationMethod: 'oninput',
         validators: _academicInfoSchema,
         async onSubmit(formData) {
-            // Log the FormData content
-            for (const pair of formData.formData.entries()) {
-                console.log(pair[0], pair[1]);
+            const result = await superValidate(
+                formData.formData,
+                _academicInfoSchema,
+            );
+
+            console.log('Result: ', result.data);
+
+            if (!result.valid) {
+                getErrorToast();
+                fail(400);
             }
-            // _submitAcademicForm($addAcademicInfoModal);
-            // openAcademicInfoModal = false;
+
+            tempAcademicRecord = [
+                ...tempAcademicRecord,
+                result.data as Academic,
+            ];
+            openAcademicInfoModal = false;
         },
     });
 
@@ -384,10 +400,26 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
+        validationMethod: 'oninput',
         validators: _experienceInfoSchema,
-        async onSubmit() {
-            _submitExperienceForm($addExperienceModalForm);
-            // openExperienceInfoModal = false;
+        async onSubmit(formData) {
+            const result = await superValidate(
+                formData.formData,
+                _experienceInfoSchema,
+            );
+
+            console.log('Result: ', result.data);
+
+            if (!result.valid) {
+                getErrorToast();
+                fail(400);
+            }
+
+            tempExperienceRecord = [
+                ...tempExperienceRecord,
+                result.data as Experience,
+            ];
+            openExperienceInfoModal = false;
         },
     });
 
@@ -402,28 +434,26 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
+        validationMethod: 'oninput',
         validators: _activityInfoSchema,
-        async onSubmit() {
-            _submitActivityForm($addActivityModal);
-            // openMembershipInfoModal = false;
-        },
-    });
+        async onSubmit(formData) {
+            const result = await superValidate(
+                formData.formData,
+                _activityInfoSchema,
+            );
 
-    const {
-        form: addNonFamilyModal,
-        errors: addNonFamilyErrors,
-        enhance: addNonFamilyEnhance,
-    } = superForm(data.addNonFamilyModal, {
-        SPA: true,
-        dataType: 'json',
-        invalidateAll: true,
-        taintedMessage: false,
-        resetForm: true,
-        multipleSubmits: 'prevent',
-        validators: _relationsSchema,
-        async onSubmit() {
-            _submitDependencyForm($addNonFamilyModal);
-            // openNonFamilyInfoModal = false;
+            console.log('Result: ', result.data);
+
+            if (!result.valid) {
+                getErrorToast();
+                fail(400);
+            }
+
+            tempActivityRecord = [
+                ...tempActivityRecord,
+                result.data as Activity,
+            ];
+            openMembershipInfoModal = false;
         },
     });
 
@@ -438,10 +468,57 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
+        validationMethod: 'oninput',
         validators: _relationsSchema,
-        async onSubmit() {
-            _submitFamilyForm($addFamilyModal);
-            // openFamilyInfoModal = false;
+        async onSubmit(formData) {
+            const result = await superValidate(
+                formData.formData,
+                _relationsSchema,
+            );
+
+            console.log('Result: ', result.data);
+
+            if (!result.valid) {
+                getErrorToast();
+                fail(400);
+            }
+
+            tempFamilyRecord = [...tempFamilyRecord, result.data as Family];
+            openFamilyInfoModal = false;
+        },
+    });
+
+    const {
+        form: addNonFamilyModal,
+        errors: addNonFamilyErrors,
+        enhance: addNonFamilyEnhance,
+    } = superForm(data.addNonFamilyModal, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        taintedMessage: false,
+        resetForm: true,
+        multipleSubmits: 'prevent',
+        validationMethod: 'oninput',
+        validators: _relationsSchema,
+        async onSubmit(formData) {
+            const result = await superValidate(
+                formData.formData,
+                _relationsSchema,
+            );
+
+            console.log('Result: ', result.data);
+
+            if (!result.valid) {
+                getErrorToast();
+                fail(400);
+            }
+
+            tempNonFamilyRecord = [
+                ...tempNonFamilyRecord,
+                result.data as Dependency,
+            ];
+            openNonFamilyInfoModal = false;
         },
     });
     const {
@@ -455,21 +532,85 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
+        validationMethod: 'oninput',
         validators: _relationsSchema,
-        async onSubmit() {
-            _submitNextOfKinForm($addNextOfKinModal);
-            // openFamilyInfoModal = false;
+        async onSubmit(formData) {
+            const result = await superValidate(
+                formData.formData,
+                _relationsSchema,
+            );
+
+            console.log('Result: ', result.data);
+
+            if (!result.valid) {
+                getErrorToast();
+                fail(400);
+            }
+
+            tempNextOfKinFromFamily = [
+                ...tempNextOfKinFromFamily,
+                result.data as NextOfKin,
+            ];
+            openFamilyInfoModal = false;
         },
     });
 
+    const triggerSubmitAcademicTempData = () => {
+        _submitAcademicInfoForm(tempAcademicRecord);
+    };
+
+    const triggerSubmitExperienceTempData = () => {
+        _submitExperienceInfoForm(tempExperienceRecord);
+    };
+
+    const triggerSubmitActivityTempData = () => {
+        _submitActivityInfoForm(tempActivityRecord);
+    };
+    const triggerSubmitFamilyTempData = () => {
+        _submitFamilyInfoForm(tempFamilyRecord);
+    };
+    const triggerSubmitDependencyTempData = () => {
+        _submitDependencyInfoForm(tempNonFamilyRecord);
+    };
+    const triggerSubmitNextOfKinTempData = () => {
+        const tempData = tempNextOfKinFromFamily.map((tempData) => ({
+            birthCountryId: Number(tempData.birthCountryId),
+            birthStateId: Number(tempData.birthStateId),
+            relationshipId: Number(tempData.relationshipId),
+            educationLevelId: Number(tempData.educationLevelId),
+            raceId: Number(tempData.raceId),
+            nationalityId: Number(tempData.nationalityId),
+            maritalId: Number(tempData.maritalId),
+            genderId: Number(tempData.genderId),
+            name: tempData.name,
+            alternativeName: tempData.alternativeName,
+            identityDocumentColor: tempData.identityDocumentColor,
+            identityDocumentNumber: tempData.identityDocumentNumber,
+            address: tempData.address,
+            postcode: tempData.postcode,
+            birthDate: new Date(tempData.birthDate),
+            workAddress: tempData.workAddress,
+            workPostcode: tempData.workPostcode,
+            phoneNumber: tempData.phoneNumber,
+            marriageDate: new Date(tempData.marriageDate),
+            inSchool: tempData.inSchool,
+        }));
+
+        tempNextOfKinRecord = [
+            ...tempNextOfKinRecord,
+            ...tempData,
+        ] as NextOfKin[];
+        _submitNextOfKinInfoForm(tempNextOfKinRecord);
+    };
+
     const proxyBirthDate = dateProxy(form, 'birthDate', {
-        format: 'date-local',
+        format: 'date',
     });
     const proxypropertyDeclarationDate = dateProxy(
         form,
         'propertyDeclarationDate',
         {
-            format: 'date',
+            format: 'date-local',
         },
     );
     const proxyAcademicCompletionDate = dateProxy(
@@ -540,14 +681,22 @@
     //     { format: 'date' },
     // );
 
-    const proxyAddAcademiStartDate = dateProxy(
+    const proxyAddAcademicCompletionDate = dateProxy(
+        addAcademicInfoModal,
+        'completionDate',
+        {
+            format: 'date',
+        },
+    );
+
+    const proxyAddExperienceStartDate = dateProxy(
         addExperienceModalForm,
         'startDate',
         {
             format: 'date',
         },
     );
-    const proxyAddAcademiEndDate = dateProxy(
+    const proxyAddExperienceEndDate = dateProxy(
         addExperienceModalForm,
         'endDate',
         {
@@ -603,7 +752,7 @@
     };
 
     const handleDownload = async () => {
-        const response = await EmploymentServices.downloadAttachment(
+        await EmploymentServices.downloadAttachment(
             data.documentInfoResponse.data?.details.attachment,
         );
     };
@@ -778,15 +927,6 @@
                 ></CustomSelectField>
 
                 <CustomTextField
-                    disabled={isReadonlyPersonalFormStepper}
-                    errors={$errors.email}
-                    id="email"
-                    label={'Emel'}
-                    type="text"
-                    bind:val={$form.email}
-                ></CustomTextField>
-
-                <CustomTextField
                     errors={$errors.homeAddress}
                     disabled={isReadonlyPersonalFormStepper}
                     id="homeAddress"
@@ -833,7 +973,7 @@
                     errors={$errors.mailAddress}
                     disabled={isReadonlyPersonalFormStepper}
                     id="mailAddress"
-                    label="Alamat Surat Menyurat (jika berlainan dari alamat rumah)"
+                    label="Alamat Surat Menyurat"
                     bind:val={$form.mailAddress}
                 />
 
@@ -881,14 +1021,14 @@
                     options={data.selectionOptions.assetDeclarationLookup}
                 ></CustomSelectField>
 
-                {#if $form.assetDeclarationStatusId !== 0}
+                {#if $form.assetDeclarationStatusId === 12 || $form.assetDeclarationStatusId === 14 || $form.assetDeclarationStatusId === 15 || $form.assetDeclarationStatusId === 17 || $form.assetDeclarationStatusId === 18 || $form.assetDeclarationStatusId === 22}
                     <CustomTextField
                         errors={$errors.propertyDeclarationDate}
                         disabled={isReadonlyPersonalFormStepper}
                         id="propertyDeclarationDate"
                         type="date"
                         label="Tarikh Pengikstiharan Harta"
-                        bind:val={$form.propertyDeclarationDate}
+                        bind:val={$proxypropertyDeclarationDate}
                     />
                 {/if}
 
@@ -969,11 +1109,27 @@
                 <TextIconButton
                     type="primary"
                     label="Simpan"
-                    form="FormStepperAkademik"
+                    onClick={() => triggerSubmitAcademicTempData()}
                 />
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
+            {#if tempAcademicRecord.length > 0}
+                <div
+                    class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                >
+                    <div class="mb-2.5 text-sm font-medium">
+                        <p>Preview Rekod Untuk Disimpan</p>
+                    </div>
+                    {#each tempAcademicRecord as academic, i}
+                        <div class="text-sm text-system-primary">
+                            <p>
+                                {i + 1}. Maklumat Akademik - {academic.name}
+                            </p>
+                        </div>
+                    {/each}
+                </div>
+            {/if}
             {#if !isReadonlyAcademicFormStepper && data.isCandidateRole}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
@@ -1111,11 +1267,27 @@
                 <TextIconButton
                     type="primary"
                     label="Simpan"
-                    form="FormStepperPengalaman"
+                    onClick={() => triggerSubmitExperienceTempData()}
                 />
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
+            {#if tempExperienceRecord.length > 0}
+                <div
+                    class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                >
+                    <div class="mb-2.5 text-sm font-medium">
+                        <p>Preview Rekod Untuk Disimpan</p>
+                    </div>
+                    {#each tempExperienceRecord as experience, i}
+                        <div class="text-sm text-system-primary">
+                            <p>
+                                {i + 1}. Maklumat Pengalaman - {experience.company}
+                            </p>
+                        </div>
+                    {/each}
+                </div>
+            {/if}
             {#if !isReadonlyExperienceFormStepper && data.isCandidateRole}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
@@ -1222,11 +1394,27 @@
                 <TextIconButton
                     type="primary"
                     label="Simpan"
-                    form="activityInfoForm"
+                    onClick={() => triggerSubmitActivityTempData()}
                 />
             {/if}</StepperContentHeader
         >
         <StepperContentBody>
+            {#if tempActivityRecord.length > 0}
+                <div
+                    class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                >
+                    <div class="mb-2.5 text-sm font-medium">
+                        <p>Preview Rekod Untuk Disimpan</p>
+                    </div>
+                    {#each tempActivityRecord as activity, i}
+                        <div class="text-sm text-system-primary">
+                            <p>
+                                {i + 1}. Maklumat Kegiatan/Keahlian - {activity.name}
+                            </p>
+                        </div>
+                    {/each}
+                </div>
+            {/if}
             {#if !isReadonlyActivityFormStepper && data.isCandidateRole}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
@@ -1253,7 +1441,7 @@
                 {:else}
                     <CustomTab>
                         {#each $activityInfoForm.activityList as _, i}
-                            <CustomTabContent title={'Aktiviti #' + i + 1}>
+                            <CustomTabContent title={'Aktiviti #' + +i + 1}>
                                 <CustomTextField
                                     disabled={isReadonlyActivityFormStepper}
                                     id="addName"
@@ -1264,10 +1452,12 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    disabled={isReadonlyActivityFormStepper}
                                     type="date"
                                     id="addJoinDate"
                                     label={'Tarikh Keahlian'}
-                                    bind:val={$proxyAddActivityJoinDate}
+                                    bind:val={$activityInfoForm.activityList[i]
+                                        .joinDate}
                                 ></CustomTextField>
 
                                 <CustomTextField
@@ -1304,11 +1494,29 @@
                 <TextIconButton
                     type="primary"
                     label="Simpan"
-                    form="familyInfoForm"
+                    onClick={() => {
+                        triggerSubmitFamilyTempData();
+                    }}
                 />
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
+            {#if tempFamilyRecord.length > 0}
+                <div
+                    class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                >
+                    <div class="mb-2.5 text-sm font-medium">
+                        <p>Preview Rekod Untuk Disimpan</p>
+                    </div>
+                    {#each tempFamilyRecord as family, i}
+                        <div class="text-sm text-system-primary">
+                            <p>
+                                {i + 1}. Maklumat Keluarga - {family.name}
+                            </p>
+                        </div>
+                    {/each}
+                </div>
+            {/if}
             {#if !isReadonlyFamilyFormStepper && data.isCandidateRole}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
@@ -1322,6 +1530,7 @@
                     </TextIconButton>
                 </div>
             {/if}
+
             <form
                 id="familyInfoForm"
                 class="flex w-full flex-col gap-2"
@@ -1360,7 +1569,7 @@
                                         i
                                     ].alternativeName}
                                 ></CustomTextField>
-                                <!-- <CustomSelectField
+                                <CustomSelectField
                                     id="addIdentityDocumentColor"
                                     label={'Warna Kad Pengenalan'}
                                     options={data.selectionOptions
@@ -1369,7 +1578,7 @@
                                     bind:val={$familyInfoForm.dependenciesList[
                                         i
                                     ].identityDocumentColor}
-                                ></CustomSelectField> -->
+                                ></CustomSelectField>
                                 <CustomTextField
                                     id="addIdentityDocumentNumber"
                                     type="number"
@@ -1380,12 +1589,14 @@
                                     ].identityDocumentNumber}
                                 ></CustomTextField>
 
-                                <!-- <LongTextField
-                id="addAddress"
-                label={'Alamat'}
-                disabled={isReadonlyFamilyFormStepper}
-                bind:val={$familyInfoForm.dependenciesList[i].address}
-            ></LongTextField> -->
+                                <CustomTextField
+                                    id="addAddress"
+                                    label={'Alamat'}
+                                    disabled={isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependenciesList[
+                                        i
+                                    ].address}
+                                ></CustomTextField>
 
                                 <CustomTextField
                                     id="addPostcode"
@@ -1398,6 +1609,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    disabled={isReadonlyFamilyFormStepper}
                                     type="date"
                                     id="addBirthDate"
                                     label={'Tarikh Lahir'}
@@ -1521,14 +1733,14 @@
                                     ].phoneNumber}
                                 ></CustomTextField>
 
-                                <CustomTextField
+                                <!-- <CustomTextField
                                     type="date"
                                     id="addMarriageDate"
                                     label={'Tarikh Kahwin'}
                                     bind:val={$familyInfoForm.dependenciesList[
                                         i
                                     ].marriageDate}
-                                ></CustomTextField>
+                                ></CustomTextField> -->
 
                                 <CustomSelectField
                                     id="inSchool"
@@ -1555,11 +1767,29 @@
                 <TextIconButton
                     type="primary"
                     label="Simpan"
-                    form="dependencyInfoForm"
+                    onClick={() => {
+                        triggerSubmitDependencyTempData();
+                    }}
                 />
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
+            {#if tempNonFamilyRecord.length > 0}
+                <div
+                    class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                >
+                    <div class="mb-2.5 text-sm font-medium">
+                        <p>Preview Rekod Untuk Disimpan</p>
+                    </div>
+                    {#each tempNonFamilyRecord as nonFamily, i}
+                        <div class="text-sm text-system-primary">
+                            <p>
+                                {i + 1}. Maklumat Selain Suami/Isteri dan Anak - {nonFamily.name}
+                            </p>
+                        </div>
+                    {/each}
+                </div>
+            {/if}
             {#if !isReadonlyDependencyFormStepper && data.isCandidateRole}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
@@ -1573,6 +1803,7 @@
                     </TextIconButton>
                 </div>
             {/if}
+
             <form
                 id="dependencyInfoForm"
                 class="flex w-full flex-col gap-2"
@@ -1610,16 +1841,16 @@
                                     bind:val={$dependencyInfoForm
                                         .dependenciesList[i].alternativeName}
                                 ></CustomTextField>
-                                <!-- <CustomSelectField
+                                <CustomSelectField
                                     id="addIdentityDocumentColor"
                                     label={'Warna Kad Pengenalan'}
                                     options={data.selectionOptions
                                         .identityCardColorLookup}
                                     disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$dependencyInfoForm.dependenciesList[
-                                        i
-                                    ].identityDocumentColor}
-                                ></CustomSelectField> -->
+                                    bind:val={$dependencyInfoForm
+                                        .dependenciesList[i]
+                                        .identityDocumentColor}
+                                ></CustomSelectField>
                                 <CustomTextField
                                     id="addIdentityDocumentNumber"
                                     type="number"
@@ -1630,12 +1861,13 @@
                                         .identityDocumentNumber}
                                 ></CustomTextField>
 
-                                <!-- <LongTextField
-                id="addAddress"
-                label={'Alamat'}
-                disabled={isReadonlyFamilyFormStepper}
-                bind:val={$dependencyInfoForm.dependenciesList[i].address}
-            ></LongTextField> -->
+                                <CustomTextField
+                                    id="addAddress"
+                                    label={'Alamat'}
+                                    disabled={isReadonlyFamilyFormStepper}
+                                    bind:val={$dependencyInfoForm
+                                        .dependenciesList[i].address}
+                                ></CustomTextField>
 
                                 <CustomTextField
                                     id="addPostcode"
@@ -1647,6 +1879,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    disabled={isReadonlyFamilyFormStepper}
                                     type="date"
                                     id="addBirthDate"
                                     label={'Tarikh Lahir'}
@@ -1758,13 +1991,13 @@
                                         .dependenciesList[i].phoneNumber}
                                 ></CustomTextField>
 
-                                <CustomTextField
+                                <!-- <CustomTextField
                                     type="date"
                                     id="addMarriageDate"
                                     label={'Tarikh Kahwin'}
                                     bind:val={$dependencyInfoForm
                                         .dependenciesList[i].marriageDate}
-                                ></CustomTextField>
+                                ></CustomTextField> -->
 
                                 <CustomSelectField
                                     id="inSchool"
@@ -1793,11 +2026,27 @@
                 <TextIconButton
                     type="primary"
                     label="Simpan"
-                    form="nextOfKinInfoForm"
+                    onClick={() => triggerSubmitNextOfKinTempData()}
                 />
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
+            {#if tempNextOfKinRecord.length > 0}
+                <div
+                    class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                >
+                    <div class="mb-2.5 text-sm font-medium">
+                        <p>Preview Rekod Untuk Disimpan</p>
+                    </div>
+                    {#each tempNextOfKinRecord as nextOfKin, i}
+                        <div class="text-sm text-system-primary">
+                            <p>
+                                {i + 1}. Maklumat Waris - {nextOfKin.name}
+                            </p>
+                        </div>
+                    {/each}
+                </div>
+            {/if}
             {#if !isReadonlyNextOfKinFormStepper && data.isCandidateRole}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
@@ -1811,6 +2060,7 @@
                     </TextIconButton>
                 </div>
             {/if}
+
             <form
                 id="nextOfKinInfoForm"
                 class="flex w-full flex-col gap-2"
@@ -1849,7 +2099,7 @@
                                         i
                                     ].alternativeName}
                                 ></CustomTextField>
-                                <!-- <CustomSelectField
+                                <CustomSelectField
                                     id="addIdentityDocumentColor"
                                     label={'Warna Kad Pengenalan'}
                                     options={data.selectionOptions
@@ -1858,7 +2108,7 @@
                                     bind:val={$nextOfKinInfoForm.nextOfKinsList[
                                         i
                                     ].identityDocumentColor}
-                                ></CustomSelectField> -->
+                                ></CustomSelectField>
                                 <CustomTextField
                                     id="addIdentityDocumentNumber"
                                     type="number"
@@ -1869,12 +2119,14 @@
                                     ].identityDocumentNumber}
                                 ></CustomTextField>
 
-                                <!-- <LongTextField
-                id="addAddress"
-                label={'Alamat'}
-                disabled={isReadonlyFamilyFormStepper}
-                bind:val={$nextOfKinInfoForm.nextOfKinsList[i].address}
-            ></LongTextField> -->
+                                <CustomTextField
+                                    id="addAddress"
+                                    label={'Alamat'}
+                                    disabled={isReadonlyFamilyFormStepper}
+                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
+                                        i
+                                    ].address}
+                                ></CustomTextField>
 
                                 <CustomTextField
                                     id="addPostcode"
@@ -1887,6 +2139,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    disabled={isReadonlyFamilyFormStepper}
                                     type="date"
                                     id="addBirthDate"
                                     label={'Tarikh Lahir'}
@@ -2010,14 +2263,14 @@
                                     ].phoneNumber}
                                 ></CustomTextField>
 
-                                <CustomTextField
+                                <!-- <CustomTextField
                                     type="date"
                                     id="addMarriageDate"
                                     label={'Tarikh Kahwin'}
                                     bind:val={$nextOfKinInfoForm.nextOfKinsList[
                                         i
                                     ].marriageDate}
-                                ></CustomTextField>
+                                ></CustomTextField> -->
 
                                 <CustomSelectField
                                     id="inSchool"
@@ -2204,7 +2457,6 @@
                     use:serviceInfoEnhance
                     class="flex w-full flex-col gap-2.5"
                 >
-                    <input hidden bind:value={$serviceInfoForm.candidateId} />
                     <CustomSelectField
                         disabled={isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.gradeId}
@@ -2861,7 +3113,7 @@
             id="completionDate"
             label="Tarikh Kelulusan"
             type="date"
-            bind:val={$addAcademicInfoModal.completionDate}
+            bind:val={$proxyAddAcademicCompletionDate}
         ></CustomTextField>
         <CustomTextField
             errors={$addAcademicInfoErrors.finalGrade}
@@ -2923,20 +3175,20 @@
             bind:val={$addExperienceModalForm.positionCode}
         ></CustomTextField>
 
-        <!-- <CustomTextField
+        <CustomTextField
             type="date"
             errors={$addExperienceModalErrors.startDate}
             id="addStartDate"
             label={'Dari (tahun)'}
-            bind:val={$proxyAddAcademiStartDate}
+            bind:val={$proxyAddExperienceStartDate}
         ></CustomTextField>
         <CustomTextField
-        type="date"
+            type="date"
             errors={$addExperienceModalErrors.endDate}
             id="addEndDate"
             label={'Hingga (tahun)'}
-            bind:val={$proxyAddAcademiEndDate}
-        ></CustomTextField> -->
+            bind:val={$proxyAddExperienceEndDate}
+        ></CustomTextField>
 
         <CustomTextField
             errors={$addExperienceModalErrors.salary}
@@ -3041,12 +3293,12 @@
             bind:val={$addFamilyModal.identityDocumentNumber}
         ></CustomTextField>
 
-        <!-- <LongTextField
+        <CustomTextField
             errors={$addFamilyErrors.address}
             id="addAddress"
             label={'Alamat'}
             bind:val={$addFamilyModal.address}
-        ></LongTextField> -->
+        ></CustomTextField>
 
         <CustomTextField
             errors={$addFamilyErrors.postcode}
@@ -3056,13 +3308,13 @@
             bind:val={$addFamilyModal.postcode}
         ></CustomTextField>
 
-        <!-- <CustomTextField
+        <CustomTextField
             type="date"
             errors={$addFamilyErrors.birthDate}
             id="addBirthDate"
             label={'Tarikh Lahir'}
             bind:val={$proxyAddFamilyBirthDate}
-        ></CustomTextField> -->
+        ></CustomTextField>
 
         <CustomSelectField
             errors={$addFamilyErrors.birthCountryId}
@@ -3152,13 +3404,13 @@
             bind:val={$addFamilyModal.phoneNumber}
         ></CustomTextField>
 
-        <!-- <CustomTextField
+        <CustomTextField
             type="date"
             errors={$addFamilyErrors.marriageDate}
             id="addMarriageDate"
             label={'Tarikh Kahwin'}
             bind:val={$proxyAddFamilyMarriageDate}
-        ></CustomTextField> -->
+        ></CustomTextField>
 
         <div class="flex flex-row">
             <label for="addInSchool" class="w-[220px] text-sm text-black"
@@ -3220,12 +3472,12 @@
             bind:val={$addNonFamilyModal.identityDocumentNumber}
         ></CustomTextField>
 
-        <!-- <LongTextField
+        <CustomTextField
             errors={$addNonFamilyErrors.address}
             id="addAddress"
             label={'Alamat'}
             bind:val={$addNonFamilyModal.address}
-        ></LongTextField> -->
+        ></CustomTextField>
 
         <CustomTextField
             errors={$addNonFamilyErrors.postcode}
@@ -3235,13 +3487,13 @@
             bind:val={$addNonFamilyModal.postcode}
         ></CustomTextField>
 
-        <!-- <CustomTextField
+        <CustomTextField
             type="date"
             errors={$addNonFamilyErrors.birthDate}
             id="addBirthDate"
             label={'Tarikh Lahir'}
             bind:val={$proxyAddDependencyBirthDate}
-        ></CustomTextField> -->
+        ></CustomTextField>
 
         <CustomSelectField
             errors={$addNonFamilyErrors.birthCountryId}
@@ -3331,13 +3583,13 @@
             bind:val={$addNonFamilyModal.phoneNumber}
         ></CustomTextField>
 
-        <!-- <CustomTextField
+        <CustomTextField
             type="date"
             errors={$addNonFamilyErrors.marriageDate}
             id="addMarriageDate"
             label={'Tarikh Kahwin'}
             bind:val={$proxyAddDependencyMarriageDate}
-        ></CustomTextField> -->
+        ></CustomTextField>
 
         <div class="flex flex-row">
             <label for="addInSchool" class="w-[220px] text-sm text-black"
@@ -3396,12 +3648,12 @@
             bind:val={$addNextOfKinModal.identityDocumentNumber}
         ></CustomTextField>
 
-        <!-- <LongTextField
+        <CustomTextField
             errors={$addNextOfKinErrors.address}
             id="addAddress"
             label={'Alamat'}
             bind:val={$addNextOfKinModal.address}
-        ></LongTextField> -->
+        ></CustomTextField>
 
         <CustomTextField
             errors={$addNextOfKinErrors.postcode}
@@ -3411,13 +3663,13 @@
             bind:val={$addNextOfKinModal.postcode}
         ></CustomTextField>
 
-        <!-- <CustomTextField
+        <CustomTextField
             type="date"
             errors={$addNextOfKinErrors.birthDate}
             id="addBirthDate"
             label={'Tarikh Lahir'}
             bind:val={$proxyAddNextOfKinBirthDate}
-        ></CustomTextField> -->
+        ></CustomTextField>
 
         <CustomSelectField
             errors={$addNextOfKinErrors.birthCountryId}
@@ -3512,7 +3764,7 @@
             errors={$addNextOfKinErrors.marriageDate}
             id="addMarriageDate"
             label={'Tarikh Kahwin'}
-            bind:val={$addNextOfKinModal.marriageDate}
+            bind:val={$proxyAddNextOfKinMarriageDate}
         ></CustomTextField>
 
         <div class="flex flex-row">
