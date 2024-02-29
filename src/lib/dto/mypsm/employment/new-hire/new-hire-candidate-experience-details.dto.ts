@@ -4,7 +4,13 @@ import type {
 } from '$lib/schemas/mypsm/employment/new-hire/schema';
 import type { z } from 'zod';
 
-export type CandidateExperiencesDetailDTO = z.infer<
+export type CandidateExperiencesDetailResponseDTO = z.infer<
     typeof _experienceListSchema
 >;
+
+export type CandidateExperiencesDetailRequestDTO = Pick<
+    CandidateExperiencesDetailResponseDTO,
+    'experienceList'
+>;
+
 export type Experience = z.infer<typeof _experienceInfoSchema>;
