@@ -35,7 +35,7 @@
 </script>
 
 <div
-    class="flex h-full max-h-[calc(100vh-200px)] w-full max-w-[calc(100vw-200px)] flex-col items-center justify-start bg-bgr-primary"
+    class="flex h-full max-h-full w-full max-w-[calc(100vw-200px)] flex-col items-center justify-start bg-bgr-primary"
 >
     <div
         class="flex h-[40px] max-h-[40px] min-h-[40px] w-full flex-row items-center justify-start border-b border-bdr-primary bg-bgr-primary"
