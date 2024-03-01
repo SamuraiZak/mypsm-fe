@@ -24,9 +24,7 @@
         _activityListRequestSchema,
         _documentsSchema,
         _uploadDocumentsSchema,
-        _nextOfKinListResponseSchema,
         _dependencyListResponseSchema,
-        _familyListResponseSchema,
         _activityListResponseSchema,
         _experienceListResponseSchema,
         _academicListResponseSchema,
@@ -88,37 +86,65 @@
     } from '$lib/constants/core/radio-option-constants';
     import { monthLookup } from '$lib/constants/core/dropdown.constant';
     import { getErrorToast } from '$lib/helpers/core/toast.helper.js';
-    import { fail } from '@sveltejs/kit';
+    import { error } from '@sveltejs/kit';
+    import { writable } from 'svelte/store';
     export let data: PageData;
 
-    const personalDetails: CandidatePersonalResponseDTO =
-        data.personalDetailResponse.data?.details;
-    let isReadonlyPersonalFormStepper: boolean =
-        data.personalDetailResponse?.data?.details?.isReadonly;
-    let isReadonlyAcademicFormStepper: boolean =
-        data.academicInfoResponse?.data?.details?.isReadonly;
-    let isReadonlyExperienceFormStepper: boolean =
-        data.experienceInfoResponse?.data?.details?.isReadonly;
-    let isReadonlyActivityFormStepper: boolean =
-        data.activityInfoResponse?.data?.details?.isReadonly;
-    let isReadonlyFamilyFormStepper: boolean =
-        data.familyInfoResponse?.data?.details?.isReadonly;
-    let isReadonlyDependencyFormStepper: boolean =
-        data.dependencyInfoResponse?.data?.details?.isReadonly;
-    let isReadonlyNextOfKinFormStepper: boolean =
-        data.nextOfKinInfoResponse?.data?.details?.isReadonly;
-    let isReadonlyDocumentFormStepper: boolean =
-        data.documentInfoResponse?.data?.details?.isReadonly;
-    let isReadonlyServiceFormStepper: boolean =
-        data.serviceResponse?.data?.details?.isReadonly;
-    let isReadonlySecretaryApprovalResult: boolean =
-        !!data.secretaryApprovalResponse?.data?.details?.status;
-    let isReadonlySetApproversFormStepper: boolean =
-        data.secretaryGetApproversResponse?.data?.details?.isReadonly;
-    let isReadonlySupporterApprovalResult: boolean =
-        !!data.supporterResultResponse?.data?.details?.status;
-    let isReadonlyApproverApprovalResult: boolean =
-        !!data.approverResultResponse?.data?.details?.status;
+    let isReadonlyPersonalFormStepper = writable<boolean>();
+    let isReadonlyAcademicFormStepper = writable<boolean>();
+    let isReadonlyExperienceFormStepper = writable<boolean>();
+    let isReadonlyActivityFormStepper = writable<boolean>();
+    let isReadonlyFamilyFormStepper = writable<boolean>();
+    let isReadonlyDependencyFormStepper = writable<boolean>();
+    let isReadonlyNextOfKinFormStepper = writable<boolean>();
+    let isReadonlyDocumentFormStepper = writable<boolean>();
+    let isReadonlyServiceFormStepper = writable<boolean>();
+    let isReadonlySecretaryApprovalResult = writable<boolean>();
+    let isReadonlySetApproversFormStepper = writable<boolean>();
+    let isReadonlySupporterApprovalResult = writable<boolean>();
+    let isReadonlyApproverApprovalResult = writable<boolean>();
+
+    $: {
+        isReadonlyPersonalFormStepper.set(
+            data.personalDetailResponse?.data?.details?.isReadonly,
+        );
+        isReadonlyAcademicFormStepper.set(
+            data.academicInfoResponse?.data?.details?.isReadonly,
+        );
+        isReadonlyExperienceFormStepper.set(
+            data.experienceInfoResponse?.data?.details?.isReadonly,
+        );
+        isReadonlyActivityFormStepper.set(
+            data.activityInfoResponse?.data?.details?.isReadonly,
+        );
+        isReadonlyFamilyFormStepper.set(
+            data.familyInfoResponse?.data?.details?.isReadonly,
+        );
+        isReadonlyDependencyFormStepper.set(
+            data.dependencyInfoResponse?.data?.details?.isReadonly,
+        );
+        isReadonlyNextOfKinFormStepper.set(
+            data.nextOfKinInfoResponse?.data?.details?.isReadonly,
+        );
+        isReadonlyDocumentFormStepper.set(
+            !!data.documentInfoResponse?.data?.details?.attachment,
+        );
+        isReadonlyServiceFormStepper.set(
+            data.serviceResponse?.data?.details?.isReadonly,
+        );
+        isReadonlySecretaryApprovalResult.set(
+            !!data.secretaryApprovalResponse?.data?.details?.status,
+        );
+        isReadonlySetApproversFormStepper.set(
+            data.secretaryGetApproversResponse?.data?.details?.isReadonly,
+        );
+        isReadonlySupporterApprovalResult.set(
+            !!data.supporterResultResponse?.data?.details?.status,
+        );
+        isReadonlyApproverApprovalResult.set(
+            !!data.approverResultResponse?.data?.details?.status,
+        );
+    }
 
     export let openExperienceInfoModal: boolean = false;
     export let openMembershipInfoModal: boolean = false;
@@ -306,7 +332,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
-        validators: _familyListResponseSchema,
+        validators: _dependencyListResponseSchema,
     });
 
     const {
@@ -334,7 +360,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
-        validators: _nextOfKinListResponseSchema,
+        validators: _dependencyListResponseSchema,
     });
 
     const {
@@ -344,7 +370,7 @@
     } = superForm(data.newHireDocumentForm, {
         SPA: true,
         dataType: 'json',
-        invalidateAll: true,
+        invalidateAll: false,
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
@@ -362,10 +388,10 @@
     } = superForm(data.addAcademicModal, {
         SPA: true,
         dataType: 'json',
-        invalidateAll: true,
+        invalidateAll: false,
         taintedMessage: false,
         resetForm: true,
-        multipleSubmits: 'prevent',
+        multipleSubmits: 'allow',
         validationMethod: 'oninput',
         validators: _academicInfoSchema,
         async onSubmit(formData) {
@@ -374,11 +400,11 @@
                 _academicInfoSchema,
             );
 
-            console.log('Result: ', result.data);
+            console.log('Result: ', result);
 
             if (!result.valid) {
                 getErrorToast();
-                fail(400);
+                error(400, 'Validation not passed, please check every fields.');
             }
 
             tempAcademicRecord = [
@@ -396,23 +422,26 @@
     } = superForm(data.addExperienceModal, {
         SPA: true,
         dataType: 'json',
-        invalidateAll: true,
+        invalidateAll: false,
         taintedMessage: false,
         resetForm: true,
-        multipleSubmits: 'prevent',
+        multipleSubmits: 'allow',
         validationMethod: 'oninput',
         validators: _experienceInfoSchema,
         async onSubmit(formData) {
+            for (const pair of formData.formData.entries()) {
+                console.log(pair[0], pair[1]);
+            }
             const result = await superValidate(
                 formData.formData,
                 _experienceInfoSchema,
             );
 
-            console.log('Result: ', result.data);
+            console.log('Result: ', result);
 
             if (!result.valid) {
                 getErrorToast();
-                fail(400);
+                error(400, 'Validation not passed, please check every fields.');
             }
 
             tempExperienceRecord = [
@@ -430,10 +459,10 @@
     } = superForm(data.addActivityModal, {
         SPA: true,
         dataType: 'json',
-        invalidateAll: true,
+        invalidateAll: false,
         taintedMessage: false,
         resetForm: true,
-        multipleSubmits: 'prevent',
+        multipleSubmits: 'allow',
         validationMethod: 'oninput',
         validators: _activityInfoSchema,
         async onSubmit(formData) {
@@ -442,11 +471,11 @@
                 _activityInfoSchema,
             );
 
-            console.log('Result: ', result.data);
+            console.log('Result: ', result);
 
             if (!result.valid) {
                 getErrorToast();
-                fail(400);
+                error(400, 'Validation not passed, please check every fields.');
             }
 
             tempActivityRecord = [
@@ -464,10 +493,10 @@
     } = superForm(data.addFamilyModal, {
         SPA: true,
         dataType: 'json',
-        invalidateAll: true,
+        invalidateAll: false,
         taintedMessage: false,
         resetForm: true,
-        multipleSubmits: 'prevent',
+        multipleSubmits: 'allow',
         validationMethod: 'oninput',
         validators: _relationsSchema,
         async onSubmit(formData) {
@@ -476,11 +505,11 @@
                 _relationsSchema,
             );
 
-            console.log('Result: ', result.data);
+            console.log('Result: ', result);
 
             if (!result.valid) {
                 getErrorToast();
-                fail(400);
+                error(400, 'Validation not passed, please check every fields.');
             }
 
             tempFamilyRecord = [...tempFamilyRecord, result.data as Family];
@@ -495,10 +524,10 @@
     } = superForm(data.addNonFamilyModal, {
         SPA: true,
         dataType: 'json',
-        invalidateAll: true,
+        invalidateAll: false,
         taintedMessage: false,
         resetForm: true,
-        multipleSubmits: 'prevent',
+        multipleSubmits: 'allow',
         validationMethod: 'oninput',
         validators: _relationsSchema,
         async onSubmit(formData) {
@@ -507,11 +536,11 @@
                 _relationsSchema,
             );
 
-            console.log('Result: ', result.data);
+            console.log('Result: ', result);
 
             if (!result.valid) {
                 getErrorToast();
-                fail(400);
+                error(400, 'Validation not passed, please check every fields.');
             }
 
             tempNonFamilyRecord = [
@@ -528,10 +557,10 @@
     } = superForm(data.addNextOfKinModal, {
         SPA: true,
         dataType: 'json',
-        invalidateAll: true,
+        invalidateAll: false,
         taintedMessage: false,
         resetForm: true,
-        multipleSubmits: 'prevent',
+        multipleSubmits: 'allow',
         validationMethod: 'oninput',
         validators: _relationsSchema,
         async onSubmit(formData) {
@@ -540,11 +569,11 @@
                 _relationsSchema,
             );
 
-            console.log('Result: ', result.data);
+            console.log('Result: ', result);
 
             if (!result.valid) {
                 getErrorToast();
-                fail(400);
+                error(400, 'Validation not passed, please check every fields.');
             }
 
             tempNextOfKinFromFamily = [
@@ -588,11 +617,11 @@
             identityDocumentNumber: tempData.identityDocumentNumber,
             address: tempData.address,
             postcode: tempData.postcode,
-            birthDate: new Date(tempData.birthDate),
+            birthDate: tempData.birthDate,
             workAddress: tempData.workAddress,
             workPostcode: tempData.workPostcode,
             phoneNumber: tempData.phoneNumber,
-            marriageDate: new Date(tempData.marriageDate),
+            marriageDate: tempData.marriageDate,
             inSchool: tempData.inSchool,
         }));
 
@@ -603,62 +632,62 @@
         _submitNextOfKinInfoForm(tempNextOfKinRecord);
     };
 
-    const proxyBirthDate = dateProxy(form, 'birthDate', {
-        format: 'date',
-    });
-    const proxypropertyDeclarationDate = dateProxy(
-        form,
-        'propertyDeclarationDate',
-        {
-            format: 'date-local',
-        },
-    );
-    const proxyAcademicCompletionDate = dateProxy(
-        addAcademicInfoModal,
-        'completionDate',
-        {
-            format: 'date',
-        },
-    );
+    // const proxyBirthDate = dateProxy(form, 'birthDate', {
+    //     format: 'date',
+    // });
+    // const proxypropertyDeclarationDate = dateProxy(
+    //     form,
+    //     'propertyDeclarationDate',
+    //     {
+    //         format: 'date',
+    //     },
+    // );
+    // const proxyAcademicCompletionDate = dateProxy(
+    //     addAcademicInfoModal,
+    //     'completionDate',
+    //     {
+    //         format: 'date',
+    //     },
+    // );
 
-    const proxyEffectiveDate = dateProxy(serviceInfoForm, 'effectiveDate', {
-        format: 'date',
-    });
-    const proxyCivilServiceStartDate = dateProxy(
-        serviceInfoForm,
-        'civilServiceStartDate',
-        { format: 'date' },
-    );
-    const proxynewRecruitEffectiveDate = dateProxy(
-        serviceInfoForm,
-        'newRecruitEffectiveDate',
-        { format: 'date' },
-    );
-    const proxyFirstEffectiveDate = dateProxy(
-        serviceInfoForm,
-        'firstEffectiveDate',
-        { format: 'date' },
-    );
-    const proxyServiceDate = dateProxy(serviceInfoForm, 'serviceDate', {
-        format: 'date',
-    });
+    // const proxyEffectiveDate = dateProxy(serviceInfoForm, 'effectiveDate', {
+    //     format: 'date',
+    // });
+    // const proxyCivilServiceStartDate = dateProxy(
+    //     serviceInfoForm,
+    //     'civilServiceStartDate',
+    //     { format: 'date' },
+    // );
+    // const proxynewRecruitEffectiveDate = dateProxy(
+    //     serviceInfoForm,
+    //     'newRecruitEffectiveDate',
+    //     { format: 'date' },
+    // );
+    // const proxyFirstEffectiveDate = dateProxy(
+    //     serviceInfoForm,
+    //     'firstEffectiveDate',
+    //     { format: 'date' },
+    // );
+    // const proxyServiceDate = dateProxy(serviceInfoForm, 'serviceDate', {
+    //     format: 'date',
+    // });
 
-    const proxyFirstServiceDate = dateProxy(
-        serviceInfoForm,
-        'firstServiceDate',
-        { format: 'date' },
-    );
-    const proxyFirstConfirmServiceDate = dateProxy(
-        serviceInfoForm,
-        'firstConfirmServiceDate',
-        { format: 'date' },
-    );
-    const proxyConfirmDate = dateProxy(serviceInfoForm, 'confirmDate', {
-        format: 'date',
-    });
-    const proxyRetirementDate = dateProxy(serviceInfoForm, 'retirementDate', {
-        format: 'date',
-    });
+    // const proxyFirstServiceDate = dateProxy(
+    //     serviceInfoForm,
+    //     'firstServiceDate',
+    //     { format: 'date' },
+    // );
+    // const proxyFirstConfirmServiceDate = dateProxy(
+    //     serviceInfoForm,
+    //     'firstConfirmServiceDate',
+    //     { format: 'date' },
+    // );
+    // const proxyConfirmDate = dateProxy(serviceInfoForm, 'confirmDate', {
+    //     format: 'date',
+    // });
+    // const proxyRetirementDate = dateProxy(serviceInfoForm, 'retirementDate', {
+    //     format: 'date',
+    // });
     // const proxyActingDate = dateProxy(serviceInfoForm, 'actingDate', {
     //     format: 'date',
     // });
@@ -681,74 +710,73 @@
     //     { format: 'date' },
     // );
 
-    const proxyAddAcademicCompletionDate = dateProxy(
-        addAcademicInfoModal,
-        'completionDate',
-        {
-            format: 'date',
-        },
-    );
+    // const proxyAddAcademicCompletionDate = dateProxy(
+    //     addAcademicInfoModal,
+    //     'completionDate',
+    //     {
+    //         format: 'date',
+    //     },
+    // );
 
-    const proxyAddExperienceStartDate = dateProxy(
-        addExperienceModalForm,
-        'startDate',
-        {
-            format: 'date',
-        },
-    );
-    const proxyAddExperienceEndDate = dateProxy(
-        addExperienceModalForm,
-        'endDate',
-        {
-            format: 'date',
-        },
-    );
-    const proxyAddActivityJoinDate = dateProxy(addActivityModal, 'joinDate', {
-        format: 'date',
-    });
-    const proxyAddFamilyBirthDate = dateProxy(addFamilyModal, 'birthDate', {
-        format: 'date',
-    });
-    const proxyAddFamilyMarriageDate = dateProxy(
-        addFamilyModal,
-        'marriageDate',
-        {
-            format: 'date',
-        },
-    );
-    const proxyAddDependencyBirthDate = dateProxy(
-        addNonFamilyModal,
-        'birthDate',
-        {
-            format: 'date',
-        },
-    );
-    const proxyAddDependencyMarriageDate = dateProxy(
-        addNonFamilyModal,
-        'marriageDate',
-        {
-            format: 'date',
-        },
-    );
-    const proxyAddNextOfKinBirthDate = dateProxy(
-        addNextOfKinModal,
-        'birthDate',
-        {
-            format: 'date',
-        },
-    );
-    const proxyAddNextOfKinMarriageDate = dateProxy(
-        addNextOfKinModal,
-        'marriageDate',
-        {
-            format: 'date',
-        },
-    );
+    // const proxyAddExperienceStartDate = dateProxy(
+    //     addExperienceModalForm,
+    //     'startDate',
+    //     {
+    //         format: 'date',
+    //     },
+    // );
+    // const proxyAddExperienceEndDate = dateProxy(
+    //     addExperienceModalForm,
+    //     'endDate',
+    //     {
+    //         format: 'date',
+    //     },
+    // );
+    // const proxyAddActivityJoinDate = dateProxy(addActivityModal, 'joinDate', {
+    //     format: 'date',
+    // });
+    // const proxyAddFamilyBirthDate = dateProxy(addFamilyModal, 'birthDate', {
+    //     format: 'date',
+    // });
+    // const proxyAddFamilyMarriageDate = dateProxy(
+    //     addFamilyModal,
+    //     'marriageDate',
+    //     {
+    //         format: 'date',
+    //     },
+    // );
+    // const proxyAddDependencyBirthDate = dateProxy(
+    //     addNonFamilyModal,
+    //     'birthDate',
+    //     {
+    //         format: 'date',
+    //     },
+    // );
+    // const proxyAddDependencyMarriageDate = dateProxy(
+    //     addNonFamilyModal,
+    //     'marriageDate',
+    //     {
+    //         format: 'date',
+    //     },
+    // );
+    // const proxyAddNextOfKinBirthDate = dateProxy(
+    //     addNextOfKinModal,
+    //     'birthDate',
+    //     {
+    //         format: 'date',
+    //     },
+    // );
+    // const proxyAddNextOfKinMarriageDate = dateProxy(
+    //     addNextOfKinModal,
+    //     'marriageDate',
+    //     {
+    //         format: 'date',
+    //     },
+    // );
 
     const handleOnInput = (e: Event) => {
-        $documentForm.document = Array.from(
-            (e.currentTarget as HTMLInputElement).files ?? [],
-        );
+        $documentForm.document =
+            (e.currentTarget as HTMLInputElement)?.files?.item(0) ?? null;
     };
 
     const handleDownload = async () => {
@@ -759,7 +787,7 @@
 
     // Function to handle the file deletion
     function handleDelete() {
-        $documentForm.document = [];
+        $documentForm.document = null;
     }
 </script>
 
@@ -814,7 +842,7 @@
                 ></CustomTextField>
 
                 <CustomSelectField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.titleId}
                     id="titleId"
                     label={'Gelaran Nama'}
@@ -823,7 +851,7 @@
                 ></CustomSelectField>
 
                 <CustomTextField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     id="alternativeName"
                     label={'Nama Lain'}
                     type="text"
@@ -831,14 +859,14 @@
                 ></CustomTextField>
 
                 <CustomTextField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     id="statusPekerjaan"
                     label="Emel Pekerja"
                     bind:val={$form.email}
                 ></CustomTextField>
 
                 <CustomSelectField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.identityDocumentColor}
                     id="identityDocumentColor"
                     label="Warna Kad Pengenalan"
@@ -847,7 +875,7 @@
                 ></CustomSelectField>
 
                 <CustomTextField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.birthDate}
                     type="date"
                     id="birthDate"
@@ -855,7 +883,7 @@
                     bind:val={$form.birthDate}
                 ></CustomTextField>
                 <CustomSelectField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.birthStateId}
                     id="birthStateId"
                     label="Tempat Lahir"
@@ -864,7 +892,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.birthCountryId}
                     id="birthCountryId"
                     label="Tempat Lahir"
@@ -873,7 +901,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.nationalityId}
                     id="nationalityId"
                     label="Warganegara"
@@ -882,7 +910,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.raceId}
                     id="raceId"
                     label="Bangsa"
@@ -891,7 +919,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.ethnicId}
                     id="ethnicId"
                     label="Etnik"
@@ -900,7 +928,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.religionId}
                     id="religionId"
                     label="Agama"
@@ -909,7 +937,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.genderId}
                     id="genderId"
                     label="Jantina"
@@ -918,7 +946,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.maritalId}
                     id="maritalId"
                     label="Status Perkahwinan"
@@ -928,14 +956,14 @@
 
                 <CustomTextField
                     errors={$errors.homeAddress}
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     id="homeAddress"
                     label="Alamat Rumah"
                     bind:val={$form.homeAddress}
                 />
 
                 <CustomSelectField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.homeCountryId}
                     id="homeCountryId"
                     label="Negara Kediaman"
@@ -944,7 +972,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.homeStateId}
                     id="homeStateId"
                     label="Negeri Kediaman"
@@ -953,7 +981,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.homeCityId}
                     id="homeCityId"
                     label="Daerah Kediaman"
@@ -963,7 +991,7 @@
 
                 <CustomTextField
                     errors={$errors.homePostcode}
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     id="homePostcode"
                     label="Poskod Rumah"
                     bind:val={$form.homePostcode}
@@ -971,14 +999,14 @@
 
                 <CustomTextField
                     errors={$errors.mailAddress}
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     id="mailAddress"
                     label="Alamat Surat Menyurat"
                     bind:val={$form.mailAddress}
                 />
 
                 <CustomSelectField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.mailCountryId}
                     id="mailCountryId"
                     label="Negara Surat Menyurat"
@@ -987,7 +1015,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.mailStateId}
                     id="mailStateId"
                     label="Negeri Surat Menyurat"
@@ -996,7 +1024,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.mailCityId}
                     id="mailCityId"
                     label="Daerah Surat Menyurat"
@@ -1006,14 +1034,14 @@
 
                 <CustomTextField
                     errors={$errors.mailPostcode}
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     id="mailPostcode"
                     label="Poskod Surat Menyurat"
                     bind:val={$form.mailPostcode}
                 />
 
                 <CustomSelectField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.assetDeclarationStatusId}
                     id="assetDeclarationStatusId"
                     label="Status Pengikstiharan Harta"
@@ -1024,16 +1052,16 @@
                 {#if $form.assetDeclarationStatusId === 12 || $form.assetDeclarationStatusId === 14 || $form.assetDeclarationStatusId === 15 || $form.assetDeclarationStatusId === 17 || $form.assetDeclarationStatusId === 18 || $form.assetDeclarationStatusId === 22}
                     <CustomTextField
                         errors={$errors.propertyDeclarationDate}
-                        disabled={isReadonlyPersonalFormStepper}
+                        disabled={$isReadonlyPersonalFormStepper}
                         id="propertyDeclarationDate"
                         type="date"
                         label="Tarikh Pengikstiharan Harta"
-                        bind:val={$proxypropertyDeclarationDate}
+                        bind:val={$form.propertyDeclarationDate}
                     />
                 {/if}
 
                 <CustomSelectField
-                    disabled={isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.isExPoliceOrSoldier}
                     id="isExPoliceOrSoldier"
                     label="Bekas Polis / Tentera"
@@ -1047,7 +1075,7 @@
                     </p>
 
                     <CustomSelectField
-                        disabled={isReadonlyPersonalFormStepper}
+                        disabled={$isReadonlyPersonalFormStepper}
                         errors={$errors.isInternalRelationship}
                         id="isInternalRelationship"
                         label="Perhubungan Dengan Kakitangan LKIM"
@@ -1056,35 +1084,37 @@
                     ></CustomSelectField>
 
                     {#if $form.isInternalRelationship}
-                        <CustomTextField
-                            disabled={isReadonlyPersonalFormStepper}
-                            errors={$errors.employeeNumber}
-                            id="employeeNumber"
-                            label={'No. Pekerja LKIM'}
-                            type="text"
-                            bind:val={$form.employeeNumber}
-                        ></CustomTextField>
-
                         <CustomSelectField
-                            disabled={isReadonlyPersonalFormStepper}
-                            errors={$errors.employeeName}
-                            id="employeeName"
-                            label="Jawatan Kakitangan LKIM"
-                            bind:val={$form.employeeName}
+                            disabled={$isReadonlyPersonalFormStepper}
+                            bind:errors={$errors.employeeNumber}
+                            id="employeeNumber"
+                            label="No. Pekerja LKIM"
+                            bind:val={$form.employeeNumber}
                             options={data.selectionOptions.employeeLookup}
                         ></CustomSelectField>
 
-                        <CustomSelectField
-                            disabled={isReadonlyPersonalFormStepper}
-                            errors={$errors.employeePosition}
-                            id="relationDetailPosition"
-                            label="Jawatan Kakitangan LKIM"
-                            bind:val={$form.employeePosition}
-                            options={data.selectionOptions.positionLookup}
-                        ></CustomSelectField>
+                        {#if !!data.personalDetailResponse.data?.details.employeeNumber}
+                            <CustomTextField
+                                disabled={$isReadonlyPersonalFormStepper}
+                                errors={$errors.employeeName}
+                                id="employeeName"
+                                label={'Nama Kakitangan LKIM'}
+                                type="text"
+                                bind:val={$form.employeeName}
+                            ></CustomTextField>
+
+                            <CustomSelectField
+                                disabled={$isReadonlyPersonalFormStepper}
+                                errors={$errors.employeePosition}
+                                id="relationDetailPosition"
+                                label="Jawatan Kakitangan LKIM"
+                                bind:val={$form.employeePosition}
+                                options={data.selectionOptions.positionLookup}
+                            ></CustomSelectField>
+                        {/if}
 
                         <CustomSelectField
-                            disabled={isReadonlyPersonalFormStepper}
+                            disabled={$isReadonlyPersonalFormStepper}
                             errors={$errors.relationshipId}
                             id="relationDetailRelationship"
                             label="Hubungan"
@@ -1114,23 +1144,23 @@
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
-            {#if tempAcademicRecord.length > 0}
-                <div
-                    class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
-                >
-                    <div class="mb-2.5 text-sm font-medium">
-                        <p>Preview Rekod Untuk Disimpan</p>
-                    </div>
-                    {#each tempAcademicRecord as academic, i}
-                        <div class="text-sm text-system-primary">
-                            <p>
-                                {i + 1}. Maklumat Akademik - {academic.name}
-                            </p>
-                        </div>
-                    {/each}
-                </div>
-            {/if}
             {#if !isReadonlyAcademicFormStepper && data.isCandidateRole}
+                {#if tempAcademicRecord.length > 0}
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                    >
+                        <div class="mb-2.5 text-sm font-medium">
+                            <p>Preview Rekod Untuk Disimpan</p>
+                        </div>
+                        {#each tempAcademicRecord as academic, i}
+                            <div class="text-sm text-system-primary">
+                                <p>
+                                    {i + 1}. Maklumat Akademik - {academic.name}
+                                </p>
+                            </div>
+                        {/each}
+                    </div>
+                {/if}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
                         type="primary"
@@ -1147,21 +1177,21 @@
                 use:academicInfoEnhance
                 method="POST"
             >
-                {#if $academicInfoForm.academicList.length < 1}
+                {#if $academicInfoForm.academics.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
                         Tiada maklumat.
                     </div>
                 {:else}
-                    <CustomTab>
-                        {#each $academicInfoForm.academicList as _, i}
-                            <CustomTabContent title={'Akademik #' + i + 1}>
+                    <CustomTab id="academics">
+                        {#each $academicInfoForm.academics as _, i}
+                            <CustomTabContent title={`Akademik #${i + 1}`}>
                                 <CustomSelectField
                                     disabled
                                     id="majorId"
                                     label={'Jurusan'}
                                     options={data.selectionOptions
                                         .majorMinorLookup}
-                                    bind:val={$academicInfoForm.academicList[i]
+                                    bind:val={$academicInfoForm.academics[i]
                                         .majorId}
                                 ></CustomSelectField>
 
@@ -1171,7 +1201,7 @@
                                     label={'Bidang'}
                                     options={data.selectionOptions
                                         .majorMinorLookup}
-                                    bind:val={$academicInfoForm.academicList[i]
+                                    bind:val={$academicInfoForm.academics[i]
                                         .minorId}
                                 ></CustomSelectField>
 
@@ -1181,7 +1211,7 @@
                                     options={data.selectionOptions
                                         .countryLookup}
                                     label={'Negara'}
-                                    bind:val={$academicInfoForm.academicList[i]
+                                    bind:val={$academicInfoForm.academics[i]
                                         .countryId}
                                 ></CustomSelectField>
 
@@ -1191,7 +1221,7 @@
                                     options={data.selectionOptions
                                         .institutionLookup}
                                     label={'Institusi'}
-                                    bind:val={$academicInfoForm.academicList[i]
+                                    bind:val={$academicInfoForm.academics[i]
                                         .institutionId}
                                 ></CustomSelectField>
 
@@ -1201,7 +1231,7 @@
                                     options={data.selectionOptions
                                         .educationLookup}
                                     label={'Taraf Pendidikan'}
-                                    bind:val={$academicInfoForm.academicList[i]
+                                    bind:val={$academicInfoForm.academics[i]
                                         .educationLevelId}
                                 ></CustomSelectField>
 
@@ -1211,7 +1241,7 @@
                                     options={data.selectionOptions
                                         .sponsorshipLookup}
                                     label={'Penajaan'}
-                                    bind:val={$academicInfoForm.academicList[i]
+                                    bind:val={$academicInfoForm.academics[i]
                                         .sponsorshipId}
                                 ></CustomSelectField>
 
@@ -1220,7 +1250,7 @@
                                     id="certName"
                                     label={'Nama Sijil/Pencapaian'}
                                     type="text"
-                                    bind:val={$academicInfoForm.academicList[i]
+                                    bind:val={$academicInfoForm.academics[i]
                                         .name}
                                 ></CustomTextField>
 
@@ -1229,7 +1259,7 @@
                                     id="completionDate"
                                     label="Tarikh Tamat Pembelajaran"
                                     type="date"
-                                    bind:val={$academicInfoForm.academicList[i]
+                                    bind:val={$academicInfoForm.academics[i]
                                         .completionDate}
                                 ></CustomTextField>
 
@@ -1238,7 +1268,7 @@
                                     id="finalGrade"
                                     label={'Ijazah/ CGPA/ Gred'}
                                     type="text"
-                                    bind:val={$academicInfoForm.academicList[i]
+                                    bind:val={$academicInfoForm.academics[i]
                                         .finalGrade}
                                 ></CustomTextField>
 
@@ -1247,7 +1277,7 @@
                                     id="field"
                                     label={'Catatan'}
                                     type="text"
-                                    bind:val={$academicInfoForm.academicList[i]
+                                    bind:val={$academicInfoForm.academics[i]
                                         .field}
                                 ></CustomTextField>
                             </CustomTabContent>
@@ -1263,7 +1293,7 @@
     <!------------------------------------------------------->
     <StepperContent>
         <StepperContentHeader title="Maklumat Pengalaman">
-            {#if !isReadonlyExperienceFormStepper && data.isCandidateRole}
+            {#if !$isReadonlyExperienceFormStepper && data.isCandidateRole}
                 <TextIconButton
                     type="primary"
                     label="Simpan"
@@ -1272,23 +1302,23 @@
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
-            {#if tempExperienceRecord.length > 0}
-                <div
-                    class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
-                >
-                    <div class="mb-2.5 text-sm font-medium">
-                        <p>Preview Rekod Untuk Disimpan</p>
-                    </div>
-                    {#each tempExperienceRecord as experience, i}
-                        <div class="text-sm text-system-primary">
-                            <p>
-                                {i + 1}. Maklumat Pengalaman - {experience.company}
-                            </p>
+            {#if !$isReadonlyExperienceFormStepper && data.isCandidateRole}
+                {#if tempExperienceRecord.length > 0}
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                    >
+                        <div class="mb-2.5 text-sm font-medium">
+                            <p>Preview Rekod Untuk Disimpan</p>
                         </div>
-                    {/each}
-                </div>
-            {/if}
-            {#if !isReadonlyExperienceFormStepper && data.isCandidateRole}
+                        {#each tempExperienceRecord as experience, i}
+                            <div class="text-sm text-system-primary">
+                                <p>
+                                    {i + 1}. Maklumat Pengalaman - {experience.company}
+                                </p>
+                            </div>
+                        {/each}
+                    </div>
+                {/if}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
                         type="primary"
@@ -1307,21 +1337,21 @@
                 use:experienceInfoEnhance
                 method="POST"
             >
-                {#if $experienceInfoForm.experienceList.length < 1}
+                {#if $experienceInfoForm.experiences.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
                         Tiada maklumat.
                     </div>
                 {:else}
-                    <CustomTab>
-                        {#each $experienceInfoForm.experienceList as _, i}
-                            <CustomTabContent title={'Pengalaman #' + i + 1}>
+                    <CustomTab id="experiences">
+                        {#each $experienceInfoForm.experiences as _, i}
+                            <CustomTabContent title={`Pengalaman #${i + 1}`}>
                                 <CustomTextField
                                     disabled
                                     id="company"
                                     label={'Nama Majikan'}
                                     type="text"
-                                    bind:val={$experienceInfoForm
-                                        .experienceList[i].company}
+                                    bind:val={$experienceInfoForm.experiences[i]
+                                        .company}
                                 ></CustomTextField>
 
                                 <CustomTextField
@@ -1329,8 +1359,8 @@
                                     id="address"
                                     label={'Alamat Majikan'}
                                     type="text"
-                                    bind:val={$experienceInfoForm
-                                        .experienceList[i].address}
+                                    bind:val={$experienceInfoForm.experiences[i]
+                                        .address}
                                 ></CustomTextField>
 
                                 <CustomTextField
@@ -1338,8 +1368,8 @@
                                     id="position"
                                     label={'Jawatan'}
                                     type="text"
-                                    bind:val={$experienceInfoForm
-                                        .experienceList[i].position}
+                                    bind:val={$experienceInfoForm.experiences[i]
+                                        .position}
                                 ></CustomTextField>
 
                                 <CustomTextField
@@ -1347,16 +1377,16 @@
                                     id="positionCode"
                                     label={'Kod Jawatan (jika ada)'}
                                     type="text"
-                                    bind:val={$experienceInfoForm
-                                        .experienceList[i].positionCode}
+                                    bind:val={$experienceInfoForm.experiences[i]
+                                        .positionCode}
                                 ></CustomTextField>
                                 <CustomTextField
                                     type="date"
                                     disabled
                                     id="startDate"
                                     label="Tarikh Mula Bekerja"
-                                    bind:val={$experienceInfoForm
-                                        .experienceList[i].startDate}
+                                    bind:val={$experienceInfoForm.experiences[i]
+                                        .startDate}
                                 ></CustomTextField>
 
                                 <CustomTextField
@@ -1364,8 +1394,8 @@
                                     disabled
                                     id="endDate"
                                     label="Tarikh Tamat Bekerja"
-                                    bind:val={$experienceInfoForm
-                                        .experienceList[i].endDate}
+                                    bind:val={$experienceInfoForm.experiences[i]
+                                        .endDate}
                                 ></CustomTextField>
 
                                 <CustomTextField
@@ -1373,8 +1403,8 @@
                                     id="salary"
                                     label={'Gaji'}
                                     type="number"
-                                    bind:val={$experienceInfoForm
-                                        .experienceList[i].salary}
+                                    bind:val={$experienceInfoForm.experiences[i]
+                                        .salary}
                                 ></CustomTextField>
                             </CustomTabContent>
                         {/each}
@@ -1390,7 +1420,7 @@
 
     <StepperContent>
         <StepperContentHeader title="Maklumat Kegiatan / Keahlian">
-            {#if !isReadonlyActivityFormStepper && data.isCandidateRole}
+            {#if !$isReadonlyActivityFormStepper && data.isCandidateRole}
                 <TextIconButton
                     type="primary"
                     label="Simpan"
@@ -1399,23 +1429,23 @@
             {/if}</StepperContentHeader
         >
         <StepperContentBody>
-            {#if tempActivityRecord.length > 0}
-                <div
-                    class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
-                >
-                    <div class="mb-2.5 text-sm font-medium">
-                        <p>Preview Rekod Untuk Disimpan</p>
-                    </div>
-                    {#each tempActivityRecord as activity, i}
-                        <div class="text-sm text-system-primary">
-                            <p>
-                                {i + 1}. Maklumat Kegiatan/Keahlian - {activity.name}
-                            </p>
+            {#if !$isReadonlyActivityFormStepper && data.isCandidateRole}
+                {#if tempActivityRecord.length > 0}
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                    >
+                        <div class="mb-2.5 text-sm font-medium">
+                            <p>Preview Rekod Untuk Disimpan</p>
                         </div>
-                    {/each}
-                </div>
-            {/if}
-            {#if !isReadonlyActivityFormStepper && data.isCandidateRole}
+                        {#each tempActivityRecord as activity, i}
+                            <div class="text-sm text-system-primary">
+                                <p>
+                                    {i + 1}. Maklumat Kegiatan/Keahlian - {activity.name}
+                                </p>
+                            </div>
+                        {/each}
+                    </div>
+                {/if}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
                         type="primary"
@@ -1434,47 +1464,47 @@
                 use:activityInfoEnhance
                 method="POST"
             >
-                {#if $activityInfoForm.activityList.length < 1}
+                {#if $activityInfoForm.activities.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
                         Tiada maklumat.
                     </div>
                 {:else}
-                    <CustomTab>
-                        {#each $activityInfoForm.activityList as _, i}
-                            <CustomTabContent title={'Aktiviti #' + +i + 1}>
+                    <CustomTab id="activities">
+                        {#each $activityInfoForm.activities as _, i}
+                            <CustomTabContent title={`Aktiviti #${i + 1}`}>
                                 <CustomTextField
-                                    disabled={isReadonlyActivityFormStepper}
+                                    disabled={$isReadonlyActivityFormStepper}
                                     id="addName"
                                     label={'Nama Kegiatan'}
                                     type="text"
-                                    bind:val={$activityInfoForm.activityList[i]
+                                    bind:val={$activityInfoForm.activities[i]
                                         .name}
                                 ></CustomTextField>
 
                                 <CustomTextField
-                                    disabled={isReadonlyActivityFormStepper}
+                                    disabled={$isReadonlyActivityFormStepper}
                                     type="date"
                                     id="addJoinDate"
                                     label={'Tarikh Keahlian'}
-                                    bind:val={$activityInfoForm.activityList[i]
+                                    bind:val={$activityInfoForm.activities[i]
                                         .joinDate}
                                 ></CustomTextField>
 
                                 <CustomTextField
-                                    disabled={isReadonlyActivityFormStepper}
+                                    disabled={$isReadonlyActivityFormStepper}
                                     id="addPosition"
                                     label={'Jawatan'}
                                     type="text"
-                                    bind:val={$activityInfoForm.activityList[i]
+                                    bind:val={$activityInfoForm.activities[i]
                                         .position}
                                 ></CustomTextField>
 
                                 <CustomTextField
-                                    disabled={isReadonlyActivityFormStepper}
+                                    disabled={$isReadonlyActivityFormStepper}
                                     id="addDescription"
                                     label={'Catatan'}
                                     type="text"
-                                    bind:val={$activityInfoForm.activityList[i]
+                                    bind:val={$activityInfoForm.activities[i]
                                         .description}
                                 ></CustomTextField>
                             </CustomTabContent>
@@ -1490,7 +1520,7 @@
     <!------------------------------------------------------->
     <StepperContent>
         <StepperContentHeader title="Maklumat Keluarga">
-            {#if !isReadonlyExperienceFormStepper && data.isCandidateRole}
+            {#if !$isReadonlyFamilyFormStepper && data.isCandidateRole}
                 <TextIconButton
                     type="primary"
                     label="Simpan"
@@ -1501,23 +1531,23 @@
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
-            {#if tempFamilyRecord.length > 0}
-                <div
-                    class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
-                >
-                    <div class="mb-2.5 text-sm font-medium">
-                        <p>Preview Rekod Untuk Disimpan</p>
-                    </div>
-                    {#each tempFamilyRecord as family, i}
-                        <div class="text-sm text-system-primary">
-                            <p>
-                                {i + 1}. Maklumat Keluarga - {family.name}
-                            </p>
+            {#if !$isReadonlyFamilyFormStepper && data.isCandidateRole}
+                {#if tempFamilyRecord.length > 0}
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                    >
+                        <div class="mb-2.5 text-sm font-medium">
+                            <p>Preview Rekod Untuk Disimpan</p>
                         </div>
-                    {/each}
-                </div>
-            {/if}
-            {#if !isReadonlyFamilyFormStepper && data.isCandidateRole}
+                        {#each tempFamilyRecord as family, i}
+                            <div class="text-sm text-system-primary">
+                                <p>
+                                    {i + 1}. Maklumat Keluarga - {family.name}
+                                </p>
+                            </div>
+                        {/each}
+                    </div>
+                {/if}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
                         type="primary"
@@ -1537,85 +1567,78 @@
                 use:familyInfoEnhance
                 method="POST"
             >
-                {#if $familyInfoForm.dependenciesList.length < 1}
+                {#if $familyInfoForm.dependencies.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
                         Tiada maklumat.
                     </div>
                 {:else}
-                    <CustomTab>
-                        {#each $familyInfoForm.dependenciesList as _, i}
+                    <CustomTab id="families">
+                        {#each Object.entries($familyInfoForm.dependencies) as [key, _], i}
                             <CustomTabContent
                                 title={i +
                                     1 +
                                     '. ' +
-                                    $familyInfoForm.dependenciesList[i].name}
+                                    $familyInfoForm.dependencies[i].name}
                             >
                                 <CustomTextField
                                     id="addName"
                                     label={'Nama'}
                                     type="text"
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$familyInfoForm.dependenciesList[
-                                        i
-                                    ].name}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependencies[i]
+                                        .name}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     id="addAlternativeName"
                                     label={'Nama Lain'}
                                     type="text"
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$familyInfoForm.dependenciesList[
-                                        i
-                                    ].alternativeName}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependencies[i]
+                                        .alternativeName}
                                 ></CustomTextField>
                                 <CustomSelectField
                                     id="addIdentityDocumentColor"
                                     label={'Warna Kad Pengenalan'}
                                     options={data.selectionOptions
                                         .identityCardColorLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$familyInfoForm.dependenciesList[
-                                        i
-                                    ].identityDocumentColor}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependencies[i]
+                                        .identityDocumentColor}
                                 ></CustomSelectField>
                                 <CustomTextField
                                     id="addIdentityDocumentNumber"
                                     type="number"
                                     label={'Nombor Kad Pengenalan'}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$familyInfoForm.dependenciesList[
-                                        i
-                                    ].identityDocumentNumber}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependencies[i]
+                                        .identityDocumentNumber}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     id="addAddress"
                                     label={'Alamat'}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$familyInfoForm.dependenciesList[
-                                        i
-                                    ].address}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependencies[i]
+                                        .address}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     id="addPostcode"
                                     label={'Poskod'}
                                     type="text"
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$familyInfoForm.dependenciesList[
-                                        i
-                                    ].postcode}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependencies[i]
+                                        .postcode}
                                 ></CustomTextField>
 
                                 <CustomTextField
-                                    disabled={isReadonlyFamilyFormStepper}
+                                    disabled={$isReadonlyFamilyFormStepper}
                                     type="date"
                                     id="addBirthDate"
                                     label={'Tarikh Lahir'}
-                                    bind:val={$familyInfoForm.dependenciesList[
-                                        i
-                                    ].birthDate}
+                                    bind:val={$familyInfoForm.dependencies[i]
+                                        .birthDate}
                                 ></CustomTextField>
 
                                 <CustomSelectField
@@ -1623,20 +1646,18 @@
                                     label={'Negara Kelahiran'}
                                     options={data.selectionOptions
                                         .countryLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$familyInfoForm.dependenciesList[
-                                        i
-                                    ].birthCountryId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependencies[i]
+                                        .birthCountryId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
                                     id="addBirthStateId"
                                     label={'Negeri Kelahiran'}
                                     options={data.selectionOptions.stateLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$familyInfoForm.dependenciesList[
-                                        i
-                                    ].birthStateId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependencies[i]
+                                        .birthStateId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
@@ -1644,10 +1665,9 @@
                                     label={'Hubungan'}
                                     options={data.selectionOptions
                                         .relationshipLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$familyInfoForm.dependenciesList[
-                                        i
-                                    ].relationshipId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependencies[i]
+                                        .relationshipId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
@@ -1655,20 +1675,18 @@
                                     label={'Taraf Pendidikan'}
                                     options={data.selectionOptions
                                         .educationLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$familyInfoForm.dependenciesList[
-                                        i
-                                    ].educationLevelId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependencies[i]
+                                        .educationLevelId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
                                     id="addRaceId"
                                     label={'Bangsa'}
                                     options={data.selectionOptions.raceLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$familyInfoForm.dependenciesList[
-                                        i
-                                    ].raceId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependencies[i]
+                                        .raceId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
@@ -1676,10 +1694,9 @@
                                     label={'Kewarganegaraan'}
                                     options={data.selectionOptions
                                         .nationalityLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$familyInfoForm.dependenciesList[
-                                        i
-                                    ].nationalityId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependencies[i]
+                                        .nationalityId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
@@ -1687,70 +1704,66 @@
                                     label={'Status Perkhahwinan'}
                                     options={data.selectionOptions
                                         .maritalLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$familyInfoForm.dependenciesList[
-                                        i
-                                    ].maritalId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependencies[i]
+                                        .maritalId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
                                     id="addGenderId"
                                     label={'Jantina'}
                                     options={data.selectionOptions.genderLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$familyInfoForm.dependenciesList[
-                                        i
-                                    ].genderId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependencies[i]
+                                        .genderId}
                                 ></CustomSelectField>
 
                                 <CustomTextField
                                     id="addWorkAddress"
                                     label={'Alamat Majikan'}
                                     type="text"
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$familyInfoForm.dependenciesList[
-                                        i
-                                    ].workAddress}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependencies[i]
+                                        .workAddress}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     id="addWorkPostcode"
                                     label={'Poskod Majikan'}
                                     type="text"
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$familyInfoForm.dependenciesList[
-                                        i
-                                    ].workPostcode}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependencies[i]
+                                        .workPostcode}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     id="addPhoneNumber"
                                     label={'Nombor Mobil'}
                                     type="text"
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$familyInfoForm.dependenciesList[
-                                        i
-                                    ].phoneNumber}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependencies[i]
+                                        .phoneNumber}
                                 ></CustomTextField>
 
-                                <!-- <CustomTextField
-                                    type="date"
-                                    id="addMarriageDate"
-                                    label={'Tarikh Kahwin'}
-                                    bind:val={$familyInfoForm.dependenciesList[
-                                        i
-                                    ].marriageDate}
-                                ></CustomTextField> -->
+                                {#if key.includes('marriageDate')}
+                                    <CustomTextField
+                                        type="date"
+                                        id="addMarriageDate"
+                                        label={'Tarikh Kahwin'}
+                                        bind:val={$familyInfoForm.dependencies[
+                                            i
+                                        ].marriageDate}
+                                    ></CustomTextField>
+                                {/if}
 
                                 <CustomSelectField
                                     id="inSchool"
                                     label={'Bersekolah'}
                                     options={data.selectionOptions
                                         .generalLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$familyInfoForm.dependenciesList[
-                                        i
-                                    ].inSchool}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$familyInfoForm.dependencies[i]
+                                        .inSchool}
                                 ></CustomSelectField>
                             </CustomTabContent>
                         {/each}
@@ -1763,7 +1776,7 @@
         <StepperContentHeader
             title="Maklumat Tanggungan Selain Isteri dan Anak"
         >
-            {#if !isReadonlyDependencyFormStepper && data.isCandidateRole}
+            {#if !$isReadonlyDependencyFormStepper && data.isCandidateRole}
                 <TextIconButton
                     type="primary"
                     label="Simpan"
@@ -1774,23 +1787,24 @@
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
-            {#if tempNonFamilyRecord.length > 0}
-                <div
-                    class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
-                >
-                    <div class="mb-2.5 text-sm font-medium">
-                        <p>Preview Rekod Untuk Disimpan</p>
-                    </div>
-                    {#each tempNonFamilyRecord as nonFamily, i}
-                        <div class="text-sm text-system-primary">
-                            <p>
-                                {i + 1}. Maklumat Selain Suami/Isteri dan Anak - {nonFamily.name}
-                            </p>
+            {#if !$isReadonlyDependencyFormStepper && data.isCandidateRole}
+                {#if tempNonFamilyRecord.length > 0}
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                    >
+                        <div class="mb-2.5 text-sm font-medium">
+                            <p>Preview Rekod Untuk Disimpan</p>
                         </div>
-                    {/each}
-                </div>
-            {/if}
-            {#if !isReadonlyDependencyFormStepper && data.isCandidateRole}
+                        {#each tempNonFamilyRecord as nonFamily, i}
+                            <div class="text-sm text-system-primary">
+                                <p>
+                                    {i + 1}. Maklumat Selain Suami/Isteri dan
+                                    Anak - {nonFamily.name}
+                                </p>
+                            </div>
+                        {/each}
+                    </div>
+                {/if}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
                         type="primary"
@@ -1810,81 +1824,85 @@
                 use:dependencyInfoEnhance
                 method="POST"
             >
-                {#if $dependencyInfoForm.dependenciesList.length < 1}
+                {#if $dependencyInfoForm.dependencies.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
                         Tiada maklumat.
                     </div>
                 {:else}
-                    <CustomTab>
-                        {#each $dependencyInfoForm.dependenciesList as _, i}
+                    <CustomTab id="dependencies">
+                        {#each Object.entries($dependencyInfoForm.dependencies) as [key, _], i}
                             <CustomTabContent
                                 title={i +
                                     1 +
                                     '. ' +
-                                    $dependencyInfoForm.dependenciesList[i]
-                                        .name}
+                                    $dependencyInfoForm.dependencies[i].name}
                             >
                                 <CustomTextField
                                     id="addName"
                                     label={'Nama'}
                                     type="text"
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$dependencyInfoForm
-                                        .dependenciesList[i].name}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$dependencyInfoForm.dependencies[
+                                        i
+                                    ].name}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     id="addAlternativeName"
                                     label={'Nama Lain'}
                                     type="text"
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$dependencyInfoForm
-                                        .dependenciesList[i].alternativeName}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$dependencyInfoForm.dependencies[
+                                        i
+                                    ].alternativeName}
                                 ></CustomTextField>
                                 <CustomSelectField
                                     id="addIdentityDocumentColor"
                                     label={'Warna Kad Pengenalan'}
                                     options={data.selectionOptions
                                         .identityCardColorLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$dependencyInfoForm
-                                        .dependenciesList[i]
-                                        .identityDocumentColor}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$dependencyInfoForm.dependencies[
+                                        i
+                                    ].identityDocumentColor}
                                 ></CustomSelectField>
                                 <CustomTextField
                                     id="addIdentityDocumentNumber"
                                     type="number"
                                     label={'Nombor Kad Pengenalan'}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$dependencyInfoForm
-                                        .dependenciesList[i]
-                                        .identityDocumentNumber}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$dependencyInfoForm.dependencies[
+                                        i
+                                    ].identityDocumentNumber}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     id="addAddress"
                                     label={'Alamat'}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$dependencyInfoForm
-                                        .dependenciesList[i].address}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$dependencyInfoForm.dependencies[
+                                        i
+                                    ].address}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     id="addPostcode"
                                     label={'Poskod'}
                                     type="text"
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$dependencyInfoForm
-                                        .dependenciesList[i].postcode}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$dependencyInfoForm.dependencies[
+                                        i
+                                    ].postcode}
                                 ></CustomTextField>
 
                                 <CustomTextField
-                                    disabled={isReadonlyFamilyFormStepper}
+                                    disabled={$isReadonlyFamilyFormStepper}
                                     type="date"
                                     id="addBirthDate"
                                     label={'Tarikh Lahir'}
-                                    bind:val={$dependencyInfoForm
-                                        .dependenciesList[i].birthDate}
+                                    bind:val={$dependencyInfoForm.dependencies[
+                                        i
+                                    ].birthDate}
                                 ></CustomTextField>
 
                                 <CustomSelectField
@@ -1892,18 +1910,20 @@
                                     label={'Negara Kelahiran'}
                                     options={data.selectionOptions
                                         .countryLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$dependencyInfoForm
-                                        .dependenciesList[i].birthCountryId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$dependencyInfoForm.dependencies[
+                                        i
+                                    ].birthCountryId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
                                     id="addBirthStateId"
                                     label={'Negeri Kelahiran'}
                                     options={data.selectionOptions.stateLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$dependencyInfoForm
-                                        .dependenciesList[i].birthStateId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$dependencyInfoForm.dependencies[
+                                        i
+                                    ].birthStateId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
@@ -1911,9 +1931,10 @@
                                     label={'Hubungan'}
                                     options={data.selectionOptions
                                         .relationshipLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$dependencyInfoForm
-                                        .dependenciesList[i].relationshipId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$dependencyInfoForm.dependencies[
+                                        i
+                                    ].relationshipId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
@@ -1921,18 +1942,20 @@
                                     label={'Taraf Pendidikan'}
                                     options={data.selectionOptions
                                         .educationLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$dependencyInfoForm
-                                        .dependenciesList[i].educationLevelId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$dependencyInfoForm.dependencies[
+                                        i
+                                    ].educationLevelId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
                                     id="addRaceId"
                                     label={'Bangsa'}
                                     options={data.selectionOptions.raceLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$dependencyInfoForm
-                                        .dependenciesList[i].raceId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$dependencyInfoForm.dependencies[
+                                        i
+                                    ].raceId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
@@ -1940,9 +1963,10 @@
                                     label={'Kewarganegaraan'}
                                     options={data.selectionOptions
                                         .nationalityLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$dependencyInfoForm
-                                        .dependenciesList[i].nationalityId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$dependencyInfoForm.dependencies[
+                                        i
+                                    ].nationalityId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
@@ -1950,63 +1974,71 @@
                                     label={'Status Perkhahwinan'}
                                     options={data.selectionOptions
                                         .maritalLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$dependencyInfoForm
-                                        .dependenciesList[i].maritalId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$dependencyInfoForm.dependencies[
+                                        i
+                                    ].maritalId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
                                     id="addGenderId"
                                     label={'Jantina'}
                                     options={data.selectionOptions.genderLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$dependencyInfoForm
-                                        .dependenciesList[i].genderId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$dependencyInfoForm.dependencies[
+                                        i
+                                    ].genderId}
                                 ></CustomSelectField>
 
                                 <CustomTextField
                                     id="addWorkAddress"
                                     label={'Alamat Majikan'}
                                     type="text"
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$dependencyInfoForm
-                                        .dependenciesList[i].workAddress}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$dependencyInfoForm.dependencies[
+                                        i
+                                    ].workAddress}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     id="addWorkPostcode"
                                     label={'Poskod Majikan'}
                                     type="text"
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$dependencyInfoForm
-                                        .dependenciesList[i].workPostcode}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$dependencyInfoForm.dependencies[
+                                        i
+                                    ].workPostcode}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     id="addPhoneNumber"
                                     label={'Nombor Mobil'}
                                     type="text"
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$dependencyInfoForm
-                                        .dependenciesList[i].phoneNumber}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$dependencyInfoForm.dependencies[
+                                        i
+                                    ].phoneNumber}
                                 ></CustomTextField>
 
-                                <!-- <CustomTextField
-                                    type="date"
-                                    id="addMarriageDate"
-                                    label={'Tarikh Kahwin'}
-                                    bind:val={$dependencyInfoForm
-                                        .dependenciesList[i].marriageDate}
-                                ></CustomTextField> -->
+                                {#if key.includes('marriageDate')}
+                                    <CustomTextField
+                                        type="date"
+                                        id="addMarriageDate"
+                                        label={'Tarikh Kahwin'}
+                                        bind:val={$dependencyInfoForm
+                                            .dependencies[i].marriageDate}
+                                    ></CustomTextField>
+                                {/if}
 
                                 <CustomSelectField
                                     id="inSchool"
                                     label={'Bersekolah'}
                                     options={data.selectionOptions
                                         .generalLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$dependencyInfoForm
-                                        .dependenciesList[i].inSchool}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$dependencyInfoForm.dependencies[
+                                        i
+                                    ].inSchool}
                                 ></CustomSelectField>
                             </CustomTabContent>
                         {/each}
@@ -2022,7 +2054,7 @@
 
     <StepperContent>
         <StepperContentHeader title="Maklumat Waris">
-            {#if !isReadonlyNextOfKinFormStepper && data.isCandidateRole}
+            {#if !$isReadonlyNextOfKinFormStepper && data.isCandidateRole}
                 <TextIconButton
                     type="primary"
                     label="Simpan"
@@ -2031,23 +2063,23 @@
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
-            {#if tempNextOfKinRecord.length > 0}
-                <div
-                    class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
-                >
-                    <div class="mb-2.5 text-sm font-medium">
-                        <p>Preview Rekod Untuk Disimpan</p>
-                    </div>
-                    {#each tempNextOfKinRecord as nextOfKin, i}
-                        <div class="text-sm text-system-primary">
-                            <p>
-                                {i + 1}. Maklumat Waris - {nextOfKin.name}
-                            </p>
+            {#if !$isReadonlyNextOfKinFormStepper && data.isCandidateRole}
+                {#if tempNextOfKinRecord.length > 0}
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
+                    >
+                        <div class="mb-2.5 text-sm font-medium">
+                            <p>Preview Rekod Untuk Disimpan</p>
                         </div>
-                    {/each}
-                </div>
-            {/if}
-            {#if !isReadonlyNextOfKinFormStepper && data.isCandidateRole}
+                        {#each tempNextOfKinRecord as nextOfKin, i}
+                            <div class="text-sm text-system-primary">
+                                <p>
+                                    {i + 1}. Maklumat Waris - {nextOfKin.name}
+                                </p>
+                            </div>
+                        {/each}
+                    </div>
+                {/if}
                 <div class="w-full rounded-[3px] border-b border-t p-2.5">
                     <TextIconButton
                         type="primary"
@@ -2067,85 +2099,78 @@
                 use:nextOfKinInfoEnhance
                 method="POST"
             >
-                {#if $nextOfKinInfoForm.nextOfKinsList.length < 1}
+                {#if $nextOfKinInfoForm.dependencies.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
                         Tiada maklumat.
                     </div>
                 {:else}
-                    <CustomTab>
-                        {#each $nextOfKinInfoForm.nextOfKinsList as _, i}
+                    <CustomTab id="nextOfKins">
+                        {#each Object.entries($nextOfKinInfoForm.dependencies) as [key, _], i}
                             <CustomTabContent
                                 title={i +
                                     1 +
                                     '. ' +
-                                    $nextOfKinInfoForm.nextOfKinsList[i].name}
+                                    $nextOfKinInfoForm.dependencies[i].name}
                             >
                                 <CustomTextField
                                     id="addName"
                                     label={'Nama'}
                                     type="text"
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
-                                        i
-                                    ].name}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$nextOfKinInfoForm.dependencies[i]
+                                        .name}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     id="addAlternativeName"
                                     label={'Nama Lain'}
                                     type="text"
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
-                                        i
-                                    ].alternativeName}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$nextOfKinInfoForm.dependencies[i]
+                                        .alternativeName}
                                 ></CustomTextField>
                                 <CustomSelectField
                                     id="addIdentityDocumentColor"
                                     label={'Warna Kad Pengenalan'}
                                     options={data.selectionOptions
                                         .identityCardColorLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
-                                        i
-                                    ].identityDocumentColor}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$nextOfKinInfoForm.dependencies[i]
+                                        .identityDocumentColor}
                                 ></CustomSelectField>
                                 <CustomTextField
                                     id="addIdentityDocumentNumber"
                                     type="number"
                                     label={'Nombor Kad Pengenalan'}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
-                                        i
-                                    ].identityDocumentNumber}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$nextOfKinInfoForm.dependencies[i]
+                                        .identityDocumentNumber}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     id="addAddress"
                                     label={'Alamat'}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
-                                        i
-                                    ].address}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$nextOfKinInfoForm.dependencies[i]
+                                        .address}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     id="addPostcode"
                                     label={'Poskod'}
                                     type="text"
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
-                                        i
-                                    ].postcode}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$nextOfKinInfoForm.dependencies[i]
+                                        .postcode}
                                 ></CustomTextField>
 
                                 <CustomTextField
-                                    disabled={isReadonlyFamilyFormStepper}
+                                    disabled={$isReadonlyFamilyFormStepper}
                                     type="date"
                                     id="addBirthDate"
                                     label={'Tarikh Lahir'}
-                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
-                                        i
-                                    ].birthDate}
+                                    bind:val={$nextOfKinInfoForm.dependencies[i]
+                                        .birthDate}
                                 ></CustomTextField>
 
                                 <CustomSelectField
@@ -2153,20 +2178,18 @@
                                     label={'Negara Kelahiran'}
                                     options={data.selectionOptions
                                         .countryLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
-                                        i
-                                    ].birthCountryId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$nextOfKinInfoForm.dependencies[i]
+                                        .birthCountryId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
                                     id="addBirthStateId"
                                     label={'Negeri Kelahiran'}
                                     options={data.selectionOptions.stateLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
-                                        i
-                                    ].birthStateId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$nextOfKinInfoForm.dependencies[i]
+                                        .birthStateId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
@@ -2174,10 +2197,9 @@
                                     label={'Hubungan'}
                                     options={data.selectionOptions
                                         .relationshipLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
-                                        i
-                                    ].relationshipId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$nextOfKinInfoForm.dependencies[i]
+                                        .relationshipId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
@@ -2185,20 +2207,18 @@
                                     label={'Taraf Pendidikan'}
                                     options={data.selectionOptions
                                         .educationLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
-                                        i
-                                    ].educationLevelId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$nextOfKinInfoForm.dependencies[i]
+                                        .educationLevelId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
                                     id="addRaceId"
                                     label={'Bangsa'}
                                     options={data.selectionOptions.raceLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
-                                        i
-                                    ].raceId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$nextOfKinInfoForm.dependencies[i]
+                                        .raceId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
@@ -2206,10 +2226,9 @@
                                     label={'Kewarganegaraan'}
                                     options={data.selectionOptions
                                         .nationalityLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
-                                        i
-                                    ].nationalityId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$nextOfKinInfoForm.dependencies[i]
+                                        .nationalityId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
@@ -2217,70 +2236,65 @@
                                     label={'Status Perkhahwinan'}
                                     options={data.selectionOptions
                                         .maritalLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
-                                        i
-                                    ].maritalId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$nextOfKinInfoForm.dependencies[i]
+                                        .maritalId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
                                     id="addGenderId"
                                     label={'Jantina'}
                                     options={data.selectionOptions.genderLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
-                                        i
-                                    ].genderId}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$nextOfKinInfoForm.dependencies[i]
+                                        .genderId}
                                 ></CustomSelectField>
 
                                 <CustomTextField
                                     id="addWorkAddress"
                                     label={'Alamat Majikan'}
                                     type="text"
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
-                                        i
-                                    ].workAddress}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$nextOfKinInfoForm.dependencies[i]
+                                        .workAddress}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     id="addWorkPostcode"
                                     label={'Poskod Majikan'}
                                     type="text"
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
-                                        i
-                                    ].workPostcode}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$nextOfKinInfoForm.dependencies[i]
+                                        .workPostcode}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     id="addPhoneNumber"
                                     label={'Nombor Mobil'}
                                     type="text"
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
-                                        i
-                                    ].phoneNumber}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$nextOfKinInfoForm.dependencies[i]
+                                        .phoneNumber}
                                 ></CustomTextField>
 
-                                <!-- <CustomTextField
-                                    type="date"
-                                    id="addMarriageDate"
-                                    label={'Tarikh Kahwin'}
-                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
-                                        i
-                                    ].marriageDate}
-                                ></CustomTextField> -->
+                                {#if key.includes('marriageDate')}
+                                    <CustomTextField
+                                        type="date"
+                                        id="addMarriageDate"
+                                        label={'Tarikh Kahwin'}
+                                        bind:val={$nextOfKinInfoForm
+                                            .dependencies[i].marriageDate}
+                                    ></CustomTextField>
+                                {/if}
 
                                 <CustomSelectField
                                     id="inSchool"
                                     label={'Bersekolah'}
                                     options={data.selectionOptions
                                         .generalLookup}
-                                    disabled={isReadonlyFamilyFormStepper}
-                                    bind:val={$nextOfKinInfoForm.nextOfKinsList[
-                                        i
-                                    ].inSchool}
+                                    disabled={$isReadonlyFamilyFormStepper}
+                                    bind:val={$nextOfKinInfoForm.dependencies[i]
+                                        .inSchool}
                                 ></CustomSelectField>
                             </CustomTabContent>
                         {/each}
@@ -2291,7 +2305,7 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Dokumen - Dokumen Sokongan yang Berkaitan">
-            {#if !isReadonlyDocumentFormStepper && data.isCandidateRole}
+            {#if !$isReadonlyDocumentFormStepper && data.isCandidateRole}
                 <TextIconButton
                     type="primary"
                     label="Simpan"
@@ -2301,7 +2315,7 @@
         </StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
-                {#if !isReadonlyDocumentFormStepper && data.isCandidateRole}
+                {#if !$isReadonlyDocumentFormStepper && data.isCandidateRole}
                     <p class="text-sm">
                         Sila muat turun, isi dengan lengkap dokumen berikut,
                         kemudian muat naik dokumen pada ruangan yang disediakan.
@@ -2333,7 +2347,7 @@
                         use:documentFormEnhance
                         enctype="multipart/form-data"
                     >
-                        <input
+                        <!-- <input
                             type="file"
                             name="document"
                             accept=".pdf"
@@ -2341,13 +2355,13 @@
                                 ($documentForm.document = Array.from(
                                     e.currentTarget.files ?? [],
                                 ))}
-                        />
+                        /> -->
 
                         <ContentHeader
                             title="Dokumen Sokongan"
                             borderClass="border-none"
                         >
-                            <div hidden={$documentForm.document.length < 1}>
+                            <div hidden={$documentForm.document?.name !== ''}>
                                 <FileInputField
                                     id="document"
                                     handleOnInput={(e) => handleOnInput(e)}
@@ -2358,26 +2372,28 @@
                             class="border-bdr-primaryp-5 flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border p-2.5"
                         >
                             <div class="flex flex-wrap gap-3">
-                                {#each $documentForm.document as item, index}
+                                <!-- {#each $documentForm.document as item, index} -->
+                                {#if $documentForm.document !== null}
                                     <FileInputFieldChildren
                                         childrenType="grid"
                                         handleDelete={() => handleDelete()}
-                                        fileName={item.name}
+                                        fileName={$documentForm.document?.name}
                                     />
-                                {/each}
+                                {/if}
+                                <!-- {/each} -->
                             </div>
                             <div
                                 class="flex flex-col items-center justify-center gap-2.5"
                             >
                                 <p
                                     class=" text-sm text-txt-tertiary"
-                                    hidden={$documentForm.document.length > 0}
+                                    hidden={$documentForm.document?.name === ''}
                                 >
                                     Pilih fail dari peranti anda.
                                 </p>
                                 <div
                                     class="text-txt-tertiary"
-                                    hidden={$documentForm.document.length > 0}
+                                    hidden={$documentForm.document?.name === ''}
                                 >
                                     <svg
                                         width={40}
@@ -2395,7 +2411,9 @@
                                         />
                                     </svg>
                                 </div>
-                                <div hidden={$documentForm.document.length > 0}>
+                                <div
+                                    hidden={$documentForm.document?.name === ''}
+                                >
                                     <FileInputField id="document"
                                     ></FileInputField>
                                 </div>
@@ -2439,7 +2457,7 @@
     {#if !isStatusNew || data.isSupporterRole || data.isApproverRole}
         <StepperContent>
             <StepperContentHeader title="Kemaskini Lantikan Baru">
-                {#if !isReadonlyServiceFormStepper && data.isEmploymentSecretaryRole}
+                {#if !$isReadonlyServiceFormStepper && data.isEmploymentSecretaryRole}
                     <TextIconButton
                         type="primary"
                         label="Simpan"
@@ -2458,7 +2476,7 @@
                     class="flex w-full flex-col gap-2.5"
                 >
                     <CustomSelectField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.gradeId}
                         id="gradeId"
                         label="Gred Semasa"
@@ -2466,7 +2484,7 @@
                         options={data.selectionOptions.gradeLookup}
                     ></CustomSelectField>
                     <CustomSelectField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.maxGradeId}
                         id="maxGradeId"
                         label="Gred Maksimum"
@@ -2474,7 +2492,7 @@
                         options={data.selectionOptions.gradeLookup}
                     ></CustomSelectField>
                     <CustomSelectField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.positionId}
                         id="positionId"
                         label="Jawatan"
@@ -2482,7 +2500,7 @@
                         options={data.selectionOptions.positionLookup}
                     ></CustomSelectField>
                     <CustomSelectField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.placementId}
                         id="placementId"
                         label="Penempatan"
@@ -2490,7 +2508,7 @@
                         options={data.selectionOptions.placementLookup}
                     ></CustomSelectField>
                     <CustomSelectField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.serviceTypeId}
                         id="serviceTypeId"
                         label="Taraf Perkhidmatan"
@@ -2499,7 +2517,7 @@
                     ></CustomSelectField>
 
                     <CustomSelectField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.serviceGroupId}
                         id="serviceGroupId"
                         label="Kumpulan Perkhidmatan"
@@ -2508,7 +2526,7 @@
                     ></CustomSelectField>
 
                     <CustomSelectField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.unitId}
                         id="unitId"
                         label="Unit Perkhidmatan"
@@ -2517,7 +2535,7 @@
                     ></CustomSelectField>
 
                     <CustomSelectField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.employmentStatusId}
                         id="employmentStatusId"
                         label="Status Perkhidmatan"
@@ -2527,7 +2545,7 @@
 
                     <CustomTextField
                         type="date"
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.effectiveDate}
                         id="effectiveDate"
                         label={'Tarikh Kuatkuasa Lantikan Semasa'}
@@ -2535,7 +2553,7 @@
                     ></CustomTextField>
 
                     <CustomSelectField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.retirementBenefit}
                         id="retirementBenefit"
                         label="Faedah Persaraan"
@@ -2544,7 +2562,7 @@
                     ></CustomSelectField>
 
                     <CustomTextField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.epfNumber}
                         id="epfNumber"
                         label={'No. KWSP'}
@@ -2552,14 +2570,14 @@
                     ></CustomTextField>
 
                     <CustomTextField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.socsoNumber}
                         id="socsoNumber"
                         label={'No. SOCSO'}
                         bind:val={$serviceInfoForm.socsoNumber}
                     ></CustomTextField>
                     <CustomTextField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.incomeNumber}
                         id="incomeNumber"
                         label={'No. Cukai'}
@@ -2567,7 +2585,7 @@
                     ></CustomTextField>
 
                     <CustomTextField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.bankName}
                         id="bankName"
                         label={'Bank'}
@@ -2575,7 +2593,7 @@
                     ></CustomTextField>
 
                     <CustomTextField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.bankAccount}
                         id="bankAccount"
                         label={'No. Akaun'}
@@ -2583,7 +2601,7 @@
                     ></CustomTextField>
 
                     <CustomTextField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.eligibleLeaveCount}
                         id="eligibleLeaveCount"
                         label={'Kelayakan Cuti'}
@@ -2592,7 +2610,7 @@
 
                     <CustomTextField
                         type="date"
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.civilServiceStartDate}
                         id="civilServiceStartDate"
                         label={'Mula Dilantik Perkhidmatan Kerajaan'}
@@ -2600,7 +2618,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         type="date"
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.firstServiceDate}
                         id="firstServiceDate"
                         label={'Mula Dilantik Perkhidmatan LKIM'}
@@ -2608,7 +2626,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         type="date"
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.serviceDate}
                         id="serviceDate"
                         label={'Mula Dilantik Perkhidmatan Sekarang'}
@@ -2616,7 +2634,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         type="date"
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.firstConfirmServiceDate}
                         id="firstConfirmServiceDate"
                         label={'Disahkan Dalam Jawatan Pertama LKIM'}
@@ -2624,7 +2642,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         type="date"
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.confirmDate}
                         id="confirmDate"
                         label={'Disahkan Dalam Jawatan Semasa LKIM'}
@@ -2633,7 +2651,7 @@
 
                     <CustomTextField
                         type="date"
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.firstEffectiveDate}
                         id="firstEffectiveDate"
                         label={'Tarikh Berkuatkuasa Lantikan Pertama'}
@@ -2641,7 +2659,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         type="date"
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.newRecruitEffectiveDate}
                         id="newRecruitEffectiveDate"
                         label={'Tarikh Lantikan Baru'}
@@ -2649,7 +2667,7 @@
                     ></CustomTextField>
 
                     <CustomTextField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.pensionNumber}
                         id="pensionNumber"
                         label={'Nombor Pencen'}
@@ -2657,7 +2675,7 @@
                     ></CustomTextField>
 
                     <CustomSelectField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.revisionMonth}
                         id="revisionMonth"
                         label="Bulan KGT"
@@ -2666,7 +2684,7 @@
                     ></CustomSelectField>
 
                     <CustomTextField
-                        disabled={isReadonlyServiceFormStepper}
+                        disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.kgt}
                         id="kgt"
                         type="number"
@@ -2674,14 +2692,14 @@
                         bind:val={$serviceInfoForm.kgt}
                     ></CustomTextField>
 
-                    <!-- <CustomTextField
+                    <CustomTextField
                         type="date"
-                    disabled={isReadonlyServiceFormStepper}
-                    errors={$serviceInfoErrors.retirementDate}
-                    id="retirementDate"
-                    label={'Tarikh Bersara'}
-                    bind:val={$serviceInfoForm.retirementDate}
-                ></CustomTextField> -->
+                        disabled={$isReadonlyServiceFormStepper}
+                        errors={$serviceInfoErrors.retirementDate}
+                        id="retirementDate"
+                        label={'Tarikh Bersara'}
+                        bind:val={$serviceInfoForm.retirementDate}
+                    ></CustomTextField>
 
                     <p class={stepperFormTitleClass}>
                         Maklumat Gaji dan Elaun - Elaun
@@ -2701,7 +2719,7 @@
                             >
                         {/if} -->
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
+                                disabled={$isReadonlyServiceFormStepper}
                                 errors={$serviceInfoErrors.maximumSalary}
                                 id="maximumSalary"
                                 type="number"
@@ -2710,7 +2728,7 @@
                             ></CustomTextField>
 
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
+                                disabled={$isReadonlyServiceFormStepper}
                                 errors={$serviceInfoErrors.baseSalary}
                                 id="baseSalary"
                                 label={'Gaji Pokok'}
@@ -2719,28 +2737,28 @@
                         </div>
                         <div class="space-y-2.5">
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
+                                disabled={$isReadonlyServiceFormStepper}
                                 errors={$serviceInfoErrors.itka}
                                 id="itka"
                                 label={'ITKA'}
                                 bind:val={$serviceInfoForm.itka}
                             ></CustomTextField>
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
+                                disabled={$isReadonlyServiceFormStepper}
                                 errors={$serviceInfoErrors.itp}
                                 id="itp"
                                 label={'ITP'}
                                 bind:val={$serviceInfoForm.itp}
                             ></CustomTextField>
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
+                                disabled={$isReadonlyServiceFormStepper}
                                 errors={$serviceInfoErrors.epw}
                                 id="epw"
                                 label={'EPW'}
                                 bind:val={$serviceInfoForm.epw}
                             ></CustomTextField>
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
+                                disabled={$isReadonlyServiceFormStepper}
                                 errors={$serviceInfoErrors.cola}
                                 id="la"
                                 label={'COLA'}
@@ -2761,7 +2779,7 @@
             <StepperContentHeader
                 title="Keputusan Lantikan Baru (Urus Setia Perjawatan)"
             >
-                {#if isReadonlySecretaryApprovalResult && data.isEmploymentSecretaryRole}
+                {#if $isReadonlySecretaryApprovalResult && data.isEmploymentSecretaryRole}
                     <TextIconButton
                         type="primary"
                         label="Simpan"
@@ -2787,14 +2805,14 @@
                     <input hidden bind:value={$secretaryApprovalInfoForm.id} />
 
                     <CustomTextField
-                        disabled={isReadonlySecretaryApprovalResult}
+                        disabled={$isReadonlySecretaryApprovalResult}
                         errors={$secretaryApprovalInfoErrors.remark}
                         id="remark"
                         label="Tindakan/Ulasan"
                         bind:val={$secretaryApprovalInfoForm.remark}
                     ></CustomTextField>
                     <CustomRadioField
-                        disabled={isReadonlySecretaryApprovalResult}
+                        disabled={$isReadonlySecretaryApprovalResult}
                         id="status"
                         options={certifyOptions}
                         label={'Keputusan'}
@@ -2808,7 +2826,7 @@
             <StepperContentHeader
                 title="Tetapan Penyokong dan Pelulus (Jika Sah)"
             >
-                {#if !isReadonlySetApproversFormStepper && data.isEmploymentSecretaryRole}
+                {#if !$isReadonlySetApproversFormStepper && data.isEmploymentSecretaryRole}
                     <TextIconButton
                         type="primary"
                         label="Simpan"
@@ -2830,7 +2848,7 @@
                         bind:value={$secretarySetApproverForm.candidateId}
                     />
                     <CustomSelectField
-                        disabled={isReadonlySetApproversFormStepper}
+                        disabled={$isReadonlySetApproversFormStepper}
                         errors={$secretarySetApproverErrors.supporterId}
                         id="supporterId"
                         label="Nama Penyokong"
@@ -2838,7 +2856,7 @@
                         bind:val={$secretarySetApproverForm.supporterId}
                     />
                     <CustomSelectField
-                        disabled={isReadonlySetApproversFormStepper}
+                        disabled={$isReadonlySetApproversFormStepper}
                         errors={$secretarySetApproverErrors.approverId}
                         id="approverId"
                         label="Nama Pelulus"
@@ -2852,7 +2870,7 @@
             <StepperContentHeader
                 title="Keputusan daripada Peranan - Peranan Lain"
             >
-                {#if !isReadonlySupporterApprovalResult && data.isSupporterRole}
+                {#if !$isReadonlySupporterApprovalResult && data.isSupporterRole}
                     <TextIconButton
                         type="primary"
                         label="Simpan"
@@ -2864,7 +2882,7 @@
             >
             <StepperContentBody>
                 <div class="flex w-full flex-col gap-2.5">
-                    {#if data.isSupporterRole && !isReadonlySupporterApprovalResult}
+                    {#if data.isSupporterRole && !$isReadonlySupporterApprovalResult}
                         <form
                             id="newEmploymentSupporterApproval"
                             method="POST"
@@ -2877,14 +2895,14 @@
                                 >
                             </div>
                             <CustomTextField
-                                disabled={isReadonlySupporterApprovalResult}
+                                disabled={$isReadonlySupporterApprovalResult}
                                 errors={$supporterApprovalErrors.remark}
                                 id="supporterRemark"
                                 label="Tindakan/Ulasan"
                                 bind:val={$supporterApprovalForm.remark}
                             ></CustomTextField>
                             <CustomRadioField
-                                disabled={isReadonlySupporterApprovalResult}
+                                disabled={$isReadonlySupporterApprovalResult}
                                 errors={$supporterApprovalErrors.status}
                                 id="supporterIsApproved"
                                 options={supportOptions}
@@ -2892,7 +2910,7 @@
                                 bind:val={$supporterApprovalForm.status}
                             ></CustomRadioField>
                         </form>
-                    {:else if data.isApproverRole && !isReadonlyApproverApprovalResult}
+                    {:else if data.isApproverRole && !$isReadonlyApproverApprovalResult}
                         <form
                             id="newEmploymentApprovalApproval"
                             method="POST"
@@ -2905,14 +2923,14 @@
                                 >
                             </div>
                             <CustomTextField
-                                disabled={isReadonlySupporterApprovalResult}
+                                disabled={$isReadonlySupporterApprovalResult}
                                 errors={$approverApprovalErrors.remark}
                                 id="approverRemark"
                                 label="Tindakan/Ulasan"
                                 bind:val={$approverApprovalForm.remark}
                             ></CustomTextField>
                             <CustomRadioField
-                                disabled={isReadonlySupporterApprovalResult}
+                                disabled={$isReadonlySupporterApprovalResult}
                                 id="approverIsApproved"
                                 options={approveOptions}
                                 label={'Keputusan'}
@@ -2932,7 +2950,7 @@
                             label="Nama"
                             val={data.approverResultResponse.data?.details.name}
                         ></CustomTextField>
-                        {#if isReadonlyApproverApprovalResult}
+                        {#if $isReadonlyApproverApprovalResult}
                             <CustomTextField
                                 disabled
                                 id="approverRemark"
@@ -2964,7 +2982,7 @@
                             val={data.supporterResultResponse.data?.details
                                 .name}
                         ></CustomTextField>
-                        {#if isReadonlyApproverApprovalResult}
+                        {#if $isReadonlyApproverApprovalResult}
                             <CustomTextField
                                 disabled
                                 id="supporterRemark"
@@ -2999,7 +3017,7 @@
                             val={data.secretaryApprovalResponse.data?.details
                                 .name}
                         ></CustomTextField>
-                        {#if isReadonlySecretaryApprovalResult}
+                        {#if $isReadonlySecretaryApprovalResult}
                             <CustomTextField
                                 disabled
                                 id="service-secretary-remark"
@@ -3113,7 +3131,7 @@
             id="completionDate"
             label="Tarikh Kelulusan"
             type="date"
-            bind:val={$proxyAddAcademicCompletionDate}
+            bind:val={$addAcademicInfoModal.completionDate}
         ></CustomTextField>
         <CustomTextField
             errors={$addAcademicInfoErrors.finalGrade}
@@ -3129,7 +3147,7 @@
         ></CustomTextField>
         <TextIconButton
             type="primary"
-            label={'Simpan'}
+            label={'Tambah'}
             form="addAcademicModalForm"
         />
     </form>
@@ -3145,7 +3163,7 @@
     >
         <CustomTextField
             errors={$addExperienceModalErrors.company}
-            id="addCompany"
+            id="company"
             label={'Nama Majikan'}
             type="text"
             bind:val={$addExperienceModalForm.company}
@@ -3153,7 +3171,7 @@
 
         <CustomTextField
             errors={$addExperienceModalErrors.address}
-            id="addAddress"
+            id="address"
             label={'Alamat Majikan'}
             type="text"
             bind:val={$addExperienceModalForm.address}
@@ -3161,7 +3179,7 @@
 
         <CustomTextField
             errors={$addExperienceModalErrors.position}
-            id="addPosition"
+            id="position"
             label={'Jawatan'}
             type="text"
             bind:val={$addExperienceModalForm.position}
@@ -3169,7 +3187,7 @@
 
         <CustomTextField
             errors={$addExperienceModalErrors.positionCode}
-            id="addPositionCode"
+            id="positionCode"
             label={'Kod Jawatan'}
             type="text"
             bind:val={$addExperienceModalForm.positionCode}
@@ -3178,28 +3196,28 @@
         <CustomTextField
             type="date"
             errors={$addExperienceModalErrors.startDate}
-            id="addStartDate"
-            label={'Dari (tahun)'}
-            bind:val={$proxyAddExperienceStartDate}
+            id="startDate"
+            label={'Tarikh Mula Bekerja'}
+            bind:val={$addExperienceModalForm.startDate}
         ></CustomTextField>
         <CustomTextField
             type="date"
             errors={$addExperienceModalErrors.endDate}
-            id="addEndDate"
-            label={'Hingga (tahun)'}
-            bind:val={$proxyAddExperienceEndDate}
+            id="endDate"
+            label={'Tarikh Tamat Bekerja'}
+            bind:val={$addExperienceModalForm.endDate}
         ></CustomTextField>
 
         <CustomTextField
             errors={$addExperienceModalErrors.salary}
-            id="addSalary"
+            id="salary"
             label={'Gaji'}
             type="text"
             bind:val={$addExperienceModalForm.salary}
         ></CustomTextField>
         <TextIconButton
             type="primary"
-            label={'Simpan'}
+            label={'Tambah'}
             form="addExperienceInfoModal"
         />
     </form>
@@ -3215,7 +3233,7 @@
     >
         <CustomTextField
             errors={$addActivityModalErrors.name}
-            id="addName"
+            id="name"
             label={'Nama Kegiatan'}
             type="text"
             bind:val={$addActivityModal.name}
@@ -3223,15 +3241,15 @@
 
         <CustomTextField
             errors={$addActivityModalErrors.joinDate}
-            id="addJoinDate"
+            id="joinDate"
             type="date"
             label={'Tarikh Keahlian'}
-            bind:val={$proxyAddActivityJoinDate}
+            bind:val={$addActivityModal.joinDate}
         ></CustomTextField>
 
         <CustomTextField
             errors={$addActivityModalErrors.position}
-            id="addPosition"
+            id="position"
             label={'Jawatan'}
             type="text"
             bind:val={$addActivityModal.position}
@@ -3239,7 +3257,7 @@
 
         <CustomTextField
             errors={$addActivityModalErrors.description}
-            id="addDescription"
+            id="description"
             label={'Catatan'}
             type="text"
             bind:val={$addActivityModal.description}
@@ -3247,7 +3265,7 @@
 
         <TextIconButton
             type="primary"
-            label={'Simpan'}
+            label={'Tambah'}
             form="addMembershipInfoModal"
         />
     </form>
@@ -3265,7 +3283,7 @@
     >
         <CustomTextField
             errors={$addFamilyErrors.name}
-            id="addName"
+            id="name"
             label={'Nama'}
             type="text"
             bind:val={$addFamilyModal.name}
@@ -3273,36 +3291,36 @@
 
         <CustomTextField
             errors={$addFamilyErrors.alternativeName}
-            id="addAlternativeName"
+            id="alternativeName"
             label={'Nama Lain'}
             type="text"
             bind:val={$addFamilyModal.alternativeName}
         ></CustomTextField>
         <CustomSelectField
             errors={$addFamilyErrors.identityDocumentColor}
-            id="addIdentityDocumentColor"
+            id="identityDocumentColor"
             label={'Warna Kad Pengenalan'}
             options={data.selectionOptions.identityCardColorLookup}
             bind:val={$addFamilyModal.identityDocumentColor}
         ></CustomSelectField>
         <CustomTextField
             errors={$addFamilyErrors.identityDocumentNumber}
-            id="addIdentityDocumentNumber"
-            type="number"
+            id="identityDocumentNumber"
+            type="text"
             label={'Nombor Kad Pengenalan'}
             bind:val={$addFamilyModal.identityDocumentNumber}
         ></CustomTextField>
 
         <CustomTextField
             errors={$addFamilyErrors.address}
-            id="addAddress"
+            id="address"
             label={'Alamat'}
             bind:val={$addFamilyModal.address}
         ></CustomTextField>
 
         <CustomTextField
             errors={$addFamilyErrors.postcode}
-            id="addPostcode"
+            id="postcode"
             label={'Poskod'}
             type="text"
             bind:val={$addFamilyModal.postcode}
@@ -3311,14 +3329,14 @@
         <CustomTextField
             type="date"
             errors={$addFamilyErrors.birthDate}
-            id="addBirthDate"
+            id="birthDate"
             label={'Tarikh Lahir'}
-            bind:val={$proxyAddFamilyBirthDate}
+            bind:val={$addFamilyModal.birthDate}
         ></CustomTextField>
 
         <CustomSelectField
             errors={$addFamilyErrors.birthCountryId}
-            id="addBirthCountryId"
+            id="birthCountryId"
             label={'Negara Kelahiran'}
             options={data.selectionOptions.countryLookup}
             bind:val={$addFamilyModal.birthCountryId}
@@ -3326,7 +3344,7 @@
 
         <CustomSelectField
             errors={$addFamilyErrors.birthStateId}
-            id="addBirthStateId"
+            id="birthStateId"
             label={'Negeri Kelahiran'}
             options={data.selectionOptions.stateLookup}
             bind:val={$addFamilyModal.birthStateId}
@@ -3334,7 +3352,7 @@
 
         <CustomSelectField
             errors={$addFamilyErrors.relationshipId}
-            id="addRelationshipId"
+            id="relationshipId"
             label={'Hubungan'}
             options={data.selectionOptions.relationshipLookup}
             bind:val={$addFamilyModal.relationshipId}
@@ -3342,7 +3360,7 @@
 
         <CustomSelectField
             errors={$addFamilyErrors.educationLevelId}
-            id="addEducationLevelId"
+            id="educationLevelId"
             label={'Taraf Pendidikan'}
             options={data.selectionOptions.educationLookup}
             bind:val={$addFamilyModal.educationLevelId}
@@ -3350,7 +3368,7 @@
 
         <CustomSelectField
             errors={$addFamilyErrors.raceId}
-            id="addRaceId"
+            id="raceId"
             label={'Bangsa'}
             options={data.selectionOptions.raceLookup}
             bind:val={$addFamilyModal.raceId}
@@ -3358,23 +3376,15 @@
 
         <CustomSelectField
             errors={$addFamilyErrors.nationalityId}
-            id="addNationalityId"
+            id="nationalityId"
             label={'Kewarganegaraan'}
             options={data.selectionOptions.nationalityLookup}
             bind:val={$addFamilyModal.nationalityId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addFamilyErrors.maritalId}
-            id="addMaritalId"
-            label={'Status Perkhahwinan'}
-            options={data.selectionOptions.maritalLookup}
-            bind:val={$addFamilyModal.maritalId}
-        ></CustomSelectField>
-
-        <CustomSelectField
             errors={$addFamilyErrors.genderId}
-            id="addGenderId"
+            id="genderId"
             label={'Jantina'}
             options={data.selectionOptions.genderLookup}
             bind:val={$addFamilyModal.genderId}
@@ -3382,7 +3392,7 @@
 
         <CustomTextField
             errors={$addFamilyErrors.workAddress}
-            id="addWorkAddress"
+            id="workAddress"
             label={'Alamat Majikan'}
             type="text"
             bind:val={$addFamilyModal.workAddress}
@@ -3390,7 +3400,7 @@
 
         <CustomTextField
             errors={$addFamilyErrors.workPostcode}
-            id="addWorkPostcode"
+            id="workPostcode"
             label={'Poskod Majikan'}
             type="text"
             bind:val={$addFamilyModal.workPostcode}
@@ -3398,34 +3408,41 @@
 
         <CustomTextField
             errors={$addFamilyErrors.phoneNumber}
-            id="addPhoneNumber"
+            id="phoneNumber"
             label={'Nombor Mobil'}
             type="text"
             bind:val={$addFamilyModal.phoneNumber}
         ></CustomTextField>
 
-        <CustomTextField
-            type="date"
-            errors={$addFamilyErrors.marriageDate}
-            id="addMarriageDate"
-            label={'Tarikh Kahwin'}
-            bind:val={$proxyAddFamilyMarriageDate}
-        ></CustomTextField>
+        <CustomSelectField
+            errors={$addFamilyErrors.maritalId}
+            id="maritalId"
+            label={'Status Perkhahwinan'}
+            options={data.selectionOptions.maritalLookup}
+            bind:val={$addFamilyModal.maritalId}
+        ></CustomSelectField>
+
+        {#if $addFamilyModal.maritalId === 3}
+            <CustomTextField
+                type="date"
+                errors={$addFamilyErrors.marriageDate}
+                id="marriageDate"
+                label={'Tarikh Kahwin'}
+                bind:val={$addFamilyModal.marriageDate}
+            ></CustomTextField>
+        {/if}
 
         <div class="flex flex-row">
-            <label for="addInSchool" class="w-[220px] text-sm text-black"
+            <label for="addInSchool" class="w-[70px] text-sm text-black"
                 >Bersekolah</label
             >
-            <Checkbox
-                id="addInSchool"
-                bind:checked={$addFamilyModal.inSchool}
-            />
+            <Checkbox id="inSchool" bind:checked={$addFamilyModal.inSchool} />
         </div>
         <br />
 
         <TextIconButton
             type="primary"
-            label={'Simpan'}
+            label={'Tambah'}
             form="addFamilyInfoModal"
         />
     </form>
@@ -3444,7 +3461,7 @@
     >
         <CustomTextField
             errors={$addNonFamilyErrors.name}
-            id="addName"
+            id="name"
             label={'Nama'}
             type="text"
             bind:val={$addNonFamilyModal.name}
@@ -3452,21 +3469,21 @@
 
         <CustomTextField
             errors={$addNonFamilyErrors.alternativeName}
-            id="addAlternativeName"
+            id="alternativeName"
             label={'Nama Lain'}
             type="text"
             bind:val={$addNonFamilyModal.alternativeName}
         ></CustomTextField>
         <CustomSelectField
             errors={$addNonFamilyErrors.identityDocumentColor}
-            id="addIdentityDocumentColor"
+            id="identityDocumentColor"
             label={'Warna Kad Pengenalan'}
             options={data.selectionOptions.identityCardColorLookup}
             bind:val={$addNonFamilyModal.identityDocumentColor}
         ></CustomSelectField>
         <CustomTextField
             errors={$addNonFamilyErrors.identityDocumentNumber}
-            id="addIdentityDocumentNumber"
+            id="identityDocumentNumber"
             type="number"
             label={'Nombor Kad Pengenalan'}
             bind:val={$addNonFamilyModal.identityDocumentNumber}
@@ -3474,14 +3491,14 @@
 
         <CustomTextField
             errors={$addNonFamilyErrors.address}
-            id="addAddress"
+            id="address"
             label={'Alamat'}
             bind:val={$addNonFamilyModal.address}
         ></CustomTextField>
 
         <CustomTextField
             errors={$addNonFamilyErrors.postcode}
-            id="addPostcode"
+            id="postcode"
             label={'Poskod'}
             type="text"
             bind:val={$addNonFamilyModal.postcode}
@@ -3490,9 +3507,9 @@
         <CustomTextField
             type="date"
             errors={$addNonFamilyErrors.birthDate}
-            id="addBirthDate"
+            id="birthDate"
             label={'Tarikh Lahir'}
-            bind:val={$proxyAddDependencyBirthDate}
+            bind:val={$addNonFamilyModal.birthDate}
         ></CustomTextField>
 
         <CustomSelectField
@@ -3513,7 +3530,7 @@
 
         <CustomSelectField
             errors={$addNonFamilyErrors.relationshipId}
-            id="addRelationshipId"
+            id="relationshipId"
             label={'Hubungan'}
             options={data.selectionOptions.relationshipLookup}
             bind:val={$addNonFamilyModal.relationshipId}
@@ -3521,7 +3538,7 @@
 
         <CustomSelectField
             errors={$addNonFamilyErrors.educationLevelId}
-            id="addEducationLevelId"
+            id="educationLevelId"
             label={'Taraf Pendidikan'}
             options={data.selectionOptions.educationLookup}
             bind:val={$addNonFamilyModal.educationLevelId}
@@ -3529,7 +3546,7 @@
 
         <CustomSelectField
             errors={$addNonFamilyErrors.raceId}
-            id="addRaceId"
+            id="raceId"
             label={'Bangsa'}
             options={data.selectionOptions.raceLookup}
             bind:val={$addNonFamilyModal.raceId}
@@ -3537,23 +3554,15 @@
 
         <CustomSelectField
             errors={$addNonFamilyErrors.nationalityId}
-            id="addNationalityId"
+            id="nationalityId"
             label={'Kewarganegaraan'}
             options={data.selectionOptions.nationalityLookup}
             bind:val={$addNonFamilyModal.nationalityId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNonFamilyErrors.maritalId}
-            id="addMaritalId"
-            label={'Status Perkhahwinan'}
-            options={data.selectionOptions.maritalLookup}
-            bind:val={$addNonFamilyModal.maritalId}
-        ></CustomSelectField>
-
-        <CustomSelectField
             errors={$addNonFamilyErrors.genderId}
-            id="addGenderId"
+            id="genderId"
             label={'Jantina'}
             options={data.selectionOptions.genderLookup}
             bind:val={$addNonFamilyModal.genderId}
@@ -3561,7 +3570,7 @@
 
         <CustomTextField
             errors={$addNonFamilyErrors.workAddress}
-            id="addWorkAddress"
+            id="workAddress"
             label={'Alamat Majikan'}
             type="text"
             bind:val={$addNonFamilyModal.workAddress}
@@ -3569,7 +3578,7 @@
 
         <CustomTextField
             errors={$addNonFamilyErrors.workPostcode}
-            id="addWorkPostcode"
+            id="workPostcode"
             label={'Poskod Majikan'}
             type="text"
             bind:val={$addNonFamilyModal.workPostcode}
@@ -3577,26 +3586,36 @@
 
         <CustomTextField
             errors={$addNonFamilyErrors.phoneNumber}
-            id="addPhoneNumber"
+            id="phoneNumber"
             label={'Nombor Mobil'}
             type="text"
             bind:val={$addNonFamilyModal.phoneNumber}
         ></CustomTextField>
 
-        <CustomTextField
-            type="date"
-            errors={$addNonFamilyErrors.marriageDate}
-            id="addMarriageDate"
-            label={'Tarikh Kahwin'}
-            bind:val={$proxyAddDependencyMarriageDate}
-        ></CustomTextField>
+        <CustomSelectField
+            errors={$addNonFamilyErrors.maritalId}
+            id="maritalId"
+            label={'Status Perkhahwinan'}
+            options={data.selectionOptions.maritalLookup}
+            bind:val={$addNonFamilyModal.maritalId}
+        ></CustomSelectField>
+
+        {#if $addNonFamilyModal.maritalId === 3}
+            <CustomTextField
+                type="date"
+                errors={$addNonFamilyErrors.marriageDate}
+                id="marriageDate"
+                label={'Tarikh Kahwin'}
+                bind:val={$addNonFamilyModal.marriageDate}
+            ></CustomTextField>
+        {/if}
 
         <div class="flex flex-row">
-            <label for="addInSchool" class="w-[220px] text-sm text-black"
+            <label for="addInSchool" class="w-[70px] text-sm text-black"
                 >Bersekolah</label
             >
             <Checkbox
-                id="addInSchool"
+                id="inSchool"
                 bind:checked={$addNonFamilyModal.inSchool}
             />
         </div>
@@ -3604,7 +3623,7 @@
 
         <TextIconButton
             type="primary"
-            label={'Simpan'}
+            label={'Tambah'}
             form="addNonFamilyInfoModal"
         />
     </form>
@@ -3620,7 +3639,7 @@
     >
         <CustomTextField
             errors={$addNextOfKinErrors.name}
-            id="addName"
+            id="name"
             label={'Nama'}
             type="text"
             bind:val={$addNextOfKinModal.name}
@@ -3628,21 +3647,21 @@
 
         <CustomTextField
             errors={$addNextOfKinErrors.alternativeName}
-            id="addAlternativeName"
+            id="alternativeName"
             label={'Nama Lain'}
             type="text"
             bind:val={$addNextOfKinModal.alternativeName}
         ></CustomTextField>
         <CustomSelectField
             errors={$addNextOfKinErrors.identityDocumentColor}
-            id="addIdentityDocumentColor"
+            id="identityDocumentColor"
             label={'Warna Kad Pengenalan'}
             options={data.selectionOptions.identityCardColorLookup}
             bind:val={$addNextOfKinModal.identityDocumentColor}
         ></CustomSelectField>
         <CustomTextField
             errors={$addNextOfKinErrors.identityDocumentNumber}
-            id="addIdentityDocumentNumber"
+            id="identityDocumentNumber"
             type="number"
             label={'Nombor Kad Pengenalan'}
             bind:val={$addNextOfKinModal.identityDocumentNumber}
@@ -3650,14 +3669,14 @@
 
         <CustomTextField
             errors={$addNextOfKinErrors.address}
-            id="addAddress"
+            id="address"
             label={'Alamat'}
             bind:val={$addNextOfKinModal.address}
         ></CustomTextField>
 
         <CustomTextField
             errors={$addNextOfKinErrors.postcode}
-            id="addPostcode"
+            id="postcode"
             label={'Poskod'}
             type="text"
             bind:val={$addNextOfKinModal.postcode}
@@ -3666,14 +3685,14 @@
         <CustomTextField
             type="date"
             errors={$addNextOfKinErrors.birthDate}
-            id="addBirthDate"
+            id="birthDate"
             label={'Tarikh Lahir'}
-            bind:val={$proxyAddNextOfKinBirthDate}
+            bind:val={$addNextOfKinModal.birthDate}
         ></CustomTextField>
 
         <CustomSelectField
             errors={$addNextOfKinErrors.birthCountryId}
-            id="addBirthCountryId"
+            id="birthCountryId"
             label={'Negara Kelahiran'}
             options={data.selectionOptions.countryLookup}
             bind:val={$addNextOfKinModal.birthCountryId}
@@ -3681,7 +3700,7 @@
 
         <CustomSelectField
             errors={$addNextOfKinErrors.birthStateId}
-            id="addBirthStateId"
+            id="birthStateId"
             label={'Negeri Kelahiran'}
             options={data.selectionOptions.stateLookup}
             bind:val={$addNextOfKinModal.birthStateId}
@@ -3689,7 +3708,7 @@
 
         <CustomSelectField
             errors={$addNextOfKinErrors.relationshipId}
-            id="addRelationshipId"
+            id="relationshipId"
             label={'Hubungan'}
             options={data.selectionOptions.relationshipLookup}
             bind:val={$addNextOfKinModal.relationshipId}
@@ -3697,7 +3716,7 @@
 
         <CustomSelectField
             errors={$addNextOfKinErrors.educationLevelId}
-            id="addEducationLevelId"
+            id="educationLevelId"
             label={'Taraf Pendidikan'}
             options={data.selectionOptions.educationLookup}
             bind:val={$addNextOfKinModal.educationLevelId}
@@ -3705,7 +3724,7 @@
 
         <CustomSelectField
             errors={$addNextOfKinErrors.raceId}
-            id="addRaceId"
+            id="raceId"
             label={'Bangsa'}
             options={data.selectionOptions.raceLookup}
             bind:val={$addNextOfKinModal.raceId}
@@ -3713,23 +3732,15 @@
 
         <CustomSelectField
             errors={$addNextOfKinErrors.nationalityId}
-            id="addNationalityId"
+            id="nationalityId"
             label={'Kewarganegaraan'}
             options={data.selectionOptions.nationalityLookup}
             bind:val={$addNextOfKinModal.nationalityId}
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNextOfKinErrors.maritalId}
-            id="addMaritalId"
-            label={'Status Perkhahwinan'}
-            options={data.selectionOptions.maritalLookup}
-            bind:val={$addNextOfKinModal.maritalId}
-        ></CustomSelectField>
-
-        <CustomSelectField
             errors={$addNextOfKinErrors.genderId}
-            id="addGenderId"
+            id="genderId"
             label={'Jantina'}
             options={data.selectionOptions.genderLookup}
             bind:val={$addNextOfKinModal.genderId}
@@ -3737,7 +3748,7 @@
 
         <CustomTextField
             errors={$addNextOfKinErrors.workAddress}
-            id="addWorkAddress"
+            id="workAddress"
             label={'Alamat Majikan'}
             type="text"
             bind:val={$addNextOfKinModal.workAddress}
@@ -3745,7 +3756,7 @@
 
         <CustomTextField
             errors={$addNextOfKinErrors.workPostcode}
-            id="addWorkPostcode"
+            id="workPostcode"
             label={'Poskod Majikan'}
             type="text"
             bind:val={$addNextOfKinModal.workPostcode}
@@ -3753,33 +3764,43 @@
 
         <CustomTextField
             errors={$addNextOfKinErrors.phoneNumber}
-            id="addPhoneNumber"
+            id="phoneNumber"
             label={'Nombor Mobil'}
             type="text"
             bind:val={$addNextOfKinModal.phoneNumber}
         ></CustomTextField>
 
-        <CustomTextField
-            type="date"
-            errors={$addNextOfKinErrors.marriageDate}
-            id="addMarriageDate"
-            label={'Tarikh Kahwin'}
-            bind:val={$proxyAddNextOfKinMarriageDate}
-        ></CustomTextField>
+        <CustomSelectField
+            errors={$addNextOfKinErrors.maritalId}
+            id="maritalId"
+            label={'Status Perkhahwinan'}
+            options={data.selectionOptions.maritalLookup}
+            bind:val={$addNextOfKinModal.maritalId}
+        ></CustomSelectField>
+
+        {#if $addNextOfKinModal.maritalId === 3}
+            <CustomTextField
+                type="date"
+                errors={$addNextOfKinErrors.marriageDate}
+                id="marriageDate"
+                label={'Tarikh Kahwin'}
+                bind:val={$addNextOfKinModal.marriageDate}
+            ></CustomTextField>
+        {/if}
 
         <div class="flex flex-row">
-            <label for="addInSchool" class="w-[220px] text-sm text-black"
+            <label for="addInSchool" class="w-[70px] text-sm text-black"
                 >Bersekolah</label
             >
             <Checkbox
-                id="addInSchool"
+                id="inSchool"
                 bind:checked={$addNextOfKinModal.inSchool}
             />
         </div>
 
         <TextIconButton
             type="primary"
-            label={'Simpan'}
+            label={'Tambah'}
             form="addNextOfKinInfoModal"
         />
     </form>
