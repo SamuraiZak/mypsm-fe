@@ -43,7 +43,7 @@ export const _personalInfoResponseSchema = z
         identityDocumentColor: codeSchema,
         email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
         assetDeclarationStatusId: numberIdSchema,
-        propertyDeclarationDate: dateStringSchema,
+        propertyDeclarationDate: dateStringSchema.nullable(),
         birthDate: z.coerce.string({
             required_error: 'Pastikan tarikh adalah betul.',
         }),
@@ -68,7 +68,7 @@ export const _personalInfoResponseSchema = z
         mailPostcode: shortTextSchema,
         isExPoliceOrSoldier: booleanSchema,
         isInternalRelationship: booleanSchema,
-        employeeNumber: z.string(),
+        employeeNumber: z.string().nullable(),
         employeeName: z.string(),
         employeePosition: z.string(),
         relationshipId: z.number().nullable(),
@@ -84,9 +84,23 @@ export const _personalInfoResponseSchema = z
     });
 
 export const _personalInfoRequestSchema = _personalInfoResponseSchema
-    .omit({ id: true, isReadOnly: true })
+    .omit({
+        id: true,
+        employeeName: true,
+        employeePosition: true,
+        isReadOnly: true,
+    })
     .superRefine(
-        ({ assetDeclarationStatusId, isInternalRelationship }, ctx) => {
+        (
+            {
+                assetDeclarationStatusId,
+                propertyDeclarationDate,
+                isInternalRelationship,
+                employeeNumber,
+                relationshipId,
+            },
+            ctx,
+        ) => {
             if (
                 assetDeclarationStatusId === 12 ||
                 assetDeclarationStatusId === 14 ||
@@ -95,24 +109,30 @@ export const _personalInfoRequestSchema = _personalInfoResponseSchema
                 assetDeclarationStatusId === 18 ||
                 assetDeclarationStatusId === 22
             ) {
-                ctx.addIssue({
-                    code: 'custom',
-                    message: 'Tarikh tidak boleh kosong.',
-                    path: ['propertyDeclarationDate'],
-                });
+                if (propertyDeclarationDate === null) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        message: 'Tarikh tidak boleh kosong.',
+                        path: ['propertyDeclarationDate'],
+                    });
+                }
             }
 
             if (isInternalRelationship) {
-                ctx.addIssue({
-                    code: 'custom',
-                    message: 'Sila isi medan ini.',
-                    path: [
-                        'employeeNumber',
-                        'employeeName',
-                        'employeePosition',
-                        'relationshipId',
-                    ],
-                });
+                if (employeeNumber === '') {
+                    ctx.addIssue({
+                        code: 'custom',
+                        message: 'Nombor pekerja tidak boleh kosong.',
+                        path: ['employeeNumber'],
+                    });
+                }
+                if (relationshipId === null) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        message: 'Hubungan tidak boleh kosong.',
+                        path: ['relationshipId'],
+                    });
+                }
             }
         },
     );
@@ -215,30 +235,41 @@ export const _relationsSchema = z
         workAddress: shortTextSchema,
         workPostcode: shortTextSchema,
         phoneNumber: shortTextSchema,
-        marriageDate: dateStringSchema,
+        marriageDate: dateStringSchema.nullable(),
         inSchool: booleanSchema,
     })
     .partial({
         marriageDate: true,
         alternativeName: true,
+    })
+    .superRefine(({ maritalId, marriageDate }, ctx) => {
+        if (maritalId === 3) {
+            if (marriageDate === null) {
+                ctx.addIssue({
+                    code: 'custom',
+                    message: 'Tarikh tidak boleh kosong.',
+                    path: ['marriageDate'],
+                });
+            }
+        }
     });
 
-export const _familyListResponseSchema = z.object({
-    dependencies: z.array(_relationsSchema),
-    isReadOnly: z.boolean().readonly(),
-});
+// export const _familyListResponseSchema = z.object({
+//     dependencies: z.array(_relationsSchema),
+//     isReadOnly: z.boolean().readonly(),
+// });
 
 export const _dependencyListResponseSchema = z.object({
     dependencies: z.array(_relationsSchema),
     isReadOnly: z.boolean().readonly(),
 });
 
-export const _nextOfKinListResponseSchema = z.object({
-    nextOfKins: z.array(_relationsSchema),
-    isReadOnly: z.boolean().readonly(),
-});
+// export const _nextOfKinListResponseSchema = z.object({
+//     nextOfKins: z.array(_relationsSchema),
+//     isReadOnly: z.boolean().readonly(),
+// });
 
-export const _familyListRequestSchema = _familyListResponseSchema.pick({
+export const _familyListRequestSchema = _dependencyListResponseSchema.pick({
     dependencies: true,
 });
 
@@ -246,8 +277,8 @@ export const _dependencyListRequestSchema = _dependencyListResponseSchema.pick({
     dependencies: true,
 });
 
-export const _nextOfKinListRequestSchema = _nextOfKinListResponseSchema.pick({
-    nextOfKins: true,
+export const _nextOfKinListRequestSchema = z.object({
+    nextOfKins: z.array(_relationsSchema),
 });
 
 //==========================================================
@@ -346,5 +377,6 @@ export const _uploadDocumentsSchema = z.object({
     document: z
         .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
         .refine((f) => f.size < 1_000_000, 'Maximum 1 MB saiz muat naik.')
-        .array(),
+        .nullish(),
+    // .array(),
 });

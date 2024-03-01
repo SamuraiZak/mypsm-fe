@@ -86,6 +86,5 @@ export const numberIdSchema = z.coerce.number({
 });
 
 export const dateStringSchema = z.coerce
-    .string()
-    .refine((value) => (value === 'null' ? null : value))
-    .nullable();
+    .string({ required_error: 'Sila tarikh tidak kosong' })
+    .refine((value) => (value === 'null' ? null : value));
