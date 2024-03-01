@@ -63,9 +63,7 @@ import {
     _experienceListRequestSchema,
     _experienceListResponseSchema,
     _familyListRequestSchema,
-    _familyListResponseSchema,
     _nextOfKinListRequestSchema,
-    _nextOfKinListResponseSchema,
     _personalInfoRequestSchema,
     _personalInfoResponseSchema,
     _relationsSchema,
@@ -205,8 +203,8 @@ export async function load({ params }) {
     const employeeLookup: DropdownDTO[] = (
         response.data?.dataList as CommonEmployeeDTO[]
     ).map((data) => ({
-        value: data.employeeId,
-        name: data.name,
+        value: data.employeeNumber,
+        name: data.employeeNumber,
     }));
 
     // ============================================================
@@ -236,7 +234,7 @@ export async function load({ params }) {
 
     const familyInfoForm = await superValidate(
         familyInfoResponse.data?.details as CandidateFamilyDetailResponseDTO,
-        _familyListResponseSchema,
+        _dependencyListResponseSchema,
     );
 
     const dependencyInfoForm = await superValidate(
@@ -247,7 +245,7 @@ export async function load({ params }) {
     const nextOfKinInfoForm = await superValidate(
         nextOfKinInfoResponse.data
             ?.details as CandidateNextOfKinDetailResponseDTO,
-        _nextOfKinListResponseSchema,
+        _dependencyListResponseSchema,
     );
 
     const addAcademicModal = await superValidate(_academicInfoSchema);
@@ -603,10 +601,12 @@ export const _submitPersonalForm = async (formData: object) => {
             form.data as CandidatePersonalRequestDTO,
         );
 
+    await invalidateAll();
+
     return { response };
 };
 
-export const _submitAcademicForm = async (formData: FormData) => {
+export const _submitAcademicForm = async (formData: object) => {
     const form = await superValidate(formData, _academicListRequestSchema);
 
     if (!form.valid) {
@@ -619,10 +619,12 @@ export const _submitAcademicForm = async (formData: FormData) => {
             form.data as CandidateAcademicDetailRequestDTO,
         );
 
+    await invalidateAll();
+
     return { response };
 };
 
-export const _submitExperienceForm = async (formData: FormData) => {
+export const _submitExperienceForm = async (formData: object) => {
     const form = await superValidate(formData, _experienceListRequestSchema);
 
     if (!form.valid) {
@@ -635,10 +637,12 @@ export const _submitExperienceForm = async (formData: FormData) => {
             form.data as CandidateExperiencesDetailRequestDTO,
         );
 
+    await invalidateAll();
+
     return { response };
 };
 
-export const _submitActivityForm = async (formData: FormData) => {
+export const _submitActivityForm = async (formData: object) => {
     const form = await superValidate(formData, _activityListRequestSchema);
 
     if (!form.valid) {
@@ -651,10 +655,12 @@ export const _submitActivityForm = async (formData: FormData) => {
             form.data as CandidateActivityDetailRequestDTO,
         );
 
+    await invalidateAll();
+
     return { response };
 };
 
-export const _submitFamilyForm = async (formData: FormData) => {
+export const _submitFamilyForm = async (formData: object) => {
     const form = await superValidate(formData, _familyListRequestSchema);
 
     if (!form.valid) {
@@ -667,10 +673,12 @@ export const _submitFamilyForm = async (formData: FormData) => {
             form.data as CandidateFamilyDetailRequestDTO,
         );
 
+    await invalidateAll();
+
     return { response };
 };
 
-export const _submitDependencyForm = async (formData: FormData) => {
+export const _submitDependencyForm = async (formData: object) => {
     const form = await superValidate(formData, _dependencyListRequestSchema);
 
     if (!form.valid) {
@@ -683,10 +691,12 @@ export const _submitDependencyForm = async (formData: FormData) => {
             form.data as CandidateDependenciesDetailRequestDTO,
         );
 
+    await invalidateAll();
+
     return { response };
 };
 
-export const _submitNextOfKinForm = async (formData: FormData) => {
+export const _submitNextOfKinForm = async (formData: object) => {
     const form = await superValidate(formData, _nextOfKinListRequestSchema);
 
     if (!form.valid) {
@@ -699,10 +709,12 @@ export const _submitNextOfKinForm = async (formData: FormData) => {
             form.data as CandidateNextOfKinDetailRequestDTO,
         );
 
+    await invalidateAll();
+
     return { response };
 };
 
-export const _submitServiceForm = async (formData: FormData) => {
+export const _submitServiceForm = async (formData: object) => {
     const form = await superValidate(formData, _serviceInfoRequestSchema);
 
     if (!form.valid) {
@@ -715,10 +727,12 @@ export const _submitServiceForm = async (formData: FormData) => {
             form.data as NewHireSecretaryServiceUpdateRequestDTO,
         );
 
+    await invalidateAll();
+
     return { response };
 };
 
-export const _submitSecretaryApprovalForm = async (formData: FormData) => {
+export const _submitSecretaryApprovalForm = async (formData: object) => {
     const form = await superValidate(formData, _approvalResultSchema);
 
     if (!form.valid) {
@@ -731,10 +745,12 @@ export const _submitSecretaryApprovalForm = async (formData: FormData) => {
             form.data as CandidateNewHireApproverResultDTO,
         );
 
+    await invalidateAll();
+
     return { response };
 };
 
-export const _submitSupporterApprovalForm = async (formData: FormData) => {
+export const _submitSupporterApprovalForm = async (formData: object) => {
     const form = await superValidate(formData, _approvalResultSchema);
 
     if (!form.valid) {
@@ -747,10 +763,12 @@ export const _submitSupporterApprovalForm = async (formData: FormData) => {
             form.data as CandidateNewHireApproverResultDTO,
         );
 
+    await invalidateAll();
+
     return { response };
 };
 
-export const _submitApproverApprovalForm = async (formData: FormData) => {
+export const _submitApproverApprovalForm = async (formData: object) => {
     const form = await superValidate(formData, _approvalResultSchema);
 
     if (!form.valid) {
@@ -763,10 +781,12 @@ export const _submitApproverApprovalForm = async (formData: FormData) => {
             form.data as CandidateNewHireApproverResultDTO,
         );
 
+    await invalidateAll();
+
     return { response };
 };
 
-export const _submitSecretarySetApproverForm = async (formData: FormData) => {
+export const _submitSecretarySetApproverForm = async (formData: object) => {
     const form = await superValidate(formData, _setApproversSchema);
 
     if (!form.valid) {
@@ -779,21 +799,32 @@ export const _submitSecretarySetApproverForm = async (formData: FormData) => {
             form.data as NewHireSetApproversDTO,
         );
 
+    await invalidateAll();
+
     return { response };
 };
 
 export const _submitDocumentsForm = async (formData: FormData) => {
+
+    
+    // const file = formData.get('document')
+    
+    
     const form = await superValidate(formData, _uploadDocumentsSchema);
+    
+    console.log(form);
 
     if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    const response: CommonResponseDTO =
-        await EmploymentServices.createCurrentCandidateDocuments(formData);
+    // const response: CommonResponseDTO =
+    //     await EmploymentServices.createCurrentCandidateDocuments(formData);
 
-    return { response };
+    // await invalidateAll();
+
+    // return { response };
 };
 
 export const _downloadDocument = async (param: string) => {
@@ -809,15 +840,17 @@ export const _submitAcademicInfoForm = async (formData: Academic[]) => {
         return fail(400);
     }
     const requestData: CandidateAcademicDetailRequestDTO = {
-        academicList: formData,
+        academics: formData,
     };
+
+    console.log(requestData);
 
     const response: CommonResponseDTO =
         await EmploymentServices.createCurrentCandidateAcademicDetails(
             requestData as CandidateAcademicDetailRequestDTO,
         );
 
-    invalidateAll();
+    await invalidateAll();
 
     return { response };
 };
@@ -828,7 +861,7 @@ export const _submitExperienceInfoForm = async (formData: Experience[]) => {
         return fail(400);
     }
     const requestData: CandidateExperiencesDetailRequestDTO = {
-        experienceList: formData,
+        experiences: formData,
     };
 
     const response: CommonResponseDTO =
@@ -836,7 +869,7 @@ export const _submitExperienceInfoForm = async (formData: Experience[]) => {
             requestData as CandidateExperiencesDetailRequestDTO,
         );
 
-    invalidateAll();
+    await invalidateAll();
 
     return { response };
 };
@@ -847,7 +880,7 @@ export const _submitActivityInfoForm = async (formData: Activity[]) => {
         return fail(400);
     }
     const requestData: CandidateActivityDetailRequestDTO = {
-        activityList: formData,
+        activities: formData,
     };
 
     const response: CommonResponseDTO =
@@ -855,7 +888,7 @@ export const _submitActivityInfoForm = async (formData: Activity[]) => {
             requestData as CandidateActivityDetailRequestDTO,
         );
 
-    invalidateAll();
+    await invalidateAll();
 
     return { response };
 };
@@ -866,7 +899,7 @@ export const _submitFamilyInfoForm = async (formData: Family[]) => {
         return fail(400);
     }
     const requestData: CandidateFamilyDetailRequestDTO = {
-        dependenciesList: formData,
+        dependencies: formData,
     };
 
     const response: CommonResponseDTO =
@@ -874,7 +907,7 @@ export const _submitFamilyInfoForm = async (formData: Family[]) => {
             requestData as CandidateFamilyDetailRequestDTO,
         );
 
-    invalidateAll();
+    await invalidateAll();
 
     return { response };
 };
@@ -885,7 +918,7 @@ export const _submitDependencyInfoForm = async (formData: Dependency[]) => {
         return fail(400);
     }
     const requestData: CandidateDependenciesDetailRequestDTO = {
-        dependenciesList: formData,
+        dependencies: formData,
     };
 
     const response: CommonResponseDTO =
@@ -893,7 +926,7 @@ export const _submitDependencyInfoForm = async (formData: Dependency[]) => {
             requestData as CandidateDependenciesDetailRequestDTO,
         );
 
-    invalidateAll();
+    await invalidateAll();
 
     return { response };
 };
@@ -904,7 +937,7 @@ export const _submitNextOfKinInfoForm = async (formData: NextOfKin[]) => {
         return fail(400);
     }
     const requestData: CandidateNextOfKinDetailRequestDTO = {
-        nextOfKinsList: formData,
+        nextOfKins: formData,
     };
 
     const response: CommonResponseDTO =
@@ -912,7 +945,7 @@ export const _submitNextOfKinInfoForm = async (formData: NextOfKin[]) => {
             requestData as CandidateNextOfKinDetailRequestDTO,
         );
 
-    invalidateAll();
+    await invalidateAll();
 
     return { response };
 };
