@@ -1094,6 +1094,10 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
+                            name: 'Laporan Cuti Kakitangan',
+                            path: '/cuti/laporan-cuti',
+                        },
+                        {
                             name: 'Cuti (Rehat, Kecemasan, Sakit)',
                             path: '/cuti/cuti-rehat-kecemasan-sakit',
                         },
@@ -1625,13 +1629,12 @@ export class SidebarConstant {
                             name: 'Pinjaman Komputer, Telefon Pintar dan Kenderaan',
                             path: '/pinjaman-kuarters/pinjaman',
                         },
-
                     ],
                 },
-            ]
+            ],
         },
         // urus Seta Tatatertib
-        
+
         // unit negeri
         {
             role: RoleConstant.unitNegeri.code,
