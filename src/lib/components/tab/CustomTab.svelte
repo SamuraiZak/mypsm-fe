@@ -3,6 +3,7 @@
     import CustomTabButton from './CustomTabButton.svelte';
 
     export let activeIndex = 0;
+    export let id: string = 'tabID';
     let contentList: any;
     let tabList: any[] = [];
     let tempTabList: any[] = [];
@@ -21,7 +22,7 @@
     });
 
     onMount(() => {
-        contentList = document.getElementById('tab-list');
+        contentList = document.getElementById(id);
         for (let index = 0; index < contentList.children.length; index++) {
             tempTabList.push(contentList.children[index].id);
         }
@@ -42,6 +43,7 @@
     >
         {#each tabList as item, index}
             <CustomTabButton
+                id={id + index + 1}
                 label={item}
                 active={activeIndex == index}
                 onClick={() => {
@@ -52,7 +54,7 @@
     </div>
 
     <ul
-        id="tab-list"
+        id={id}
         class="h-full max-h-full w-full max-w-full overflow-hidden"
     >
         <slot />
