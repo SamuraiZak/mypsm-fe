@@ -449,7 +449,18 @@ const dictionary: { [key: string]: string } = {
     workAddress: 'Alamat Majikan',
     workPostcode: 'Poskod Majikan',
 
-    // 
+    //
     month: 'Bulan',
-    baseSalary: 'Gaji Pokok'
+    baseSalary: 'Gaji Pokok',
+
+    // cuti
+    leaveId: 'Id Permohonan',
+    leaveFrom: 'Tarikh Mula Cuti',
+    leaveTo: 'Tarikh Tamat Cuti',
+    leaveTotal: 'Jumlah Hari Cuti',
+    submittedOn: 'Tarikh Permohonan',
+    entitlement: 'Peruntukan',
+    carryForward: 'Baki Bawa Kehadapan',
+    used: 'Diambil',
+    balance: 'Baki',
 };
