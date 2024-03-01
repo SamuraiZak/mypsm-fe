@@ -103,15 +103,15 @@ export const _serviceInfoSchema = z.object({
     eligibleLeaveCount: numberSchema,
     civilServiceStartDate: dateSchema,
     newRecruitEffectiveDate: dateSchema,
-    serviceDate: dateSchema,
+    // serviceDate: dateSchema,
     firstServiceDate: dateSchema,
     firstConfirmServiceDate: dateSchema,
     firstEffectiveDate: dateSchema,
     confirmDate: dateSchema,
-    pensionNumber: shortTextSchema,
+    // pensionNumber: shortTextSchema,
     kgt: numberSchema,
     retirementDate: minDateSchema,
-    revisionMonth: codeSchema,
+    // revisionMonth: codeSchema,
     maximumSalary: numberSchema,
     baseSalary: numberSchema,
     itka: numberSchema,
@@ -119,4 +119,18 @@ export const _serviceInfoSchema = z.object({
     epw: numberSchema,
     cola: numberSchema,
     isReadOnly: z.boolean().readonly().nullable(),
+});
+
+//==========================================================
+//================== PTB KWAP Schema ===================
+//==========================================================
+
+export const _PTBInfoSchema = z.object({
+
+    PTBdate:dateSchema,
+    refrenceDate:dateSchema,
+    referenceNumber:numberSchema,
+    pensionNumber:shortTextSchema,
+    KWAPEmailDate:dateSchema,
+
 });

@@ -10,7 +10,7 @@ import { EmployeeServices } from '$lib/services/implementation/mypsm/shared/empl
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/client';
 
-import { _personalInfoSchema ,_serviceInfoSchema} from '$lib/schemas/mypsm/employment/PTB-KWAP/schema';
+import { _personalInfoSchema ,_serviceInfoSchema, _PTBInfoSchema} from '$lib/schemas/mypsm/employment/PTB-KWAP/schema';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 
 export async function load({ params }) {
@@ -21,8 +21,13 @@ export async function load({ params }) {
         _serviceInfoSchema,
     )
 
+    const PTBInfoForm = await superValidate (
+        _PTBInfoSchema,
+    )
+
     return{personalInfoForm,
-        serviceInfoForm}
+        serviceInfoForm,
+        PTBInfoForm}
 
 }
 
@@ -68,6 +73,30 @@ export const _serviceInfoSubmit= async (formData: object) => {
             },
         })
         if (serviceInfoForm.valid) {
+            const result: string | null = 'success';
+            return { response, result };
+        } else {
+            const result: string | null = 'fail';
+            return { response, result };
+        }
+    }
+}
+
+export const _PTBInfoSubmit= async (formData: object) => {
+    const PTBInfoForm= await superValidate(
+        formData,
+        _PTBInfoSchema,
+    );
+        console.log (PTBInfoForm)
+    if(PTBInfoForm.valid){
+        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify(PTBInfoForm),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+        if (PTBInfoForm.valid) {
             const result: string | null = 'success';
             return { response, result };
         } else {

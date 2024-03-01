@@ -13,8 +13,12 @@
         Badge,
         type SelectOptionType,
     } from 'flowbite-svelte';
-    import { _personalInfoSubmit ,_serviceInfoSubmit } from './+page';
-    import { _personalInfoSchema, _serviceInfoSchema} from '$lib/schemas/mypsm/employment/PTB-KWAP/schema';
+    import { _personalInfoSubmit, _serviceInfoSubmit } from './+page';
+    import {
+        _personalInfoSchema,
+        _serviceInfoSchema,
+        _PTBInfoSchema,
+    } from '$lib/schemas/mypsm/employment/PTB-KWAP/schema';
     import { superForm } from 'sveltekit-superforms/client';
 
     import { onMount } from 'svelte';
@@ -35,6 +39,8 @@
     } from '$lib/helpers/core/toast.helper';
     import type { RadioDTO } from '$lib/dto/core/radio/radio.dto';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
+    import CustomRadioField from '$lib/components/inputs/radio-field/CustomRadioField.svelte';
+    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
 
     let currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
@@ -113,6 +119,26 @@
         onUpdate(event) {},
         onSubmit() {
             _serviceInfoSubmit($serviceInfoForm).then((value) => {
+                result = value?.result;
+                if (result == 'success') {
+                    getLoginSuccessToast();
+                } else {
+                    getErrorToast();
+                }
+            });
+        },
+    });
+    const {
+        form: PTBInfoForm,
+        errors: PTBInfoError,
+        enhance: PTBInfoEnhance,
+    } = superForm(data.PTBInfoForm, {
+        SPA: true,
+        id: 'PTBDetail',
+        validators: _PTBInfoSchema,
+        onUpdate(event) {},
+        onSubmit() {
+            _PTBInfoSubmit($PTBInfoForm).then((value) => {
                 result = value?.result;
                 if (result == 'success') {
                     getLoginSuccessToast();
@@ -365,58 +391,56 @@
 
         <!-- Maklumat Perkhidmatan -->
         <StepperContent>
-            <StepperContentHeader title="Maklumat Perkhidmatan"
-            > <TextIconButton
-            label="simpan"
-            type="primary"
-            icon="check"
-            form="serviceDetail"></TextIconButton>
-           
-        </StepperContentHeader>
+            <StepperContentHeader title="Maklumat Perkhidmatan">
+                <TextIconButton
+                    label="simpan"
+                    type="primary"
+                    icon="check"
+                    form="serviceDetail"
+                ></TextIconButton>
+            </StepperContentHeader>
             <StepperContentBody>
-                
                 <form
-                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
-                id="serviceDetail"
-                method="POST"
-                use:serviceInfoEnhance>
-                
-               
-                        <b class="text-sm text-system-primary"
-                            >Maklumat Perkhidmatan</b
-                        >
-                        <CustomTextField
-                            id="gradeId"
-                            label={'Gred Semasa'}
-                            type="text"
-                            errors={$serviceInfoError.gradeId}
-                            bind:val={$serviceInfoForm.gradeId}
-                        ></CustomTextField>
-                        <CustomTextField
-                            id="positionId"
-                            label={'Jawatan'}
-                            type="text"
-                            errors={$serviceInfoError.positionId}
-                            bind:val={$serviceInfoForm.positionId}
-                        ></CustomTextField>
+                    class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
+                    id="serviceDetail"
+                    method="POST"
+                    use:serviceInfoEnhance
+                >
+                    <b class="text-sm text-system-primary"
+                        >Maklumat Perkhidmatan</b
+                    >
+                    <CustomTextField
+                        id="gradeId"
+                        label={'Gred Semasa'}
+                        type="text"
+                        errors={$serviceInfoError.gradeId}
+                        bind:val={$serviceInfoForm.gradeId}
+                    ></CustomTextField>
+                    <CustomTextField
+                        id="positionId"
+                        label={'Jawatan'}
+                        type="text"
+                        errors={$serviceInfoError.positionId}
+                        bind:val={$serviceInfoForm.positionId}
+                    ></CustomTextField>
 
-                        <CustomTextField
-                            id="placementId"
-                            label={'Penempatan'}
-                            type="text"
-                            errors={$serviceInfoError.placementId}
-                            bind:val={$serviceInfoForm.placementId}
-                        ></CustomTextField>
+                    <CustomTextField
+                        id="placementId"
+                        label={'Penempatan'}
+                        type="text"
+                        errors={$serviceInfoError.placementId}
+                        bind:val={$serviceInfoForm.placementId}
+                    ></CustomTextField>
 
-                        <CustomTextField
-                            id="serviceTypeId"
-                            label={'Taraf Perkhidmatan'}
-                            type="text"
-                            errors={$serviceInfoError.serviceTypeId}
-                            bind:val={$serviceInfoForm.serviceTypeId}
-                        ></CustomTextField>
+                    <CustomTextField
+                        id="serviceTypeId"
+                        label={'Taraf Perkhidmatan'}
+                        type="text"
+                        errors={$serviceInfoError.serviceTypeId}
+                        bind:val={$serviceInfoForm.serviceTypeId}
+                    ></CustomTextField>
 
-                        <!-- <RadioButton
+                    <!-- <RadioButton
                         
                         options={faedahPersaraanOptions}
                         legend={'Faedah Persaraan'}
@@ -431,92 +455,92 @@
                         bind:val={$serviceInfoForm.retirementBenefit}
                     />
 
-                        <CustomTextField
-                            id="noKWSP"
-                            label={'No. KWSP'}
-                            type="text"
-                            val=""
-                            placeholder=""
-                        ></CustomTextField>
-                        <CustomTextField
-                            id="noSOCSO"
-                            label={'No. SOCSO'}
-                            type="text"
-                            val=""
-                            placeholder=""
-                        ></CustomTextField>
-                        <CustomTextField
-                            id="noCukai"
-                            label={'No. Cukai (LHDN)'}
-                            type="text"
-                            val=""
-                            placeholder=""
-                        ></CustomTextField>
-                        <CustomTextField
-                            id="bank"
-                            label={'Bank'}
-                            type="text"
-                            val=""
-                            placeholder=""
-                        ></CustomTextField>
-                        <CustomTextField
-                            id="noAkaun"
-                            label={'No. Akaun'}
-                            type="text"
-                            val=""
-                            placeholder=""
-                        ></CustomTextField>
-                        <CustomTextField
+                    <CustomTextField
+                        id="epfNumber"
+                        label={'No. KWSP'}
+                        type="text"
+                        errors={$serviceInfoError.epfNumber}
+                        bind:val={$serviceInfoForm.epfNumber}
+                    ></CustomTextField>
+                    <CustomTextField
+                        id="socsoNumber"
+                        label={'No. SOCSO'}
+                        type="text"
+                        errors={$serviceInfoError.socsoNumber}
+                        bind:val={$serviceInfoForm.socsoNumber}
+                    ></CustomTextField>
+                    <CustomTextField
+                        id="incomeNumber"
+                        label={'No. Cukai (LHDN)'}
+                        type="text"
+                        errors={$serviceInfoError.incomeNumber}
+                        bind:val={$serviceInfoForm.incomeNumber}
+                    ></CustomTextField>
+                    <CustomTextField
+                        id="bankName"
+                        label={'Bank'}
+                        type="text"
+                        errors={$serviceInfoError.bankName}
+                        bind:val={$serviceInfoForm.bankName}
+                    ></CustomTextField>
+                    <CustomTextField
+                        id="bankAccount"
+                        label={'No. Akaun'}
+                        type="text"
+                        errors={$serviceInfoError.bankAccount}
+                        bind:val={$serviceInfoForm.bankAccount}
+                    ></CustomTextField>
+                    <!-- <CustomTextField
                             id="program"
                             label={'Program'}
                             type="text"
                             val=""
                             placeholder=""
-                        ></CustomTextField>
-                        <CustomTextField
-                            id="kelayakanCuti"
-                            label={'Kelayakan Cuti'}
-                            type="text"
-                            val=""
-                            placeholder=""
-                        ></CustomTextField>
-                        <CustomTextField
-                            id="mulaDilantikPerkhidmatanKerajaan"
-                            label={'Mula Dilantik Perkhidmatan Kerajaan'}
-                            type="text"
-                            val=""
-                            placeholder=""
-                        ></CustomTextField>
-                        <CustomTextField
-                            id="mulaDilantikPerkhidmatanLKIM"
-                            label={'Mula Dilantik Perkhidmatan LKIM'}
-                            type="text"
-                            val=""
-                            placeholder=""
-                        ></CustomTextField>
-                        <CustomTextField
-                            id="mulaDilantikPerkhidmatanSekarang"
-                            label={'Mula Dilantik Perkhidmatan Sekarang'}
-                            type="text"
-                            val=""
-                            placeholder=""
-                        ></CustomTextField>
-                        <CustomTextField
-                            id="disahkanDalamJawatanPertamaLKIM"
-                            label={'Disahkan Dalam Jawatan Pertama LKIM'}
-                            type="text"
-                            val=""
-                            placeholder=""
-                        ></CustomTextField>
-                        <CustomTextField
-                            id="disahkanDalamJawatanSemasaLKIM"
-                            label={'Disahkan Dalam Jawatan Semasa LKIM'}
-                            type="text"
-                            val=""
-                            placeholder=""
-                        ></CustomTextField>
+                        ></CustomTextField> -->
+                    <CustomTextField
+                        id="eligibleLeaveCount"
+                        label={'Kelayakan Cuti'}
+                        type="text"
+                        errors={$serviceInfoError.eligibleLeaveCount}
+                        bind:val={$serviceInfoForm.eligibleLeaveCount}
+                    ></CustomTextField>
+                    <CustomTextField
+                        id="civilServiceStartDate"
+                        label={'Mula Dilantik Perkhidmatan Kerajaan'}
+                        type="date"
+                        errors={$serviceInfoError.civilServiceStartDate}
+                        bind:val={$serviceInfoForm.civilServiceStartDate}
+                    ></CustomTextField>
+                    <CustomTextField
+                        id="newRecruitEffectiveDate"
+                        label={'Mula Dilantik Perkhidmatan LKIM'}
+                        type="text"
+                        errors={$serviceInfoError.newRecruitEffectiveDate}
+                        bind:val={$serviceInfoForm.newRecruitEffectiveDate}
+                    ></CustomTextField>
+                    <CustomTextField
+                        id="firstServiceDate"
+                        label={'Mula Dilantik Perkhidmatan Sekarang'}
+                        type="date"
+                        errors={$serviceInfoError.firstServiceDate}
+                        bind:val={$serviceInfoForm.firstServiceDate}
+                    ></CustomTextField>
+                    <CustomTextField
+                        id="firstConfirmServiceDate"
+                        label={'Disahkan Dalam Jawatan Pertama LKIM'}
+                        type="date"
+                        errors={$serviceInfoError.firstConfirmServiceDate}
+                        bind:val={$serviceInfoForm.firstConfirmServiceDate}
+                    ></CustomTextField>
+                    <CustomTextField
+                        id="confirmDate"
+                        label={'Disahkan Dalam Jawatan Semasa LKIM'}
+                        type="date"
+                        errors={$serviceInfoError.confirmDate}
+                        bind:val={$serviceInfoForm.confirmDate}
+                    ></CustomTextField>
 
-                        <!-- <AccordianField
+                    <!-- <AccordianField
                         disabled={editable}
                         label="Sejarah Lantikan Jawatan LKIM (Gred, Jawatan, Tarikh Disahkan Jawatan, Tarikh Lantikan)"
                         header={'maklumatPerkhidmatanData.sejarahLantikanJawatanLKIM[0]'}
@@ -524,7 +548,7 @@
 
                         <{#each maklumatPerkhidmatanData.sejarahLantikanJawatanLKIM as val, i} -->
 
-                        <!-- <label
+                    <!-- <label
                             for=""
                             class="border-1 active:border-1 w-full rounded-[3px] border-bdr-primary text-base {!editable
                                 ? 'text-txt-tertiary'
@@ -532,17 +556,17 @@
                                                     hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0"
                             >{'i + 1'}. {'val'}</label
                         > -->
-                        <!-- {/each} -->
-                        <!-- </AccordianField>
+                    <!-- {/each} -->
+                    <!-- </AccordianField>
                              -->
-                        <CustomTextField
+                    <!-- <CustomTextField
                             id="tarikhKelulusanPercantumanPerkhidmatanLepas"
                             label={'Tarikh Kelulusan Percantuman Perkhidmatan Lepas'}
                             type="text"
                             val=""
                             placeholder=""
-                        ></CustomTextField>
-                        <CustomTextField
+                        ></CustomTextField> -->
+                    <!-- <CustomTextField
                             id="pemangkuanSekarang"
                             label={'Pemangkuan Sekarang'}
                             type="text"
@@ -555,15 +579,15 @@
                             type="text"
                             val=""
                             placeholder=""
-                        ></CustomTextField>
-                        <CustomTextField
+                        ></CustomTextField> -->
+                    <!-- <CustomTextField
                             id="skimPencen"
                             label={'Skim Pencen'}
                             type="text"
                             val=""
                             placeholder=""
-                        ></CustomTextField>
-                        <CustomTextField
+                        ></CustomTextField> -->
+                    <!-- <CustomTextField
                             id="kenaikanGajiAkhir"
                             label={'Kenaikan Gaji Akhir'}
                             type="text"
@@ -576,89 +600,90 @@
                             type="text"
                             val=""
                             placeholder=""
-                        ></CustomTextField>
-                        <CustomTextField
-                            id="bulanKGT"
-                            label={'Bulan KGT'}
-                            type="text"
-                            val=""
-                            placeholder=""
-                        ></CustomTextField>
-                        <CustomTextField
-                            id="tarikhBersara"
-                            label={'Tarikh Bersara'}
-                            type="text"
-                            val=""
-                            placeholder=""
-                        ></CustomTextField>
-                        <b class="text-sm text-system-primary"
-                            >Maklumat Gaji dan Elaun - Elaun</b
-                        >
-                        <div class="grid grid-cols-2 gap-10">
-                            <div class="space-y-2.5">
-                                <CustomTextField
+                        ></CustomTextField> -->
+                    <CustomTextField
+                        id="kgt"
+                        label={'Bulan KGT'}
+                        type="text"
+                        errors={$serviceInfoError.kgt}
+                        bind:val={$serviceInfoForm.kgt}
+                    ></CustomTextField>
+                    <CustomTextField
+                        id="retirementDate"
+                        label={'Tarikh Bersara'}
+                        type="text"
+                        errors={$serviceInfoError.retirementDate}
+                        bind:val={$serviceInfoForm.retirementDate}
+                    ></CustomTextField>
+                    <b class="text-sm text-system-primary"
+                        >Maklumat Gaji dan Elaun - Elaun</b
+                    >
+                    <div class="grid grid-cols-2 gap-10">
+                        <div class="space-y-2.5">
+                            <!-- <CustomTextField
                                     id="tarikhBerkuatkuasa"
                                     label={'Tarikh Berkuatkuasa'}
                                     type="text"
                                     val=""
                                     placeholder=""
-                                ></CustomTextField>
-                                <CustomTextField
-                                    id="tanggaGaji"
-                                    label={'Tangga Gaji'}
-                                    type="text"
-                                    val=""
-                                    placeholder=""
-                                ></CustomTextField>
-                                <CustomTextField
-                                    id="gajiPokok"
-                                    label={'Gaji Pokok'}
-                                    type="text"
-                                    val=""
-                                    placeholder=""
-                                ></CustomTextField>
-                            </div>
-                            <!-- hasTooltip={true}
+                                ></CustomTextField> -->
+                            <CustomTextField
+                                id="maximumSalary"
+                                label={'Tangga Gaji'}
+                                type="text"
+                                errors={$serviceInfoError.maximumSalary}
+                                bind:val={$serviceInfoForm.maximumSalary}
+                            ></CustomTextField>
+                            <CustomTextField
+                                id="baseSalary"
+                                label={'Gaji Pokok'}
+                                type="text"
+                                errors={$serviceInfoError.baseSalary}
+                                bind:val={$serviceInfoForm.baseSalary}
+                            ></CustomTextField>
+                        </div>
+                        <!-- hasTooltip={true}
                                 toolTipID="type-itka" -->
-                            <div class="space-y-2.5">
-                                <CustomTextField
-                                    id="type-itka"
-                                    label={'ITKA'}
-                                    type="text"
-                                    val=""
-                                    placeholder=""
-                                ></CustomTextField>
-                                <CustomTextField
-                                    id="itp"
-                                    label={'ITP'}
-                                    type="text"
-                                    val=""
-                                    placeholder=""
-                                ></CustomTextField>
-                                <CustomTextField
-                                    id="epw"
-                                    label={'EPW'}
-                                    type="text"
-                                    val=""
-                                    placeholder=""
-                                ></CustomTextField>
-                                <CustomTextField
-                                    id="cola"
-                                    label={'COLA'}
-                                    type="text"
-                                    val=""
-                                    placeholder=""
-                                ></CustomTextField>
-                                <!-- Tooltip body -->
-                                <!-- <Tooltip
+                        <div class="space-y-2.5">
+                            <CustomTextField
+                                id="itka"
+                                label={'ITKA'}
+                                type="text"
+                                errors={$serviceInfoError.itka}
+                                bind:val={$serviceInfoForm.itka}
+                            ></CustomTextField>
+                            <CustomTextField
+                                id="itp"
+                                label={'ITP'}
+                                type="text"
+                                errors={$serviceInfoError.itp}
+                                bind:val={$serviceInfoForm.itp}
+                            ></CustomTextField>
+                            <CustomTextField
+                                id="epw"
+                                label={'EPW'}
+                                type="text"
+                                errors={$serviceInfoError.epw}
+                                bind:val={$serviceInfoForm.epw}
+                            ></CustomTextField>
+                            <CustomTextField
+                                id="cola"
+                                label={'COLA'}
+                                type="text"
+                                errors={$serviceInfoError.cola}
+                                bind:val={$serviceInfoForm.cola}
+                            ></CustomTextField>
+                            <!-- Tooltip body -->
+                            <!-- <Tooltip
                                     type="dark"
                                     triggeredBy="[id^='type-']"
                                     on:show={assignContent}
                                     >"{tooltipContent}"</Tooltip
                                 > -->
-                            </div>
                         </div>
-                </form></StepperContentBody>
+                    </div>
+                </form></StepperContentBody
+            >
         </StepperContent>
 
         <!-- Kemaskini Maklumat PTB dan KWAP -->
@@ -666,58 +691,60 @@
             <StepperContent>
                 <StepperContentHeader title="Kemaskini Maklumat PTB dan KWAP">
                     <TextIconButton
+                        label="simpan"
                         type="primary"
-                        label="Simpan"
-                        form="meetingResultForm"
-                    >
-                        <SvgCheck></SvgCheck>
-                    </TextIconButton>
+                        icon="check"
+                        form="PTBDetail"
+                    ></TextIconButton>
                 </StepperContentHeader>
                 <StepperContentBody>
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start"
-                    ></div>
+                    <form
+                        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
+                        id="PTBDetail"
+                        method="POST"
+                        use:PTBInfoEnhance
+                    >
+                        <CustomTextField
+                            id="PTBDate"
+                            type="date"
+                            label="Tarikh Diberi PTB"
+                            errors={$PTBInfoError.PTBdate}
+                            bind:val={$PTBInfoForm.PTBdate}
+                        ></CustomTextField>
 
-                    <CustomTextField
-                        id="PTBDate"
-                        type="date"
-                        label="Tarikh Diberi PTB"
-                        val=""
-                        placeholder=""
-                    ></CustomTextField>
+                        <CustomTextField
+                            id="referenceNumber"
+                            type="text"
+                            label="No. Rujukan Surat JPA"
+                            errors={$PTBInfoError.referenceNumber}
+                            bind:val={$PTBInfoForm.referenceNumber}
+                        ></CustomTextField>
 
-                    <CustomTextField
-                        id="referenceNumber"
-                        type="text"
-                        label="No. Rujukan Surat JPA"
-                        placeholder="contoh: 81672178"
-                        val=""
-                    ></CustomTextField>
+                        <CustomTextField
+                            id="referenceDate"
+                            type="date"
+                            label="Tarikh Rujukan"
+                            errors={$PTBInfoError.refrenceDate}
+                            bind:val={$PTBInfoForm.refrenceDate}
+                        ></CustomTextField>
 
-                    <CustomTextField
-                        id="referenceDate"
-                        type="date"
-                        label="Tarikh Rujukan"
-                        val=""
-                        placeholder=""
-                    ></CustomTextField>
+                        <CustomTextField
+                            id="pensionNumber"
+                            type="date"
+                            label="No. Pencen"
+                            errors={$PTBInfoError.pensionNumber}
+                            bind:val={$PTBInfoForm.pensionNumber}
+                        ></CustomTextField>
 
-                    <CustomTextField
-                        id="pensionNumber"
-                        type="date"
-                        label="No. Pencen"
-                        val=""
-                        placeholder=""
-                    ></CustomTextField>
-
-                    <CustomTextField
-                        id="KWAPEmailDate"
-                        type="date"
-                        label="Tarikh Emel (KWAP)"
-                        val=""
-                        placeholder=""
-                    ></CustomTextField>
-                </StepperContentBody>
+                        <CustomTextField
+                            id="KWAPEmailDate"
+                            type="date"
+                            label="Tarikh Emel (KWAP)"
+                            errors={$PTBInfoError.KWAPEmailDate}
+                            bind:val={$PTBInfoForm.KWAPEmailDate}
+                        ></CustomTextField>
+                    </form></StepperContentBody
+                >
             </StepperContent>
 
             <!-- Peranan -Peranan Berkaitan -->
@@ -740,24 +767,17 @@
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start"
                     ></div>
-                    <!-- <DropdownSelect
-              
-                id="staffSupporter"
-                label="Nama Penyokong"
-                dropdownType="label-left-full"
-                options={employeeLists}
-               val = " "
-            />
-           
-            <DropdownSelect
-               
-                id="staffApprover"
-                label="Nama Pelulus"
-                dropdownType="label-left-full"
-                options={employeeLists}
-                val = " "
-                
-            /> -->
+                    <CustomSelectField
+                        id="staffSupporter"
+                        label="Nama Penyokong"
+                        val=" "
+                    />
+
+                    <CustomSelectField
+                        id="staffApprover"
+                        label="Nama Pelulus"
+                        val=" "
+                    />
                 </StepperContentBody>
             </StepperContent>
 
@@ -878,288 +898,6 @@
                         {/if}
                     </div>
                 </StepperContentBody>
-            </StepperContent>
-        {:else if currentRoleCode === penyokong || currentRoleCode === pelulus}
-            <!-- Kemaskini Maklumat Pemangkuan -->
-            <StepperContent>
-                <StepperContentHeader title="Maklumat Perkhidmatan"
-                ></StepperContentHeader>
-                <StepperContentBody>
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start"
-                    >
-                        <div class="flex w-full flex-col gap-2.5">
-                            <b class="text-sm text-system-primary"
-                                >Maklumat Perkhidmatan</b
-                            >
-                            <CustomTextField
-                                id="gredSemasa"
-                                label={'Gred Semasa'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="jawatan"
-                                label={'Jawatan'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-
-                            <CustomTextField
-                                id="penempatan"
-                                label={'Penempatan'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-
-                            <CustomTextField
-                                id="tarafPerkhidmatan"
-                                label={'Taraf Perkhidmatan'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-
-                            <!-- <RadioButton
-                        
-                        options={faedahPersaraanOptions}
-                        legend={'Faedah Persaraan'}
-                        bind:userSelected={isFaedahKWSP}
-                    ></RadioButton>  -->
-
-                            <CustomTextField
-                                id="noKWSP"
-                                label={'No. KWSP'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="noSOCSO"
-                                label={'No. SOCSO'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="noCukai"
-                                label={'No. Cukai (LHDN)'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="bank"
-                                label={'Bank'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="noAkaun"
-                                label={'No. Akaun'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="program"
-                                label={'Program'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="kelayakanCuti"
-                                label={'Kelayakan Cuti'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="mulaDilantikPerkhidmatanKerajaan"
-                                label={'Mula Dilantik Perkhidmatan Kerajaan'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="mulaDilantikPerkhidmatanLKIM"
-                                label={'Mula Dilantik Perkhidmatan LKIM'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="mulaDilantikPerkhidmatanSekarang"
-                                label={'Mula Dilantik Perkhidmatan Sekarang'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="disahkanDalamJawatanPertamaLKIM"
-                                label={'Disahkan Dalam Jawatan Pertama LKIM'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="disahkanDalamJawatanSemasaLKIM"
-                                label={'Disahkan Dalam Jawatan Semasa LKIM'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-
-                            <!-- <AccordianField
-                        disabled={editable}
-                        label="Sejarah Lantikan Jawatan LKIM (Gred, Jawatan, Tarikh Disahkan Jawatan, Tarikh Lantikan)"
-                        header={'maklumatPerkhidmatanData.sejarahLantikanJawatanLKIM[0]'}
-                    > 
-
-                        <{#each maklumatPerkhidmatanData.sejarahLantikanJawatanLKIM as val, i} -->
-
-                            <!-- <label
-                            for=""
-                            class="border-1 active:border-1 w-full rounded-[3px] border-bdr-primary text-base {!editable
-                                ? 'text-txt-tertiary'
-                                : 'text-txt-primary'}
-                                                    hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0"
-                            >{'i + 1'}. {'val'}</label
-                        > -->
-                            <!-- {/each} -->
-                            <!-- </AccordianField>
-                             -->
-                            <CustomTextField
-                                id="tarikhKelulusanPercantumanPerkhidmatanLepas"
-                                label={'Tarikh Kelulusan Percantuman Perkhidmatan Lepas'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="pemangkuanSekarang"
-                                label={'Pemangkuan Sekarang'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="tanggungKerjaSekarang"
-                                label={'Tanggung Kerja Sekarang'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="skimPencen"
-                                label={'Skim Pencen'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="kenaikanGajiAkhir"
-                                label={'Kenaikan Gaji Akhir'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="kenaikanPangkatAkhir"
-                                label={'Kenaikan Pangkat Akhir'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="bulanKGT"
-                                label={'Bulan KGT'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="tarikhBersara"
-                                label={'Tarikh Bersara'}
-                                type="text"
-                                val=""
-                                placeholder=""
-                            ></CustomTextField>
-                            <b class="text-sm text-system-primary"
-                                >Maklumat Gaji dan Elaun - Elaun</b
-                            >
-                            <div class="grid grid-cols-2 gap-10">
-                                <div class="space-y-2.5">
-                                    <CustomTextField
-                                        id="tarikhBerkuatkuasa"
-                                        label={'Tarikh Berkuatkuasa'}
-                                        type="text"
-                                        val=""
-                                        placeholder=""
-                                    ></CustomTextField>
-                                    <CustomTextField
-                                        id="tanggaGaji"
-                                        label={'Tangga Gaji'}
-                                        type="text"
-                                        val=""
-                                        placeholder=""
-                                    ></CustomTextField>
-                                    <CustomTextField
-                                        id="gajiPokok"
-                                        label={'Gaji Pokok'}
-                                        type="text"
-                                        val=""
-                                        placeholder=""
-                                    ></CustomTextField>
-                                </div>
-                                <!-- hasTooltip={true}
-                                toolTipID="type-itka" -->
-                                <div class="space-y-2.5">
-                                    <CustomTextField
-                                        id="type-itka"
-                                        label={'ITKA'}
-                                        type="text"
-                                        val=""
-                                        placeholder=""
-                                    ></CustomTextField>
-                                    <CustomTextField
-                                        id="itp"
-                                        label={'ITP'}
-                                        type="text"
-                                        val=""
-                                        placeholder=""
-                                    ></CustomTextField>
-                                    <CustomTextField
-                                        id="epw"
-                                        label={'EPW'}
-                                        type="text"
-                                        val=""
-                                        placeholder=""
-                                    ></CustomTextField>
-                                    <CustomTextField
-                                        id="cola"
-                                        label={'COLA'}
-                                        type="text"
-                                        val=""
-                                        placeholder=""
-                                    ></CustomTextField>
-                                    <!-- Tooltip body -->
-                                    <!-- <Tooltip
-                                    type="dark"
-                                    triggeredBy="[id^='type-']"
-                                    on:show={assignContent}
-                                    >"{tooltipContent}"</Tooltip
-                                > -->
-                                </div>
-                            </div>
-                        </div>
-                    </div></StepperContentBody
-                >
             </StepperContent>
 
             <!-- Kemaskini Maklumat Temuduga -->
