@@ -5,6 +5,7 @@
 import {
     booleanSchema,
     codeSchema,
+    dateStringSchema,
     longTextSchema,
     numberIdSchema,
     numberSchema,
@@ -42,7 +43,7 @@ export const _personalInfoResponseSchema = z
         identityDocumentColor: codeSchema,
         email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
         assetDeclarationStatusId: numberIdSchema,
-        propertyDeclarationDate: z.coerce.string(),
+        propertyDeclarationDate: dateStringSchema,
         birthDate: z.coerce.string({
             required_error: 'Pastikan tarikh adalah betul.',
         }),
@@ -120,27 +121,31 @@ export const _personalInfoRequestSchema = _personalInfoResponseSchema
 //================== Academic Schema =====================
 //==========================================================
 
-export const _academicInfoSchema = z.object({
-    id: z.number().readonly(),
-    majorId: numberIdSchema,
-    minorId: numberIdSchema,
-    countryId: numberIdSchema,
-    institutionId: numberIdSchema,
-    educationLevelId: numberIdSchema,
-    sponsorshipId: numberIdSchema,
-    name: codeSchema,
-    completionDate: z.coerce.string(),
-    finalGrade: codeSchema,
-    field: shortTextSchema,
-});
+export const _academicInfoSchema = z
+    .object({
+        id: z.number().readonly(),
+        majorId: numberIdSchema,
+        minorId: numberIdSchema,
+        countryId: numberIdSchema,
+        institutionId: numberIdSchema,
+        educationLevelId: numberIdSchema,
+        sponsorshipId: numberIdSchema,
+        name: codeSchema,
+        completionDate: dateStringSchema,
+        finalGrade: codeSchema,
+        field: shortTextSchema,
+    })
+    .partial({
+        id: true,
+    });
 
 export const _academicListResponseSchema = z.object({
-    academicList: z.array(_academicInfoSchema),
+    academics: z.array(_academicInfoSchema),
     isReadOnly: z.boolean().readonly(),
 });
 
 export const _academicListRequestSchema = _academicListResponseSchema.pick({
-    academicList: true,
+    academics: true,
 });
 
 //==========================================================
@@ -152,18 +157,18 @@ export const _experienceInfoSchema = z.object({
     address: shortTextSchema,
     position: shortTextSchema,
     positionCode: codeSchema,
-    startDate: z.coerce.string(),
-    endDate: z.coerce.string(),
+    startDate: dateStringSchema,
+    endDate: dateStringSchema,
     salary: numberSchema,
 });
 
 export const _experienceListResponseSchema = z.object({
-    experienceList: z.array(_experienceInfoSchema),
+    experiences: z.array(_experienceInfoSchema),
     isReadOnly: z.boolean().readonly(),
 });
 
 export const _experienceListRequestSchema = _experienceListResponseSchema.pick({
-    experienceList: true,
+    experiences: true,
 });
 
 //==========================================================
@@ -172,18 +177,18 @@ export const _experienceListRequestSchema = _experienceListResponseSchema.pick({
 
 export const _activityInfoSchema = z.object({
     name: shortTextSchema,
-    joinDate: z.coerce.string(),
+    joinDate: dateStringSchema,
     position: shortTextSchema,
     description: longTextSchema,
 });
 
 export const _activityListResponseSchema = z.object({
-    activityList: z.array(_activityInfoSchema),
+    activities: z.array(_activityInfoSchema),
     isReadOnly: z.boolean().readonly(),
 });
 
 export const _activityListRequestSchema = _activityListResponseSchema.pick({
-    activityList: true,
+    activities: true,
 });
 
 //==========================================================
@@ -206,11 +211,11 @@ export const _relationsSchema = z
         identityDocumentNumber: shortTextSchema,
         address: shortTextSchema,
         postcode: shortTextSchema,
-        birthDate: z.coerce.string(),
+        birthDate: dateStringSchema,
         workAddress: shortTextSchema,
         workPostcode: shortTextSchema,
         phoneNumber: shortTextSchema,
-        marriageDate: z.coerce.string(),
+        marriageDate: dateStringSchema,
         inSchool: booleanSchema,
     })
     .partial({
@@ -219,30 +224,30 @@ export const _relationsSchema = z
     });
 
 export const _familyListResponseSchema = z.object({
-    dependenciesList: z.array(_relationsSchema),
+    dependencies: z.array(_relationsSchema),
     isReadOnly: z.boolean().readonly(),
 });
 
 export const _dependencyListResponseSchema = z.object({
-    dependenciesList: z.array(_relationsSchema),
+    dependencies: z.array(_relationsSchema),
     isReadOnly: z.boolean().readonly(),
 });
 
 export const _nextOfKinListResponseSchema = z.object({
-    nextOfKinsList: z.array(_relationsSchema),
+    nextOfKins: z.array(_relationsSchema),
     isReadOnly: z.boolean().readonly(),
 });
 
 export const _familyListRequestSchema = _familyListResponseSchema.pick({
-    dependenciesList: true,
+    dependencies: true,
 });
 
 export const _dependencyListRequestSchema = _dependencyListResponseSchema.pick({
-    dependenciesList: true,
+    dependencies: true,
 });
 
 export const _nextOfKinListRequestSchema = _nextOfKinListResponseSchema.pick({
-    nextOfKinsList: true,
+    nextOfKins: true,
 });
 
 //==========================================================
@@ -260,7 +265,7 @@ export const _serviceDetailSchema = z.object({
     unitId: numberIdSchema,
     programId: numberIdSchema,
     employmentStatusId: numberIdSchema,
-    effectiveDate: z.coerce.string(),
+    effectiveDate: dateStringSchema,
     retirementBenefit: codeSchema,
     epfNumber: shortTextSchema,
     socsoNumber: shortTextSchema,
@@ -268,16 +273,16 @@ export const _serviceDetailSchema = z.object({
     bankName: shortTextSchema,
     bankAccount: shortTextSchema,
     eligibleLeaveCount: numberSchema,
-    civilServiceStartDate: z.coerce.string(),
-    newRecruitEffectiveDate: z.coerce.string(),
-    serviceDate: z.coerce.string(),
-    firstServiceDate: z.coerce.string(),
-    firstConfirmServiceDate: z.coerce.string(),
-    firstEffectiveDate: z.coerce.string(),
-    confirmDate: z.coerce.string(),
+    civilServiceStartDate: dateStringSchema,
+    newRecruitEffectiveDate: dateStringSchema,
+    serviceDate: dateStringSchema,
+    firstServiceDate: dateStringSchema,
+    firstConfirmServiceDate: dateStringSchema,
+    firstEffectiveDate: dateStringSchema,
+    confirmDate: dateStringSchema,
     pensionNumber: shortTextSchema,
     kgt: numberSchema,
-    retirementDate: z.coerce.string(),
+    retirementDate: dateStringSchema,
     revisionMonth: codeSchema,
     maximumSalary: numberSchema,
     baseSalary: numberSchema,
