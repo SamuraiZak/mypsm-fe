@@ -461,7 +461,7 @@ export class LookupServices {
     // Major Minor Lookup Service
     static async getMajorMinorEnums() {
         try {
-            const url: Input = 'lookup/institutions';
+            const url: Input = 'lookup/major_minors';
 
             const response: Response = await http.get(url, {}).json();
 
