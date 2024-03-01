@@ -59,4 +59,22 @@ export class EmployeeServices {
             return CommonResponseConstant.httpError;
         }
     }
+
+    static async getCurrentEmployeeDetails() {
+        try {
+            let url: Input = 'employee/detail';
+
+            const response: Response = await http.get(url).json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 }
