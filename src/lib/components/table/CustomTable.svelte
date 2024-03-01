@@ -49,6 +49,8 @@
 
     export let enableSelect = false;
 
+    export let hiddenFooter = false;
+
     const pageSizeOption = [
         {
             key: 5,
@@ -186,30 +188,6 @@
 <div
     class="flex h-full max-h-full w-full flex-col rounded-md border border-ios-labelColors-separator-light"
 >
-    <div
-        class="flex h-10 min-h-10 w-full flex-row items-center justify-between px-2"
-    >
-        <!-- leading starts here -->
-        <div
-            class="flex h-full max-h-full min-h-full w-fit flex-row items-center justify-start"
-        >
-            <span class="text-base font-medium"> {title} </span>
-        </div>
-        <!-- leading ends here -->
-
-        <!-- trailing starts here -->
-        <div
-            class="flex h-full max-h-full min-h-full w-fit flex-row items-center justify-end gap-2"
-        >
-            {#if tableData.selectedData?.length ?? 0 > 0}
-                <span class="text-base font-normal">
-                    {tableData.selectedData?.length} item dipilih
-                </span>
-            {/if}
-        </div>
-
-        <!-- trailing ends here -->
-    </div>
     <!-- table info -->
 
     <div
@@ -217,30 +195,23 @@
     >
         <!-- leading -->
         <div class="flex flex-row items-center gap-2">
-            <button
-                on:click={() => {
-                    onUpdate();
-                }}
-                class="flex h-7 min-h-7 flex-row items-center justify-center gap-1 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0"
-            >
-                <!-- icon -->
-                <div class="flex h-full flex-row items-center justify-center">
-                    <span class="leading-loose">
-                        <!-- icon slot -->
-                        <SvgReload size="12"></SvgReload>
-                        <slot />
-                    </span>
-                </div>
-            </button>
+            <div class="flex h-full flex-row items-center justify-center">
+                <span class="text-base font-medium"> {title} </span>
+            </div>
         </div>
 
         <!-- trailing -->
         <div class="flex flex-row items-center gap-2">
+            {#if tableData.selectedData?.length ?? 0 > 0}
+                <span class="text-base font-normal">
+                    {tableData.selectedData?.length} item dipilih
+                </span>
+            {/if}
             <button
                 on:click={() => {
                     printDiv(prefix);
                 }}
-                class="flex h-7 min-h-7 flex-row items-center justify-center gap-1 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0"
+                class="flex h-7 min-h-7 flex-row items-center justify-center gap-1 rounded border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0"
             >
                 <!-- icon -->
                 <div class="flex h-full flex-row items-center justify-center">
@@ -259,7 +230,9 @@
         </div>
     </div>
 
-    <div class="h-full max-h-full min-h-[300px] w-full overflow-x-auto">
+    <div
+        class="h-full max-h-full min-h-[100px] w-full overflow-x-auto border-b"
+    >
         <table
             id={prefix}
             class="table max-h-full w-full table-auto border-collapse"
@@ -269,16 +242,16 @@
             <thead class="sticky top-0 z-[1]">
                 <!-- table head row starts -->
 
-                <tr class="h-10 bg-ios-systemColors-quaternarySystemFill-light">
+                <tr
+                    class="h-7 min-h-7 bg-ios-systemColors-quaternarySystemFill-light"
+                >
                     {#if enableAdd}
-                        <th
-                            class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
-                        >
+                        <th class="h-full w-10 border border-r px-2.5">
                             <div
                                 class="flex h-full flex-row items-center justify-center"
                             >
                                 <span
-                                    class="select-none text-center align-middle text-sm font-semibold text-ios-labelColors-secondaryLabel-light"
+                                    class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
                                 >
                                 </span>
                             </div>
@@ -291,7 +264,7 @@
                             class="flex h-full flex-row items-center justify-center"
                         >
                             <span
-                                class="select-none text-center align-middle text-sm font-semibold text-ios-labelColors-secondaryLabel-light"
+                                class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
                             >
                                 Bil.
                             </span>
@@ -316,7 +289,7 @@
                                         class="flex h-full flex-row items-center justify-between"
                                     >
                                         <span
-                                            class="select-none text-center align-middle text-sm font-semibold text-ios-labelColors-secondaryLabel-light"
+                                            class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
                                         >
                                             {translate(columnHeading)}
                                         </span>
@@ -356,7 +329,7 @@
                                     class="flex h-full flex-row items-center justify-center"
                                 >
                                     <span
-                                        class="select-none text-center align-middle text-sm font-semibold text-ios-labelColors-secondaryLabel-light"
+                                        class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
                                     >
                                     </span>
                                 </div>
@@ -370,7 +343,7 @@
                                     class="flex h-full flex-row items-center justify-center"
                                 >
                                     <span
-                                        class="select-none text-center align-middle text-sm font-semibold text-ios-labelColors-secondaryLabel-light"
+                                        class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
                                     >
                                     </span>
                                 </div>
@@ -379,7 +352,7 @@
                     {:else}
                         <th>
                             <span
-                                class="select-none text-center align-middle text-sm font-semibold text-ios-labelColors-secondaryLabel-light"
+                                class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
                             >
                                 Tiada Rekod
                             </span>
@@ -450,9 +423,12 @@
                             class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
                         >
                             <span
-                                class="relative text-center align-middle text-base font-normal"
+                                class="relative text-center align-middle text-sm font-normal"
                             >
-                                {index + 1}
+                                {index +
+                                    1 +
+                                    (tableData.meta.pageNum - 1) *
+                                        tableData.meta.pageSize}
                             </span>
                         </td>
                         <!-- loop through each property -->
@@ -462,7 +438,7 @@
                                     class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
                                 >
                                     <span
-                                        class="relative text-center align-middle text-base font-normal"
+                                        class="relative text-center align-middle text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                     >
                                         {#if typeof TableHelper.getKey(row, key) == 'string'}
                                             {TextAppearanceHelper.toProper(
@@ -475,17 +451,6 @@
                                 </td>
                             {/if}
                         {/each}
-                        <!-- {#each Object.values(row) as cell}
-                            <td
-                                class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
-                            >
-                                <span
-                                    class="relative text-center align-middle text-base font-normal"
-                                >
-                                    {cell}
-                                </span>
-                            </td>
-                        {/each} -->
 
                         <!-- actions column starts -->
                         {#if enableDetail}
@@ -537,55 +502,71 @@
     <!-- table control -->
 
     <div
-        class="flex min-h-10 w-full flex-row items-center justify-between border-t border-ios-labelColors-separator-light p-2"
+        class="flex min-h-10 w-full flex-row items-center justify-between border-ios-labelColors-separator-light p-2"
     >
-        <!-- leading -->
-        <div class="flex flex-row items-center gap-2">
-            <label
-                for="idType"
-                class=" w-full text-sm font-medium text-gray-900 dark:text-white"
-            >
-                Saiz Data
-            </label>
-            <select
-                name="idType"
-                bind:value={tableData.param.pageSize}
-                on:change={handlePageSize}
-                class=" block h-9 appearance-none rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
-            >
-                {#each pageSizeOption as option}
-                    <option value={option.value}>{option.key}</option>
-                {/each}
-            </select>
-        </div>
+        {#if !hiddenFooter}
+            <!-- leading -->
+            <div class="flex flex-row items-center gap-2">
+                <label
+                    for="idType"
+                    class=" w-full text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                >
+                    Saiz Data
+                </label>
+                <select
+                    name="idType"
+                    bind:value={tableData.param.pageSize}
+                    on:change={handlePageSize}
+                    class=" block h-7 appearance-none rounded border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
+                >
+                    {#each pageSizeOption as option}
+                        <option value={option.value}>{option.key}</option>
+                    {/each}
+                </select>
+                
+            </div>
+            <div class="flex flex-row items-center gap-2">
+                <label
+                    for="idType"
+                    class=" w-full text-sm font-medium text-nowrap text-ios-labelColors-secondaryLabel-light"
+                >
+                    {tableData.meta.totalData} hasil carian
+                </label>
+            </div>
 
-        <!-- trailing -->
-        <div class="flex flex-row items-center gap-2">
-            <button
-                disabled={tableData.param.pageNum == 1}
-                on:click={() => {
-                    handlePagination('previous');
-                }}
-                type="button"
-                class=" block h-9 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light disabled:text-ios-basic-inactiveGray"
-            >
-                <span>
-                    <SvgChevronLeft></SvgChevronLeft>
-                </span>
-            </button>
+            <!-- trailing -->
+            <div class="flex flex-row items-center gap-2">
+                <button
+                    disabled={tableData.param.pageNum == 1}
+                    on:click={() => {
+                        handlePagination('previous');
+                    }}
+                    type="button"
+                    class=" block h-7 w-7 rounded border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light disabled:text-ios-basic-inactiveGray"
+                >
+                    <span
+                        class="flex flex-col items-center justify-center text-center"
+                    >
+                        <SvgChevronLeft></SvgChevronLeft>
+                    </span>
+                </button>
 
-            <button
-                disabled={tableData.param.pageNum == tableData.meta.totalPage}
-                on:click={() => {
-                    handlePagination('next');
-                }}
-                type="button"
-                class=" block h-9 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light disabled:text-ios-basic-inactiveGray"
-            >
-                <span>
-                    <SvgChevronRight></SvgChevronRight>
-                </span>
-            </button>
-        </div>
+                <button
+                    disabled={tableData.param.pageNum ==
+                        tableData.meta.totalPage}
+                    on:click={() => {
+                        handlePagination('next');
+                    }}
+                    type="button"
+                    class=" block h-7 w-7 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light disabled:text-ios-basic-inactiveGray"
+                >
+                    <span
+                        class="flex flex-col items-center justify-center text-center"
+                    >
+                        <SvgChevronRight></SvgChevronRight>
+                    </span>
+                </button>
+            </div>
+        {/if}
     </div>
 </div>
