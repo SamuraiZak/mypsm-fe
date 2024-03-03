@@ -1,6 +1,11 @@
 export interface LeaveHistoryRequestDTO {
-    employeeId: number | null;
-    year: number;
+    year:         number;
+    employeeId?:   number | null;
+    identityCard?: string | null;
+    staffNo?:      string | null;
+    staffName?:    string | null;
+    position?:     string | null;
+    status?:       string | null;
 }
 
 // Converts JSON strings to/from your types
