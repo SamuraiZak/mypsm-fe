@@ -26,7 +26,7 @@
         ? 'bg-ios-systemColors-systemBlue-light hover:bg-ios-systemColors-systemBlue-dark'
         : type === 'danger'
           ? 'bg-ios-systemColors-systemRed-light hover:bg-ios-systemColors-systemRed-dark'
-          : 'border bg-bgr-primary hover:bg-bgr-secondary'} h-8 max-h-8 min-h-8"
+          : 'border bg-bgr-primary hover:bg-bgr-secondary'} h-7 max-h-7 min-h-7"
 >
     <!-- icon -->
     <div class="flex h-full max-h-full flex-row items-center justify-center">
@@ -73,15 +73,15 @@
 </button>
 
 {#if options.length !== 0}
-<Dropdown containerClass="z-50 border border-bdr-primary min-w-[200px]">
-    {#if options.length > 0}
-        {#each options as item}
-            <DropdownItem href={item.href}>
-                {item.name}
-            </DropdownItem>
-        {/each}
-    {:else}
-        <slot />
-    {/if}
-</Dropdown>
+    <Dropdown containerClass="z-50 border border-bdr-primary min-w-[200px]">
+        {#if options.length > 0}
+            {#each options as item}
+                <DropdownItem href={item.href}>
+                    {item.name}
+                </DropdownItem>
+            {/each}
+        {:else}
+            <slot />
+        {/if}
+    </Dropdown>
 {/if}
