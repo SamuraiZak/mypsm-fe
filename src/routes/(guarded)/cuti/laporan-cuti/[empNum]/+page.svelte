@@ -46,8 +46,8 @@
     let leaveHistoryTable: TableDTO = {
         param: data.props.leaveHistoryRequestBody,
         meta: data.props.leaveHistoryResponse.data?.meta ?? {
-            pageSize: leaveEntitlementTableParam.pageSize ?? 50,
-            pageNum: leaveEntitlementTableParam.pageNum ?? 1,
+            pageSize: leaveHistoryTableParam.pageSize ?? 50,
+            pageNum: leaveHistoryTableParam.pageNum ?? 1,
             totalData: 50,
             totalPage: 1,
         },
