@@ -124,5 +124,9 @@ export const _mainSupporterAndApproverSchema = z.object({
 export const _placementAmendmentApplication = z.object({
     isNeedPlacementAmendment: booleanSchema,
     requestedReportingDate: z.coerce.string(),
-    requestedPlacement: codeSchema,
+    requestedPlacement: numberSchema.refine((x) =>  x > 0, {message: "Silap tetapkan pilihan anda."}),
+    document: z
+        .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
+        .refine((f) => f.size < 1_000_000, 'Maximum 1 MB saiz muat naik.')
+        .array(),
 })
