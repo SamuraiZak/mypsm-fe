@@ -1,4 +1,5 @@
-import { invalidateAll } from '$app/navigation';
+import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
+import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CandidateIDRequestBody } from '$lib/dto/core/common/candidate-id-request.view-dto';
 import type { CommonFilterDTO } from '$lib/dto/core/common/common-filter.dto';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
@@ -88,12 +89,24 @@ import { superValidate } from 'sveltekit-superforms/client';
 export async function load({ params }) {
     // const currentLoggedInUser = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode);
 
+    let newHireStatusResponse: CommonResponseDTO = {};
+
+    const currentRoleCode = localStorage.getItem(
+        LocalStorageKeyConstant.currentRoleCode,
+    );
+
+    const isEmploymentSecretaryRole =
+        currentRoleCode === RoleConstant.urusSetiaPerjawatan.code;
+
     const candidateIdRequestBody: CandidateIDRequestBody = {
         id: Number(params.id),
     };
 
-    const newHireStatusResponse: CommonResponseDTO =
-        await EmploymentServices.getNewHireStatus(candidateIdRequestBody);
+    if (isEmploymentSecretaryRole) {
+        newHireStatusResponse = await EmploymentServices.getNewHireStatus(
+            candidateIdRequestBody,
+        );
+    }
 
     const personalDetailResponse: CommonResponseDTO =
         await EmploymentServices.getCurrentCandidatePersonalDetails(
@@ -601,8 +614,6 @@ export const _submitPersonalForm = async (formData: object) => {
             form.data as CandidatePersonalRequestDTO,
         );
 
-    await invalidateAll();
-
     return { response };
 };
 
@@ -618,8 +629,6 @@ export const _submitAcademicForm = async (formData: object) => {
         await EmploymentServices.createCurrentCandidateAcademicDetails(
             form.data as CandidateAcademicDetailRequestDTO,
         );
-
-    await invalidateAll();
 
     return { response };
 };
@@ -637,8 +646,6 @@ export const _submitExperienceForm = async (formData: object) => {
             form.data as CandidateExperiencesDetailRequestDTO,
         );
 
-    await invalidateAll();
-
     return { response };
 };
 
@@ -654,8 +661,6 @@ export const _submitActivityForm = async (formData: object) => {
         await EmploymentServices.createCurrentCandidateActivityDetails(
             form.data as CandidateActivityDetailRequestDTO,
         );
-
-    await invalidateAll();
 
     return { response };
 };
@@ -673,8 +678,6 @@ export const _submitFamilyForm = async (formData: object) => {
             form.data as CandidateFamilyDetailRequestDTO,
         );
 
-    await invalidateAll();
-
     return { response };
 };
 
@@ -690,8 +693,6 @@ export const _submitDependencyForm = async (formData: object) => {
         await EmploymentServices.createCurrentCandidateDependenciesDetails(
             form.data as CandidateDependenciesDetailRequestDTO,
         );
-
-    await invalidateAll();
 
     return { response };
 };
@@ -709,8 +710,6 @@ export const _submitNextOfKinForm = async (formData: object) => {
             form.data as CandidateNextOfKinDetailRequestDTO,
         );
 
-    await invalidateAll();
-
     return { response };
 };
 
@@ -726,8 +725,6 @@ export const _submitServiceForm = async (formData: object) => {
         await EmploymentServices.createCurrentCandidateSecretaryUpdate(
             form.data as NewHireSecretaryServiceUpdateRequestDTO,
         );
-
-    await invalidateAll();
 
     return { response };
 };
@@ -745,8 +742,6 @@ export const _submitSecretaryApprovalForm = async (formData: object) => {
             form.data as CandidateNewHireApproverResultDTO,
         );
 
-    await invalidateAll();
-
     return { response };
 };
 
@@ -762,8 +757,6 @@ export const _submitSupporterApprovalForm = async (formData: object) => {
         await EmploymentServices.createCurrentCandidateSupporterApproval(
             form.data as CandidateNewHireApproverResultDTO,
         );
-
-    await invalidateAll();
 
     return { response };
 };
@@ -781,8 +774,6 @@ export const _submitApproverApprovalForm = async (formData: object) => {
             form.data as CandidateNewHireApproverResultDTO,
         );
 
-    await invalidateAll();
-
     return { response };
 };
 
@@ -799,32 +790,25 @@ export const _submitSecretarySetApproverForm = async (formData: object) => {
             form.data as NewHireSetApproversDTO,
         );
 
-    await invalidateAll();
-
     return { response };
 };
 
-export const _submitDocumentsForm = async (formData: FormData) => {
+export const _submitDocumentsForm = async (file: File | null | undefined) => {
+    const documentData = new FormData();
 
-    
-    // const file = formData.get('document')
-    
-    
-    const form = await superValidate(formData, _uploadDocumentsSchema);
-    
-    console.log(form);
+    documentData.append('document', file as File);
+
+    const form = await superValidate(documentData, _uploadDocumentsSchema);
 
     if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    // const response: CommonResponseDTO =
-    //     await EmploymentServices.createCurrentCandidateDocuments(formData);
+    const response: CommonResponseDTO =
+        await EmploymentServices.createCurrentCandidateDocuments(documentData);
 
-    // await invalidateAll();
-
-    // return { response };
+    return { response };
 };
 
 export const _downloadDocument = async (param: string) => {
@@ -850,8 +834,6 @@ export const _submitAcademicInfoForm = async (formData: Academic[]) => {
             requestData as CandidateAcademicDetailRequestDTO,
         );
 
-    await invalidateAll();
-
     return { response };
 };
 
@@ -868,8 +850,6 @@ export const _submitExperienceInfoForm = async (formData: Experience[]) => {
         await EmploymentServices.createCurrentCandidateExperienceDetails(
             requestData as CandidateExperiencesDetailRequestDTO,
         );
-
-    await invalidateAll();
 
     return { response };
 };
@@ -888,8 +868,6 @@ export const _submitActivityInfoForm = async (formData: Activity[]) => {
             requestData as CandidateActivityDetailRequestDTO,
         );
 
-    await invalidateAll();
-
     return { response };
 };
 
@@ -906,8 +884,6 @@ export const _submitFamilyInfoForm = async (formData: Family[]) => {
         await EmploymentServices.createCurrentCandidateFamilyDetails(
             requestData as CandidateFamilyDetailRequestDTO,
         );
-
-    await invalidateAll();
 
     return { response };
 };
@@ -926,8 +902,6 @@ export const _submitDependencyInfoForm = async (formData: Dependency[]) => {
             requestData as CandidateDependenciesDetailRequestDTO,
         );
 
-    await invalidateAll();
-
     return { response };
 };
 
@@ -944,8 +918,6 @@ export const _submitNextOfKinInfoForm = async (formData: NextOfKin[]) => {
         await EmploymentServices.createCurrentCandidateNextOfKinDetails(
             requestData as CandidateNextOfKinDetailRequestDTO,
         );
-
-    await invalidateAll();
 
     return { response };
 };

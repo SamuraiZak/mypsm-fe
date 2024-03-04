@@ -369,14 +369,11 @@
         enhance: documentFormEnhance,
     } = superForm(data.newHireDocumentForm, {
         SPA: true,
-        dataType: 'json',
         invalidateAll: false,
         taintedMessage: false,
-        resetForm: true,
-        multipleSubmits: 'prevent',
         validators: _uploadDocumentsSchema,
-        onSubmit(formData) {
-            _submitDocumentsForm(formData.formData);
+        onSubmit() {
+            _submitDocumentsForm($documentForm.document);
         },
     });
 
@@ -776,13 +773,12 @@
 
     const handleOnInput = (e: Event) => {
         $documentForm.document =
-            (e.currentTarget as HTMLInputElement)?.files?.item(0) ?? null;
+            ((e.currentTarget as HTMLInputElement)?.files?.item(0) as File) ??
+            null;
     };
 
-    const handleDownload = async () => {
-        await EmploymentServices.downloadAttachment(
-            data.documentInfoResponse.data?.details.attachment,
-        );
+    const handleDownload = async (url: string) => {
+        await EmploymentServices.downloadAttachment(url);
     };
 
     // Function to handle the file deletion
@@ -2325,12 +2321,15 @@
                         class="cursor-pointer space-y-1 text-sm italic text-system-primary underline"
                     >
                         <li>
-                            <a
-                                href={data.documentInfoResponse.data?.details
-                                    .template}
-                                target="_blank"
+                            <button
+                                on:click={() =>
+                                    handleDownload(
+                                        data.documentInfoResponse.data?.details
+                                            .template,
+                                    )}
+                                class="underline"
                             >
-                                Borang Lantikan Baru</a
+                                Borang Lantikan Baru</button
                             >
                         </li>
                     </ul>
@@ -2347,21 +2346,15 @@
                         use:documentFormEnhance
                         enctype="multipart/form-data"
                     >
-                        <!-- <input
-                            type="file"
-                            name="document"
-                            accept=".pdf"
-                            on:input={(e) =>
-                                ($documentForm.document = Array.from(
-                                    e.currentTarget.files ?? [],
-                                ))}
-                        /> -->
-
                         <ContentHeader
                             title="Dokumen Sokongan"
                             borderClass="border-none"
                         >
-                            <div hidden={$documentForm.document?.name !== ''}>
+                            <div
+                                hidden={!(
+                                    $documentForm.document instanceof File
+                                )}
+                            >
                                 <FileInputField
                                     id="document"
                                     handleOnInput={(e) => handleOnInput(e)}
@@ -2373,7 +2366,7 @@
                         >
                             <div class="flex flex-wrap gap-3">
                                 <!-- {#each $documentForm.document as item, index} -->
-                                {#if $documentForm.document !== null}
+                                {#if $documentForm.document instanceof File}
                                     <FileInputFieldChildren
                                         childrenType="grid"
                                         handleDelete={() => handleDelete()}
@@ -2387,13 +2380,15 @@
                             >
                                 <p
                                     class=" text-sm text-txt-tertiary"
-                                    hidden={$documentForm.document?.name === ''}
+                                    hidden={$documentForm.document instanceof
+                                        File}
                                 >
                                     Pilih fail dari peranti anda.
                                 </p>
                                 <div
                                     class="text-txt-tertiary"
-                                    hidden={$documentForm.document?.name === ''}
+                                    hidden={$documentForm.document instanceof
+                                        File}
                                 >
                                     <svg
                                         width={40}
@@ -2412,7 +2407,8 @@
                                     </svg>
                                 </div>
                                 <div
-                                    hidden={$documentForm.document?.name === ''}
+                                    hidden={$documentForm.document instanceof
+                                        File}
                                 >
                                     <FileInputField id="document"
                                     ></FileInputField>
@@ -2443,7 +2439,11 @@
                                 >1.</label
                             >
                             <DownloadAttachment
-                                triggerDownload={handleDownload}
+                                triggerDownload={() =>
+                                    handleDownload(
+                                        data.documentInfoResponse.data?.details
+                                            .attachment,
+                                    )}
                                 fileName={data.documentInfoResponse.data
                                     ?.details.attachment}
                             ></DownloadAttachment>
