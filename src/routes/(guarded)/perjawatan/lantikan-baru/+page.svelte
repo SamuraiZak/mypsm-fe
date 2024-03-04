@@ -1,12 +1,10 @@
 <script lang="ts">
-    // import { CustomTextField } from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
-    import FilterContainer from '$lib/components/filter-container/FilterContainer.svelte';
-    // import { Toaster } from 'svelte-french-toast';
+    import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
@@ -19,10 +17,15 @@
         _updateSupporterViewTable,
         _updateTable,
     } from './+layout';
+    import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
+    import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
+    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
 
     export let data: LayoutData;
     let rowData: any;
     let param: CommonListRequestDTO = data.param;
+    let submittedTableParam: CommonListRequestDTO = data.submittedTableParam;
+    let allNewHireTableParam: CommonListRequestDTO = data.allNewHireTableParam;
 
     // Table list - new application view for secretary role
     let newCandidateTable: TableDTO = {
@@ -53,7 +56,7 @@
 
     // Table list - submitted view for secretary role
     let submittedListTable: TableDTO = {
-        param: param,
+        param: submittedTableParam,
         meta: {
             pageNum: 1,
             pageSize: 5,
@@ -81,7 +84,7 @@
 
     // Table list - for candidate role
     let candidateViewTable: TableDTO = {
-        param: param,
+        param: allNewHireTableParam,
         meta: {
             pageNum: 1,
             pageSize: 5,
@@ -173,18 +176,15 @@
 <section
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
-    {#if data.isCandidateRole}
+    {#if data.currentRoleCode == UserRoleConstant.calon.code}
         <div
             class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
         >
-            <ContentHeader
-                title="Senarai Lantikan Baru"
-                borderClass="border-none"
-            ></ContentHeader>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
                 <CustomTable
+                    title="Senarai Lantikan Baru"
                     onUpdate={_searchCandidateView}
                     enableDetail
                     bind:tableData={candidateViewTable}
@@ -201,19 +201,44 @@
         <CustomTab>
             <CustomTabContent title="Senarai Rekod Selesai Diisi">
                 <!-- Table filter placeholder -->
-                <FilterContainer>filter to be in here..</FilterContainer>
+                <FilterCard onSearch={_searchSubmittedList}>
+                    <FilterTextField
+                        label="ID Sementara"
+                        bind:inputValue={submittedListTable.param.filter
+                            .temporaryId}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="Nama"
+                        bind:inputValue={submittedListTable.param.filter.name}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="No. Kad Pengenalan"
+                        bind:inputValue={submittedListTable.param.filter
+                            .identityCard}
+                    ></FilterTextField>
+                    <FilterSelectField
+                        label="Status"
+                        options={data.selectionOptions.statusLookup}
+                        bind:inputValue={submittedListTable.param.filter.status}
+                    ></FilterSelectField>
+                </FilterCard>
                 <div
                     class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
                 >
-                    <ContentHeader title="Senarai Lantikan Baru"
-                    ></ContentHeader>
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start"
                     >
                         <CustomTable
+                            title="Senarai Lantikan Baru"
                             onUpdate={_searchSubmittedList}
                             enableDetail
                             bind:tableData={submittedListTable}
+                            bind:passData={rowData}
+                            detailActions={() => {
+                                const route = `./lantikan-baru/kemaskini-permohonan/${rowData.candidateId}`;
+
+                                goto(route);
+                            }}
                         ></CustomTable>
                     </div>
                 </div>
@@ -225,7 +250,7 @@
                     class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
                 >
                     <ContentHeader
-                        title="Senarai Calon Yang Belum Melengkapkan Maklumat"
+                        title="Tekan butang disebelah untuk menambah rekod lantikan baru"
                         borderClass="border-none"
                     >
                         <TextIconButton
@@ -235,10 +260,35 @@
                                 goto('./lantikan-baru/permohonan-baru')}
                         ></TextIconButton>
                     </ContentHeader>
+                    <!-- Table filter placeholder -->
+                    <FilterCard onSearch={_searchNewCandidate}>
+                        <FilterTextField
+                            label="ID Sementara"
+                            bind:inputValue={newCandidateTable.param.filter
+                                .temporaryId}
+                        ></FilterTextField>
+                        <FilterTextField
+                            label="Nama"
+                            bind:inputValue={newCandidateTable.param.filter
+                                .name}
+                        ></FilterTextField>
+                        <FilterTextField
+                            label="No. Kad Pengenalan"
+                            bind:inputValue={newCandidateTable.param.filter
+                                .identityCard}
+                        ></FilterTextField>
+                        <FilterSelectField
+                            label="Status"
+                            options={data.selectionOptions.statusLookup}
+                            bind:inputValue={newCandidateTable.param.filter
+                                .status}
+                        ></FilterSelectField>
+                    </FilterCard>
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start"
                     >
                         <CustomTable
+                            title="Senarai Calon Yang Belum Melengkapkan Maklumat"
                             onUpdate={_searchNewCandidate}
                             bind:tableData={newCandidateTable}
                         ></CustomTable>
@@ -250,14 +300,33 @@
         <div
             class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
         >
-            <ContentHeader
-                title="Senarai Lantikan Baru"
-                borderClass="border-none"
-            ></ContentHeader>
+            <!-- Table filter placeholder -->
+            <FilterCard onSearch={_searchSupporterView}>
+                <FilterTextField
+                    label="ID Sementara"
+                    bind:inputValue={supporterViewTable.param.filter
+                        .temporaryId}
+                ></FilterTextField>
+                <FilterTextField
+                    label="Nama"
+                    bind:inputValue={supporterViewTable.param.filter.name}
+                ></FilterTextField>
+                <FilterTextField
+                    label="No. Kad Pengenalan"
+                    bind:inputValue={supporterViewTable.param.filter
+                        .identityCard}
+                ></FilterTextField>
+                <FilterSelectField
+                    label="Status"
+                    options={data.selectionOptions.statusLookup}
+                    bind:inputValue={supporterViewTable.param.filter.status}
+                ></FilterSelectField>
+            </FilterCard>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
                 <CustomTable
+                    title="Senarai Lantikan Baru"
                     onUpdate={_searchSupporterView}
                     enableDetail
                     bind:tableData={supporterViewTable}
@@ -274,14 +343,32 @@
         <div
             class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
         >
-            <ContentHeader
-                title="Senarai Lantikan Baru"
-                borderClass="border-none"
-            ></ContentHeader>
+            <!-- Table filter placeholder -->
+            <FilterCard onSearch={_searchApproverView}>
+                <FilterTextField
+                    label="ID Sementara"
+                    bind:inputValue={approverViewTable.param.filter.temporaryId}
+                ></FilterTextField>
+                <FilterTextField
+                    label="Nama"
+                    bind:inputValue={approverViewTable.param.filter.name}
+                ></FilterTextField>
+                <FilterTextField
+                    label="No. Kad Pengenalan"
+                    bind:inputValue={approverViewTable.param.filter
+                        .identityCard}
+                ></FilterTextField>
+                <FilterSelectField
+                    label="Status"
+                    options={data.selectionOptions.statusLookup}
+                    bind:inputValue={approverViewTable.param.filter.status}
+                ></FilterSelectField>
+            </FilterCard>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
                 <CustomTable
+                    title="Senarai Lantikan Baru"
                     onUpdate={_searchApproverView}
                     enableDetail
                     bind:tableData={approverViewTable}

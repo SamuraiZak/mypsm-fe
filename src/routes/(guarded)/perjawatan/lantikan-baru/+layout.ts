@@ -2,6 +2,8 @@ import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.c
 import { RoleConstant } from '$lib/constants/core/role.constant.js';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
+import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { EmploymentServices } from '$lib/services/implementation/mypsm/perjawatan/employment.service';
 // import { redirect } from '@sveltejs/kit';
 
@@ -70,7 +72,7 @@ export const load = async () => {
         orderBy: null,
         orderType: null,
         filter: {
-            dataType: 1, // 0: New | 1: Other | null
+            dataType: null, // 0: New | 1: Other | null
             identityCard: null, //string | null | undefined;
             temporaryId: null, //string | null | undefined;
             status: null, // status code from lookup | null | undefined;
@@ -103,8 +105,21 @@ export const load = async () => {
         approverViewList = approverViewResponse.data?.dataList ?? [];
     }
 
+    // ==========================================================================
+    // Get Lookup Functions
+    // ==========================================================================
+    const statusLookupResponse: CommonResponseDTO =
+        await LookupServices.getStatusEnums();
+
+    const statusLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsInString(statusLookupResponse);
+
+    // ===========================================================================
+
     return {
         param,
+        submittedTableParam,
+        allNewHireTableParam,
         submittedFormList,
         newCandidateList,
         candidateViewTable,
@@ -114,6 +129,10 @@ export const load = async () => {
         isEmploymentSecretaryRole,
         isSupporterRole,
         isApproverRole,
+        currentRoleCode,
+        selectionOptions: {
+            statusLookup,
+        },
     };
 };
 
