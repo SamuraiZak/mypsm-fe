@@ -7,11 +7,11 @@
     import type { TableDTO } from '$lib/dto/core/table/table.dto.js';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { PageData } from './$types';
-    import { _updateTable } from './+page';
+    import { _update154sTable, _updateFlexi41Table, _updateTable } from './+page';
     import { goto } from '$app/navigation';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     export let data: PageData;
-
+    let rowData: any;
     // Role Code
     let employeeRoleCode: string = UserRoleConstant.kakitangan.code;
     let secretaryRoleCode: string = UserRoleConstant.urusSetiaPerjawatan.code;
@@ -39,6 +39,55 @@
     ];
 
     let param: CommonListRequestDTO = data.param;
+    // gred 154 table
+    let tableList154s: TableDTO = {
+        param: param,
+        meta: {
+            pageNum: 1,
+            pageSize: 5,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: data.tableList154 ?? [],
+    }
+    async function _search154List() {
+        _update154sTable(tableList154s.param).then((value) => {
+            tableList154s.data = value.response.data?.dataList ?? [];
+            tableList154s.meta = value.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            tableList154s.param.pageSize = tableList154s.meta.pageSize;
+            tableList154s.param.pageNum = tableList154s.meta.pageNum;
+        })
+    }
+    // gred flexi 41 table
+    let tableListFlexi41s: TableDTO = {
+        param: param,
+        meta: {
+            pageNum: 1,
+            pageSize: 5,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: data.tableListFlexi41 ?? [],
+    }
+    async function _searchFlexi41List() {
+        _updateFlexi41Table(tableListFlexi41s.param).then((value) => {
+            tableListFlexi41s.data = value.response.data?.dataList ?? [];
+            tableListFlexi41s.meta = value.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            tableListFlexi41s.param.pageSize = tableListFlexi41s.meta.pageSize;
+            tableListFlexi41s.param.pageNum = tableListFlexi41s.meta.pageNum;
+        })
+    }
+
     let table: TableDTO = {
         param: param,
         meta: {
@@ -89,56 +138,45 @@
         <CustomTab>
             <!-- Gred 1-54 -->
             <CustomTabContent title="Gred 1-54">
-                <ContentHeader
-                    borderClass="border-none"
-                    title="Senarai rekod pemangkuan bagi Gred 1-54"
-                />
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
                     <CustomTable
-                        title=""
-                        onUpdate={_search}
+                    title="Senarai rekod pemangkuan bagi Gred 1-54"
+                        onUpdate={_search154List}
                         enableDetail
-                        detailActions={() => goto('./pemangkuan/butiran-1_54')}
-                        bind:tableData={table}
+                        detailActions={() => goto('./pemangkuan/butiran-1_54-'+rowData.batchId)}
+                        bind:passData={rowData}
+                        bind:tableData={tableList154s}  
                     ></CustomTable>
                 </div>
             </CustomTabContent>
 
             <!-- Gred Flexi 41 -->
             <CustomTabContent title="Gred Flexi 41">
-                <ContentHeader
-                    borderClass="border-none"
-                    title="Senarai rekod pemangkuan bagi Gred Flexi 41"
-                ></ContentHeader>
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
                     <!-- Table Here -->
                     <CustomTable
-                        title=""
-                        onUpdate={_search}
+                    title="Senarai rekod pemangkuan bagi Gred Flexi 41"
+                        onUpdate={_searchFlexi41List}
                         enableDetail
                         detailActions={() =>
                             goto('./pemangkuan/butiran-flexi_41')}
-                        bind:tableData={table}
+                        bind:tableData={tableList154s}
                     ></CustomTable>
                 </div>
             </CustomTabContent>
 
             <!-- Gred Utama -->
             <CustomTabContent title="Gred Utama">
-                <ContentHeader
-                    borderClass="border-none"
-                    title="Senarai rekod pemangkuan bagi Gred Utama"
-                ></ContentHeader>
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
                     <!-- Table Here -->
                     <CustomTable
-                        title=""
+                    title="Senarai rekod pemangkuan bagi Gred Utama"
                         onUpdate={_search}
                         enableDetail
                         detailActions={() =>
