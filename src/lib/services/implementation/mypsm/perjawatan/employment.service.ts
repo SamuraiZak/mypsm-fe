@@ -2,6 +2,7 @@
 // Employment Services
 // ===============================================================
 
+import { invalidateAll } from '$app/navigation';
 import { CommonResponseConstant } from '$lib/constants/core/common-response.constant';
 import type { CandidateIDRequestBody } from '$lib/dto/core/common/candidate-id-request.view-dto';
 import {
@@ -205,6 +206,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -263,6 +265,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -321,6 +324,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -379,6 +383,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -437,6 +442,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -497,6 +503,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -555,6 +562,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -622,12 +630,16 @@ export class EmploymentServices {
         try {
             const url: Input = 'employment/new_hire/document/add';
 
+            console.log(param.get('document'));
+            param.append('key', 'ocument');
+
             // get the promise response
             const promiseRes: Promise<Response> = http
                 .post(url, {
                     body: param,
                     headers: {
-                        'Content-type': '',
+                        Accept: 'multipart/form-data',
+                        'Content-type': 'multipart/form-data;',
                     },
                 })
                 .json();
@@ -639,6 +651,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -699,6 +712,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -759,6 +773,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -818,6 +833,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -908,6 +924,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -997,6 +1014,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
