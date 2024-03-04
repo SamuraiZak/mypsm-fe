@@ -1,4 +1,4 @@
-export interface NewHire {
+export type NewHire = {
     candidateId: string;
     candidateName: string;
     temporaryId: string;

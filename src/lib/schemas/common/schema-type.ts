@@ -84,3 +84,7 @@ export const numberIdSchema = z.coerce.number({
     required_error: 'Tidak tepat.',
     invalid_type_error: 'Sila pastikan ID ditaip dengan angka',
 });
+
+export const dateStringSchema = z.coerce
+    .string({ required_error: 'Sila tarikh tidak kosong' })
+    .refine((value) => (value === 'null' ? null : value));

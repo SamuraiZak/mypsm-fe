@@ -5,10 +5,8 @@
 import {
     booleanSchema,
     codeSchema,
-    dateSchema,
+    dateStringSchema,
     longTextSchema,
-    maxDateSchema,
-    minDateSchema,
     numberIdSchema,
     numberSchema,
     shortTextSchema,
@@ -36,17 +34,19 @@ export const _addNewHireSchema = z.object({
         .email({ message: 'Pastikan emel adalah betul dan lengkap' }),
 });
 
-export const _personalInfoSchema = z
+export const _personalInfoResponseSchema = z
     .object({
-        id: z.number().readonly().nullable(),
+        id: z.number().readonly(),
         name: shortTextSchema,
         alternativeName: z.string(),
         identityDocumentNumber: shortTextSchema,
         identityDocumentColor: codeSchema,
         email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
         assetDeclarationStatusId: numberIdSchema,
-        propertyDeclarationDate: z.date().nullable(),
-        birthDate: maxDateSchema,
+        propertyDeclarationDate: dateStringSchema.nullable(),
+        birthDate: z.coerce.string({
+            required_error: 'Pastikan tarikh adalah betul.',
+        }),
         birthStateId: numberIdSchema,
         birthCountryId: numberIdSchema,
         genderId: numberIdSchema,
@@ -69,32 +69,70 @@ export const _personalInfoSchema = z
         isExPoliceOrSoldier: booleanSchema,
         isInternalRelationship: booleanSchema,
         employeeNumber: z.string().nullable(),
-        employeeName: z.string().nullable(),
-        employeePosition: z.string().nullable(),
+        employeeName: z.string(),
+        employeePosition: z.string(),
         relationshipId: z.number().nullable(),
-        isReadOnly: z.boolean().readonly().nullable(),
+        isReadOnly: z.boolean().readonly(),
+    })
+    .partial({
+        alternativeName: true,
+        propertyDeclarationDate: true,
+        employeeNumber: true,
+        employeeName: true,
+        employeePosition: true,
+        relationshipId: true,
+    });
+
+export const _personalInfoRequestSchema = _personalInfoResponseSchema
+    .omit({
+        id: true,
+        employeeName: true,
+        employeePosition: true,
+        isReadOnly: true,
     })
     .superRefine(
-        ({ assetDeclarationStatusId, isInternalRelationship }, ctx) => {
-            if (assetDeclarationStatusId !== 0) {
-                ctx.addIssue({
-                    code: 'custom',
-                    message: 'Tarikh tidak boleh kosong.',
-                    path: ['propertyDeclarationDate'],
-                });
+        (
+            {
+                assetDeclarationStatusId,
+                propertyDeclarationDate,
+                isInternalRelationship,
+                employeeNumber,
+                relationshipId,
+            },
+            ctx,
+        ) => {
+            if (
+                assetDeclarationStatusId === 12 ||
+                assetDeclarationStatusId === 14 ||
+                assetDeclarationStatusId === 15 ||
+                assetDeclarationStatusId === 17 ||
+                assetDeclarationStatusId === 18 ||
+                assetDeclarationStatusId === 22
+            ) {
+                if (propertyDeclarationDate === null) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        message: 'Tarikh tidak boleh kosong.',
+                        path: ['propertyDeclarationDate'],
+                    });
+                }
             }
 
             if (isInternalRelationship) {
-                ctx.addIssue({
-                    code: 'custom',
-                    message: 'Sila isi medan ini.',
-                    path: [
-                        'employeeNumber',
-                        'employeeName',
-                        'employeePosition',
-                        'relationshipId',
-                    ],
-                });
+                if (employeeNumber === '') {
+                    ctx.addIssue({
+                        code: 'custom',
+                        message: 'Nombor pekerja tidak boleh kosong.',
+                        path: ['employeeNumber'],
+                    });
+                }
+                if (relationshipId === null) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        message: 'Hubungan tidak boleh kosong.',
+                        path: ['relationshipId'],
+                    });
+                }
             }
         },
     );
@@ -103,23 +141,31 @@ export const _personalInfoSchema = z
 //================== Academic Schema =====================
 //==========================================================
 
-export const _academicInfoSchema = z.object({
-    id: z.number().readonly().nullable(),
-    majorId: numberIdSchema,
-    minorId: numberIdSchema,
-    countryId: numberIdSchema,
-    institutionId: numberIdSchema,
-    educationLevelId: numberIdSchema,
-    sponsorshipId: numberIdSchema,
-    name: codeSchema,
-    completionDate: maxDateSchema,
-    finalGrade: codeSchema,
-    field: shortTextSchema,
+export const _academicInfoSchema = z
+    .object({
+        id: z.number().readonly(),
+        majorId: numberIdSchema,
+        minorId: numberIdSchema,
+        countryId: numberIdSchema,
+        institutionId: numberIdSchema,
+        educationLevelId: numberIdSchema,
+        sponsorshipId: numberIdSchema,
+        name: codeSchema,
+        completionDate: dateStringSchema,
+        finalGrade: codeSchema,
+        field: shortTextSchema,
+    })
+    .partial({
+        id: true,
+    });
+
+export const _academicListResponseSchema = z.object({
+    academics: z.array(_academicInfoSchema),
+    isReadOnly: z.boolean().readonly(),
 });
 
-export const _academicListSchema = z.object({
-    academicList: z.array(_academicInfoSchema),
-    isReadOnly: z.boolean().readonly().nullable(),
+export const _academicListRequestSchema = _academicListResponseSchema.pick({
+    academics: true,
 });
 
 //==========================================================
@@ -131,14 +177,18 @@ export const _experienceInfoSchema = z.object({
     address: shortTextSchema,
     position: shortTextSchema,
     positionCode: codeSchema,
-    startDate: maxDateSchema,
-    endDate: maxDateSchema,
+    startDate: dateStringSchema,
+    endDate: dateStringSchema,
     salary: numberSchema,
 });
 
-export const _experienceListSchema = z.object({
-    experienceList: z.array(_experienceInfoSchema),
-    isReadOnly: z.boolean().readonly().nullable(),
+export const _experienceListResponseSchema = z.object({
+    experiences: z.array(_experienceInfoSchema),
+    isReadOnly: z.boolean().readonly(),
+});
+
+export const _experienceListRequestSchema = _experienceListResponseSchema.pick({
+    experiences: true,
 });
 
 //==========================================================
@@ -147,63 +197,95 @@ export const _experienceListSchema = z.object({
 
 export const _activityInfoSchema = z.object({
     name: shortTextSchema,
-    joinDate: maxDateSchema,
+    joinDate: dateStringSchema,
     position: shortTextSchema,
     description: longTextSchema,
 });
 
-export const _activityListSchema = z.object({
-    activityList: z.array(_activityInfoSchema),
-    isReadOnly: z.boolean().readonly().nullable(),
+export const _activityListResponseSchema = z.object({
+    activities: z.array(_activityInfoSchema),
+    isReadOnly: z.boolean().readonly(),
+});
+
+export const _activityListRequestSchema = _activityListResponseSchema.pick({
+    activities: true,
 });
 
 //==========================================================
 //================== Realations Schema =====================
 //==========================================================
 
-export const _relationsSchema = z.object({
-    birthCountryId: numberIdSchema,
-    birthStateId: numberIdSchema,
-    relationshipId: numberIdSchema,
-    educationLevelId: numberIdSchema,
-    raceId: numberIdSchema,
-    nationalityId: numberIdSchema,
-    maritalId: numberIdSchema,
-    genderId: numberIdSchema,
-    name: shortTextSchema,
-    alternativeName: z.string(),
-    identityDocumentColor: codeSchema,
-    identityDocumentNumber: shortTextSchema,
-    address: shortTextSchema,
-    postcode: shortTextSchema,
-    birthDate: maxDateSchema,
-    workAddress: shortTextSchema,
-    workPostcode: shortTextSchema,
-    phoneNumber: shortTextSchema,
-    marriageDate: z.date(),
-    inSchool: booleanSchema,
+export const _relationsSchema = z
+    .object({
+        birthCountryId: numberIdSchema,
+        birthStateId: numberIdSchema,
+        relationshipId: numberIdSchema,
+        educationLevelId: numberIdSchema,
+        raceId: numberIdSchema,
+        nationalityId: numberIdSchema,
+        maritalId: numberIdSchema,
+        genderId: numberIdSchema,
+        name: shortTextSchema,
+        alternativeName: z.string(),
+        identityDocumentColor: codeSchema,
+        identityDocumentNumber: shortTextSchema,
+        address: shortTextSchema,
+        postcode: shortTextSchema,
+        birthDate: dateStringSchema,
+        workAddress: shortTextSchema,
+        workPostcode: shortTextSchema,
+        phoneNumber: shortTextSchema,
+        marriageDate: dateStringSchema.nullable(),
+        inSchool: booleanSchema,
+    })
+    .partial({
+        marriageDate: true,
+        alternativeName: true,
+    })
+    .superRefine(({ maritalId, marriageDate }, ctx) => {
+        if (maritalId === 3) {
+            if (marriageDate === null) {
+                ctx.addIssue({
+                    code: 'custom',
+                    message: 'Tarikh tidak boleh kosong.',
+                    path: ['marriageDate'],
+                });
+            }
+        }
+    });
+
+// export const _familyListResponseSchema = z.object({
+//     dependencies: z.array(_relationsSchema),
+//     isReadOnly: z.boolean().readonly(),
+// });
+
+export const _dependencyListResponseSchema = z.object({
+    dependencies: z.array(_relationsSchema),
+    isReadOnly: z.boolean().readonly(),
 });
 
-export const _familyListSchema = z.object({
-    dependenciesList: z.array(_relationsSchema),
-    isReadOnly: z.boolean().readonly().nullable(),
+// export const _nextOfKinListResponseSchema = z.object({
+//     nextOfKins: z.array(_relationsSchema),
+//     isReadOnly: z.boolean().readonly(),
+// });
+
+export const _familyListRequestSchema = _dependencyListResponseSchema.pick({
+    dependencies: true,
 });
 
-export const _dependencyListSchema = z.object({
-    dependenciesList: z.array(_relationsSchema),
-    isReadOnly: z.boolean().readonly().nullable(),
+export const _dependencyListRequestSchema = _dependencyListResponseSchema.pick({
+    dependencies: true,
 });
 
-export const _nextOfKinListSchema = z.object({
-    nextOfKinsList: z.array(_relationsSchema),
-    isReadOnly: z.boolean().readonly().nullable(),
+export const _nextOfKinListRequestSchema = z.object({
+    nextOfKins: z.array(_relationsSchema),
 });
 
 //==========================================================
 //================== Service Schema ===================
 //==========================================================
 
-export const _serviceInfoSchema = z.object({
+export const _serviceDetailSchema = z.object({
     candidateId: numberIdSchema,
     gradeId: numberIdSchema,
     maxGradeId: numberIdSchema,
@@ -214,7 +296,7 @@ export const _serviceInfoSchema = z.object({
     unitId: numberIdSchema,
     programId: numberIdSchema,
     employmentStatusId: numberIdSchema,
-    effectiveDate: minDateSchema,
+    effectiveDate: dateStringSchema,
     retirementBenefit: codeSchema,
     epfNumber: shortTextSchema,
     socsoNumber: shortTextSchema,
@@ -222,16 +304,16 @@ export const _serviceInfoSchema = z.object({
     bankName: shortTextSchema,
     bankAccount: shortTextSchema,
     eligibleLeaveCount: numberSchema,
-    civilServiceStartDate: dateSchema,
-    newRecruitEffectiveDate: dateSchema,
-    serviceDate: dateSchema,
-    firstServiceDate: dateSchema,
-    firstConfirmServiceDate: dateSchema,
-    firstEffectiveDate: dateSchema,
-    confirmDate: dateSchema,
+    civilServiceStartDate: dateStringSchema,
+    newRecruitEffectiveDate: dateStringSchema,
+    serviceDate: dateStringSchema,
+    firstServiceDate: dateStringSchema,
+    firstConfirmServiceDate: dateStringSchema,
+    firstEffectiveDate: dateStringSchema,
+    confirmDate: dateStringSchema,
     pensionNumber: shortTextSchema,
     kgt: numberSchema,
-    retirementDate: minDateSchema,
+    retirementDate: dateStringSchema,
     revisionMonth: codeSchema,
     maximumSalary: numberSchema,
     baseSalary: numberSchema,
@@ -239,7 +321,15 @@ export const _serviceInfoSchema = z.object({
     itp: numberSchema,
     epw: numberSchema,
     cola: numberSchema,
-    isReadOnly: z.boolean().readonly().nullable(),
+    isReadOnly: z.boolean().readonly(),
+});
+
+export const _serviceInfoResponseSchema = _serviceDetailSchema.omit({
+    candidateId: true,
+});
+
+export const _serviceInfoRequestSchema = _serviceDetailSchema.omit({
+    isReadOnly: true,
 });
 
 //==========================================================
@@ -247,7 +337,7 @@ export const _serviceInfoSchema = z.object({
 //==========================================================
 
 export const _approvalResultSchema = z.object({
-    id: z.number().readonly().nullable(),
+    id: z.number().readonly(),
     name: z.string().readonly(),
     remark: longTextSchema,
     status: booleanSchema.default(true),
@@ -268,7 +358,7 @@ export const _setApproversSchema = z.object({
 //==========================================================
 
 export const _getNewHireApproversSchema = z.object({
-    isReadonly: z.boolean().readonly().nullable(),
+    isReadonly: z.boolean().readonly(),
     supporterId: z.number().readonly(),
     approverId: z.number().readonly(),
 });
@@ -280,12 +370,13 @@ export const _getNewHireApproversSchema = z.object({
 export const _documentsSchema = z.object({
     template: z.string().readonly(),
     attachment: z.string().readonly(),
-    isReadonly: z.boolean().readonly().nullable(),
+    isReadonly: z.boolean().readonly(),
 });
 
 export const _uploadDocumentsSchema = z.object({
     document: z
         .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
         .refine((f) => f.size < 1_000_000, 'Maximum 1 MB saiz muat naik.')
-        .array(),
+        .nullish(),
+    // .array(),
 });

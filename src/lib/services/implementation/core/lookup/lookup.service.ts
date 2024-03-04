@@ -461,7 +461,7 @@ export class LookupServices {
     // Major Minor Lookup Service
     static async getMajorMinorEnums() {
         try {
-            const url: Input = 'lookup/institutions';
+            const url: Input = 'lookup/major_minors';
 
             const response: Response = await http.get(url, {}).json();
 
@@ -964,13 +964,24 @@ export class LookupServices {
         return LookupHelper.toDropdownId(lookupItems);
     };
 
-    static setSelectOptionsInString = (param: CommonResponseDTO): DropdownDTO[] => {
+    static setSelectOptionsInString = (
+        param: CommonResponseDTO,
+    ): DropdownDTO[] => {
         const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
         return LookupHelper.toDropdown(lookupItems);
     };
-    
-    static setSelectOptionsValueIsDescription = (param: CommonResponseDTO): DropdownDTO[] => {
+
+    static setSelectOptionsValueIsDescription = (
+        param: CommonResponseDTO,
+    ): DropdownDTO[] => {
         const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
         return LookupHelper.toDropdownDescription(lookupItems);
+    };
+
+    static setSelectOptionsNameIsCode = (
+        param: CommonResponseDTO,
+    ): DropdownDTO[] => {
+        const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
+        return LookupHelper.toDropdownNameIsCode(lookupItems);
     };
 }

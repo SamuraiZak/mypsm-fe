@@ -1,4 +1,4 @@
-export interface NewHireApproverTableListFilter {
+export type NewHireApproverTableListFilter = {
     identityCard?: string;
     staffNo?: number;
     staffName?: string;

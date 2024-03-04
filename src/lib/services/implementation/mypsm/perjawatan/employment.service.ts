@@ -2,6 +2,7 @@
 // Employment Services
 // ===============================================================
 
+import { invalidateAll } from '$app/navigation';
 import { CommonResponseConstant } from '$lib/constants/core/common-response.constant';
 import type { CandidateIDRequestBody } from '$lib/dto/core/common/candidate-id-request.view-dto';
 import {
@@ -9,16 +10,16 @@ import {
     type CommonListRequestDTO,
 } from '$lib/dto/core/common/common-list-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
-import type { Activity } from '$lib/dto/mypsm/employment/new-hire/new-hire-activity.dto';
-import type { CandidateAcademicDetailsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-academic-details.dto';
-import type { Dependency } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-dependencies-details.dto';
-import type { Experience } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-experience-details.dto';
-import type { Family } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-family-details.dto';
-import type { NextOfKin } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto';
-import type { CandidatePersonalDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto';
+import type { CandidateAcademicDetailRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-academic-details.dto';
+import type { CandidateActivityDetailRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-activity.dto';
+import type { CandidateDependenciesDetailRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-dependencies-details.dto';
+import type { CandidateExperiencesDetailRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-experience-details.dto';
+import type { CandidateFamilyDetailRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-family-details.dto';
+import type { CandidateNextOfKinDetailRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto';
+import type { CandidatePersonalRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto';
 import type { NewHireAddCandidateDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-create-candidate.dto';
 import type { CandidateNewHireApproverResultDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-get-approver-result.dto';
-import type { NewHireSecretaryServiceUpdateDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-secretary-service-update.dto';
+import type { NewHireSecretaryServiceUpdateRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-secretary-service-update.dto';
 import type { NewHireSetApproversDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-set-approvers.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
@@ -186,7 +187,7 @@ export class EmploymentServices {
 
     // create employee personal details
     static async createCurrentCandidatePersonalDetails(
-        param: CandidatePersonalDTO,
+        param: CandidatePersonalRequestDTO,
     ) {
         try {
             const url: Input = 'employment/new_hire/personal_detail/add';
@@ -205,6 +206,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -244,7 +246,7 @@ export class EmploymentServices {
 
     // create employee academic details
     static async createCurrentCandidateAcademicDetails(
-        param: CandidateAcademicDetailsDTO,
+        param: CandidateAcademicDetailRequestDTO,
     ) {
         try {
             const url: Input = 'employment/new_hire/academic/add';
@@ -263,6 +265,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -301,7 +304,9 @@ export class EmploymentServices {
     }
 
     // create employee academic details
-    static async createCurrentCandidateExperienceDetails(param: Experience) {
+    static async createCurrentCandidateExperienceDetails(
+        param: CandidateExperiencesDetailRequestDTO,
+    ) {
         try {
             const url: Input = 'employment/new_hire/experience/add';
 
@@ -319,6 +324,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -357,7 +363,9 @@ export class EmploymentServices {
     }
 
     // create employee activity details
-    static async createCurrentCandidateActivityDetails(param: Activity) {
+    static async createCurrentCandidateActivityDetails(
+        param: CandidateActivityDetailRequestDTO,
+    ) {
         try {
             const url: Input = 'employment/new_hire/activity/add';
 
@@ -375,6 +383,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -413,7 +422,9 @@ export class EmploymentServices {
     }
 
     // create employee family details
-    static async createCurrentCandidateFamilyDetails(param: Family) {
+    static async createCurrentCandidateFamilyDetails(
+        param: CandidateFamilyDetailRequestDTO,
+    ) {
         try {
             const url: Input = 'employment/new_hire/family/add';
 
@@ -431,6 +442,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -471,7 +483,9 @@ export class EmploymentServices {
     }
 
     // create employee dependencies details
-    static async createCurrentCandidateDependenciesDetails(param: Dependency) {
+    static async createCurrentCandidateDependenciesDetails(
+        param: CandidateDependenciesDetailRequestDTO,
+    ) {
         try {
             const url: Input = 'employment/new_hire/dependant/add';
 
@@ -489,6 +503,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -527,7 +542,9 @@ export class EmploymentServices {
     }
 
     // create employee next of kin details
-    static async createCurrentCandidateNextOfKinDetails(param: NextOfKin) {
+    static async createCurrentCandidateNextOfKinDetails(
+        param: CandidateNextOfKinDetailRequestDTO,
+    ) {
         try {
             const url: Input = 'employment/new_hire/next_of_kin/add';
 
@@ -545,6 +562,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -612,12 +630,16 @@ export class EmploymentServices {
         try {
             const url: Input = 'employment/new_hire/document/add';
 
+            console.log(param.get('document'));
+            param.append('key', 'ocument');
+
             // get the promise response
             const promiseRes: Promise<Response> = http
                 .post(url, {
                     body: param,
                     headers: {
-                        'Content-type': '',
+                        Accept: 'multipart/form-data',
+                        'Content-type': 'multipart/form-data;',
                     },
                 })
                 .json();
@@ -629,6 +651,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -670,7 +693,7 @@ export class EmploymentServices {
 
     // create new hire secretary update
     static async createCurrentCandidateSecretaryUpdate(
-        param: NewHireSecretaryServiceUpdateDTO,
+        param: NewHireSecretaryServiceUpdateRequestDTO,
     ) {
         try {
             const url: Input = 'employment/new_hire/secretary_update/add';
@@ -689,6 +712,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -749,6 +773,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -808,6 +833,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -898,6 +924,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -987,6 +1014,7 @@ export class EmploymentServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
