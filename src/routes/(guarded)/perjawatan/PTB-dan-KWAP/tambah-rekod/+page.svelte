@@ -12,9 +12,6 @@
 
     import type { PageData } from './$types';
     import { _updateTable } from './+page';
-    import TextIconButton from '$lib/components/button/TextIconButton.svelte';
-    import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
-    import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
 
     export let data: PageData;
     let param: CommonListRequestDTO = data.param;
@@ -29,19 +26,6 @@
     let pelulus = UserRoleConstant.pelulus.code;
     // penyokong
     let penyokong = UserRoleConstant.penyokong.code;
-
-    let rowData: any;
-
-    let PTBtable: TableDTO = {
-        param: param,
-        meta: {
-            pageSize: 5,
-            pageNum: 1,
-            totalData: 4,
-            totalPage: 1,
-        },
-        data: data.ptbViewTable ?? [],
-    };
 
     let table: TableDTO = {
         param: param,
@@ -93,37 +77,18 @@
 >
     {#if currentRoleCode === urusetia}
         <CustomTab>
-            
             <CustomTabContent
                 title="Senarai Kakitangan Baharu diberi PTB dan KWAP"
             >
-            
-            
-            <FilterCard></FilterCard>
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
-                <TextIconButton
-            label="Tambah Rekod"
-            onClick={() => {
-                goto('./perjawatan/tambah-rekod');
-            }}
-        >
-            <SvgPlus />
-        </TextIconButton>
                     <CustomTable
                         onUpdate={_search}
                         enableDetail
-
-
-                        bind:passData={rowData}
-                    detailActions={() => {
-                          const route = `./PTB-dan-KWAP/butiran-${rowData.employeeId}`;
- 
-                        goto(route);
-                    }}
-               
-                        bind:tableData={PTBtable}
+                        detailActions={() =>
+                            goto('/perjawatan/PTB-dan-KWAP/butiran')}
+                        bind:tableData={table}
                     ></CustomTable>
                 </div>
             </CustomTabContent>
@@ -142,14 +107,10 @@
             class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
         >
             <ContentHeader title="Senarai Kakitangan Baharu diberi PTB dan KWAP"
-            >
-            
-        </ContentHeader>
-        
+            ></ContentHeader>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
-            <FilterCard></FilterCard>
                 <CustomTable
                     onUpdate={_search}
                     enableDetail
@@ -165,7 +126,6 @@
         >
             <ContentHeader title="Senarai Kakitangan Baharu diberi PTB dan KWAP"
             ></ContentHeader>
-            <FilterCard></FilterCard>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >

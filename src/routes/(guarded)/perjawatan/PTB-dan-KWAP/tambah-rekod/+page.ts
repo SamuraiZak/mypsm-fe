@@ -1,41 +1,10 @@
-import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
-import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
-import { PTBKWAPServices } from "$lib/services/implementation/mypsm/PTB-KWAP/PTB.service";
-
 export const load = async () => {
-    // const param = {
-    //     pageNum: 1,
-    //     pageSize: 5,
-    //     orderBy: null,
-    //     orderType: null,
-    // };
-
-
-    const param: CommonListRequestDTO = {
+    const param = {
         pageNum: 1,
         pageSize: 5,
         orderBy: null,
         orderType: null,
-        filter: {
-            dataType: 1,
-            staffName: "",
-            staffNo: "",
-            identityCard: "",
-           applicationDate: null,
-            grade: "",
-            position: "",
-            status: "" // status code from lookup | null | undefined;
-        },
     };
-
-    let ptbViewResponse: CommonResponseDTO;
-    let ptbViewTable = [];
-    
-
-    ptbViewResponse = await PTBKWAPServices.getPTBKWAPListDetails(param);
-    ptbViewTable = ptbViewResponse.data?.dataList ?? [];
-
-
 
     const dataList = [
         { id:'0001', name: 'Calvin', noKadPengenalan:'999999999999', Kategori:'Tetap', tarikhMemohon:'30/2/2024', status: 'baru', Tindakan:'-'},
@@ -48,7 +17,7 @@ export const load = async () => {
        
     ];
 
-    return { param, dataList,dataList2,ptbViewTable };
+    return { param, dataList,dataList2 };
 };
 
 export const _updateTable = async (param: unknown) => {

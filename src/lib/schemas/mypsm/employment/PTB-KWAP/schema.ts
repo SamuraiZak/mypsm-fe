@@ -17,24 +17,24 @@ import { z } from 'zod';
 
 export const _personalInfoSchema = z
     .object({
-        id:shortTextSchema,
+        employeeNo:numberSchema,
         name: shortTextSchema,
-        alternativeName: z.string(),
-        identityDocumentNumber: shortTextSchema,
-        identityDocumentColor: codeSchema,
-        email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
-        assetDeclarationStatusId: numberIdSchema,
-        propertyDeclarationDate: z.date().nullable(),
-        birthDate: maxDateSchema,
-        birthStateId: numberIdSchema,
+        otherName: z.string(),
+        identityCard: shortTextSchema,
+        identityCardColor: shortTextSchema,
+        // email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
+        // assetDeclarationStatusId: numberIdSchema,
+        // propertyDeclarationDate: z.date().nullable(),
+        dateOfBirth: maxDateSchema,
+        placeOfBirth: shortTextSchema,
         // birthCountryId: numberIdSchema,
-        genderId: numberIdSchema,
-        nationalityId: numberIdSchema,
-        religionId: numberIdSchema,
-        raceId: numberIdSchema,
-        titleId: numberIdSchema,
-        ethnicId: numberIdSchema,
-        maritalId: numberIdSchema,
+        gender: shortTextSchema,
+        nationality: shortTextSchema,
+        religion: shortTextSchema,
+        race: shortTextSchema,
+        titleId: shortTextSchema,
+        ethnicId: shortTextSchema,
+        status: shortTextSchema,
         homeAddress: shortTextSchema,
         // homeCountryId: numberIdSchema,
         // homeStateId: numberIdSchema,
@@ -45,6 +45,10 @@ export const _personalInfoSchema = z
         // mailStateId: numberIdSchema,
         // mailCityId: numberIdSchema,
         // mailPostcode: shortTextSchema,
+        homeNo:numberSchema,
+        mobileNo:numberSchema,
+        housing:shortTextSchema,
+        houseLoan:shortTextSchema,
         isExPoliceOrSoldier: booleanSchema,
         isInternalRelationship: booleanSchema,
         employeeNumber: z.string().nullable(),
@@ -121,9 +125,9 @@ export const _serviceInfoSchema = z.object({
     isReadOnly: z.boolean().readonly().nullable(),
 });
 
-//==========================================================
+//======================================================
 //================== PTB KWAP Schema ===================
-//==========================================================
+//======================================================
 
 export const _PTBInfoSchema = z.object({
 
@@ -133,4 +137,63 @@ export const _PTBInfoSchema = z.object({
     pensionNumber:shortTextSchema,
     KWAPEmailDate:dateSchema,
 
+});
+
+//======================================================
+//============= Peranan -Peranan Berkaitan ============
+//======================================================
+
+//======================================================
+//=== Keputusan Daripada Peranan - Peranan Berkaitan ===
+//======================================================
+
+export const _resultInfoSchema = z.object({
+
+    passerName:shortTextSchema,
+    passerRemark:shortTextSchema,
+    supporterName:shortTextSchema,
+    supporterRemark:shortTextSchema,
+    approverName:shortTextSchema,
+    approverRemark: shortTextSchema,
+
+});
+
+//======================================================
+//============= Kemaskini Maklumat Temuduga ============
+//======================================================
+
+export const _meetingInfoSchema = z.object({
+
+    PTBDate:dateSchema,
+    referenceNumber:numberSchema,
+    referenceDate:dateSchema,
+    pensionNumber:numberSchema,
+    KWAPEmailDate:dateSchema,
+
+});
+
+//======================================================
+//============= keputusan Penyokong ============
+//======================================================
+
+export const _supporterInfoSchema = z.object({
+
+    supporterResult:shortTextSchema,
+    supporterRemark:shortTextSchema,
+    passerName:shortTextSchema,
+   
+});
+
+
+//======================================================
+//============= pelulus Penyokong ============
+//======================================================
+
+export const _passerInfoSchema = z.object({
+
+    supporterResult:shortTextSchema,
+    supporterRemark:shortTextSchema,
+    passerName:shortTextSchema,
+    passerRemark:shortTextSchema,
+   
 });
