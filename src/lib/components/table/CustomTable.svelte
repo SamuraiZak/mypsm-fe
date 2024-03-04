@@ -440,12 +440,19 @@
                                     <span
                                         class="relative text-center align-middle text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                     >
-                                        {#if typeof TableHelper.getKey(row, key) == 'string'}
-                                            {TextAppearanceHelper.toProper(
-                                                TableHelper.getKey(row, key),
-                                            )}
+                                        {#if TableHelper.getKey(row, key) !== '' || TableHelper.getKey(row, key) !== null || TableHelper.getKey(row, key) !== null}
+                                            {#if typeof TableHelper.getKey(row, key) == 'string'}
+                                                {TextAppearanceHelper.toProper(
+                                                    TableHelper.getKey(
+                                                        row,
+                                                        key,
+                                                    ),
+                                                )}
+                                            {:else}
+                                                {TableHelper.getKey(row, key)}
+                                            {/if}
                                         {:else}
-                                            {TableHelper.getKey(row, key)}
+                                            Tiada data
                                         {/if}
                                     </span>
                                 </td>
@@ -523,12 +530,11 @@
                         <option value={option.value}>{option.key}</option>
                     {/each}
                 </select>
-                
             </div>
             <div class="flex flex-row items-center gap-2">
                 <label
                     for="idType"
-                    class=" w-full text-sm font-medium text-nowrap text-ios-labelColors-secondaryLabel-light"
+                    class=" w-full text-nowrap text-sm font-medium text-ios-labelColors-secondaryLabel-light"
                 >
                     {tableData.meta.totalData} hasil carian
                 </label>
