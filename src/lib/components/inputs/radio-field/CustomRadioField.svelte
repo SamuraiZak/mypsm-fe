@@ -26,7 +26,7 @@
     export let errors: string[] | undefined = [] ?? undefined;
 
     // disable
-    export let disabled: boolean = true;
+    export let disabled: boolean = false;
 </script>
 
 <div class="flex w-full flex-col items-center justify-start gap-1">

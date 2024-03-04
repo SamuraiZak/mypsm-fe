@@ -72,12 +72,8 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Rekod Elaun Kakitangan',
-                            path: '/elaun/rekod',
-                        },
-                        {
-                            name: 'Permohonan Elaun Perkhidmatan',
-                            path: '/elaun/permohonan',
+                            name: 'Permohonan',
+                            path: '/elaun-elaun-perkhidmatan/permohonan',
                         },
                     ],
                 },
@@ -412,8 +408,8 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Senarai Permohonan Elaun-elaun',
-                            path: '/elaun/senarai-permohonan',
+                            name: 'Permohonan',
+                            path: '/elaun-elaun-perkhidmatan/permohonan',
                         },
                     ],
                 },
@@ -717,8 +713,8 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Senarai Permohonan Elaun-elaun',
-                            path: '/elaun/senarai-permohonan',
+                            name: 'Permohonan',
+                            path: '/elaun-elaun-perkhidmatan/permohonan',
                         },
                     ],
                 },
@@ -1037,8 +1033,8 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Senarai Permohonan Elaun-elaun',
-                            path: '/elaun/senarai-permohonan',
+                            name: 'Permohonan',
+                            path: '/elaun-elaun-perkhidmatan/permohonan',
                         },
                     ],
                 },
@@ -1094,6 +1090,10 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
+                            name: 'Laporan Cuti Kakitangan',
+                            path: '/cuti/laporan-cuti',
+                        },
+                        {
                             name: 'Cuti (Rehat, Kecemasan, Sakit)',
                             path: '/cuti/cuti-rehat-kecemasan-sakit',
                         },
@@ -1106,8 +1106,8 @@ export class SidebarConstant {
                             path: '/cuti/pengeluaran-gantian-cuti-rehat-awal',
                         },
                         {
-                            name: 'Kelulusan Cuti',
-                            path: '/cuti/kelulusan-cuti',
+                            name: 'Permohonan Cuti',
+                            path: '/cuti/permohonan-cuti',
                         },
                     ],
                 },
@@ -1130,8 +1130,8 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Senarai Permohonan Elaun-elaun',
-                            path: '/elaun/senarai-permohonan',
+                            name: 'Permohonan',
+                            path: '/elaun-elaun-perkhidmatan/permohonan',
                         },
                     ],
                 },
@@ -1384,8 +1384,8 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Senarai Permohonan Elaun-elaun',
-                            path: '/elaun/senarai-permohonan',
+                            name: 'Permohonan',
+                            path: '/elaun-elaun-perkhidmatan/permohonan',
                         },
                     ],
                 },
@@ -1625,13 +1625,12 @@ export class SidebarConstant {
                             name: 'Pinjaman Komputer, Telefon Pintar dan Kenderaan',
                             path: '/pinjaman-kuarters/pinjaman',
                         },
-
                     ],
                 },
-            ]
+            ],
         },
         // urus Seta Tatatertib
-        
+
         // unit negeri
         {
             role: RoleConstant.unitNegeri.code,
@@ -1839,8 +1838,8 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Senarai Permohonan Elaun-elaun',
-                            path: '/elaun/senarai-permohonan',
+                            name: 'Permohonan',
+                            path: '/elaun-elaun-perkhidmatan/permohonan',
                         },
                     ],
                 },

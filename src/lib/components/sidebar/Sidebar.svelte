@@ -38,7 +38,7 @@
                 {#if item.subItems == undefined}
                     <SidebarItem
                         spanClass="flex-1 text-base text-primary"
-                        nonActiveClass="flex items-center p-2 text-base font-normal text-txt-primary transition duration-75 group hover:bg-ios-ui-sidebarItem-light-hover"
+                        nonActiveClass="flex items-center p-2 text-base font-normal text-ios-labelColors-secondaryLabel-light transition duration-75 group hover:bg-ios-ui-sidebarItem-light-hover"
                         label={item.name}
                         href={item.path}
                         active={activeUrl.includes(item.path)}
@@ -49,7 +49,7 @@
                     <SidebarDropdownWrapper
                         ulClass="py-0 space-y-0"
                         spanClass="text-base w-full flex"
-                        btnClass="flex items-center p-2 text-base font-normal text-txt-primary transition duration-75 group hover:bg-ios-ui-sidebarItem-light-hover w-full"
+                        btnClass="flex items-center p-2 text-base font-normal text-ios-labelColors-secondaryLabel-light transition duration-75 group hover:bg-ios-ui-sidebarItem-light-hover w-full"
                         label={item.name}
                     >
                         <svelte:fragment slot="arrowup"
@@ -61,7 +61,7 @@
 
                         {#each item.subItems as dropdownItem}
                             <SidebarDropdownItem
-                                aClass="flex items-center p-2 pl-6 text-base font-normal text-txt-primary transition duration-75 group hover:bg-ios-ui-sidebarItem-light-hover"
+                                aClass="flex items-center p-2 pl-6 text-base font-normal text-ios-labelColors-secondaryLabel-light transition duration-75 group hover:bg-ios-ui-sidebarItem-light-hover"
                                 label={dropdownItem.name}
                                 href={dropdownItem.path}
                                 active={!!dropdownItem.path &&

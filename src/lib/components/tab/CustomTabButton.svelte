@@ -14,7 +14,7 @@ id={id}
 >
     <p
         class="text-base  {active
-            ? 'text-ios-systemColors-systemBlue-light font-semibold'
+            ? 'text-ios-systemColors-systemBlue-light font-medium'
             : ' text-ios-basic-inactiveGray font-normal'}"
     >
         {label}
