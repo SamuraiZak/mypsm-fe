@@ -440,7 +440,7 @@
                                     <span
                                         class="relative text-center align-middle text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                     >
-                                        {#if TableHelper.getKey(row, key) !== '' || TableHelper.getKey(row, key) !== null || TableHelper.getKey(row, key) !== null}
+                                        <!-- {#if TableHelper.getKey(row, key) !== '' || TableHelper.getKey(row, key) !== null || TableHelper.getKey(row, key) !== null}
                                             {#if typeof TableHelper.getKey(row, key) == 'string'}
                                                 {TextAppearanceHelper.toProper(
                                                     TableHelper.getKey(
@@ -453,7 +453,7 @@
                                             {/if}
                                         {:else}
                                             Tiada data
-                                        {/if}
+                                        {/if} -->
                                     </span>
                                 </td>
                             {/if}

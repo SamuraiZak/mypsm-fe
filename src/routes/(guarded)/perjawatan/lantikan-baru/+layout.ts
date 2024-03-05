@@ -10,15 +10,15 @@ import { EmploymentServices } from '$lib/services/implementation/mypsm/perjawata
 // guard code WIP
 
 export const load = async () => {
-    let candidateViewResponse: CommonResponseDTO;
+    let candidateViewResponse: CommonResponseDTO = {};
     let candidateViewTable = [];
-    let newCandidateResponse: CommonResponseDTO;
+    let newCandidateResponse: CommonResponseDTO = {};
     let newCandidateList = [];
-    let submittedFormResponse: CommonResponseDTO;
+    let submittedFormResponse: CommonResponseDTO = {};
     let submittedFormList = [];
-    let supporterViewResponse: CommonResponseDTO;
+    let supporterViewResponse: CommonResponseDTO = {};
     let supporterViewList = [];
-    let approverViewResponse: CommonResponseDTO;
+    let approverViewResponse: CommonResponseDTO = {};
     let approverViewList = [];
 
     const currentRoleCode = localStorage.getItem(
@@ -130,6 +130,13 @@ export const load = async () => {
         isSupporterRole,
         isApproverRole,
         currentRoleCode,
+        responses: {
+            candidateViewResponse,
+            newCandidateResponse,
+            submittedFormResponse,
+            supporterViewResponse,
+            approverViewResponse,
+        },
         selectionOptions: {
             statusLookup,
         },

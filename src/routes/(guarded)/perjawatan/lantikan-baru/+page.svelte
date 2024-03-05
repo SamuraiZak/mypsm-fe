@@ -30,7 +30,7 @@
     // Table list - new application view for secretary role
     let newCandidateTable: TableDTO = {
         param: param,
-        meta: {
+        meta: data.responses.newCandidateResponse.data?.meta ?? {
             pageNum: 1,
             pageSize: 5,
             totalData: 4,
@@ -57,7 +57,7 @@
     // Table list - submitted view for secretary role
     let submittedListTable: TableDTO = {
         param: submittedTableParam,
-        meta: {
+        meta: data.responses.submittedFormResponse.data?.meta ?? {
             pageNum: 1,
             pageSize: 5,
             totalData: 4,
@@ -85,7 +85,7 @@
     // Table list - for candidate role
     let candidateViewTable: TableDTO = {
         param: allNewHireTableParam,
-        meta: {
+        meta: data.responses.candidateViewResponse.data?.meta ?? {
             pageNum: 1,
             pageSize: 5,
             totalData: 4,
@@ -113,7 +113,7 @@
     // Table list - for supporter role
     let supporterViewTable: TableDTO = {
         param: param,
-        meta: {
+        meta: data.responses.supporterViewResponse.data?.meta ?? {
             pageNum: 1,
             pageSize: 5,
             totalData: 4,
@@ -141,7 +141,7 @@
     // Table list - for approver role
     let approverViewTable: TableDTO = {
         param: param,
-        meta: {
+        meta: data.responses.approverViewResponse.data?.meta ?? {
             pageNum: 1,
             pageSize: 5,
             totalData: 4,
