@@ -32,6 +32,19 @@ export const load = async ({params}) => {
         filter: filter,
     };
 
+    //first stepper table
+    const newChosenActingEmployeeParam = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: null,
+        orderType: null,
+        filter: {
+            employeeIds: [
+                
+            ]
+        },
+    }
+
     const dataList = [
         { employeeNumber: 28339, name: 'David Beckham', identityCard: 990122136443, program: '-', skim: '-', grade: 'E21', position: 'Setiausaha Pejabat', penempatanSekarang: '-', pengisytiahranHarta: '-', akuanPinjamanPendidikan: '-' },
         { employeeNumber: 28340, name: 'Cristiano Ronaldo', identityCard: 990122136443, program: '-', skim: '-', grade: 'E21', position: 'Pegawai Teknologi Maklumat', penempatanSekarang: '-', pengisytiahranHarta: '-', akuanPinjamanPendidikan: '-' },
@@ -51,6 +64,8 @@ export const load = async ({params}) => {
         { employeeNumber: 28340, name: 'Kylian Mbapper', identityCard: 990122136443, grade: '-', position: '-', penempatanSekarang: 'Bahagian Sains', permohonanPindaanPenempatan: 'Ada', keputusanPermohonanPindaanPenempatan: 'Lulus'},
     ];
 
+
+    //form validation
     const verifyMeetingResultDetailForm = await superValidate(_verifyMeetingResultDetailSchema)
     const directorResultForm = await superValidate (_directorResultSchema)
     const updateMeetingDetailForm = await superValidate(_updateMeetingDetailSchema)

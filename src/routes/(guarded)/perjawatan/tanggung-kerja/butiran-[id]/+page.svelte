@@ -10,9 +10,22 @@
     import { goto } from '$app/navigation';
     import type { PageData } from './$types';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
-
+    import type { InterimApplicationDetailDTO } from '$lib/dto/mypsm/employment/tanggung-kerja/interim-application-detail-response.dto';
+    import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     export let data: PageData;
 
+    // const interimApplicationDetail: InterimApplicationDetailDTO =
+    //     data.employeeInterimApplicationDetailResponse
+    //         .data?.details as InterimApplicationDetailDTO;
+
+    const interimApplicationDetail: InterimApplicationDetailDTO = {
+        view: data.employeeInterimApplicationDetailResponse.data?.details.applicationDetail,
+        detail: data.employeeInterimApplicationDetailResponse.data?.details.employeeDetail,
+        duration: data.employeeInterimApplicationDetailResponse.data?.details.duration,
+    }
+
+    
+    console.log(data.employeeInterimApplicationDetailResponse.data?.details)
     let stepperIndex: number = 0;
 
     function goNext() {
@@ -56,55 +69,51 @@
                     <CustomSelectField
                         label="Gred"
                         disabled
-                        id="grade"
-                        val="-"
+                        id="gradeId"
+                        options={data.selectionOptions.gradeLookup}
+                        val={interimApplicationDetail.view?.grade}
                     />
                     <CustomSelectField
-                        label="Jawatan"
+                        label="Kementrian/Jabatan"
                         disabled
                         id="position"
-                        val="-"
-                    />
-                    <CustomSelectField
-                        label="Gred"
-                        disabled
-                        id="grade"
-                        val="-"
+                        options={data.selectionOptions.positionLookup}
+                        val={interimApplicationDetail.view?.position}
                     />
                     <CustomTextField
                         id="detailNumber"
                         label="Nombor Butiran Anggaran Belanjawan Mengurus/Waran Penjawatan"
                         disabled
                         type="text"
-                        val="-"
+                        val={interimApplicationDetail.view?.referenceNumber}
                     />
                     <CustomTextField
                         id="startDate"
                         label="Tarikh Mula"
                         disabled
                         type="text"
-                        val="date selector here"
+                        val={interimApplicationDetail.view?.startDate}
                     />
                     <CustomTextField
                         id="endDate"
-                        label="Tarikh Mula"
+                        label="Tarikh Tamat"
                         disabled
                         type="text"
-                        val="date selectore here"
+                        val={interimApplicationDetail.view?.endDate}
                     />
-                    <CustomTextField
+                    <CustomSelectField
                         label="Tempat Kekosongan"
                         disabled
                         id="emptyPlacement"
-                        type="text"
-                        val="-"
+                        options={data.selectionOptions.placementLookup}
+                        val={interimApplicationDetail.view?.placement}
                     />
                     <CustomTextField
                         id="emptyReason"
                         label="Sebab-sebab Kekosongan"
                         disabled
                         type="text"
-                        val="-"
+                        val={interimApplicationDetail.view?.reason}
                     />
                 </form>
             </StepperContentBody>
@@ -132,49 +141,49 @@
                         disabled
                         id="employeeName"
                         type="text"
-                        val="Usain Bolt"
+                        val={interimApplicationDetail.detail?.name}
                     />
                     <CustomTextField
                         label="No. Kad Pengenalan"
                         disabled
                         id="identificationNumber"
                         type="text"
-                        val="970221-14-5667"
+                        val={interimApplicationDetail.detail?.identityCardNumber}
                     />
                     <CustomTextField
                         label="Tarikh Lantikan Jawatan Sekarang"
                         disabled
                         id="currentPositionAppointDate"
-                        type="text"
-                        val="22/11/2022"
+                        type="date"
+                        val={interimApplicationDetail.detail?.confirmServiceDate}
                     />
                     <CustomTextField
                         label="Tarikh Sah Dalam Jawatan Sekarang"
                         disabled
                         id="currentPositionVerifiedDate"
-                        type="text"
-                        val="19/09/2022"
+                        type="date"
+                        val={interimApplicationDetail.detail?.effectiveDate}
                     />
                     <CustomTextField
                         label="Jawatan/Gred"
                         disabled
                         id="positionAndGrade"
                         type="text"
-                        val="F41 - Pegawai Teknologi Maklumat"
+                        val={interimApplicationDetail.detail?.positionWithGrade}
                     />
                     <CustomTextField
                         label="Tarikh Mula Bertugas di Jawatan Sekarang"
                         disabled
                         id="startWorkingDate"
-                        type="text"
-                        val="13/11/2022"
+                        type="date"
+                        val={interimApplicationDetail.detail?.effectiveDate}
                     />
                     <CustomTextField
                         label="Tempat Bertugas Semasa"
                         disabled
                         id="currentWorkplace"
                         type="text"
-                        val="LKIM Bintulu"
+                        val={interimApplicationDetail.detail?.placement}
                     />
                 </div>
             </StepperContentBody>
@@ -205,15 +214,15 @@
                         label="Dari"
                         id="startDate"
                         disabled
-                        type="text"
-                        val="date selector here"
+                        type="date"
+                        val={interimApplicationDetail.duration?.from}
                     />
                     <CustomTextField
                         label="Hingga"
                         id="endDate"
                         disabled
-                        type="text"
-                        val="date selector here"
+                        type="date"
+                        val={interimApplicationDetail.duration?.to}
                     />
                     <ContentHeader
                         title="Tempoh Penanggungan Kerja Bagi Jawatan yang Sama Sebelum Ini (Jika Ada)"
@@ -223,15 +232,15 @@
                         label="Dari"
                         disabled
                         id="optionalStartDate"
-                        type="text"
-                        val="date selector here"
+                        type="date"
+                        val={interimApplicationDetail.duration?.previousInterim[0].from}
                     />
                     <CustomTextField
                         label="Hingga"
                         disabled
                         id="optionalEndDate"
-                        type="text"
-                        val="date selector here"
+                        type="date"
+                        val={interimApplicationDetail.duration?.previousInterim[0].to}
                     />
                 </form>
             </StepperContentBody>
@@ -253,12 +262,19 @@
                 />
             </StepperContentHeader>
             <StepperContentBody>
-                <form class="flex w-full flex-col justify-start gap-2.5 pb-10">
-                    <ContentHeader
-                        title="Upload Files Here"
-                        borderClass="border-none"
-                    />
-                </form>
+                <div class="flex w-full flex-col justify-start gap-2.5 pb-10">
+                    <div class="w-full flex flex-col text-sm text-ios-labelColors-secondaryLabel-light">
+                        <span>Fail-fail yang dimuat naik:</span>
+                        <span>Carta Organisasi (Kedudukan Pegawai dan Jawatan yang Ditanggung Kerja)</span>
+                        <span>Salinan Surat Arahan Penagguhan Kerja</span>
+                        <span>Maklumat Cuti Yang Terkini</span>
+                        <span>Senarai Tugas Jawatan Ditanggung Kerja dan Pegawai Menanggung Kerja</span>
+                    </div>
+                    <DownloadAttachment fileName="Carta Organisasi"/>
+                    <DownloadAttachment fileName="Salinan Surat Arahan Penangguhan Kerja"/>
+                    <DownloadAttachment fileName="Maklumat Cuti Terkini"/>
+                    <DownloadAttachment fileName="Senarai Tugas"/>
+                </div>
             </StepperContentBody>
         </StepperContent>
 

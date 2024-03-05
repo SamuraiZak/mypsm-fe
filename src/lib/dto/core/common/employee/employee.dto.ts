@@ -6,8 +6,8 @@ export interface CommonEmployeeDTO {
     program: string;
     scheme: string;
     grade: string;
-    position: string;
-    placement: string;
+    position?: string;
+    placement?: string;
 }
 
 // Converts JSON strings to/from your types

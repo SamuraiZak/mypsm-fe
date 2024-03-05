@@ -10,6 +10,8 @@ export const load = async () => {
     let tableList154 = [];
     let tableListFlexiResponse: CommonResponseDTO;
     let tableListFlexi41 = [];
+    let tableListMainResponse: CommonResponseDTO;
+    let tableListMain = [];
     // param for table 154/flexi41/main
     const param = {
         pageNum: 1,
@@ -29,6 +31,9 @@ export const load = async () => {
         //flexi 41
         tableListFlexiResponse = await EmploymentActingServices.getFlexi41List(param);
         tableListFlexi41 = tableListFlexiResponse.data?.dataList ?? [];
+        
+       
+        
     }
     //table for penyokong, pengarah bahagian/negeri and pelulus
     else if ((currentRoleCode === UserRoleConstant.penyokong.code) || (currentRoleCode === UserRoleConstant.pengarahBahagian.code) ||
@@ -64,6 +69,7 @@ export const _update154sTable = async (param: CommonListRequestDTO) => {
         response,
     }
 }
+
 export const _updateFlexi41Table = async (param: CommonListRequestDTO) => {
     const response: CommonResponseDTO = 
         await EmploymentActingServices.getFlexi41List(param);
