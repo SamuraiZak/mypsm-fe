@@ -6,13 +6,14 @@
     import UserGroupButton from '$lib/components/login/UserGroupButton.svelte';
     import type { PageData } from './$types';
     import { _loginSchema, _submit } from './+page';
-    import { superForm, setMessage } from 'sveltekit-superforms/client';
+    import { superForm, setMessage, type Infer } from 'sveltekit-superforms/client';
     import { UserGroupConstant } from '$lib/constants/core/user-group.constant';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import { UserRoleConvert } from '$lib/dto/core/user-role/user-role.dto';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
+    import { zod } from 'sveltekit-superforms/adapters';
 
     export let data: PageData;
 
@@ -25,7 +26,7 @@
     const { form, errors, enhance } = superForm(data.props.form, {
         SPA: true,
         taintedMessage: false,
-        validators: _loginSchema,
+        validators: zod(_loginSchema),
         onUpdate({ form }) {},
         onSubmit(input) {
             _submit($form);

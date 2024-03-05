@@ -29,6 +29,7 @@ import { fail } from '@sveltejs/kit';
 import toast from 'svelte-french-toast';
 import { message, superValidate } from 'sveltekit-superforms/client';
 import { Schema, z } from 'zod';
+import { zod } from 'sveltekit-superforms/adapters';
 
 export const _loginSchema = z
     .object({
@@ -80,7 +81,7 @@ export const load = async () => {
     );
 
     // create form
-    const form = await superValidate(_loginSchema);
+    const form = await superValidate(zod(_loginSchema));
 
     // set default usergroup
     form.data.userGroupCode = UserGroupConstant.employee.code;
@@ -100,7 +101,7 @@ export const load = async () => {
 
 // on login form submit
 export const _submit = async (formData: AuthenticationRequestDTO) => {
-    const form = await superValidate(formData, _loginSchema);
+    const form = await superValidate(formData, zod(_loginSchema));
 
     if (form.valid) {
         const login: boolean = await AuthService.loginProcess(formData);
