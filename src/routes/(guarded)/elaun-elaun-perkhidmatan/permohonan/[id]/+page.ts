@@ -6,7 +6,9 @@ import { LookupHelper } from '$lib/helpers/core/lookup.helper.js';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service.js';
 
 export async function load({ params }) {
-    // get allowance type
+    // =====================================================================
+    // Step 1: Get allowance type lookup
+    // =====================================================================
     let allowanceTypeDropdown: DropdownDTO[] = [];
 
     const allowanceTypeResponse: CommonResponseDTO =
@@ -20,12 +22,17 @@ export async function load({ params }) {
             LookupHelper.toDropdownProper(allowanceTypeLookup);
     }
 
+    // =====================================================================
+    // Step 2: Setting up the page content based on the id slug
+    // =====================================================================
     if (params.id == 'baru') {
+        // if this is a new application
         // get current role code
         let currentRoleCode: string =
             localStorage.getItem(LocalStorageKeyConstant.currentRoleCode) ??
             'unknown';
     } else {
+        // if this is an existing application
     }
 
     return {
