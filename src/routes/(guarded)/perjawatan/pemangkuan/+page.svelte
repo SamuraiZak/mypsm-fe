@@ -24,7 +24,7 @@
         {
             value: 'Gred 1-54',
             name: 'Gred 1-54',
-            href: './pemangkuan/baru-1_54',
+            href: './pemangkuan/baru-1-54',
         },
         {
             value: 'Gred Flexi 41',
@@ -50,6 +50,7 @@
         },
         data: data.tableList154 ?? [],
     }
+    
     async function _search154List() {
         _update154sTable(tableList154s.param).then((value) => {
             tableList154s.data = value.response.data?.dataList ?? [];
@@ -145,7 +146,7 @@
                     title="Senarai rekod pemangkuan bagi Gred 1-54"
                         onUpdate={_search154List}
                         enableDetail
-                        detailActions={() => goto('./pemangkuan/butiran-1_54-'+rowData.batchId)}
+                        detailActions={() => goto('./pemangkuan/butiran-1-54-'+rowData.batchId)}
                         bind:passData={rowData}
                         bind:tableData={tableList154s}  
                     ></CustomTable>
@@ -181,7 +182,7 @@
                         enableDetail
                         detailActions={() =>
                             goto('./pemangkuan/butiran-gred_utama')}
-                        bind:tableData={table}
+                        bind:tableData={tableList154s}
                     ></CustomTable>
                 </div>
             </CustomTabContent>

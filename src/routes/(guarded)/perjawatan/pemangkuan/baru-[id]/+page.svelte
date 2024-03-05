@@ -8,37 +8,35 @@
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import type { PageData } from './$types';
-    import { _updateTable } from './+page';
+    import { _updateActingEmployeeListTable, _updateTable } from './+page';
+    import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+    import { EmploymentActingServices } from '$lib/services/implementation/mypsm/perjawatan/employment-acting.service';
+    import type { AddChosenActingEmployeeDTO } from '$lib/dto/mypsm/employment/acting/add-chosen-acting-employee.dto';
+    import { error } from '@sveltejs/kit';
+    import type { CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
     export let data: PageData;
 
     let param: CommonListRequestDTO = data.param;
     let table: TableDTO = {
         param: param,
-        meta: {
+        meta: data.actingEmployeeListResponse.data?.meta ?? {
             pageSize: 5,
             pageNum: 1,
             totalData: 4,
             totalPage: 1,
         },
-        data: data.actingTypes == '1_54' ? data.dataList : data.dataList2 ?? [],
+        data:
+            data.actingTypes == '1-54'
+                ? data.actingEmployeeList
+                : data.dataList2 ?? [],
+        hiddenData: ['employeeId', 'homeAddress'],
         selectedData: [],
     };
-
-    let selectedStaffTable: TableDTO = {
-        param: param,
-        meta: {
-            pageSize: 5,
-            pageNum: 1,
-            totalData: 4,
-            totalPage: 1,
-        },
-        data: table.selectedData ?? [],
-    };
     
-    async function _search() {
-        _updateTable(table.param).then((value) => {
-            table.data = value.response?.dataList ?? [];
-            table.meta = value.response?.meta ?? {
+    async function _searchActingEmployeeList() {
+        _updateActingEmployeeListTable(table.param).then((value) => {
+            table.data = value.response.data?.dataList ?? [];
+            table.meta = value.response.data?.meta ?? {
                 pageSize: 1,
                 pageNum: 1,
                 totalData: 1,
@@ -48,12 +46,61 @@
             table.param.pageNum = table.meta.pageNum;
         });
     }
-    $: selectedStaffTable.data = table.selectedData ?? [];
+
+    // table for selected employee for acting
+    let selectedEmployeeTable: TableDTO = {
+        param: param,
+        meta: table.meta ?? {
+            pageSize: 5,
+            pageNum: 1,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: table.selectedData ?? [],
+        hiddenData: ['employeeId', 'homeAddress'],
+    };
+   
+    $: selectedEmployeeTable.data = table.selectedData ?? [];
+
+    const addChosenEmployeeToActing = async () => {
+        const employeeArray = selectedEmployeeTable.data;
+
+        let tempEmployeeIdList: number[] = [];
+
+        selectedEmployeeTable.data.forEach((element) => {
+            let tempEmployee: CommonEmployeeDTO = element as CommonEmployeeDTO;
+            tempEmployeeIdList.push(tempEmployee.employeeId);
+        });
+
+        let tempChosenEmpployee: AddChosenActingEmployeeDTO = {
+            actingType: data.actingTypes,
+            employeeIds: tempEmployeeIdList,
+        };
+        console.log(tempChosenEmpployee)
+        if (selectedEmployeeTable.data.length < 1) {
+            alert('Senarai calon pemangkuan tidak boleh kosong.');
+            error(400, { message: 'No ID Selected!' });
+        }
+        const response: CommonResponseDTO =
+            await EmploymentActingServices.addChosenActingEmployee(tempChosenEmpployee)
+        
+        if(response.status == 'success'){
+            console.log('berjaya')
+            setTimeout(() => goto('/perjawatan/pemangkuan/butiran-' + data.actingTypes), 1500);
+        }
+
+        console.log(response)
+        return { response }
+    };
 </script>
 
 <!-- header section -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Pemangkuan Baru Gred {data.actingTypes.replace(/f/g, "F").replace(/_/g, "-")}">
+    <ContentHeader
+        title="Pemangkuan Baru Gred {data.actingTypes
+            .replace(/f/g, 'F')
+            .replace(/_/g, '-')}"
+    >
         <TextIconButton
             icon="cancel"
             type="neutral"
@@ -67,12 +114,12 @@
             label="Seterusnya"
             type="primary"
             onClick={() => {
-                if(selectedStaffTable.data.length < 1){
-                    alert('Senarai calon pemangkuan tidak boleh kosong.')
-                }
-                else{
-                    goto('/perjawatan/pemangkuan/butiran-'+data.actingTypes);
-                }
+                // if (selectedEmployeeTable.data.length < 1) {
+                //     alert('Senarai calon pemangkuan tidak boleh kosong.');
+                // } else {
+                //     goto('/perjawatan/pemangkuan/butiran-' + data.actingTypes);
+                // }
+                addChosenEmployeeToActing()
             }}
         />
     </ContentHeader>
@@ -87,14 +134,17 @@
     <CustomTab>
         <!-- Senarai Semua Kakitangan -->
         <CustomTabContent title="Senarai Semua Kakitangan">
-            <ContentHeader title="Tindakan: Tekan tombol tambah untuk masukkan kakitangan ke senarai calon yang dipilih untuk dipangku." borderClass="border-none"/>
+            <ContentHeader
+                title="Tindakan: Tekan tombol tambah untuk masukkan kakitangan ke senarai calon yang dipilih untuk dipangku."
+                borderClass="border-none"
+            />
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
-                
                 <!-- Table here -->
                 <CustomTable
-                    onUpdate={_search}
+                    title=""
+                    onUpdate={_searchActingEmployeeList}
                     bind:tableData={table}
                     enableAdd={true}
                 ></CustomTable>
@@ -103,12 +153,16 @@
 
         <!-- Senarai Kakitangan Yang Dipilih -->
         <CustomTabContent title="Senarai Kakitangan Yang Dipilih">
-            <ContentHeader title="Senarai calon yang dipilih untuk dipangku." borderClass="border-none"/>
+            <ContentHeader
+                title="Senarai calon yang dipilih untuk dipangku."
+                borderClass="border-none"
+            />
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
                 <!-- Table here -->
-                <CustomTable bind:tableData={selectedStaffTable}></CustomTable>
+                <CustomTable title="" bind:tableData={selectedEmployeeTable}
+                ></CustomTable>
             </div>
         </CustomTabContent>
     </CustomTab>
