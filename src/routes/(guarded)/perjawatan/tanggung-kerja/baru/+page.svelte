@@ -10,6 +10,9 @@
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
+    import { superForm } from 'sveltekit-superforms/client';
+    import { _submitAddNewInterimApplicationForm } from './+page';
+    import { _addNewInterimApplicationSchema } from '$lib/schemas/mypsm/employment/tanggung-kerja/interim-schemas';
 
     export let data: PageData;
 
@@ -30,6 +33,26 @@
         { value: 'E22', name: 'E22' },
         { value: 'DV41', name: 'DV41' },
     ];
+
+    const {
+        form: addNewInterimApplicationForm,
+        errors: addNewInterimApplicationError,
+        enhance: addNewInterimApplicationEnhance,
+    } = superForm(data.addNewInterimApplicationForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        taintedMessage: false,
+        resetForm: false,
+        multipleSubmits: 'prevent',
+        id: 'addNewInterimApplicationForm',
+        validators: _addNewInterimApplicationSchema,
+        onSubmit() {
+            _submitAddNewInterimApplicationForm(
+                $addNewInterimApplicationForm,
+            )
+        },
+    });
 </script>
 
 <!-- content header starts here -->
@@ -54,60 +77,73 @@
             <StepperContentHeader title="Butiran Permohonan Tanggung Kerja">
                 <TextIconButton
                     type="primary"
-                    label="Seterusnya"
-                    icon="next"
-                    onClick={() => goNext()}
+                    label="Simpan"
+                    icon="check"
+                    form="addNewInterimApplicationForm"
                 />
             </StepperContentHeader>
             <StepperContentBody>
-                <form class="flex w-full flex-col justify-start gap-2.5 pb-10">
+                <form 
+                    class="flex w-full flex-col justify-start gap-2.5 pb-12"
+                    id="addNewInterimApplicationForm"
+                    method="POST"
+                    use:addNewInterimApplicationEnhance
+                >
                     <CustomSelectField
                         label="Gred"
-                        id="grade"
-                        bind:val={dropdownVal}
-                        options={dropdownOption}
+                        id="gradeId"
+                        bind:val={$addNewInterimApplicationForm.gradeId}
+                        errors={$addNewInterimApplicationError.gradeId}
+                        options={data.selectionOptions.gradeLookup}
                     />
                     <CustomSelectField
                         label="Jawatan"
-                        id="position"
-                        bind:val={dropdownVal}
-                        options={dropdownOption}
+                        id="positionId"
+                        bind:val={$addNewInterimApplicationForm.positionId}
+                        errors={$addNewInterimApplicationError.positionId}
+                        options={data.selectionOptions.positionLookup}
                     />
                     <CustomSelectField
-                        label="Gred"
-                        id="grade"
-                        bind:val={dropdownVal}
-                        options={dropdownOption}
+                        label="Kementrian/Jabatan"
+                        id="placementId"
+                        bind:val={$addNewInterimApplicationForm.placementId}
+                        errors={$addNewInterimApplicationError.placementId}
+                        options={data.selectionOptions.departmentLookup}
                     />
                     <CustomTextField
-                        id="detailNumber"
+                        id="referenceNumber"
                         label="Nombor Butiran Anggaran Belanjawan Mengurus/Waran Penjawatan"
                         type="text"
-                        val="-"
+                        bind:val={$addNewInterimApplicationForm.referenceNumber}
+                        errors={$addNewInterimApplicationError.referenceNumber}
                     />
                     <CustomTextField
                         id="startDate"
                         label="Tarikh Mula"
-                        type="text"
-                        val="date selector here"
+                        type="date"
+                        bind:val={$addNewInterimApplicationForm.startDate}
+                        errors={$addNewInterimApplicationError.startDate}
                     />
                     <CustomTextField
                         id="endDate"
-                        label="Tarikh Mula"
-                        type="text"
-                        val="date selectore here"
+                        label="Tarikh Tamat"
+                        type="date"
+                        bind:val={$addNewInterimApplicationForm.endDate}
+                        errors={$addNewInterimApplicationError.endDate}
                     />
-                    <CustomTextField
+                    <CustomSelectField
                         label="Tempat Kekosongan"
-                        id="emptyPlacement"
-                        type="text"
-                        val="-"
+                        id="newPlacementId"
+                        options={data.selectionOptions.placementLookup}
+                        bind:val={$addNewInterimApplicationForm.newPlacementId}
+                        errors={$addNewInterimApplicationError.newPlacementId}
                     />
                     <CustomTextField
-                        id="emptyReason"
+                        id="reason"
                         label="Sebab-sebab Kekosongan"
                         type="text"
-                        val="-"
+                        bind:val={$addNewInterimApplicationForm.reason}
+                        errors={$addNewInterimApplicationError.reason}
                     />
                 </form>
             </StepperContentBody>

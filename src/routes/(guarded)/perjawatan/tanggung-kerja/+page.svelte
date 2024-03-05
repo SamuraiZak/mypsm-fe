@@ -20,6 +20,20 @@
     let depDirectorRoleCode: string = UserRoleConstant.pengarahBahagian.code;
     let managementServiceDirectorRoleCode: string =
         UserRoleConstant.pengarahKhidmatPengurusan.code;
+    let rowData: any;
+    
+    //Employees' POV: Table for application list
+    let employeeApplicationParam: CommonListRequestDTO = data.employeeApplicationParam;
+    let employeeApplicationTable: TableDTO = {
+        param: employeeApplicationParam,
+        meta: data.employeeInterimApplicationResponse.data?.meta ?? {
+            pageSize: 5,
+            pageNum: 1,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: data.employeeInterimApplicationList ?? [],
+    }
 
     let param: CommonListRequestDTO = data.param;
     let table: TableDTO = {
@@ -84,11 +98,12 @@
             <CustomTabContent title="Permohonan Tanggung Kerja">
                 <CustomTable
                     title="Senarai Permohonan Tanggung Kerja"
-                    bind:tableData={table}
+                    bind:tableData={employeeApplicationTable}
+                    bind:passData={rowData}
                     enableDetail
                     detailActions={() =>
-                        goto('/perjawatan/tanggung-kerja/butiran')}
-                />
+                        goto('/perjawatan/tanggung-kerja/butiran-'+rowData.id)}
+                />  
             </CustomTabContent>
 
             <CustomTabContent title="Penamatan Tanggung Kerja">

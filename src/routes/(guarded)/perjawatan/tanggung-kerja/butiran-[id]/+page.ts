@@ -1,22 +1,45 @@
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant";
 import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
-import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
+import type { CommonFilterDTO } from "$lib/dto/core/common/common-filter.dto";
+import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto.js";
 import type { DropdownDTO } from "$lib/dto/core/dropdown/dropdown.dto";
-import type { AddNewInterimApplicationDetailDTO } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-employee-new-application-detail.dto";
-import { _addNewInterimApplicationSchema } from "$lib/schemas/mypsm/employment/tanggung-kerja/interim-schemas";
+import type { EmployeeInterimApplicationDetailRequestDTO } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-employee-application-detail-request.dto.js";
 import { LookupServices } from "$lib/services/implementation/core/lookup/lookup.service";
-import { EmploymentInterimServices } from "$lib/services/implementation/mypsm/perjawatan/employment-interim.service";
-import { superValidate } from "sveltekit-superforms/client";
+import { EmploymentInterimServices } from "$lib/services/implementation/mypsm/perjawatan/employment-interim.service.js";
 
-export const load = async () => {
+export const load = async ({ params }) => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
+    let employeeInterimApplicationDetailResponse: CommonResponseDTO = {}
+    //Employee POV: Get detail for tanggung kerja application
+    const interimId: EmployeeInterimApplicationDetailRequestDTO = {
+        interimId: Number(params.id)
+    }
 
-    //form validation
-    const addNewInterimApplicationForm = await superValidate(_addNewInterimApplicationSchema)
+    if (currentRoleCode === UserRoleConstant.kakitangan.code) {
+        employeeInterimApplicationDetailResponse =
+            await EmploymentInterimServices.getInterimApplicationDetail(interimId)
+    }
 
-    // =======================================================
-    // Dropdown Lookup =======================================
-    // =======================================================
+    const filter: CommonFilterDTO = {
+        identityCard: null,
+        employeeNumber: null,
+        name: null,
+        position: null,
+        status: null,
+        grade: null,
+        scheme: null,
+    };
+
+    const param = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: null,
+        orderType: null,
+        filter: filter,
+    };
+
+    let dataList;
+
     const gradeLookupResponse: CommonResponseDTO =
         await LookupServices.getServiceGradeEnums();
 
@@ -41,11 +64,10 @@ export const load = async () => {
     const departmentLookup: DropdownDTO[] =
         LookupServices.setSelectOptions(departmentLookupResponse)
     // -------------------------------------------------------
-
-
     return {
+        employeeInterimApplicationDetailResponse,
+        dataList,
         currentRoleCode,
-        addNewInterimApplicationForm,
         selectionOptions: {
             gradeLookup,
             placementLookup,
@@ -54,23 +76,3 @@ export const load = async () => {
         }
     }
 }
-
-export const _submitAddNewInterimApplicationForm = async (formData: object) => {
-    const addNewInterimApplicationForm = await superValidate(
-        formData,
-        _addNewInterimApplicationSchema,
-    );
-    if(addNewInterimApplicationForm.valid){
-        const response: CommonResponseDTO =
-            await EmploymentInterimServices.addNewInterimApplication(
-                addNewInterimApplicationForm.data as AddNewInterimApplicationDetailDTO,
-            )
-        if (addNewInterimApplicationForm.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
-    }
-};

@@ -1,10 +1,32 @@
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant";
 import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
 import type { CommonFilterDTO } from "$lib/dto/core/common/common-filter.dto";
+import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
+import type { EmployeeInterimApplicationDTO } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-employee-application-list-request.dto";
+import type { EmployeeInterimApplicationListResponseDTO } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-employee-application-list-response.dto";
+import { EmploymentInterimServices } from "$lib/services/implementation/mypsm/perjawatan/employment-interim.service";
 
 export const load = async () => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
+    let employeeInterimApplicationList: EmployeeInterimApplicationListResponseDTO[] = [];
 
+    //Employees' POV: View Application Table
+    const employeeApplicationParam = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: null,
+        orderType: null,
+        filter: {
+            employeeNumber: null,
+            name: null,
+            identityCardNumber: null,
+            applicationDate: null,
+        },
+    }
+    const employeeInterimApplicationResponse: CommonResponseDTO = 
+        await EmploymentInterimServices.getEmployeeApplicationList(employeeApplicationParam);
+
+    
     const filter: CommonFilterDTO = {
         identityCard: null,
         employeeNumber: null,
@@ -27,9 +49,12 @@ export const load = async () => {
 
     //table for kakitangan
     if (currentRoleCode === UserRoleConstant.kakitangan.code) {
-        dataList = [
-            { noPekerja: '7956', name: 'Eric Dier', noKadPengenalan: 950420137894, tarikhMohon: '19/02/2024', tarikhAkhir: '19/02/2024', status: 'Dalam Proses', tindakan: "-" },
-        ]
+        // employeeInterimApplicationResponse =
+        //     await EmploymentInterimServices.getEmployeeApplicationList(employeeApplicationParam);
+        if(employeeInterimApplicationResponse.status == "success"){
+            employeeInterimApplicationList = employeeInterimApplicationResponse.data?.dataList as EmployeeInterimApplicationListResponseDTO[];
+        }
+        
     }
     else if (currentRoleCode === UserRoleConstant.pengarahBahagian.code || currentRoleCode === UserRoleConstant.pengarahNegeri.code || currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code) {
         dataList = [
@@ -47,6 +72,9 @@ export const load = async () => {
     ]
 
     return {
+        employeeApplicationParam,
+        employeeInterimApplicationResponse,
+        employeeInterimApplicationList,
         param,
         currentRoleCode,
         dataList,
