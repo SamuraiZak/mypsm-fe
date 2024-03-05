@@ -9,7 +9,7 @@ import {
     numberSchema,
     shortTextSchema,
 } from '$lib/schemas/common/schema-type';
-import { z } from 'zod';
+import { date, z } from 'zod';
 
 //=====================================================
 //================== Service Schema ===================
@@ -88,41 +88,45 @@ export const _personalInfoSchema = z
 
 export const _serviceInfoSchema = z.object({
     // candidateId: numberIdSchema,
-    gradeId: numberIdSchema,
+    grade: numberIdSchema,
     // maxGradeId: numberIdSchema,
-    positionId: numberIdSchema,
-    placementId: numberIdSchema,
-    serviceTypeId: numberIdSchema,
+    position: numberIdSchema,
+    placement: numberIdSchema,
+    serviceLevel: numberIdSchema,
     // serviceGroupId: numberIdSchema,
     // unitId: numberIdSchema,
     // programId: numberIdSchema,
     // employmentStatusId: numberIdSchema,
     // effectiveDate: minDateSchema,
-    retirementBenefit: codeSchema,
-    epfNumber: shortTextSchema,
-    socsoNumber: shortTextSchema,
+    retirementType: codeSchema,
+    EPFNumber: shortTextSchema,
+    SOCSONumber: shortTextSchema,
     incomeNumber: shortTextSchema,
     bankName: shortTextSchema,
     bankAccount: shortTextSchema,
-    eligibleLeaveCount: numberSchema,
-    civilServiceStartDate: dateSchema,
-    newRecruitEffectiveDate: dateSchema,
+    program:shortTextSchema,
+    leaveEntitlement: numberSchema,
+    hireByGovermentDate: dateSchema,
+    hireByLKIMDate: dateSchema,
     // serviceDate: dateSchema,
-    firstServiceDate: dateSchema,
-    firstConfirmServiceDate: dateSchema,
-    firstEffectiveDate: dateSchema,
+    currentServiceStartDate:shortTextSchema,
+    firstServiceConfirmedDate: dateSchema,
+    currentServiceConfirmedDate: dateSchema,
+    currentActing: dateSchema,
     confirmDate: dateSchema,
     // pensionNumber: shortTextSchema,
+    lastSalary:shortTextSchema,
+    lastPromotion:shortTextSchema,
     kgt: numberSchema,
     retirementDate: minDateSchema,
     // revisionMonth: codeSchema,
-    maximumSalary: numberSchema,
-    baseSalary: numberSchema,
-    itka: numberSchema,
-    itp: numberSchema,
-    epw: numberSchema,
-    cola: numberSchema,
-    isReadOnly: z.boolean().readonly().nullable(),
+    // maximumSalary: numberSchema,
+    // baseSalary: numberSchema,
+    // itka: numberSchema,
+    // itp: numberSchema,
+    // epw: numberSchema,
+    // cola: numberSchema,
+    // isReadOnly: z.boolean().readonly().nullable(),
 });
 
 //======================================================
@@ -131,30 +135,44 @@ export const _serviceInfoSchema = z.object({
 
 export const _PTBInfoSchema = z.object({
 
+    applicationDate:dateSchema,
     PTBdate:dateSchema,
     refrenceDate:dateSchema,
     referenceNumber:numberSchema,
+    status:shortTextSchema,
+    remark:shortTextSchema,
     pensionNumber:shortTextSchema,
     KWAPEmailDate:dateSchema,
 
 });
 
 //======================================================
-//============= Peranan -Peranan Berkaitan ============
+//========= edit Peranan -Peranan Berkaitan ============
 //======================================================
 
+// belum superform/service
+export const _rolesRelatedEditSchema = z.object({
+    id:numberSchema,
+    supportername:shortTextSchema,
+    approverName:shortTextSchema,
+   
+    
+});
 //======================================================
 //=== Keputusan Daripada Peranan - Peranan Berkaitan ===
 //======================================================
 
 export const _resultInfoSchema = z.object({
 
-    passerName:shortTextSchema,
-    passerRemark:shortTextSchema,
     supporterName:shortTextSchema,
-    supporterRemark:shortTextSchema,
+    supportedStatus:shortTextSchema,
+    supportedRemark:shortTextSchema,
+    supportedDate:dateSchema,
     approverName:shortTextSchema,
-    approverRemark: shortTextSchema,
+    approvedStatus:shortTextSchema,
+    approvedRemark:shortTextSchema,
+    approvedDate:dateSchema,
+    
 
 });
 
@@ -162,8 +180,12 @@ export const _resultInfoSchema = z.object({
 //============= Kemaskini Maklumat Temuduga ============
 //======================================================
 
+
+// edit pension Detail
+// belum superform
 export const _meetingInfoSchema = z.object({
 
+    id:numberIdSchema,
     PTBDate:dateSchema,
     referenceNumber:numberSchema,
     referenceDate:dateSchema,
@@ -178,11 +200,23 @@ export const _meetingInfoSchema = z.object({
 
 export const _supporterInfoSchema = z.object({
 
-    supporterResult:shortTextSchema,
-    supporterRemark:shortTextSchema,
-    passerName:shortTextSchema,
-   
+    supporterName:shortTextSchema,
+    supportedStatus:shortTextSchema,
+    supportedRemark:shortTextSchema,
+    supportedDate:dateSchema,
 });
+
+//======================================================
+//========= Add keputusan Penyokong ============
+//======================================================
+
+export const _addSupporterInfoSchema = z.object({
+
+    supportedStatus:shortTextSchema,
+    supportedRemark:shortTextSchema,
+    supportedDate:dateSchema,
+});
+
 
 
 //======================================================
@@ -191,9 +225,20 @@ export const _supporterInfoSchema = z.object({
 
 export const _passerInfoSchema = z.object({
 
-    supporterResult:shortTextSchema,
-    supporterRemark:shortTextSchema,
-    passerName:shortTextSchema,
-    passerRemark:shortTextSchema,
+    approverName:shortTextSchema,
+    approvedStatus:shortTextSchema,
+    approvedRemark:shortTextSchema,
+    approvedDate:dateSchema,
    
+});
+
+//======================================================
+//========= Add pelulus ============
+//======================================================
+
+export const _addapproveInfoSchema = z.object({
+
+    approvedStatus:shortTextSchema,
+    approvedRemark:shortTextSchema,
+    approvedDate:dateSchema,
 });

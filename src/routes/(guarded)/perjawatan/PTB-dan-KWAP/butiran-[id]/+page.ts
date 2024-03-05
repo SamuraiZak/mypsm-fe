@@ -18,6 +18,9 @@ import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import type { PTBIDRequestBody } from '$lib/dto/mypsm/employment/PTB-KWAP/ptb-kwap-employeeid-request.view-dto';
 import { PTBKWAPServices } from '$lib/services/implementation/mypsm/PTB-KWAP/PTB.service';
 import type { PTBPersonalDTO } from '$lib/dto/mypsm/employment/PTB-KWAP/PTB-KWAP-personal-detail.dto';
+import type { PTBServiceDTO } from '$lib/dto/mypsm/employment/PTB-KWAP/ptb-kwap-service-detail.dto';
+import type { ptbPensionResponseDTO } from '$lib/dto/mypsm/employment/PTB-KWAP/ptb-kwap-pension-detail.dto';
+import type { ptbPensionRequestDTO } from '$lib/dto/mypsm/employment/PTB-KWAP/add-ptb-kwap-service-detail.dto';
 
 
 
@@ -28,11 +31,6 @@ import type { PTBPersonalDTO } from '$lib/dto/mypsm/employment/PTB-KWAP/PTB-KWAP
 
 // const authorisedRoleCode : string[] = [
 //     UserRoleConstants.calon
-
-
-
-
-
 
 export async function load({ params }) {
 
@@ -46,11 +44,28 @@ export async function load({ params }) {
             candidateIdRequestBody,
         );
 
-        const personalDetails: PTBPersonalDTO = personalDetailResponse.data
-            ?.details as PTBPersonalDTO;
+    const personalDetails: PTBPersonalDTO = personalDetailResponse.data
+        ?.details as PTBPersonalDTO;
 
 
+    const serviceDetailResponse: CommonResponseDTO =
+        await PTBKWAPServices.getPTBKWAPServiceDetails(
+            candidateIdRequestBody,
+        );
 
+    const serviceDetails: PTBServiceDTO = serviceDetailResponse.data
+        ?.details as PTBServiceDTO;
+
+        const pensionDetailResponse: CommonResponseDTO =
+        await PTBKWAPServices.getPTBKWAPpensionDetails(
+            candidateIdRequestBody,
+        );
+
+    const pensionDetails: ptbPensionResponseDTO = pensionDetailResponse.data
+        ?.details as ptbPensionResponseDTO;
+
+console.log(pensionDetails)
+    
     const personalInfoForm = await superValidate(
         _personalInfoSchema,
     );
@@ -59,6 +74,7 @@ export async function load({ params }) {
     )
 
     const PTBInfoForm = await superValidate(
+        pensionDetails,
         _PTBInfoSchema,
     )
     const resultInfoForm = await superValidate(
@@ -108,7 +124,7 @@ export async function load({ params }) {
         name: data.name,
     }));
 
-    
+
 
 
 
@@ -138,7 +154,7 @@ export async function load({ params }) {
         await LookupServices.getCityEnums();
 
     const cityLookup: DropdownDTO[] =
-        LookupServices.setSelectOptions(cityLookupResponse);
+        LookupServices.setSelectOptionsValueIsDescription(cityLookupResponse);
 
     // ===========================================================================
 
@@ -309,6 +325,7 @@ export async function load({ params }) {
             generalLookup,
             employeeLookup,
             assetDeclarationLookup,
+
         },
         personalInfoForm,
         serviceInfoForm,
@@ -318,6 +335,8 @@ export async function load({ params }) {
         supporterInfoForm,
         passerInfoForm,
         personalDetails,
+        serviceDetails,
+        pensionDetails,
     }
 };
 
@@ -380,29 +399,49 @@ export const _serviceInfoSubmit = async (formData: object) => {
     }
 }
 
+
+
 export const _PTBInfoSubmit = async (formData: object) => {
-    const PTBInfoForm = await superValidate(
-        formData,
-        _PTBInfoSchema,
-    );
-    console.log(PTBInfoForm)
-    if (PTBInfoForm.valid) {
-        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(PTBInfoForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        if (PTBInfoForm.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
+    const form = await superValidate(formData, _PTBInfoSchema);
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
     }
-}
+
+    const response: CommonResponseDTO =
+        await PTBKWAPServices.addPTBKWAPpensionDetails(
+            form.data as ptbPensionRequestDTO,
+        );
+
+    return { response };
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const _resultInfoSubmit = async (formData: object) => {
     const resultInfoForm = await superValidate(

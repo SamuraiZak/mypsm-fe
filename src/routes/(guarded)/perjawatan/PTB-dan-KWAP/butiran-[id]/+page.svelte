@@ -233,7 +233,7 @@
             });
         },
     });
-    console.log (data.personalDetails.placeOfBirth)
+    console.log(data.serviceDetails);
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -252,9 +252,8 @@
 >
     <Stepper bind:activeIndex={stepperIndex} dataId="#01" dataStatus="Draf">
         <StepperContent>
-            <StepperContentHeader title="Maklumat Kakitangan">
-                
-            </StepperContentHeader>
+            <StepperContentHeader title="Maklumat Kakitangan"
+            ></StepperContentHeader>
             <!-- {#if editingCandidateList} -->
             <StepperContentBody>
                 <form
@@ -271,7 +270,7 @@
                         id="employeeNo"
                         label="No. Pekerja"
                         errors={$personalInfoError.employeeNo}
-                       val={data.personalDetails.employeeNo}
+                        val={data.personalDetails.employeeNo}
                     ></CustomTextField>
                     <!-- <CustomTextField
                         type="date"
@@ -325,6 +324,7 @@
                         errors={$personalInfoError.dateOfBirth}
                         bind:val={data.personalDetails.dateOfBirth}
                     ></CustomTextField>
+
                     <CustomSelectField
                         disabled
                         id="placeOfBirth"
@@ -363,7 +363,7 @@
                         label="Jantina"
                         errors={$personalInfoError.gender}
                         bind:val={data.personalDetails.gender}
-                        options={data.selectionOptions.genderLookupResponse}
+                        options={data.selectionOptions.genderLookup}
                     ></CustomSelectField>
                     <CustomTextField
                         disabled
@@ -532,34 +532,34 @@
                         >Maklumat Perkhidmatan</b
                     >
                     <CustomTextField
-                        id="gradeId"
+                        id="grade"
                         label={'Gred Semasa'}
                         type="text"
-                        errors={$serviceInfoError.gradeId}
-                        bind:val={$serviceInfoForm.gradeId}
+                        errors={$serviceInfoError.grade}
+                        bind:val={$serviceInfoForm.grade}
                     ></CustomTextField>
                     <CustomTextField
-                        id="positionId"
+                        id="position"
                         label={'Jawatan'}
                         type="text"
-                        errors={$serviceInfoError.positionId}
-                        bind:val={$serviceInfoForm.positionId}
+                        errors={$serviceInfoError.position}
+                        bind:val={$serviceInfoForm.position}
                     ></CustomTextField>
 
                     <CustomTextField
-                        id="placementId"
+                        id="placement"
                         label={'Penempatan'}
                         type="text"
-                        errors={$serviceInfoError.placementId}
-                        bind:val={$serviceInfoForm.placementId}
+                        errors={$serviceInfoError.placement}
+                        bind:val={$serviceInfoForm.placement}
                     ></CustomTextField>
 
                     <CustomTextField
-                        id="serviceTypeId"
+                        id="serviceLevel"
                         label={'Taraf Perkhidmatan'}
                         type="text"
-                        errors={$serviceInfoError.serviceTypeId}
-                        bind:val={$serviceInfoForm.serviceTypeId}
+                        errors={$serviceInfoError.serviceLevel}
+                        bind:val={$serviceInfoForm.serviceLevel}
                     ></CustomTextField>
 
                     <!-- <RadioButton
@@ -570,26 +570,26 @@
                     ></RadioButton>  -->
 
                     <CustomRadioBoolean
-                        id="retirementBenefit"
+                        id="retirementType"
                         options={retirementBenefitOption}
                         label="Faedah Persaraan"
-                        errors={$serviceInfoError.retirementBenefit}
-                        bind:val={$serviceInfoForm.retirementBenefit}
+                        errors={$serviceInfoError.retirementType}
+                        bind:val={$serviceInfoForm.retirementType}
                     />
 
                     <CustomTextField
-                        id="epfNumber"
+                        id="EPFNumber"
                         label={'No. KWSP'}
                         type="text"
-                        errors={$serviceInfoError.epfNumber}
-                        bind:val={$serviceInfoForm.epfNumber}
+                        errors={$serviceInfoError.EPFNumber}
+                        bind:val={$serviceInfoForm.EPFNumber}
                     ></CustomTextField>
                     <CustomTextField
-                        id="socsoNumber"
+                        id="SOCSONumber"
                         label={'No. SOCSO'}
                         type="text"
-                        errors={$serviceInfoError.socsoNumber}
-                        bind:val={$serviceInfoForm.socsoNumber}
+                        errors={$serviceInfoError.SOCSONumber}
+                        bind:val={$serviceInfoForm.SOCSONumber}
                     ></CustomTextField>
                     <CustomTextField
                         id="incomeNumber"
@@ -612,54 +612,54 @@
                         errors={$serviceInfoError.bankAccount}
                         bind:val={$serviceInfoForm.bankAccount}
                     ></CustomTextField>
-                    <!-- <CustomTextField
-                            id="program"
-                            label={'Program'}
-                            type="text"
-                            val=""
-                            placeholder=""
-                        ></CustomTextField> -->
                     <CustomTextField
-                        id="eligibleLeaveCount"
+                        id="program"
+                        label={'Program'}
+                        type="text"
+                        errors={$serviceInfoError.program}
+                        bind:val={$serviceInfoForm.program}
+                    ></CustomTextField>
+                    <CustomTextField
+                        id="leaveEntitlement"
                         label={'Kelayakan Cuti'}
                         type="text"
-                        errors={$serviceInfoError.eligibleLeaveCount}
-                        bind:val={$serviceInfoForm.eligibleLeaveCount}
+                        errors={$serviceInfoError.leaveEntitlement}
+                        bind:val={$serviceInfoForm.leaveEntitlement}
                     ></CustomTextField>
                     <CustomTextField
-                        id="civilServiceStartDate"
+                        id="hireByGovermentDate"
                         label={'Mula Dilantik Perkhidmatan Kerajaan'}
-                        type="date"
-                        errors={$serviceInfoError.civilServiceStartDate}
-                        bind:val={$serviceInfoForm.civilServiceStartDate}
+                        type="text"
+                        errors={$serviceInfoError.hireByGovermentDate}
+                        bind:val={$serviceInfoForm.hireByGovermentDate}
                     ></CustomTextField>
                     <CustomTextField
-                        id="newRecruitEffectiveDate"
+                        id="hireByLKIMDate"
                         label={'Mula Dilantik Perkhidmatan LKIM'}
                         type="text"
-                        errors={$serviceInfoError.newRecruitEffectiveDate}
-                        bind:val={$serviceInfoForm.newRecruitEffectiveDate}
+                        errors={$serviceInfoError.hireByLKIMDate}
+                        bind:val={$serviceInfoForm.hireByLKIMDate}
                     ></CustomTextField>
                     <CustomTextField
-                        id="firstServiceDate"
+                        id="currentServiceStartDate"
                         label={'Mula Dilantik Perkhidmatan Sekarang'}
-                        type="date"
-                        errors={$serviceInfoError.firstServiceDate}
-                        bind:val={$serviceInfoForm.firstServiceDate}
+                        type="text"
+                        errors={$serviceInfoError.currentServiceStartDate}
+                        bind:val={$serviceInfoForm.currentServiceStartDate}
                     ></CustomTextField>
                     <CustomTextField
-                        id="firstConfirmServiceDate"
+                        id="firstServiceConfirmedDate"
                         label={'Disahkan Dalam Jawatan Pertama LKIM'}
-                        type="date"
-                        errors={$serviceInfoError.firstConfirmServiceDate}
-                        bind:val={$serviceInfoForm.firstConfirmServiceDate}
+                        type="text"
+                        errors={$serviceInfoError.firstServiceConfirmedDate}
+                        bind:val={$serviceInfoForm.firstServiceConfirmedDate}
                     ></CustomTextField>
                     <CustomTextField
-                        id="confirmDate"
+                        id="currentServiceConfirmedDate"
                         label={'Disahkan Dalam Jawatan Semasa LKIM'}
-                        type="date"
-                        errors={$serviceInfoError.confirmDate}
-                        bind:val={$serviceInfoForm.confirmDate}
+                        type="text"
+                        errors={$serviceInfoError.currentServiceConfirmedDate}
+                        bind:val={$serviceInfoForm.currentServiceConfirmedDate}
                     ></CustomTextField>
 
                     <!-- <AccordianField
@@ -689,13 +689,20 @@
                             placeholder=""
                         ></CustomTextField> -->
                     <!-- <CustomTextField
-                            id="pemangkuanSekarang"
-                            label={'Pemangkuan Sekarang'}
-                            type="text"
-                            val=""
-                            placeholder=""
-                        ></CustomTextField>
-                        <CustomTextField
+                        id="currentActing"
+                        label={'Pemangkuan Sekarang'}
+                        type="text"
+                        errors={$serviceInfoError.currentActing}
+                        bind:val={data.serviceDetails.currentActing}
+                    ></CustomTextField>
+                    <CustomTextField
+                        id="confirmDate"
+                        label={'Tarikh Disahkan'}
+                        type="text"
+                        errors={$serviceInfoError.confirmDate}
+                        bind:val={data.serviceDetails.confirmDate}
+                    ></CustomTextField> -->
+                    <!-- <CustomTextField
                             id="tanggungKerjaSekarang"
                             label={'Tanggung Kerja Sekarang'}
                             type="text"
@@ -710,99 +717,99 @@
                             placeholder=""
                         ></CustomTextField> -->
                     <!-- <CustomTextField
-                            id="kenaikanGajiAkhir"
+                            id="lastSalary"
                             label={'Kenaikan Gaji Akhir'}
                             type="text"
-                            val=""
-                            placeholder=""
+                            errors={$serviceInfoError.lastSalary}
+                            bind:val={data.serviceDetails.lastSalary}
                         ></CustomTextField>
                         <CustomTextField
-                            id="kenaikanPangkatAkhir"
+                            id="lastPromotion"
                             label={'Kenaikan Pangkat Akhir'}
                             type="text"
-                            val=""
-                            placeholder=""
-                        ></CustomTextField> -->
+                            errors={$serviceInfoError.lastPromotion}
+                            bind:val={data.serviceDetails.lastPromotion}
+                        ></CustomTextField>
                     <CustomTextField
                         id="kgt"
                         label={'Bulan KGT'}
                         type="text"
                         errors={$serviceInfoError.kgt}
-                        bind:val={$serviceInfoForm.kgt}
+                        bind:val={data.serviceDetails.kgt}
                     ></CustomTextField>
                     <CustomTextField
                         id="retirementDate"
                         label={'Tarikh Bersara'}
                         type="text"
                         errors={$serviceInfoError.retirementDate}
-                        bind:val={$serviceInfoForm.retirementDate}
+                        bind:val={data.serviceDetails.retirementDate}
                     ></CustomTextField>
                     <b class="text-sm text-system-primary"
                         >Maklumat Gaji dan Elaun - Elaun</b
-                    >
+                    > -->
                     <div class="grid grid-cols-2 gap-10">
-                        <div class="space-y-2.5">
-                            <!-- <CustomTextField
+                        <!-- <div class="space-y-2.5">
+                             <CustomTextField
                                     id="tarikhBerkuatkuasa"
                                     label={'Tarikh Berkuatkuasa'}
                                     type="text"
                                     val=""
                                     placeholder=""
-                                ></CustomTextField> -->
+                                ></CustomTextField> 
                             <CustomTextField
                                 id="maximumSalary"
                                 label={'Tangga Gaji'}
                                 type="text"
                                 errors={$serviceInfoError.maximumSalary}
-                                bind:val={$serviceInfoForm.maximumSalary}
+                                bind:val={data.serviceDetails.maximumSalary}
                             ></CustomTextField>
                             <CustomTextField
                                 id="baseSalary"
                                 label={'Gaji Pokok'}
                                 type="text"
                                 errors={$serviceInfoError.baseSalary}
-                                bind:val={$serviceInfoForm.baseSalary}
+                                bind:val={data.serviceDetails.baseSalary}
                             ></CustomTextField>
-                        </div>
+                        </div> -->
                         <!-- hasTooltip={true}
                                 toolTipID="type-itka" -->
-                        <div class="space-y-2.5">
+                        <!-- <div class="space-y-2.5">
                             <CustomTextField
                                 id="itka"
                                 label={'ITKA'}
                                 type="text"
                                 errors={$serviceInfoError.itka}
-                                bind:val={$serviceInfoForm.itka}
+                                bind:val={data.serviceDetails.itka}
                             ></CustomTextField>
                             <CustomTextField
                                 id="itp"
                                 label={'ITP'}
                                 type="text"
                                 errors={$serviceInfoError.itp}
-                                bind:val={$serviceInfoForm.itp}
+                                bind:val={data.serviceDetails.itp}
                             ></CustomTextField>
                             <CustomTextField
                                 id="epw"
                                 label={'EPW'}
                                 type="text"
                                 errors={$serviceInfoError.epw}
-                                bind:val={$serviceInfoForm.epw}
+                                bind:val={data.serviceDetails.epw}
                             ></CustomTextField>
                             <CustomTextField
                                 id="cola"
                                 label={'COLA'}
                                 type="text"
                                 errors={$serviceInfoError.cola}
-                                bind:val={$serviceInfoForm.cola}
-                            ></CustomTextField>
-                            <!-- Tooltip body -->
-                            <!-- <Tooltip
+                                bind:val={data.serviceDetails.cola}
+                            ></CustomTextField> -->
+                        <!-- Tooltip body -->
+                        <!-- <Tooltip
                                     type="dark"
                                     triggeredBy="[id^='type-']"
                                     on:show={assignContent}
                                     >"{tooltipContent}"</Tooltip
                                 > -->
-                        </div>
+                        <!-- </div> -->
                     </div>
                 </form></StepperContentBody
             >
@@ -827,13 +834,19 @@
                         use:PTBInfoEnhance
                     >
                         <CustomTextField
-                            id="PTBDate"
+                            id="applicationDate"
+                            type="date"
+                            label="Tarikh Permohonan"
+                            errors={$PTBInfoError.applicationDate}
+                            bind:val={$PTBInfoForm.applicationDate}
+                        ></CustomTextField>
+                        <CustomTextField
+                            id="PTBdate"
                             type="date"
                             label="Tarikh Diberi PTB"
                             errors={$PTBInfoError.PTBdate}
                             bind:val={$PTBInfoForm.PTBdate}
                         ></CustomTextField>
-
                         <CustomTextField
                             id="referenceNumber"
                             type="text"
@@ -848,6 +861,20 @@
                             label="Tarikh Rujukan"
                             errors={$PTBInfoError.refrenceDate}
                             bind:val={$PTBInfoForm.refrenceDate}
+                        ></CustomTextField>
+                        <CustomTextField
+                            id="status"
+                            type="date"
+                            label="Status"
+                            errors={$PTBInfoError.status}
+                            bind:val={$PTBInfoForm.status}
+                        ></CustomTextField>
+                        <CustomTextField
+                            id="remark"
+                            type="date"
+                            label="Catatan"
+                            errors={$PTBInfoError.remark}
+                            bind:val={$PTBInfoForm.remark}
                         ></CustomTextField>
 
                         <CustomTextField
@@ -934,17 +961,23 @@
                                     </div>
                                     <CustomTextField
                                         type="text"
-                                        id="passerName"
+                                        id="supporterName"
                                         label="Nama"
-                                        errors={$resultInfoError.passerName}
-                                        bind:val={$resultInfoForm.passerName}
+                                        errors={$resultInfoError.supporterName}
+                                        bind:val={$resultInfoForm.supporterName}
                                     ></CustomTextField>
                                     <CustomTextField
-                                        id="passerRemark"
-                                        label="Tindakan/Ulasan"
-                                        errors={$resultInfoError.passerRemark}
-                                        bind:val={$resultInfoForm.passerRemark}
+                                        id="supportedStatus"
+                                        label="TUlasan"
+                                        errors={$resultInfoError.supportedStatus}
+                                        bind:val={$resultInfoForm.supportedStatus}
                                     ></CustomTextField>
+                                    <CustomTextField
+                                    id="supportedRemark"
+                                    label="Tindakan"
+                                    errors={$resultInfoError.supportedRemark}
+                                    bind:val={$resultInfoForm.supportedRemark}
+                                ></CustomTextField>
                                     <div class="flex w-full flex-row text-sm">
                                         <label
                                             for="supporter-result"
@@ -962,10 +995,10 @@
                                     </div>
                                     <CustomTextField
                                         type="text"
-                                        id="passerName"
+                                        id="approverName"
                                         label="Nama"
-                                        errors={$resultInfoError.passerName}
-                                        bind:val={$resultInfoForm.passerName}
+                                        errors={$resultInfoError.approverName}
+                                        bind:val={$resultInfoForm.approverName}
                                     ></CustomTextField>
                                     <div class="text-sm text-system-primary">
                                         <i class=""
@@ -987,16 +1020,16 @@
                                     </div>
                                     <CustomTextField
                                         type="text"
-                                        id="ssupporterName"
+                                        id="supporterName"
                                         label="Nama"
                                         errors={$resultInfoError.supporterName}
                                         bind:val={$resultInfoForm.supporterName}
                                     ></CustomTextField>
                                     <CustomTextField
-                                        id="supporterRemark"
+                                        id="supportedStatus"
                                         label="Tindakan/Ulasan"
-                                        errors={$resultInfoError.supporterRemark}
-                                        bind:val={$resultInfoForm.supporterRemark}
+                                        errors={$resultInfoError.supportedStatus}
+                                        bind:val={$resultInfoForm.supportedStatus}
                                     ></CustomTextField>
                                     <div class="flex w-full flex-row text-sm">
                                         <label
@@ -1021,10 +1054,16 @@
                                         bind:val={$resultInfoForm.approverName}
                                     ></CustomTextField>
                                     <CustomTextField
-                                        id="approverRemark"
-                                        label="Tindakan/Ulasan"
-                                        errors={$resultInfoError.approverRemark}
-                                        bind:val={$resultInfoForm.approverRemark}
+                                        id="approvedStatus"
+                                        label="Ulasan"
+                                        errors={$resultInfoError.approvedStatus}
+                                        bind:val={$resultInfoForm.approvedStatus}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        id="approvedRemark"
+                                        label="Tindakan"
+                                        errors={$resultInfoError.approvedRemark}
+                                        bind:val={$resultInfoForm.approvedRemark}
                                     ></CustomTextField>
                                     <div class="flex w-full flex-row text-sm">
                                         <label
@@ -1143,18 +1182,29 @@
                                 <b class="text-sm text-system-primary"
                                     >Keputusan Penyokong</b
                                 >
-
                                 <CustomTextField
-                                    id="supporterResult"
-                                    label="Tindakan/Ulasan"
-                                    errors={$supporterInfoError.supporterResult}
-                                    bind:val={$supporterInfoForm.supporterResult}
+                                    id="supporterName"
+                                    label="Nama Penyokong"
+                                    errors={$supporterInfoError.supporterName}
+                                    bind:val={$supporterInfoForm.supporterName}
                                 ></CustomTextField>
                                 <CustomTextField
-                                    id="supporterRemark"
+                                    id="supportedStatus"
+                                    label="Status"
+                                    errors={$supporterInfoError.supportedStatus}
+                                    bind:val={$supporterInfoForm.supportedStatus}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    id="supportedRemark"
                                     label="Tindakan/Ulasan"
-                                    errors={$supporterInfoError.supporterRemark}
-                                    bind:val={$supporterInfoForm.supporterRemark}
+                                    errors={$supporterInfoError.supportedRemark}
+                                    bind:val={$supporterInfoForm.supportedRemark}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    id="supportedDate"
+                                    label="Tindakan/Ulasan"
+                                    errors={$supporterInfoError.supportedDate}
+                                    bind:val={$supporterInfoForm.supportedDate}
                                 ></CustomTextField>
                                 <!-- <RadioSingle
                         name="supporterResult"
@@ -1167,7 +1217,7 @@
                                 <hr />
                             </div>
                             <!-- Pelulus Card -->
-                            <div
+                            <!-- <div
                                 class="flex max-h-full w-full flex-col items-start justify-start"
                             >
                                 <div>
@@ -1179,8 +1229,8 @@
                                     type="text"
                                     id="passerName"
                                     label="Nama"
-                                    errors={$supporterInfoError.passerName}
-                                    bind:val={$supporterInfoForm.passerName}
+                                    errors={$supporterInfoError.supporterName}
+                                    bind:val={$supporterInfoForm.supporterName}
                                 ></CustomTextField>
                                 <div class="text-sm text-system-primary">
                                     <i class=""
@@ -1190,7 +1240,7 @@
                                         </li></i
                                     >
                                 </div>
-                            </div>
+                            </div> -->
                         </form>
                     </StepperContentBody>
                 </StepperContent>
@@ -1223,11 +1273,11 @@
                             >
                                 <!-- Penyokong Card -->
 
-                                <b class="text-sm text-system-primary"
+                                <!-- <b class="text-sm text-system-primary"
                                     >Keputusan Penyokong</b
-                                >
+                                > -->
 
-                                <CustomTextField
+                                <!-- <CustomTextField
                                     id="supporterResult"
                                     label="Tindakan/Ulasan"
                                     errors={$passerInfoError.supporterResult}
@@ -1238,7 +1288,7 @@
                                     label="Tindakan/Ulasan"
                                     errors={$passerInfoError.supporterRemark}
                                     bind:val={$passerInfoForm.supporterRemark}
-                                ></CustomTextField>
+                                ></CustomTextField> -->
                                 <!-- <RadioSingle
                         name="supporterResult"
                         disabled={!editable}
@@ -1260,16 +1310,29 @@
                                 </div>
                                 <CustomTextField
                                     type="text"
-                                    id="passerName"
+                                    id="approverName"
                                     label="Nama"
-                                    errors={$passerInfoError.passerName}
-                                    bind:val={$passerInfoForm.passerName}
+                                    errors={$passerInfoError.approverName}
+                                    bind:val={$passerInfoForm.approverName}
                                 ></CustomTextField>
                                 <CustomTextField
-                                    id="passerRemark"
+                                    id="approvedStatus"
+                                    label="Status"
+                                    errors={$passerInfoError.approvedStatus}
+                                    bind:val={$passerInfoForm.approvedStatus}
+                                ></CustomTextField>
+
+                                <CustomTextField
+                                    id="approvedRemark"
                                     label="Tindakan/Ulasan"
-                                    errors={$passerInfoError.passerRemark}
-                                    bind:val={$passerInfoForm.passerRemark}
+                                    errors={$passerInfoError.approvedRemark}
+                                    bind:val={$passerInfoForm.approvedRemark}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    id="approvedDate"
+                                    label="Tarikh Diluluskan"
+                                    errors={$passerInfoError.approvedDate}
+                                    bind:val={$passerInfoForm.approvedDate}
                                 ></CustomTextField>
                                 <div class="flex w-full flex-row text-sm">
                                     <label
