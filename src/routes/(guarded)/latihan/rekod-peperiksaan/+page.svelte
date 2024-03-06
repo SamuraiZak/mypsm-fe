@@ -72,12 +72,8 @@
                 label="Nama Pekerja"
                 bind:inputValue={examTable.param.filter.employeeName}
             ></FilterTextField>
-            <FilterTextField
-                label="Tajuk Peperiksaan"
-                bind:inputValue={examTable.param.filter.examTitle}
-            ></FilterTextField>
             <FilterSelectField
-                label="Keputusan Peperiksaan"
+                label="Jenis Peperiksaan"
                 options={data.selectionOptions.statusLookup}
                 bind:inputValue={examTable.param.filter.examTypeId}
             ></FilterSelectField>
@@ -90,13 +86,18 @@
                 bind:inputValue={examTable.param.filter.examTitle}
             ></FilterTextField>
             <FilterTextField
-                label="Tajuk Peperiksaan"
-                bind:inputValue={examTable.param.filter.examTitle}
+                label="Tarikh Peperiksaan"
+                bind:inputValue={examTable.param.filter.examDate}
             ></FilterTextField>
+            <FilterSelectField
+                label="Keputusan Peperiksaan"
+                options={data.selectionOptions.statusLookup}
+                bind:inputValue={examTable.param.filter.examResult}
+            ></FilterSelectField>
             <FilterSelectField
                 label="Status"
                 options={data.selectionOptions.statusLookup}
-                bind:inputValue={examTable.param.filter.examTypeId}
+                bind:inputValue={examTable.param.filter.examStatus}
             ></FilterSelectField>
         </FilterCard>
         <div class="flex max-h-full w-full flex-col items-start justify-start">
