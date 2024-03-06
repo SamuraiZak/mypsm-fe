@@ -1,12 +1,12 @@
 import type {
     _nextOfKinListRequestSchema,
-    _nextOfKinListResponseSchema,
+    _dependencyListResponseSchema,
     _relationsSchema,
 } from '$lib/schemas/mypsm/employment/new-hire/schema';
 import type { z } from 'zod';
 
 export type CandidateNextOfKinDetailResponseDTO = z.infer<
-    typeof _nextOfKinListResponseSchema
+    typeof _dependencyListResponseSchema
 >;
 
 export type CandidateNextOfKinDetailRequestDTO = z.infer<
