@@ -7,6 +7,7 @@ import {
     codeSchema,
     dateStringSchema,
     longTextSchema,
+    minDateSchema,
     numberIdSchema,
     requiredDateStringSchema,
     shortTextSchema,
@@ -22,17 +23,19 @@ export const _examIDschema = z.object({
 
 export const _examInfoResponseSchema = z.object({
     id: z.number().readonly(),
-    examTitle: shortTextSchema,
     examTypeId: numberIdSchema,
-    startDate: requiredDateStringSchema,
-    endDate: requiredDateStringSchema,
-    examDate: requiredDateStringSchema,
+    examTitle: codeSchema,
+    startDate: minDateSchema,
+    endDate: minDateSchema,
+    examDate: minDateSchema,
     examLocation: longTextSchema,
 });
 
 export const _examInfoRequestSchema = _examInfoResponseSchema.omit({
     id: true,
 });
+
+export const _editExamInfoRequestSchema = _examInfoResponseSchema;
 
 export const _examListResponseSchema = z.array(_examInfoResponseSchema);
 
