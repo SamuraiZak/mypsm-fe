@@ -210,6 +210,31 @@ export class SidebarConstant {
             ],
         },
 
+        //Kakitangan Kontrak
+        {
+            role: RoleConstant.kakitanganKontrak.code,
+            navItems: [
+                {
+                    name: 'Halaman Utama',
+                    path: '/halaman-utama',
+                },
+                {
+                    name: 'Maklumat Kontrak',
+                    path: '',
+                    subItems: [
+                        {
+                            name: 'Perlantikan Baru (Kontrak)',
+                            path: '/kakitangan-kontrak/lantikan-baru',
+                        },
+                        {
+                            name: 'Pembaharuan Kontrak',
+                            path: '/kakitangan-kontrak/pembaharuan',
+                        },
+                    ],
+                },
+            ],
+        },
+
         //Ketua Pengarah
         {
             role: RoleConstant.ketuaPengarah.code,
@@ -1511,6 +1536,20 @@ export class SidebarConstant {
                         {
                             name: 'Persaraan',
                             path: '/perjawatan/persaraan',
+                        },
+                    ],
+                },
+                {
+                    name: 'Kakitangan Kontrak',
+                    path: '',
+                    subItems: [
+                        {
+                            name: 'Perlantikan Baru (Kontrak)',
+                            path: '/kakitangan-kontrak/lantikan-baru',
+                        },
+                        {
+                            name: 'Pembaharuan Kontrak',
+                            path: '/kakitangan-kontrak/pembaharuan',
                         },
                     ],
                 },
