@@ -1,5 +1,6 @@
+import { goto } from '$app/navigation';
 import { redirect } from '@sveltejs/kit';
 
 export function load() {
-    throw redirect(302, '/login');
+    goto('/login');
 }

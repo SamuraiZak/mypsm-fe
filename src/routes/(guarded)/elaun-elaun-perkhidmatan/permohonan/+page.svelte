@@ -47,7 +47,7 @@
             label="Permohonan Baru"
             icon="add"
             onClick={() => {
-                goto('/elaun-elaun-perkhidmatan/permohonan/baru');
+                goto('/elaun-elaun-perkhidmatan/permohonan/baru/bantuan-mengurus-jenazah');
             }}
         ></TextIconButton>
     </ContentHeader>

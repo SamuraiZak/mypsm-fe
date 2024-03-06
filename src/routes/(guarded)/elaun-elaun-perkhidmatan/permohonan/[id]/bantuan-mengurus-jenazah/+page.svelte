@@ -9,12 +9,27 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import { ServiceAllowanceTypeConstant } from '$lib/constants/core/service-allowance.constant';
-    import type { PageData } from './$types';
+    import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
+    import type { PageData } from '../$types';
 
     export let data: PageData;
 
     let selectedAllowanceType: string =
-        ServiceAllowanceTypeConstant.culturalClothesAllowance.code;
+        ServiceAllowanceTypeConstant.bantuanPakaianIstiadat.code;
+
+    function _handleAllowanceTypeChange(allowanceTypeCode: string) {
+        const tempAllowanceType: LookupDTO =
+            ServiceAllowanceTypeConstant.list.find(
+                (item) => item.code === allowanceTypeCode,
+            ) ?? ServiceAllowanceTypeConstant.bantuanPakaianIstiadat;
+
+        const newUrl: string =
+            '/elaun-elaun-perkhidmatan/permohonan/' +
+            data.props.applicationId +
+            '/' +
+            tempAllowanceType.url;
+        goto(newUrl, { replaceState: true });
+    }
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -51,6 +66,11 @@
                                 id="allowanceType"
                                 label={'Jenis Elaun'}
                                 bind:val={selectedAllowanceType}
+                                onValueChange={() => {
+                                    _handleAllowanceTypeChange(
+                                        selectedAllowanceType,
+                                    );
+                                }}
                                 options={data.props.allowanceTypeDropdown}
                             ></CustomSelectField>
                         </div>
@@ -60,3 +80,4 @@
         </StepperContent>
     </Stepper>
 </section>
+
