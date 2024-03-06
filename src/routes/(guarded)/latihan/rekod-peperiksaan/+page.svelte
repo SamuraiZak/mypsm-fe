@@ -3,16 +3,15 @@
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
-    import { _updateTable } from './+page';
+    import { _updateTable } from './+layout';
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
-    import type { CourseExamListResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-list-response.dto';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import type { CourseExamDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam.dto';
-    import type { PageData } from './$types';
+    import type { LayoutData } from './$types';
 
-    export let data: PageData;
+    export let data: LayoutData;
     let rowData: CourseExamDetailResponseDTO;
     let param: CommonListRequestDTO = data.param;
 
@@ -25,9 +24,7 @@
             totalData: 4,
             totalPage: 1,
         },
-        data:
-            (data.list.examApplicationList as CourseExamListResponseDTO) ?? [],
-        hiddenData: ['applicationId'],
+        data: data.list.examApplicationList ?? [],
     };
 
     async function _updateExamTable() {
@@ -72,15 +69,6 @@
                 label="Nama Pekerja"
                 bind:inputValue={examTable.param.filter.employeeName}
             ></FilterTextField>
-            <FilterSelectField
-                label="Jenis Peperiksaan"
-                options={data.selectionOptions.statusLookup}
-                bind:inputValue={examTable.param.filter.examTypeId}
-            ></FilterSelectField>
-            <FilterTextField
-                label="Tajuk Peperiksaan"
-                bind:inputValue={examTable.param.filter.examTitle}
-            ></FilterTextField>
             <FilterTextField
                 label="Tajuk Peperiksaan"
                 bind:inputValue={examTable.param.filter.examTitle}
@@ -90,8 +78,13 @@
                 bind:inputValue={examTable.param.filter.examDate}
             ></FilterTextField>
             <FilterSelectField
+                label="Jenis Peperiksaan"
+                options={data.selectionOptions.examTypeLookup}
+                bind:inputValue={examTable.param.filter.examTypeId}
+            ></FilterSelectField>
+            <FilterSelectField
                 label="Keputusan Peperiksaan"
-                options={data.selectionOptions.statusLookup}
+                options={data.selectionOptions.examResultLookup}
                 bind:inputValue={examTable.param.filter.examResult}
             ></FilterSelectField>
             <FilterSelectField
