@@ -15,7 +15,7 @@ import type {
     CourseAddExamApplicationRequestDTO,
     CourseSetExamAttendanceRequestDTO,
 } from '$lib/dto/mypsm/course/exam/course-exam-application.dto';
-import type { CourseCreateExamRequestDTO } from '$lib/dto/mypsm/course/exam/course-exam.dto';
+// import type { CourseCreateExamRequestDTO } from '$lib/dto/mypsm/course/exam/course-exam.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
@@ -72,9 +72,38 @@ export class CourseServices {
     }
 
     // create exam record
-    static async createCourseExam(param: CourseCreateExamRequestDTO) {
+    static async createCourseExam<T>(param: T) {
         try {
             const url: Input = 'course/exam/add';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // edit exam record
+    static async editCourseExam<T>(param: T) {
+        try {
+            const url: Input = 'course/exam/edit';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
