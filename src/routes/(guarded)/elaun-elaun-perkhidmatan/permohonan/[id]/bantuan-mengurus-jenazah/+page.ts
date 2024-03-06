@@ -6,6 +6,12 @@ import { LookupHelper } from '$lib/helpers/core/lookup.helper.js';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service.js';
 
 export async function load({ params }) {
+
+    // =====================================================================
+    // Step 1: Get application type
+    // =====================================================================
+    const applicationId = params.id;
+
     // =====================================================================
     // Step 1: Get allowance type lookup
     // =====================================================================
@@ -19,7 +25,7 @@ export async function load({ params }) {
             ?.dataList as LookupDTO[];
 
         allowanceTypeDropdown =
-            LookupHelper.toDropdownProper(allowanceTypeLookup);
+            LookupHelper.toDropdownDescriptionWithUrl(allowanceTypeLookup);
     }
 
     // =====================================================================
@@ -37,6 +43,7 @@ export async function load({ params }) {
 
     return {
         props: {
+            applicationId,
             allowanceTypeDropdown,
         },
     };
