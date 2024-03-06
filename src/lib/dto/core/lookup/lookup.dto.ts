@@ -7,6 +7,8 @@ export interface LookupDTO {
     code: string;
     description: string;
     year?: number;
+    url?: string;
+    countryCode?: string;
 }
 
 // Converts JSON strings to/from your types

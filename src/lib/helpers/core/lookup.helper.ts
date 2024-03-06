@@ -50,4 +50,14 @@ export class LookupHelper {
 
         return dropdownList;
     }
+
+    static toDropdownDescriptionWithUrl(lookupList: LookupDTO[]) {
+        const dropdownList: DropdownDTO[] = lookupList.map((lookup) => ({
+            value: lookup.code,
+            name: TextAppearanceHelper.toProper(lookup.description),
+            url: lookup.url,
+        }));
+
+        return dropdownList;
+    }
 }
