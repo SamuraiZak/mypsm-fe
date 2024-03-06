@@ -10,6 +10,7 @@
     export let disabled: boolean = false;
 
     export let options: DropdownDTO[] = [];
+    export let onValueChange = ()=>{};
 </script>
 
 <div class="flex w-full flex-col items-center justify-start gap-1">
@@ -26,6 +27,7 @@
         {disabled}
         name={id}
         bind:value={val}
+        on:change={onValueChange}
         class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
             ? 'bg-ios-systemColors-quaternarySystemFill-light'
             : 'bg-ios-backgroundColors-systemBackground-light'} py-0 text-sm focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
