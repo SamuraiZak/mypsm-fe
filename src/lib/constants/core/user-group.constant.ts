@@ -11,7 +11,7 @@ export class UserGroupConstant {
         description: 'Kakitangan',
     };
     public static contractor: UserGroupDTO = {
-        code: 'ff063e92-84be-45cb-bb27-7c0f96cfdc0',
+        code: 'ff063e92-84be-45cb-bb27-7c0f96cfdc00',
         description: 'Kakitangan Kontrak',
     };
     public static candidate: UserGroupDTO = {
