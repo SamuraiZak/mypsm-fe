@@ -145,4 +145,8 @@ export class RoleConstant {
         code: '24b3d6f7-4196-4659-9b18-919319b40626',
         description: 'klinik panel',
     };
+    public static kakitanganKontrak: LookupDTO = {
+        code: '0f2656ce-783a-4729-a58d-3abf7712660e',
+        description: 'kakitangan kontrak',
+    }
 }

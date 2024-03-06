@@ -1240,7 +1240,7 @@
                                 onUpdate={_search}
                                 title=""
                                 bind:tableData={table}
-                                enableSelect
+                                enableAdd
                             />
                         </form>
                     {/if}
