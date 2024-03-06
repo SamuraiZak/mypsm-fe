@@ -1,18 +1,19 @@
 <script lang="ts">
+    import type { LayoutData } from './$types';
     import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
-    import { _updateTable } from './+page';
+    import { _updateTable } from './+layout';
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import type { CourseExamListResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-list-response.dto';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import type { CourseExamDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam.dto';
-    import type { PageData } from './$types';
+    import TextIconButton from '$lib/components/button/TextIconButton.svelte';
 
-    export let data: PageData;
+    export let data: LayoutData;
     let rowData: CourseExamDetailResponseDTO;
     let param: CommonListRequestDTO = data.param;
 
@@ -57,6 +58,17 @@
     <div
         class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
     >
+        <ContentHeader
+            title="Tekan butang disebelah untuk menambah peperiksaan"
+            borderClass="border-none"
+        >
+            <TextIconButton
+                label="Tambah Peperiksaan"
+                type="primary"
+                onClick={() =>
+                    goto('./kemaskini-peperiksaan/tambah-peperiksaan')}
+            ></TextIconButton>
+        </ContentHeader>
         <!-- Table filter placeholder -->
         <FilterCard onSearch={_updateExamTable}>
             <FilterTextField
@@ -77,7 +89,7 @@
                 bind:tableData={examTable}
                 bind:passData={rowData}
                 detailActions={() => {
-                    const route = `./lantikan/peperiksaan/${rowData.id}`;
+                    const route = `./kemaskini-peperiksaan/${rowData.id}`;
 
                     goto(route);
                 }}
