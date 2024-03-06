@@ -1251,35 +1251,35 @@
                         ></CustomSelectField>
 
                         <CustomSelectField
-                            id="addRelationshipId"
+                            id="relationshipId"
                             label={'Hubungan'}
                             disabled
                             val=""
                         ></CustomSelectField>
 
                         <CustomSelectField
-                            id="addEducationLevelId"
+                            id="educationLevelId"
                             label={'Taraf Pendidikan'}
                             disabled
                             val=""
                         ></CustomSelectField>
 
                         <CustomSelectField
-                            id="addRaceId"
+                            id="raceId"
                             label={'Bangsa'}
                             disabled
                             val=""
                         ></CustomSelectField>
 
                         <CustomSelectField
-                            id="addNationalityId"
+                            id="nationalityId"
                             label={'Kewarganegaraan'}
                             disabled
                             val=""
                         ></CustomSelectField>
 
                         <CustomSelectField
-                            id="addMaritalId"
+                            id="maritalId"
                             label={'Status Perkhahwinan'}
                             disabled
                             val=""
@@ -1293,7 +1293,7 @@
                         ></CustomSelectField>
 
                         <CustomTextField
-                            id="addWorkAddress"
+                            id="workAddress"
                             label={'Alamat Majikan'}
                             type="text"
                             disabled
@@ -1301,7 +1301,7 @@
                         ></CustomTextField>
 
                         <CustomTextField
-                            id="addWorkPostcode"
+                            id="workPostcode"
                             label={'Poskod Majikan'}
                             type="text"
                             disabled
@@ -1309,7 +1309,7 @@
                         ></CustomTextField>
 
                         <CustomTextField
-                            id="addPhoneNumber"
+                            id="phoneNumber"
                             label={'Nombor Mobil'}
                             type="text"
                             disabled
@@ -1318,7 +1318,7 @@
 
                         <CustomTextField
                             type="date"
-                            id="addMarriageDate"
+                            id="marriageDate"
                             label={'Tarikh Kahwin'}
                             val=""
                         ></CustomTextField>
@@ -1382,7 +1382,7 @@
                         </div>
                         <CustomTabContent>
                             <CustomTextField
-                                id="addName"
+                                id="name"
                                 label={'Nama'}
                                 type="text"
                                 disabled
@@ -1390,20 +1390,20 @@
                             ></CustomTextField>
 
                             <CustomTextField
-                                id="addAlternativeName"
+                                id="alternativeName"
                                 label={'Nama Lain'}
                                 type="text"
                                 disabled
                                 val=""
                             ></CustomTextField>
                             <CustomSelectField
-                                id="addIdentityDocumentColor"
+                                id="identityDocumentColor"
                                 label={'Warna Kad Pengenalan'}
                                 disabled
                                 val=""
                             ></CustomSelectField>
                             <CustomTextField
-                                id="addIdentityDocumentNumber"
+                                id="identityDocumentNumber"
                                 type="number"
                                 label={'Nombor Kad Pengenalan'}
                                 disabled
@@ -1411,14 +1411,14 @@
                             ></CustomTextField>
 
                             <CustomTextField
-                                id="addAddress"
+                                id="address"
                                 label={'Alamat'}
                                 disabled
                                 val=""
                             ></CustomTextField>
 
                             <CustomTextField
-                                id="addPostcode"
+                                id="postcode"
                                 label={'Poskod'}
                                 type="text"
                                 disabled
@@ -1428,69 +1428,69 @@
                             <CustomTextField
                                 disabled
                                 type="date"
-                                id="addBirthDate"
+                                id="birthDate"
                                 label={'Tarikh Lahir'}
                                 val=""
                             ></CustomTextField>
 
                             <CustomSelectField
-                                id="addBirthCountryId"
+                                id="birthCountryId"
                                 label={'Negara Kelahiran'}
                                 disabled
                                 val=""
                             ></CustomSelectField>
 
                             <CustomSelectField
-                                id="addBirthStateId"
+                                id="birthStateId"
                                 label={'Negeri Kelahiran'}
                                 disabled
                                 val=""
                             ></CustomSelectField>
 
                             <CustomSelectField
-                                id="addRelationshipId"
+                                id="relationshipId"
                                 label={'Hubungan'}
                                 disabled
                                 val=""
                             ></CustomSelectField>
 
                             <CustomSelectField
-                                id="addEducationLevelId"
+                                id="educationLevelId"
                                 label={'Taraf Pendidikan'}
                                 disabled
                                 val=""
                             ></CustomSelectField>
 
                             <CustomSelectField
-                                id="addRaceId"
+                                id="raceId"
                                 label={'Bangsa'}
                                 disabled
                                 val=""
                             ></CustomSelectField>
 
                             <CustomSelectField
-                                id="addNationalityId"
+                                id="nationalityId"
                                 label={'Kewarganegaraan'}
                                 disabled
                                 val=""
                             ></CustomSelectField>
 
                             <CustomSelectField
-                                id="addMaritalId"
+                                id="maritalId"
                                 label={'Status Perkhahwinan'}
                                 disabled
                                 val=""
                             ></CustomSelectField>
 
                             <CustomSelectField
-                                id="addGenderId"
+                                id="genderId"
                                 label={'Jantina'}
                                 disabled
                                 val=""
                             ></CustomSelectField>
 
                             <CustomTextField
-                                id="addWorkAddress"
+                                id="workAddress"
                                 label={'Alamat Majikan'}
                                 type="text"
                                 disabled
@@ -1498,7 +1498,7 @@
                             ></CustomTextField>
 
                             <CustomTextField
-                                id="addWorkPostcode"
+                                id="workPostcode"
                                 label={'Poskod Majikan'}
                                 type="text"
                                 disabled
@@ -1506,7 +1506,7 @@
                             ></CustomTextField>
 
                             <CustomTextField
-                                id="addPhoneNumber"
+                                id="phoneNumber"
                                 label={'Nombor Mobil'}
                                 type="text"
                                 disabled
@@ -1515,7 +1515,7 @@
 
                             <CustomTextField
                                 type="date"
-                                id="addMarriageDate"
+                                id="marriageDate"
                                 label={'Tarikh Kahwin'}
                                 val=""
                             ></CustomTextField>

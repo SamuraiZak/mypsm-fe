@@ -62,66 +62,66 @@ export const _personalInfoResponseSchema = z
         relationshipId: true,
     });
 
-// export const _personalInfoRequestSchema = _personalInfoResponseSchema
-// .omit({
-//     id: true,
-//     employeeName: true,
-//     employeePosition: true,
-//     isReadOnly: true,
-// })
-// .superRefine(
-//     (
-//         {
-//             assetDeclarationStatusId,
-//             propertyDeclarationDate,
-//             isInternalRelationship,
-//             employeeNumber,
-//             relationshipId,
-//         },
-//         ctx,
-//     ) => {
-//         if (
-//             assetDeclarationStatusId === 12 ||
-//             assetDeclarationStatusId === 14 ||
-//             assetDeclarationStatusId === 15 ||
-//             assetDeclarationStatusId === 17 ||
-//             assetDeclarationStatusId === 18 ||
-//             assetDeclarationStatusId === 22
-//         ) {
-//             if (propertyDeclarationDate === null) {
-//                 ctx.addIssue({
-//                     code: 'custom',
-//                     message: 'Tarikh tidak boleh kosong.',
-//                     path: ['propertyDeclarationDate'],
-//                 });
-//             }
-//         }
+export const _personalInfoRequestSchema = _personalInfoResponseSchema
+.omit({
+    id: true,
+    employeeName: true,
+    employeePosition: true,
+    isReadOnly: true,
+})
+.superRefine(
+    (
+        {
+            assetDeclarationStatusId,
+            propertyDeclarationDate,
+            isInternalRelationship,
+            employeeNumber,
+            relationshipId,
+        },
+        ctx,
+    ) => {
+        if (
+            assetDeclarationStatusId === 12 ||
+            assetDeclarationStatusId === 14 ||
+            assetDeclarationStatusId === 15 ||
+            assetDeclarationStatusId === 17 ||
+            assetDeclarationStatusId === 18 ||
+            assetDeclarationStatusId === 22
+        ) {
+            if (propertyDeclarationDate === null) {
+                ctx.addIssue({
+                    code: 'custom',
+                    message: 'Tarikh tidak boleh kosong.',
+                    path: ['propertyDeclarationDate'],
+                });
+            }
+        }
 
-//         if (isInternalRelationship) {
-//             if (employeeNumber === '') {
-//                 ctx.addIssue({
-//                     code: 'custom',
-//                     message: 'Nombor pekerja tidak boleh kosong.',
-//                     path: ['employeeNumber'],
-//                 });
-//             }
-//             if (relationshipId === null) {
-//                 ctx.addIssue({
-//                     code: 'custom',
-//                     message: 'Hubungan tidak boleh kosong.',
-//                     path: ['relationshipId'],
-//                 });
-//             }
-//         }
-//     },
-// );
+        if (isInternalRelationship) {
+            if (employeeNumber === '') {
+                ctx.addIssue({
+                    code: 'custom',
+                    message: 'Nombor pekerja tidak boleh kosong.',
+                    path: ['employeeNumber'],
+                });
+            }
+            if (relationshipId === null) {
+                ctx.addIssue({
+                    code: 'custom',
+                    message: 'Hubungan tidak boleh kosong.',
+                    path: ['relationshipId'],
+                });
+            }
+        }
+    },
+);
 
 //==========================================================
 //================== Service Schema ===================
 //==========================================================
 
 export const _serviceDetailSchema = z.object({
-    // candidateId: numberIdSchema,
+    candidateId: numberIdSchema,
     gradeId: numberIdSchema,
     positionId: numberIdSchema,
     placementId: numberIdSchema,
@@ -159,13 +159,13 @@ export const _serviceDetailSchema = z.object({
     isReadOnly: z.boolean().readonly(),
 });
 
-// export const _serviceInfoResponseSchema = _serviceDetailSchema.omit({
-//     candidateId: true,
-// });
+export const _serviceInfoResponseSchema = _serviceDetailSchema.omit({
+    candidateId: true,
+});
 
-// export const _serviceInfoRequestSchema = _serviceDetailSchema.omit({
-//     isReadOnly: true,
-// });
+export const _serviceInfoRequestSchema = _serviceDetailSchema.omit({
+    isReadOnly: true,
+});
 
 //==========================================================
 //================== Academic Schema =====================
@@ -256,7 +256,7 @@ export const _relationsSchema = z
         nationalityId: numberIdSchema,
         maritalId: numberIdSchema,
         genderId: numberIdSchema,
-        
+
         name: shortTextSchema,
         alternativeName: z.string(),
         identityDocumentColor: codeSchema,
