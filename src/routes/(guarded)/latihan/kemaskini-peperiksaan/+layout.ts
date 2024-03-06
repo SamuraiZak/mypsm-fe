@@ -3,14 +3,13 @@ import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-requ
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { CourseExamListResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-list-response.dto';
+import { renameExamTypeKeyValue } from '$lib/helpers/mypsm/course/exam-type.helper';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { CourseServices } from '$lib/services/implementation/mypsm/latihan/course.service';
 
 export const load = async () => {
     let examListResponse: CommonResponseDTO = {};
     let examList = [];
-    let examApplicationResponse: CommonResponseDTO = {};
-    let examApplicationList = [];
 
     const currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
@@ -19,8 +18,8 @@ export const load = async () => {
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
-        orderType: null,
+        orderBy: 'examTitle',
+        orderType: 0,
         filter: {
             examTypeId: null, // 0 or Null: All | 1: Perkhidmatan | 2: PSL
             identityCard: null, //string | null | undefined;
@@ -31,13 +30,11 @@ export const load = async () => {
 
     // exam list
     examListResponse = await CourseServices.getCourseExamList(param);
+
+    await renameExamTypeKeyValue(examListResponse);
+
     examList =
         (examListResponse.data?.dataList as CourseExamListResponseDTO) ?? [];
-
-    // submitted form list
-    examApplicationResponse =
-        await CourseServices.getCourseExamApplicationList(param);
-    examApplicationList = examApplicationResponse.data?.dataList ?? [];
 
     // ==========================================================================
     // Get Lookup Functions
@@ -50,18 +47,26 @@ export const load = async () => {
 
     // ===========================================================================
 
+    const examTypeLookupResponse: CommonResponseDTO =
+        await LookupServices.getExamTypeEnums();
+
+    const examTypeLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        examTypeLookupResponse,
+    );
+
+    // ===========================================================================
+
     return {
         param,
         currentRoleCode,
         list: {
             examList,
-            examApplicationList,
         },
         responses: {
             examListResponse,
-            examApplicationResponse,
         },
         selectionOptions: {
+            examTypeLookup,
             statusLookup,
         },
     };
@@ -70,6 +75,8 @@ export const load = async () => {
 export const _updateTable = async (param: CommonListRequestDTO) => {
     const response: CommonResponseDTO =
         await CourseServices.getCourseExamList(param);
+
+    await renameExamTypeKeyValue(response);
     return {
         param,
         response,
