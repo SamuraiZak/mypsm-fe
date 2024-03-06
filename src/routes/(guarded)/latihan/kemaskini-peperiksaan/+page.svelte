@@ -46,7 +46,7 @@
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Rekod Lantikan Baru Kakitangan Tetap"></ContentHeader>
+    <ContentHeader title="Rekod Jenis - Jenis Peperiksaan"></ContentHeader>
 </section>
 
 <!-- content body starts here -->
