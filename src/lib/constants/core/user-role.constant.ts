@@ -217,9 +217,9 @@ export class UserRoleConstant {
     };
     public static kakitanganKontrak: UserRoleDTO = {
         id: 36,
-        code: '0f2656ce-783a-4729-a58d-3abf7712660e',
+        code: '442e6f24-2de2-452e-8146-2185ea36479d',
         description: 'kakitangan kontrak',
-        userGroupCode: 'f82fe23c-d4fd-4d61-9267-b16555c9db12',
+        userGroupCode: 'ff063e92-84be-45cb-bb27-7c0f96cfdc00',
     };
 
     public static list: UserRoleDTO[] = [
