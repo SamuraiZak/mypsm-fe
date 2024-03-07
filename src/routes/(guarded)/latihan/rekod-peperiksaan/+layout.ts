@@ -1,4 +1,5 @@
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant.js';
+import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
@@ -14,6 +15,8 @@ export const load = async () => {
     const currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
     );
+
+    const isStaffRole = currentRoleCode === RoleConstant.kakitangan.code;
 
     const param: CommonListRequestDTO = {
         pageNum: 1,
@@ -74,7 +77,10 @@ export const load = async () => {
 
     return {
         param,
-        currentRoleCode,
+        roles: {
+            currentRoleCode,
+            isStaffRole,
+        },
         list: {
             examApplicationList,
         },
@@ -100,4 +106,3 @@ export const _updateTable = async (param: CommonListRequestDTO) => {
         response,
     };
 };
-
