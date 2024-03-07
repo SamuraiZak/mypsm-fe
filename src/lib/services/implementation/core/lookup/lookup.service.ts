@@ -958,6 +958,26 @@ export class LookupServices {
         }
     }
 
+    // IC Type Lookup Service
+    static async getIdentityCardColor() {
+        try {
+            const url: Input = 'lookup/ic_types';
+
+            const response: Response = await http.get(url, {}).json();
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     // Sets the dropdown selection options
     static setSelectOptions = (param: CommonResponseDTO): DropdownDTO[] => {
         const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];

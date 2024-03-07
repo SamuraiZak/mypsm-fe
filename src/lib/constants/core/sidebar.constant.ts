@@ -235,6 +235,27 @@ export class SidebarConstant {
             ],
         },
 
+        //Kakitangan Kontrak
+        {
+            role: RoleConstant.calonKontrak.code,
+            navItems: [
+                {
+                    name: 'Halaman Utama',
+                    path: '/halaman-utama',
+                },
+                {
+                    name: 'Maklumat Kontrak',
+                    path: '',
+                    subItems: [
+                        {
+                            name: 'Perlantikan Baru (Kontrak)',
+                            path: '/kakitangan-kontrak/lantikan-baru',
+                        },
+                    ],
+                },
+            ],
+        },
+
         //Ketua Pengarah
         {
             role: RoleConstant.ketuaPengarah.code,
