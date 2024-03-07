@@ -1,0 +1,852 @@
+<script lang="ts">
+    import {
+        approveOptions,
+        certifyOptions,
+    } from '$lib/constants/core/radio-option-constants';
+    import type { CourseExamApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-application.dto';
+    import { writable } from 'svelte/store';
+    import { _examApplicationApprovalSchema } from '$lib/schemas/mypsm/course/schema';
+    import { _coursePersonalInfoResponseSchema } from '$lib/schemas/mypsm/course/schema';
+    import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/schema';
+    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
+    import Stepper from '$lib/components/stepper/Stepper.svelte';
+    import StepperContent from '$lib/components/stepper/StepperContent.svelte';
+    import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
+    import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
+    import toast, { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
+    import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
+    import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
+    import TextIconButton from '$lib/components/button/TextIconButton.svelte';
+    import {
+        _academicInfoSchema,
+        _serviceInfoRequestSchema,
+    } from '$lib/schemas/mypsm/employment/new-hire/schema';
+    import { goto } from '$app/navigation';
+    import {
+        _addExamApplicationForm,
+        _addSecretaryApprovalForm,
+    } from './+page';
+    import { zod } from 'sveltekit-superforms/adapters';
+    import { error } from '@sveltejs/kit';
+    export let data: PageData;
+
+    let isReadonlySecretaryApprovalResult = writable<boolean>();
+
+    $: {
+        isReadonlySecretaryApprovalResult.set(
+            !!(
+                data.responses.courseExamSecretaryApprovalResponse.data?.details
+                    .status !== null
+            ),
+        );
+    }
+
+    // Superforms
+    const { form, enhance } = superForm(data.forms.examInfoForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: false,
+    });
+
+    const { form: personalInfoForm, enhance: personalInfoEnhance } = superForm(
+        data.forms.examPersonalInfoForm,
+        {
+            SPA: true,
+            dataType: 'json',
+            invalidateAll: true,
+            resetForm: false,
+            multipleSubmits: 'allow',
+            validationMethod: 'oninput',
+            validators: false,
+        },
+    );
+
+    const { form: serviceInfoForm, enhance: serviceInfoEnhance } = superForm(
+        data.forms.examServiceInfoForm,
+        {
+            SPA: true,
+            dataType: 'json',
+            invalidateAll: true,
+            resetForm: false,
+            multipleSubmits: 'allow',
+            validationMethod: 'oninput',
+            validators: false,
+        },
+    );
+
+    const {
+        form: secretaryApprovalInfoForm,
+        errors: secretaryApprovalInfoErrors,
+        enhance: secretaryApprovalInfoEnhance,
+        isTainted: secretaryApprovalInfoIsTainted,
+    } = superForm(data.forms.examSecretaryApprovalForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: zod(_examApplicationApprovalSchema),
+        onSubmit() {
+            if (!secretaryApprovalInfoIsTainted()) {
+                toast('Tiada perubahan data dikesan.');
+                error(400);
+            }
+
+            $secretaryApprovalInfoForm.id = (
+                data.responses.examApplicationDetailResponse.data
+                    ?.details as CourseExamApplicationDetailResponseDTO
+            ).applicationId;
+            _addSecretaryApprovalForm($secretaryApprovalInfoForm);
+        },
+    });
+
+    const {
+        form: examResultInfoForm,
+        errors: examResultInfoErrors,
+        enhance: examResultInfoEnhance,
+        isTainted: examResultInfoIsTainted,
+    } = superForm(data.forms.examSecretaryApprovalForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: zod(_examApplicationApprovalSchema),
+        onSubmit() {
+            if (!examResultInfoIsTainted()) {
+                toast('Tiada perubahan data dikesan.');
+                error(400);
+            }
+
+            $examResultInfoForm.id = (
+                data.responses.examApplicationDetailResponse.data
+                    ?.details as CourseExamApplicationDetailResponseDTO
+            ).applicationId;
+            _addSecretaryApprovalForm($examResultInfoForm);
+        },
+    });
+</script>
+
+<ContentHeader title="Maklumat Lantikan Baru"
+    ><TextIconButton
+        label="Kembali"
+        type="neutral"
+        onClick={() => {
+            goto('../rekod-peperiksaan');
+        }}
+    /></ContentHeader
+>
+<Stepper>
+    <StepperContent>
+        <StepperContentHeader title="Maklumat Peribadi" />
+        <StepperContentBody>
+            <!-- Maklumat Peribadi -->
+            <form
+                id="personalInfoStepper"
+                method="POST"
+                use:personalInfoEnhance
+                class="flex w-full flex-col gap-2"
+            >
+                <CustomTextField
+                    disabled
+                    id="employeeNo"
+                    label={'No. Pekerja'}
+                    type="text"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.employeeNo}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled
+                    id="name"
+                    label={'Nama Penuh'}
+                    type="text"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.name}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled
+                    id="identityCard"
+                    label={'No. Kad Pengenalan'}
+                    type="text"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.identityCard}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled
+                    id="identityCardColor"
+                    label={'Warna Kad Pengenalan'}
+                    type="text"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.identityCardColor}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled
+                    id="email"
+                    label={'Emel'}
+                    type="text"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.email}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled
+                    type="date"
+                    id="dateOfBirth"
+                    label="Tarikh Lahir"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.dateOfBirth}
+                ></CustomTextField>
+                <CustomSelectField
+                    disabled
+                    id="placeOfBirth"
+                    label="Tempat Lahir"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.placeOfBirth}
+                    options={data.selectionOptions.stateLookup}
+                ></CustomSelectField>
+
+                <CustomSelectField
+                    disabled
+                    id="nationality"
+                    label="Warganegara"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.nationality}
+                    options={data.selectionOptions.nationalityLookup}
+                ></CustomSelectField>
+
+                <CustomSelectField
+                    disabled
+                    id="race"
+                    label="Bangsa"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.race}
+                    options={data.selectionOptions.raceLookup}
+                ></CustomSelectField>
+
+                <CustomSelectField
+                    disabled
+                    id="religion"
+                    label="Agama"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.religion}
+                    options={data.selectionOptions.religionLookup}
+                ></CustomSelectField>
+
+                <CustomSelectField
+                    disabled
+                    id="gender"
+                    label="Jantina"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.gender}
+                    options={data.selectionOptions.genderLookup}
+                ></CustomSelectField>
+
+                <CustomSelectField
+                    disabled
+                    id="status"
+                    label="Status Perkahwinan"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.status}
+                    options={data.selectionOptions.maritalLookup}
+                ></CustomSelectField>
+
+                <CustomSelectField
+                    disabled
+                    id="skim"
+                    label="Skim Perkhidmatan"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.skim}
+                    options={data.selectionOptions.serviceTypeLookup}
+                ></CustomSelectField>
+
+                <CustomSelectField
+                    disabled
+                    id="grade"
+                    label="Gred"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.grade}
+                    options={data.selectionOptions.gradeLookup}
+                ></CustomSelectField>
+
+                <CustomSelectField
+                    disabled
+                    id="position"
+                    label="Jawatan"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.position}
+                    options={data.selectionOptions.positionLookup}
+                ></CustomSelectField>
+
+                <CustomSelectField
+                    disabled
+                    id="currentPlacement"
+                    label="Penempatan"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.currentPlacement}
+                    options={data.selectionOptions.placementLookup}
+                ></CustomSelectField>
+
+                <CustomSelectField
+                    disabled
+                    id="group"
+                    label="Kumpulan"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.group}
+                    options={data.selectionOptions.groupLookup}
+                ></CustomSelectField>
+
+                <CustomTextField
+                    disabled
+                    id="homeAddress"
+                    label="Alamat Rumah"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.homeAddress}
+                />
+
+                <CustomTextField
+                    disabled
+                    id="mailAddress"
+                    label="Alamat Surat Menyurat"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.mailAddress}
+                />
+
+                <CustomTextField
+                    disabled
+                    type="number"
+                    id="homeNo"
+                    label="Nombor Telefon Rumah"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.homeNo}
+                />
+
+                <CustomTextField
+                    disabled
+                    type="number"
+                    id="mobileNo"
+                    label="Nombor Telefon Bimbit"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.mobileNo}
+                />
+
+                <CustomTextField
+                    disabled
+                    type="number"
+                    id="housing"
+                    label="Perumahan"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.housing}
+                />
+
+                <CustomTextField
+                    disabled
+                    type="number"
+                    id="houseLoan"
+                    label="Pinjaman Perumahan"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.houseLoan}
+                />
+
+                <CustomSelectField
+                    disabled
+                    id="isExPolice"
+                    label="Bekas Polis / Tentera"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.isExPolice}
+                    options={data.selectionOptions.generalLookup}
+                ></CustomSelectField>
+            </form>
+        </StepperContentBody>
+    </StepperContent>
+    <StepperContent>
+        <StepperContentHeader title="Kemaskini Lantikan Baru" />
+        <StepperContentBody>
+            <form
+                id="serviceInfoStepper"
+                method="POST"
+                use:serviceInfoEnhance
+                class="flex w-full flex-col gap-2.5"
+            >
+                <CustomSelectField
+                    disabled
+                    id="currentGrade"
+                    label="Gred Semasa"
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.currentGrade}
+                    options={data.selectionOptions.gradeLookup}
+                ></CustomSelectField>
+                <CustomSelectField
+                    disabled
+                    id="currentPosition"
+                    label="Jawatan Semasa"
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.currentPosition}
+                    options={data.selectionOptions.positionLookup}
+                ></CustomSelectField>
+                <CustomSelectField
+                    disabled
+                    id="placement"
+                    label="Penempatan"
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.placement}
+                    options={data.selectionOptions.placementLookup}
+                ></CustomSelectField>
+                <CustomSelectField
+                    disabled
+                    id="serviceType"
+                    label="Jenis Perkhidmatan"
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.serviceType}
+                    options={data.selectionOptions.serviceTypeLookup}
+                ></CustomSelectField>
+
+                <CustomSelectField
+                    disabled
+                    id="program"
+                    label="Program"
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.program}
+                    options={data.selectionOptions.programLookup}
+                ></CustomSelectField>
+
+                <CustomTextField
+                    disabled
+                    id="retirementBenefit"
+                    label={'Faedah Persaraan'}
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.retirementBenefit}
+                ></CustomTextField>
+
+                <CustomTextField
+                    type="date"
+                    disabled
+                    id="effectiveDate"
+                    label={'Tarikh Kuatkuasa Lantikan Semasa'}
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.effectiveDate}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled
+                    id="EPFNumber"
+                    label={'No. KWSP'}
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.EPFNumber}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled
+                    id="SOCSO"
+                    label={'No. SOCSO'}
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.SOCSO}
+                ></CustomTextField>
+                <CustomTextField
+                    disabled
+                    id="taxIncome"
+                    label={'No. Cukai'}
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.taxIncome}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled
+                    id="bankName"
+                    label={'Bank'}
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.bankName}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled
+                    id="accountNumber"
+                    label={'No. Akaun'}
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.accountNumber}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled
+                    type="number"
+                    id="eligibleLeaveCount"
+                    label={'Kelayakan Cuti'}
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.eligibleLeaveCount}
+                ></CustomTextField>
+
+                <CustomTextField
+                    type="date"
+                    disabled
+                    id="civilServiceStartDate"
+                    label={'Mula Dilantik Perkhidmatan Kerajaan'}
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.civilServiceStartDate}
+                ></CustomTextField>
+
+                <CustomTextField
+                    type="date"
+                    disabled
+                    id="confirmServiceDate"
+                    label={'Disahkan Dalam Jawatan Semasa LKIM'}
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.confirmServiceDate}
+                ></CustomTextField>
+
+                <CustomTextField
+                    type="date"
+                    disabled
+                    id="actingDate"
+                    label={'Pemangkuan Sekarang'}
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.actingDate}
+                ></CustomTextField>
+
+                <CustomTextField
+                    type="date"
+                    disabled
+                    id="interimDate"
+                    label={'Tanggung Kerja Sekarang'}
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.interimDate}
+                ></CustomTextField>
+
+                <CustomTextField
+                    type="date"
+                    disabled
+                    id="firstEffectiveDate"
+                    label={'Tarikh Berkuatkuasa Lantikan Pertama'}
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.firstEffectiveDate}
+                ></CustomTextField>
+
+                <CustomTextField
+                    type="date"
+                    disabled
+                    id="pastAttachmentDate"
+                    label={'Tarikh Percantuman Perkhidmatan Lepas'}
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.pastAttachmentDate}
+                ></CustomTextField>
+
+                <CustomTextField
+                    type="date"
+                    disabled
+                    id="lastSalaryRaiseDate"
+                    label={'Kenaikan Gaji Akhir'}
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.lastSalaryRaiseDate}
+                ></CustomTextField>
+
+                <CustomTextField
+                    type="date"
+                    disabled
+                    id="lastPromotionDate"
+                    label={'Kenaikan Pangkat Akhir'}
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.lastPromotionDate}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled
+                    id="pensionScheme"
+                    label={'Skim Pencen'}
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.pensionScheme}
+                ></CustomTextField>
+
+                <CustomTextField
+                    type="date"
+                    disabled
+                    id="retirementDate"
+                    label={'Tarikh Bersara'}
+                    placeholder="-"
+                    bind:val={$serviceInfoForm.retirementDate}
+                ></CustomTextField>
+
+                <ContentHeader title="Maklumat Gaji dan Elaun - Elaun" />
+                <div class="grid grid-cols-2 gap-10">
+                    <div class="space-y-2.5">
+                        <CustomTextField
+                            disabled
+                            id="salaryEffectiveDate"
+                            type="number"
+                            label={'Tarikh Berkuatkuasa'}
+                            placeholder="-"
+                            bind:val={$serviceInfoForm.salaryEffectiveDate}
+                        ></CustomTextField>
+
+                        <CustomTextField
+                            disabled
+                            id="maximumSalary"
+                            type="number"
+                            label={'Tangga Gaji'}
+                            placeholder="-"
+                            bind:val={$serviceInfoForm.maximumSalary}
+                        ></CustomTextField>
+
+                        <CustomTextField
+                            disabled
+                            id="baseSalary"
+                            label={'Gaji Pokok'}
+                            placeholder="-"
+                            bind:val={$serviceInfoForm.baseSalary}
+                        ></CustomTextField>
+                    </div>
+                    <div class="space-y-2.5">
+                        <CustomTextField
+                            disabled
+                            id="ITKA"
+                            label={'ITKA'}
+                            placeholder="-"
+                            bind:val={$serviceInfoForm.ITKA}
+                        ></CustomTextField>
+                        <CustomTextField
+                            disabled
+                            id="ITP"
+                            label={'ITP'}
+                            placeholder="-"
+                            bind:val={$serviceInfoForm.ITP}
+                        ></CustomTextField>
+                        <CustomTextField
+                            disabled
+                            id="EPW"
+                            label={'EPW'}
+                            placeholder="-"
+                            bind:val={$serviceInfoForm.EPW}
+                        ></CustomTextField>
+                        <CustomTextField
+                            disabled
+                            id="COLA"
+                            label={'COLA'}
+                            placeholder="-"
+                            bind:val={$serviceInfoForm.COLA}
+                        ></CustomTextField>
+                        <!-- Tooltip body -->
+                        <!-- <Tooltip
+                        type="dark"
+                        triggeredBy="[id^='type-']"
+                        on:show={assignContent}>"{tooltipContent}"</Tooltip
+                    > -->
+                    </div>
+                </div>
+            </form>
+        </StepperContentBody>
+    </StepperContent>
+    <StepperContent>
+        <StepperContentHeader title="Maklumat Peperiksaan LKIM Yang Dimohon" />
+        <StepperContentBody>
+            <form
+                id="examApplicationInfoStepper"
+                method="POST"
+                use:enhance
+                class="flex w-full flex-col gap-2"
+            >
+                <CustomTextField
+                    disabled
+                    id="applicationId"
+                    label="ID Permohonan"
+                    type="text"
+                    placeholder="-"
+                    bind:val={$form.applicationId}
+                ></CustomTextField>
+
+                <CustomSelectField
+                    disabled
+                    id="examTypeId"
+                    label="Jenis Peperiksaan"
+                    placeholder="-"
+                    bind:val={$form.examTypeId}
+                    options={data.selectionOptions.examTypeLookup}
+                ></CustomSelectField>
+
+                <CustomTextField
+                    disabled
+                    id="examTitle"
+                    label="Tajuk Peperiksaan"
+                    type="text"
+                    placeholder="-"
+                    bind:val={$form.examTitle}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled
+                    id="employeeNumber"
+                    label="Nombor Pekerja Calon Peperiksaan"
+                    type="text"
+                    placeholder="-"
+                    bind:val={$form.employeeNumber}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled
+                    id="employeeName"
+                    label="Nama Calon Peperiksaan"
+                    type="text"
+                    placeholder="-"
+                    bind:val={$form.employeeName}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled
+                    id="examApplicationOpenDate"
+                    label="Tarikh Mula Permohonan"
+                    type="date"
+                    placeholder="-"
+                    bind:val={$form.examApplicationOpenDate}
+                ></CustomTextField>
+                <CustomTextField
+                    disabled
+                    id="examApplicationCloseDate"
+                    label="Tarikh Tutup Permohonan"
+                    type="date"
+                    placeholder="-"
+                    bind:val={$form.examApplicationCloseDate}
+                ></CustomTextField>
+                <CustomTextField
+                    disabled
+                    id="examDate"
+                    label="Tarikh Peperiksaan"
+                    type="date"
+                    placeholder="-"
+                    bind:val={$form.examDate}
+                ></CustomTextField>
+                <CustomTextField
+                    disabled
+                    id="examLocation"
+                    label="Lokasi Peperiksaan"
+                    type="text"
+                    placeholder="-"
+                    bind:val={$form.examLocation}
+                ></CustomTextField>
+
+                <!-- <CustomTextField
+                    disabled
+                    id="examStatus"
+                    label="Status Peperiksaan"
+                    type="text"
+                    placeholder="-"
+                    bind:val={$form.examStatus}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled
+                    id="examResult"
+                    label="Keputusan Peperiksaan"
+                    type="text"
+                    placeholder="Dalam Proses"
+                    bind:val={$form.examResult}
+                ></CustomTextField> -->
+            </form>
+        </StepperContentBody>
+    </StepperContent>
+    <StepperContent>
+        <StepperContentHeader
+            title="Sila Tetapkan Pengesahan Urus Setia Latihan"
+        >
+            {#if !$isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole}
+                <TextIconButton
+                    type="primary"
+                    label="Simpan"
+                    form="examApplicationSecretaryApprovalForm"
+                ></TextIconButton>
+            {/if}
+        </StepperContentHeader>
+        <StepperContentBody>
+            <form
+                id="examApplicationSecretaryApprovalForm"
+                method="POST"
+                use:secretaryApprovalInfoEnhance
+                class="flex w-full flex-col gap-2.5"
+            >
+                <div class="mb-5">
+                    <b class="text-sm text-system-primary"
+                        >Keputusan Urus Setia Perjawatan</b
+                    >
+                </div>
+
+                <input hidden bind:value={$secretaryApprovalInfoForm.id} />
+
+                <CustomTextField
+                    disabled={$isReadonlySecretaryApprovalResult}
+                    errors={$secretaryApprovalInfoErrors.remark}
+                    id="remark"
+                    label="Tindakan/Ulasan"
+                    placeholder="-"
+                    bind:val={$secretaryApprovalInfoForm.remark}
+                ></CustomTextField>
+
+                <CustomSelectField
+                    disabled={$isReadonlySecretaryApprovalResult}
+                    errors={$secretaryApprovalInfoErrors.status}
+                    id="status"
+                    label="Keputusan"
+                    placeholder="-"
+                    bind:val={$secretaryApprovalInfoForm.status}
+                    options={certifyOptions}
+                ></CustomSelectField>
+            </form>
+            <hr />
+        </StepperContentBody>
+    </StepperContent>
+    <StepperContent>
+        <StepperContentHeader title="Kemaskini Keputusan Panel">
+            {#if !$isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole}
+                <TextIconButton
+                    type="primary"
+                    label="Simpan"
+                    form="examApplicationSecretaryApprovalForm"
+                ></TextIconButton>
+            {/if}
+        </StepperContentHeader>
+        <StepperContentBody>
+            <form
+                id="examApplicationSecretaryApprovalForm"
+                method="POST"
+                use:examResultInfoEnhance
+                class="flex w-full flex-col gap-2.5"
+            >
+                <div class="mb-5">
+                    <b class="text-sm text-system-primary"
+                        >Keputusan daripada Panel Pemeriksa:</b
+                    >
+                </div>
+
+                <input hidden bind:value={$examResultInfoForm.id} />
+
+                <CustomTextField
+                    disabled={$isReadonlySecretaryApprovalResult}
+                    errors={$examResultInfoErrors.remark}
+                    id="remark"
+                    label="Tajuk Peperiksaan"
+                    placeholder="-"
+                    bind:val={$examResultInfoForm.remark}
+                ></CustomTextField>
+
+                <CustomSelectField
+                    disabled={$isReadonlySecretaryApprovalResult}
+                    errors={$examResultInfoErrors.status}
+                    id="status"
+                    label="Keputusan Panel"
+                    placeholder="-"
+                    bind:val={$examResultInfoForm.status}
+                    options={approveOptions}
+                ></CustomSelectField>
+            </form>
+            <hr />
+        </StepperContentBody>
+    </StepperContent>
+</Stepper>
+
+<Toaster />
