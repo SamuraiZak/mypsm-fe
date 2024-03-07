@@ -28,16 +28,19 @@
         SPA: true,
         dataType: 'json',
         invalidateAll: true,
-        resetForm: true,
+        resetForm: false,
         multipleSubmits: 'allow',
         validationMethod: 'oninput',
         validators: zod(_examInfoResponseSchema),
-        onSubmit() {
+        async onSubmit() {
             if (!isTainted()) {
                 toast('Tiada perubahan data dikesan.');
                 error(400);
             }
-            _editExamForm($form);
+            const result = await _editExamForm($form);
+
+            if (result.response.status === 'success')
+                isReadonlyExamFormStepper = true;
         },
         taintedMessage: false,
     });
