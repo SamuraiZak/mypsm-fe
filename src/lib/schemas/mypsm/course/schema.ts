@@ -46,7 +46,7 @@ export const _addExamApplicationRequestSchema = z.object({
     exams: z.array(_examIDschema),
 });
 
-export const _examApplicationInfoSchema = z.object({
+export const _examApplicationInfoResponseSchema = z.object({
     applicationId: z.number().readonly(),
     employeeNumber: z.string().readonly(),
     employeeName: shortTextSchema,
@@ -63,18 +63,19 @@ export const _examApplicationInfoSchema = z.object({
 });
 
 export const _examApplicationListResponseSchema = z.array(
-    _examApplicationInfoSchema,
+    _examApplicationInfoResponseSchema,
 );
 
-export const _examApplicationDetailResponseSchema = _examApplicationInfoSchema
-    .omit({
-        examTypeId: true,
-        examResult: true,
-        examStatus: true,
-    })
-    .extend({
-        examType: shortTextSchema,
-    });
+export const _examApplicationDetailResponseSchema =
+    _examApplicationInfoResponseSchema
+        .omit({
+            examTypeId: true,
+            examResult: true,
+            examStatus: true,
+        })
+        .extend({
+            examType: shortTextSchema,
+        });
 
 // ==================================================
 // course staff personal info schema
@@ -122,8 +123,8 @@ export const _courseServiceInfoResponseSchema = z
         currentPosition: z.string(),
         placement: z.string(),
         serviceType: z.string(),
-        effectiveDate: dateStringSchema,
         retirementBenefit: z.string(),
+        effectiveDate: dateStringSchema,
         EPFNumber: z.string(),
         SOCSO: z.string(),
         taxIncome: z.string(),
@@ -174,4 +175,12 @@ export const _examApplicationApprovalSchema = z.object({
     id: numberIdSchema,
     remark: shortTextSchema,
     status: booleanSchema,
+});
+
+// ==================================================
+// course exam result schema
+// ==================================================
+export const _examApplicationResultSchema = z.object({
+    id: numberIdSchema,
+    examResult: shortTextSchema,
 });
