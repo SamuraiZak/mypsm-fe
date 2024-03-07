@@ -4,6 +4,7 @@
 
 import { invalidateAll } from '$app/navigation';
 import { CommonResponseConstant } from '$lib/constants/core/common-response.constant';
+import { CandidateIDRequestBodyConvert, type CandidateIDRequestBody } from '$lib/dto/core/common/candidate-id-request.view-dto';
 import {
     CommonListRequestConvert,
     type CommonListRequestDTO,
@@ -105,6 +106,31 @@ export class ContractEmployeeServices {
             const promiseRes: Promise<Response> = http
                 .post(url, {
                     body: AddNewContractEmployeeAcademicDTOConvert.toJson(param),
+                })
+                .json();
+                
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get contract academic detail
+    static async getContractAcademicDetail(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/academic/get';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
                 })
                 .json();
                 

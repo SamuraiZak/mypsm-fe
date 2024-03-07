@@ -1,8 +1,8 @@
 export interface AddNewContractEmployeeExperienceDTO {
-    experiences: ContractExperienceDTO[];
+    experiences: ContractExperience[];
 }
 
-export interface ContractExperienceDTO {
+export interface ContractExperience {
     company:      string;
     address:      string;
     position:     string;

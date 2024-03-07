@@ -1,8 +1,8 @@
 export interface AddNewContractEmployeeActivityDTO {
-    activities: ContractActivityDTO[];
+    activities: ContractActivity[];
 }
 
-export interface ContractActivityDTO {
+export interface ContractActivity {
     name:        string;
     joinDate:    Date;
     position:    string;
