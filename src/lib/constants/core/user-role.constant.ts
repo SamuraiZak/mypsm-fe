@@ -143,6 +143,12 @@ export class UserRoleConstant {
         description: 'calon',
         userGroupCode: 'f82fe23c-d4fd-4d61-9267-b16555c9db12',
     };
+    public static calonKontrak: UserRoleDTO = {
+        id: 23,
+        code: '442e6f24-2de2-452e-8146-2185ea36479e',
+        description: 'calon kontrak',
+        userGroupCode: 'f82fe23c-d4fd-4d61-9267-b16555c9db12',
+    };
     public static pengarahIntegriti: UserRoleDTO = {
         id: 24,
         code: '1eea87db-610b-48be-9d42-ab94ad58a346',
@@ -221,12 +227,6 @@ export class UserRoleConstant {
         description: 'kakitangan kontrak',
         userGroupCode: 'ff063e92-84be-45cb-bb27-7c0f96cfdc00',
     };
-    public static calonKontrak: UserRoleDTO = {
-        id: 37,
-        code: '442e6f24-2de2-452e-8146-2185ea36479e',
-        description: 'calon kontrak',
-        userGroupCode: 'f82fe23c-d4fd-4d61-9267-b16555c9db12',
-    };
 
     public static list: UserRoleDTO[] = [
         this.urusSetiaPerjawatan,
@@ -252,6 +252,7 @@ export class UserRoleConstant {
         this.superAdmin,
         this.kakitangan,
         this.calon,
+        this.calonKontrak,
         this.pengarahIntegriti,
         this.pengarahAudit,
         this.timbalanKetuaSeksyen,

@@ -11,7 +11,7 @@
     import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
-    import { zod } from 'sveltekit-superforms/adapters';
+    import { zod, zodClient } from 'sveltekit-superforms/adapters';
     import {
         _addTambangMengunjungiWilayahAsalSchemaSchema,
         _serviceAllowanceApproverFeedbackSchema,
@@ -55,7 +55,7 @@
         enhance: detailEnhance,
     } = superForm(data.props.allowanceDetailForm, {
         SPA: true,
-        validators: zod(_addTambangMengunjungiWilayahAsalSchemaSchema),
+        validators: zodClient(_addTambangMengunjungiWilayahAsalSchemaSchema),
         onSubmit(input) {
             _submitAllowanceDetail($detailForm);
         },
@@ -68,7 +68,7 @@
         enhance: verificationEnhance,
     } = superForm(data.props.verificationForm, {
         SPA: true,
-        validators: zod(_serviceAllowanceVerificationSchema),
+        validators: zodClient(_serviceAllowanceVerificationSchema),
         onSubmit(input) {
             _submitVerificationForm($verificationForm);
         },
@@ -81,7 +81,7 @@
         enhance: suppAppDetailsEnhance,
     } = superForm(data.props.suppporterApproverDetailForm, {
         SPA: true,
-        validators: zod(_serviceAllowanceSuppAppDetailSchema),
+        validators: zodClient(_serviceAllowanceSuppAppDetailSchema),
         onSubmit(input) {
             _submitSuppAppDetailsForm($suppAppDetailsForm);
         },
@@ -93,7 +93,7 @@
         enhance: supporterFeedbackEnhance,
     } = superForm(data.props.supporterFeedbackForm, {
         SPA: true,
-        validators: zod(_serviceAllowanceSupporterFeedbackSchema),
+        validators: zodClient(_serviceAllowanceSupporterFeedbackSchema),
         onSubmit(input) {
             _submitSupporterFeedbackForm($supporterFeedbackForm);
         },
@@ -105,7 +105,7 @@
         enhance: approverFeedbackEnhance,
     } = superForm(data.props.approverFeedbackForm, {
         SPA: true,
-        validators: zod(_serviceAllowanceApproverFeedbackSchema),
+        validators: zodClient(_serviceAllowanceApproverFeedbackSchema),
         onSubmit(input) {
             _submitApproverFeedbackForm($approverFeedbackForm);
         },
