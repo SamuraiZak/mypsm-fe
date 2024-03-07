@@ -149,4 +149,8 @@ export class RoleConstant {
         code: '442e6f24-2de2-452e-8146-2185ea36479d',
         description: 'kakitangan kontrak',
     }
+    public static calonKontrak: LookupDTO = {
+        code: '442e6f24-2de2-452e-8146-2185ea36479e',
+        description: 'calon kontrak',
+    }
 }
