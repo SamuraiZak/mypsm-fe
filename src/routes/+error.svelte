@@ -16,12 +16,12 @@
             <h6
                 class="text-2xl md:text-3xl mb-2 text-center font-bold text-gray-800"
             >
-                {$page.error?.message}
+                {$page.status === 404 ? 'Tidak Dijumpai' : $page.error?.message}
             </h6>
 
             <p class="mb-8 text-center text-gray-500 md:text-lg">
                 Terdapat masalah semasa cuba mengakses halaman yang telah anda
-                klik.<br /> Tetapi jangan risau, sila cek sambungan internet anda
+                klik.<br /> Namun jangan risau, sila cek sambungan internet anda
                 dan pastikan anda mempunyai akses kedalam laman ini.
             </p>
 
