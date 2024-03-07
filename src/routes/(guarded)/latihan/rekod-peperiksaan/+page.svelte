@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { CourseExamApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-application.dto';
     import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
@@ -8,11 +9,11 @@
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
-    import type { CourseExamDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam.dto';
     import type { LayoutData } from './$types';
+    import TextIconButton from '$lib/components/button/TextIconButton.svelte';
 
     export let data: LayoutData;
-    let rowData: CourseExamDetailResponseDTO;
+    let rowData: CourseExamApplicationDetailResponseDTO;
     let param: CommonListRequestDTO = data.param;
 
     // Table list - new application view for secretary role
@@ -55,6 +56,21 @@
     <div
         class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
     >
+        {#if data.roles.isStaffRole}
+            <ContentHeader
+                title="Tekan butang disebelah untuk menambah peperiksaan"
+                borderClass="border-none"
+            >
+                <TextIconButton
+                    label="Tambah Permohonan Peperiksaan"
+                    type="primary"
+                    onClick={() =>
+                        goto(
+                            './rekod-peperiksaan/tambah-permohonan-peperiksaan',
+                        )}
+                ></TextIconButton>
+            </ContentHeader>
+        {/if}
         <!-- Table filter placeholder -->
         <FilterCard onSearch={_updateExamTable}>
             <FilterTextField
@@ -101,7 +117,7 @@
                 bind:tableData={examTable}
                 bind:passData={rowData}
                 detailActions={() => {
-                    const route = `./lantikan/peperiksaan/${rowData.id}`;
+                    const route = `./rekod-peperiksaan/${rowData.applicationId}`;
 
                     goto(route);
                 }}
