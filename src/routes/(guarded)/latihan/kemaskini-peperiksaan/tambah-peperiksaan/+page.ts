@@ -17,10 +17,11 @@ export async function load() {
         LocalStorageKeyConstant.currentRoleCode,
     );
 
-    const isStaffRole = currentRoleCode === RoleConstant.urusSetiaLatihan.code;
+    const isCourseSecretaryRole =
+        currentRoleCode === RoleConstant.urusSetiaLatihan.code;
 
-    if (!isStaffRole) {
-        error(401, { message: 'Akses ditolak!' });
+    if (!isCourseSecretaryRole) {
+        error(401, { message: 'Akses ditolak' });
     }
 
     // ============================================================
