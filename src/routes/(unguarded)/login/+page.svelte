@@ -6,7 +6,11 @@
     import UserGroupButton from '$lib/components/login/UserGroupButton.svelte';
     import type { PageData } from './$types';
     import { _loginSchema, _submit } from './+page';
-    import { superForm, setMessage, type Infer } from 'sveltekit-superforms/client';
+    import {
+        superForm,
+        setMessage,
+        type Infer,
+    } from 'sveltekit-superforms/client';
     import { UserGroupConstant } from '$lib/constants/core/user-group.constant';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
@@ -34,39 +38,42 @@
     });
 
     function _handleSelectGroup(selectedGroup: DropdownDTO) {
-        switch (selectedGroup.value) {
-            case UserGroupConstant.employee.code:
-                $form.userGroupCode = UserGroupConstant.employee.code;
-                $form.currentRoleCode = UserRoleConstant.kakitangan.code;
+        if (selectedGroup.value !== $form.userGroupCode) {
+            switch (selectedGroup.value) {
+                case UserGroupConstant.employee.code:
+                    $form.userGroupCode = UserGroupConstant.employee.code;
+                    $form.currentRoleCode = UserRoleConstant.kakitangan.code;
 
-                break;
+                    break;
 
-            case UserGroupConstant.contractor.code:
-                $form.userGroupCode = UserGroupConstant.contractor.code;
-                $form.currentRoleCode = UserRoleConstant.kakitanganKontrak.code;
-                break;
+                case UserGroupConstant.contractor.code:
+                    $form.userGroupCode = UserGroupConstant.contractor.code;
+                    $form.currentRoleCode =
+                        UserRoleConstant.kakitanganKontrak.code;
+                    break;
 
-            case UserGroupConstant.candidate.code:
-                $form.userGroupCode = UserGroupConstant.candidate.code;
-                $form.currentRoleCode = UserRoleConstant.calon.code;
-                break;
+                case UserGroupConstant.candidate.code:
+                    $form.userGroupCode = UserGroupConstant.candidate.code;
+                    $form.currentRoleCode = UserRoleConstant.calon.code;
+                    break;
 
-            case UserGroupConstant.clinic.code:
-                $form.userGroupCode = UserGroupConstant.clinic.code;
-                $form.currentRoleCode = UserRoleConstant.klinikPanel.code;
-                break;
+                case UserGroupConstant.clinic.code:
+                    $form.userGroupCode = UserGroupConstant.clinic.code;
+                    $form.currentRoleCode = UserRoleConstant.klinikPanel.code;
+                    break;
 
-            default:
-                $form.userGroupCode = UserGroupConstant.employee.code;
-                $form.currentRoleCode = UserRoleConstant.kakitangan.code;
-                break;
+                default:
+                    $form.userGroupCode = UserGroupConstant.employee.code;
+                    $form.currentRoleCode = UserRoleConstant.kakitangan.code;
+                    break;
+            }
+
+            roleDropdown = UserRoleConvert.toDropdown(
+                data.props.roleList.filter(
+                    (item) => item.userGroupCode == $form.userGroupCode,
+                ),
+            ).sort((a, b) => (a.name < b.name ? -1 : 1));
         }
-
-        roleDropdown = UserRoleConvert.toDropdown(
-            data.props.roleList.filter(
-                (item) => item.userGroupCode == $form.userGroupCode,
-            ),
-        ).sort((a, b) => (a.name < b.name ? -1 : 1));
     }
 </script>
 
@@ -132,9 +139,11 @@
                 id="role"
                 bind:val={$form.currentRoleCode}
                 errors={$errors.currentRoleCode}
-                disabled={$form.userGroupCode !==
-                    UserGroupConstant.employee.code}
+                disabled={$form.userGroupCode ===
+                    UserGroupConstant.contractor.code ||
+                    $form.userGroupCode === UserGroupConstant.clinic.code}
                 options={roleDropdown}
+                label={'Peranan'}
             ></CustomSelectField>
 
             <!-- role selection input ends here -->
