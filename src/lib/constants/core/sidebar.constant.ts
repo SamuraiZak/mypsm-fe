@@ -101,7 +101,7 @@ export class SidebarConstant {
                     subItems: [
                         {
                             name: 'Rekod Latihan Kakitangan',
-                            path: '/latihan/rekod',
+                            path: '/latihan/rekod-peperiksaan',
                         },
                         {
                             name: 'Pembiayaan Pembelajaran',
