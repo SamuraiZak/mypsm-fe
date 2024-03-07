@@ -51,6 +51,15 @@ export class LookupHelper {
         return dropdownList;
     }
 
+    static toDropdownBothAreCode(lookupList: LookupDTO[]) {
+        const dropdownList: DropdownDTO[] = lookupList.map((lookup) => ({
+            value: lookup.code,
+            name: lookup.code,
+        }));
+
+        return dropdownList;
+    }
+
     static toDropdownDescriptionWithUrl(lookupList: LookupDTO[]) {
         const dropdownList: DropdownDTO[] = lookupList.map((lookup) => ({
             value: lookup.code,
