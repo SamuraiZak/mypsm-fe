@@ -8,6 +8,7 @@
     export let val: string | number | boolean | null | undefined;
     export let errors: string[] | undefined = [] ?? undefined;
     export let disabled: boolean = false;
+    export let placeholder: string = "-";
 
     export let options: DropdownDTO[] = [];
     export let onValueChange = ()=>{};
@@ -25,6 +26,7 @@
     <!-- input field starts here -->
     <select
         {disabled}
+        {placeholder}
         name={id}
         bind:value={val}
         on:change={onValueChange}
