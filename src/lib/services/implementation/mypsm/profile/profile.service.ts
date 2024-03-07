@@ -23,6 +23,37 @@ import type { activityRequestDTO } from '$lib/dto/mypsm/profile/activity-detail.
 
 export class ProfileServices {
 
+    
+
+    static async getSalaryListDetails(
+        param: CommonListRequestDTO,
+    ) {
+        try {
+            const url: Input = 'profile/salary_allowance';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     //============================================
     //========= Get Personal Detail ==============
     //============================================

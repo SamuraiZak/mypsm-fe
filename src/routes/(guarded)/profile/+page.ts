@@ -13,16 +13,21 @@ import {
     _academicInfoSchema, _academicListRequestSchema, _academicListResponseSchema,
     _activityInfoSchema,
     _activityListRequestSchema,
+    _activityListResponseSchema,
     _dependencyListRequestSchema,
+    _dependencyListResponseSchema,
     _experienceInfoSchema,
     _experienceListRequestSchema,
     _experienceListResponseSchema,
     _familyListRequestSchema,
+    _familyListResponseSchema,
     _nextOfKinListRequestSchema,
+    _nextOfKinListResponseSchema,
     _personalInfoResponseSchema,
     _relationsSchema,
     _serviceDetailSchema,
     _serviceInfoRequestSchema,
+    _serviceInfoResponseSchema,
 } from '$lib/schemas/mypsm/profile/profile-schemas';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service.js';
 import { EmploymentServices } from '$lib/services/implementation/mypsm/perjawatan/employment.service';
@@ -32,17 +37,29 @@ import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { fail } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { Experience, experiencesRequestDTO } from '$lib/dto/mypsm/profile/experience-detail.dto';
-import type { Activity, activityRequestDTO } from '$lib/dto/mypsm/profile/activity-detail.dto';
-import type { Dependency, Family, NextOfKin, dependencyRequestDTO, familyRequestDTO, nextOfKinRequestDTO } from '$lib/dto/mypsm/profile/relation-detail.dto';
+import type { Experience, experiencesRequestDTO, experiencesResponseDTO } from '$lib/dto/mypsm/profile/experience-detail.dto';
+import type { Activity, activityRequestDTO, activityResponseDTO } from '$lib/dto/mypsm/profile/activity-detail.dto';
+import type { Dependency, Family, NextOfKin, dependencResponseDTO, dependencyRequestDTO, familyRequestDTO, familyResponseDTO, nextOfKinRequestDTO, nextOfKinResponseDTO } from '$lib/dto/mypsm/profile/relation-detail.dto';
 import type { CandidatePersonalRequestDTO, CandidatePersonalResponseDTO } from '$lib/dto/mypsm/profile/personal-detail.dto';
+import type { serviceResponseDTO } from '$lib/dto/mypsm/profile/service-detail.dto';
 
 
+
+// export const load = async () => {
+//     let salaryViewResponse: CommonResponseDTO;
+//     let salaryViewTable = [];
+    
+//     salaryViewResponse = await ProfileServices.getSalaryListDetails(param);
+//     salaryViewTable = salaryViewResponse.data?.dataList ?? [];
+
+//     return {salaryViewTable}
+// };
 
 
 export async function load({ }) {
 
 
+  
 
     //==================================================
     //=============== Load Function ====================
@@ -51,43 +68,58 @@ export async function load({ }) {
     const personalDetailResponse: CommonResponseDTO =
         await ProfileServices.getProfilePersonalDetails();
 
-
-
-    console.log(personalDetailResponse)
+    const serviceDetailResponse: CommonResponseDTO =
+        await ProfileServices.getProfileServiceDetails();
 
     const academicInfoResponse: CommonResponseDTO =
-        await ProfileServices.getProfileAcademicDetails(
-        );
-    const personalDetail = await superValidate(personalDetailResponse.data?.details as CandidatePersonalResponseDTO , zod(
+        await ProfileServices.getProfileAcademicDetails();
+
+        const experienceInfoResponse: CommonResponseDTO =
+        await ProfileServices.getProfileExperienceDetails();
+
+        const activityInfoResponse: CommonResponseDTO =
+        await ProfileServices.getProfileActivityDetails();
+
+        const familyInfoResponse: CommonResponseDTO =
+        await ProfileServices.getProfileFamilyDetails();
+
+        const relationInfoResponse: CommonResponseDTO =
+        await ProfileServices.getProfileDependentDetails();
+
+        const nextOfKinInfoResponse: CommonResponseDTO =
+        await ProfileServices.getProfileNextOfKinDetails();
+
+
+
+    const personalDetail = await superValidate(personalDetailResponse.data?.details as CandidatePersonalResponseDTO, zod(
         _personalInfoResponseSchema))
         ;
-        console.log(personalDetail)
-    const serviceInfoForm = await superValidate(zod(
-        _serviceDetailSchema))
+    const serviceInfoForm = await superValidate(serviceDetailResponse.data?.details as serviceResponseDTO, zod(
+        _serviceInfoResponseSchema))
         ;
 
     const academicInfoForm = await superValidate(academicInfoResponse.data?.details as academicResponseDTO, zod(
         _academicListResponseSchema))
         ;
 
-    const experienceInfoForm = await superValidate(zod(
+    const experienceInfoForm = await superValidate (experienceInfoResponse.data?.details as experiencesResponseDTO, zod(
         _experienceListResponseSchema))
         ;
 
-    const activityInfoForm = await superValidate(zod(
-        _activityInfoSchema))
+    const activityInfoForm = await superValidate (activityInfoResponse.data?.details as activityResponseDTO, zod(
+        _activityListResponseSchema))
         ;
 
-    const relationInfoForm = await superValidate(zod(
-        _relationsSchema))
+    const relationInfoForm = await superValidate (relationInfoResponse.data?.details as dependencResponseDTO, zod(
+        _dependencyListResponseSchema))
         ;
 
-    const familyInfoForm = await superValidate(zod(
-        _relationsSchema))
+    const familyInfoForm = await superValidate (familyInfoResponse.data?.details as familyResponseDTO, zod(
+        _familyListResponseSchema))
         ;
 
-    const nextOFKInInfoForm = await superValidate(zod(
-        _relationsSchema))
+    const nextOFKInInfoForm = await superValidate (nextOfKinInfoResponse.data?.details as nextOfKinResponseDTO, zod(
+        _nextOfKinListResponseSchema))
         ;
 
 
@@ -764,3 +796,5 @@ export const _submitNextOfKinInfoForm = async (formData: NextOfKin[]) => {
 
     return { response };
 };
+
+
