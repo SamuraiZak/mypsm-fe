@@ -9,14 +9,17 @@
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
-    import { superForm } from 'sveltekit-superforms/client';
+    import { superForm, superValidate } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import {
+    _submitAcademicDetailForm,
         _submitDocumentForm,
         _submitEditNewContractEmployeeDetailForm,
     } from './+page';
-    import { zod, zodClient } from 'sveltekit-superforms/adapters';
+    import { zod } from 'sveltekit-superforms/adapters';
     import {
+    _addContractAcademicSchema,
+        _contractAcademicSchema,
         _editNewContractEmployeeSchema,
         _uploadDocSchema,
     } from '$lib/schemas/mypsm/contract-employee/contract-employee-schemas';
@@ -25,8 +28,25 @@
     import FileInputField from '$lib/components/inputs/file-input-field/FileInputField.svelte';
     import FileInputFieldChildren from '$lib/components/inputs/file-input-field/FileInputFieldChildren.svelte';
     import type { RadioDTO } from '$lib/dto/core/radio/radio.dto';
+    import type { ContractAcademic } from '$lib/dto/mypsm/kakitangan-kontrak/add-contract-academic.dto';
+    import type { ContractExperience } from '$lib/dto/mypsm/kakitangan-kontrak/add-contract-experience.dto';
+    import type { ContractActivity } from '$lib/dto/mypsm/kakitangan-kontrak/add-contract-activity.dto';
+    import type { ContractDependency } from '$lib/dto/mypsm/kakitangan-kontrak/add-contract-dependency.dto';
+    import { getErrorToast } from '$lib/helpers/core/toast.helper';
+    import { error } from '@sveltejs/kit';
+    
     export let data: PageData;
 
+    // temporay arrays for list details
+    let tempAcademicRecord: ContractAcademic[] = [];
+    let tempExperienceRecord: ContractExperience[] = [];
+    let tempActivityRecord: ContractActivity[] = [];
+    let tempFamilyRecord: ContractDependency[] = [];
+    let tempNonFamilyRecord: ContractDependency[] = [];
+    let tempNextOfKinRecord: ContractDependency[] = [];
+    let tempNextOfKinFromFamily: ContractDependency[] = [];
+
+    // checkbox for 1st stepper if mail address is the same as home address
     let sameAddress: boolean = false;
     const {
         form: editNewContractEmployeeDetailForm,
@@ -38,11 +58,19 @@
         id: 'addContractPersonalDetailForm',
         validators: zod(_editNewContractEmployeeSchema),
         onSubmit() {
+            if ($editNewContractEmployeeDetailForm.isInternalRelationship) {
+                $editNewContractEmployeeDetailForm.employeeNumber = '';
+                $editNewContractEmployeeDetailForm.relationshipId = 0;
+            } else {
+                $editNewContractEmployeeDetailForm.employeeNumber = null;
+                $editNewContractEmployeeDetailForm.relationshipId = null;
+            }
             _submitEditNewContractEmployeeDetailForm(
                 $editNewContractEmployeeDetailForm,
             );
         },
     });
+
     const {
         form: contractUploadDocumentForm,
         errors: contractUploadDocumentError,
@@ -58,9 +86,48 @@
         },
     });
 
+    const {
+        form: academicDetailForm,
+        errors: academicDetailError,
+        enhance: academicDetailEnhance,
+    } = superForm(data.academicDetailForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'academicDetailForm',
+        validators: zod(_addContractAcademicSchema),
+        onSubmit() {
+            _submitAcademicDetailForm($academicDetailForm);
+        },
+        // async onSubmit(formData) {
+        //     const result = await superValidate(
+        //         formData.formData,
+        //         _contractAcademicSchema,
+        //     );
+
+        //     console.log('Result: ', result);
+
+        //     if (!result.valid) {
+        //         getErrorToast();
+        //         error(400, 'Validation not passed, please check every fields.');
+        //     }
+
+        //     tempAcademicRecord = [
+        //         ...tempAcademicRecord,
+        //         result.data as ContractAcademic,
+        //     ];
+        });
+
     $: if (sameAddress) {
         $editNewContractEmployeeDetailForm.mailAddress =
             $editNewContractEmployeeDetailForm.homeAddress;
+        $editNewContractEmployeeDetailForm.mailCityId =
+            $editNewContractEmployeeDetailForm.homeCityId;
+        $editNewContractEmployeeDetailForm.mailCountryId =
+            $editNewContractEmployeeDetailForm.homeCountryId;
+        $editNewContractEmployeeDetailForm.mailStateId =
+            $editNewContractEmployeeDetailForm.homeStateId;
+        $editNewContractEmployeeDetailForm.mailPostcode =
+            $editNewContractEmployeeDetailForm.homePostcode;
     }
 
     const handleOnInput = (e: Event) => {
@@ -144,6 +211,14 @@
                         errors={$editNewContractEmployeeDetailError.email}
                     />
                     <CustomTextField
+                        label="No. Telefon Bimbit"
+                        placeholder="01104220000"
+                        id="phoneNumber"
+                        bind:val={$editNewContractEmployeeDetailForm.phoneNumber}
+                        errors={$editNewContractEmployeeDetailError.phoneNumber}
+                    />
+
+                    <CustomTextField
                         label="Tarikh Lahir"
                         id="birthDate"
                         type="date"
@@ -151,18 +226,25 @@
                         errors={$editNewContractEmployeeDetailError.birthDate}
                     />
                     <CustomSelectField
-                        label="Negeri Lahir"
+                        label="Negeri Kelahiran"
                         id="birthStateId"
                         options={data.selectOption.stateLookup}
                         bind:val={$editNewContractEmployeeDetailForm.birthStateId}
                         errors={$editNewContractEmployeeDetailError.birthStateId}
                     />
                     <CustomSelectField
-                        label="Warganegara"
+                        label="Negara Kelahiran"
                         id="birthCountryId"
-                        options={data.selectOption.nationalityLookup}
+                        options={data.selectOption.countryLookup}
                         bind:val={$editNewContractEmployeeDetailForm.birthCountryId}
                         errors={$editNewContractEmployeeDetailError.birthCountryId}
+                    />
+                    <CustomSelectField
+                        label="Warganegara"
+                        id="nationalityId"
+                        options={data.selectOption.nationalityLookup}
+                        bind:val={$editNewContractEmployeeDetailForm.nationalityId}
+                        errors={$editNewContractEmployeeDetailError.nationalityId}
                     />
                     <CustomSelectField
                         label="Bangsa"
@@ -205,6 +287,33 @@
                         bind:val={$editNewContractEmployeeDetailForm.homeAddress}
                         errors={$editNewContractEmployeeDetailError.homeAddress}
                     />
+                    <CustomSelectField
+                        label="Bandar Alamat Rumah"
+                        id="homeCityId"
+                        options={data.selectOption.cityLookup}
+                        bind:val={$editNewContractEmployeeDetailForm.homeCityId}
+                        errors={$editNewContractEmployeeDetailError.homeCityId}
+                    />
+                    <CustomSelectField
+                        label="Negeri Alamat Rumah"
+                        id="homeStateId"
+                        options={data.selectOption.stateLookup}
+                        bind:val={$editNewContractEmployeeDetailForm.homeStateId}
+                        errors={$editNewContractEmployeeDetailError.homeStateId}
+                    />
+                    <CustomSelectField
+                        label="Negara Alamat Rumah"
+                        id="homeCountryId"
+                        options={data.selectOption.countryLookup}
+                        bind:val={$editNewContractEmployeeDetailForm.homeCountryId}
+                        errors={$editNewContractEmployeeDetailError.homeCountryId}
+                    />
+                    <CustomTextField
+                        label="Poskod Alamat Rumah"
+                        id="homePostcode"
+                        bind:val={$editNewContractEmployeeDetailForm.homePostcode}
+                        errors={$editNewContractEmployeeDetailError.homePostcode}
+                    />
                     <div class="flex w-full flex-col justify-items-start gap-2">
                         <Checkbox
                             bind:checked={sameAddress}
@@ -218,20 +327,55 @@
                             bind:val={$editNewContractEmployeeDetailForm.mailAddress}
                             errors={$editNewContractEmployeeDetailError.mailAddress}
                         />
+                        <CustomSelectField
+                            label="Bandar Alamat Surat Menyurat"
+                            disabled={sameAddress}
+                            options={data.selectOption.cityLookup}
+                            id="mailCityId"
+                            bind:val={$editNewContractEmployeeDetailForm.mailCityId}
+                            errors={$editNewContractEmployeeDetailError.mailCityId}
+                        />
+                        <CustomSelectField
+                            label="Negeri Alamat Surat Menyurat"
+                            disabled={sameAddress}
+                            options={data.selectOption.stateLookup}
+                            id="mailStateId"
+                            bind:val={$editNewContractEmployeeDetailForm.mailStateId}
+                            errors={$editNewContractEmployeeDetailError.mailStateId}
+                        />
+                        <CustomSelectField
+                            label="Negara Alamat Surat Menyurat"
+                            disabled={sameAddress}
+                            options={data.selectOption.countryLookup}
+                            id="mailCountryId"
+                            bind:val={$editNewContractEmployeeDetailForm.mailCountryId}
+                            errors={$editNewContractEmployeeDetailError.mailCountryId}
+                        />
+                        <CustomTextField
+                            label="Poskod Alamat Surat Menyurat"
+                            disabled={sameAddress}
+                            id="mailPostcode"
+                            bind:val={$editNewContractEmployeeDetailForm.mailPostcode}
+                            errors={$editNewContractEmployeeDetailError.mailPostcode}
+                        />
                     </div>
-                    <!-- <CustomTextField
-                        label="No. Telefon Rumah"
-                        id="name"
-                        bind:val={$editNewContractEmployeeDetailForm.}
-                        errors={$editNewContractEmployeeDetailError.}
-                    />
-                    <CustomTextField
-                        label="No. Telefon Bimbit"
-                        id="name"
-                        bind:val={$editNewContractEmployeeDetailForm.}
-                        errors={$editNewContractEmployeeDetailError.}
-                    />
-                    -->
+                    <CustomSelectField
+                        errors={$editNewContractEmployeeDetailError.assetDeclarationStatusId}
+                        id="assetDeclarationStatusId"
+                        label="Status Pengikstiharan Harta"
+                        bind:val={$editNewContractEmployeeDetailForm.assetDeclarationStatusId}
+                        options={data.selectOption.assetDeclarationLookup}
+                    ></CustomSelectField>
+
+                    {#if $editNewContractEmployeeDetailForm.assetDeclarationStatusId === 12 || $editNewContractEmployeeDetailForm.assetDeclarationStatusId === 14 || $editNewContractEmployeeDetailForm.assetDeclarationStatusId === 15 || $editNewContractEmployeeDetailForm.assetDeclarationStatusId === 17 || $editNewContractEmployeeDetailForm.assetDeclarationStatusId === 18 || $editNewContractEmployeeDetailForm.assetDeclarationStatusId === 22}
+                        <CustomTextField
+                            errors={$editNewContractEmployeeDetailError.propertyDeclarationDate}
+                            id="propertyDeclarationDate"
+                            type="date"
+                            label="Tarikh Pengikstiharan Harta"
+                            bind:val={$editNewContractEmployeeDetailForm.propertyDeclarationDate}
+                        />
+                    {/if}
                     <CustomRadioBoolean
                         disabled={false}
                         id="isExPoliceOrSoldier"
@@ -239,6 +383,28 @@
                         bind:val={$editNewContractEmployeeDetailForm.isExPoliceOrSoldier}
                         errors={$editNewContractEmployeeDetailError.isExPoliceOrSoldier}
                     />
+                    <CustomRadioBoolean
+                        disabled={false}
+                        id="isInternalRelationship"
+                        label="Perhubungan Dengan Kakitangan LKIM"
+                        bind:val={$editNewContractEmployeeDetailForm.isInternalRelationship}
+                        errors={$editNewContractEmployeeDetailError.isInternalRelationship}
+                    />
+                    {#if $editNewContractEmployeeDetailForm.isInternalRelationship}
+                        <CustomTextField
+                            label="Nama Kakitangan LKIM"
+                            id="employeeNumber"
+                            bind:val={$editNewContractEmployeeDetailForm.employeeNumber}
+                            errors={$editNewContractEmployeeDetailError.employeeNumber}
+                        />
+                        <CustomSelectField
+                            label="Hubungan Kakitangan LKIM"
+                            id="relationshipId"
+                            options={data.selectOption.relationshipLookup}
+                            bind:val={$editNewContractEmployeeDetailForm.relationshipId}
+                            errors={$editNewContractEmployeeDetailError.relationshipId}
+                        />
+                    {/if}
                 </form>
             </StepperContentBody>
         </StepperContent>
@@ -259,67 +425,74 @@
                     class="flex w-full flex-col justify-start gap-2.5 pb-10"
                     method="POST"
                     id="academicDetailForm"
+                    use:academicDetailEnhance
                 >
-                    <CustomTextField
+                    <CustomSelectField
                         label="Jenis Jurusan"
                         id="majorId"
-                        val=""
-                        errors={[]}
+                        options={data.selectOption.majorMinorLookup}
+                        bind:val={$academicDetailForm.majorId}
+                        errors={$academicDetailError.majorId}
                     />
-                    <CustomTextField
+                    <CustomSelectField
                         label="Jenis Bidang"
                         id="minorId"
-                        val=""
-                        errors={[]}
+                        options={data.selectOption.majorMinorLookup}
+                        bind:val={$academicDetailForm.minorId}
+                        errors={$academicDetailError.minorId}
                     />
-                    <CustomTextField
+                    <CustomSelectField
                         label="Negara"
                         id="countryId"
-                        val=""
-                        errors={[]}
+                        options={data.selectOption.countryLookup}
+                        bind:val={$academicDetailForm.countryId}
+                        errors={$academicDetailError.countryId}
                     />
-                    <CustomTextField
+                    <CustomSelectField
                         label="Institusi"
                         id="institutionId"
-                        val=""
-                        errors={[]}
+                        options={data.selectOption.institutionLookup}
+                        bind:val={$academicDetailForm.institutionId}
+                        errors={$academicDetailError.institutionId}
                     />
-                    <CustomTextField
-                        label="Taraf Pembelajaran"
+                    <CustomSelectField
+                        label="Taraf Pendidikan"
                         id="educationLevelId"
-                        val=""
-                        errors={[]}
+                        options={data.selectOption.educationLookup}
+                        bind:val={$academicDetailForm.educationLevelId}
+                        errors={$academicDetailError.educationLevelId}
                     />
-                    <CustomTextField
+                    <CustomSelectField
                         label="Penajaan"
                         id="sponsorshipId"
-                        val=""
-                        errors={[]}
+                        options={data.selectOption.sponsorshipLookup}
+                        bind:val={$academicDetailForm.sponsorshipId}
+                        errors={$academicDetailError.sponsorshipId}
                     />
                     <CustomTextField
                         label="Nama Pencapaian/Sijil"
                         id="name"
-                        val=""
-                        errors={[]}
+                        bind:val={$academicDetailForm.name}
+                        errors={$academicDetailError.name}
                     />
                     <CustomTextField
                         label="Tarikh Kelulusan"
                         id="completionDate"
                         type="date"
-                        val=""
-                        errors={[]}
+                        bind:val={$academicDetailForm.completionDate}
+                        errors={$academicDetailError.completionDate}
                     />
                     <CustomTextField
                         label="Pencapaian Akhir (Gred)"
                         id="finalGrade"
-                        val=""
-                        errors={[]}
+                        bind:val={$academicDetailForm.finalGrade}
+                        errors={$academicDetailError.finalGrade}
                     />
                     <CustomTextField
                         label="Catatan"
                         id="field"
-                        val=""
-                        errors={[]}
+                        bind:val={$academicDetailForm.field}
+                        errors={$academicDetailError.field}
                     />
                 </form>
             </StepperContentBody>
@@ -985,7 +1158,7 @@
                     />
                 </form>
             </StepperContentBody>
-            </StepperContent>
+        </StepperContent>
     </Stepper>
 </section>
 

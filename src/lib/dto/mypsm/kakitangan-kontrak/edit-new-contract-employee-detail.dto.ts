@@ -3,6 +3,7 @@ export interface EditNewContractEmployeeDetailDTO {
     nationalityId:            number;
     religionId:               number;
     raceId:                   number;
+    phoneNumber:              string;
     titleId?:                  number | null;
     ethnicId:                 number;
     maritalId:                number;

@@ -6,19 +6,23 @@ import {
     maxDateSchema,
     minDateSchema,
     numberIdSchema,
-    numberSchema,
     shortTextSchema,
 } from '$lib/schemas/common/schema-type';
+import { message } from 'sveltekit-superforms';
 import { z } from 'zod';
 
+export const numberSchema = z.coerce.number({
+    required_error: 'Medan ini hendaklah diisi.',
+    invalid_type_error: 'Sila pastikan medan ini ditaip dengan angka',
+}).refine(x => x > 0, { message: "Medan ini tidak boleh dibiar kosong." });
 const emailSchema = z.string({
     invalid_type_error: "Medan ini tidak boleh dibiar kosong."
 }).email("Sila nyatakan format emel yang sah. ");
-const identificationCardSchema = z.string().refine(x => /^[0-9]+$/.test(x) && x.length == 12,{
+const identificationCardSchema = z.string().refine(x => /^[0-9]+$/.test(x) && x.length == 12, {
     message: "Sila nyatakan No. Kad Pengenalan dalam format yang dikehendaki."
 });
-const optionalNumberSchema = z.number().nullable().default(null);
-const optionalTextSchema = z.string().nullable().default(null);
+const optionalNumberSchema = z.number().refine(x => x > 0, { message: "Sila tetapkan pilihan anda." }).nullable().default(null);
+const optionalTextSchema = z.string().min(4, { message: "Medan hendaklah lebih dari 4 karakter." }).nullable().default(null);
 const optionalDate = z.coerce.date().nullable().default(null);
 const optionalBoolean = z.boolean().nullable().default(null);
 // ========================================
@@ -41,15 +45,19 @@ export const _addNewContractEmployeeSchema = z.object({
 })
 
 export const _editNewContractEmployeeSchema = z.object({
-    genderId: numberSchema.refine(x => x > 0, { message: 'Medan ini tidak boleh dibiar kosong.' }),
+    genderId: numberSchema,
     nationalityId: optionalNumberSchema,
-    religionId: numberSchema.refine(x => x > 0, { message: 'Medan ini tidak boleh dibiar kosong.' }),
-    raceId: numberSchema.refine(x => x > 0, { message: 'Medan ini tidak boleh dibiar kosong.' }),
+    religionId: numberSchema,
+    raceId: numberSchema,
     titleId: optionalNumberSchema,
-    ethnicId: numberSchema.refine(x => x > 0, { message: 'Medan ini tidak boleh dibiar kosong.' }),
-    maritalId: numberSchema.refine(x => x > 0, { message: 'Medan ini tidak boleh dibiar kosong.' }),
-    birthCountryId: numberSchema.refine(x => x > 0, { message: 'Medan ini tidak boleh dibiar kosong.' }),
-    birthStateId: numberSchema.refine(x => x > 0, { message: 'Medan ini tidak boleh dibiar kosong.' }),
+    ethnicId: numberSchema,
+    maritalId: numberSchema,
+    birthCountryId: numberSchema,
+    birthStateId: numberSchema,
+    phoneNumber: z.string().refine(x => /^[0-9]+$/.test(x) && (x.length == 11 || x.length == 10),
+        {
+            message: "Sila nyatakan No. Telefon Bimbit yang betul."
+        }),
     assetDeclarationStatusId: optionalNumberSchema,
     name: shortTextSchema,
     alternativeName: shortTextSchema,
@@ -59,19 +67,35 @@ export const _editNewContractEmployeeSchema = z.object({
     propertyDeclarationDate: optionalDate,
     birthDate: maxDateSchema,
     homeAddress: shortTextSchema,
-    homeCountryId: optionalNumberSchema,
-    homeStateId: optionalNumberSchema,
-    homeCityId: optionalNumberSchema,
-    homePostcode: optionalTextSchema,
+    homeCountryId: numberSchema,
+    homeStateId: numberSchema,
+    homeCityId: numberSchema,
+    homePostcode: shortTextSchema,
     mailAddress: shortTextSchema,
-    mailCountryId: optionalNumberSchema,
-    mailStateId: optionalNumberSchema,
-    mailCityId: optionalNumberSchema,
-    mailPostcode: optionalTextSchema,
+    mailCountryId: numberSchema,
+    mailStateId: numberSchema,
+    mailCityId: numberSchema,
+    mailPostcode: shortTextSchema,
     isExPoliceOrSoldier: booleanSchema,
-    isInternalRelationship: optionalBoolean,
+    isInternalRelationship: booleanSchema,
     employeeNumber: optionalTextSchema,
     relationshipId: optionalNumberSchema,
+})
+
+export const _addContractAcademicSchema = z.object({
+    majorId: numberSchema,
+    minorId: numberSchema,
+    countryId: numberSchema,
+    institutionId: numberSchema,
+    educationLevelId: numberSchema,
+    sponsorshipId: numberSchema,
+    name: shortTextSchema,
+    completionDate: maxDateSchema,
+    finalGrade: shortTextSchema,
+    field: shortTextSchema,
+})
+export const _contractAcademicSchema = z.object({
+    academics: _addContractAcademicSchema.array(),
 })
 
 export const _uploadDocSchema = z.object({
