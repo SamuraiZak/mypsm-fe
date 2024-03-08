@@ -185,8 +185,10 @@ export async function load({ params }) {
 
         console.log(applicationId);
 
+        allowanceId = parseInt(params.id);
+
         const detailRequest: ServiceAllowanceApplicationDetailRequestDTO = {
-            allowanceId: parseInt(params.id),
+            allowanceId: allowanceId,
             allowanceTypeCode: currentAllowanceType,
         };
 

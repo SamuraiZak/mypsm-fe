@@ -200,7 +200,7 @@
         <!-- **************************************************** -->
         <StepperContent stepperId="allowanceVerification">
             <StepperContentHeader title="Pengesahan Permohonan"
-                >{#if data.props.currentRoleCode == UserRoleConstant.urusSetiaElaunElaunPerkhidmatan.code && data.props.allowanceId == 0}
+                >{#if data.props.currentRoleCode == UserRoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
                     <TextIconButton
                         type="primary"
                         form="verificationForm"
@@ -266,8 +266,15 @@
         <!-- Maklumat Penyokong Dan Pelulus Form -->
         <!-- **************************************************** -->
         <StepperContent stepperId="allowanceSuppAppDetail">
-            <StepperContentHeader title="Maklumat Penyokong Dan Pelulus"
-            ></StepperContentHeader>
+            <StepperContentHeader title="Maklumat Penyokong Dan Pelulus">
+                {#if data.props.currentRoleCode == UserRoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
+                    <TextIconButton
+                        type="primary"
+                        form="suppAppDetailForm"
+                        label="Hantar"
+                    ></TextIconButton>
+                {/if}
+            </StepperContentHeader>
             <StepperContentBody>
                 <div
                     class="flex h-full w-full flex-col items-start justify-start"
@@ -329,8 +336,15 @@
         <!-- Supporter Feedback Form -->
         <!-- **************************************************** -->
         <StepperContent stepperId="allowanceSupport">
-            <StepperContentHeader title="Maklum Balas Daripada Penyokong"
-            ></StepperContentHeader>
+            <StepperContentHeader title="Maklum Balas Daripada Penyokong">
+                {#if data.props.currentRoleCode == UserRoleConstant.penyokong.code}
+                    <TextIconButton
+                        type="primary"
+                        form="supporterFeedbackForm"
+                        label="Hantar"
+                    ></TextIconButton>
+                {/if}
+            </StepperContentHeader>
             <StepperContentBody>
                 <div
                     class="flex h-full w-full flex-col items-start justify-start"
@@ -385,8 +399,15 @@
         <!-- Approver Feedback Form -->
         <!-- **************************************************** -->
         <StepperContent stepperId="allowanceApprove">
-            <StepperContentHeader title="Maklum Balas Daripada Pelulus"
-            ></StepperContentHeader>
+            <StepperContentHeader title="Maklum Balas Daripada Pelulus">
+                {#if data.props.currentRoleCode == UserRoleConstant.penyokong.code}
+                    <TextIconButton
+                        type="primary"
+                        form="approverFeedbackForm"
+                        label="Hantar"
+                    ></TextIconButton>
+                {/if}
+            </StepperContentHeader>
             <StepperContentBody>
                 <div
                     class="flex h-full w-full flex-col items-start justify-start"

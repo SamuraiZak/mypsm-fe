@@ -97,7 +97,7 @@ export class ServiceAllowanceStateVisitServices {
             let url: Input = 'service_allowance/state_visit/verification';
 
             const responsePromise: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: ServiceAllowanceVerificationConvert.toJson(param),
                 })
                 .json();
