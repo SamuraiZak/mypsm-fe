@@ -1,16 +1,15 @@
 <script lang="ts">
+    import type { CourseAddExamApplicationRequestDTO } from '$lib/dto/mypsm/course/exam/course-exam-application.dto.ts';
     import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/schema';
     import { zod } from 'sveltekit-superforms/adapters';
-    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import { Toaster } from 'svelte-french-toast';
-    import { dateProxy, superForm } from 'sveltekit-superforms/client';
+    import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
-    import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import {
         _academicInfoSchema,
@@ -25,7 +24,6 @@
     import CustomTable from '$lib/components/table/CustomTable.svelte';
     export let data: PageData;
 
-    let rowData: CourseExamDetailResponseDTO;
     let param: CommonListRequestDTO = data.param;
 
     // Table list - new application view for secretary role
@@ -41,6 +39,7 @@
             (data.responses.examListResponse.data
                 ?.dataList as CourseExamListResponseDTO) ?? [],
         hiddenData: ['id'],
+        selectedData: [],
     };
 
     async function _updateExamTable() {
@@ -72,13 +71,20 @@
         taintedMessage: false,
     });
 
-    const proxyExamApplicationStartDate = dateProxy(form, 'startDate', {
-        format: 'date',
-    });
-    const proxyExamApplicationEndDate = dateProxy(form, 'endDate', {
-        format: 'date',
-    });
-    const proxyExamDate = dateProxy(form, 'examDate', { format: 'date' });
+    const submitAddExamApplication = () => {
+        if (examTable.selectedData && examTable.selectedData.length > 0) {
+            const selectedExams: CourseAddExamApplicationRequestDTO = {
+                exams: examTable.selectedData.map((exam) => ({
+                    examId: (exam as CourseExamDetailResponseDTO).id,
+                })),
+            };
+            let selectedExamFormData = new FormData();
+
+            // selectedExamFormData.append('exams', selectedExams);
+            console.log('HI');
+            _createExamForm(selectedExams);
+        }
+    };
 </script>
 
 <ContentHeader title="Maklumat Lantikan Baru"
@@ -95,15 +101,15 @@
         <StepperContentHeader title="Permohonan Peperiksaan LKIM">
             <TextIconButton
                 type="primary"
-                label="Simpan"
-                form="examFormStepper"
+                label="Mohon Peperiksaan"
+                onClick={submitAddExamApplication}
             />
         </StepperContentHeader>
         <StepperContentBody
             ><!-- Maklumat Peperiksaan -->
             <div class="mb-5">
                 <b class="text-sm text-system-primary"
-                    >Sila pilih satu peperiksaan LKIM untuk dipohon:</b
+                    >Sila pilih satu atau lebih peperiksaan LKIM untuk dipohon:</b
                 >
             </div>
             <form
@@ -118,10 +124,8 @@
                     <CustomTable
                         title="Senarai Peperiksaan"
                         onUpdate={_updateExamTable}
-                        enableSelect
                         bind:tableData={examTable}
-                        bind:passData={rowData}
-                        selectActions={() => {}}
+                        enableAdd={true}
                     ></CustomTable>
                 </div>
             </form>

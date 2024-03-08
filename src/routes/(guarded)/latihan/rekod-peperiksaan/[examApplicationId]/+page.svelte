@@ -1,4 +1,5 @@
 <script lang="ts">
+    import CustomRadioField from '$lib/components/inputs/radio-field/CustomRadioField.svelte';
     import {
         approveOptions,
         certifyOptions,
@@ -32,7 +33,7 @@
     import { error } from '@sveltejs/kit';
     export let data: PageData;
 
-    let isReadonlySecretaryApprovalResult = writable<boolean>();
+    let isReadonlySecretaryApprovalResult = writable<boolean>(false);
 
     $: {
         isReadonlySecretaryApprovalResult.set(
@@ -371,7 +372,7 @@
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Kemaskini Lantikan Baru" />
+        <StepperContentHeader title="Maklumat Perkhidmatan" />
         <StepperContentBody>
             <form
                 id="serviceInfoStepper"
@@ -751,57 +752,57 @@
             </form>
         </StepperContentBody>
     </StepperContent>
+    {#if $isReadonlySecretaryApprovalResult}
+        <StepperContent>
+            <StepperContentHeader title="Pengesahan Semakan Urus Setia Latihan">
+                {#if !$isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole}
+                    <TextIconButton
+                        type="primary"
+                        label="Simpan"
+                        form="examApplicationSecretaryApprovalForm"
+                    ></TextIconButton>
+                {/if}
+            </StepperContentHeader>
+            <StepperContentBody>
+                <form
+                    id="examApplicationSecretaryApprovalForm"
+                    method="POST"
+                    use:secretaryApprovalInfoEnhance
+                    class="flex w-full flex-col gap-2.5"
+                >
+                    <div class="mb-5">
+                        <b class="text-sm text-system-primary"
+                            >Keputusan Urus Setia Perjawatan</b
+                        >
+                    </div>
+
+                    <input hidden bind:value={$secretaryApprovalInfoForm.id} />
+
+                    <CustomTextField
+                        disabled={$isReadonlySecretaryApprovalResult}
+                        errors={$secretaryApprovalInfoErrors.remark}
+                        id="remark"
+                        label="Tindakan/Ulasan"
+                        placeholder="-"
+                        bind:val={$secretaryApprovalInfoForm.remark}
+                    ></CustomTextField>
+
+                    <CustomSelectField
+                        disabled={$isReadonlySecretaryApprovalResult}
+                        errors={$secretaryApprovalInfoErrors.status}
+                        id="status"
+                        label="Keputusan"
+                        placeholder="-"
+                        bind:val={$secretaryApprovalInfoForm.status}
+                        options={certifyOptions}
+                    ></CustomSelectField>
+                </form>
+                <hr />
+            </StepperContentBody>
+        </StepperContent>
+    {/if}
     <StepperContent>
-        <StepperContentHeader
-            title="Sila Tetapkan Pengesahan Urus Setia Latihan"
-        >
-            {#if !$isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole}
-                <TextIconButton
-                    type="primary"
-                    label="Simpan"
-                    form="examApplicationSecretaryApprovalForm"
-                ></TextIconButton>
-            {/if}
-        </StepperContentHeader>
-        <StepperContentBody>
-            <form
-                id="examApplicationSecretaryApprovalForm"
-                method="POST"
-                use:secretaryApprovalInfoEnhance
-                class="flex w-full flex-col gap-2.5"
-            >
-                <div class="mb-5">
-                    <b class="text-sm text-system-primary"
-                        >Keputusan Urus Setia Perjawatan</b
-                    >
-                </div>
-
-                <input hidden bind:value={$secretaryApprovalInfoForm.id} />
-
-                <CustomTextField
-                    disabled={$isReadonlySecretaryApprovalResult}
-                    errors={$secretaryApprovalInfoErrors.remark}
-                    id="remark"
-                    label="Tindakan/Ulasan"
-                    placeholder="-"
-                    bind:val={$secretaryApprovalInfoForm.remark}
-                ></CustomTextField>
-
-                <CustomSelectField
-                    disabled={$isReadonlySecretaryApprovalResult}
-                    errors={$secretaryApprovalInfoErrors.status}
-                    id="status"
-                    label="Keputusan"
-                    placeholder="-"
-                    bind:val={$secretaryApprovalInfoForm.status}
-                    options={certifyOptions}
-                ></CustomSelectField>
-            </form>
-            <hr />
-        </StepperContentBody>
-    </StepperContent>
-    <StepperContent>
-        <StepperContentHeader title="Kemaskini Keputusan Panel">
+        <StepperContentHeader title="Keputusan Panel">
             {#if !$isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole}
                 <TextIconButton
                     type="primary"
@@ -826,12 +827,11 @@
                 <input hidden bind:value={$examResultInfoForm.id} />
 
                 <CustomTextField
-                    disabled={$isReadonlySecretaryApprovalResult}
-                    errors={$examResultInfoErrors.remark}
+                    disabled
                     id="remark"
                     label="Tajuk Peperiksaan"
                     placeholder="-"
-                    bind:val={$examResultInfoForm.remark}
+                    bind:val={$form.examTitle}
                 ></CustomTextField>
 
                 <CustomSelectField

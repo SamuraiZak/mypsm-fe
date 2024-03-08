@@ -3,9 +3,13 @@ import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.c
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { CourseAddExamApplicationRequestDTO } from '$lib/dto/mypsm/course/exam/course-exam-application.dto';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import { renameExamTypeKeyValue } from '$lib/helpers/mypsm/course/exam-type.helper';
-import { _examInfoRequestSchema } from '$lib/schemas/mypsm/course/schema';
+import {
+    _addExamApplicationRequestSchema,
+    _examInfoRequestSchema,
+} from '$lib/schemas/mypsm/course/schema';
 import { CourseServices } from '$lib/services/implementation/mypsm/latihan/course.service.js';
 import { error } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -43,7 +47,6 @@ export async function load() {
     // exam list
     examListResponse = await CourseServices.getCourseExamList(param);
 
-
     await renameExamTypeKeyValue(examListResponse);
     // ============================================================
     // Supervalidated form initialization
@@ -63,29 +66,26 @@ export async function load() {
 //==================================================
 //=============== Submit Functions =================
 //==================================================
-export const _createExamForm = async (formData: FormData) => {
-    const form = await superValidate(formData, zod(_examInfoRequestSchema));
+export const _createExamForm = async (formData: object) => {
+    const form = await superValidate(
+        formData,
+        zod(_addExamApplicationRequestSchema),
+    );
 
+    console.log(form);
     if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    const modifiedForm = {
-        examTypeId: form.data.examTypeId,
-        examTitle: form.data.examTitle,
-        startDate: form.data.startDate.toISOString().split('T')[0],
-        endDate: form.data.endDate.toISOString().split('T')[0],
-        examDate: form.data.examDate.toISOString().split('T')[0],
-        examLocation: form.data.examLocation,
-    };
-
     const response: CommonResponseDTO =
-        await CourseServices.createCourseExam(modifiedForm);
+        await CourseServices.addCourseExamApplication(
+            form.data as CourseAddExamApplicationRequestDTO,
+        );
 
     if (response.status === 'success')
         setTimeout(() => {
-            goto('../kemaskini-peperiksaan');
+            goto('../rekod-peperiksaan');
         }, 2000);
 
     return { response };
