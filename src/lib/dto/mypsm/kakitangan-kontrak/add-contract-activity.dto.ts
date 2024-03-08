@@ -4,7 +4,7 @@ export interface AddNewContractEmployeeActivityDTO {
 
 export interface ContractActivity {
     name:        string;
-    joinDate:    Date;
+    joinDate:    Date | string;
     position:    string;
     description: string;
 }

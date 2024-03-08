@@ -14,6 +14,7 @@ import { AddNewContractEmployeeAcademicDTOConvert, type AddNewContractEmployeeAc
 import { AddNewContractEmployeeActivityDTOConvert, type AddNewContractEmployeeActivityDTO } from '$lib/dto/mypsm/kakitangan-kontrak/add-contract-activity.dto';
 import { AddNewContractEmployeeDependencyDTOConvert, type AddNewContractEmployeeDependencyDTO } from '$lib/dto/mypsm/kakitangan-kontrak/add-contract-dependency.dto';
 import { AddNewContractEmployeeExperienceDTOConvert, type AddNewContractEmployeeExperienceDTO } from '$lib/dto/mypsm/kakitangan-kontrak/add-contract-experience.dto';
+import { AddContractNextOfKinDTOConvert, type AddContractNextOfKinDTO } from '$lib/dto/mypsm/kakitangan-kontrak/add-contract-next-of-kin.dto';
 import { AddContractApproverSupporterDTOConvert, type AddContractApproverSupporterDTO } from '$lib/dto/mypsm/kakitangan-kontrak/add-contract-supproter-approver.dto';
 import { AddNewContractEmployeeDTOConvert, type AddNewContractEmployeeDTO } from '$lib/dto/mypsm/kakitangan-kontrak/add-new-contract-employee.dto';
 import { EditNewContractEmployeeDetailDTOConvert, type EditNewContractEmployeeDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/edit-new-contract-employee-detail.dto';
@@ -36,6 +37,30 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    // get contract employee offer
+    static async getContractEmployeeOfferList() {
+        try {
+            const url: Input = 'contracts/personal_detail/get';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http.get(url).json();
+
+            // await toast for resolved or rejected state
+            // const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await promiseRes;
+
+            // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -226,31 +251,6 @@ export class ContractEmployeeServices {
     //add contract employee dependency
     static async addNewContractEmployeeDependency(param: AddNewContractEmployeeDependencyDTO) {
         try {
-            let url: Input = 'contracts/next_of_kin/add';
-
-            const promiseRes: Promise<Response> = http
-                .post(url, {
-                    body: AddNewContractEmployeeDependencyDTOConvert.toJson(param),
-                })
-                .json();
-                
-            const response: Response = await getPromiseToast(promiseRes);
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                invalidateAll()
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    //add contract employee next of kin
-    static async addNewContractEmployeeNextOfKin(param: AddNewContractEmployeeDependencyDTO) {
-        try {
             let url: Input = 'contracts/dependant/add';
 
             const promiseRes: Promise<Response> = http
@@ -273,13 +273,38 @@ export class ContractEmployeeServices {
         }
     }
 
+    //add contract employee next of kin
+    static async addNewContractEmployeeNextOfKin(param: AddContractNextOfKinDTO) {
+        try {
+            let url: Input = 'contracts/next_of_kin/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: AddContractNextOfKinDTOConvert.toJson(param),
+                })
+                .json();
+                
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     // create contract employee documents //multipart form
     static async addNewContractEmployeeDocument(param: FormData) {
         try {
             const url: Input = 'contracts/document/add';
-
-            param.append('key', 'document');
-
+            
+            // param.append('key', 'document');
+            param.append('key', 'document')
             // get the promise response
             const promiseRes: Promise<Response> = http
                 .post(url, {
@@ -290,13 +315,12 @@ export class ContractEmployeeServices {
                     },
                 })
                 .json();
-
             // await toast for resolved or rejected state
             const response: Response = await getPromiseToast(promiseRes);
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
-
+            console.log(result)
             if (result.status == 'success') {
                 await invalidateAll();
                 return result;

@@ -12,13 +12,25 @@
     import { superForm, superValidate } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import {
-    _submitAcademicDetailForm,
+        _submitAcademicDetailForm,
+        _submitActivityDetailForm,
+        _submitDependantDetailForm,
         _submitDocumentForm,
         _submitEditNewContractEmployeeDetailForm,
+        _submitExperienceDetailForm,
+        _submitFamilyDetailForm,
+        _submitNextOfKinForm,
+        _submitSecretaryContractResultForm,
+        _submitUpdateContractDetailForm,
     } from './+page';
     import { zod } from 'sveltekit-superforms/adapters';
     import {
-    _addContractAcademicSchema,
+        _addContractAcademicSchema,
+        _addContractActivitySchema,
+        _addContractCommonRoleResult,
+        _addContractExperienceSchema,
+        _addContractSecretaryUpdate,
+        _commonContractDependencySchema,
         _contractAcademicSchema,
         _editNewContractEmployeeSchema,
         _uploadDocSchema,
@@ -34,7 +46,7 @@
     import type { ContractDependency } from '$lib/dto/mypsm/kakitangan-kontrak/add-contract-dependency.dto';
     import { getErrorToast } from '$lib/helpers/core/toast.helper';
     import { error } from '@sveltejs/kit';
-    
+
     export let data: PageData;
 
     // temporay arrays for list details
@@ -81,7 +93,6 @@
         id: 'documentUploadForm',
         validators: zod(_uploadDocSchema),
         onSubmit() {
-            console.log($contractUploadDocumentForm);
             _submitDocumentForm($contractUploadDocumentForm.document);
         },
     });
@@ -98,24 +109,100 @@
         onSubmit() {
             _submitAcademicDetailForm($academicDetailForm);
         },
-        // async onSubmit(formData) {
-        //     const result = await superValidate(
-        //         formData.formData,
-        //         _contractAcademicSchema,
-        //     );
-
-        //     console.log('Result: ', result);
-
-        //     if (!result.valid) {
-        //         getErrorToast();
-        //         error(400, 'Validation not passed, please check every fields.');
-        //     }
-
-        //     tempAcademicRecord = [
-        //         ...tempAcademicRecord,
-        //         result.data as ContractAcademic,
-        //     ];
-        });
+    });
+    const {
+        form: experienceDetailForm,
+        errors: experienceDetailError,
+        enhance: experienceDetailEnhance,
+    } = superForm(data.experienceDetailForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'experienceDetailForm',
+        validators: zod(_addContractExperienceSchema),
+        onSubmit() {
+            _submitExperienceDetailForm($experienceDetailForm);
+        },
+    });
+    const {
+        form: activityDetailForm,
+        errors: activityDetailError,
+        enhance: activityDetailEnhance,
+    } = superForm(data.activityDetailForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'activityDetailForm',
+        validators: zod(_addContractActivitySchema),
+        onSubmit() {
+            _submitActivityDetailForm($activityDetailForm);
+        },
+    });
+    const {
+        form: familyDetailForm,
+        errors: familyDetailError,
+        enhance: familyDetailEnhance,
+    } = superForm(data.familyDetailForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'familyDetailForm',
+        validators: zod(_commonContractDependencySchema),
+        onSubmit() {
+            _submitFamilyDetailForm($familyDetailForm);
+        },
+    });
+    const {
+        form: dependantDetailForm,
+        errors: dependantDetailError,
+        enhance: dependantDetailEnhance,
+    } = superForm(data.dependantDetailForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'dependantDetailForm',
+        validators: zod(_commonContractDependencySchema),
+        onSubmit() {
+            _submitDependantDetailForm($dependantDetailForm);
+        },
+    });
+    const {
+        form: nextOfKinDetailForm,
+        errors: nextOfKinDetailError,
+        enhance: nextOfKinDetailEnhance,
+    } = superForm(data.nextOfKinDetailForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'nextOfKinDetailForm',
+        validators: zod(_commonContractDependencySchema),
+        onSubmit() {
+            _submitNextOfKinForm($nextOfKinDetailForm);
+        },
+    });
+    const {
+        form: updateContractDetailForm,
+        errors: updateContractDetailError,
+        enhance: updateContractDetailEnhance,
+    } = superForm(data.updateContractDetailForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'updateContractDetailForm',
+        validators: zod(_addContractSecretaryUpdate),
+        onSubmit() {
+            $updateContractDetailForm.candidateId = data.contractId.id;
+            _submitUpdateContractDetailForm($updateContractDetailForm);
+        },
+    });
+    const {
+        form: secretaryContractResultForm,
+        errors: secretaryContractResultError,
+        enhance: secretaryContractResultEnhance,
+    } = superForm(data.secretaryContractResultForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'secretaryContractResultForm',
+        validators: zod(_addContractCommonRoleResult),
+        onSubmit() {
+            $secretaryContractResultForm.id = data.contractId.id;
+            _submitSecretaryContractResultForm($secretaryContractResultForm);
+        },
+    });
 
     $: if (sameAddress) {
         $editNewContractEmployeeDetailForm.mailAddress =
@@ -183,6 +270,13 @@
                         id="name"
                         bind:val={$editNewContractEmployeeDetailForm.name}
                         errors={$editNewContractEmployeeDetailError.name}
+                    />
+                    <CustomSelectField
+                        label="Gelaran Nama"
+                        id="titleId"
+                        options={data.selectOption.titleLookup}
+                        bind:val={$editNewContractEmployeeDetailForm.titleId}
+                        errors={$editNewContractEmployeeDetailError.titleId}
                     />
                     <CustomTextField
                         label="Nama Lain"
@@ -512,49 +606,51 @@
                     class="flex w-full flex-col justify-start gap-2.5 pb-10"
                     method="POST"
                     id="experienceDetailForm"
+                    use:experienceDetailEnhance
                 >
                     <CustomTextField
                         label="Nama Majikan"
                         id="company"
-                        val=""
-                        errors={[]}
+                        bind:val={$experienceDetailForm.company}
+                        errors={$experienceDetailError.company}
                     />
                     <CustomTextField
                         label="Alamat Majikan"
                         id="address"
-                        val=""
-                        errors={[]}
+                        bind:val={$experienceDetailForm.address}
+                        errors={$experienceDetailError.address}
                     />
                     <CustomTextField
                         label="Jawatan"
                         id="position"
-                        val=""
-                        errors={[]}
+                        bind:val={$experienceDetailForm.position}
+                        errors={$experienceDetailError.position}
                     />
                     <CustomTextField
                         label="Kod Jawatan (Jika Ada)"
                         id="positionCode"
-                        val=""
-                        errors={[]}
+                        bind:val={$experienceDetailForm.positionCode}
+                        errors={$experienceDetailError.positionCode}
                     />
                     <CustomTextField
                         label="Tarikh Mula Bekerja"
                         id="startDate"
                         type="date"
-                        val=""
-                        errors={[]}
+                        bind:val={$experienceDetailForm.startDate}
+                        errors={$experienceDetailError.startDate}
                     />
                     <CustomTextField
                         label="Tarikh Tamat Bekerja"
                         id="endDate"
-                        val=""
-                        errors={[]}
+                        type="date"
+                        bind:val={$experienceDetailForm.endDate}
+                        errors={$experienceDetailError.endDate}
                     />
                     <CustomTextField
                         label="Gaji (RM)"
                         id="salary"
-                        val=""
-                        errors={[]}
+                        bind:val={$experienceDetailForm.salary}
+                        errors={$experienceDetailError.salary}
                     />
                 </form>
             </StepperContentBody>
@@ -574,30 +670,32 @@
                     class="flex w-full flex-col justify-start gap-2.5 pb-10"
                     method="POST"
                     id="activityDetailForm"
+                    use:activityDetailEnhance
                 >
                     <CustomTextField
                         label="Nama Kegiatan/Keahlian"
                         id="name"
-                        val=""
-                        errors={[]}
+                        bind:val={$activityDetailForm.name}
+                        errors={$activityDetailError.name}
                     />
                     <CustomTextField
                         label="Jawatan"
                         id="position"
-                        val=""
-                        errors={[]}
+                        bind:val={$activityDetailForm.position}
+                        errors={$activityDetailError.position}
                     />
                     <CustomTextField
                         label="Tarikh Penyertaan"
                         id="joinDate"
-                        val=""
-                        errors={[]}
+                        type="date"
+                        bind:val={$activityDetailForm.joinDate}
+                        errors={$activityDetailError.joinDate}
                     />
                     <CustomTextField
                         label="Catatan"
                         id="description"
-                        val=""
-                        errors={[]}
+                        bind:val={$activityDetailForm.description}
+                        errors={$activityDetailError.description}
                     />
                 </form>
             </StepperContentBody>
@@ -617,54 +715,145 @@
                     class="flex w-full flex-col justify-start gap-2.5 pb-10"
                     method="POST"
                     id="familyDetailForm"
+                    use:familyDetailEnhance
                 >
                     <CustomTextField
                         label="Nama"
                         id="name"
-                        val=""
-                        errors={[]}
+                        bind:val={$familyDetailForm.name}
+                        errors={$familyDetailError.name}
+                    />
+                    <CustomTextField
+                        label="Nama Lain"
+                        id="alternativeName"
+                        bind:val={$familyDetailForm.alternativeName}
+                        errors={$familyDetailError.alternativeName}
                     />
                     <CustomTextField
                         label="No. Kad Pengenalan"
                         id="identityDocumentNumber"
-                        val=""
-                        errors={[]}
+                        bind:val={$familyDetailForm.identityDocumentNumber}
+                        errors={$familyDetailError.identityDocumentNumber}
                     />
-                    <CustomTextField
+                    <CustomSelectField
+                        label="Jenis Kad Pengenalan"
+                        id="identityDocumentColor"
+                        options={data.selectOption.identityCardTypeLookup}
+                        bind:val={$familyDetailForm.identityDocumentColor}
+                        errors={$familyDetailError.identityDocumentColor}
+                    />
+                    <CustomSelectField
                         label="Jantina"
                         id="genderId"
-                        val=""
-                        errors={[]}
+                        options={data.selectOption.genderLookup}
+                        bind:val={$familyDetailForm.genderId}
+                        errors={$familyDetailError.genderId}
                     />
                     <CustomTextField
                         label="Tarikh Lahir"
                         id="birthDate"
-                        val=""
-                        errors={[]}
+                        type="date"
+                        bind:val={$familyDetailForm.birthDate}
+                        errors={$familyDetailError.birthDate}
+                    />
+                    <CustomSelectField
+                        label="Kewarganegaraan"
+                        id="nationalityId"
+                        options={data.selectOption.nationalityLookup}
+                        bind:val={$familyDetailForm.nationalityId}
+                        errors={$familyDetailError.nationalityId}
+                    />
+                    <CustomSelectField
+                        label="Negeri Kelahiran"
+                        id="birthStateId"
+                        options={data.selectOption.stateLookup}
+                        bind:val={$familyDetailForm.birthStateId}
+                        errors={$familyDetailError.birthStateId}
+                    />
+                    <CustomSelectField
+                        label="Negara Kelahiran"
+                        id="birthCountryId"
+                        options={data.selectOption.countryLookup}
+                        bind:val={$familyDetailForm.birthCountryId}
+                        errors={$familyDetailError.birthCountryId}
                     />
                     <CustomTextField
+                        label="Alamat"
+                        id="address"
+                        bind:val={$familyDetailForm.address}
+                        errors={$familyDetailError.address}
+                    />
+                    <CustomTextField
+                        label="Poskod"
+                        id="postcode"
+                        bind:val={$familyDetailForm.postcode}
+                        errors={$familyDetailError.postcode}
+                    />
+                    <CustomTextField
+                        label="No. Telefon"
+                        id="phoneNumber"
+                        bind:val={$familyDetailForm.phoneNumber}
+                        errors={$familyDetailError.phoneNumber}
+                    />
+                    <CustomSelectField
                         label="Bangsa"
                         id="raceId"
-                        val=""
-                        errors={[]}
+                        options={data.selectOption.raceLookup}
+                        bind:val={$familyDetailForm.raceId}
+                        errors={$familyDetailError.raceId}
                     />
+
+                    <CustomSelectField
+                        label="Status"
+                        id="maritalId"
+                        options={data.selectOption.maritalLookup}
+                        bind:val={$familyDetailForm.maritalId}
+                        errors={$familyDetailError.maritalId}
+                    />
+                    {#if $familyDetailForm.maritalId === 3}
                     <CustomTextField
+                        label="Tarikh Perkahwinan"
+                        id="marriageDate"
+                        type="date"
+                        bind:val={$familyDetailForm.marriageDate}
+                        errors={$familyDetailError.marriageDate}
+                    />
+                    {/if}
+                    <CustomSelectField
                         label="Hubungan"
                         id="relationshipId"
-                        val=""
-                        errors={[]}
+                        options={data.selectOption.relationshipLookup}
+                        bind:val={$familyDetailForm.relationshipId}
+                        errors={$familyDetailError.relationshipId}
+                    />
+                    <CustomSelectField
+                        label="Taraf Pendidikan"
+                        id="educationLevelId"
+                        options={data.selectOption.educationLookup}
+                        bind:val={$familyDetailForm.educationLevelId}
+                        errors={$familyDetailError.educationLevelId}
                     />
                     <CustomTextField
-                        label="Pekerjaan"
-                        id="position"
-                        val=""
-                        errors={[]}
+                        label="Alamat Majikan"
+                        id="workAddress"
+                        bind:val={$familyDetailForm.workAddress}
+                        errors={$familyDetailError.workAddress}
                     />
                     <CustomTextField
+                        label="Poskod Alamat Majikan"
+                        id="workPostcode"
+                        bind:val={$familyDetailForm.workPostcode}
+                        errors={$familyDetailError.workPostcode}
+                    />
+                    <CustomSelectField
                         label="Bersekolah"
                         id="inSchool"
-                        val=""
-                        errors={[]}
+                        options={[
+                            { value: true, name: 'Ya' },
+                            { value: false, name: 'Tidak' },
+                        ]}
+                        bind:val={$familyDetailForm.inSchool}
+                        errors={$familyDetailError.inSchool}
                     />
                 </form>
             </StepperContentBody>
@@ -676,7 +865,7 @@
             >
                 <TextIconButton
                     label="Simpan"
-                    form="dependencyDetailForm"
+                    form="dependantDetailForm"
                     type="primary"
                     icon="check"
                 />
@@ -685,55 +874,146 @@
                 <form
                     class="flex w-full flex-col justify-start gap-2.5 pb-10"
                     method="POST"
-                    id="dependencyDetailForm"
+                    id="dependantDetailForm"
+                    use:dependantDetailEnhance
                 >
                     <CustomTextField
                         label="Nama"
                         id="name"
-                        val=""
-                        errors={[]}
+                        bind:val={$dependantDetailForm.name}
+                        errors={$dependantDetailError.name}
+                    />
+                    <CustomTextField
+                        label="Nama Lain"
+                        id="alternativeName"
+                        bind:val={$dependantDetailForm.alternativeName}
+                        errors={$dependantDetailError.alternativeName}
                     />
                     <CustomTextField
                         label="No. Kad Pengenalan"
                         id="identityDocumentNumber"
-                        val=""
-                        errors={[]}
+                        bind:val={$dependantDetailForm.identityDocumentNumber}
+                        errors={$dependantDetailError.identityDocumentNumber}
                     />
-                    <CustomTextField
+                    <CustomSelectField
+                        label="Jenis Kad Pengenalan"
+                        id="identityDocumentColor"
+                        options={data.selectOption.identityCardTypeLookup}
+                        bind:val={$dependantDetailForm.identityDocumentColor}
+                        errors={$dependantDetailError.identityDocumentColor}
+                    />
+                    <CustomSelectField
                         label="Jantina"
                         id="genderId"
-                        val=""
-                        errors={[]}
+                        options={data.selectOption.genderLookup}
+                        bind:val={$dependantDetailForm.genderId}
+                        errors={$dependantDetailError.genderId}
                     />
                     <CustomTextField
                         label="Tarikh Lahir"
                         id="birthDate"
-                        val=""
-                        errors={[]}
+                        type="date"
+                        bind:val={$dependantDetailForm.birthDate}
+                        errors={$dependantDetailError.birthDate}
+                    />
+                    <CustomSelectField
+                        label="Kewarganegaraan"
+                        id="nationalityId"
+                        options={data.selectOption.nationalityLookup}
+                        bind:val={$dependantDetailForm.nationalityId}
+                        errors={$dependantDetailError.nationalityId}
+                    />
+                    <CustomSelectField
+                        label="Negeri Kelahiran"
+                        id="birthStateId"
+                        options={data.selectOption.stateLookup}
+                        bind:val={$dependantDetailForm.birthStateId}
+                        errors={$dependantDetailError.birthStateId}
+                    />
+                    <CustomSelectField
+                        label="Negara Kelahiran"
+                        id="birthCountryId"
+                        options={data.selectOption.countryLookup}
+                        bind:val={$dependantDetailForm.birthCountryId}
+                        errors={$dependantDetailError.birthCountryId}
                     />
                     <CustomTextField
+                        label="Alamat"
+                        id="address"
+                        bind:val={$dependantDetailForm.address}
+                        errors={$dependantDetailError.address}
+                    />
+                    <CustomTextField
+                        label="Poskod"
+                        id="postcode"
+                        bind:val={$dependantDetailForm.postcode}
+                        errors={$dependantDetailError.postcode}
+                    />
+                    <CustomTextField
+                        label="No. Telefon"
+                        id="phoneNumber"
+                        bind:val={$dependantDetailForm.phoneNumber}
+                        errors={$dependantDetailError.phoneNumber}
+                    />
+                    <CustomSelectField
                         label="Bangsa"
                         id="raceId"
-                        val=""
-                        errors={[]}
+                        options={data.selectOption.raceLookup}
+                        bind:val={$dependantDetailForm.raceId}
+                        errors={$dependantDetailError.raceId}
                     />
+
+                    <CustomSelectField
+                        label="Status"
+                        id="maritalId"
+                        options={data.selectOption.maritalLookup}
+                        bind:val={$dependantDetailForm.maritalId}
+                        errors={$dependantDetailError.maritalId}
+                    />
+                    {#if $dependantDetailForm.maritalId === 3}
                     <CustomTextField
+                        label="Tarikh Perkahwinan"
+                        id="marriageDate"
+                        type="date"
+                        bind:val={$dependantDetailForm.marriageDate}
+                        errors={$dependantDetailError.marriageDate}
+                    />
+                    {/if}
+                    <CustomSelectField
                         label="Hubungan"
                         id="relationshipId"
-                        val=""
-                        errors={[]}
+                        options={data.selectOption.relationshipLookup}
+                        bind:val={$dependantDetailForm.relationshipId}
+                        errors={$dependantDetailError.relationshipId}
+                    />
+                    <CustomSelectField
+                        label="Taraf Pendidikan"
+                        id="educationLevelId"
+                        options={data.selectOption.educationLookup}
+                        bind:val={$dependantDetailForm.educationLevelId}
+                        errors={$dependantDetailError.educationLevelId}
                     />
                     <CustomTextField
-                        label="Pekerjaan"
-                        id="position"
-                        val=""
-                        errors={[]}
+                        label="Alamat Majikan"
+                        id="workAddress"
+                        bind:val={$dependantDetailForm.workAddress}
+                        errors={$dependantDetailError.workAddress}
                     />
                     <CustomTextField
+                        label="Poskod Alamat Majikan"
+                        id="workPostcode"
+                        bind:val={$dependantDetailForm.workPostcode}
+                        errors={$dependantDetailError.workPostcode}
+                    />
+                    <CustomSelectField
                         label="Bersekolah"
                         id="inSchool"
-                        val=""
-                        errors={[]}
+                        options={[
+                            { value: true, name: 'Ya' },
+                            { value: false, name: 'Tidak' },
+                        ]}
+                        bind:val={$dependantDetailForm.inSchool}
+                        errors={$dependantDetailError.inSchool}
                     />
                 </form>
             </StepperContentBody>
@@ -753,54 +1033,145 @@
                     class="flex w-full flex-col justify-start gap-2.5 pb-10"
                     method="POST"
                     id="nextOfKinDetailForm"
+                    use:nextOfKinDetailEnhance
                 >
                     <CustomTextField
                         label="Nama"
                         id="name"
-                        val=""
-                        errors={[]}
+                        bind:val={$nextOfKinDetailForm.name}
+                        errors={$nextOfKinDetailError.name}
+                    />
+                    <CustomTextField
+                        label="Nama Lain"
+                        id="alternativeName"
+                        bind:val={$nextOfKinDetailForm.alternativeName}
+                        errors={$nextOfKinDetailError.alternativeName}
                     />
                     <CustomTextField
                         label="No. Kad Pengenalan"
                         id="identityDocumentNumber"
-                        val=""
-                        errors={[]}
+                        bind:val={$nextOfKinDetailForm.identityDocumentNumber}
+                        errors={$nextOfKinDetailError.identityDocumentNumber}
                     />
-                    <CustomTextField
+                    <CustomSelectField
+                        label="Jenis Kad Pengenalan"
+                        id="identityDocumentColor"
+                        options={data.selectOption.identityCardTypeLookup}
+                        bind:val={$nextOfKinDetailForm.identityDocumentColor}
+                        errors={$nextOfKinDetailError.identityDocumentColor}
+                    />
+                    <CustomSelectField
                         label="Jantina"
                         id="genderId"
-                        val=""
-                        errors={[]}
+                        options={data.selectOption.genderLookup}
+                        bind:val={$nextOfKinDetailForm.genderId}
+                        errors={$nextOfKinDetailError.genderId}
                     />
                     <CustomTextField
                         label="Tarikh Lahir"
                         id="birthDate"
-                        val=""
-                        errors={[]}
+                        type="date"
+                        bind:val={$nextOfKinDetailForm.birthDate}
+                        errors={$nextOfKinDetailError.birthDate}
+                    />
+                    <CustomSelectField
+                        label="Kewarganegaraan"
+                        id="nationalityId"
+                        options={data.selectOption.nationalityLookup}
+                        bind:val={$nextOfKinDetailForm.nationalityId}
+                        errors={$nextOfKinDetailError.nationalityId}
+                    />
+                    <CustomSelectField
+                        label="Negeri Kelahiran"
+                        id="birthStateId"
+                        options={data.selectOption.stateLookup}
+                        bind:val={$nextOfKinDetailForm.birthStateId}
+                        errors={$nextOfKinDetailError.birthStateId}
+                    />
+                    <CustomSelectField
+                        label="Negara Kelahiran"
+                        id="birthCountryId"
+                        options={data.selectOption.countryLookup}
+                        bind:val={$nextOfKinDetailForm.birthCountryId}
+                        errors={$nextOfKinDetailError.birthCountryId}
                     />
                     <CustomTextField
+                        label="Alamat"
+                        id="address"
+                        bind:val={$nextOfKinDetailForm.address}
+                        errors={$nextOfKinDetailError.address}
+                    />
+                    <CustomTextField
+                        label="Poskod"
+                        id="postcode"
+                        bind:val={$nextOfKinDetailForm.postcode}
+                        errors={$nextOfKinDetailError.postcode}
+                    />
+                    <CustomTextField
+                        label="No. Telefon"
+                        id="phoneNumber"
+                        bind:val={$nextOfKinDetailForm.phoneNumber}
+                        errors={$nextOfKinDetailError.phoneNumber}
+                    />
+                    <CustomSelectField
                         label="Bangsa"
                         id="raceId"
-                        val=""
-                        errors={[]}
+                        options={data.selectOption.raceLookup}
+                        bind:val={$nextOfKinDetailForm.raceId}
+                        errors={$nextOfKinDetailError.raceId}
                     />
+
+                    <CustomSelectField
+                        label="Status"
+                        id="maritalId"
+                        options={data.selectOption.maritalLookup}
+                        bind:val={$nextOfKinDetailForm.maritalId}
+                        errors={$nextOfKinDetailError.maritalId}
+                    />
+                    {#if $nextOfKinDetailForm.maritalId === 3}
                     <CustomTextField
+                        label="Tarikh Perkahwinan"
+                        id="marriageDate"
+                        type="date"
+                        bind:val={$nextOfKinDetailForm.marriageDate}
+                        errors={$nextOfKinDetailError.marriageDate}
+                    />
+                    {/if}
+                    <CustomSelectField
                         label="Hubungan"
                         id="relationshipId"
-                        val=""
-                        errors={[]}
+                        options={data.selectOption.relationshipLookup}
+                        bind:val={$nextOfKinDetailForm.relationshipId}
+                        errors={$nextOfKinDetailError.relationshipId}
+                    />
+                    <CustomSelectField
+                        label="Taraf Pendidikan"
+                        id="educationLevelId"
+                        options={data.selectOption.educationLookup}
+                        bind:val={$nextOfKinDetailForm.educationLevelId}
+                        errors={$nextOfKinDetailError.educationLevelId}
                     />
                     <CustomTextField
-                        label="Pekerjaan"
-                        id="position"
-                        val=""
-                        errors={[]}
+                        label="Alamat Majikan"
+                        id="workAddress"
+                        bind:val={$nextOfKinDetailForm.workAddress}
+                        errors={$nextOfKinDetailError.workAddress}
                     />
                     <CustomTextField
+                        label="Poskod Alamat Majikan"
+                        id="workPostcode"
+                        bind:val={$nextOfKinDetailForm.workPostcode}
+                        errors={$nextOfKinDetailError.workPostcode}
+                    />
+                    <CustomSelectField
                         label="Bersekolah"
                         id="inSchool"
-                        val=""
-                        errors={[]}
+                        options={[
+                            { value: true, name: 'Ya' },
+                            { value: false, name: 'Tidak' },
+                        ]}
+                        bind:val={$nextOfKinDetailForm.inSchool}
+                        errors={$nextOfKinDetailError.inSchool}
                     />
                 </form>
             </StepperContentBody>
@@ -920,117 +1291,135 @@
                     class="flex w-full flex-col justify-start gap-2.5 pb-10"
                     method="POST"
                     id="updateContractDetailForm"
+                    use:updateContractDetailEnhance
                 >
                     <CustomTextField
                         label="Tarikh Mula Kontrak"
                         id="startContract"
                         type="date"
-                        val=""
-                        errors={[]}
+                        bind:val={$updateContractDetailForm.startContract}
+                        errors={$updateContractDetailError.startContract}
                     />
                     <CustomTextField
                         label="Tarikh Tamat Kontrak"
                         id="endContract"
-                        type="text"
-                        val=""
-                        errors={[]}
+                        type="date"
+                        bind:val={$updateContractDetailForm.endContract}
+                        errors={$updateContractDetailError.endContract}
                     />
                     <CustomTextField
                         label="Kadar Upah (RM)"
                         id="wageRate"
                         type="number"
-                        val=""
-                        errors={[]}
+                        bind:val={$updateContractDetailForm.wageRate}
+                        errors={$updateContractDetailError.wageRate}
                     />
-                    <CustomTextField
+                    <CustomSelectField
                         label="Penempatan"
                         id="placementId"
-                        val=""
-                        errors={[]}
+                        options={data.selectOption.placementLookup}
+                        bind:val={$updateContractDetailForm.placementId}
+                        errors={$updateContractDetailError.placementId}
                     />
-                    <CustomTextField
+                    <CustomSelectField
                         label="Gelaran Tugas"
                         id="designation"
-                        val=""
-                        errors={[]}
+                        options={data.selectOption.positionLookup}
+                        bind:val={$updateContractDetailForm.designation}
+                        errors={$updateContractDetailError.designation}
                     />
                     <CustomTextField
                         label="Tarikh Lapor Diri"
                         id="reportDutyDate"
-                        val=""
-                        errors={[]}
+                        type="date"
+                        bind:val={$updateContractDetailForm.reportDutyDate}
+                        errors={$updateContractDetailError.reportDutyDate}
                     />
                     <CustomTextField
                         label="No. KWSP"
                         id="kwspNo"
-                        val=""
-                        errors={[]}
+                        bind:val={$updateContractDetailForm.kwspNo}
+                        errors={$updateContractDetailError.kwspNo}
                     />
                     <CustomTextField
                         label="No. SOCSO"
                         id="socsoNo"
-                        val=""
-                        errors={[]}
+                        bind:val={$updateContractDetailForm.socsoNo}
+                        errors={$updateContractDetailError.socsoNo}
                     />
                     <CustomTextField
                         label="No. Cukai"
                         id="taxNo"
-                        val=""
-                        errors={[]}
+                        bind:val={$updateContractDetailForm.taxNo}
+                        errors={$updateContractDetailError.taxNo}
                     />
                     <CustomTextField
                         label="Nama Bank"
                         id="bankName"
-                        val=""
-                        errors={[]}
+                        bind:val={$updateContractDetailForm.bankName}
+                        errors={$updateContractDetailError.bankName}
                     />
                     <CustomTextField
                         label="No. Akaun Bank"
                         id="bankAccount"
-                        val=""
-                        errors={[]}
+                        bind:val={$updateContractDetailForm.bankAccount}
+                        errors={$updateContractDetailError.bankAccount}
                     />
-                    <CustomTextField
+                    <CustomSelectField
                         label="Jenis Perkhidmatan"
                         id="serviceTypeId"
-                        val=""
-                        errors={[]}
+                        options={data.selectOption.serviceTypeLookup}
+                        bind:val={$updateContractDetailForm.serviceTypeId}
+                        errors={$updateContractDetailError.serviceTypeId}
                     />
                     <CustomTextField
                         label="Kelayakan Cuti (Hari)"
                         id="leaveEntitlement"
-                        val=""
-                        errors={[]}
+                        type="number"
+                        bind:val={$updateContractDetailForm.leaveEntitlement}
+                        errors={$updateContractDetailError.leaveEntitlement}
+                    />
+                    <CustomTextField
+                        label="Tarikh Kuatkuasa Lantikan Semasa"
+                        id="effectiveDate"
+                        type="date"
+                        bind:val={$updateContractDetailForm.effectiveDate}
+                        errors={$updateContractDetailError.effectiveDate}
                     />
                     <CustomTextField
                         label="Mula Dilantik Perkhidmatan Kerajaan"
                         id="civilServiceStartDate"
-                        val=""
-                        errors={[]}
+                        type="date"
+                        bind:val={$updateContractDetailForm.civilServiceStartDate}
+                        errors={$updateContractDetailError.civilServiceStartDate}
                     />
                     <CustomTextField
                         label="Mula Dilantik Perkhidmatan LKIM"
                         id="lkimServiceStartDate"
-                        val=""
-                        errors={[]}
+                        type="date"
+                        bind:val={$updateContractDetailForm.lkimServiceStartDate}
+                        errors={$updateContractDetailError.lkimServiceStartDate}
                     />
                     <CustomTextField
                         label="Mula Dilantik Perkhidmatan Sekarang"
                         id="currentServiceStartDate"
-                        val=""
-                        errors={[]}
+                        type="date"
+                        bind:val={$updateContractDetailForm.currentServiceStartDate}
+                        errors={$updateContractDetailError.currentServiceStartDate}
                     />
                     <CustomTextField
                         label="Disahkan Dalam Jawatan Pertama LKIM"
                         id="firstConfirmServiceDate"
-                        val=""
-                        errors={[]}
+                        type="date"
+                        bind:val={$updateContractDetailForm.firstConfirmServiceDate}
+                        errors={$updateContractDetailError.firstConfirmServiceDate}
                     />
                     <CustomTextField
                         label="Tarikh Perkhidmatan Pengesahan Semasa"
                         id="currentConfirmServiceDate"
-                        val=""
-                        errors={[]}
+                        type="date"
+                        bind:val={$updateContractDetailForm.currentConfirmServiceDate}
+                        errors={$updateContractDetailError.currentConfirmServiceDate}
                     />
                 </form>
             </StepperContentBody>
@@ -1050,17 +1439,19 @@
                     class="flex w-full flex-col justify-start gap-2.5 pb-10"
                     method="POST"
                     id="secretaryContractResultForm"
+                    use:secretaryContractResultEnhance
                 >
                     <CustomTextField
                         label="Tindakan/Ulasan Urus Setia Perjawatan"
                         id="remark"
-                        val=""
-                        errors={[]}
+                        bind:val={$secretaryContractResultForm.remark}
+                        errors={$secretaryContractResultError.remark}
                     />
                     <CustomRadioBoolean
                         label="Keputusan"
                         id="status"
                         options={secretaryOption}
+                        bind:val={$secretaryContractResultForm.status}
                         disabled={false}
                     />
                 </form>
