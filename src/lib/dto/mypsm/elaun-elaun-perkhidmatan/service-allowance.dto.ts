@@ -1,9 +1,10 @@
 export interface ServiceAllowanceDTO {
-    allowanceID: string;
+    allowanceId: string;
     employeeID: string;
     name: string;
     identityCardNumber: string;
     allowanceType: string;
+    allowanceTypeCode: string | null;
     category: string;
     applicationDate: string;
     total: number;

@@ -7,12 +7,17 @@
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
+    import { ServiceAllowanceTypeConstant } from '$lib/constants/core/service-allowance.constant';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
+    import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type { ServiceAllowanceDTO } from '$lib/dto/mypsm/elaun-elaun-perkhidmatan/service-allowance.dto';
     import type { PageData } from './$types';
     import { _updateAllowanceTable } from './+page';
 
     export let data: PageData;
+
+    let selectedRecord: ServiceAllowanceDTO;
 
     let allowanceTable: TableDTO = {
         param: data.props.allowanceListRequestBody,
@@ -39,6 +44,21 @@
             allowanceTable.param.pageNum = allowanceTable.meta.pageNum;
         });
     }
+
+    function _viewDetails() {
+        const currentAllowanceType: LookupDTO | null =
+            ServiceAllowanceTypeConstant.list.find(
+                (item) => item.code == selectedRecord.allowanceTypeCode,
+            ) ?? null;
+
+        let redirectUrl: string =
+            '/elaun-elaun-perkhidmatan/permohonan/' +
+            selectedRecord.allowanceId +
+            '/' +
+            currentAllowanceType?.url;
+
+        goto(redirectUrl);
+    }
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -47,7 +67,9 @@
             label="Permohonan Baru"
             icon="add"
             onClick={() => {
-                goto('/elaun-elaun-perkhidmatan/permohonan/baru/bantuan-mengurus-jenazah');
+                goto(
+                    '/elaun-elaun-perkhidmatan/permohonan/baru/bantuan-mengurus-jenazah',
+                );
             }}
         ></TextIconButton>
     </ContentHeader>
@@ -99,6 +121,10 @@
                     title="Senarai Permohonan Elaun-elaun Perkhidmatan"
                     bind:tableData={allowanceTable}
                     onUpdate={_allowanceListSearch}
+                    bind:passData={selectedRecord}
+                    detailActions={() => {
+                        _viewDetails();
+                    }}
                     enableDetail
                 ></CustomTable>
             </div>
