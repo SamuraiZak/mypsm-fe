@@ -2,7 +2,7 @@ import type {
     _editExamInfoRequestSchema,
     _examInfoRequestSchema,
     _examInfoResponseSchema,
-} from '$lib/schemas/mypsm/course/schema';
+} from '$lib/schemas/mypsm/course/exam-schema';
 import type { z } from 'zod';
 
 export type CourseCreateExamRequestDTO = z.infer<typeof _examInfoRequestSchema>;
