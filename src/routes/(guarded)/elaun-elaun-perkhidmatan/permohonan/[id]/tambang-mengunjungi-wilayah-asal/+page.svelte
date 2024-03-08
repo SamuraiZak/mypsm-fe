@@ -1,5 +1,6 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
+    import { Toaster } from 'svelte-french-toast';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
@@ -54,6 +55,7 @@
         errors: detailErrors,
         enhance: detailEnhance,
     } = superForm(data.props.allowanceDetailForm, {
+        id: 'detailForm',
         SPA: true,
         validators: zodClient(_addTambangMengunjungiWilayahAsalSchemaSchema),
         onSubmit(input) {
@@ -67,6 +69,7 @@
         errors: verificationErrors,
         enhance: verificationEnhance,
     } = superForm(data.props.verificationForm, {
+        id: 'verificationForm',
         SPA: true,
         validators: zodClient(_serviceAllowanceVerificationSchema),
         onSubmit(input) {
@@ -80,6 +83,7 @@
         errors: suppAppDetailsErrors,
         enhance: suppAppDetailsEnhance,
     } = superForm(data.props.suppporterApproverDetailForm, {
+        id: 'suppAppDetailForm',
         SPA: true,
         validators: zodClient(_serviceAllowanceSuppAppDetailSchema),
         onSubmit(input) {
@@ -92,6 +96,7 @@
         errors: supporterFeedbackErrors,
         enhance: supporterFeedbackEnhance,
     } = superForm(data.props.supporterFeedbackForm, {
+        id: 'supportForm',
         SPA: true,
         validators: zodClient(_serviceAllowanceSupporterFeedbackSchema),
         onSubmit(input) {
@@ -104,6 +109,7 @@
         errors: approverFeedbackErrors,
         enhance: approverFeedbackEnhance,
     } = superForm(data.props.approverFeedbackForm, {
+        id: 'approveForm',
         SPA: true,
         validators: zodClient(_serviceAllowanceApproverFeedbackSchema),
         onSubmit(input) {
@@ -129,9 +135,16 @@
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
     <Stepper activeIndex={0}>
-        <StepperContent>
-            <StepperContentHeader title="Butiran Permohonan"
-            ></StepperContentHeader>
+        <StepperContent stepperId="allowanceDetail">
+            <StepperContentHeader title="Butiran Permohonan">
+                {#if data.props.currentRoleCode == UserRoleConstant.kakitangan.code && data.props.allowanceId == 0}
+                    <TextIconButton
+                        type="primary"
+                        form="allowanceForm"
+                        label="Hantar"
+                    ></TextIconButton>
+                {/if}
+            </StepperContentHeader>
             <StepperContentBody>
                 <div
                     class="flex h-full w-full flex-col items-start justify-start"
@@ -144,6 +157,7 @@
                     >
                         <div class="flex w-full flex-col gap-2">
                             <CustomSelectField
+                                disabled={data.props.applicationId !== 'baru'}
                                 id="allowanceType"
                                 label={'Jenis Elaun'}
                                 errors={$detailErrors.allowanceTypeCode}
@@ -158,6 +172,7 @@
                         </div>
                         <div class="flex w-full flex-col gap-2">
                             <CustomSelectField
+                                disabled={data.props.applicationId !== 'baru'}
                                 id="applyCode"
                                 label={'Permohonan Untuk'}
                                 errors={$detailErrors.applyCode}
@@ -167,6 +182,7 @@
                         </div>
                         <div class="flex w-full flex-col gap-2">
                             <CustomSelectField
+                                disabled={data.props.applicationId !== 'baru'}
                                 id="stateCode"
                                 label={'Wilayah Asal'}
                                 errors={$detailErrors.stateCode}
@@ -182,9 +198,16 @@
         <!-- **************************************************** -->
         <!-- Verification Form -->
         <!-- **************************************************** -->
-        <StepperContent>
+        <StepperContent stepperId="allowanceVerification">
             <StepperContentHeader title="Pengesahan Permohonan"
-            ></StepperContentHeader>
+                >{#if data.props.currentRoleCode == UserRoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
+                    <TextIconButton
+                        type="primary"
+                        form="verificationForm"
+                        label="Hantar"
+                    ></TextIconButton>
+                {/if}</StepperContentHeader
+            >
             <StepperContentBody>
                 <div
                     class="flex h-full w-full flex-col items-start justify-start"
@@ -207,15 +230,16 @@
                             Bahagian ini untuk diisi oleh Urus Setia
                         </Alert>
                         <fieldset
-                            disabled={data.props.currentRoleCode ===
-                                UserRoleConstant.urusSetiaElaunElaunPerkhidmatan
-                                    .code}
                             class="flex w-full flex-col items-center justify-start space-y-2"
                         >
                             <div class="flex w-full flex-col gap-2">
                                 <CustomRadioField
+                                    disabled={data.props.currentRoleCode !==
+                                        UserRoleConstant
+                                            .urusSetiaElaunElaunPerkhidmatan
+                                            .code}
                                     id="status"
-                                    label={'Adakah Pengesah Ini Sah?'}
+                                    label={'Pengesahan Permohonan'}
                                     options={data.props
                                         .verificationStatusOption}
                                     val={false}
@@ -223,6 +247,10 @@
                             </div>
                             <div class="flex w-full flex-col gap-2">
                                 <CustomTextField
+                                    disabled={data.props.currentRoleCode !==
+                                        UserRoleConstant
+                                            .urusSetiaElaunElaunPerkhidmatan
+                                            .code}
                                     id="remark"
                                     label={'Ulasan'}
                                     bind:val={$verificationForm.remark}
@@ -237,9 +265,16 @@
         <!-- **************************************************** -->
         <!-- Maklumat Penyokong Dan Pelulus Form -->
         <!-- **************************************************** -->
-        <StepperContent>
-            <StepperContentHeader title="Maklumat Penyokong Dan Pelulus"
-            ></StepperContentHeader>
+        <StepperContent stepperId="allowanceSuppAppDetail">
+            <StepperContentHeader title="Maklumat Penyokong Dan Pelulus">
+                {#if data.props.currentRoleCode == UserRoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
+                    <TextIconButton
+                        type="primary"
+                        form="suppAppDetailForm"
+                        label="Hantar"
+                    ></TextIconButton>
+                {/if}
+            </StepperContentHeader>
             <StepperContentBody>
                 <div
                     class="flex h-full w-full flex-col items-start justify-start"
@@ -247,7 +282,7 @@
                     <form
                         id="suppAppDetailForm"
                         method="POST"
-                        use:supporterFeedbackEnhance
+                        use:suppAppDetailsEnhance
                         class="flex w-full flex-col items-center justify-start space-y-4 p-2 lg:w-1/2"
                     >
                         <Alert
@@ -269,6 +304,10 @@
                         >
                             <div class="flex w-full flex-col gap-2">
                                 <CustomTextField
+                                    disabled={data.props.currentRoleCode !==
+                                        UserRoleConstant
+                                            .urusSetiaElaunElaunPerkhidmatan
+                                            .code}
                                     id="supporter"
                                     label={'Nama Penyokong'}
                                     errors={$suppAppDetailsErrors.supporter}
@@ -277,6 +316,10 @@
                             </div>
                             <div class="flex w-full flex-col gap-2">
                                 <CustomTextField
+                                    disabled={data.props.currentRoleCode !==
+                                        UserRoleConstant
+                                            .urusSetiaElaunElaunPerkhidmatan
+                                            .code}
                                     id="approver"
                                     label={'Nama Pelulus'}
                                     errors={$suppAppDetailsErrors.approver}
@@ -292,9 +335,16 @@
         <!-- **************************************************** -->
         <!-- Supporter Feedback Form -->
         <!-- **************************************************** -->
-        <StepperContent>
-            <StepperContentHeader title="Maklum Balas Daripada Penyokong"
-            ></StepperContentHeader>
+        <StepperContent stepperId="allowanceSupport">
+            <StepperContentHeader title="Maklum Balas Daripada Penyokong">
+                {#if data.props.currentRoleCode == UserRoleConstant.penyokong.code}
+                    <TextIconButton
+                        type="primary"
+                        form="supporterFeedbackForm"
+                        label="Hantar"
+                    ></TextIconButton>
+                {/if}
+            </StepperContentHeader>
             <StepperContentBody>
                 <div
                     class="flex h-full w-full flex-col items-start justify-start"
@@ -302,7 +352,7 @@
                     <form
                         id="supporterFeedbackForm"
                         method="POST"
-                        use:verificationEnhance
+                        use:supporterFeedbackEnhance
                         class="flex w-full flex-col items-center justify-start space-y-4 p-2 lg:w-1/2"
                     >
                         <Alert
@@ -317,12 +367,12 @@
                             Bahagian ini untuk diisi oleh penyokong yang telah dipilih.
                         </Alert>
                         <fieldset
-                            disabled={data.props.currentRoleCode ===
-                                UserRoleConstant.penyokong.code}
                             class="flex w-full flex-col items-center justify-start space-y-2"
                         >
                             <div class="flex w-full flex-col gap-2">
                                 <CustomRadioField
+                                    disabled={data.props.currentRoleCode !==
+                                        UserRoleConstant.penyokong.code}
                                     id="status"
                                     label={'Penyokongan Permohonan'}
                                     options={data.props.supportStatusOption}
@@ -332,6 +382,8 @@
                             </div>
                             <div class="flex w-full flex-col gap-2">
                                 <CustomTextField
+                                    disabled={data.props.currentRoleCode !==
+                                        UserRoleConstant.penyokong.code}
                                     id="remark"
                                     label={'Ulasan'}
                                     errors={$supporterFeedbackErrors.remark}
@@ -346,9 +398,16 @@
         <!-- **************************************************** -->
         <!-- Approver Feedback Form -->
         <!-- **************************************************** -->
-        <StepperContent>
-            <StepperContentHeader title="Maklum Balas Daripada Pelulus"
-            ></StepperContentHeader>
+        <StepperContent stepperId="allowanceApprove">
+            <StepperContentHeader title="Maklum Balas Daripada Pelulus">
+                {#if data.props.currentRoleCode == UserRoleConstant.penyokong.code}
+                    <TextIconButton
+                        type="primary"
+                        form="approverFeedbackForm"
+                        label="Hantar"
+                    ></TextIconButton>
+                {/if}
+            </StepperContentHeader>
             <StepperContentBody>
                 <div
                     class="flex h-full w-full flex-col items-start justify-start"
@@ -356,7 +415,7 @@
                     <form
                         id="approverFeedbackForm"
                         method="POST"
-                        use:verificationEnhance
+                        use:approverFeedbackEnhance
                         class="flex w-full flex-col items-center justify-start space-y-4 p-2 lg:w-1/2"
                     >
                         <Alert
@@ -371,12 +430,12 @@
                             Bahagian ini untuk diisi oleh pelulus yang telah dipilih.
                         </Alert>
                         <fieldset
-                            disabled={data.props.currentRoleCode ===
-                                UserRoleConstant.penyokong.code}
                             class="flex w-full flex-col items-center justify-start space-y-2"
                         >
                             <div class="flex w-full flex-col gap-2">
                                 <CustomRadioField
+                                    disabled={data.props.currentRoleCode !==
+                                        UserRoleConstant.pelulus.code}
                                     id="status"
                                     label={'Pelulusan Permohonan'}
                                     options={data.props.approvalStatusOption}
@@ -386,6 +445,8 @@
                             </div>
                             <div class="flex w-full flex-col gap-2">
                                 <CustomTextField
+                                    disabled={data.props.currentRoleCode !==
+                                        UserRoleConstant.pelulus.code}
                                     id="remark"
                                     label={'Ulasan'}
                                     errors={$approverFeedbackErrors.remark}

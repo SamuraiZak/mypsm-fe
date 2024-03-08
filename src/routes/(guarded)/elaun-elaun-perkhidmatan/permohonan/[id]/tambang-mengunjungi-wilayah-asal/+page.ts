@@ -6,7 +6,15 @@ import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto.js';
 import type { RadioDTO } from '$lib/dto/core/radio/radio.dto';
+import type { ServiceAllowanceApproverFeedbackDTO } from '$lib/dto/mypsm/elaun-elaun-perkhidmatan/shared/service-allowance-app-feedback.dto.js';
+import type { ServiceAllowanceApplicationDetailRequestDTO } from '$lib/dto/mypsm/elaun-elaun-perkhidmatan/shared/service-allowance-application-detail-request.dto';
+import type { ServiceAllowanceSuppAppDetailDTO } from '$lib/dto/mypsm/elaun-elaun-perkhidmatan/shared/service-allowance-supp-app-detail.dto.js';
+import type { ServiceAllowanceSuppFeedbackDTO } from '$lib/dto/mypsm/elaun-elaun-perkhidmatan/shared/service-allowance-supp-feedback.dto.js';
+import type { ServiceAllowanceVerificationDTO } from '$lib/dto/mypsm/elaun-elaun-perkhidmatan/shared/service-allowance-verification.dto.js';
+import type { ServiceAllowanceStateVisitDetailDTO } from '$lib/dto/mypsm/elaun-elaun-perkhidmatan/tambang/state-visit-application-detail.dto.js';
+import type { ServiceAllowanceStateVisitApplicationDTO } from '$lib/dto/mypsm/elaun-elaun-perkhidmatan/tambang/state-visit-application.dto';
 import { LookupHelper } from '$lib/helpers/core/lookup.helper';
+import { getErrorToast } from '$lib/helpers/core/toast.helper.js';
 import {
     _addTambangMengunjungiWilayahAsalSchemaSchema,
     _serviceAllowanceApproverFeedbackSchema,
@@ -16,6 +24,7 @@ import {
     _serviceAllowanceVerificationSchema,
 } from '$lib/schemas/mypsm/service-allowance/service-allowance.schema';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
+import { ServiceAllowanceStateVisitServices } from '$lib/services/implementation/mypsm/elaun-elaun-perkhidmatan/service-allowance-state-visit.service.js';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
@@ -27,6 +36,8 @@ export async function load({ params }) {
 
     // get application id; new = baru
     const applicationId = params.id;
+
+    let allowanceId = 0;
 
     // get currentRoleCode
     const currentRoleCode = localStorage.getItem(
@@ -158,6 +169,7 @@ export async function load({ params }) {
 
     // check if user is making new application or viewing aplpication details
     if (applicationId == 'baru') {
+        allowanceId = 0;
         // if new create form
 
         // set the form allowance type code to default
@@ -170,12 +182,53 @@ export async function load({ params }) {
         allowanceDetailForm.data.stateCode = stateDropdown[0].value;
     } else {
         // if not new fetch the application details
+
+        console.log(applicationId);
+
+        allowanceId = parseInt(params.id);
+
+        const detailRequest: ServiceAllowanceApplicationDetailRequestDTO = {
+            allowanceId: allowanceId,
+            allowanceTypeCode: currentAllowanceType,
+        };
+
+        const applicationDetailResponse: CommonResponseDTO =
+            await ServiceAllowanceStateVisitServices.getFullApplicationDetail(
+                detailRequest,
+            );
+
+        if (applicationDetailResponse.status == 'success') {
+            const applicationDetail: ServiceAllowanceStateVisitApplicationDTO =
+                applicationDetailResponse.data
+                    ?.details as ServiceAllowanceStateVisitApplicationDTO;
+
+            allowanceDetailForm.data = {
+                allowanceTypeCode:
+                    applicationDetail.applicationDetail?.allowanceTypeCode ??
+                    '',
+                applyCode: applicationDetail.applicationDetail?.applyCode ?? '',
+                stateCode: applicationDetail.applicationDetail?.stateCode ?? '',
+                familyDetail:
+                    applicationDetail.applicationDetail?.familyDetail ?? [],
+            };
+        } else {
+            const applicationDetail: ServiceAllowanceStateVisitApplicationDTO =
+                {
+                    applicationDetail: null,
+                    download: null,
+                    verification: null,
+                    supportApprover: null,
+                    support: null,
+                    approval: null,
+                };
+        }
     }
 
     // return necessary page data
     return {
         props: {
             applicationId,
+            allowanceId,
             currentRoleCode,
             currentAllowanceType,
             allowanceTypeDropdown,
@@ -200,6 +253,16 @@ export const _submitAllowanceDetail = async (allowanceDetail: object) => {
         allowanceDetail,
         zod(_addTambangMengunjungiWilayahAsalSchemaSchema),
     );
+
+    if (form.valid) {
+        // submit request
+        const response: CommonResponseDTO =
+            await ServiceAllowanceStateVisitServices.postDetail(
+                allowanceDetail as ServiceAllowanceStateVisitDetailDTO,
+            );
+    } else {
+        getErrorToast();
+    }
 };
 
 // submit verification form
@@ -208,6 +271,16 @@ export const _submitVerificationForm = async (formData: object) => {
         formData,
         zod(_serviceAllowanceVerificationSchema),
     );
+
+    if (form.valid) {
+        // submit request
+        const response: CommonResponseDTO =
+            await ServiceAllowanceStateVisitServices.postVerification(
+                formData as ServiceAllowanceVerificationDTO,
+            );
+    } else {
+        getErrorToast();
+    }
 };
 
 // submit supporter and approver detail form
@@ -216,6 +289,16 @@ export const _submitSuppAppDetailsForm = async (formData: object) => {
         formData,
         zod(_serviceAllowanceSuppAppDetailSchema),
     );
+
+    if (form.valid) {
+        // submit request
+        const response: CommonResponseDTO =
+            await ServiceAllowanceStateVisitServices.postSuppAppDetail(
+                formData as ServiceAllowanceSuppAppDetailDTO,
+            );
+    } else {
+        getErrorToast();
+    }
 };
 // submit supporter feedback form
 export const _submitSupporterFeedbackForm = async (formData: object) => {
@@ -223,6 +306,16 @@ export const _submitSupporterFeedbackForm = async (formData: object) => {
         formData,
         zod(_serviceAllowanceSupporterFeedbackSchema),
     );
+
+    if (form.valid) {
+        // submit request
+        const response: CommonResponseDTO =
+            await ServiceAllowanceStateVisitServices.postSupporterFeedback(
+                formData as ServiceAllowanceSuppFeedbackDTO,
+            );
+    } else {
+        getErrorToast();
+    }
 };
 // submit supporter feedback form
 export const _submitApproverFeedbackForm = async (formData: object) => {
@@ -230,4 +323,14 @@ export const _submitApproverFeedbackForm = async (formData: object) => {
         formData,
         zod(_serviceAllowanceApproverFeedbackSchema),
     );
+
+    if (form.valid) {
+        // submit request
+        const response: CommonResponseDTO =
+            await ServiceAllowanceStateVisitServices.postApproverFeedback(
+                formData as ServiceAllowanceApproverFeedbackDTO,
+            );
+    } else {
+        getErrorToast();
+    }
 };
