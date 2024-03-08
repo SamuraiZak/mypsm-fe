@@ -7,7 +7,7 @@ import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
     _editExamInfoRequestSchema,
     _examInfoResponseSchema,
-} from '$lib/schemas/mypsm/course/schema';
+} from '$lib/schemas/mypsm/course/exam-schema';
 import { CourseServices } from '$lib/services/implementation/mypsm/latihan/course.service.js';
 import { error } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';

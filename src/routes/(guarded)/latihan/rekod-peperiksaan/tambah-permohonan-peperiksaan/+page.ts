@@ -9,7 +9,7 @@ import { renameExamTypeKeyValue } from '$lib/helpers/mypsm/course/exam-type.help
 import {
     _addExamApplicationRequestSchema,
     _examInfoRequestSchema,
-} from '$lib/schemas/mypsm/course/schema';
+} from '$lib/schemas/mypsm/course/exam-schema';
 import { CourseServices } from '$lib/services/implementation/mypsm/latihan/course.service.js';
 import { error } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';

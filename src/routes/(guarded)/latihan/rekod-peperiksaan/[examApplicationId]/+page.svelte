@@ -6,9 +6,9 @@
     } from '$lib/constants/core/radio-option-constants';
     import type { CourseExamApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-application.dto';
     import { writable } from 'svelte/store';
-    import { _examApplicationApprovalSchema } from '$lib/schemas/mypsm/course/schema';
-    import { _coursePersonalInfoResponseSchema } from '$lib/schemas/mypsm/course/schema';
-    import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/schema';
+    import { _examApplicationApprovalSchema } from '$lib/schemas/mypsm/course/exam-schema';
+    import { _coursePersonalInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
+    import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';

@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { CourseAddExamApplicationRequestDTO } from '$lib/dto/mypsm/course/exam/course-exam-application.dto.ts';
-    import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/schema';
+    import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
     import { zod } from 'sveltekit-superforms/adapters';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';

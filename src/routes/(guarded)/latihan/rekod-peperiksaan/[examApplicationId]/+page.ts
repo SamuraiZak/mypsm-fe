@@ -13,13 +13,13 @@ import {
     _courseServiceInfoResponseSchema,
     _editExamInfoRequestSchema,
     _examApplicationInfoResponseSchema,
-} from '$lib/schemas/mypsm/course/schema';
+} from '$lib/schemas/mypsm/course/exam-schema';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { CourseServices } from '$lib/services/implementation/mypsm/latihan/course.service.js';
 import { error } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms/client';
-import { _examApplicationApprovalSchema } from '../../../../../lib/schemas/mypsm/course/schema';
+import { _examApplicationApprovalSchema } from '../../../../../lib/schemas/mypsm/course/exam-schema';
 
 //==================================================
 //=============== Load Function ====================
