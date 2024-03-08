@@ -1,11 +1,11 @@
 export interface EditContractDetailSecretaryDTO {
     candidateId:               number;
-    startContract:             Date;
-    endContract:               Date;
+    startContract:             Date | string;
+    endContract:               Date | string;
     wageRate:                  number;
     placementId:               number;
     designation:               string;
-    reportDutyDate:            Date;
+    reportDutyDate:            Date | string;
     kwspNo:                    string;
     socsoNo:                   string;
     taxNo:                     string;
@@ -13,12 +13,12 @@ export interface EditContractDetailSecretaryDTO {
     bankAccount:               string;
     serviceTypeId:             number;
     leaveEntitlement:          number;
-    effectiveDate:             Date;
-    civilServiceStartDate:     Date;
-    lkimServiceStartDate:      Date;
-    currentServiceStartDate:   Date;
-    firstConfirmServiceDate:   Date;
-    currentConfirmServiceDate: Date;
+    effectiveDate:             Date | string;
+    civilServiceStartDate:     Date | string;
+    lkimServiceStartDate:      Date | string;
+    currentServiceStartDate:   Date | string;
+    firstConfirmServiceDate:   Date | string;
+    currentConfirmServiceDate: Date | string;
 }
 
 // Converts JSON strings to/from your types
