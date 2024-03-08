@@ -191,7 +191,7 @@ export const _academicInfoSchema = z
         finalGrade: codeSchema,
         remark: shortTextSchema,
     })
-    .partial({ 
+    .partial({
         id: true,
     });
 
@@ -208,7 +208,7 @@ export const _academicListRequestSchema = _academicListResponseSchema.pick({
 //==========================================================
 
 export const _experienceInfoSchema = z.object({
-    id:numberSchema,
+    id: numberSchema,
     company: shortTextSchema,
     address: shortTextSchema,
     position: shortTextSchema,
@@ -220,7 +220,7 @@ export const _experienceInfoSchema = z.object({
 
 export const _experienceListResponseSchema = z.object({
     experiences: z.array(_experienceInfoSchema),
-   
+
 });
 
 export const _experienceListRequestSchema = _experienceListResponseSchema.pick({
@@ -232,7 +232,7 @@ export const _experienceListRequestSchema = _experienceListResponseSchema.pick({
 //==========================================================
 
 export const _activityInfoSchema = z.object({
-    id:numberSchema,
+    id: numberSchema,
     name: shortTextSchema,
     joinDate: dateStringSchema,
     position: shortTextSchema,
@@ -335,13 +335,10 @@ export const _medicalAssessmentInfoSchema = z.object({
 
 
 export const _medicalAssessmentListResponseSchema = z.object({
-    activities: z.array(_medicalAssessmentInfoSchema),
-    isReadOnly: z.boolean().readonly(),
+    medicalHistory: z.array(_medicalAssessmentInfoSchema),
 });
 
-export const _medicalAssessmentListRequestSchema = _medicalAssessmentListResponseSchema.pick({
-    activities: true,
-});
+export const _medicalAssessmentListRequestSchema = _medicalAssessmentListResponseSchema;
 
 
 //==========================================================

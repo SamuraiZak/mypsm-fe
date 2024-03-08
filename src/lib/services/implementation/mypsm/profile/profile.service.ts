@@ -23,8 +23,6 @@ import type { activityRequestDTO } from '$lib/dto/mypsm/profile/activity-detail.
 
 export class ProfileServices {
 
-    
-
     static async getSalaryListDetails(
         param: CommonListRequestDTO,
     ) {
@@ -92,7 +90,7 @@ export class ProfileServices {
             const url: Input = 'profile/personal/add';
 
             // get the promise response
-            const promiseRes: Promise<Response> = http.get(url).json();
+            const promiseRes: Promise<Response> = http.post(url, { body: JSON.stringify(param) }).json();
 
             // await toast for resolved or rejected state
             const response: Response = await getPromiseToast(promiseRes);
@@ -102,7 +100,7 @@ export class ProfileServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                invalidateAll()
+                invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -198,7 +196,7 @@ export class ProfileServices {
         }
     }
 
-     //============================================
+    //============================================
     //========= Add Academic Detail ==============
     //============================================
 
@@ -228,7 +226,7 @@ export class ProfileServices {
     }
 
 
-     //============================================
+    //============================================
     //========= Get experience Detail  ===========
     //============================================
 
@@ -256,7 +254,7 @@ export class ProfileServices {
         }
     }
 
-      //============================================
+    //============================================
     //========= Add experience Detail ==============
     //============================================
 
@@ -285,7 +283,7 @@ export class ProfileServices {
         }
     }
 
-      //============================================
+    //============================================
     //========= Get Activity Detail  ===========
     //============================================
 
@@ -313,7 +311,7 @@ export class ProfileServices {
         }
     }
 
-     //============================================
+    //============================================
     //========= Add Activity Detail ==============
     //============================================
 
@@ -399,7 +397,7 @@ export class ProfileServices {
         }
     }
 
-     //============================================
+    //============================================
     //========= Get Dependent Detail  ===========
     //============================================
 
@@ -426,7 +424,7 @@ export class ProfileServices {
             return CommonResponseConstant.httpError;
         }
     }
-      //============================================
+    //============================================
     //========= Add Dependent Detail ==============
     //============================================
 

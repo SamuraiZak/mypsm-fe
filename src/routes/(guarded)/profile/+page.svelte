@@ -36,6 +36,7 @@
         _experienceInfoSchema,
         _experienceListResponseSchema,
         _familyListResponseSchema,
+        _medicalAssessmentListResponseSchema,
         _nextOfKinListResponseSchema,
         _personalInfoResponseSchema,
         _relationsSchema,
@@ -73,6 +74,8 @@
         Family,
         NextOfKin,
     } from '$lib/dto/mypsm/profile/relation-detail.dto';
+    import toast from 'svelte-french-toast';
+    import { commonOptions } from '$lib/constants/core/radio-option-constants';
 
     export let openMembershipInfoModal: boolean = false;
     export let openFamilyInfoModal: boolean = false;
@@ -81,6 +84,7 @@
     export let openAcademicInfoModal: boolean = false;
     export let openExperienceInfoModal: boolean = false;
     export let data: PageData;
+    let param: CommonListRequestDTO = data.salaryListParam;
 
     const handleOnInput = (e: Event) => {
         // $documentForm.document =
@@ -149,34 +153,59 @@
         _submitNextOfKinInfoForm(tempNextOfKin);
     };
 
+    let isReadonlyExamFormStepper: boolean = true;
     const {
         form: personalInfoForm,
         errors: personalInfoError,
         enhance: personalInfoEnhance,
+        isTainted: personalDetailTainted,
     } = superForm(data.personalDetail, {
         SPA: true,
         id: 'personalDetail',
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
         validators: zod(_personalInfoResponseSchema),
         onUpdate(event) {},
-        onSubmit() {
-            _personalInfoSubmit($personalInfoForm);
+        async onSubmit() {
+            if (!personalDetailTainted()) {
+                toast('Tiada perubahan data dikesan.');
+                error(400);
+            }
+            const result = await _personalInfoSubmit($personalInfoForm);
+            if (result.response.status === 'success')
+                isReadonlyExamFormStepper = true;
         },
+        taintedMessage: false,
     });
 
     const {
         form: serviceInfoForm,
         errors: serviceInfoError,
         enhance: serviceInfoEnhance,
+        isTainted: serviceInfoTainted,
     } = superForm(
         data.serviceInfoForm,
-
         {
             SPA: true,
             id: 'serviceDetail',
+            dataType: 'json',
+            invalidateAll: true,
+            resetForm: false,
+            multipleSubmits: 'allow',
+            validationMethod: 'oninput',
             validators: zod(_serviceInfoResponseSchema),
             onUpdate(event) {},
-            onSubmit() {
-                _serviceInfoSubmit($serviceInfoForm);
+           async onSubmit() {
+            if (!serviceInfoTainted()) {
+                toast('Tiada perubahan data dikesan.');
+                error(400);
+            }
+            const result = await _serviceInfoSubmit($serviceInfoForm);
+            if (result.response.status === 'success')
+                isReadonlyExamFormStepper = true;
             },
         },
     );
@@ -499,10 +528,36 @@
             openNextOfKinInfoModal = false;
         },
     });
+    const {
+        form: medicalHistoryForm,
+        errors: medicalHistoryErrors,
+        enhance: medicalHistoryEnhance,
+    } = superForm(data.medicalHistoryForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        taintedMessage: false,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: zod(_medicalAssessmentListResponseSchema),
+        async onSubmit(formData) {
+            console.log('Result: ', formData.formData);
+        },
+    });
 
+    let salaryTable: TableDTO = {
+        param: data.salaryListParam,
+        meta: {
+            pageSize: 5,
+            pageNum: 1,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: data.salaryViewTable ?? [],
+    };
 
-    
-
+    console.log(data.salaryViewTable);
 </script>
 
 <section
@@ -737,14 +792,14 @@
                                         .generalLookup}
                                 ></CustomSelectField>
 
-                                <CustomSelectField
+                                <!-- <CustomSelectField
                                     disabled
                                     id="employeeNumber"
                                     label={'No. Pekerja LKIM'}
                                     bind:val={$personalInfoForm.employeeNumber}
                                     options={data.selectionOptions
                                         .employeeLookup}
-                                ></CustomSelectField>
+                                ></CustomSelectField> -->
 
                                 <CustomSelectField
                                     disabled
@@ -2023,8 +2078,7 @@
                                             type="text"
                                             disabled
                                             bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i]
-                                                .alternativeName}
+                                                .nextOfKins[i].alternativeName}
                                         ></CustomTextField>
                                         <CustomSelectField
                                             id="identityDocumentColor"
@@ -2108,8 +2162,7 @@
                                                 .educationLookup}
                                             disabled
                                             bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i]
-                                                .educationLevelId}
+                                                .nextOfKins[i].educationLevelId}
                                         ></CustomSelectField>
 
                                         <CustomSelectField
@@ -2348,24 +2401,10 @@
             </Stepper>
         </CustomTabContent>
 
-        <CustomTabContent title="GajiElaun"></CustomTabContent>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        <CustomTabContent title="GajiElaun">
+            <CustomTable enableDetail bind:tableData={salaryTable}
+            ></CustomTable>
+        </CustomTabContent>
 
         <CustomTabContent title="RekodKesihatan">
             <Stepper>
@@ -2382,53 +2421,51 @@
                     <!------------------------------------------->
                     <StepperContentBody>
                         <div class="flex w-full flex-col gap-2.5">
-                            <!-- <form
-                            id="FormStepperSejarahPenyakit"
-                            class="flex w-full flex-col gap-2"
-                            use:sejarahPenyakitEnhance
-                            method="POST"
-                        > -->
-                            <div class="flex w-full flex-col gap-2">
-                                <!-- {#each data.medicalHistoryDiseaseNamesResponse.data.list as record, i}
-                                    <div class="flex flex-row">
-                                        <label
-                                            for="diseases"
-                                            class="w-full min-w-[220px] text-sm"
-                                            >{record}</label
-                                        >
-                                        <input
-                                            hidden
-                                            type="text"
-                                            value={$sejarahPenyakitForm.medicalHistory[
-                                                i
-                                            ]?.diseases ?? ' '}
-                                        />
-                                        <CustomRadioBoolean
-                                            disabled
-                                            options={commonOptions}
-                                            name="record{i}isPesonal"
-                                            userSelected={$sejarahPenyakitForm
-                                                .medicalHistory[i]?.isPersonal ?? true}
-                                        ></CustomRadioBoolean>
-                                        <CustomRadioBoolean
-                                            disabled
-                                            options={commonOptions}
-                                            name="record{i}isFamily"
-                                            userSelected={$sejarahPenyakitForm
-                                                .medicalHistory[i]?.isFamily ?? true}
-                                        ></CustomRadioBoolean>
-                                        <CustomTextField
-                                            disabled
-                                            name="alahan"
-                                            label=""
-                                            type="text"
-                                            value={$sejarahPenyakitForm.medicalHistory[
-                                                i
-                                            ]?.remark ?? ' '}
-                                        ></CustomTextField>
-                                    </div>
-                                {/each} -->
-                                <table
+                            <form
+                                id="FormStepperSejarahPenyakit"
+                                class="flex w-full flex-col gap-2"
+                                use:medicalHistoryEnhance
+                                method="POST"
+                            >
+                                <div class="flex w-full flex-col gap-2">
+                                    {#each $medicalHistoryForm.medicalHistory as record, i}
+                                        <div class="flex flex-row">
+                                            <label
+                                                for="diseases"
+                                                class="w-full min-w-[220px] text-sm"
+                                                >{record}</label
+                                            >
+                                            <input
+                                                hidden
+                                                bind:value={$medicalHistoryForm
+                                                    .medicalHistory[i].diseases}
+                                            />
+                                            <CustomRadioBoolean
+                                                disabled
+                                                options={commonOptions}
+                                                id="isPesonal"
+                                                bind:val={$medicalHistoryForm
+                                                    .medicalHistory[i]
+                                                    .isPersonal}
+                                            ></CustomRadioBoolean>
+                                            <CustomRadioBoolean
+                                                disabled
+                                                options={commonOptions}
+                                                id="isFamily"
+                                                bind:val={$medicalHistoryForm
+                                                    .medicalHistory[i].isFamily}
+                                            ></CustomRadioBoolean>
+                                            <CustomTextField
+                                                disabled
+                                                id="remark"
+                                                label=""
+                                                type="text"
+                                                bind:val={$medicalHistoryForm
+                                                    .medicalHistory[i].remark}
+                                            ></CustomTextField>
+                                        </div>
+                                    {/each}
+                                    <!-- <table
                                     class="text-left text-sm {stepperFormTitleClass}"
                                 >
                                     <tr>
@@ -2990,9 +3027,9 @@
                                             ></CustomTextField>
                                         </td>
                                     </tr>
-                                </table>
-                            </div>
-                            <!-- </form> -->
+                                </table> -->
+                                </div>
+                            </form>
                         </div></StepperContentBody
                     >
                 </StepperContent>
@@ -3648,64 +3685,76 @@
         use:addAcademicInfoEnhance
         class="flex h-fit w-full flex-col gap-y-2"
     >
-    <CustomSelectField
-        id="majorId"
-        label={'Jenis Jurusan'}
-        val=""
-        options={data.selectionOptions.majorMinorLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="majorId"
+            label={'Jenis Jurusan'}
+            bind:val={$addAcademicInfoModal.majorId}
+            options={data.selectionOptions.majorMinorLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="minorId"
-        label={'Jenis Bidang'}
-        val=""
-        options={data.selectionOptions.majorMinorLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="minorId"
+            label={'Jenis Bidang'}
+            bind:val={$addAcademicInfoModal.minorId}
+            options={data.selectionOptions.majorMinorLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="countryId"
-        label={'Negara'}
-        val=""
-        options={data.selectionOptions.countryLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="countryId"
+            label={'Negara'}
+            bind:val={$addAcademicInfoModal.countryId}
+            options={data.selectionOptions.countryLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="institutionId"
-        label={'Institusi'}
-        val=""
-        options={data.selectionOptions.institutionLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="institutionId"
+            label={'Institusi'}
+            bind:val={$addAcademicInfoModal.institutionId}
+            options={data.selectionOptions.institutionLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="educationLevelId"
-        label={'Taraf Pembelajaran'}
-        val=""
-        options={data.selectionOptions.educationLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="educationLevelId"
+            label={'Taraf Pembelajaran'}
+            val=""
+            options={data.selectionOptions.educationLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="sponsorshipId"
-        label={'Penajaan'}
-        val=""
-        options={data.selectionOptions.sponsorshipLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="sponsorshipId"
+            label={'Penajaan'}
+            bind:val={$addAcademicInfoModal.sponsorshipId}
+            options={data.selectionOptions.sponsorshipLookup}
+        ></CustomSelectField>
 
-    <CustomTextField id="id" label={'Nama Pencapaian/Sijil'} val=""
-    ></CustomTextField>
-    <CustomTextField
-        id="completionDate"
-        label="Tarikh Kelulusan"
-        type="date"
-        val=""
-    ></CustomTextField>
-    <CustomTextField id="finalGrade" label={'Pencapaian Akhir (Gred)'} val=""
-    ></CustomTextField>
-    <CustomTextField id="field" label={'Catatan'} val=""></CustomTextField>
-    <TextIconButton
-        type="primary"
-        label={'Tambah'}
-        form="addAcademicModalForm"
-    />
+        <CustomTextField
+            id="id"
+            label={'Nama Pencapaian/Sijil'}
+            bind:val={$addAcademicInfoModal.name}
+        ></CustomTextField>
+        <CustomTextField
+            id="completionDate"
+            label="Tarikh Kelulusan"
+            type="date"
+            bind:val={$addAcademicInfoModal.completionDate}
+        ></CustomTextField>
+        <CustomTextField
+            id="finalGrade"
+            label={'Pencapaian Akhir (Gred)'}
+            bind:val={$addAcademicInfoModal.finalGrade}
+        ></CustomTextField>
+        <CustomTextField
+            errors={$addAcademicInfoErrors.remark}
+            id="remark"
+            label={'Catatan'}
+            bind:val={$addAcademicInfoModal.remark}
+        ></CustomTextField>
+        <CustomTextField id="field" label={'Catatan'} val=""></CustomTextField>
+        <TextIconButton
+            type="primary"
+            label={'Tambah'}
+            form="addAcademicModalForm"
+        />
     </form>
 </Modal>
 
@@ -3717,40 +3766,61 @@
         use:addExperienceModalEnhance
         class="flex w-full flex-col gap-2"
     >
-    <CustomTextField id="company" label={'Nama Majikan'} type="text" val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="company"
+            label={'Nama Majikan'}
+            type="text"
+            bind:val={$addExperienceModalForm.company}
+        ></CustomTextField>
 
-    <CustomTextField id="address" label={'Alamat Majikan'} type="text" val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="address"
+            label={'Alamat Majikan'}
+            type="text"
+            bind:val={$addExperienceModalForm.address}
+        ></CustomTextField>
 
-    <CustomTextField id="position" label={'Jawatan'} type="text" val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="position"
+            label={'Jawatan'}
+            type="text"
+            bind:val={$addExperienceModalForm.position}
+        ></CustomTextField>
 
-    <CustomTextField id="positionCode" label={'Kod Jawatan'} type="text" val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="positionCode"
+            label={'Kod Jawatan'}
+            type="text"
+            bind:val={$addExperienceModalForm.positionCode}
+        ></CustomTextField>
 
-    <CustomTextField
-        type="date"
-        id="startDate"
-        label={'Tarikh Mula Bekerja'}
-        val=""
-    ></CustomTextField>
-    <CustomTextField
-        type="date"
-        id="endDate"
-        label={'Tarikh Tamat Bekerja'}
-        val=""
-    ></CustomTextField>
+        <CustomTextField
+            type="date"
+            id="startDate"
+            label={'Tarikh Mula Bekerja'}
+            bind:val={$addExperienceModalForm.startDate}
+        ></CustomTextField>
+        <CustomTextField
+            type="date"
+            id="endDate"
+            label={'Tarikh Tamat Bekerja'}
+            bind:val={$addExperienceModalForm.endDate}
+        ></CustomTextField>
 
-    <CustomTextField id="salary" label={'Gaji'} type="text" val=""
-    ></CustomTextField>
-    <TextIconButton
-        type="primary"
-        label={'Tambah'}
-        form="addExperienceInfoModal"
-    />
-    <!-- </form> -->
-</Modal>
+        <CustomTextField
+            id="salary"
+            label={'Gaji'}
+            type="text"
+            bind:val={$addExperienceModalForm.salary}
+        ></CustomTextField>
+        <TextIconButton
+            type="primary"
+            label={'Tambah'}
+            form="addExperienceInfoModal"
+        />
+        <!-- </form> -->
+    </form></Modal
+>
 
 <!-- Membership Info Modal -->
 <Modal title={'Tambah Kegiatan/Keahlian'} bind:open={openMembershipInfoModal}>
@@ -3760,23 +3830,39 @@
         use:addActivityModalEnhance
         method="POST"
     >
-    <CustomTextField id="name" label={'Nama Kegiatan'} type="text" val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="name"
+            label={'Nama Kegiatan'}
+            type="text"
+            bind:val={$addActivityModal.name}
+        ></CustomTextField>
 
-    <CustomTextField id="joinDate" type="date" label={'Tarikh Keahlian'} val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="joinDate"
+            type="date"
+            label={'Tarikh Keahlian'}
+            bind:val={$addActivityModal.joinDate}
+        ></CustomTextField>
 
-    <CustomTextField id="position" label={'Jawatan'} type="text" val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="position"
+            label={'Jawatan'}
+            type="text"
+            bind:val={$addActivityModal.position}
+        ></CustomTextField>
 
-    <CustomTextField id="description" label={'Catatan'} type="text" val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="description"
+            label={'Catatan'}
+            type="text"
+            bind:val={$addActivityModal.description}
+        ></CustomTextField>
 
-    <TextIconButton
-        type="primary"
-        label={'Tambah'}
-        form="addMembershipInfoModal"
-    />
+        <TextIconButton
+            type="primary"
+            label={'Tambah'}
+            form="addMembershipInfoModal"
+        />
     </form>
 </Modal>
 <!-- Family Info Modal -->
@@ -3790,117 +3876,149 @@
         use:addFamilyEnhance
         method="POST"
     >
-    <CustomTextField id="name" label={'Nama'} type="text" val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="name"
+            label={'Nama'}
+            type="text"
+            bind:val={$addFamilyModal.name}
+        ></CustomTextField>
 
-    <CustomTextField id="alternativeName" label={'Nama Lain'} type="text" val=""
-    ></CustomTextField>
-    <CustomSelectField
-        id="identityDocumentColor"
-        label={'Warna Kad Pengenalan'}
-        options={data.selectionOptions.identityCardColorLookup}
-        val=""
-    ></CustomSelectField>
-    <CustomTextField
-        id="identityDocumentNumber"
-        type="text"
-        label={'Nombor Kad Pengenalan'}
-        val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="alternativeName"
+            label={'Nama Lain'}
+            type="text"
+            bind:val={$addFamilyModal.alternativeName}
+        ></CustomTextField>
+        <CustomSelectField
+            id="identityDocumentColor"
+            label={'Warna Kad Pengenalan'}
+            options={data.selectionOptions.identityCardColorLookup}
+            bind:val={$addFamilyModal.identityDocumentColor}
+        ></CustomSelectField>
+        <CustomTextField
+            id="identityDocumentNumber"
+            type="text"
+            label={'Nombor Kad Pengenalan'}
+            bind:val={$addFamilyModal.identityDocumentNumber}
+        ></CustomTextField>
 
-    <CustomTextField id="address" label={'Alamat'} val=""></CustomTextField>
+        <CustomTextField
+            id="address"
+            label={'Alamat'}
+            bind:val={$addFamilyModal.address}
+        ></CustomTextField>
 
-    <CustomTextField id="postcode" label={'Poskod'} type="text" val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="postcode"
+            label={'Poskod'}
+            type="text"
+            bind:val={$addFamilyModal.postcode}
+        ></CustomTextField>
 
-    <CustomTextField type="date" id="birthDate" label={'Tarikh Lahir'} val=""
-    ></CustomTextField>
+        <CustomTextField
+            type="date"
+            id="birthDate"
+            label={'Tarikh Lahir'}
+            bind:val={$addFamilyModal.birthDate}
+        ></CustomTextField>
 
-    <CustomSelectField
-        id="birthCountryId"
-        label={'Negara Kelahiran'}
-        val=""
-        options={data.selectionOptions.countryLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="birthCountryId"
+            label={'Negara Kelahiran'}
+            bind:val={$addFamilyModal.birthCountryId}
+            options={data.selectionOptions.countryLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="birthStateId"
-        label={'Negeri Kelahiran'}
-        val=""
-        options={data.selectionOptions.stateLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="birthStateId"
+            label={'Negeri Kelahiran'}
+            bind:val={$addFamilyModal.birthStateId}
+            options={data.selectionOptions.stateLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="relationshipId"
-        label={'Hubungan'}
-        val=""
-        options={data.selectionOptions.relationshipLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="relationshipId"
+            label={'Hubungan'}
+            bind:val={$addFamilyModal.relationshipId}
+            options={data.selectionOptions.relationshipLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="educationLevelId"
-        label={'Taraf Pendidikan'}
-        val=""
-        options={data.selectionOptions.educationLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="educationLevelId"
+            label={'Taraf Pendidikan'}
+            bind:val={$addFamilyModal.educationLevelId}
+            options={data.selectionOptions.educationLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField id="raceId" label={'Bangsa'} val=""></CustomSelectField> options={data
-        .selectionOptions.raceLookup}
+        <CustomSelectField
+            id="raceId"
+            label={'Bangsa'}
+            bind:val={$addFamilyModal.raceId}
+            options={data.selectionOptions.raceLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="nationalityId"
-        label={'Kewarganegaraan'}
-        val=""
-        options={data.selectionOptions.nationalityLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="nationalityId"
+            label={'Kewarganegaraan'}
+            bind:val={$addFamilyModal.nationalityId}
+            options={data.selectionOptions.nationalityLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="genderId"
-        label={'Jantina'}
-        val=""
-        options={data.selectionOptions.genderLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="genderId"
+            label={'Jantina'}
+            bind:val={$addFamilyModal.genderId}
+            options={data.selectionOptions.genderLookup}
+        ></CustomSelectField>
 
-    <CustomTextField
-        id="workAddress"
-        label={'Alamat Majikan'}
-        type="text"
-        val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="workAddress"
+            label={'Alamat Majikan'}
+            type="text"
+            bind:val={$addFamilyModal.workAddress}
+        ></CustomTextField>
 
-    <CustomTextField
-        id="workPostcode"
-        label={'Poskod Majikan'}
-        type="text"
-        val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="workPostcode"
+            label={'Poskod Majikan'}
+            type="text"
+            bind:val={$addFamilyModal.workPostcode}
+        ></CustomTextField>
 
-    <CustomTextField id="phoneNumber" label={'Nombor Mobil'} type="text" val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="phoneNumber"
+            label={'Nombor Mobil'}
+            type="text"
+            bind:val={$addFamilyModal.phoneNumber}
+        ></CustomTextField>
 
-    <CustomSelectField
-        id="maritalId"
-        label={'Status Perkhahwinan'}
-        val=""
-        options={data.selectionOptions.maritalLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="maritalId"
+            label={'Status Perkhahwinan'}
+            bind:val={$addFamilyModal.maritalId}
+            options={data.selectionOptions.maritalLookup}
+        ></CustomSelectField>
 
-    <CustomTextField
-        type="date"
-        id="marriageDate"
-        label={'Tarikh Kahwin'}
-        val=""
-    ></CustomTextField>
+        <CustomTextField
+            type="date"
+            id="marriageDate"
+            label={'Tarikh Kahwin'}
+            bind:val={$addFamilyModal.marriageDate}
+        ></CustomTextField>
 
-    <div class="flex flex-row">
-        <label for="addInSchool" class="w-[70px] text-sm text-black"
-            >Bersekolah</label
-        >
-        <Checkbox id="inSchool" />
-    </div>
-    <br />
+        <div class="flex flex-row">
+            <label for="addInSchool" class="w-[70px] text-sm text-black"
+                >Bersekolah</label
+            >
+            <Checkbox id="inSchool" bind:checked={$addFamilyModal.inSchool} />
+        </div>
+        <br />
 
-    <TextIconButton type="primary" label={'Tambah'} form="addFamilyInfoModal" />
+        <TextIconButton
+            type="primary"
+            label={'Tambah'}
+            form="addFamilyInfoModal"
+        />
     </form>
 </Modal>
 
@@ -3915,121 +4033,152 @@
         use:addNonFamilyEnhance
         method="POST"
     >
-    <CustomTextField id="name" label={'Nama'} type="text" val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="name"
+            label={'Nama'}
+            type="text"
+            bind:val={$addNonFamilyModal.name}
+        ></CustomTextField>
 
-    <CustomTextField id="alternativeName" label={'Nama Lain'} type="text" val=""
-    ></CustomTextField>
-    <CustomSelectField
-        id="identityDocumentColor"
-        label={'Warna Kad Pengenalan'}
-        options={data.selectionOptions.identityCardColorLookup}
-        val=""
-    ></CustomSelectField>
-    <CustomTextField
-        id="identityDocumentNumber"
-        type="number"
-        label={'Nombor Kad Pengenalan'}
-        val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="alternativeName"
+            label={'Nama Lain'}
+            type="text"
+            bind:val={$addNonFamilyModal.alternativeName}
+        ></CustomTextField>
+        <CustomSelectField
+            id="identityDocumentColor"
+            label={'Warna Kad Pengenalan'}
+            options={data.selectionOptions.identityCardColorLookup}
+            bind:val={$addNonFamilyModal.identityDocumentColor}
+        ></CustomSelectField>
+        <CustomTextField
+            id="identityDocumentNumber"
+            type="number"
+            label={'Nombor Kad Pengenalan'}
+            bind:val={$addNonFamilyModal.identityDocumentNumber}
+        ></CustomTextField>
 
-    <CustomTextField id="address" label={'Alamat'} val=""></CustomTextField>
+        <CustomTextField
+            id="address"
+            label={'Alamat'}
+            bind:val={$addNonFamilyModal.address}
+        ></CustomTextField>
 
-    <CustomTextField id="postcode" label={'Poskod'} type="text" val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="postcode"
+            label={'Poskod'}
+            type="text"
+            bind:val={$addNonFamilyModal.postcode}
+        ></CustomTextField>
 
-    <CustomTextField type="date" id="birthDate" label={'Tarikh Lahir'} val=""
-    ></CustomTextField>
+        <CustomTextField
+            type="date"
+            id="birthDate"
+            label={'Tarikh Lahir'}
+            bind:val={$addNonFamilyModal.birthDate}
+        ></CustomTextField>
 
-    <CustomSelectField
-        id="birthCountryId"
-        label={'Negara Kelahiran'}
-        val=""
-        options={data.selectionOptions.countryLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="birthCountryId"
+            label={'Negara Kelahiran'}
+            bind:val={$addNonFamilyModal.birthCountryId}
+            options={data.selectionOptions.countryLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="birthStateId"
-        label={'Negeri Kelahiran'}
-        val=""
-        options={data.selectionOptions.stateLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="birthStateId"
+            label={'Negeri Kelahiran'}
+            bind:val={$addNonFamilyModal.birthStateId}
+            options={data.selectionOptions.stateLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="relationshipId"
-        label={'Hubungan'}
-        val=""
-        options={data.selectionOptions.relationshipLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="relationshipId"
+            label={'Hubungan'}
+            bind:val={$addNonFamilyModal.relationshipId}
+            options={data.selectionOptions.relationshipLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="educationLevelId"
-        label={'Taraf Pendidikan'}
-        val=""
-        options={data.selectionOptions.educationLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="educationLevelId"
+            label={'Taraf Pendidikan'}
+            bind:val={$addNonFamilyModal.educationLevelId}
+            options={data.selectionOptions.educationLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField id="raceId" label={'Bangsa'} val=""></CustomSelectField> options={data
-        .selectionOptions.raceLookup}
+        <CustomSelectField
+            id="raceId"
+            label={'Bangsa'}
+            bind:val={$addNonFamilyModal.raceId}
+            options={data.selectionOptions.raceLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="nationalityId"
-        label={'Kewarganegaraan'}
-        val=""
-        options={data.selectionOptions.nationalityLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="nationalityId"
+            label={'Kewarganegaraan'}
+            bind:val={$addNonFamilyModal.nationalityId}
+            options={data.selectionOptions.nationalityLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="genderId"
-        label={'Jantina'}
-        val=""
-        options={data.selectionOptions.genderLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="genderId"
+            label={'Jantina'}
+            bind:val={$addNonFamilyModal.genderId}
+            options={data.selectionOptions.genderLookup}
+        ></CustomSelectField>
 
-    <CustomTextField
-        id="workAddress"
-        label={'Alamat Majikan'}
-        type="text"
-        val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="workAddress"
+            label={'Alamat Majikan'}
+            type="text"
+            bind:val={$addNonFamilyModal.workAddress}
+        ></CustomTextField>
 
-    <CustomTextField
-        id="workPostcode"
-        label={'Poskod Majikan'}
-        type="text"
-        val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="workPostcode"
+            label={'Poskod Majikan'}
+            type="text"
+            bind:val={$addNonFamilyModal.workPostcode}
+        ></CustomTextField>
 
-    <CustomTextField id="phoneNumber" label={'Nombor Mobil'} type="text" val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="phoneNumber"
+            label={'Nombor Mobil'}
+            type="text"
+            bind:val={$addNonFamilyModal.phoneNumber}
+        ></CustomTextField>
 
-    <CustomSelectField
-        id="maritalId"
-        label={'Status Perkhahwinan'}
-        val=""
-        options={data.selectionOptions.maritalLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="maritalId"
+            label={'Status Perkhahwinan'}
+            val=""
+            options={data.selectionOptions.maritalLookup}
+        ></CustomSelectField>
 
-    <CustomTextField
-        type="date"
-        id="marriageDate"
-        label={'Tarikh Kahwin'}
-        val=""
-    ></CustomTextField>
+        <CustomTextField
+            type="date"
+            id="marriageDate"
+            label={'Tarikh Kahwin'}
+            bind:val={$addNonFamilyModal.marriageDate}
+        ></CustomTextField>
 
-    <div class="flex flex-row">
-        <label for="addInSchool" class="w-[70px] text-sm text-black"
-            >Bersekolah</label
-        >
-        <Checkbox id="inSchool" checked />
-    </div>
-    <br />
+        <div class="flex flex-row">
+            <label for="addInSchool" class="w-[70px] text-sm text-black"
+                >Bersekolah</label
+            >
+            <Checkbox
+                id="inSchool"
+                bind:checked={$addNonFamilyModal.inSchool}
+            />
+        </div>
+        <br />
 
-    <TextIconButton
-        type="primary"
-        label={'Tambah'}
-        form="addNonFamilyInfoModal"
-    />
+        <TextIconButton
+            type="primary"
+            label={'Tambah'}
+            form="addNonFamilyInfoModal"
+        />
     </form>
 </Modal>
 
@@ -4041,123 +4190,150 @@
         method="POST"
         class="flex w-full flex-col gap-2"
     >
-    <CustomTextField id="name" label={'Nama'} type="text" val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="name"
+            label={'Nama'}
+            type="text"
+            bind:val={$addNextOfKinModal.name}
+        ></CustomTextField>
 
-    <CustomTextField id="alternativeName" label={'Nama Lain'} type="text" val=""
-    ></CustomTextField>
-    <CustomSelectField
-        id="identityDocumentColor"
-        label={'Warna Kad Pengenalan'}
-        options={data.selectionOptions.identityCardColorLookup}
-        val=""
-    ></CustomSelectField>
-    <CustomTextField
-        id="identityDocumentNumber"
-        type="number"
-        label={'Nombor Kad Pengenalan'}
-        val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="alternativeName"
+            label={'Nama Lain'}
+            type="text"
+            bind:val={$addNextOfKinModal.alternativeName}
+        ></CustomTextField>
+        <CustomSelectField
+            id="identityDocumentColor"
+            label={'Warna Kad Pengenalan'}
+            options={data.selectionOptions.identityCardColorLookup}
+            bind:val={$addNextOfKinModal.identityDocumentColor}
+        ></CustomSelectField>
+        <CustomTextField
+            id="identityDocumentNumber"
+            type="number"
+            label={'Nombor Kad Pengenalan'}
+            bind:val={$addNextOfKinModal.identityDocumentNumber}
+        ></CustomTextField>
 
-    <CustomTextField id="address" label={'Alamat'} val=""></CustomTextField>
+        <CustomTextField
+            id="address"
+            label={'Alamat'}
+            bind:val={$addNextOfKinModal.address}
+        ></CustomTextField>
 
-    <CustomTextField id="postcode" label={'Poskod'} type="text" val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="postcode"
+            label={'Poskod'}
+            type="text"
+            bind:val={$addNextOfKinModal.postcode}
+        ></CustomTextField>
 
-    <CustomTextField type="date" id="birthDate" label={'Tarikh Lahir'} val=""
-    ></CustomTextField>
+        <CustomTextField
+            type="date"
+            id="birthDate"
+            label={'Tarikh Lahir'}
+            bind:val={$addNextOfKinModal.birthDate}
+        ></CustomTextField>
 
-    <CustomSelectField
-        id="birthCountryId"
-        label={'Negara Kelahiran'}
-        val=""
-        options={data.selectionOptions.countryLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="birthCountryId"
+            label={'Negara Kelahiran'}
+            bind:val={$addNextOfKinModal.birthCountryId}
+            options={data.selectionOptions.countryLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="birthStateId"
-        label={'Negeri Kelahiran'}
-        val=""
-        options={data.selectionOptions.stateLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="birthStateId"
+            label={'Negeri Kelahiran'}
+            bind:val={$addNextOfKinModal.birthStateId}
+            options={data.selectionOptions.stateLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="relationshipId"
-        label={'Hubungan'}
-        val=""
-        options={data.selectionOptions.relationshipLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="relationshipId"
+            label={'Hubungan'}
+            bind:val={$addNextOfKinModal.relationshipId}
+            options={data.selectionOptions.relationshipLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="educationLevelId"
-        label={'Taraf Pendidikan'}
-        val=""
-        options={data.selectionOptions.educationLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="educationLevelId"
+            label={'Taraf Pendidikan'}
+            bind:val={$addNextOfKinModal.educationLevelId}
+            options={data.selectionOptions.educationLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="raceId"
-        label={'Bangsa'}
-        val=""
-        options={data.selectionOptions.raceLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="raceId"
+            label={'Bangsa'}
+            bind:val={$addNextOfKinModal.raceId}
+            options={data.selectionOptions.raceLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="nationalityId"
-        label={'Kewarganegaraan'}
-        val=""
-        options={data.selectionOptions.nationalityLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="nationalityId"
+            label={'Kewarganegaraan'}
+            bind:val={$addNextOfKinModal.nationalityId}
+            options={data.selectionOptions.nationalityLookup}
+        ></CustomSelectField>
 
-    <CustomSelectField
-        id="genderId"
-        label={'Jantina'}
-        val=""
-        options={data.selectionOptions.genderLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="genderId"
+            label={'Jantina'}
+            bind:val={$addNextOfKinModal.genderId}
+            options={data.selectionOptions.genderLookup}
+        ></CustomSelectField>
 
-    <CustomTextField
-        id="workAddress"
-        label={'Alamat Majikan'}
-        type="text"
-        val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="workAddress"
+            label={'Alamat Majikan'}
+            type="text"
+            bind:val={$addNextOfKinModal.workAddress}
+        ></CustomTextField>
 
-    <CustomTextField
-        id="workPostcode"
-        label={'Poskod Majikan'}
-        type="text"
-        val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="workPostcode"
+            label={'Poskod Majikan'}
+            type="text"
+            bind:val={$addNextOfKinModal.workPostcode}
+        ></CustomTextField>
 
-    <CustomTextField id="phoneNumber" label={'Nombor Mobil'} type="text" val=""
-    ></CustomTextField>
+        <CustomTextField
+            id="phoneNumber"
+            label={'Nombor Mobil'}
+            type="text"
+            bind:val={$addNextOfKinModal.phoneNumber}
+        ></CustomTextField>
 
-    <CustomSelectField
-        id="maritalId"
-        label={'Status Perkhahwinan'}
-        val=""
-        options={data.selectionOptions.maritalLookup}
-    ></CustomSelectField>
+        <CustomSelectField
+            id="maritalId"
+            label={'Status Perkhahwinan'}
+            bind:val={$addNextOfKinModal.maritalId}
+            options={data.selectionOptions.maritalLookup}
+        ></CustomSelectField>
 
-    <CustomTextField
-        type="date"
-        id="marriageDate"
-        label={'Tarikh Kahwin'}
-        val=""
-    ></CustomTextField>
+        <CustomTextField
+            type="date"
+            id="marriageDate"
+            label={'Tarikh Kahwin'}
+            bind:val={$addNextOfKinModal.marriageDate}
+        ></CustomTextField>
 
-    <div class="flex flex-row">
-        <label for="addInSchool" class="w-[70px] text-sm text-black"
-            >Bersekolah</label
-        >
-        <Checkbox id="inSchool" checked />
-    </div>
+        <div class="flex flex-row">
+            <label for="addInSchool" class="w-[70px] text-sm text-black"
+                >Bersekolah</label
+            >
+            <Checkbox
+                id="inSchool"
+                bind:checked={$addNextOfKinModal.inSchool}
+            />
+        </div>
 
-    <TextIconButton
-        type="primary"
-        label={'Tambah'}
-        form="addNextOfKinInfoModal"
-    />
+        <TextIconButton
+            type="primary"
+            label={'Tambah'}
+            form="addNextOfKinInfoModal"
+        />
     </form>
 </Modal>

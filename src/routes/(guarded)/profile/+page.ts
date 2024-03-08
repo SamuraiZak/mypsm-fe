@@ -21,8 +21,10 @@ import {
     _experienceListResponseSchema,
     _familyListRequestSchema,
     _familyListResponseSchema,
+    _medicalAssessmentListResponseSchema,
     _nextOfKinListRequestSchema,
     _nextOfKinListResponseSchema,
+    _personalInfoRequestSchema,
     _personalInfoResponseSchema,
     _relationsSchema,
     _serviceDetailSchema,
@@ -41,16 +43,12 @@ import type { Experience, experiencesRequestDTO, experiencesResponseDTO } from '
 import type { Activity, activityRequestDTO, activityResponseDTO } from '$lib/dto/mypsm/profile/activity-detail.dto';
 import type { Dependency, Family, NextOfKin, dependencResponseDTO, dependencyRequestDTO, familyRequestDTO, familyResponseDTO, nextOfKinRequestDTO, nextOfKinResponseDTO } from '$lib/dto/mypsm/profile/relation-detail.dto';
 import type { CandidatePersonalRequestDTO, CandidatePersonalResponseDTO } from '$lib/dto/mypsm/profile/personal-detail.dto';
-import type { serviceResponseDTO } from '$lib/dto/mypsm/profile/service-detail.dto';
+import type { serviceRequestDTO, serviceResponseDTO } from '$lib/dto/mypsm/profile/service-detail.dto';
+import type { medicalAssessmentResponseDTO } from '$lib/dto/mypsm/profile/medical-assessment.dto';
 
 
 
 // export const load = async () => {
-//     let salaryViewResponse: CommonResponseDTO;
-//     let salaryViewTable = [];
-    
-//     salaryViewResponse = await ProfileServices.getSalaryListDetails(param);
-//     salaryViewTable = salaryViewResponse.data?.dataList ?? [];
 
 //     return {salaryViewTable}
 // };
@@ -58,8 +56,22 @@ import type { serviceResponseDTO } from '$lib/dto/mypsm/profile/service-detail.d
 
 export async function load({ }) {
 
+    // const salaryFilter: CommonFilterDTO = {
+    //     examType: 1,
+    //  };
+    const salaryListParam: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: null,
+        orderType: 1,
+        filter: {},
+    }
+    let salaryViewResponse: CommonResponseDTO;
+    let salaryViewTable = [];
 
-  
+    salaryViewResponse = await ProfileServices.getSalaryListDetails(salaryListParam);
+    salaryViewTable = salaryViewResponse.data?.dataList ?? [];
+
 
     //==================================================
     //=============== Load Function ====================
@@ -74,20 +86,23 @@ export async function load({ }) {
     const academicInfoResponse: CommonResponseDTO =
         await ProfileServices.getProfileAcademicDetails();
 
-        const experienceInfoResponse: CommonResponseDTO =
+    const experienceInfoResponse: CommonResponseDTO =
         await ProfileServices.getProfileExperienceDetails();
 
-        const activityInfoResponse: CommonResponseDTO =
+    const activityInfoResponse: CommonResponseDTO =
         await ProfileServices.getProfileActivityDetails();
 
-        const familyInfoResponse: CommonResponseDTO =
+    const familyInfoResponse: CommonResponseDTO =
         await ProfileServices.getProfileFamilyDetails();
 
-        const relationInfoResponse: CommonResponseDTO =
+    const relationInfoResponse: CommonResponseDTO =
         await ProfileServices.getProfileDependentDetails();
 
-        const nextOfKinInfoResponse: CommonResponseDTO =
+    const nextOfKinInfoResponse: CommonResponseDTO =
         await ProfileServices.getProfileNextOfKinDetails();
+
+    const medicalHistoryResponse: CommonResponseDTO =
+        await ProfileServices.getProfileMedicalAssessmentDetails();
 
 
 
@@ -102,24 +117,27 @@ export async function load({ }) {
         _academicListResponseSchema))
         ;
 
-    const experienceInfoForm = await superValidate (experienceInfoResponse.data?.details as experiencesResponseDTO, zod(
+    const experienceInfoForm = await superValidate(experienceInfoResponse.data?.details as experiencesResponseDTO, zod(
         _experienceListResponseSchema))
         ;
 
-    const activityInfoForm = await superValidate (activityInfoResponse.data?.details as activityResponseDTO, zod(
+    const activityInfoForm = await superValidate(activityInfoResponse.data?.details as activityResponseDTO, zod(
         _activityListResponseSchema))
         ;
 
-    const relationInfoForm = await superValidate (relationInfoResponse.data?.details as dependencResponseDTO, zod(
+    const relationInfoForm = await superValidate(relationInfoResponse.data?.details as dependencResponseDTO, zod(
         _dependencyListResponseSchema))
         ;
 
-    const familyInfoForm = await superValidate (familyInfoResponse.data?.details as familyResponseDTO, zod(
+    const familyInfoForm = await superValidate(familyInfoResponse.data?.details as familyResponseDTO, zod(
         _familyListResponseSchema))
         ;
 
-    const nextOFKInInfoForm = await superValidate (nextOfKinInfoResponse.data?.details as nextOfKinResponseDTO, zod(
+    const nextOFKInInfoForm = await superValidate(nextOfKinInfoResponse.data?.details as nextOfKinResponseDTO, zod(
         _nextOfKinListResponseSchema))
+        ;
+    const medicalHistoryForm = await superValidate(medicalHistoryResponse.data?.details as medicalAssessmentResponseDTO, zod(
+        _medicalAssessmentListResponseSchema))
         ;
 
 
@@ -153,15 +171,15 @@ export async function load({ }) {
         filter: relationFilter,
     };
 
-    const employeeRelationResponse: CommonResponseDTO =
-        await EmployeeServices.getEmployeeList(relationParam);
+    // const employeeRelationResponse: CommonResponseDTO =
+    //     await EmployeeServices.getEmployeeList(relationParam);
 
-    const employeeLookup: DropdownDTO[] = (
-        employeeRelationResponse.data?.dataList as CommonEmployeeDTO[]
-    ).map((data) => ({
-        value: data.employeeId,
-        name: data.name,
-    }));
+    // const employeeLookup: DropdownDTO[] = (
+    //     employeeRelationResponse.data?.dataList as CommonEmployeeDTO[]
+    // ).map((data) => ({
+    //     value: data.employeeId,
+    //     name: data.name,
+    // }));
 
 
     // ==========================================================================
@@ -407,6 +425,9 @@ export async function load({ }) {
         addFamilyModal,
         addNonFamilyModal,
         addNextOfKinModal,
+        medicalHistoryForm,
+        salaryViewTable,
+        salaryListParam,
         selectionOptions: {
             identityCardColorLookup,
             cityLookup,
@@ -426,7 +447,7 @@ export async function load({ }) {
             majorMinorLookup,
             titleLookup,
             generalLookup,
-            employeeLookup,
+            // employeeLookup,
             assetDeclarationLookup,
             gradeLookup,
             placementLookup,
@@ -442,52 +463,44 @@ export async function load({ }) {
 //=============== Submit Functions =================
 //==================================================
 export const _personalInfoSubmit = async (formData: object) => {
-    const personalInfoForm = await superValidate(
-        formData,
-        (zod)(_personalInfoResponseSchema),
-    );
-    console.log(personalInfoForm)
-    if (personalInfoForm.valid) {
-        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(personalInfoForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        if (personalInfoForm.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
+    const personalInfoForm = await superValidate(formData, zod(_personalInfoRequestSchema));
+
+    if (!personalInfoForm.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
     }
-}
+
+    // const modifiedForm = {
+    //     id: form.data.id,
+    //     examTypeId: form.data.examTypeId,
+    //     examTitle: form.data.examTitle,
+    //     startDate: form.data.startDate.toISOString().split('T')[0],
+    //     endDate: form.data.endDate.toISOString().split('T')[0],
+    //     examDate: form.data.examDate.toISOString().split('T')[0],
+    //     examLocation: form.data.examLocation,
+    // }; 
+
+    const response: CommonResponseDTO =
+        await ProfileServices.addProfilePersonalDetails(personalInfoForm.data as CandidatePersonalRequestDTO);
+
+    return { response };
+};
+
+
+// ===============================================================
 
 export const _serviceInfoSubmit = async (formData: object) => {
-    const serviceInfoForm = await superValidate(
-        formData,
-        (zod)(_serviceInfoRequestSchema),
-    );
-    console.log(serviceInfoForm)
+    const serviceInfoForm = await superValidate(formData,(zod)(_serviceInfoRequestSchema));
+   
     if (serviceInfoForm.valid) {
-        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(serviceInfoForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        if (serviceInfoForm.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+            }
+
+            const response: CommonResponseDTO =
+            await ProfileServices.addProfileServiceDetails(serviceInfoForm.data as serviceRequestDTO);
     }
-}
+
 
 export const _submitAcademicForm = async (formData: object) => {
     const academicInfoform = await superValidate(formData, (zod)(_academicListRequestSchema));
