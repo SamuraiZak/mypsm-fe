@@ -44,18 +44,17 @@ export const _fundApplicationDetailResponseSchema = z.object({
     learningInstitution: shortTextSchema,
     studyDuration: numberSchema,
     courseApplicationDate: minDateSchema,
+    entryDateToInstituition: minDateSchema,
+    expectedFinishedStudyDate: minDateSchema,
     educationType: shortTextSchema,
     applicationType: shortTextSchema,
 });
 
 export const _createFundApplicationRequestSchema =
-    _fundApplicationDetailResponseSchema
-        .omit({
-            id: true,
-        })
-        .extend({
-            entryDateToInstituition: minDateSchema,
-        });
+    _fundApplicationDetailResponseSchema.omit({
+        id: true,
+        courseApplicationDate: true,
+    });
 
 // ==================================================
 // fund application staff personal info schema
