@@ -31,6 +31,7 @@
     } from './+page';
     import { zod } from 'sveltekit-superforms/adapters';
     import { error } from '@sveltejs/kit';
+    import { Badge } from 'flowbite-svelte';
     export let data: PageData;
 
     let isReadonlySecretaryApprovalResult = writable<boolean>(false);
@@ -136,8 +137,11 @@
     });
 </script>
 
-<ContentHeader title="Maklumat Lantikan Baru"
-    ><TextIconButton
+<ContentHeader title="Maklumat Peperiksaan Yang Dipohon">
+    {#if data.responses.courseExamSecretaryApprovalResponse.data?.details && data.responses.courseExamSecretaryApprovalResponse.data?.details.status === true}
+        <Badge color="green">Proses Peperiksaan Tamat</Badge>
+    {/if}
+    <TextIconButton
         label="Kembali"
         type="neutral"
         onClick={() => {
@@ -807,13 +811,13 @@
                 <TextIconButton
                     type="primary"
                     label="Simpan"
-                    form="examApplicationSecretaryApprovalForm"
+                    form="examApplicationPanelResultForm"
                 ></TextIconButton>
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
             <form
-                id="examApplicationSecretaryApprovalForm"
+                id="examApplicationPanelResultForm"
                 method="POST"
                 use:examResultInfoEnhance
                 class="flex w-full flex-col gap-2.5"
