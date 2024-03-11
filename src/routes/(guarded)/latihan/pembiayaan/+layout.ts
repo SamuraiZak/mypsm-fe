@@ -6,7 +6,7 @@ import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { CourseFundReimbursementListResponseDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement.dto';
 import { renameExamTypeKeyValue } from '$lib/helpers/mypsm/course/exam-type.helper';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
-import { CourseFundReimbursementServices } from '$lib/services/implementation/mypsm/latihan/fundReimbursement.service';
+import { CourseFundApplicationServices } from '$lib/services/implementation/mypsm/latihan/fundApplication.service';
 
 export const load = async () => {
     let fundReimbursementResponse: CommonResponseDTO = {};
@@ -32,9 +32,7 @@ export const load = async () => {
 
     // fund application list
     fundReimbursementResponse =
-        await CourseFundReimbursementServices.getCourseFundReimbursementList(
-            param,
-        );
+        await CourseFundApplicationServices.getCourseFundApplicationList(param);
 
     await renameExamTypeKeyValue(fundReimbursementResponse);
 
@@ -72,6 +70,24 @@ export const load = async () => {
 
     // ===========================================================================
 
+    const educationLookupResponse: CommonResponseDTO =
+        await LookupServices.getHighestEducationEnums();
+
+    const educationLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsValueIsDescription(
+            educationLookupResponse,
+        );
+
+    // ===========================================================================
+
+    const institutionLookupResponse: CommonResponseDTO =
+        await LookupServices.getInstitutionEnums();
+
+    const institutionLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsValueIsDescription(
+            institutionLookupResponse,
+        );
+
     return {
         param,
         roles: {
@@ -81,22 +97,22 @@ export const load = async () => {
         list: {
             fundReimbursementList,
         },
-        responses: {
+        response: {
             fundReimbursementResponse,
         },
-        selectionOptions: {
+        lookups: {
             statusLookup,
             examTypeLookup,
             examResultLookup,
+            educationLookup,
+            institutionLookup,
         },
     };
 };
 
 export const _updateTable = async (param: CommonListRequestDTO) => {
     const response: CommonResponseDTO =
-        await CourseFundReimbursementServices.getCourseFundReimbursementList(
-            param,
-        );
+        await CourseFundApplicationServices.getCourseFundApplicationList(param);
 
     await renameExamTypeKeyValue(response);
 
