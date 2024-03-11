@@ -1,4 +1,4 @@
-import type { RadioDTO } from "$lib/dto/core/radio/radio.dto";
+import type { RadioDTO } from '$lib/dto/core/radio/radio.dto';
 
 export const certifyOptions: RadioDTO[] = [
     {
@@ -8,6 +8,16 @@ export const certifyOptions: RadioDTO[] = [
     {
         value: false,
         name: 'TIDAK SAH',
+    },
+];
+export const confirmOptions: RadioDTO[] = [
+    {
+        value: true,
+        name: 'PERAKU',
+    },
+    {
+        value: false,
+        name: 'TIDAK PERAKU',
     },
 ];
 
