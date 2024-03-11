@@ -2,7 +2,6 @@
     import type { CourseFundApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
     import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
-    import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
     import { _updateTable } from './+layout';
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
@@ -16,7 +15,7 @@
     let rowData: CourseFundApplicationDetailResponseDTO;
     let param: CommonListRequestDTO = data.param;
 
-    let fundApplicationTable: TableDTO = {
+    let fundReimbursementTable: TableDTO = {
         param: param,
         meta: data.responses.fundApplicationResponse.data?.meta ?? {
             pageNum: 1,
@@ -24,30 +23,30 @@
             totalData: 4,
             totalPage: 1,
         },
-        data: data.list.fundApplicationList ?? [],
+        data: data.list.fundReimbursementList ?? [],
         hiddenData: ['id'],
     };
 
     async function _updateExamTable() {
-        _updateTable(fundApplicationTable.param).then((value) => {
-            fundApplicationTable.data = value.response.data?.dataList ?? [];
-            fundApplicationTable.meta = value.response.data?.meta ?? {
+        _updateTable(fundReimbursementTable.param).then((value) => {
+            fundReimbursementTable.data = value.response.data?.dataList ?? [];
+            fundReimbursementTable.meta = value.response.data?.meta ?? {
                 pageSize: 1,
                 pageNum: 1,
                 totalData: 1,
                 totalPage: 1,
             };
-            fundApplicationTable.param.pageSize =
-                fundApplicationTable.meta.pageSize;
-            fundApplicationTable.param.pageNum =
-                fundApplicationTable.meta.pageNum;
+            fundReimbursementTable.param.pageSize =
+                fundReimbursementTable.meta.pageSize;
+            fundReimbursementTable.param.pageNum =
+                fundReimbursementTable.meta.pageNum;
         });
     }
 </script>
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Rekod Tuntutan Pembiayaan Yuran Pengajajian"
+    <ContentHeader title="Rekod Tuntutan Pembiayaan Yuran Pengajian"
     ></ContentHeader>
 </section>
 
@@ -67,10 +66,7 @@
                 <TextIconButton
                     label="Tambah Tuntutan Yuran"
                     type="primary"
-                    onClick={() =>
-                        goto(
-                            './rekod-tuntutan-yuran/tambah-permohonan-tuntutan-yuran',
-                        )}
+                    onClick={() => goto('./tuntutan-yuran/mohon-tuntutan')}
                 ></TextIconButton>
             </ContentHeader>
         {/if}
@@ -78,17 +74,18 @@
         <FilterCard onSearch={_updateExamTable}>
             <FilterTextField
                 label="No. Kad Pengenalan"
-                bind:inputValue={fundApplicationTable.param.filter
+                bind:inputValue={fundReimbursementTable.param.filter
                     .employeeIdentityNumber}
             ></FilterTextField>
             <FilterTextField
                 label="Nombor Pekerja"
-                bind:inputValue={fundApplicationTable.param.filter
+                bind:inputValue={fundReimbursementTable.param.filter
                     .employeeNumber}
             ></FilterTextField>
             <FilterTextField
                 label="Nama Pekerja"
-                bind:inputValue={fundApplicationTable.param.filter.employeeName}
+                bind:inputValue={fundReimbursementTable.param.filter
+                    .employeeName}
             ></FilterTextField>
         </FilterCard>
         <div class="flex max-h-full w-full flex-col items-start justify-start">
@@ -96,10 +93,10 @@
                 title="Senarai Permohonan Peperiksaan"
                 onUpdate={_updateExamTable}
                 enableDetail
-                bind:tableData={fundApplicationTable}
+                bind:tableData={fundReimbursementTable}
                 bind:passData={rowData}
                 detailActions={() => {
-                    const route = `./rekod-peperiksaan/${rowData.id}`;
+                    const route = `./tuntutan-yuran/${rowData.id}`;
 
                     goto(route);
                 }}
