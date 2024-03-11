@@ -107,6 +107,10 @@ export class SidebarConstant {
                             name: 'Pembiayaan Pembelajaran',
                             path: '/latihan/pembiayaan',
                         },
+                        {
+                            name: 'Tuntutan Pembiayaan Yuran Pengajian',
+                            path: '/latihan/tuntutan-yuran',
+                        },
                     ],
                 },
                 {
