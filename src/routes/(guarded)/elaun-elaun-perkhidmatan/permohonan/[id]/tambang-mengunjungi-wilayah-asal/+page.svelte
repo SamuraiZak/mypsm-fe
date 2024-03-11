@@ -73,6 +73,9 @@
         SPA: true,
         validators: zodClient(_serviceAllowanceVerificationSchema),
         onSubmit(input) {
+            $verificationForm.allowanceTypeCode =
+                data.props.currentAllowanceType;
+            $verificationForm.allowanceId = data.props.allowanceId;
             _submitVerificationForm($verificationForm);
         },
     });
@@ -87,6 +90,9 @@
         SPA: true,
         validators: zodClient(_serviceAllowanceSuppAppDetailSchema),
         onSubmit(input) {
+            $suppAppDetailsForm.allowanceTypeCode =
+                data.props.currentAllowanceType;
+            $suppAppDetailsForm.allowanceId = data.props.allowanceId;
             _submitSuppAppDetailsForm($suppAppDetailsForm);
         },
     });
@@ -200,7 +206,7 @@
         <!-- **************************************************** -->
         <StepperContent stepperId="allowanceVerification">
             <StepperContentHeader title="Pengesahan Permohonan"
-                >{#if data.props.currentRoleCode == UserRoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
+                >{#if data.props.currentRoleCode == UserRoleConstant.urusSetiaElaunElaunPerkhidmatan.code && data.props.fullApplicationDetail.verification === null}
                     <TextIconButton
                         type="primary"
                         form="verificationForm"
@@ -233,16 +239,19 @@
                             class="flex w-full flex-col items-center justify-start space-y-2"
                         >
                             <div class="flex w-full flex-col gap-2">
+                                {$verificationForm.status}
                                 <CustomRadioField
                                     disabled={data.props.currentRoleCode !==
                                         UserRoleConstant
                                             .urusSetiaElaunElaunPerkhidmatan
-                                            .code}
+                                            .code ||
+                                        data.props.fullApplicationDetail
+                                            .verification !== null}
                                     id="status"
                                     label={'Pengesahan Permohonan'}
                                     options={data.props
                                         .verificationStatusOption}
-                                    val={false}
+                                    bind:val={$verificationForm.status}
                                 ></CustomRadioField>
                             </div>
                             <div class="flex w-full flex-col gap-2">
@@ -250,7 +259,9 @@
                                     disabled={data.props.currentRoleCode !==
                                         UserRoleConstant
                                             .urusSetiaElaunElaunPerkhidmatan
-                                            .code}
+                                            .code ||
+                                        data.props.fullApplicationDetail
+                                            .verification !== null}
                                     id="remark"
                                     label={'Ulasan'}
                                     bind:val={$verificationForm.remark}
@@ -267,7 +278,7 @@
         <!-- **************************************************** -->
         <StepperContent stepperId="allowanceSuppAppDetail">
             <StepperContentHeader title="Maklumat Penyokong Dan Pelulus">
-                {#if data.props.currentRoleCode == UserRoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
+                {#if data.props.currentRoleCode == UserRoleConstant.urusSetiaElaunElaunPerkhidmatan.code && data.props.fullApplicationDetail.supportApprover === null}
                     <TextIconButton
                         type="primary"
                         form="suppAppDetailForm"
@@ -297,9 +308,6 @@
                             Bahagian ini untuk diisi oleh Urus Setia
                         </Alert>
                         <fieldset
-                            disabled={data.props.currentRoleCode ===
-                                UserRoleConstant.urusSetiaElaunElaunPerkhidmatan
-                                    .code}
                             class="flex w-full flex-col items-center justify-start space-y-2"
                         >
                             <div class="flex w-full flex-col gap-2">
@@ -307,7 +315,9 @@
                                     disabled={data.props.currentRoleCode !==
                                         UserRoleConstant
                                             .urusSetiaElaunElaunPerkhidmatan
-                                            .code}
+                                            .code ||
+                                        data.props.fullApplicationDetail
+                                            .supportApprover !== null}
                                     id="supporter"
                                     label={'Nama Penyokong'}
                                     errors={$suppAppDetailsErrors.supporter}
@@ -319,7 +329,9 @@
                                     disabled={data.props.currentRoleCode !==
                                         UserRoleConstant
                                             .urusSetiaElaunElaunPerkhidmatan
-                                            .code}
+                                            .code ||
+                                        data.props.fullApplicationDetail
+                                            .supportApprover !== null}
                                     id="approver"
                                     label={'Nama Pelulus'}
                                     errors={$suppAppDetailsErrors.approver}
@@ -337,7 +349,7 @@
         <!-- **************************************************** -->
         <StepperContent stepperId="allowanceSupport">
             <StepperContentHeader title="Maklum Balas Daripada Penyokong">
-                {#if data.props.currentRoleCode == UserRoleConstant.penyokong.code}
+                {#if data.props.currentRoleCode == UserRoleConstant.penyokong.code && data.props.fullApplicationDetail.support === null}
                     <TextIconButton
                         type="primary"
                         form="supporterFeedbackForm"
@@ -372,7 +384,9 @@
                             <div class="flex w-full flex-col gap-2">
                                 <CustomRadioField
                                     disabled={data.props.currentRoleCode !==
-                                        UserRoleConstant.penyokong.code}
+                                        UserRoleConstant.penyokong.code ||
+                                        data.props.fullApplicationDetail
+                                            .support !== null}
                                     id="status"
                                     label={'Penyokongan Permohonan'}
                                     options={data.props.supportStatusOption}
@@ -383,7 +397,9 @@
                             <div class="flex w-full flex-col gap-2">
                                 <CustomTextField
                                     disabled={data.props.currentRoleCode !==
-                                        UserRoleConstant.penyokong.code}
+                                        UserRoleConstant.penyokong.code ||
+                                        data.props.fullApplicationDetail
+                                            .support !== null}
                                     id="remark"
                                     label={'Ulasan'}
                                     errors={$supporterFeedbackErrors.remark}
@@ -400,7 +416,7 @@
         <!-- **************************************************** -->
         <StepperContent stepperId="allowanceApprove">
             <StepperContentHeader title="Maklum Balas Daripada Pelulus">
-                {#if data.props.currentRoleCode == UserRoleConstant.penyokong.code}
+                {#if data.props.currentRoleCode == UserRoleConstant.penyokong.code && data.props.fullApplicationDetail.approval === null}
                     <TextIconButton
                         type="primary"
                         form="approverFeedbackForm"
@@ -435,7 +451,9 @@
                             <div class="flex w-full flex-col gap-2">
                                 <CustomRadioField
                                     disabled={data.props.currentRoleCode !==
-                                        UserRoleConstant.pelulus.code}
+                                        UserRoleConstant.pelulus.code ||
+                                        data.props.fullApplicationDetail
+                                            .approval !== null}
                                     id="status"
                                     label={'Pelulusan Permohonan'}
                                     options={data.props.approvalStatusOption}
@@ -446,7 +464,9 @@
                             <div class="flex w-full flex-col gap-2">
                                 <CustomTextField
                                     disabled={data.props.currentRoleCode !==
-                                        UserRoleConstant.pelulus.code}
+                                        UserRoleConstant.pelulus.code ||
+                                        data.props.fullApplicationDetail
+                                            .approval !== null}
                                     id="remark"
                                     label={'Ulasan'}
                                     errors={$approverFeedbackErrors.remark}
@@ -460,3 +480,5 @@
         </StepperContent>
     </Stepper>
 </section>
+
+<Toaster></Toaster>

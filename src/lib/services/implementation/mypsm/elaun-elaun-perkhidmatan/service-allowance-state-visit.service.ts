@@ -44,15 +44,13 @@ export class ServiceAllowanceStateVisitServices {
         try {
             let url: Input = 'service_allowance/state_visit/view';
 
-            const responsePromise: Promise<Response> = http
+            const response: Response = await http
                 .post(url, {
                     body: ServiceAllowanceApplicationDetailRequestConvert.toJson(
                         param,
                     ),
                 })
                 .json();
-
-            const response: Response = await getPromiseToast(responsePromise);
 
             const result = CommonResponseConvert.fromResponse(response);
 
@@ -122,7 +120,7 @@ export class ServiceAllowanceStateVisitServices {
             let url: Input = 'service_allowance/state_visit/supporter_approver';
 
             const responsePromise: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: ServiceAllowanceSuppAppDetailConvert.toJson(param),
                 })
                 .json();
@@ -147,7 +145,7 @@ export class ServiceAllowanceStateVisitServices {
             let url: Input = 'service_allowance/state_visit/support';
 
             const responsePromise: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: ServiceAllowanceSuppFeedbackConvert.toJson(param),
                 })
                 .json();
@@ -174,7 +172,7 @@ export class ServiceAllowanceStateVisitServices {
             let url: Input = 'service_allowance/state_visit/approval';
 
             const responsePromise: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: ServiceAllowanceApproverFeedbackConvert.toJson(param),
                 })
                 .json();

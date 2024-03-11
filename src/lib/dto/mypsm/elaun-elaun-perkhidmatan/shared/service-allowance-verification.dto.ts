@@ -1,5 +1,5 @@
 export interface ServiceAllowanceVerificationDTO {
-    allowanceID: number;
+    allowanceId: number;
     allowanceTypeCode: string;
     remark: string;
     status: boolean;

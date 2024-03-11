@@ -1,5 +1,5 @@
 export interface ServiceAllowanceSuppAppDetailDTO {
-    allowanceID: number;
+    allowanceId: number;
     allowanceTypeCode: string;
     supporter: string;
     approver: string;

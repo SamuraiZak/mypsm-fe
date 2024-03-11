@@ -1,8 +1,8 @@
 export interface ServiceAllowanceSuppFeedbackDTO {
-    allowanceID:       number;
+    allowanceId: number;
     allowanceTypeCode: string;
-    remark:            string;
-    status:            boolean;
+    remark: string;
+    status: boolean;
 }
 
 // Converts JSON strings to/from your types

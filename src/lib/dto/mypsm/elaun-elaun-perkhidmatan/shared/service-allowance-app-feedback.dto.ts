@@ -1,5 +1,5 @@
 export interface ServiceAllowanceApproverFeedbackDTO {
-    allowanceID: number;
+    allowanceId: number;
     allowanceTypeCode: string;
     remark: string;
     status: boolean;

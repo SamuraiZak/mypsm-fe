@@ -167,6 +167,19 @@ export async function load({ params }) {
         zod(_serviceAllowanceApproverFeedbackSchema),
     );
 
+    // ===================================================================
+    // Create Empty Application Detail
+    // ===================================================================
+
+    let fullApplicationDetail: ServiceAllowanceStateVisitApplicationDTO = {
+        applicationDetail: null,
+        download: null,
+        verification: null,
+        supportApprover: null,
+        support: null,
+        approval: null,
+    };
+
     // check if user is making new application or viewing aplpication details
     if (applicationId == 'baru') {
         allowanceId = 0;
@@ -182,9 +195,6 @@ export async function load({ params }) {
         allowanceDetailForm.data.stateCode = stateDropdown[0].value;
     } else {
         // if not new fetch the application details
-
-        console.log(applicationId);
-
         allowanceId = parseInt(params.id);
 
         const detailRequest: ServiceAllowanceApplicationDetailRequestDTO = {
@@ -198,29 +208,113 @@ export async function load({ params }) {
             );
 
         if (applicationDetailResponse.status == 'success') {
-            const applicationDetail: ServiceAllowanceStateVisitApplicationDTO =
-                applicationDetailResponse.data
-                    ?.details as ServiceAllowanceStateVisitApplicationDTO;
+            currentAllowanceType =
+                fullApplicationDetail.applicationDetail?.allowanceTypeCode ??
+                '';
+            fullApplicationDetail = applicationDetailResponse.data
+                ?.details as ServiceAllowanceStateVisitApplicationDTO;
 
-            allowanceDetailForm.data = {
-                allowanceTypeCode:
-                    applicationDetail.applicationDetail?.allowanceTypeCode ??
-                    '',
-                applyCode: applicationDetail.applicationDetail?.applyCode ?? '',
-                stateCode: applicationDetail.applicationDetail?.stateCode ?? '',
-                familyDetail:
-                    applicationDetail.applicationDetail?.familyDetail ?? [],
-            };
-        } else {
-            const applicationDetail: ServiceAllowanceStateVisitApplicationDTO =
-                {
-                    applicationDetail: null,
-                    download: null,
-                    verification: null,
-                    supportApprover: null,
-                    support: null,
-                    approval: null,
+            // fill the detail form using the data fetched
+            if (fullApplicationDetail.applicationDetail !== null) {
+                // set the new allowance type
+                currentAllowanceType =
+                    fullApplicationDetail.applicationDetail.allowanceTypeCode;
+
+                allowanceDetailForm.data = {
+                    allowanceTypeCode:
+                        fullApplicationDetail.applicationDetail
+                            ?.allowanceTypeCode ?? '',
+                    applyCode:
+                        fullApplicationDetail.applicationDetail?.applyCode ??
+                        '',
+                    stateCode:
+                        fullApplicationDetail.applicationDetail?.stateCode ??
+                        '',
+                    familyDetail:
+                        fullApplicationDetail.applicationDetail?.familyDetail ??
+                        [],
                 };
+            } else {
+                allowanceDetailForm.data = {
+                    allowanceTypeCode: currentAllowanceType,
+                    applyCode: '',
+                    stateCode: '',
+                    familyDetail: [],
+                };
+            }
+
+            // fill the verification form
+            if (fullApplicationDetail.verification !== null) {
+                verificationForm.data = {
+                    allowanceTypeCode:
+                        fullApplicationDetail.verification.allowanceTypeCode,
+                    allowanceId: fullApplicationDetail.verification.allowanceId,
+                    status: fullApplicationDetail.verification.status,
+                    remark: fullApplicationDetail.verification.remark,
+                };
+            } else {
+                verificationForm.data = {
+                    allowanceTypeCode: currentAllowanceType,
+                    allowanceId: allowanceId,
+                    status: false,
+                    remark: '',
+                };
+            }
+
+            // fill the supporter approver detail form
+            if (fullApplicationDetail.supportApprover !== null) {
+                suppporterApproverDetailForm.data = {
+                    allowanceTypeCode:
+                        fullApplicationDetail.supportApprover.allowanceTypeCode,
+                    allowanceId:
+                        fullApplicationDetail.supportApprover.allowanceId,
+                    supporter: fullApplicationDetail.supportApprover.supporter,
+                    approver: fullApplicationDetail.supportApprover.approver,
+                };
+            } else {
+                suppporterApproverDetailForm.data = {
+                    allowanceTypeCode: currentAllowanceType,
+                    allowanceId: allowanceId,
+                    supporter: '',
+                    approver: '',
+                };
+            }
+
+            // fill the support form
+            if (fullApplicationDetail.support !== null) {
+                supporterFeedbackForm.data = {
+                    allowanceTypeCode:
+                        fullApplicationDetail.support.allowanceTypeCode,
+                    allowanceId: fullApplicationDetail.support.allowanceId,
+                    status: fullApplicationDetail.support.status,
+                    remark: fullApplicationDetail.support.remark,
+                };
+            } else {
+                supporterFeedbackForm.data = {
+                    allowanceTypeCode: currentAllowanceType,
+                    allowanceId: allowanceId,
+                    status: false,
+                    remark: '',
+                };
+            }
+
+            // fill the approval form
+            if (fullApplicationDetail.approval !== null) {
+                approverFeedbackForm.data = {
+                    allowanceTypeCode:
+                        fullApplicationDetail.approval.allowanceTypeCode,
+                    allowanceId: fullApplicationDetail.approval.allowanceId,
+                    status: fullApplicationDetail.approval.status,
+                    remark: fullApplicationDetail.approval.remark,
+                };
+            } else {
+                approverFeedbackForm.data = {
+                    allowanceTypeCode: currentAllowanceType,
+                    allowanceId: allowanceId,
+                    status: false,
+                    remark: '',
+                };
+            }
         }
     }
 
@@ -243,9 +337,14 @@ export async function load({ params }) {
             suppporterApproverDetailForm,
             supporterFeedbackForm,
             approverFeedbackForm,
+            fullApplicationDetail,
         },
     };
 }
+
+// =======================================================================
+// Form Submitter Functions
+// =======================================================================
 
 // submit add allowance detail
 export const _submitAllowanceDetail = async (allowanceDetail: object) => {
@@ -300,6 +399,7 @@ export const _submitSuppAppDetailsForm = async (formData: object) => {
         getErrorToast();
     }
 };
+
 // submit supporter feedback form
 export const _submitSupporterFeedbackForm = async (formData: object) => {
     const form = await superValidate(
@@ -317,6 +417,7 @@ export const _submitSupporterFeedbackForm = async (formData: object) => {
         getErrorToast();
     }
 };
+
 // submit supporter feedback form
 export const _submitApproverFeedbackForm = async (formData: object) => {
     const form = await superValidate(
