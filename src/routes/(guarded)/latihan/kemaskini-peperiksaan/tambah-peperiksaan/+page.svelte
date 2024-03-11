@@ -44,7 +44,7 @@
     const proxyExamDate = dateProxy(form, 'examDate', { format: 'date' });
 </script>
 
-<ContentHeader title="Maklumat Lantikan Baru"
+<ContentHeader title="Maklumat Peperiksaan"
     ><TextIconButton
         label="Kembali"
         type="neutral"
