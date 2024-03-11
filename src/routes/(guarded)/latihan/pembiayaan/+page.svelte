@@ -1,8 +1,6 @@
 <script lang="ts">
-    import type { CourseFundApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
     import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
-    import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
     import { _updateTable } from './+layout';
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
@@ -11,6 +9,7 @@
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import type { LayoutData } from './$types';
+    import type { CourseFundApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
 
     export let data: LayoutData;
     let rowData: CourseFundApplicationDetailResponseDTO;
@@ -18,13 +17,13 @@
 
     let fundApplicationTable: TableDTO = {
         param: param,
-        meta: data.responses.fundApplicationResponse.data?.meta ?? {
+        meta: data.response.fundReimbursementResponse.data?.meta ?? {
             pageNum: 1,
             pageSize: 5,
             totalData: 4,
             totalPage: 1,
         },
-        data: data.list.fundApplicationList ?? [],
+        data: data.list.fundReimbursementList ?? [],
         hiddenData: ['id'],
     };
 
@@ -47,7 +46,7 @@
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Rekod Tuntutan Pembiayaan Yuran Pengajajian"
+    <ContentHeader title="Rekod Pembiayaan Pelajaran"
     ></ContentHeader>
 </section>
 
@@ -61,16 +60,13 @@
     >
         {#if data.roles.isStaffRole}
             <ContentHeader
-                title="Tekan butang disebelah untuk menambah tuntutan yuran"
+                title="Tekan butang disebelah untuk memohon pembiayaan pelajaran"
                 borderClass="border-none"
             >
                 <TextIconButton
-                    label="Tambah Tuntutan Yuran"
+                    label="Mohon Pembiayaan"
                     type="primary"
-                    onClick={() =>
-                        goto(
-                            './rekod-tuntutan-yuran/tambah-permohonan-tuntutan-yuran',
-                        )}
+                    onClick={() => goto('./pembiayaan/mohon-pembiayaan')}
                 ></TextIconButton>
             </ContentHeader>
         {/if}
@@ -99,7 +95,7 @@
                 bind:tableData={fundApplicationTable}
                 bind:passData={rowData}
                 detailActions={() => {
-                    const route = `./rekod-peperiksaan/${rowData.id}`;
+                    const route = `./pembiayaan/${rowData.id}`;
 
                     goto(route);
                 }}
