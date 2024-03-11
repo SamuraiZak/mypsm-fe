@@ -4,13 +4,12 @@ import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-requ
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { CourseFundApplicationListResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
-import { renameExamTypeKeyValue } from '$lib/helpers/mypsm/course/exam-type.helper';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
-import { CourseFundApplicationServices } from '$lib/services/implementation/mypsm/latihan/fundApplication.service';
+import { CourseFundReimbursementServices } from '$lib/services/implementation/mypsm/latihan/fundReimbursement.service';
 
 export const load = async () => {
     let fundApplicationResponse: CommonResponseDTO = {};
-    let fundApplicationList = [];
+    let fundReimbursementList = [];
 
     const currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
@@ -32,11 +31,11 @@ export const load = async () => {
 
     // fund application list
     fundApplicationResponse =
-        await CourseFundApplicationServices.getCourseFundApplicationList(param);
+        await CourseFundReimbursementServices.getCourseFundReimbursementList(
+            param,
+        );
 
-    await renameExamTypeKeyValue(fundApplicationResponse);
-
-    fundApplicationList =
+    fundReimbursementList =
         (fundApplicationResponse.data
             ?.dataList as CourseFundApplicationListResponseDTO) ?? [];
 
@@ -70,6 +69,24 @@ export const load = async () => {
 
     // ===========================================================================
 
+    const educationLookupResponse: CommonResponseDTO =
+        await LookupServices.getHighestEducationEnums();
+
+    const educationLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsValueIsDescription(
+            educationLookupResponse,
+        );
+
+    // ===========================================================================
+
+    const institutionLookupResponse: CommonResponseDTO =
+        await LookupServices.getInstitutionEnums();
+
+    const institutionLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsValueIsDescription(
+            institutionLookupResponse,
+        );
+
     return {
         param,
         roles: {
@@ -77,24 +94,26 @@ export const load = async () => {
             isStaffRole,
         },
         list: {
-            fundApplicationList,
+            fundReimbursementList,
         },
         responses: {
             fundApplicationResponse,
         },
-        selectionOptions: {
+        lookups: {
             statusLookup,
             examTypeLookup,
             examResultLookup,
+            educationLookup,
+            institutionLookup,
         },
     };
 };
 
 export const _updateTable = async (param: CommonListRequestDTO) => {
     const response: CommonResponseDTO =
-        await CourseFundApplicationServices.getCourseFundApplicationList(param);
-
-    await renameExamTypeKeyValue(response);
+        await CourseFundReimbursementServices.getCourseFundReimbursementList(
+            param,
+        );
 
     return {
         param,
