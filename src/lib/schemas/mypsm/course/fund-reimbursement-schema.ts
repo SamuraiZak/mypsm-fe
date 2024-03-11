@@ -27,7 +27,7 @@ export const _fundReimbursementResponseSchema = z.object({
     courseName: shortTextSchema,
     academic: shortTextSchema,
     courseApplicationDate: dateStringSchema,
-    coursePeriod: z.number(),
+    studyDuration: numberSchema,
     LNPTAverage: z.number(),
     totalClaim: z.number(),
     status: z.string().readonly(),
@@ -43,7 +43,7 @@ export const _fundReimbursementDetailResponseSchema =
             id: true,
             courseName: true,
             courseApplicationDate: true,
-            coursePeriod: true,
+            studyDuration: true,
             totalClaim: true,
             status: true,
         })
@@ -51,18 +51,33 @@ export const _fundReimbursementDetailResponseSchema =
             academicLevel: shortTextSchema,
             institution: shortTextSchema,
             learningInstitution: shortTextSchema,
+            semester: numberSchema,
+            entryDateToInstituition: minDateSchema,
+            finishedStudyDate: minDateSchema,
+            finalResult: codeSchema,
         });
 
 export const _createFundReimbursementRequestSchema =
-    _fundReimbursementDetailResponseSchema
-        .omit({
-            id: true,
-        })
-        .extend({
-            entryDateToInstituition: minDateSchema,
-            studyDuration: numberSchema,
-            semester: numberSchema,
-        });
+    _fundReimbursementDetailResponseSchema.pick({
+        academicLevel: true,
+        courseName: true,
+        institution: true,
+        learningInstitution: true,
+        studyDuration: true,
+        semester: true,
+        entryDateToInstituition: true,
+        finishedStudyDate: true,
+        finalResult: true,
+        totalClaim: true,
+    });
+
+export const _uploadDocumentsSchema = z.object({
+    document: z
+        .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
+        .refine((f) => f.size < 1_000_000, 'Maximum 1 MB saiz muat naik.')
+        .nullish(),
+    // .array(),
+});
 
 // ==================================================
 // fund reimbursement staff personal info schema
