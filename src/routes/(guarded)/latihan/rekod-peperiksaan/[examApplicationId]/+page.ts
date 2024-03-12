@@ -7,12 +7,18 @@ import type { CourseExamApplicationApprovalDTO } from '$lib/dto/mypsm/course/exa
 import type { CourseExamApplicationPersonalDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-application-personal-info.dto.js';
 import type { CourseExamApplicationServiceDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-application-service-info.dto.js';
 import type { CourseExamApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-application.dto.js';
+import type {
+    CourseExamApplicationResultRequestDTO,
+    CourseExamApplicationResultResponseDTO,
+} from '$lib/dto/mypsm/course/exam/course-exam-result.dto';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
     _coursePersonalInfoResponseSchema,
     _courseServiceInfoResponseSchema,
     _editExamInfoRequestSchema,
     _examApplicationInfoResponseSchema,
+    _examApplicationResultRequestSchema,
+    _examApplicationResultResponseSchema,
 } from '$lib/schemas/mypsm/course/exam-schema';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { CourseServices } from '$lib/services/implementation/mypsm/latihan/course.service.js';
@@ -62,10 +68,8 @@ export async function load({ params }) {
             idRequestBody,
         );
 
-    courseExamResultResponse = {};
-    // await CourseServices.setCourseExamResult(
-    //     idRequestBody,
-    // );
+    courseExamResultResponse =
+        await CourseServices.getCourseExamResult(idRequestBody);
 
     // ============================================================
     // Supervalidated form initialization
@@ -96,8 +100,8 @@ export async function load({ params }) {
 
     const examResultForm = await superValidate(
         courseExamResultResponse.data
-            ?.details as CourseExamApplicationApprovalDTO,
-        zod(_examApplicationApprovalSchema),
+            ?.details as CourseExamApplicationResultResponseDTO,
+        zod(_examApplicationResultResponseSchema),
     );
 
     // ===========================================================================
@@ -109,7 +113,7 @@ export async function load({ params }) {
         await LookupServices.getICTypeEnums();
 
     const identityCardColorLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsValueIsDescription(
+        LookupServices.setSelectOptionsInString(
             identityCardColorLookupResponse,
         );
 
@@ -275,7 +279,18 @@ export async function load({ params }) {
 
     // ===========================================================================
 
+    const examResultLookupResponse: CommonResponseDTO =
+        await LookupServices.getExamResultEnums();
+
+    const examResultLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsValueIsDescription(
+            examResultLookupResponse,
+        );
+
+    // ===========================================================================
+
     return {
+        params,
         responses: {
             examApplicationDetailResponse,
             examPersonalDetailResponse,
@@ -308,6 +323,7 @@ export async function load({ params }) {
             schemeLookup,
             groupLookup,
             examTypeLookup,
+            examResultLookup,
             programLookup,
         },
         role: {
@@ -357,6 +373,25 @@ export const _addSecretaryApprovalForm = async (formData: object) => {
     const response: CommonResponseDTO =
         await CourseServices.setCourseExamApplicationSecretaryApproval(
             form.data as CourseExamApplicationApprovalDTO,
+        );
+
+    return { response };
+};
+
+export const _submitExamResult = async (formData: object) => {
+    const form = await superValidate(
+        formData,
+        zod(_examApplicationResultRequestSchema),
+    );
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await CourseServices.setCourseExamResult(
+            form.data as CourseExamApplicationResultRequestDTO,
         );
 
     return { response };

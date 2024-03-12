@@ -1,12 +1,12 @@
 <script lang="ts">
-    import CustomRadioField from '$lib/components/inputs/radio-field/CustomRadioField.svelte';
-    import {
-        approveOptions,
-        certifyOptions,
-    } from '$lib/constants/core/radio-option-constants';
+    import { certifyOptions } from '$lib/constants/core/radio-option-constants';
     import type { CourseExamApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-application.dto';
     import { writable } from 'svelte/store';
-    import { _examApplicationApprovalSchema } from '$lib/schemas/mypsm/course/exam-schema';
+    import StepperOtherRolesResult from '$lib/components/stepper/StepperOtherRolesResult.svelte';
+    import {
+        _examApplicationApprovalSchema,
+        _examApplicationResultResponseSchema,
+    } from '$lib/schemas/mypsm/course/exam-schema';
     import { _coursePersonalInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
     import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
@@ -28,22 +28,24 @@
     import {
         _addExamApplicationForm,
         _addSecretaryApprovalForm,
+        _submitExamResult,
     } from './+page';
     import { zod } from 'sveltekit-superforms/adapters';
     import { error } from '@sveltejs/kit';
     import { Badge } from 'flowbite-svelte';
     export let data: PageData;
 
-    let isReadonlySecretaryApprovalResult = writable<boolean>(false);
+    let isReadonlySecretaryApprovalResult = writable<boolean>();
+    let isReadonlyExamResult = writable<boolean>();
 
-    $: {
-        isReadonlySecretaryApprovalResult.set(
-            !!(
-                data.responses.courseExamSecretaryApprovalResponse.data?.details
-                    .status !== null
-            ),
-        );
-    }
+    $: data.responses.courseExamSecretaryApprovalResponse.data?.details
+        .status == null
+        ? isReadonlySecretaryApprovalResult.set(false)
+        : isReadonlySecretaryApprovalResult.set(true);
+
+    $: data.responses.courseExamResultResponse.data?.details.examResult == ''
+        ? isReadonlyExamResult.set(false)
+        : isReadonlyExamResult.set(true);
 
     // Superforms
     const { form, enhance } = superForm(data.forms.examInfoForm, {
@@ -114,14 +116,14 @@
         errors: examResultInfoErrors,
         enhance: examResultInfoEnhance,
         isTainted: examResultInfoIsTainted,
-    } = superForm(data.forms.examSecretaryApprovalForm, {
+    } = superForm(data.forms.examResultForm, {
         SPA: true,
         dataType: 'json',
         invalidateAll: true,
         resetForm: false,
         multipleSubmits: 'allow',
         validationMethod: 'oninput',
-        validators: zod(_examApplicationApprovalSchema),
+        validators: zod(_examApplicationResultResponseSchema),
         onSubmit() {
             if (!examResultInfoIsTainted()) {
                 toast('Tiada perubahan data dikesan.');
@@ -132,13 +134,13 @@
                 data.responses.examApplicationDetailResponse.data
                     ?.details as CourseExamApplicationDetailResponseDTO
             ).applicationId;
-            _addSecretaryApprovalForm($examResultInfoForm);
+            _submitExamResult($examResultInfoForm);
         },
     });
 </script>
 
 <ContentHeader title="Maklumat Peperiksaan Yang Dipohon">
-    {#if data.responses.courseExamSecretaryApprovalResponse.data?.details && data.responses.courseExamSecretaryApprovalResponse.data?.details.status === true}
+    {#if data.responses.courseExamResultResponse.data?.details && data.responses.courseExamResultResponse.data?.details.examResult !== ''}
         <Badge color="green">Proses Peperiksaan Tamat</Badge>
     {/if}
     <TextIconButton
@@ -187,14 +189,14 @@
                     bind:val={$personalInfoForm.identityCard}
                 ></CustomTextField>
 
-                <CustomTextField
+                <CustomSelectField
                     disabled
                     id="identityCardColor"
-                    label={'Warna Kad Pengenalan'}
-                    type="text"
+                    label={'Jenis Kad Pengenalan'}
                     placeholder="-"
+                    options={data.selectionOptions.identityCardColorLookup}
                     bind:val={$personalInfoForm.identityCardColor}
-                ></CustomTextField>
+                ></CustomSelectField>
 
                 <CustomTextField
                     disabled
@@ -661,7 +663,7 @@
                 <CustomTextField
                     disabled
                     id="applicationId"
-                    label="ID Permohonan"
+                    label="ID Permohonan Peperiksaan"
                     type="text"
                     placeholder="-"
                     bind:val={$form.applicationId}
@@ -756,43 +758,46 @@
             </form>
         </StepperContentBody>
     </StepperContent>
-    {#if $isReadonlySecretaryApprovalResult}
-        <StepperContent>
-            <StepperContentHeader title="Pengesahan Semakan Urus Setia Latihan">
-                {#if !$isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole}
-                    <TextIconButton
-                        type="primary"
-                        label="Simpan"
-                        form="examApplicationSecretaryApprovalForm"
-                    ></TextIconButton>
-                {/if}
-            </StepperContentHeader>
-            <StepperContentBody>
-                <form
-                    id="examApplicationSecretaryApprovalForm"
-                    method="POST"
-                    use:secretaryApprovalInfoEnhance
-                    class="flex w-full flex-col gap-2.5"
-                >
-                    <div class="mb-5">
-                        <b class="text-sm text-system-primary"
-                            >Keputusan Urus Setia Perjawatan</b
-                        >
-                    </div>
+    <StepperContent>
+        <StepperContentHeader title="Pengesahan Semakan Urus Setia Latihan">
+            {#if !$isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole}
+                <TextIconButton
+                    type="primary"
+                    label="Simpan"
+                    form="examApplicationSecretaryApprovalForm"
+                ></TextIconButton>
+            {/if}
+        </StepperContentHeader>
+        <StepperContentBody>
+            <form
+                id="examApplicationSecretaryApprovalForm"
+                method="POST"
+                use:secretaryApprovalInfoEnhance
+                class="flex w-full flex-col gap-2.5"
+            >
+                <div class="mb-5">
+                    <b class="text-sm text-system-primary"
+                        >Keputusan Urus Setia Perjawatan</b
+                    >
+                </div>
 
-                    <input hidden bind:value={$secretaryApprovalInfoForm.id} />
+                <input hidden bind:value={$secretaryApprovalInfoForm.id} />
 
-                    <CustomTextField
-                        disabled={$isReadonlySecretaryApprovalResult}
-                        errors={$secretaryApprovalInfoErrors.remark}
-                        id="remark"
-                        label="Tindakan/Ulasan"
-                        placeholder="-"
-                        bind:val={$secretaryApprovalInfoForm.remark}
-                    ></CustomTextField>
-
+                <CustomTextField
+                    disabled={!data.role.isCourseSecretaryRole ||
+                        $isReadonlySecretaryApprovalResult}
+                    errors={$secretaryApprovalInfoErrors.remark}
+                    id="remark"
+                    label="Tindakan/Ulasan"
+                    placeholder="-"
+                    bind:val={$secretaryApprovalInfoForm.remark}
+                ></CustomTextField>
+                {#if data.role.isCourseSecretaryRole || $isReadonlySecretaryApprovalResult}
                     <CustomSelectField
-                        disabled={$isReadonlySecretaryApprovalResult}
+                        disabled={!!(
+                            !data.role.isCourseSecretaryRole ||
+                            $isReadonlySecretaryApprovalResult
+                        )}
                         errors={$secretaryApprovalInfoErrors.status}
                         id="status"
                         label="Keputusan"
@@ -800,14 +805,16 @@
                         bind:val={$secretaryApprovalInfoForm.status}
                         options={certifyOptions}
                     ></CustomSelectField>
-                </form>
-                <hr />
-            </StepperContentBody>
-        </StepperContent>
-    {/if}
+                {:else}
+                    <StepperOtherRolesResult />
+                {/if}
+            </form>
+            <hr />
+        </StepperContentBody>
+    </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Keputusan Panel">
-            {#if !$isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole}
+            {#if data.role.isCourseSecretaryRole && !isReadonlyExamResult}
                 <TextIconButton
                     type="primary"
                     label="Simpan"
@@ -835,18 +842,25 @@
                     id="remark"
                     label="Tajuk Peperiksaan"
                     placeholder="-"
-                    bind:val={$form.examTitle}
+                    bind:val={$examResultInfoForm.examTitle}
                 ></CustomTextField>
 
-                <CustomSelectField
-                    disabled={$isReadonlySecretaryApprovalResult}
-                    errors={$examResultInfoErrors.status}
-                    id="status"
-                    label="Keputusan Panel"
-                    placeholder="-"
-                    bind:val={$examResultInfoForm.status}
-                    options={approveOptions}
-                ></CustomSelectField>
+                {#if data.role.isCourseSecretaryRole || $isReadonlyExamResult}
+                    <CustomSelectField
+                        disabled={!data.role.isCourseSecretaryRole ||
+                            $isReadonlyExamResult}
+                        errors={$examResultInfoErrors.examResult}
+                        id="examResult"
+                        label="Keputusan Panel"
+                        placeholder="-"
+                        bind:val={$examResultInfoForm.examResult}
+                        options={data.selectionOptions.examResultLookup}
+                    ></CustomSelectField>
+                {:else}
+                    <span class="text-center text-sm italic text-system-primary"
+                        >Menunggu keputusan daripada panel.</span
+                    >
+                {/if}
             </form>
             <hr />
         </StepperContentBody>
