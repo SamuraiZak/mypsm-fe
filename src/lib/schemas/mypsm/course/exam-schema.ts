@@ -10,6 +10,7 @@ import {
     minDateSchema,
     numberIdSchema,
     requiredDateStringSchema,
+    requiredTextSchema,
     shortTextSchema,
 } from '$lib/schemas/common/schema-type';
 import { z } from 'zod';
@@ -173,14 +174,18 @@ export const _examSetAttendanceRequestSchema = z.object({
 // ==================================================
 export const _examApplicationApprovalSchema = z.object({
     id: numberIdSchema,
-    remark: shortTextSchema,
+    remark: codeSchema,
     status: booleanSchema,
 });
 
 // ==================================================
 // course exam result schema
 // ==================================================
-export const _examApplicationResultSchema = z.object({
+export const _examApplicationResultResponseSchema = z.object({
     id: numberIdSchema,
-    examResult: shortTextSchema,
+    examTitle: shortTextSchema,
+    examResult: requiredTextSchema,
 });
+
+export const _examApplicationResultRequestSchema =
+    _examApplicationResultResponseSchema.omit({ examTitle: true });
