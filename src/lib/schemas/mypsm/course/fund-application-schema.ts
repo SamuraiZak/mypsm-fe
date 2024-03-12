@@ -7,7 +7,6 @@ import {
     codeSchema,
     dateSchema,
     dateStringSchema,
-    minDateSchema,
     numberIdSchema,
     numberSchema,
     shortTextSchema,
@@ -43,11 +42,11 @@ export const _fundApplicationDetailResponseSchema = z.object({
     institution: shortTextSchema,
     learningInstitution: shortTextSchema,
     studyDuration: numberSchema,
-    courseApplicationDate: minDateSchema,
-    entryDateToInstituition: minDateSchema,
-    expectedFinishedStudyDate: minDateSchema,
-    educationType: shortTextSchema,
-    applicationType: shortTextSchema,
+    courseApplicationDate: dateStringSchema,
+    entryDateToInstituition: dateStringSchema,
+    expectedFinishedStudyDate: dateStringSchema,
+    educationTypeId: numberIdSchema,
+    applicationTypeId: numberIdSchema,
 });
 
 export const _createFundApplicationRequestSchema =
@@ -78,6 +77,7 @@ export const _fundApplicationPersonalInfoResponseSchema = z
         position: codeSchema,
         currentPlacement: codeSchema,
         group: codeSchema,
+        program: codeSchema,
         homeAddress: z.string().nullable(),
         mailAddress: z.string().nullable(),
         homeNo: z.string().nullable(),
@@ -141,4 +141,17 @@ export const _fundApplicationApprovalSchema = z.object({
     id: numberIdSchema,
     remark: shortTextSchema,
     status: booleanSchema,
+});
+
+// ==================================================
+// fund application document upload schema
+// ==================================================
+export const _fundApplicationDocumentSchema = z.object({
+    id: numberIdSchema,
+    document: z.array(z.object({ document: z.string() })),
+});
+export const _fundApplicationUploadDocSchema = z.object({
+    documents: z
+        .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
+        .refine((f) => f.size < 4_000_000, 'Maximum 4 MB saiz muat naik.'),
 });
