@@ -25,6 +25,7 @@
     import {
         _addCourseSecretaryApprovalForm,
         _addIntegritySecretaryApprovalForm,
+        _addStateUnitSecretaryApprovalForm,
     } from './+page';
     import { zod } from 'sveltekit-superforms/adapters';
     import { error } from '@sveltejs/kit';
@@ -33,6 +34,8 @@
         _fundApplicationApprovalSchema,
         _fundApplicationDetailResponseSchema,
     } from '$lib/schemas/mypsm/course/fund-application-schema';
+    import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
+    import { CourseFundApplicationServices } from '$lib/services/implementation/mypsm/latihan/fundApplication.service';
     export let data: PageData;
 
     let isReadonlyStateUnitDirectorApprovalResult = writable<boolean>(false);
@@ -86,6 +89,19 @@
 
     const { form: serviceInfoForm, enhance: serviceInfoEnhance } = superForm(
         data.forms.fundApplicationServiceInfoForm,
+        {
+            SPA: true,
+            dataType: 'json',
+            invalidateAll: true,
+            resetForm: false,
+            multipleSubmits: 'allow',
+            validationMethod: 'oninput',
+            validators: false,
+        },
+    );
+
+    const { form: documentsForm, enhance: documentsEnhance } = superForm(
+        data.forms.fundApplicationDocumentForm,
         {
             SPA: true,
             dataType: 'json',
@@ -176,30 +192,18 @@
                 data.responses.fundApplicationDetailResponse.data
                     ?.details as CourseFundApplicationDetailResponseDTO
             ).id;
-            _addIntegritySecretaryApprovalForm(
+            _addStateUnitSecretaryApprovalForm(
                 $stateUnitDirectorApprovalInfoForm,
             );
         },
     });
 
-    const proxyEntryDateToInstituition = dateProxy(
-        form,
-        'entryDateToInstituition',
-        {
-            format: 'date',
-        },
-    );
-
-    const proxyExpectedFinishedStudyDate = dateProxy(
-        form,
-        'expectedFinishedStudyDate',
-        {
-            format: 'date',
-        },
-    );
+    const handleDownload = async (url: string) => {
+        await CourseFundApplicationServices.downloadAttachment(url);
+    };
 </script>
 
-<ContentHeader title="Maklumat Tuntutan Pembiayaan Yuran Pembelajaran">
+<ContentHeader title="Maklumat Pembiayaan Pelajaran">
     {#if data.responses.fundApplicationCourseSecretaryApprovalResponse.data?.details && data.responses.fundApplicationCourseSecretaryApprovalResponse.data?.details.status === true}
         <Badge color="green">Permohonan LULUS</Badge>
     {/if}
@@ -208,7 +212,7 @@
         label="Kembali"
         type="neutral"
         onClick={() => {
-            goto('../tuntutan-yuran');
+            goto('../pembiayaan');
         }}
     /></ContentHeader
 >
@@ -250,14 +254,14 @@
                     bind:val={$personalInfoForm.identityCard}
                 ></CustomTextField>
 
-                <CustomTextField
+                <CustomSelectField
                     disabled
                     id="identityCardColor"
-                    label={'Warna Kad Pengenalan'}
-                    type="text"
+                    label={'Jenis Kad Pengenalan'}
                     placeholder="-"
+                    options={data.selectionOptions.identityCardColorLookup}
                     bind:val={$personalInfoForm.identityCardColor}
-                ></CustomTextField>
+                ></CustomSelectField>
 
                 <CustomTextField
                     disabled
@@ -373,6 +377,15 @@
                     placeholder="-"
                     bind:val={$personalInfoForm.group}
                     options={data.selectionOptions.groupLookup}
+                ></CustomSelectField>
+
+                <CustomSelectField
+                    disabled
+                    id="program"
+                    label="Program"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.program}
+                    options={data.selectionOptions.programLookup}
                 ></CustomSelectField>
 
                 <CustomTextField
@@ -761,11 +774,11 @@
 
                 <CustomTextField
                     disabled={true}
-                    id="entryDateToInstituition"
+                    id="courseApplicationDate"
                     label="Tarikh Kemasukan Ke IPTA"
                     type="date"
                     placeholder="-"
-                    bind:val={$proxyEntryDateToInstituition}
+                    bind:val={$form.courseApplicationDate}
                 ></CustomTextField>
 
                 <CustomTextField
@@ -774,7 +787,7 @@
                     label="Dijangka Tamat Pada"
                     type="date"
                     placeholder="-"
-                    bind:val={$proxyExpectedFinishedStudyDate}
+                    bind:val={$form.expectedFinishedStudyDate}
                 ></CustomTextField>
 
                 <CustomSelectField
@@ -782,8 +795,8 @@
                     id="educationType"
                     label="Jenis Pengajian"
                     placeholder="-"
-                    bind:val={$form.educationType}
-                    options={data.lookups.educationLookup}
+                    bind:val={$form.educationTypeId}
+                    options={data.lookups.educationTypeLookup}
                 ></CustomSelectField>
 
                 <CustomSelectField
@@ -791,11 +804,50 @@
                     id="applicationType"
                     label="Jenis Permohonan"
                     placeholder="-"
-                    bind:val={$form.applicationType}
-                    options={data.lookups.educationLookup}
+                    bind:val={$form.applicationTypeId}
+                    options={data.lookups.fundApplicationTypeLookup}
                 ></CustomSelectField>
             </form>
         </StepperContentBody>
+    </StepperContent>
+    <StepperContent>
+        <StepperContentHeader title="Dokumen - Dokumen Sokongan yang Berkaitan"
+        ></StepperContentHeader>
+        <StepperContentBody
+            ><div class="flex w-full flex-col gap-2">
+                <div
+                    class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+                >
+                    <ContentHeader
+                        title="Dokumen - Dokumen Sokongan yang Berkaitan"
+                    ></ContentHeader>
+                    <p
+                        class="mt-2 h-fit w-full bg-bgr-primary text-sm font-medium text-system-primary"
+                    >
+                        Fail-fail yang dimuat naik:
+                    </p>
+
+                    {#each $documentsForm.document as _, i}
+                        <div
+                            class="flex w-full flex-row items-center justify-between"
+                        >
+                            <label
+                                for=""
+                                class="block w-[20px] min-w-[20px] text-[11px] font-medium"
+                                >1.</label
+                            >
+                            <DownloadAttachment
+                                triggerDownload={() =>
+                                    handleDownload(
+                                        $documentsForm.document[i].document,
+                                    )}
+                                fileName={$documentsForm.document[i].document}
+                            ></DownloadAttachment>
+                        </div>
+                    {/each}
+                </div>
+            </div></StepperContentBody
+        >
     </StepperContent>
     {#if data.response.fundReimbursementResponse.data}
         <StepperContent>

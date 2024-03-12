@@ -4,6 +4,7 @@ import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto
 import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto.js';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { CourseFundApplicationApprovalDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-approval.dto';
+import type { CourseFundApplicationDocumentsResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-document.dto';
 import type { CourseFundApplicationPersonalDetailResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-personal-info.dto';
 import type { CourseFundApplicationServiceDetailResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-service-info.dto';
 import type { CourseFundApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
@@ -11,6 +12,7 @@ import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
     _fundApplicationApprovalSchema,
     _fundApplicationDetailResponseSchema,
+    _fundApplicationDocumentSchema,
     _fundApplicationPersonalInfoResponseSchema,
     _fundApplicationServiceInfoResponseSchema,
 } from '$lib/schemas/mypsm/course/fund-application-schema';
@@ -82,6 +84,11 @@ export async function load({ params }) {
             idRequestBody,
         );
 
+    const fundApplicationDocumentInfoResponse: CommonResponseDTO =
+        await CourseFundApplicationServices.getCurrentCandidateDocuments(
+            idRequestBody,
+        );
+
     // ============================================================
     // Supervalidated form initialization
     // ============================================================
@@ -121,7 +128,11 @@ export async function load({ params }) {
         zod(_fundApplicationApprovalSchema),
     );
 
-    // ===========================================================================
+    const fundApplicationDocumentForm = await superValidate(
+        fundApplicationDocumentInfoResponse.data
+            ?.details as CourseFundApplicationDocumentsResponseDTO,
+        zod(_fundApplicationDocumentSchema),
+    );
 
     // ==========================================================================
     // Get Lookup Functions
@@ -130,7 +141,7 @@ export async function load({ params }) {
         await LookupServices.getICTypeEnums();
 
     const identityCardColorLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsValueIsDescription(
+        LookupServices.setSelectOptionsInString(
             identityCardColorLookupResponse,
         );
 
@@ -262,8 +273,6 @@ export async function load({ params }) {
 
     // ===========================================================================
 
-    // ===========================================================================
-
     const programLookupResponse: CommonResponseDTO =
         await LookupServices.getProgrammeEnums();
 
@@ -303,6 +312,7 @@ export async function load({ params }) {
             fundApplicationCourseSecretaryApprovalResponse,
             fundApplicationIntegritySecretaryApprovalResponse,
             fundApplicationStateUnitDirectorApprovalResponse,
+            fundApplicationDocumentInfoResponse,
         },
         forms: {
             fundApplicationInfoForm,
@@ -311,6 +321,7 @@ export async function load({ params }) {
             fundApplicationCourseSecretaryApprovalForm,
             fundApplicationIntegritySecretaryApprovalForm,
             fundApplicationStateUnitDirectorApprovalForm,
+            fundApplicationDocumentForm,
         },
         selectionOptions: {
             identityCardColorLookup,
