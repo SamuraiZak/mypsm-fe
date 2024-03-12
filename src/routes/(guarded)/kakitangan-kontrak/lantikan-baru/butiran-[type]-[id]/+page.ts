@@ -2,6 +2,7 @@ import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.c
 import type { CandidateIDRequestBody } from "$lib/dto/core/common/candidate-id-request.view-dto.js";
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
 import type { DropdownDTO } from "$lib/dto/core/dropdown/dropdown.dto";
+import type { RadioDTO } from "$lib/dto/core/radio/radio.dto.js";
 import type { AddNewContractEmployeeAcademicDTO, ContractAcademic } from "$lib/dto/mypsm/kakitangan-kontrak/add-contract-academic.dto.js";
 import type { AddNewContractEmployeeActivityDTO } from "$lib/dto/mypsm/kakitangan-kontrak/add-contract-activity.dto.js";
 import type { AddNewContractEmployeeDependencyDTO } from "$lib/dto/mypsm/kakitangan-kontrak/add-contract-dependency.dto.js";
@@ -13,6 +14,7 @@ import type { AcademicList, GetContractAcademicDetailDTO } from "$lib/dto/mypsm/
 import type { GetContractActivityDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-activity-detail.dto.js";
 import type { GetContractDependencyDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-dependency-detail.dto.js";
 import type { GetContractDocumentDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-document.dto.js";
+import type { GetContractEmployeeNumberDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-employee-number.dto.js";
 import type { GetContractExperienceDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-experience-detail.dto.js";
 import type { GetContractNextOfKinDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-next-of-kin-detail.dto.js";
 import type { GetContractPersonalDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-personal-detail.dto.js";
@@ -33,6 +35,7 @@ import {
     _commonContractDependencySchema,
     _contractAcademicSchema,
     _editNewContractEmployeeSchema,
+    _getContractEmployeeNumber,
     _uploadDocSchema,
 } from '$lib/schemas/mypsm/contract-employee/contract-employee-schemas';
 import { LookupServices } from "$lib/services/implementation/core/lookup/lookup.service";
@@ -74,7 +77,9 @@ export const load = async ({ params }) => {
     let getSupporterResult = {} as GetContractSupporterApproverResultDTO;
     let getContractApproverResultResponse: CommonResponseDTO = {};
     let getApproverResult = {} as GetContractSupporterApproverResultDTO;
-   
+    let getContractEmployeeNumberResponse: CommonResponseDTO = {};
+    let getContractEmployeeNumber = {} as GetContractEmployeeNumberDTO;
+
     const lookup = await getLookup();
 
     if (params.type == "baru") {
@@ -132,7 +137,7 @@ export const load = async ({ params }) => {
         // ========================== get secretary update
         getContractSecretaryUpdateResponse =
             await ContractEmployeeServices.getContractSecretaryUpdate(contractId)
-            getSecretaryUpdate =
+        getSecretaryUpdate =
             await getContractSecretaryUpdateResponse.data?.details as GetContractSecretaryUpdateDTO;
         // ========================== get secretary result
         getContractSecretaryResultResponse =
@@ -154,6 +159,11 @@ export const load = async ({ params }) => {
             await ContractEmployeeServices.getContractApproverResult(contractId)
         getApproverResult =
             await getContractApproverResultResponse.data?.details as GetContractSupporterApproverResultDTO;
+        // ========================== get contract employee number 
+        getContractEmployeeNumberResponse =
+            await ContractEmployeeServices.getContractEmployeeNumber(contractId)
+        getContractEmployeeNumber =
+            await getContractEmployeeNumberResponse.data?.details as GetContractEmployeeNumberDTO;
     }
     //form validation
     const editNewContractEmployeeDetailForm = await superValidate(getContractPersonalDetail, zod(_editNewContractEmployeeSchema));
@@ -169,6 +179,7 @@ export const load = async ({ params }) => {
     const supporterContractResultForm = await superValidate(getSupporterResult, zod(_addContractCommonRoleResult));
     const approverContractResultForm = await superValidate(getApproverResult, zod(_addContractCommonRoleResult));
     const contractUploadDocumentForm = await superValidate(zod(_uploadDocSchema));
+    const getContractEmployeeNumberForm = await superValidate(getContractEmployeeNumber,zod(_getContractEmployeeNumber))
 
     return {
         currentRoleCode,
@@ -197,6 +208,7 @@ export const load = async ({ params }) => {
         lookup,
         viewOnly,
         contractDocLink,
+        getContractEmployeeNumberForm,
     }
 }
 
@@ -392,7 +404,7 @@ export const _submitSecretaryContractResultForm = async (formData: ContractCommo
 };
 export const _submitSetSupporterApproverForm = async (formData: AddContractApproverSupporterDTO) => {
     const form = await superValidate(formData, zod(_addContractSupporterApprover));
- 
+
     if (form.valid) {
         const response: CommonResponseDTO =
             await ContractEmployeeServices.addContractApproverSupporter(
@@ -408,13 +420,14 @@ export const _submitSetSupporterApproverForm = async (formData: AddContractAppro
     }
 };
 
-export const _submitSupporterContractResultForm = async (formData: ContractCommonRoleResultDTO) => {
+export const _submitSupporterContractResultForm = async (formData: object) => {
     const form = await superValidate(formData, zod(_addContractCommonRoleResult));
-    console.log(form)
+    
     if (form.valid) {
+        const {name, ...tempObj} = form.data
         const response: CommonResponseDTO =
             await ContractEmployeeServices.addContractSupporterResult(
-                form.data
+                tempObj as ContractCommonRoleResultDTO
             )
         if (form.valid) {
             const result: string | null = 'success';
@@ -428,7 +441,7 @@ export const _submitSupporterContractResultForm = async (formData: ContractCommo
 
 export const _submitApproverContractResultForm = async (formData: ContractCommonRoleResultDTO) => {
     const form = await superValidate(formData, zod(_addContractCommonRoleResult));
-    console.log(form)
+   
     if (form.valid) {
         const response: CommonResponseDTO =
             await ContractEmployeeServices.addContractApproverResult(
@@ -442,6 +455,14 @@ export const _submitApproverContractResultForm = async (formData: ContractCommon
             return { response, result };
         }
     }
+};
+export const _submitGetContractEmployeeNumberForm = async (contractId: CandidateIDRequestBody) => {
+    const response: CommonResponseDTO =
+    await ContractEmployeeServices.getContractEmployeeNumber(
+        contractId,
+    );
+
+    return response
 };
 
 const getLookup = async () => {
@@ -578,6 +599,15 @@ const getLookup = async () => {
         serviceTypeLookupResponse,
     );
 
+    const supportOption: RadioDTO[] = [
+        { name: "Sokong", value: true },
+        { name: "Tidak Sokong", value: false }
+    ]
+    const approveOption: RadioDTO[] = [
+        { name: "Lulus", value: true },
+        { name: "Tidak Lulus", value: false }
+    ]
+
     return {
         genderLookup,
         identityCardTypeLookup,
@@ -599,6 +629,8 @@ const getLookup = async () => {
         placementLookup,
         positionLookup,
         serviceTypeLookup,
+        supportOption,
+        approveOption,
     }
 }
 

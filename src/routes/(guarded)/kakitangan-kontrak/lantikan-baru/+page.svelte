@@ -29,9 +29,10 @@
         data: data.contractEmployeeList ?? [],
         hiddenData: ['candidateId'],
     };
+    
     //table for calon kakitangan kontrak
     let contractOfferTable: TableDTO = {
-        param: data.contractOfferParam,
+        param: param,
         meta: data.contractEmployeeListResponse.data?.meta ?? {
             pageSize: 5,
             pageNum: 1,

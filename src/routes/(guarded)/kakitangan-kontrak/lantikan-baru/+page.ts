@@ -11,43 +11,38 @@ export const load = async () => {
     const currentRoleCode: string | null = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
     let contractEmployeeListResponse: CommonResponseDTO = {}
     let contractEmployeeList: ContractEmployeeListDTO[] = [];
-    
-    const contractEmployeeListFilter: ContractEmployeeListDTO = {
-        candidateName: null,
-        identityCardNo: null,
-        temporaryId: null,
-    }
+    let employeeContractOffer: GetContractEmployeeOffer[] = [];
     const contractEmployeeListParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
         orderBy: null,
-        orderType: 1,
-        filter: contractEmployeeListFilter,
+        orderType: null,
+        filter: {},
     }
-    // table for other than calon
-    if (currentRoleCode !== UserRoleConstant.calonKontrak.code) {
+    // table 
+    if (currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code) {
         contractEmployeeListResponse =
             await ContractEmployeeServices.getContractEmployeeList(contractEmployeeListParam);
         if (contractEmployeeListResponse.status == "success") {
             contractEmployeeList = contractEmployeeListResponse.data?.dataList as ContractEmployeeListDTO[];
         }
-    }
-
-    //table for calon
-    const contractOfferParam: CommonListRequestDTO = {
-        pageNum: 1,
-        pageSize: 5,
-        orderBy: null,
-        orderType: 1,
-        filter: {},
-    }
-    let employeeContractOffer: GetContractEmployeeOffer[] = [];
-    let employeeContractOfferResponse: CommonResponseDTO = {}
-    if (currentRoleCode === UserRoleConstant.calonKontrak.code) {
-        employeeContractOfferResponse =
+    } else if (currentRoleCode === UserRoleConstant.penyokong.code) {
+        contractEmployeeListResponse =
+            await ContractEmployeeServices.getContractSupporterTable(contractEmployeeListParam);
+        if (contractEmployeeListResponse.status == "success") {
+            contractEmployeeList = contractEmployeeListResponse.data?.dataList as ContractEmployeeListDTO[];
+        }
+    } else if (currentRoleCode === UserRoleConstant.pelulus.code) {
+        contractEmployeeListResponse =
+            await ContractEmployeeServices.getContractApproverTable(contractEmployeeListParam);
+        if (contractEmployeeListResponse.status == "success") {
+            contractEmployeeList = contractEmployeeListResponse.data?.dataList as ContractEmployeeListDTO[];
+        }
+    }   else if (currentRoleCode === UserRoleConstant.calonKontrak.code) {
+        contractEmployeeListResponse =
             await ContractEmployeeServices.getContractEmployeeOfferList();
-        if (employeeContractOfferResponse.status == "success") {
-            employeeContractOffer = employeeContractOfferResponse.data?.dataList as GetContractEmployeeOffer[];
+        if (contractEmployeeListResponse.status == "success") {
+            employeeContractOffer = contractEmployeeListResponse.data?.dataList as GetContractEmployeeOffer[];
         }
     }
 
@@ -56,9 +51,7 @@ export const load = async () => {
         contractEmployeeListParam,
         contractEmployeeListResponse,
         contractEmployeeList,
-        employeeContractOfferResponse,
         employeeContractOffer,
-        contractOfferParam,
     }
 }
 

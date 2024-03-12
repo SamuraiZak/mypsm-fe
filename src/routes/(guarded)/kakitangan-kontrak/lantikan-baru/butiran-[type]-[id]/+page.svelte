@@ -20,6 +20,7 @@
         _submitEditNewContractEmployeeDetailForm,
         _submitExperienceDetailForm,
         _submitFamilyDetailForm,
+        _submitGetContractEmployeeNumberForm,
         _submitNextOfKinForm,
         _submitSecretaryContractResultForm,
         _submitSetSupporterApproverForm,
@@ -37,6 +38,7 @@
         _commonContractDependencySchema,
         _contractAcademicSchema,
         _editNewContractEmployeeSchema,
+        _getContractEmployeeNumber,
         _uploadDocSchema,
     } from '$lib/schemas/mypsm/contract-employee/contract-employee-schemas';
     import { Toaster } from 'svelte-french-toast';
@@ -69,6 +71,9 @@
     import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     import { ContractEmployeeServices } from '$lib/services/implementation/mypsm/kakitangan-kontrak/contract-employee.service';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
+    import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
+    import CustomTab from '$lib/components/tab/CustomTab.svelte';
+
     export let data: PageData;
 
     //setup authorization
@@ -365,6 +370,18 @@
             _submitApproverContractResultForm($approverContractResultForm);
         },
     });
+    const {
+        form: getContractEmployeeNumberForm,
+        errors: getContractEmployeeNumberError,
+        enhance: getContractEmployeeNumberEnhance,
+    } = superForm(data.getContractEmployeeNumberForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'getContractEmployeeNumberForm',
+        onSubmit() {
+            _submitGetContractEmployeeNumberForm(data.contractId);
+        },
+    });
 
     $: if (sameAddress) {
         $editNewContractEmployeeDetailForm.mailAddress =
@@ -395,24 +412,6 @@
         { value: true, name: 'SAH' },
         { value: false, name: 'TIDAK SAH' },
     ];
-
-    let contractEmployeeAcademicTable: TableDTO = {
-        param: {
-            pageNum: 1,
-            pageSize: 5,
-            orderBy: null,
-            orderType: 1,
-            filter: {},
-        },
-        meta: {
-            pageSize: data.getContractAcademicDetails.academicList.length,
-            pageNum: 1,
-            totalData: data.getContractAcademicDetails.academicList.length,
-            totalPage: 1,
-        },
-        data: data.getContractAcademicDetails.academicList ?? [],
-        hiddenData: ['id'],
-    };
     let contractEmployeeExperienceTable: TableDTO = {
         param: {},
         meta: {
@@ -790,11 +789,85 @@
                         />
                     </div>
                     <div class="flex w-full flex-col justify-start pb-10">
-                        {#each tempAcademicRecord.academics as obj, i}
-                            <span
-                                class="text-sm text-ios-labelColors-link-light"
-                                >Rekod #{i + 1}</span
-                            >
+                        <CustomTab>
+                            {#each tempAcademicRecord.academics as obj, i}
+                                <CustomTabContent title="Maklumat {i + 1}">
+                                    <CustomSelectField
+                                        label="Jenis Jurusan"
+                                        disabled
+                                        id="academicsMajor{i}"
+                                        options={data.lookup.majorMinorLookup}
+                                        val={obj.majorId}
+                                    />
+                                    <CustomSelectField
+                                        label="Jenis Bidang"
+                                        disabled
+                                        id="academicsMinor{i}"
+                                        options={data.lookup.majorMinorLookup}
+                                        val={obj.minorId}
+                                    />
+                                    <CustomSelectField
+                                        label="Negara"
+                                        disabled
+                                        id="academicscountryId{i}"
+                                        options={data.lookup.countryLookup}
+                                        val={obj.countryId}
+                                    />
+                                    <CustomSelectField
+                                        label="Institusi"
+                                        disabled
+                                        id="academicsinstitutionId{i}"
+                                        options={data.lookup.institutionLookup}
+                                        val={obj.institutionId}
+                                    />
+                                    <CustomSelectField
+                                        label="Taraf Pendidikan"
+                                        disabled
+                                        id="academicseducationLevelId{i}"
+                                        options={data.lookup.educationLookup}
+                                        val={obj.educationLevelId}
+                                    />
+                                    <CustomSelectField
+                                        label="Penajaan"
+                                        disabled
+                                        id="academicssponsorshipId{i}"
+                                        options={data.lookup.sponsorshipLookup}
+                                        val={obj.sponsorshipId}
+                                    />
+                                    <CustomTextField
+                                        label="Nama Pencapaian/Sijil"
+                                        disabled
+                                        id="academicsname{i}"
+                                        val={obj.name}
+                                    />
+                                    <CustomTextField
+                                        label="Tarikh Kelulusan"
+                                        disabled
+                                        id="academicscompletionDate{i}"
+                                        type="date"
+                                        val={obj.completionDate}
+                                    />
+                                    <CustomTextField
+                                        label="Pencapaian Akhir (Gred)"
+                                        disabled
+                                        id="academicsfinalGrade{i}"
+                                        val={obj.finalGrade}
+                                    />
+                                    <CustomTextField
+                                        label="Catatan"
+                                        disabled
+                                        id="academicsfield{i}"
+                                        val={obj.field}
+                                    />
+                                </CustomTabContent>
+                            {/each}
+                        </CustomTab>
+                    </div>
+                {:else}
+                    <CustomTab>
+                        {#each data.getContractAcademicDetails.academicList as obj, i}
+                        <CustomTabContent title="Maklumat {i + 1}">
+                            <div class="flex w-full flex-col justify-start pb-10">
                             <CustomSelectField
                                 label="Jenis Jurusan"
                                 disabled
@@ -862,15 +935,13 @@
                                 id="academicsfield{i}"
                                 val={obj.field}
                             />
+                        </div>
+                        </CustomTabContent>
+                 
                         {/each}
-                    </div>
-                {:else}
-                    <div class="flex w-full flex-col justify-start p-3">
-                        <CustomTable
-                            title="Rekod Akademik"
-                            bind:tableData={contractEmployeeAcademicTable}
-                        />
-                    </div>
+                   
+                        </CustomTab>
+                    
                 {/if}
             </StepperContentBody>
         </StepperContent>
@@ -1720,12 +1791,12 @@
             <StepperContent>
                 <StepperContentHeader title="Maklumat Lantikan Baru (Kontrak)">
                     {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code}
-                    <TextIconButton
-                        label="Simpan"
-                        form="updateContractDetailForm"
-                        type="primary"
-                        icon="check"
-                    />
+                        <TextIconButton
+                            label="Simpan"
+                            form="updateContractDetailForm"
+                            type="primary"
+                            icon="check"
+                        />
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -1888,12 +1959,12 @@
             <StepperContent>
                 <StepperContentHeader title="Keputusan Urus Setia Perjawatan">
                     {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code}
-                    <TextIconButton
-                        label="Simpan"
-                        form="secretaryContractResultForm"
-                        type="primary"
-                        icon="check"
-                    />
+                        <TextIconButton
+                            label="Simpan"
+                            form="secretaryContractResultForm"
+                            type="primary"
+                            icon="check"
+                        />
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -1903,6 +1974,12 @@
                         id="secretaryContractResultForm"
                         use:secretaryContractResultEnhance
                     >
+                        <CustomTextField
+                            label="Nama"
+                            disabled
+                            id="name"
+                            val={$secretaryContractResultForm.name}
+                        />
                         <CustomTextField
                             label="Tindakan/Ulasan Urus Setia Perjawatan"
                             disabled={approverAndSupporterView}
@@ -1924,19 +2001,19 @@
             <StepperContent>
                 <StepperContentHeader title="Tetapkan Penyokong & Pelulus">
                     {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code}
-                    <TextIconButton
-                        label="Simpan"
-                        form="setSupporterApproverEnhance"
-                        type="primary"
-                        icon="check"
-                    />
+                        <TextIconButton
+                            label="Simpan"
+                            form="setSupporterApproverEnhance"
+                            type="primary"
+                            icon="check"
+                        />
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
                     <form
                         class="flex w-full flex-col justify-start gap-2.5 pb-10"
                         method="POST"
-                        id="setSupporterApproverEnhance"
+                        id="setSupporterApproverForm"
                         use:setSupporterApproverEnhance
                     >
                         <!-- <CustomSelectField
@@ -1975,13 +2052,13 @@
 
             <StepperContent>
                 <StepperContentHeader title="Keputusan Penyokong">
-                    {#if data.currentRoleCode !== UserRoleConstant.urusSetiaPerjawatan.code}
-                    <TextIconButton
-                        label="Simpan"
-                        form="supporterContractResultForm"
-                        type="primary"
-                        icon="check"
-                    />
+                    {#if data.currentRoleCode !== UserRoleConstant.urusSetiaPerjawatan.code && data.currentRoleCode !== UserRoleConstant.pelulus.code}
+                        <TextIconButton
+                            label="Simpan"
+                            form="supporterContractResultForm"
+                            type="primary"
+                            icon="check"
+                        />
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -1992,17 +2069,29 @@
                         use:supporterContractResultEnhance
                     >
                         <CustomTextField
+                            label="Nama"
+                            disabled
+                            id="name"
+                            val={$supporterContractResultForm.name}
+                        />
+                        <CustomTextField
                             label="Tindakan/Ulasan Urus Setia Perjawatan"
-                            disabled={secretaryView}
+                            disabled={data.currentRoleCode !==
+                            UserRoleConstant.penyokong.code
+                                ? true
+                                : false}
                             id="remark"
                             bind:val={$supporterContractResultForm.remark}
                             errors={$supporterContractResultError.remark}
                         />
                         <CustomRadioBoolean
                             label="Keputusan"
-                            disabled={secretaryView}
+                            disabled={data.currentRoleCode !==
+                            UserRoleConstant.penyokong.code
+                                ? true
+                                : false}
                             id="status"
-                            options={secretaryOption}
+                            options={data.lookup.supportOption}
                             bind:val={$supporterContractResultForm.status}
                         />
                     </form>
@@ -2011,13 +2100,13 @@
 
             <StepperContent>
                 <StepperContentHeader title="Keputusan Pelulus">
-                    {#if data.currentRoleCode !== UserRoleConstant.urusSetiaPerjawatan.code}
-                    <TextIconButton
-                        label="Simpan"
-                        form="approverContractResultForm"
-                        type="primary"
-                        icon="check"
-                    />
+                    {#if data.currentRoleCode !== UserRoleConstant.urusSetiaPerjawatan.code && data.currentRoleCode !== UserRoleConstant.penyokong.code}
+                        <TextIconButton
+                            label="Simpan"
+                            form="approverContractResultForm"
+                            type="primary"
+                            icon="check"
+                        />
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -2028,18 +2117,63 @@
                         use:approverContractResultEnhance
                     >
                         <CustomTextField
+                            label="Nama"
+                            disabled
+                            id="name"
+                            val={$approverContractResultForm.name}
+                        />
+                        <CustomTextField
                             label="Tindakan/Ulasan Urus Setia Perjawatan"
-                            disabled={secretaryView}
+                            disabled={data.currentRoleCode !==
+                            UserRoleConstant.pelulus.code
+                                ? true
+                                : false}
                             id="remark"
                             bind:val={$approverContractResultForm.remark}
                             errors={$approverContractResultError.remark}
                         />
                         <CustomRadioBoolean
                             label="Keputusan"
-                            disabled={secretaryView}
+                            disabled={data.currentRoleCode !==
+                            UserRoleConstant.pelulus.code
+                                ? true
+                                : false}
                             id="status"
-                            options={secretaryOption}
+                            options={data.lookup.approveOption}
                             bind:val={$approverContractResultForm.status}
+                        />
+                    </form>
+                </StepperContentBody>
+            </StepperContent>
+
+            <StepperContent>
+                <StepperContentHeader title="No. Pekerja Calon"
+                ></StepperContentHeader>
+                <StepperContentBody>
+                    <ContentHeader
+                        title="Tindakan: Tekan butang untuk memperolehi No. Pekerja kakitangan kontrak."
+                        borderClass="border-none"
+                    />
+                    <form
+                        class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                        method="POST"
+                        id="getContractEmployeeNumberForm"
+                        use:getContractEmployeeNumberEnhance
+                    >
+                        <div class="flex justify-start">
+                            <TextIconButton
+                                label="No. Pekerja"
+                                icon="create"
+                                type="primary"
+                                form="getContractEmployeeNumberForm"
+                            />
+                        </div>
+                        <CustomTextField
+                            id="employeeNumber"
+                            label="No. Pekerja"
+                            disabled
+                            placeholder=""
+                            bind:val={$getContractEmployeeNumberForm.employeeNumber}
                         />
                     </form>
                 </StepperContentBody>
