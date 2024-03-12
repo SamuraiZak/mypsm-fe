@@ -21,7 +21,7 @@ export const load = async () => {
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
+        orderBy: 'id',
         orderType: 1,
         filter: {
             employeeNumber: null,
@@ -87,6 +87,21 @@ export const load = async () => {
         LookupServices.setSelectOptionsValueIsDescription(
             institutionLookupResponse,
         );
+    // ===========================================================================
+
+    const educationTypeLookupResponse: CommonResponseDTO =
+        await LookupServices.getEducationTypeEnums();
+
+    const educationTypeLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        educationTypeLookupResponse,
+    );
+    // ===========================================================================
+
+    const fundApplicationTypeLookupResponse: CommonResponseDTO =
+        await LookupServices.getApplicationTypeEnums();
+
+    const fundApplicationTypeLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(fundApplicationTypeLookupResponse);
 
     return {
         param,
@@ -106,6 +121,8 @@ export const load = async () => {
             examResultLookup,
             educationLookup,
             institutionLookup,
+            educationTypeLookup,
+            fundApplicationTypeLookup,
         },
     };
 };

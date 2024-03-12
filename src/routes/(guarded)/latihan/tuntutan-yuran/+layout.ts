@@ -20,7 +20,7 @@ export const load = async () => {
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
+        orderBy: 'id',
         orderType: 1,
         filter: {
             employeeNumber: null,
