@@ -229,6 +229,37 @@ export class ProfileServices {
 
 
     //============================================
+    //========= Edit Academic Detail ==============
+    //============================================
+
+    static async editProfileAcademicDetails(param: academicRequestDTO) {
+        try {
+            const url: Input = 'profile/academic/edit';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
+
+            // await toast for resolved or rejected statec
+            const response: Response = await getPromiseToast(promiseRes);
+            //   const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //============================================
     //========= Get experience Detail  ===========
     //============================================
 
@@ -263,6 +294,37 @@ export class ProfileServices {
     static async addProfileExperienceDetails(param: experiencesRequestDTO) {
         try {
             const url: Input = 'profile/experience/add';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+            //   const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+      //============================================
+    //========= Edit experience Detail ==============
+    //============================================
+
+    static async editProfileExperienceDetails(param: experiencesRequestDTO) {
+        try {
+            const url: Input = 'profile/experience/edit';
 
             // get the promise response
             const promiseRes: Promise<Response> = http.post(url, {
@@ -346,6 +408,40 @@ export class ProfileServices {
         }
     }
 
+
+    //============================================
+    //========= Edit Activity Detail ==============
+    //============================================
+
+    static async editProfileActivityDetails(param: activityRequestDTO) {
+        try {
+            const url: Input = 'profile/activity/edit';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+            //   const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    
+
     //============================================
     //========= Get Family Detail  ===========
     //============================================
@@ -381,6 +477,37 @@ export class ProfileServices {
     static async addProfileFamilyDetails(param: familyRequestDTO) {
         try {
             const url: Input = 'profile/family/add';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+            //   const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+      //============================================
+    //========= Edit Family Detail ==============
+    //============================================
+
+    static async editProfileFamilyDetails(param: familyRequestDTO) {
+        try {
+            const url: Input = 'profile/family/edit';
 
             // get the promise response
             const promiseRes: Promise<Response> = http.post(url, {
@@ -463,6 +590,37 @@ export class ProfileServices {
         }
     }
 
+     //============================================
+    //========= Edit Dependent Detail ==============
+    //============================================
+
+    static async editProfileDependentDetails(param: dependencyRequestDTO) {
+        try {
+            const url: Input = 'profile/dependent/edit';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+            //   const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     //============================================
     //========= Get Next of Kin Detail  ===========
     //============================================
@@ -498,6 +656,37 @@ export class ProfileServices {
     static async addProfileNextOfKinDetails(param: nextOfKinRequestDTO) {
         try {
             const url: Input = 'profile/next_of_kin/add';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+            //   const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+       //============================================
+    //========= Edit ext of Kin Detail ==============
+    //============================================
+
+    static async editProfileNextOfKinDetails(param: nextOfKinRequestDTO) {
+        try {
+            const url: Input = 'profile/next_of_kin/edit';
 
             // get the promise response
             const promiseRes: Promise<Response> = http.post(url, {
