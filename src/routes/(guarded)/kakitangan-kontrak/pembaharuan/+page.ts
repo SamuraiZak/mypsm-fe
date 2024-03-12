@@ -1,23 +1,60 @@
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant";
+import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
+import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
+import type { RenewContractListResponseDTO } from "$lib/dto/mypsm/kakitangan-kontrak/renew-contract-list-response.dto";
+import type { RenewContractListDTO } from "$lib/dto/mypsm/kakitangan-kontrak/renew-contract-list.dto";
+import { ContractEmployeeServices } from "$lib/services/implementation/mypsm/kakitangan-kontrak/contract-employee.service";
 
 export const load = async () => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
-    const param = {
+    let nearExpiredContractListResponse: CommonResponseDTO = {};
+    let nearExpiredContractList: RenewContractListResponseDTO[] = [];
+    let renewContractListResponse: CommonResponseDTO = {};
+    let renewContractList: RenewContractListResponseDTO[] = [];
+
+    //near expired contract table
+    const nearExpiredContractFilter: RenewContractListDTO = {
+        dataType: 0,
+    }
+    const nearExpiredContractParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
         orderBy: null,
         orderType: null,
+        filter: nearExpiredContractFilter,
     };
 
-    const dataList = [
-        { id: 1, noPekerja: 28341, name: 'Gareth Bale', noKadPengenalan: 990122136443, kategori: 'Kontrak', tarikhMohon: '2023-10-26', tarikhLantikan: '2023-11-01', tarikTamatKontrak: '2024-06-30', hariSehinggaTamatKontrak: 56, markahAspekPengetahuan: 30, markahAspekKualitiPeribadi: 25, markahKeseluruhan: 75, status: "Lulus - Pelulus" },
-        { id: 2, noPekerja: 28342, name: 'Cristiano Ronaldo', noKadPengenalan: 990122136443, kategori: 'Kontrak', tarikhMohon: '2023-10-26', tarikhLantikan: '2023-11-01', tarikTamatKontrak: '2024-06-30', hariSehinggaTamatKontrak: 56, markahAspekPengetahuan: 35, markahAspekKualitiPeribadi: 33, markahKeseluruhan: 81, status: "Selesai" },
-        { id: 3, noPekerja: 28343, name: 'Toni Kroos', noKadPengenalan: 990122136443, kategori: 'Kontrak', tarikhMohon: '2023-10-26', tarikhLantikan: '2023-11-01', tarikTamatKontrak: '2024-06-30', hariSehinggaTamatKontrak: 56, markahAspekPengetahuan: 45, markahAspekKualitiPeribadi: 31, markahKeseluruhan: 92, status: "Semak" },
-    ];
+    //renew contract in process table
+    const renewContract: RenewContractListDTO = {
+        dataType: 1,
+    }
+    const renewContractParam: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: null,
+        orderType: null,
+        filter: renewContract,
+    };
+
+    //get list of near expired contract
+    nearExpiredContractListResponse =
+        await ContractEmployeeServices.getRenewContractList(nearExpiredContractParam)
+    nearExpiredContractList =
+        nearExpiredContractListResponse.data?.dataList as RenewContractListResponseDTO[]
+
+    //get list of renew contract process 
+    renewContractListResponse =
+        await ContractEmployeeServices.getRenewContractList(renewContractParam)
+    renewContractList =
+        renewContractListResponse.data?.dataList as RenewContractListResponseDTO[]
 
     return {
         currentRoleCode,
-        param,
-        dataList,
+        nearExpiredContractParam,
+        nearExpiredContractListResponse,
+        nearExpiredContractList,
+        renewContractParam,
+        renewContractListResponse,
+        renewContractList,
     }
 }
