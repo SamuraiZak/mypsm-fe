@@ -52,8 +52,8 @@ export const _fundReimbursementDetailResponseSchema =
             institution: shortTextSchema,
             learningInstitution: shortTextSchema,
             semester: numberSchema,
-            entryDateToInstituition: minDateSchema,
-            finishedStudyDate: minDateSchema,
+            entryDateToInstituition: dateStringSchema,
+            finishedStudyDate: dateStringSchema,
             finalResult: codeSchema,
         });
 
