@@ -6,7 +6,6 @@ import {
     booleanSchema,
     codeSchema,
     dateStringSchema,
-    minDateSchema,
     numberIdSchema,
     numberSchema,
     shortTextSchema,
