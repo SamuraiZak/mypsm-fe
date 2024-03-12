@@ -35,18 +35,6 @@
         },
         taintedMessage: false,
     });
-
-    const proxyEntryDateToInstituition = dateProxy(
-        form,
-        'entryDateToInstituition',
-        {
-            format: 'date',
-        },
-    );
-
-    const proxyFinishedStudyDate = dateProxy(form, 'finishedStudyDate', {
-        format: 'date',
-    });
 </script>
 
 <ContentHeader title="Maklumat Pembiayaan Pelajaran"
@@ -126,7 +114,7 @@
                     id="entryDateToInstituition"
                     label="Tarikh Kemasukan Ke IPTA"
                     type="date"
-                    bind:val={$proxyEntryDateToInstituition}
+                    bind:val={$form.entryDateToInstituition}
                 ></CustomTextField>
 
                 <CustomTextField
@@ -135,7 +123,7 @@
                     id="finishedStudyDate"
                     label="Tamat Pada"
                     type="date"
-                    bind:val={$proxyFinishedStudyDate}
+                    bind:val={$form.finishedStudyDate}
                 ></CustomTextField>
 
                 <CustomSelectField

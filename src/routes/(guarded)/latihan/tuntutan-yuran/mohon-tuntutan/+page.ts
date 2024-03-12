@@ -2,6 +2,7 @@ import { goto } from '$app/navigation';
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { CourseAddFundReimbursementRequestDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement.dto';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
     _createFundReimbursementRequestSchema,
@@ -54,31 +55,14 @@ export const _createFundReimbursementForm = async (formData: FormData) => {
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    const modifiedForm = {
-        academicLevel: form.data.academicLevel,
-        courseName: form.data.courseName,
-        institution: form.data.institution,
-        learningInstitution: form.data.learningInstitution,
-        studyDuration: form.data.studyDuration,
-        semester: form.data.semester,
-        entryDateToInstituition: form.data.entryDateToInstituition
-            .toISOString()
-            .split('T')[0],
-        finishedStudyDate: form.data.finishedStudyDate
-            .toISOString()
-            .split('T')[0],
-        finalResult: form.data.finalResult,
-        totalClaim: form.data.totalClaim,
-    };
-
     const response: CommonResponseDTO =
         await CourseFundReimbursementServices.createCourseFundReimbursement(
-            modifiedForm,
+            form.data as CourseAddFundReimbursementRequestDTO,
         );
 
     if (response.status === 'success')
         setTimeout(() => {
-            goto('../pembiayaan');
+            goto('../tuntutan-yuran');
         }, 2000);
 
     return { response };
