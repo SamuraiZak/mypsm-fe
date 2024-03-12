@@ -223,10 +223,6 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Perlantikan Baru (Kontrak)',
-                            path: '/kakitangan-kontrak/lantikan-baru',
-                        },
-                        {
                             name: 'Pembaharuan Kontrak',
                             path: '/kakitangan-kontrak/pembaharuan',
                         },
@@ -252,6 +248,10 @@ export class SidebarConstant {
                             path: '/kakitangan-kontrak/lantikan-baru',
                         },
                     ],
+                },
+                {
+                    name: 'Tetapan',
+                    path: '/tetapan',
                 },
             ],
         },
@@ -1649,8 +1649,8 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Perkhidmatan (Permohonan Panel Klinik)',
-                            path: '/perubatan/permohonan-panel-klinik',
+                            name: 'Perkhidmatan (Permohonan Klinik Panel)',
+                            path: '/perubatan/permohonan-klinik-panel',
                         },
                         {
                             name: 'Perkhidmatan (Bil Tuntutan Klinik)',
