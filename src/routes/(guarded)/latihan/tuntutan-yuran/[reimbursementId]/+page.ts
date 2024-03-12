@@ -110,7 +110,7 @@ export async function load({ params }) {
         await LookupServices.getICTypeEnums();
 
     const identityCardColorLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsValueIsDescription(
+        LookupServices.setSelectOptionsInString(
             identityCardColorLookupResponse,
         );
 

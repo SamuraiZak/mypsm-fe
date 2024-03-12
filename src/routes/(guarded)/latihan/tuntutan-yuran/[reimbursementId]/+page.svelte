@@ -115,18 +115,6 @@
             _addSecretaryApprovalForm($secretaryApprovalInfoForm);
         },
     });
-
-    const proxyEntryDateToInstituition = dateProxy(
-        form,
-        'entryDateToInstituition',
-        {
-            format: 'date',
-        },
-    );
-
-    const proxyFinishedStudyDate = dateProxy(form, 'finishedStudyDate', {
-        format: 'date',
-    });
 </script>
 
 <ContentHeader title="Maklumat Tuntutan Pembiayaan Yuran Pembelajaran">
@@ -179,14 +167,14 @@
                     bind:val={$personalInfoForm.identityCard}
                 ></CustomTextField>
 
-                <CustomTextField
+                <CustomSelectField
                     disabled
                     id="identityCardColor"
-                    label={'Warna Kad Pengenalan'}
-                    type="text"
+                    label={'Jenis Kad Pengenalan'}
                     placeholder="-"
+                    options={data.selectionOptions.identityCardColorLookup}
                     bind:val={$personalInfoForm.identityCardColor}
-                ></CustomTextField>
+                ></CustomSelectField>
 
                 <CustomTextField
                     disabled
@@ -697,11 +685,11 @@
 
                 <CustomTextField
                     disabled={true}
-                    id="entryDateToInstituition"
+                    id="courseApplicationDate"
                     label="Tarikh Kemasukan Ke IPTA"
                     type="date"
                     placeholder="-"
-                    bind:val={$proxyEntryDateToInstituition}
+                    bind:val={$form.courseApplicationDate}
                 ></CustomTextField>
 
                 <CustomTextField
@@ -710,7 +698,7 @@
                     label="Tamat Pada"
                     type="date"
                     placeholder="-"
-                    bind:val={$proxyFinishedStudyDate}
+                    bind:val={$form.finishedStudyDate}
                 ></CustomTextField>
 
                 <CustomSelectField
