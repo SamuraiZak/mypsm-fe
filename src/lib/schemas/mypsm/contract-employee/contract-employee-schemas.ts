@@ -174,6 +174,7 @@ export const _addContractViewSecretaryUpdate = z.object({
 
 export const _addContractCommonRoleResult = z.object({
     id: numberSchema,
+    name: shortTextSchema.optional(),
     status: booleanSchema,
     remark: shortTextSchema,
 })
@@ -181,4 +182,8 @@ export const _addContractSupporterApprover = z.object({
     candidateId: numberSchema,
     supporterId: numberSchema,
     approverId: numberSchema,
+})
+
+export const _getContractEmployeeNumber = z.object({
+    employeeNumber: shortTextSchema.nullable().default(null)
 })
