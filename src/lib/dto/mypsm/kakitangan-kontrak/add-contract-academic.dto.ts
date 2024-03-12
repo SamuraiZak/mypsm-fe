@@ -10,7 +10,7 @@ export interface ContractAcademic {
     educationLevelId: number;
     sponsorshipId:    number;
     name:             string;
-    completionDate:   Date | string;
+    completionDate:   string | Date;
     finalGrade:       string;
     field:            string;
 }

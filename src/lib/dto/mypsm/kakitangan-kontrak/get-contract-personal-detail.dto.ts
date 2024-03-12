@@ -1,4 +1,5 @@
-export interface EditNewContractEmployeeDetailDTO {
+export interface GetContractPersonalDetailDTO {
+    id?:                       number;
     genderId:                 number;
     nationalityId:            number;
     religionId:               number;
@@ -8,14 +9,13 @@ export interface EditNewContractEmployeeDetailDTO {
     maritalId:                number;
     birthCountryId:           number;
     birthStateId:             number;
-    phoneNumber:              string;
     assetDeclarationStatusId: number | null;
     name:                     string;
     alternativeName:          string;
     identityDocumentColor:    string;
     identityDocumentNumber:   string;
     email:                    string;
-    propertyDeclarationDate:  string | null;
+    propertyDeclarationDate:  string;
     birthDate:                string;
     homeAddress:              string;
     homeCountryId:            number;
@@ -30,16 +30,20 @@ export interface EditNewContractEmployeeDetailDTO {
     isExPoliceOrSoldier:      boolean;
     isInternalRelationship:   boolean;
     employeeNumber:           string | null;
+    employeeName?:            string;
+    employeePosition?:        string;
     relationshipId:           number | null;
+    phoneNumber:              string;
+    isReadonly?:              boolean;
 }
 
 // Converts JSON strings to/from your types
-export class EditNewContractEmployeeDetailDTOConvert {
-    public static fromJson(json: string): EditNewContractEmployeeDetailDTO {
+export class GetContractPersonalDetailDTOConvert {
+    public static fromJson(json: string): GetContractPersonalDetailDTO {
         return JSON.parse(json);
     }
 
-    public static toJson(value: EditNewContractEmployeeDetailDTO): string {
+    public static toJson(value: GetContractPersonalDetailDTO): string {
         return JSON.stringify(value);
     }
 }

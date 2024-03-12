@@ -2,11 +2,11 @@ export interface AddNewContractEmployeeDTO {
     name:           string;
     email:          string;
     identityDocumentNumber: string;
-    startContract:  Date | string;
-    endContract:    Date | string;
+    startContract:  string;
+    endContract:    string;
     wageRate:       number;
     designation:    string;
-    reportDutyDate: Date | string;
+    reportDutyDate: string;
 }
 // import type { _addNewContractEmployeeSchema } from '$lib/schemas/mypsm/contract-employee/contract-employee-schemas';
 // import type { z } from 'zod';

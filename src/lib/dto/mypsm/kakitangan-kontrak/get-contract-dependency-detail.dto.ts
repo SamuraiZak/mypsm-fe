@@ -1,8 +1,9 @@
-export interface AddContractNextOfKinDTO {
-    nextOfKins: NextOfKin[];
+export interface GetContractDependencyDetailDTO {
+    dependenciesList: DependenciesList[];
+    isReadonly:       boolean;
 }
 
-export interface NextOfKin {
+export interface DependenciesList {
     birthCountryId:         number;
     birthStateId:           number;
     relationshipId:         number;
@@ -12,26 +13,15 @@ export interface NextOfKin {
     maritalId:              number;
     genderId:               number;
     name:                   string;
-    alternativeName:        string;
+    alternativeName:        string | null;
     identityDocumentColor:  string;
     identityDocumentNumber: string;
     address:                string;
     postcode:               string;
-    birthDate:              Date | string;
+    birthDate:              Date;
     workAddress:            string;
     workPostcode:           string;
     phoneNumber:            string;
-    marriageDate:           Date | string | null;
     inSchool:               boolean;
-}
-
-// Converts JSON strings to/from your types
-export class AddContractNextOfKinDTOConvert {
-    public static fromJson(json: string): AddContractNextOfKinDTO {
-        return JSON.parse(json);
-    }
-
-    public static toJson(value: AddContractNextOfKinDTO): string {
-        return JSON.stringify(value);
-    }
+    marriageDate:           Date;
 }
