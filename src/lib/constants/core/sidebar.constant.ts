@@ -1223,6 +1223,30 @@ export class SidebarConstant {
                 },
             ],
         },
+        // Urus Setia Khidmat Sokongan
+        {
+            role: RoleConstant.urusSetiaKhidmatSokongan.code,
+            navItems: [
+                {
+                    name: 'Halaman Utama',
+                    path: '/halaman-utama',
+                },
+                {
+                    name: 'Kakitangan Kontrak',
+                    path: '',
+                    subItems: [
+                        {
+                            name: 'Pembaharuan Kontrak',
+                            path: '/kakitangan-kontrak/pembaharuan',
+                        },
+                    ],
+                },
+                {
+                    name: 'Tetapan',
+                    path: '/tetapan',
+                },
+            ],
+        },
         // Urus Setia Integriti
         {
             role: RoleConstant.urusSetiaIntegriti.code,
@@ -1567,10 +1591,6 @@ export class SidebarConstant {
                         {
                             name: 'Perlantikan Baru (Kontrak)',
                             path: '/kakitangan-kontrak/lantikan-baru',
-                        },
-                        {
-                            name: 'Pembaharuan Kontrak',
-                            path: '/kakitangan-kontrak/pembaharuan',
                         },
                     ],
                 },
