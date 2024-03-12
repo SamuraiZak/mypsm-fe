@@ -3,6 +3,6 @@
     <div
         class="mb-2.5 text-start text-sm font-medium italic text-system-primary"
     >
-        <p>Menunggu keputusan peranan sebelumnya...</p>
+        <p>Menunggu keputusan peranan bertanggungjawab.</p>
     </div>
 </div>
