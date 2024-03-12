@@ -16,11 +16,14 @@ import {
     _activityListResponseSchema,
     _dependencyListRequestSchema,
     _dependencyListResponseSchema,
+    _diseaseInfoCollectionSchema,
     _experienceInfoSchema,
     _experienceListRequestSchema,
     _experienceListResponseSchema,
     _familyListRequestSchema,
     _familyListResponseSchema,
+    _generalAssessmentListRequestSchema,
+    _generalAssessmentListResponseSchema,
     _medicalAssessmentListResponseSchema,
     _nextOfKinListRequestSchema,
     _nextOfKinListResponseSchema,
@@ -44,14 +47,17 @@ import type { Activity, activityRequestDTO, activityResponseDTO } from '$lib/dto
 import type { Dependency, Family, NextOfKin, dependencResponseDTO, dependencyRequestDTO, familyRequestDTO, familyResponseDTO, nextOfKinRequestDTO, nextOfKinResponseDTO } from '$lib/dto/mypsm/profile/relation-detail.dto';
 import type { CandidatePersonalRequestDTO, CandidatePersonalResponseDTO } from '$lib/dto/mypsm/profile/personal-detail.dto';
 import type { serviceRequestDTO, serviceResponseDTO } from '$lib/dto/mypsm/profile/service-detail.dto';
-import type { medicalAssessmentResponseDTO } from '$lib/dto/mypsm/profile/medical-assessment.dto';
+import type { medicalAssessmentRequestDTO, medicalAssessmentResponseDTO } from '$lib/dto/mypsm/profile/medical-assessment.dto';
+import type { generalAssessmentRequestDTO, generalAssessmentResponseDTO } from '$lib/dto/mypsm/profile/general-assessment.dto';
+import type { MedicalDiseaseListDTO } from '$lib/dto/mypsm/profile/medical-disease-list.dto';
+import { z } from 'zod';
 
 
 
-// export const load = async () => {
+// schema for history Medical
 
-//     return {salaryViewTable}
-// };
+
+
 
 
 export async function load({ }) {
@@ -79,7 +85,7 @@ export async function load({ }) {
 
     const personalDetailResponse: CommonResponseDTO =
         await ProfileServices.getProfilePersonalDetails();
-
+    console.log(personalDetailResponse)
     const serviceDetailResponse: CommonResponseDTO =
         await ProfileServices.getProfileServiceDetails();
 
@@ -104,11 +110,17 @@ export async function load({ }) {
     const medicalHistoryResponse: CommonResponseDTO =
         await ProfileServices.getProfileMedicalAssessmentDetails();
 
-
+    const medicalGeneralResponse: CommonResponseDTO =
+        await ProfileServices.getProfileGeneralAssessmentDetails();
+    const medicalDiseaseList: CommonResponseDTO =
+        await ProfileServices.getProfileMedicalDiseases();
+    const diseaseList: MedicalDiseaseListDTO =
+        await medicalDiseaseList.data?.details as MedicalDiseaseListDTO;
 
     const personalDetail = await superValidate(personalDetailResponse.data?.details as CandidatePersonalResponseDTO, zod(
         _personalInfoResponseSchema))
         ;
+
     const serviceInfoForm = await superValidate(serviceDetailResponse.data?.details as serviceResponseDTO, zod(
         _serviceInfoResponseSchema))
         ;
@@ -137,8 +149,13 @@ export async function load({ }) {
         _nextOfKinListResponseSchema))
         ;
     const medicalHistoryForm = await superValidate(medicalHistoryResponse.data?.details as medicalAssessmentResponseDTO, zod(
-        _medicalAssessmentListResponseSchema))
+        _diseaseInfoCollectionSchema))
         ;
+
+    const medicalGeneralForm = await superValidate(medicalGeneralResponse.data?.details as generalAssessmentResponseDTO, zod(
+        _generalAssessmentListResponseSchema))
+        ;
+
 
 
     const addAcademicModal = await superValidate(zod(_academicInfoSchema));
@@ -275,7 +292,7 @@ export async function load({ }) {
     const positionLookupResponse: CommonResponseDTO =
         await LookupServices.getPositionEnums();
 
-    const positionLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+    const positionLookup: DropdownDTO[] = LookupServices.setSelectOptionsNameIsCode(
         positionLookupResponse,
     );
 
@@ -338,7 +355,7 @@ export async function load({ }) {
         await LookupServices.getPropertyDeclarationEnums();
 
     const assetDeclarationLookup: DropdownDTO[] =
-        LookupServices.setSelectOptions(assetDeclarationLookupResponse);
+        LookupServices.setSelectOptionsValueIsDescription(assetDeclarationLookupResponse);
 
     // ===========================================================================
 
@@ -389,7 +406,7 @@ export async function load({ }) {
         await LookupServices.getRetirementTypeEnums();
 
     const retirementBenefitLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsInString(
+        LookupServices.setSelectOptionsValueIsDescription(
             retirementBenefitLookupResponse,
         );
 
@@ -405,6 +422,17 @@ export async function load({ }) {
             name: 'Tidak',
         },
     ];
+
+    const diseaseCollectionForm = await superValidate(zod(_diseaseInfoCollectionSchema));
+
+    // diseaseList.disease.forEach(element => {
+    //     diseaseCollectionForm.data.medicalHistory.push({
+    //         disease: element,
+    //         isPersonal: true,
+    //         isFamily: true,
+    //         remark: "",
+    //     })
+    // });
 
 
     // ============================================================
@@ -428,6 +456,9 @@ export async function load({ }) {
         medicalHistoryForm,
         salaryViewTable,
         salaryListParam,
+        medicalGeneralForm,
+        diseaseList,
+        diseaseCollectionForm,
         selectionOptions: {
             identityCardColorLookup,
             cityLookup,
@@ -465,6 +496,12 @@ export async function load({ }) {
 export const _personalInfoSubmit = async (formData: object) => {
     const personalInfoForm = await superValidate(formData, zod(_personalInfoRequestSchema));
 
+    personalInfoForm.data.identityDocumentNumber = (formData as CandidatePersonalResponseDTO).identityCardNumber;
+    personalInfoForm.data.employeeNumber = (formData as CandidatePersonalResponseDTO).relationDetail.employeeNumber;
+    personalInfoForm.data.relationshipId = (formData as CandidatePersonalResponseDTO).relationDetail.relationshipId;
+    console.log('HERE: ', personalInfoForm)
+
+
     if (!personalInfoForm.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
@@ -488,20 +525,24 @@ export const _personalInfoSubmit = async (formData: object) => {
 
 
 // ===============================================================
+// ===============================================================
+
 
 export const _serviceInfoSubmit = async (formData: object) => {
-    const serviceInfoForm = await superValidate(formData,(zod)(_serviceInfoRequestSchema));
-   
+    const serviceInfoForm = await superValidate(formData, (zod)(_serviceInfoRequestSchema));
+
     if (serviceInfoForm.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
-            }
-
-            const response: CommonResponseDTO =
-            await ProfileServices.addProfileServiceDetails(serviceInfoForm.data as serviceRequestDTO);
     }
 
+    const response: CommonResponseDTO =
+        await ProfileServices.addProfileServiceDetails(serviceInfoForm.data as serviceRequestDTO);
+    return { response };
+};
 
+// ============================================================
+// ============================================================
 export const _submitAcademicForm = async (formData: object) => {
     const academicInfoform = await superValidate(formData, (zod)(_academicListRequestSchema));
 
@@ -510,32 +551,14 @@ export const _submitAcademicForm = async (formData: object) => {
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    console.log(academicInfoform)
-    if (academicInfoform.valid) {
-        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(academicInfoform),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        if (academicInfoform.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
-    }
+    const response: CommonResponseDTO =
+        await ProfileServices.addProfileAcademicDetails(academicInfoform.data as academicRequestDTO);
 
-    // const response: CommonResponseDTO =
-    //     await EmploymentServices.createCurrentCandidateAcademicDetails(
-    //         form.data as CandidateAcademicDetailRequestDTO,
-    //     );
-
-    // return { response };
+    return { response };
 };
 
+// ===============================================================
+// ===============================================================
 export const _submitExperienceForm = async (formData: object) => {
     const experienceInfoform = await superValidate(formData, (zod)(_experienceListRequestSchema));
 
@@ -544,32 +567,14 @@ export const _submitExperienceForm = async (formData: object) => {
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    console.log(experienceInfoform)
-    if (experienceInfoform.valid) {
-        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(experienceInfoform),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        if (experienceInfoform.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
-    }
+    const response: CommonResponseDTO =
+        await ProfileServices.addProfileExperienceDetails(experienceInfoform.data as experiencesRequestDTO);
 
-    // const response: CommonResponseDTO =
-    //     await EmploymentServices.createCurrentCandidateExperienceDetails(
-    //         form.data as CandidateExperiencesDetailRequestDTO,
-    //     );
-
-    // return { response };
+    return { response };
 };
 
+// ===============================================================
+// ===============================================================
 export const _submitActivityForm = async (formData: object) => {
     const activityInfoform = await superValidate(formData, (zod)(_activityListRequestSchema));
 
@@ -578,31 +583,14 @@ export const _submitActivityForm = async (formData: object) => {
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    console.log(activityInfoform)
-    if (activityInfoform.valid) {
-        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(activityInfoform),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        if (activityInfoform.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
-    }
+    const response: CommonResponseDTO =
+        await ProfileServices.addProfileActivityDetails(activityInfoform.data as activityRequestDTO);
 
-    // const response: CommonResponseDTO =
-    //     await EmploymentServices.createCurrentCandidateActivityDetails(
-    //         form.data as CandidateActivityDetailRequestDTO,
-    //     );
-
-    // return { response };
+    return { response };
 };
+
+// ===============================================================
+// ===============================================================
 
 export const _submitFamilyForm = async (formData: object) => {
     const familyInfoform = await superValidate(formData, (zod)(_familyListRequestSchema));
@@ -612,30 +600,14 @@ export const _submitFamilyForm = async (formData: object) => {
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    console.log(familyInfoform)
-    if (familyInfoform.valid) {
-        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(familyInfoform),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        if (familyInfoform.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
-    }
-    // const response: CommonResponseDTO =
-    //     await EmploymentServices.createCurrentCandidateFamilyDetails(
-    //         form.data as CandidateFamilyDetailRequestDTO,
-    //     );
+    const response: CommonResponseDTO =
+        await ProfileServices.addProfileFamilyDetails(familyInfoform.data as familyRequestDTO);
 
-    // return { response };
+    return { response };
 };
+
+// ===============================================================
+// ===============================================================
 
 export const _submitDependencyForm = async (formData: object) => {
     const dependencyInfoform = await superValidate(formData, (zod)(_dependencyListRequestSchema));
@@ -645,32 +617,14 @@ export const _submitDependencyForm = async (formData: object) => {
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    console.log(dependencyInfoform)
-    if (dependencyInfoform.valid) {
-        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(dependencyInfoform),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        if (dependencyInfoform.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
-    }
+    const response: CommonResponseDTO =
+        await ProfileServices.addProfileDependentDetails(dependencyInfoform.data as dependencyRequestDTO);
 
-    // const response: CommonResponseDTO =
-    //     await EmploymentServices.createCurrentCandidateDependenciesDetails(
-    //         form.data as CandidateDependenciesDetailRequestDTO,
-    //     );
-
-    // return { response };
+    return { response };
 };
 
+// ================================================================
+// ================================================================
 export const _submitNextOfKinForm = async (formData: object) => {
     const nextOfKinform = await superValidate(formData, (zod)(_nextOfKinListRequestSchema));
 
@@ -679,32 +633,45 @@ export const _submitNextOfKinForm = async (formData: object) => {
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    console.log(nextOfKinform)
-    if (nextOfKinform.valid) {
-        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(nextOfKinform),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        if (nextOfKinform.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
-    }
+    const response: CommonResponseDTO =
+        await ProfileServices.addProfileNextOfKinDetails(nextOfKinform.data as nextOfKinRequestDTO);
 
-    // const response: CommonResponseDTO =
-    //     await EmploymentServices.createCurrentCandidateNextOfKinDetails(
-    //         form.data as CandidateNextOfKinDetailRequestDTO,
-    //     );
-
-    // return { response };
+    return { response };
 };
 
+// ================================================================
+// ================================================================
+export const _submitMedicalHistoryForm = async (formData: object) => {
+    const historyMedicalform = await superValidate(formData, (zod)(_diseaseInfoCollectionSchema));
+
+    if (!historyMedicalform.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await ProfileServices.addProfileMedicalAssessmentDetails(historyMedicalform.data as medicalAssessmentRequestDTO);
+
+    return { response };
+};
+
+
+// ================================================================
+// ================================================================
+export const _submitGeneralMedicalForm = async (formData: object) => {
+    const generalMedicalform = await superValidate(formData, (zod)(_generalAssessmentListRequestSchema));
+
+    console.log(generalMedicalform)
+    if (!generalMedicalform.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await ProfileServices.addProfileGeneralAssessmentDetails(generalMedicalform.data as generalAssessmentRequestDTO);
+
+    return { response };
+};
 // submit array modal functions
 export const _submitAcademicInfoForm = async (formData: Academic[]) => {
     if (formData.length < 1) {
@@ -765,7 +732,7 @@ export const _submitFamilyInfoForm = async (formData: Family[]) => {
         return fail(400);
     }
     const requestData: familyRequestDTO = {
-        dependencies: formData,
+        families: formData,
     };
 
     const response: CommonResponseDTO =
@@ -782,7 +749,7 @@ export const _submitDependencyInfoForm = async (formData: Dependency[]) => {
         return fail(400);
     }
     const requestData: dependencyRequestDTO = {
-        dependencies: formData,
+        families: formData,
     };
 
     const response: CommonResponseDTO =
@@ -799,7 +766,7 @@ export const _submitNextOfKinInfoForm = async (formData: NextOfKin[]) => {
         return fail(400);
     }
     const requestData: nextOfKinRequestDTO = {
-        nextOfKins: formData,
+        families: formData,
     };
 
     const response: CommonResponseDTO =

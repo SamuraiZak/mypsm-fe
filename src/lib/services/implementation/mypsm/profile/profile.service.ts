@@ -145,10 +145,10 @@ export class ProfileServices {
 
     static async addProfileServiceDetails(param: serviceRequestDTO) {
         try {
-            const url: Input = 'profile/personal/add';
+            const url: Input = 'profile/employee/add';
 
             // get the promise response
-            const promiseRes: Promise<Response> = http.get(url).json();
+            const promiseRes: Promise<Response> = http.post(url, { body: JSON.stringify(param) }).json();
 
             // await toast for resolved or rejected state
             const response: Response = await getPromiseToast(promiseRes);
@@ -205,7 +205,9 @@ export class ProfileServices {
             const url: Input = 'profile/academic/add';
 
             // get the promise response
-            const promiseRes: Promise<Response> = http.get(url).json();
+            const promiseRes: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
 
             // await toast for resolved or rejected state
             const response: Response = await getPromiseToast(promiseRes);
@@ -263,7 +265,9 @@ export class ProfileServices {
             const url: Input = 'profile/experience/add';
 
             // get the promise response
-            const promiseRes: Promise<Response> = http.get(url).json();
+            const promiseRes: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
 
             // await toast for resolved or rejected state
             const response: Response = await getPromiseToast(promiseRes);
@@ -320,7 +324,9 @@ export class ProfileServices {
             const url: Input = 'profile/activity/add';
 
             // get the promise response
-            const promiseRes: Promise<Response> = http.get(url).json();
+            const promiseRes: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
 
             // await toast for resolved or rejected state
             const response: Response = await getPromiseToast(promiseRes);
@@ -377,7 +383,9 @@ export class ProfileServices {
             const url: Input = 'profile/family/add';
 
             // get the promise response
-            const promiseRes: Promise<Response> = http.get(url).json();
+            const promiseRes: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
 
             // await toast for resolved or rejected state
             const response: Response = await getPromiseToast(promiseRes);
@@ -433,7 +441,9 @@ export class ProfileServices {
             const url: Input = 'profile/dependent/add';
 
             // get the promise response
-            const promiseRes: Promise<Response> = http.get(url).json();
+            const promiseRes: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
 
             // await toast for resolved or rejected state
             const response: Response = await getPromiseToast(promiseRes);
@@ -490,7 +500,9 @@ export class ProfileServices {
             const url: Input = 'profile/next_of_kin/add';
 
             // get the promise response
-            const promiseRes: Promise<Response> = http.get(url).json();
+            const promiseRes: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
 
             // await toast for resolved or rejected state
             const response: Response = await getPromiseToast(promiseRes);
@@ -543,20 +555,17 @@ export class ProfileServices {
         }
     }
 
+
     //============================================
-    //====== Get Medical Assesment Detail  =======
+    //====== Get History Medical Assesment Detail  =======
     //============================================
 
-    static async getProfileMedicalAssessmentDetails() {
+    static async getProfileHistoryMedicalDetails() {
         try {
             const url: Input = 'profile/assessment/medical/get';
 
             // get the promise response
-            const promiseRes: Promise<Response> = http.get(url).json();
-
-            // await toast for resolved or rejected state
-            // const response: Response = await getPromiseToast(promiseRes);
-            const response: Response = await promiseRes;
+            const response: Response = await http.get(url).json();
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
@@ -570,6 +579,61 @@ export class ProfileServices {
             return CommonResponseConstant.httpError;
         }
     }
+
+    //============================================
+    //===== Add  Medical Assesment Detail ========
+    //============================================
+
+    static async addProfileHistoryMedicalDetails(param: generalAssessmentRequestDTO) {
+        try {
+            const url: Input = 'profile/assessment/medical/add';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http.get(url).json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+            //   const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //============================================
+    //====== Get Medical Assesment Detail  =======
+    //============================================
+
+    static async getProfileMedicalAssessmentDetails() {
+        try {
+            const url: Input = 'profile/assessment/medical/get';
+
+            // get the promise response
+            const response: Response = await http.get(url).json();
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+
 
     //============================================
     //===== Add  Medical Assesment Detail ========
@@ -591,6 +655,34 @@ export class ProfileServices {
 
             if (result.status == 'success') {
                 invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //============================================
+    //====== Get Medical Disease Name  =======
+    //============================================
+
+    static async getProfileMedicalDiseases() {
+        try {
+            const url: Input = 'profile/assessment/medical/list';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http.get(url).json();
+
+            // await toast for resolved or rejected state
+            // const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -637,7 +729,9 @@ export class ProfileServices {
             const url: Input = 'profile/assessment/general/add';
 
             // get the promise response
-            const promiseRes: Promise<Response> = http.get(url).json();
+            const promiseRes: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
 
             // await toast for resolved or rejected state
             const response: Response = await getPromiseToast(promiseRes);
