@@ -2,10 +2,12 @@ import { goto } from '$app/navigation';
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { CourseAddFundApplicationRequestDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
     _createFundApplicationRequestSchema,
     _fundApplicationDetailResponseSchema,
+    _fundApplicationUploadDocSchema,
 } from '$lib/schemas/mypsm/course/fund-application-schema';
 import { CourseFundApplicationServices } from '$lib/services/implementation/mypsm/latihan/fundApplication.service';
 import { error } from '@sveltejs/kit';
@@ -33,10 +35,15 @@ export async function load() {
         zod(_fundApplicationDetailResponseSchema),
     );
 
+    const fundApplicationUploadDocumentForm = await superValidate(
+        zod(_fundApplicationUploadDocSchema),
+    );
+
     // ===========================================================================
 
     return {
         fundApplicationInfoForm,
+        fundApplicationUploadDocumentForm,
     };
 }
 
@@ -49,30 +56,16 @@ export const _createFundApplicationForm = async (formData: FormData) => {
         zod(_createFundApplicationRequestSchema),
     );
 
+    console.log(form);
+
     if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    const modifiedForm = {
-        academicLevel: form.data.academicLevel,
-        courseName: form.data.courseName,
-        institution: form.data.institution,
-        learningInstitution: form.data.learningInstitution,
-        studyDuration: form.data.studyDuration,
-        expectedFinishedStudy: form.data.expectedFinishedStudyDate
-            .toISOString()
-            .split('T')[0],
-        entryDateToInstituition: form.data.entryDateToInstituition
-            .toISOString()
-            .split('T')[0],
-        educationType: form.data.educationType,
-        applicationType: form.data.applicationType,
-    };
-
     const response: CommonResponseDTO =
         await CourseFundApplicationServices.createCourseFundApplication(
-            modifiedForm,
+            form.data as CourseAddFundApplicationRequestDTO,
         );
 
     if (response.status === 'success')
@@ -80,5 +73,22 @@ export const _createFundApplicationForm = async (formData: FormData) => {
             goto('../pembiayaan');
         }, 2000);
 
+    return { response };
+};
+
+export const _submitDocumentForm = async (file: File) => {
+    const documentData = new FormData();
+    documentData.append('documents', file as File);
+
+    const form = await superValidate(documentData, zod(_fundApplicationUploadDocSchema));
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+    const response: CommonResponseDTO =
+        await CourseFundApplicationServices.uploadFundApplicationEmployeeDocument(
+            documentData,
+        );
     return { response };
 };

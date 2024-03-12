@@ -17,8 +17,13 @@
         _serviceInfoRequestSchema,
     } from '$lib/schemas/mypsm/employment/new-hire/schema';
     import { goto } from '$app/navigation';
-    import { _createFundApplicationForm } from './+page';
-    import { _fundApplicationDetailResponseSchema } from '$lib/schemas/mypsm/course/fund-application-schema';
+    import { _createFundApplicationForm, _submitDocumentForm } from './+page';
+    import {
+        _fundApplicationDetailResponseSchema,
+        _fundApplicationUploadDocSchema,
+    } from '$lib/schemas/mypsm/course/fund-application-schema';
+    import FileInputField from '$lib/components/inputs/file-input-field/FileInputField.svelte';
+    import FileInputFieldChildren from '$lib/components/inputs/file-input-field/FileInputFieldChildren.svelte';
     export let data: PageData;
 
     // Superforms
@@ -36,20 +41,31 @@
         taintedMessage: false,
     });
 
-    const proxyExpectedFinishedStudyDate = dateProxy(
-        form,
-        'expectedFinishedStudyDate',
-        {
-            format: 'date',
+    const {
+        form: fundApplicationUploadDocumentForm,
+        errors: fundApplicationUploadDocumentError,
+        enhance: fundApplicationUploadDocumentEnhance,
+    } = superForm(data.fundApplicationUploadDocumentForm, {
+        SPA: true,
+        resetForm: false,
+        taintedMessage: false,
+        id: 'documentUploadForm',
+        validators: zod(_fundApplicationUploadDocSchema),
+        onSubmit() {
+            _submitDocumentForm(
+                $fundApplicationUploadDocumentForm.documents as File,
+            );
         },
-    );
-    const proxyEntryDateToInstituition = dateProxy(
-        form,
-        'entryDateToInstituition',
-        {
-            format: 'date',
-        },
-    );
+    });
+
+    const handleOnInput = (e: Event) => {
+        $fundApplicationUploadDocumentForm.documents =
+            ((e.currentTarget as HTMLInputElement)?.files?.item(0) as File) ??
+            null;
+    };
+    function handleDelete() {
+        $fundApplicationUploadDocumentForm.documents = null;
+    }
 </script>
 
 <ContentHeader title="Maklumat Pembiayaan Pelajaran"
@@ -96,15 +112,6 @@
 
                 <CustomSelectField
                     disabled={false}
-                    errors={$errors.academicLevel}
-                    id="academicLevel"
-                    label="Peringkat Kursus Pengajian"
-                    bind:val={$form.academicLevel}
-                    options={data.lookups.institutionLookup}
-                ></CustomSelectField>
-
-                <CustomSelectField
-                    disabled={false}
                     errors={$errors.institution}
                     id="institution"
                     label="Nama IPTA"
@@ -118,7 +125,7 @@
                     id="learningInstitution"
                     label="Institusi/Pusat Pembelajaran"
                     bind:val={$form.learningInstitution}
-                    options={data.lookups.educationLookup}
+                    options={data.lookups.institutionLookup}
                 ></CustomSelectField>
 
                 <CustomTextField
@@ -136,7 +143,7 @@
                     id="entryDateToInstituition"
                     label="Tarikh Kemasukan Ke IPTA"
                     type="date"
-                    bind:val={$proxyEntryDateToInstituition}
+                    bind:val={$form.entryDateToInstituition}
                 ></CustomTextField>
 
                 <CustomTextField
@@ -145,28 +152,127 @@
                     id="expectedFinishedStudyDate"
                     label="Dijangka Tamat Pada"
                     type="date"
-                    bind:val={$proxyExpectedFinishedStudyDate}
+                    bind:val={$form.expectedFinishedStudyDate}
                 ></CustomTextField>
 
                 <CustomSelectField
                     disabled={false}
-                    errors={$errors.educationType}
-                    id="educationType"
+                    errors={$errors.educationTypeId}
+                    id="educationTypeId"
                     label="Jenis Pengajian"
-                    bind:val={$form.educationType}
-                    options={data.lookups.educationLookup}
+                    bind:val={$form.educationTypeId}
+                    options={data.lookups.educationTypeLookup}
                 ></CustomSelectField>
 
                 <CustomSelectField
                     disabled={false}
-                    errors={$errors.applicationType}
-                    id="applicationType"
+                    errors={$errors.applicationTypeId}
+                    id="applicationTypeId"
                     label="Jenis Permohonan"
-                    bind:val={$form.applicationType}
-                    options={data.lookups.educationLookup}
+                    bind:val={$form.applicationTypeId}
+                    options={data.lookups.fundApplicationTypeLookup}
                 ></CustomSelectField>
             </form>
         </StepperContentBody>
+    </StepperContent>
+    <StepperContent>
+        <StepperContentHeader title="Dokumen Sokongan">
+            <TextIconButton
+                label="Simpan"
+                form="documentUploadForm"
+                type="primary"
+                icon="check"
+            />
+        </StepperContentHeader>
+        <StepperContentBody>
+            <div class="flex w-full flex-col gap-2">
+                <form
+                    class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                    method="POST"
+                    id="documentUploadForm"
+                    enctype="multipart/form-data"
+                    use:fundApplicationUploadDocumentEnhance
+                >
+                    {#if $fundApplicationUploadDocumentError.documents}
+                        <span
+                            class="font-sans text-sm italic text-system-danger"
+                            >Sila muat naik dokumen barkaitan dan pastikan tidak
+                            melebihi 4MB.</span
+                        >
+                    {/if}
+                    <ContentHeader
+                        title="Dokumen Sokongan"
+                        borderClass="border-none"
+                    >
+                        <div
+                            hidden={!(
+                                $fundApplicationUploadDocumentForm.documents instanceof
+                                File
+                            )}
+                        >
+                            <FileInputField
+                                id="documents"
+                                handleOnInput={(e) => handleOnInput(e)}
+                            ></FileInputField>
+                        </div>
+                    </ContentHeader>
+                    <div
+                        class="flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border border-bdr-primary p-2.5"
+                    >
+                        <div class="flex flex-wrap gap-3">
+                            <!-- {#each $documentForm.documents as item, index} -->
+                            {#if $fundApplicationUploadDocumentForm.documents instanceof File}
+                                <FileInputFieldChildren
+                                    childrenType="grid"
+                                    handleDelete={() => handleDelete()}
+                                    fileName={$fundApplicationUploadDocumentForm
+                                        .documents?.name}
+                                />
+                            {/if}
+                            <!-- {/each} -->
+                        </div>
+                        <div
+                            class="flex flex-col items-center justify-center gap-2.5"
+                        >
+                            <p
+                                class=" text-sm text-txt-tertiary"
+                                hidden={$fundApplicationUploadDocumentForm.documents instanceof
+                                    File}
+                            >
+                                Pilih fail dari peranti anda.
+                            </p>
+                            <div
+                                class="text-txt-tertiary"
+                                hidden={$fundApplicationUploadDocumentForm.documents instanceof
+                                    File}
+                            >
+                                <svg
+                                    width={40}
+                                    height={40}
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                                    />
+                                </svg>
+                            </div>
+                            <div
+                                hidden={$fundApplicationUploadDocumentForm.documents instanceof
+                                    File}
+                            >
+                                <FileInputField id="documents"></FileInputField>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div></StepperContentBody
+        >
     </StepperContent>
 </Stepper>
 
