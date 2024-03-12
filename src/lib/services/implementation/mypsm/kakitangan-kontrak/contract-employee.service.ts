@@ -657,6 +657,28 @@ export class ContractEmployeeServices {
         }
     }
 
+    //get supporter waiting for approval table
+    static async getContractSupporterTable(param: CommonListRequestDTO) {
+        try {
+            let url: Input = 'contracts/supporter_approval/list';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
     //add supporter result
     static async addContractSupporterResult(param: ContractCommonRoleResultDTO) {
         try {
@@ -705,6 +727,28 @@ export class ContractEmployeeServices {
         }
     }
 
+    //get approver waiting for approval table
+    static async getContractApproverTable(param: CommonListRequestDTO) {
+        try {
+            let url: Input = 'contracts/approver_approval/list';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
     //add approver result
     static async addContractApproverResult(param: ContractCommonRoleResultDTO) {
         try {
@@ -738,6 +782,54 @@ export class ContractEmployeeServices {
             const response: Response = await http
                 .post(url, {
                     body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //add employee number
+    static async getContractEmployeeNumber(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/employee/get';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // ====================================================================
+    // renew contract services
+    // ====================================================================
+    static async getRenewContractList(param: CommonListRequestDTO) {
+        try {
+            let url: Input = 'contracts/renew/list';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
                 })
                 .json();
 
