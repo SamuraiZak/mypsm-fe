@@ -95,6 +95,93 @@ export class CourseFundApplicationServices {
         }
     }
 
+    // get employee documents
+    static async getCurrentCandidateDocuments(param: commonIdRequestDTO) {
+        try {
+            const url: Input = 'course/fund_application/document/get';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // download documents
+    static async downloadAttachment(param: string) {
+        try {
+            const url: Input = param;
+
+            // get the promise response
+            const promiseRes = await http.get(url, {
+                prefixUrl: '',
+                headers: {
+                    Accept: 'application/pdf',
+                    'Content-type': 'application/pdf',
+                },
+            });
+
+            if (promiseRes.status == 200) {
+                window.open(promiseRes.url);
+                return promiseRes.url;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // create fund application employee documents //multipart form
+    static async uploadFundApplicationEmployeeDocument(param: FormData) {
+        try {
+            const url: Input = 'fundapplications/document/add';
+
+            // param.append('key', 'document');
+            param.append('key', 'document');
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: param,
+                    headers: {
+                        Accept: 'multipart/form-data',
+                        'Content-type': 'multipart/form-data;',
+                    },
+                })
+                .json();
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+            console.log(result);
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     // get personal detail fund application details
     static async getCourseFundApplicationPersonalDetail(
         param: commonIdRequestDTO,
