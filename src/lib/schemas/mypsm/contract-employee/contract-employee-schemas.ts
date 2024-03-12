@@ -1,15 +1,20 @@
 import {
     booleanSchema,
-    codeSchema,
-    dateStringSchema,
-    longTextSchema,
-    maxDateSchema,
-    minDateSchema,
-    numberIdSchema,
     shortTextSchema,
 } from '$lib/schemas/common/schema-type';
-import { message } from 'sveltekit-superforms';
-import { number, z } from 'zod';
+import { z } from 'zod';
+
+const stringToMinDate = shortTextSchema.refine((val) => {
+    const convertedStringToDate = new Date(val);
+    const currentDate = new Date();
+return convertedStringToDate > currentDate;
+}, { message: "Tarikh tidak boleh kurang dari tarikh semasa." })
+
+const stringToMaxDate = shortTextSchema.refine((val) => {
+    const convertedStringToDate = new Date(val);
+    const currentDate = new Date();
+return convertedStringToDate < currentDate;
+}, { message: "Tarikh tidak boleh lebih dari tarikh semasa." })
 
 export const numberSchema = z.coerce.number({
     required_error: 'Medan ini hendaklah diisi.',
@@ -22,16 +27,14 @@ const identificationCardSchema = z.string().refine(x => /^[0-9]+$/.test(x) && x.
     message: "Sila nyatakan No. Kad Pengenalan dalam format yang dikehendaki."
 });
 const phoneSchema = z.string().refine(x => /^[0-9]+$/.test(x) && (x.length == 11 || x.length == 10),
-{
-    message: "Sila nyatakan No. Telefon Bimbit yang betul."
-});
+    {
+        message: "Sila nyatakan No. Telefon Bimbit yang betul."
+    });
 const optionalNumberSchema = z.number().refine(x => x > 0, { message: "Sila tetapkan pilihan anda." }).nullable().default(null);
 const optionalTextSchema = z.string().min(4, { message: "Medan hendaklah lebih dari 4 karakter." }).nullable().default(null);
-const optionalDate = z.coerce.date().nullable().default(null);
-const optionalBoolean = z.boolean().nullable().default(null);
-// ========================================
-// ============= Urus Setia 
-// ========================================
+
+
+
 export const _addNewContractEmployeeSchema = z.object({
     name: shortTextSchema,
     email: z.string({
@@ -41,11 +44,11 @@ export const _addNewContractEmployeeSchema = z.object({
         {
             message: "Sila nyatakan No. Kad Pengenalan dalam format yang dikehendaki."
         }),
-    startContract: minDateSchema,
-    endContract: minDateSchema,
+    startContract: stringToMinDate,
+    endContract: stringToMinDate,
     wageRate: numberSchema.refine(x => x > 0, { message: "Medan ini tidak boleh dibiar kosong." }),
     designation: shortTextSchema,
-    reportDutyDate: minDateSchema,
+    reportDutyDate: stringToMinDate,
 })
 
 export const _editNewContractEmployeeSchema = z.object({
@@ -65,8 +68,8 @@ export const _editNewContractEmployeeSchema = z.object({
     identityDocumentColor: shortTextSchema,
     identityDocumentNumber: identificationCardSchema,
     email: emailSchema,
-    propertyDeclarationDate: maxDateSchema,
-    birthDate: maxDateSchema,
+    propertyDeclarationDate: stringToMaxDate.nullable().default(null),
+    birthDate: stringToMaxDate,
     homeAddress: shortTextSchema,
     homeCountryId: numberSchema,
     homeStateId: numberSchema,
@@ -77,8 +80,8 @@ export const _editNewContractEmployeeSchema = z.object({
     mailStateId: numberSchema,
     mailCityId: numberSchema,
     mailPostcode: shortTextSchema,
-    isExPoliceOrSoldier: booleanSchema,
-    isInternalRelationship: booleanSchema,
+    isExPoliceOrSoldier: booleanSchema.default(false),
+    isInternalRelationship: booleanSchema.default(false),
     employeeNumber: optionalTextSchema,
     relationshipId: optionalNumberSchema,
 })
@@ -91,7 +94,7 @@ export const _addContractAcademicSchema = z.object({
     educationLevelId: numberSchema,
     sponsorshipId: numberSchema,
     name: shortTextSchema,
-    completionDate: maxDateSchema,
+    completionDate: stringToMaxDate,
     finalGrade: shortTextSchema,
     field: shortTextSchema,
 })
@@ -104,39 +107,39 @@ export const _addContractExperienceSchema = z.object({
     address: shortTextSchema,
     position: shortTextSchema,
     positionCode: shortTextSchema,
-    startDate: maxDateSchema,
-    endDate: maxDateSchema,
+    startDate: stringToMaxDate,
+    endDate: stringToMaxDate,
     salary: numberSchema,
 })
 
 export const _addContractActivitySchema = z.object({
     name: shortTextSchema,
-    joinDate: maxDateSchema,
+    joinDate: stringToMaxDate,
     position: shortTextSchema,
     description: shortTextSchema,
 })
 
 export const _commonContractDependencySchema = z.object({
-    birthCountryId:         numberSchema,
-    birthStateId:           numberSchema,
-    relationshipId:         numberSchema,
-    educationLevelId:       numberSchema,
-    raceId:                 numberSchema,
-    nationalityId:          numberSchema,
-    maritalId:              numberSchema,
-    genderId:               numberSchema,
-    name:                   shortTextSchema,
-    alternativeName:        shortTextSchema,
-    identityDocumentColor:  shortTextSchema,
+    birthCountryId: numberSchema,
+    birthStateId: numberSchema,
+    relationshipId: numberSchema,
+    educationLevelId: numberSchema,
+    raceId: numberSchema,
+    nationalityId: numberSchema,
+    maritalId: numberSchema,
+    genderId: numberSchema,
+    name: shortTextSchema,
+    alternativeName: shortTextSchema,
+    identityDocumentColor: shortTextSchema,
     identityDocumentNumber: identificationCardSchema,
-    address:                shortTextSchema,
-    postcode:               shortTextSchema,
-    birthDate:              maxDateSchema,
-    workAddress:            shortTextSchema,
-    workPostcode:           shortTextSchema,
-    phoneNumber:            phoneSchema,
-    marriageDate:           optionalDate,
-    inSchool:               booleanSchema,
+    address: shortTextSchema,
+    postcode: shortTextSchema,
+    birthDate: stringToMaxDate,
+    workAddress: shortTextSchema,
+    workPostcode: shortTextSchema,
+    phoneNumber: phoneSchema,
+    marriageDate: stringToMaxDate.nullable().default(null),
+    inSchool: booleanSchema,
 })
 
 export const _uploadDocSchema = z.object({
@@ -146,31 +149,36 @@ export const _uploadDocSchema = z.object({
         .nullable(),
 });
 
-export const _addContractSecretaryUpdate = z.object({
-    candidateId:               numberSchema,
-    startContract:             minDateSchema,
-    endContract:               minDateSchema,
-    wageRate:                  numberSchema,
-    placementId:               numberSchema,
-    designation:               shortTextSchema,
-    reportDutyDate:            minDateSchema,
-    kwspNo:                    shortTextSchema,
-    socsoNo:                   shortTextSchema,
-    taxNo:                     shortTextSchema,
-    bankName:                  shortTextSchema,
-    bankAccount:               shortTextSchema,
-    serviceTypeId:             numberSchema,
-    leaveEntitlement:          numberSchema,
-    effectiveDate:             minDateSchema,
-    civilServiceStartDate:     minDateSchema,
-    lkimServiceStartDate:      minDateSchema,
-    currentServiceStartDate:   minDateSchema,
-    firstConfirmServiceDate:   minDateSchema,
-    currentConfirmServiceDate: minDateSchema,
+export const _addContractViewSecretaryUpdate = z.object({
+    candidateId: numberSchema,
+    startContract: stringToMinDate,
+    endContract: stringToMinDate,
+    wageRate: numberSchema,
+    placementId: numberSchema,
+    designation: shortTextSchema,
+    reportDutyDate: stringToMinDate,
+    kwspNo: shortTextSchema,
+    socsoNo: shortTextSchema,
+    taxNo: shortTextSchema,
+    bankName: shortTextSchema,
+    bankAccount: shortTextSchema,
+    serviceTypeId: numberSchema,
+    leaveEntitlement: numberSchema,
+    effectiveDate: stringToMinDate,
+    civilServiceStartDate: stringToMinDate,
+    lkimServiceStartDate: stringToMinDate,
+    currentServiceStartDate: stringToMinDate,
+    firstConfirmServiceDate: stringToMinDate,
+    currentConfirmServiceDate: stringToMinDate,
 })
 
 export const _addContractCommonRoleResult = z.object({
-    id:     numberSchema,
+    id: numberSchema,
     status: booleanSchema,
     remark: shortTextSchema,
+})
+export const _addContractSupporterApprover = z.object({
+    candidateId: numberSchema,
+    supporterId: numberSchema,
+    approverId: numberSchema,
 })
