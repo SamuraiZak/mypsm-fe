@@ -15,7 +15,7 @@ import type {
     CourseAddExamApplicationRequestDTO,
     CourseSetExamAttendanceRequestDTO,
 } from '$lib/dto/mypsm/course/exam/course-exam-application.dto';
-import type { CourseExamApplicationResultDTO } from '$lib/dto/mypsm/course/exam/course-exam-result.dto';
+import type { CourseExamApplicationResultRequestDTO } from '$lib/dto/mypsm/course/exam/course-exam-result.dto';
 // import type { CourseCreateExamRequestDTO } from '$lib/dto/mypsm/course/exam/course-exam.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
@@ -355,7 +355,9 @@ export class CourseServices {
     }
 
     // set result for exam application
-    static async setCourseExamResult(param: CourseExamApplicationResultDTO) {
+    static async setCourseExamResult(
+        param: CourseExamApplicationResultRequestDTO,
+    ) {
         try {
             const url: Input = 'course/exam_application/edit';
 
@@ -374,6 +376,31 @@ export class CourseServices {
 
             if (result.status == 'success') {
                 await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // get exam result
+    static async getCourseExamResult(param: commonIdRequestDTO) {
+        try {
+            const url: Input = 'course/exam_application/exam_result';
+
+            // get the promise response
+            const response: Response = await http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
