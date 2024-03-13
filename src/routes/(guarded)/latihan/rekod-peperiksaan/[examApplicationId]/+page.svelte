@@ -37,6 +37,12 @@
 
     let isReadonlySecretaryApprovalResult = writable<boolean>();
     let isReadonlyExamResult = writable<boolean>();
+    let examApplicationIsFail = writable<boolean>();
+
+    $: data.responses.courseExamSecretaryApprovalResponse.data?.details
+        .status === false
+        ? examApplicationIsFail.set(true)
+        : examApplicationIsFail.set(false);
 
     $: data.responses.courseExamSecretaryApprovalResponse.data?.details
         .status == null
@@ -141,7 +147,9 @@
 
 <ContentHeader title="Maklumat Peperiksaan Yang Dipohon">
     {#if data.responses.courseExamResultResponse.data?.details && data.responses.courseExamResultResponse.data?.details.examResult !== ''}
-        <Badge color="green">Proses Peperiksaan Tamat</Badge>
+        <Badge color="dark">Proses Peperiksaan Tamat</Badge>
+    {:else if $examApplicationIsFail}
+        <Badge color="red">Proses Permohonan Diberhentikan</Badge>
     {/if}
     <TextIconButton
         label="Kembali"
@@ -777,7 +785,7 @@
             >
                 <div class="mb-5">
                     <b class="text-sm text-system-primary"
-                        >Keputusan Urus Setia Perjawatan</b
+                        >Keputusan Urus Setia Latihan</b
                     >
                 </div>
 
@@ -812,59 +820,62 @@
             <hr />
         </StepperContentBody>
     </StepperContent>
-    <StepperContent>
-        <StepperContentHeader title="Keputusan Panel">
-            {#if data.role.isCourseSecretaryRole && !isReadonlyExamResult}
-                <TextIconButton
-                    type="primary"
-                    label="Simpan"
-                    form="examApplicationPanelResultForm"
-                ></TextIconButton>
-            {/if}
-        </StepperContentHeader>
-        <StepperContentBody>
-            <form
-                id="examApplicationPanelResultForm"
-                method="POST"
-                use:examResultInfoEnhance
-                class="flex w-full flex-col gap-2.5"
-            >
-                <div class="mb-5">
-                    <b class="text-sm text-system-primary"
-                        >Keputusan daripada Panel Pemeriksa:</b
-                    >
-                </div>
-
-                <input hidden bind:value={$examResultInfoForm.id} />
-
-                <CustomTextField
-                    disabled
-                    id="remark"
-                    label="Tajuk Peperiksaan"
-                    placeholder="-"
-                    bind:val={$examResultInfoForm.examTitle}
-                ></CustomTextField>
-
-                {#if data.role.isCourseSecretaryRole || $isReadonlyExamResult}
-                    <CustomSelectField
-                        disabled={!data.role.isCourseSecretaryRole ||
-                            $isReadonlyExamResult}
-                        errors={$examResultInfoErrors.examResult}
-                        id="examResult"
-                        label="Keputusan Panel"
-                        placeholder="-"
-                        bind:val={$examResultInfoForm.examResult}
-                        options={data.selectionOptions.examResultLookup}
-                    ></CustomSelectField>
-                {:else}
-                    <span class="text-center text-sm italic text-system-primary"
-                        >Menunggu keputusan daripada panel.</span
-                    >
+    {#if !$examApplicationIsFail && isReadonlySecretaryApprovalResult}
+        <StepperContent>
+            <StepperContentHeader title="Keputusan Panel">
+                {#if data.role.isCourseSecretaryRole && !isReadonlyExamResult}
+                    <TextIconButton
+                        type="primary"
+                        label="Simpan"
+                        form="examApplicationPanelResultForm"
+                    ></TextIconButton>
                 {/if}
-            </form>
-            <hr />
-        </StepperContentBody>
-    </StepperContent>
+            </StepperContentHeader>
+            <StepperContentBody>
+                <form
+                    id="examApplicationPanelResultForm"
+                    method="POST"
+                    use:examResultInfoEnhance
+                    class="flex w-full flex-col gap-2.5"
+                >
+                    <div class="mb-5">
+                        <b class="text-sm text-system-primary"
+                            >Keputusan daripada Panel Pemeriksa:</b
+                        >
+                    </div>
+
+                    <input hidden bind:value={$examResultInfoForm.id} />
+
+                    <CustomTextField
+                        disabled
+                        id="remark"
+                        label="Tajuk Peperiksaan"
+                        placeholder="-"
+                        bind:val={$examResultInfoForm.examTitle}
+                    ></CustomTextField>
+
+                    {#if data.role.isCourseSecretaryRole || $isReadonlyExamResult}
+                        <CustomSelectField
+                            disabled={!data.role.isCourseSecretaryRole ||
+                                $isReadonlyExamResult}
+                            errors={$examResultInfoErrors.examResult}
+                            id="examResult"
+                            label="Keputusan Panel"
+                            placeholder="-"
+                            bind:val={$examResultInfoForm.examResult}
+                            options={data.selectionOptions.examResultLookup}
+                        ></CustomSelectField>
+                    {:else}
+                        <span
+                            class="text-center text-sm italic text-system-primary"
+                            >Menunggu keputusan daripada panel.</span
+                        >
+                    {/if}
+                </form>
+                <hr />
+            </StepperContentBody>
+        </StepperContent>
+    {/if}
 </Stepper>
 
 <Toaster />
