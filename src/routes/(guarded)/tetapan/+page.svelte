@@ -4,7 +4,7 @@
     import SvgMailSolid from '$lib/assets/svg/SvgMailSolid.svelte';
     import { goto } from '$app/navigation';
 </script>
- 
+
 <section
     class="flex h-full max-h-full w-full flex-col gap-2 overflow-hidden p-10 pb-2"
 >
@@ -29,13 +29,6 @@
         <div class="flex w-full flex-col items-center justify-start gap-2">
             <!-- button group starts here -->
             <div class="grid w-full grid-cols-2 gap-2.5 md:grid-cols-3">
-                <CardButton
-                    title="E-mel"
-                    subtitle="Kemaskini sekarang"
-                    onClick={() => {}}
-                >
-                    <SvgMailSolid slot="icon" size="20"></SvgMailSolid>
-                </CardButton>
                 <CardButton
                     title="Kata Laluan"
                     subtitle="Kemaskini sekarang"
