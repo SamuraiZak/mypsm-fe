@@ -164,3 +164,18 @@ export const _fundReimbursementApprovalSchema = z.object({
     remark: shortTextSchema,
     status: booleanSchema,
 });
+
+// ==================================================
+// fund reimbursement document upload schema
+// ==================================================
+export const _fundReimbursementDocumentSchema = z.object({
+    id: numberIdSchema,
+    document: z.array(z.object({ document: z.string() })),
+});
+export const _fundReimbursementUploadDocSchema = z.object({
+    id: numberIdSchema,
+    documents: z
+        .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
+        .refine((f) => f.size < 4_000_000, 'Maximum 4 MB saiz muat naik.')
+        .array(),
+});

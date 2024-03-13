@@ -11,6 +11,7 @@ import {
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
 import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
 import type { CourseFundApplicationApprovalDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-approval.dto';
+import type { CourseFundApplicationUploadDocumentsRequestDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-document.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
@@ -149,16 +150,24 @@ export class CourseFundApplicationServices {
     }
 
     // create fund application employee documents //multipart form
-    static async uploadFundApplicationEmployeeDocument(param: FormData) {
+    static async uploadFundApplicationEmployeeDocument(
+        param: CourseFundApplicationUploadDocumentsRequestDTO,
+    ) {
         try {
             const url: Input = 'fundapplications/document/add';
 
             // param.append('key', 'document');
-            param.append('key', 'document');
+            const params = new FormData();
+            params.append('id', param.id.toString());
+            // Append each file
+            param.documents.forEach((file) => {
+                params.append('files', file);
+            });
+
             // get the promise response
             const promiseRes: Promise<Response> = http
                 .post(url, {
-                    body: param,
+                    body: params,
                     headers: {
                         Accept: 'multipart/form-data',
                         'Content-type': 'multipart/form-data;',
@@ -299,7 +308,7 @@ export class CourseFundApplicationServices {
         param: CourseFundApplicationApprovalDTO,
     ) {
         try {
-            const url: Input = 'course/fund_application/confirmer_approval/get';
+            const url: Input = 'course/fund_application/confirmer_approval/add';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -330,7 +339,7 @@ export class CourseFundApplicationServices {
         param: commonIdRequestDTO,
     ) {
         try {
-            const url: Input = 'course/fund_application/confirmer_approval/add';
+            const url: Input = 'course/fund_application/confirmer_approval/get';
 
             // get the promise response
             const response: Response = await http
