@@ -117,7 +117,7 @@ export async function load({ params }) {
     );
 
     const fundApplicationIntegritySecretaryApprovalForm = await superValidate(
-        fundApplicationCourseSecretaryApprovalResponse.data
+        fundApplicationIntegritySecretaryApprovalResponse.data
             ?.details as CourseFundApplicationApprovalDTO,
         zod(_fundApplicationApprovalSchema),
     );
