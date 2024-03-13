@@ -25,11 +25,11 @@
             pageNum: 1,
             totalData: 4,
             totalPage: 1,
-        },  
+        },
         data: data.contractEmployeeList ?? [],
         hiddenData: ['candidateId'],
     };
-    
+    console.log(data.contractEmployeeList);
     //table for calon kakitangan kontrak
     let contractOfferTable: TableDTO = {
         param: param,
@@ -109,7 +109,10 @@
                     bind:tableData={contractEmployeeListTable}
                     bind:passData={rowData}
                     detailActions={() =>
-                        goto('./lantikan-baru/butiran-calon-' + rowData.candidateId)}
+                        goto(
+                            './lantikan-baru/butiran-calon-' +
+                                rowData.candidateId,
+                        )}
                 />
             </div>
         {:else if data.currentRoleCode === UserRoleConstant.calonKontrak.code}
@@ -123,15 +126,10 @@
                     bind:passData={rowData}
                     hiddenFooter
                     detailActions={() => {
-                        if (rowData.remark == null) {
-                            goto('./lantikan-baru/butiran-baru-' +
-                                    rowData.candidateId)
-                        } else {
-                            goto(
-                                './lantikan-baru/butiran-calon-' +
-                                    rowData.candidateId
-                            );
-                        }
+                        goto(
+                            './lantikan-baru/butiran-calon-' +
+                                rowData.candidateId,
+                        );
                     }}
                 />
             </div>

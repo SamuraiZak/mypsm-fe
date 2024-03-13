@@ -20,15 +20,11 @@ export const _submit = async (formData: AddNewContractEmployeeDTO) => {
     if (form.valid) {
         const response: CommonResponseDTO =
             await ContractEmployeeServices.addNewContractEmployee(
-                form.data
+                form.data as AddNewContractEmployeeDTO
             )
-        if (form.valid) {
-            const result: string | null = 'success';
+        if(response.status == 'success'){
             goto('./');
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
+            return response
         }
     }
 };

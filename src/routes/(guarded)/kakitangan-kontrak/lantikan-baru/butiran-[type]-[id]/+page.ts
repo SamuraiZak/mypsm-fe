@@ -33,7 +33,6 @@ import {
     _addContractSupporterApprover,
     _addContractViewSecretaryUpdate,
     _commonContractDependencySchema,
-    _contractAcademicSchema,
     _editNewContractEmployeeSchema,
     _getContractEmployeeNumber,
     _uploadDocSchema,
@@ -49,22 +48,21 @@ export const load = async ({ params }) => {
     const contractId: CandidateIDRequestBody = {
         id: Number(params.id)
     };
-    let contractDocLink: string = ""
-    let viewOnly: boolean = true;
+    let contractDocLink: string = getContractDocumentLink()
     let getContractPersonalDetailResponse: CommonResponseDTO = {}
     let getContractPersonalDetail = {} as GetContractPersonalDetailDTO;
     let getContractAcedemicDetailsResponse: CommonResponseDTO = {};
-    let getContractAcademicDetails = {} as GetContractAcademicDetailDTO;
+    let getContractAcademicDetails: GetContractAcademicDetailDTO = { academicList: [], isReadonly: false };
     let getContractExperienceDetailsResponse: CommonResponseDTO = {};
-    let getContractExperienceDetails = {} as GetContractExperienceDetailDTO;
+    let getContractExperienceDetails: GetContractExperienceDetailDTO = { experienceList: [], isReadonly: false };
     let getContractActivityDetailsResponse: CommonResponseDTO = {};
-    let getContractActivityDetails = {} as GetContractActivityDetailDTO;
+    let getContractActivityDetails: GetContractActivityDetailDTO = { activityList: [], isReadonly: false };
     let getContractFamilyDetailsResponse: CommonResponseDTO = {};
-    let getContractFamilyDetails: GetContractDependencyDetailDTO = { dependenciesList: [], isReadonly: true };
+    let getContractFamilyDetails: GetContractDependencyDetailDTO = { dependenciesList: [], isReadonly: false };
     let getContractNonFamilyDetailsResponse: CommonResponseDTO = {};
-    let getContractNonFamilyDetails: GetContractDependencyDetailDTO = { dependenciesList: [], isReadonly: true };
+    let getContractNonFamilyDetails: GetContractDependencyDetailDTO = { dependenciesList: [], isReadonly: false };
     let getContractNextOfKinDetailsResponse: CommonResponseDTO = {};
-    let getContractNextOfKinDetails: GetContractNextOfKinDetailDTO = { nextOfKinList: [], isReadonly: true };
+    let getContractNextOfKinDetails: GetContractNextOfKinDetailDTO = { nextOfKinList: [], isReadonly: false };
     let getContractDocumentsResponse: CommonResponseDTO = {};
     let getContractDocuments = {} as GetContractDocumentDTO;
     let getContractSecretaryUpdateResponse: CommonResponseDTO = {};
@@ -82,89 +80,84 @@ export const load = async ({ params }) => {
 
     const lookup = await getLookup();
 
-    if (params.type == "baru") {
-        viewOnly = false;
-        contractDocLink = getContractDocumentLink()
-    } else if (params.type == "calon") {
-        viewOnly = true;
-        // ========================== get personal detail
-        getContractPersonalDetailResponse =
-            await ContractEmployeeServices.getContractPersonalDetail(contractId)
-        getContractPersonalDetail =
-            await getContractPersonalDetailResponse.data?.details as GetContractPersonalDetailDTO;
+    // ========================== get personal detail
+    getContractPersonalDetailResponse =
+        await ContractEmployeeServices.getContractPersonalDetail(contractId)
+    getContractPersonalDetail =
+        await getContractPersonalDetailResponse.data?.details as GetContractPersonalDetailDTO;
 
-        // ========================== get academic detail
-        getContractAcedemicDetailsResponse =
-            await ContractEmployeeServices.getContractAcademicDetail(contractId)
-        getContractAcademicDetails =
-            await getContractAcedemicDetailsResponse.data?.details as GetContractAcademicDetailDTO;
+    // ========================== get academic detail
+    getContractAcedemicDetailsResponse =
+        await ContractEmployeeServices.getContractAcademicDetail(contractId)
+    getContractAcademicDetails =
+        await getContractAcedemicDetailsResponse.data?.details as GetContractAcademicDetailDTO;
 
-        // ========================== get experience detail
-        getContractExperienceDetailsResponse =
-            await ContractEmployeeServices.getContractExperienceDetail(contractId)
-        getContractExperienceDetails =
-            await getContractExperienceDetailsResponse.data?.details as GetContractExperienceDetailDTO;
+    // ========================== get experience detail
+    getContractExperienceDetailsResponse =
+        await ContractEmployeeServices.getContractExperienceDetail(contractId)
+    getContractExperienceDetails =
+        await getContractExperienceDetailsResponse.data?.details as GetContractExperienceDetailDTO;
 
-        // ========================== get activity detail
-        getContractActivityDetailsResponse =
-            await ContractEmployeeServices.getContractActivityDetail(contractId)
-        getContractActivityDetails =
-            await getContractActivityDetailsResponse.data?.details as GetContractActivityDetailDTO;
+    // ========================== get activity detail
+    getContractActivityDetailsResponse =
+        await ContractEmployeeServices.getContractActivityDetail(contractId)
+    getContractActivityDetails =
+        await getContractActivityDetailsResponse.data?.details as GetContractActivityDetailDTO;
 
-        // ========================== get family detail
-        getContractFamilyDetailsResponse =
-            await ContractEmployeeServices.getContractFamilyDetail(contractId)
-        getContractFamilyDetails =
-            await getContractFamilyDetailsResponse.data?.details as GetContractDependencyDetailDTO;
+    // ========================== get family detail
+    getContractFamilyDetailsResponse =
+        await ContractEmployeeServices.getContractFamilyDetail(contractId)
+    getContractFamilyDetails =
+        await getContractFamilyDetailsResponse.data?.details as GetContractDependencyDetailDTO;
 
-        // ========================== get non family detail
-        getContractNonFamilyDetailsResponse =
-            await ContractEmployeeServices.getContractNonFamilyDetail(contractId)
-        getContractNonFamilyDetails =
-            await getContractNonFamilyDetailsResponse.data?.details as GetContractDependencyDetailDTO;
+    // ========================== get non family detail
+    getContractNonFamilyDetailsResponse =
+        await ContractEmployeeServices.getContractNonFamilyDetail(contractId)
+    getContractNonFamilyDetails =
+        await getContractNonFamilyDetailsResponse.data?.details as GetContractDependencyDetailDTO;
 
-        // ========================== get next of kin detail
-        getContractNextOfKinDetailsResponse =
-            await ContractEmployeeServices.getContractNextOfKinDetail(contractId)
-        getContractNextOfKinDetails =
-            await getContractNextOfKinDetailsResponse.data?.details as GetContractNextOfKinDetailDTO;
+    // ========================== get next of kin detail
+    getContractNextOfKinDetailsResponse =
+        await ContractEmployeeServices.getContractNextOfKinDetail(contractId)
+    getContractNextOfKinDetails =
+        await getContractNextOfKinDetailsResponse.data?.details as GetContractNextOfKinDetailDTO;
 
-        // ========================== get uploaded documents
-        getContractDocumentsResponse =
-            await ContractEmployeeServices.getContractDocument(contractId)
-        getContractDocuments =
-            await getContractDocumentsResponse.data?.details as GetContractDocumentDTO;
-        // ========================== get secretary update
-        getContractSecretaryUpdateResponse =
-            await ContractEmployeeServices.getContractSecretaryUpdate(contractId)
-        getSecretaryUpdate =
-            await getContractSecretaryUpdateResponse.data?.details as GetContractSecretaryUpdateDTO;
-        // ========================== get secretary result
-        getContractSecretaryResultResponse =
-            await ContractEmployeeServices.getContractSecretaryResult(contractId)
-        getSecretaryResult =
-            await getContractSecretaryResultResponse.data?.details as GetContracSecretaryResultDTO;
-        // ========================== get assigned supporter and approver
-        getContractSupporterApproverResponse =
-            await ContractEmployeeServices.getContractSupporterApprover(contractId)
-        getSupporterApprover =
-            await getContractSupporterApproverResponse.data?.details as GetContractSupporterApproverDTO;
-        // ========================== get assigned supporter result
-        getContractSupporterResultResponse =
-            await ContractEmployeeServices.getContractSupporterResult(contractId)
-        getSupporterResult =
-            await getContractSupporterResultResponse.data?.details as GetContractSupporterApproverResultDTO;
-        // ========================== get assigned approver result
-        getContractApproverResultResponse =
-            await ContractEmployeeServices.getContractApproverResult(contractId)
-        getApproverResult =
-            await getContractApproverResultResponse.data?.details as GetContractSupporterApproverResultDTO;
-        // ========================== get contract employee number 
-        getContractEmployeeNumberResponse =
-            await ContractEmployeeServices.getContractEmployeeNumber(contractId)
-        getContractEmployeeNumber =
-            await getContractEmployeeNumberResponse.data?.details as GetContractEmployeeNumberDTO;
-    }
+    // ========================== get uploaded documents
+    getContractDocumentsResponse =
+        await ContractEmployeeServices.getContractDocument(contractId)
+    getContractDocuments =
+        await getContractDocumentsResponse.data?.details as GetContractDocumentDTO;
+    // ========================== get secretary update
+    getContractSecretaryUpdateResponse =
+        await ContractEmployeeServices.getContractSecretaryUpdate(contractId)
+    getSecretaryUpdate =
+        await getContractSecretaryUpdateResponse.data?.details as GetContractSecretaryUpdateDTO;
+    // ========================== get secretary result
+    getContractSecretaryResultResponse =
+        await ContractEmployeeServices.getContractSecretaryResult(contractId)
+    getSecretaryResult =
+        await getContractSecretaryResultResponse.data?.details as GetContracSecretaryResultDTO;
+    // ========================== get assigned supporter and approver
+    getContractSupporterApproverResponse =
+        await ContractEmployeeServices.getContractSupporterApprover(contractId)
+    getSupporterApprover =
+        await getContractSupporterApproverResponse.data?.details as GetContractSupporterApproverDTO;
+    // ========================== get assigned supporter result
+    getContractSupporterResultResponse =
+        await ContractEmployeeServices.getContractSupporterResult(contractId)
+    getSupporterResult =
+        await getContractSupporterResultResponse.data?.details as GetContractSupporterApproverResultDTO;
+    // ========================== get assigned approver result
+    getContractApproverResultResponse =
+        await ContractEmployeeServices.getContractApproverResult(contractId)
+    getApproverResult =
+        await getContractApproverResultResponse.data?.details as GetContractSupporterApproverResultDTO;
+    // ========================== get contract employee number 
+    getContractEmployeeNumberResponse =
+        await ContractEmployeeServices.getContractEmployeeNumber(contractId)
+    getContractEmployeeNumber =
+        await getContractEmployeeNumberResponse.data?.details as GetContractEmployeeNumberDTO;
+
     //form validation
     const editNewContractEmployeeDetailForm = await superValidate(getContractPersonalDetail, zod(_editNewContractEmployeeSchema));
     const academicDetailForm = await superValidate(zod(_addContractAcademicSchema));
@@ -173,14 +166,16 @@ export const load = async ({ params }) => {
     const familyDetailForm = await superValidate(zod(_commonContractDependencySchema));
     const dependantDetailForm = await superValidate(zod(_commonContractDependencySchema));
     const nextOfKinDetailForm = await superValidate(zod(_commonContractDependencySchema));
-    const updateContractDetailForm = await superValidate(getSecretaryUpdate, zod(_addContractViewSecretaryUpdate))
+    const updateContractDetailForm = await superValidate(getSecretaryUpdate, zod(_addContractViewSecretaryUpdate));
     const secretaryContractResultForm = await superValidate(getSecretaryResult, zod(_addContractCommonRoleResult));
+
     const setSupporterApproverForm = await superValidate(getSupporterApprover, zod(_addContractSupporterApprover));
+
     const supporterContractResultForm = await superValidate(getSupporterResult, zod(_addContractCommonRoleResult));
     const approverContractResultForm = await superValidate(getApproverResult, zod(_addContractCommonRoleResult));
     const contractUploadDocumentForm = await superValidate(zod(_uploadDocSchema));
-    const getContractEmployeeNumberForm = await superValidate(getContractEmployeeNumber,zod(_getContractEmployeeNumber))
-
+    const getContractEmployeeNumberForm = await superValidate(getContractEmployeeNumber, zod(_getContractEmployeeNumber));
+    console.log(editNewContractEmployeeDetailForm)
     return {
         currentRoleCode,
         contractId,
@@ -206,7 +201,6 @@ export const load = async ({ params }) => {
         getContractNextOfKinDetails,
         getContractDocuments,
         lookup,
-        viewOnly,
         contractDocLink,
         getContractEmployeeNumberForm,
     }
@@ -214,58 +208,17 @@ export const load = async ({ params }) => {
 
 export const _submitEditNewContractEmployeeDetailForm = async (formData: EditNewContractEmployeeDetailDTO) => {
     const form = await superValidate(formData, zod(_editNewContractEmployeeSchema));
-
     if (form.valid) {
-        // const tempData: EditNewContractEmployeeDetailDTO = {
-        //     birthDate: form.data.birthDate.toISOString().split('T')[0],
-        //     propertyDeclarationDate: form.data.propertyDeclarationDate.toISOString().split('T')[0],
-        //     genderId: form.data.genderId,
-        //     nationalityId: form.data.nationalityId,
-        //     religionId: form.data.religionId,
-        //     raceId: form.data.raceId,
-        //     titleId: form.data.titleId,
-        //     ethnicId: form.data.ethnicId,
-        //     maritalId: form.data.maritalId,
-        //     birthCountryId: form.data.birthCountryId,
-        //     birthStateId: form.data.birthStateId,
-        //     phoneNumber: form.data.phoneNumber,
-        //     assetDeclarationStatusId: form.data.assetDeclarationStatusId,
-        //     name: form.data.name,
-        //     alternativeName: form.data.alternativeName,
-        //     identityDocumentColor: form.data.identityDocumentColor,
-        //     identityDocumentNumber: form.data.identityDocumentNumber,
-        //     email: form.data.email,
-        //     homeAddress: form.data.homeAddress,
-        //     homeCountryId: form.data.homeCountryId,
-        //     homeStateId: form.data.homeStateId,
-        //     homeCityId: form.data.homeCityId,
-        //     homePostcode: form.data.homePostcode,
-        //     mailAddress: form.data.mailAddress,
-        //     mailCountryId: form.data.mailCountryId,
-        //     mailStateId: form.data.mailStateId,
-        //     mailCityId: form.data.mailCityId,
-        //     mailPostcode: form.data.mailPostcode,
-        //     isExPoliceOrSoldier: form.data.isExPoliceOrSoldier,
-        //     isInternalRelationship: form.data.isInternalRelationship,
-        //     employeeNumber: form.data.employeeNumber,
-        //     relationshipId: form.data.relationshipId,
-        // }
+        const { isReadonly, ...tempObj } = form.data
         const response: CommonResponseDTO =
             await ContractEmployeeServices.editNewContractEmployeeDetail(
-                form.data as EditNewContractEmployeeDetailDTO
+                tempObj as EditNewContractEmployeeDetailDTO
             )
-        if (form.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
+        return { response }
     }
 };
 
 export const _submitAcademicDetailForm = async (formData: AddNewContractEmployeeAcademicDTO) => {
-    // formData.academics.map((convert) => convert.completionDate = convert.completionDate.toString().split('T')[0])
     const response: CommonResponseDTO =
         await ContractEmployeeServices.addNewContractEmployeeAcademic(
             formData
@@ -282,9 +235,6 @@ export const _submitExperienceDetailForm = async (formData: AddNewContractEmploy
 };
 
 export const _submitActivityDetailForm = async (formData: AddNewContractEmployeeActivityDTO) => {
-    // formData.activities.map((convert) => {
-    //     convert.joinDate = convert.joinDate.toString().split('T')[0];
-    // })
     const response: CommonResponseDTO =
         await ContractEmployeeServices.addNewContractEmployeeActivity(
             formData
@@ -292,12 +242,6 @@ export const _submitActivityDetailForm = async (formData: AddNewContractEmployee
     return { response }
 };
 export const _submitFamilyDetailForm = async (formData: AddNewContractEmployeeDependencyDTO) => {
-    // formData.dependencies.map((convert) => {
-    //     convert.birthDate = convert.birthDate.toString().split('T')[0];
-    //     if (convert.marriageDate !== null) {
-    //         convert.marriageDate = convert.marriageDate.toString().split('T')[0];
-    //     }
-    // })
     const response: CommonResponseDTO =
         await ContractEmployeeServices.addNewContractEmployeeFamily(
             formData
@@ -305,12 +249,6 @@ export const _submitFamilyDetailForm = async (formData: AddNewContractEmployeeDe
     return { response }
 }
 export const _submitDependantDetailForm = async (formData: AddNewContractEmployeeDependencyDTO) => {
-    // formData.dependencies.map((convert) => {
-    //     convert.birthDate = convert.birthDate.toString().split('T')[0];
-    //     if (convert.marriageDate !== null) {
-    //         convert.marriageDate = convert.marriageDate.toString().split('T')[0];
-    //     }
-    // })
     const response: CommonResponseDTO =
         await ContractEmployeeServices.addNewContractEmployeeDependency(
             formData
@@ -319,12 +257,6 @@ export const _submitDependantDetailForm = async (formData: AddNewContractEmploye
     return { response }
 };
 export const _submitNextOfKinForm = async (formData: AddContractNextOfKinDTO) => {
-    // formData.nextOfKins.map((convert) => {
-    //     convert.birthDate = convert.birthDate.toString().split('T')[0];
-    //     if (convert.marriageDate !== null) {
-    //         convert.marriageDate = convert.marriageDate.toString().split('T')[0];
-    //     }
-    // })
     const response: CommonResponseDTO =
         await ContractEmployeeServices.addNewContractEmployeeNextOfKin(
             formData
@@ -349,28 +281,6 @@ export const _submitDocumentForm = async (file: File | null | undefined) => {
 export const _submitUpdateContractDetailForm = async (formData: EditContractDetailSecretaryDTO) => {
     const form = await superValidate(formData, zod(_addContractViewSecretaryUpdate));
     if (form.valid) {
-        // const tempData: EditContractDetailSecretaryDTO = {
-        //     candidateId: form.data.candidateId,
-        //     startContract: form.data.startContract.toISOString().split('T')[0],
-        //     endContract: form.data.endContract.toISOString().split('T')[0],
-        //     reportDutyDate: form.data.reportDutyDate.toISOString().split('T')[0],
-        //     effectiveDate: form.data.effectiveDate.toISOString().split('T')[0],
-        //     civilServiceStartDate: form.data.civilServiceStartDate.toISOString().split('T')[0],
-        //     lkimServiceStartDate: form.data.lkimServiceStartDate.toISOString().split('T')[0],
-        //     currentServiceStartDate: form.data.currentServiceStartDate.toISOString().split('T')[0],
-        //     firstConfirmServiceDate: form.data.firstConfirmServiceDate.toISOString().split('T')[0],
-        //     currentConfirmServiceDate: form.data.currentConfirmServiceDate.toISOString().split('T')[0],
-        //     wageRate: form.data.wageRate,
-        //     placementId: form.data.placementId,
-        //     designation: form.data.designation,
-        //     kwspNo: form.data.kwspNo,
-        //     socsoNo: form.data.socsoNo,
-        //     taxNo: form.data.taxNo,
-        //     bankName: form.data.bankName,
-        //     bankAccount: form.data.bankAccount,
-        //     serviceTypeId: form.data.serviceTypeId,
-        //     leaveEntitlement: form.data.leaveEntitlement,
-        // }
         const response: CommonResponseDTO =
             await ContractEmployeeServices.updateContractDetail(
                 form.data
@@ -385,82 +295,60 @@ export const _submitUpdateContractDetailForm = async (formData: EditContractDeta
     }
 };
 
-export const _submitSecretaryContractResultForm = async (formData: ContractCommonRoleResultDTO) => {
+export const _submitSecretaryContractResultForm = async (formData: GetContracSecretaryResultDTO) => {
     const form = await superValidate(formData, zod(_addContractCommonRoleResult));
-    console.log(form)
     if (form.valid) {
+        const { isReadonly, ...tempObj } = form.data
         const response: CommonResponseDTO =
             await ContractEmployeeServices.addContractSecretaryResult(
-                form.data
+                tempObj as GetContracSecretaryResultDTO
             )
-        if (form.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
+
+        return { response }
     }
 };
 export const _submitSetSupporterApproverForm = async (formData: AddContractApproverSupporterDTO) => {
     const form = await superValidate(formData, zod(_addContractSupporterApprover));
-
     if (form.valid) {
+        const { isReadonly, ...tempObj } = form.data
         const response: CommonResponseDTO =
             await ContractEmployeeServices.addContractApproverSupporter(
-                form.data
+                tempObj as AddContractApproverSupporterDTO
             )
-        if (form.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
+        return { response }
     }
 };
 
-export const _submitSupporterContractResultForm = async (formData: object) => {
+export const _submitSupporterContractResultForm = async (formData: ContractCommonRoleResultDTO) => {
     const form = await superValidate(formData, zod(_addContractCommonRoleResult));
-    
+
     if (form.valid) {
-        const {name, ...tempObj} = form.data
+        const { name, isReadonly, ...tempObj } = form.data
         const response: CommonResponseDTO =
             await ContractEmployeeServices.addContractSupporterResult(
                 tempObj as ContractCommonRoleResultDTO
             )
-        if (form.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
+        return { response }
     }
 };
 
 export const _submitApproverContractResultForm = async (formData: ContractCommonRoleResultDTO) => {
     const form = await superValidate(formData, zod(_addContractCommonRoleResult));
-   
+
     if (form.valid) {
+        const { name, isReadonly, ...tempObj } = form.data
         const response: CommonResponseDTO =
             await ContractEmployeeServices.addContractApproverResult(
-                form.data
+                tempObj as ContractCommonRoleResultDTO
             )
-        if (form.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
+        return { response }
     }
 };
 export const _submitGetContractEmployeeNumberForm = async (contractId: CandidateIDRequestBody) => {
     const response: CommonResponseDTO =
-    await ContractEmployeeServices.getContractEmployeeNumber(
-        contractId,
-    );
+        await ContractEmployeeServices.getContractEmployeeNumber(
+            contractId,
+        );
 
     return response
 };
