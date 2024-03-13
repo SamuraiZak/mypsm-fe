@@ -1,8 +1,5 @@
 <script lang="ts">
-    import {
-        approveOptions,
-        certifyOptions,
-    } from '$lib/constants/core/radio-option-constants';
+    import { certifyOptions } from '$lib/constants/core/radio-option-constants';
     import { writable } from 'svelte/store';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
@@ -10,7 +7,8 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import toast, { Toaster } from 'svelte-french-toast';
-    import { dateProxy, superForm } from 'sveltekit-superforms/client';
+    import StepperOtherRolesResult from '$lib/components/stepper/StepperOtherRolesResult.svelte';
+    import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
@@ -29,13 +27,18 @@
 
     let isReadonlySecretaryApprovalResult = writable<boolean>(false);
 
+    let fundReimbursementIsFail = writable<boolean>(false);
+
     $: {
-        isReadonlySecretaryApprovalResult.set(
-            !!(
-                data.responses.fundReimbursementSecretaryApprovalResponse.data
-                    ?.details.status !== null
-            ),
-        );
+        data.responses.fundReimbursementSecretaryApprovalResponse.data?.details
+            .status === false
+            ? fundReimbursementIsFail.set(true)
+            : fundReimbursementIsFail.set(false);
+
+        data.responses.fundReimbursementSecretaryApprovalResponse.data?.details
+            .status !== null
+            ? isReadonlySecretaryApprovalResult.set(true)
+            : isReadonlySecretaryApprovalResult.set(false);
     }
 
     // Superforms
@@ -48,20 +51,6 @@
         validationMethod: 'oninput',
         validators: false,
     });
-
-    // const {
-    //     form: documentForm,
-    //     errors: documentFormErrors,
-    //     enhance: documentFormEnhance,
-    // } = superForm(data.newHireDocumentForm, {
-    //     SPA: true,
-    //     invalidateAll: false,
-    //     taintedMessage: false,
-    //     validators: _uploadDocumentsSchema,
-    //     onSubmit() {
-    //         _submitDocumentsForm($documentForm.document);
-    //     },
-    // });
 
     const { form: personalInfoForm, enhance: personalInfoEnhance } = superForm(
         data.forms.fundReimbursementPersonalInfoForm,
@@ -120,6 +109,8 @@
 <ContentHeader title="Maklumat Tuntutan Pembiayaan Yuran Pembelajaran">
     {#if data.responses.fundReimbursementSecretaryApprovalResponse.data?.details && data.responses.fundReimbursementSecretaryApprovalResponse.data?.details.status === true}
         <Badge color="green">Permohonan LULUS</Badge>
+    {:else if $fundReimbursementIsFail}
+        <Badge color="red">Permohonan TIDAK BERJAYA</Badge>
     {/if}
     <TextIconButton
         label="Kembali"
@@ -743,185 +734,35 @@
             </form>
         </StepperContentBody>
     </StepperContent>
-    <!-- <StepperContent>
-        <StepperContentHeader title="Dokumen - Dokumen Sokongan yang Berkaitan">
-            {#if !$isReadonlyDocumentFormStepper && data.isCandidateRole}
+    <StepperContent>
+        <StepperContentHeader title="Pengesahan Semakan Urus Setia Latihan">
+            {#if !$isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole}
                 <TextIconButton
                     type="primary"
                     label="Simpan"
-                    form="documentUploadForm"
-                />
+                    form="examApplicationSecretaryApprovalForm"
+                ></TextIconButton>
             {/if}
         </StepperContentHeader>
-        <StepperContentBody
-            ><div class="flex w-full flex-col gap-2">
-                {#if !$isReadonlyDocumentFormStepper && data.isCandidateRole}
-                    <p class="text-sm">
-                        Sila muat turun, isi dengan lengkap dokumen berikut,
-                        kemudian muat naik dokumen pada ruangan yang disediakan.
-                    </p>
-
-                    <ul
-                        class="cursor-pointer space-y-1 text-sm italic text-system-primary underline"
+        <StepperContentBody>
+            <form
+                id="examApplicationSecretaryApprovalForm"
+                method="POST"
+                use:secretaryApprovalInfoEnhance
+                class="flex w-full flex-col gap-2.5"
+            >
+                <div class="mb-5">
+                    <b class="text-sm text-system-primary"
+                        >Keputusan Urus Setia Latihan</b
                     >
-                        <li>
-                            <button
-                                on:click={() =>
-                                    handleDownload(
-                                        data.documentInfoResponse.data?.details
-                                            .template,
-                                    )}
-                                class="underline"
-                            >
-                                Borang Lantikan Baru</button
-                            >
-                        </li>
-                    </ul>
+                </div>
 
-                    {#if $documentFormErrors.document}
-                        <span
-                            class="font-sans text-sm italic text-system-danger"
-                            >Sila muat naik dokumen barkaitan.</span
-                        >
-                    {/if}
-                    <form
-                        id="documentUploadForm"
-                        method="POST"
-                        use:documentFormEnhance
-                        enctype="multipart/form-data"
-                    >
-                        <ContentHeader
-                            title="Dokumen Sokongan"
-                            borderClass="border-none"
-                        >
-                            <div
-                                hidden={!(
-                                    $documentForm.document instanceof File
-                                )}
-                            >
-                                <FileInputField
-                                    id="document"
-                                    handleOnInput={(e) => handleOnInput(e)}
-                                ></FileInputField>
-                            </div>
-                        </ContentHeader>
-                        <div
-                            class="border-bdr-primaryp-5 flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border p-2.5"
-                        >
-                            <div class="flex flex-wrap gap-3">
-                                {#if $documentForm.document instanceof File}
-                                    <FileInputFieldChildren
-                                        childrenType="grid"
-                                        handleDelete={() => handleDelete()}
-                                        fileName={$documentForm.document?.name}
-                                    />
-                                {/if}
-                            </div>
-                            <div
-                                class="flex flex-col items-center justify-center gap-2.5"
-                            >
-                                <p
-                                    class=" text-sm text-txt-tertiary"
-                                    hidden={$documentForm.document instanceof
-                                        File}
-                                >
-                                    Pilih fail dari peranti anda.
-                                </p>
-                                <div
-                                    class="text-txt-tertiary"
-                                    hidden={$documentForm.document instanceof
-                                        File}
-                                >
-                                    <svg
-                                        width={40}
-                                        height={40}
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke-width="1.5"
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                                        />
-                                    </svg>
-                                </div>
-                                <div
-                                    hidden={$documentForm.document instanceof
-                                        File}
-                                >
-                                    <FileInputField id="document"
-                                    ></FileInputField>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                {:else}
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
-                    >
-                        <ContentHeader
-                            title="Dokumen - Dokumen Sokongan yang Berkaitan"
-                        ></ContentHeader>
-                        <p
-                            class="mt-2 h-fit w-full bg-bgr-primary text-sm font-medium text-system-primary"
-                        >
-                            Fail-fail yang dimuat naik:
-                        </p>
-
-                        <div
-                            class="flex w-full flex-row items-center justify-between"
-                        >
-                            <label
-                                for=""
-                                class="block w-[20px] min-w-[20px] text-[11px] font-medium"
-                                >1.</label
-                            >
-                            <DownloadAttachment
-                                triggerDownload={() =>
-                                    handleDownload(
-                                        data.documentInfoResponse.data?.details
-                                            .attachment,
-                                    )}
-                                fileName={data.documentInfoResponse.data
-                                    ?.details.attachment}
-                            ></DownloadAttachment>
-                        </div>
-                    </div>
-                {/if}
-            </div></StepperContentBody
-        >
-    </StepperContent> -->
-    {#if $isReadonlySecretaryApprovalResult}
-        <StepperContent>
-            <StepperContentHeader title="Pengesahan Semakan Urus Setia Latihan">
-                {#if !$isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole}
-                    <TextIconButton
-                        type="primary"
-                        label="Simpan"
-                        form="examApplicationSecretaryApprovalForm"
-                    ></TextIconButton>
-                {/if}
-            </StepperContentHeader>
-            <StepperContentBody>
-                <form
-                    id="examApplicationSecretaryApprovalForm"
-                    method="POST"
-                    use:secretaryApprovalInfoEnhance
-                    class="flex w-full flex-col gap-2.5"
-                >
-                    <div class="mb-5">
-                        <b class="text-sm text-system-primary"
-                            >Keputusan Urus Setia Perjawatan</b
-                        >
-                    </div>
-
+                {#if $isReadonlySecretaryApprovalResult || data.role.isCourseSecretaryRole}
                     <input hidden bind:value={$secretaryApprovalInfoForm.id} />
 
                     <CustomTextField
-                        disabled={$isReadonlySecretaryApprovalResult}
+                        disabled={$isReadonlySecretaryApprovalResult ||
+                            !data.role.isCourseSecretaryRole}
                         errors={$secretaryApprovalInfoErrors.remark}
                         id="remark"
                         label="Tindakan/Ulasan"
@@ -930,7 +771,8 @@
                     ></CustomTextField>
 
                     <CustomSelectField
-                        disabled={$isReadonlySecretaryApprovalResult}
+                        disabled={$isReadonlySecretaryApprovalResult ||
+                            !data.role.isCourseSecretaryRole}
                         errors={$secretaryApprovalInfoErrors.status}
                         id="status"
                         label="Keputusan"
@@ -938,11 +780,13 @@
                         bind:val={$secretaryApprovalInfoForm.status}
                         options={certifyOptions}
                     ></CustomSelectField>
-                </form>
-                <hr />
-            </StepperContentBody>
-        </StepperContent>
-    {/if}
+                {:else}
+                    <StepperOtherRolesResult />
+                {/if}
+            </form>
+            <hr />
+        </StepperContentBody>
+    </StepperContent>
 </Stepper>
 
 <Toaster />
