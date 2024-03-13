@@ -17,6 +17,7 @@
         on:input={handleOnInput}
         type="file"
         {id}
+        name={id}
         class=" z-[-1] h-[0.001px] w-[0.001px] overflow-hidden opacity-0"
         multiple
         accept=".pdf"
