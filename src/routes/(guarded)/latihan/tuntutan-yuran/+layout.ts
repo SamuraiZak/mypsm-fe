@@ -3,14 +3,13 @@ import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
-import type { CourseExamApplicationListResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-application.dto';
-import { renameExamTypeKeyValue } from '$lib/helpers/mypsm/course/exam-type.helper';
+import type { CourseFundApplicationListResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
-import { CourseServices } from '$lib/services/implementation/mypsm/latihan/course.service';
+import { CourseFundReimbursementServices } from '$lib/services/implementation/mypsm/latihan/fundReimbursement.service';
 
 export const load = async () => {
-    let examApplicationResponse: CommonResponseDTO = {};
-    let examApplicationList = [];
+    let fundApplicationResponse: CommonResponseDTO = {};
+    let fundReimbursementList = [];
 
     const currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
@@ -21,29 +20,24 @@ export const load = async () => {
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: 'applicationId',
+        orderBy: 'id',
         orderType: 1,
         filter: {
             employeeNumber: null,
             employeeName: null,
             employeeIdentityNumber: null,
-            examTypeId: null,
-            examTitle: null,
-            examDate: null,
-            examResult: null,
-            examStatus: null,
         },
     };
 
-    // exam application list
-    examApplicationResponse =
-        await CourseServices.getCourseExamApplicationList(param);
+    // fund application list
+    fundApplicationResponse =
+        await CourseFundReimbursementServices.getCourseFundReimbursementList(
+            param,
+        );
 
-    await renameExamTypeKeyValue(examApplicationResponse);
-
-    examApplicationList =
-        (examApplicationResponse.data
-            ?.dataList as CourseExamApplicationListResponseDTO) ?? [];
+    fundReimbursementList =
+        (fundApplicationResponse.data
+            ?.dataList as CourseFundApplicationListResponseDTO) ?? [];
 
     // ==========================================================================
     // Get Lookup Functions
@@ -75,6 +69,24 @@ export const load = async () => {
 
     // ===========================================================================
 
+    const educationLookupResponse: CommonResponseDTO =
+        await LookupServices.getHighestEducationEnums();
+
+    const educationLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsValueIsDescription(
+            educationLookupResponse,
+        );
+
+    // ===========================================================================
+
+    const institutionLookupResponse: CommonResponseDTO =
+        await LookupServices.getInstitutionEnums();
+
+    const institutionLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsValueIsDescription(
+            institutionLookupResponse,
+        );
+
     return {
         param,
         roles: {
@@ -82,24 +94,26 @@ export const load = async () => {
             isStaffRole,
         },
         list: {
-            examApplicationList,
+            fundReimbursementList,
         },
         responses: {
-            examApplicationResponse,
+            fundApplicationResponse,
         },
-        selectionOptions: {
+        lookups: {
             statusLookup,
             examTypeLookup,
             examResultLookup,
+            educationLookup,
+            institutionLookup,
         },
     };
 };
 
 export const _updateTable = async (param: CommonListRequestDTO) => {
     const response: CommonResponseDTO =
-        await CourseServices.getCourseExamApplicationList(param);
-
-    await renameExamTypeKeyValue(response);
+        await CourseFundReimbursementServices.getCourseFundReimbursementList(
+            param,
+        );
 
     return {
         param,

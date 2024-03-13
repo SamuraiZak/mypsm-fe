@@ -738,6 +738,46 @@ export class LookupServices {
         }
     }
 
+    // Education Type Lookup Service
+    static async getEducationTypeEnums() {
+        try {
+            const url: Input = 'lookup/education_types';
+
+            const response: Response = await http.get(url, {}).json();
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // Application type Lookup Service
+    static async getApplicationTypeEnums() {
+        try {
+            const url: Input = 'lookup/application_types';
+
+            const response: Response = await http.get(url, {}).json();
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     // Title Lookup Service
     static async getTitleEnums() {
         try {

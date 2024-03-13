@@ -1,14 +1,16 @@
 <script lang="ts">
-    import { certifyOptions } from '$lib/constants/core/radio-option-constants';
-    import type { CourseExamApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-application.dto';
-    import { writable } from 'svelte/store';
-    import StepperOtherRolesResult from '$lib/components/stepper/StepperOtherRolesResult.svelte';
+    import StepperFailStatement from '$lib/components/stepper/StepperFailStatement.svelte';
     import {
-        _examApplicationApprovalSchema,
-        _examApplicationResultResponseSchema,
-    } from '$lib/schemas/mypsm/course/exam-schema';
-    import { _coursePersonalInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
-    import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
+        integrityOptions,
+        supportOptions,
+        confirmOptions,
+    } from '$lib/constants/core/radio-option-constants';
+    import { Badge } from 'flowbite-svelte';
+    import {
+        approveOptions,
+        certifyOptions,
+    } from '$lib/constants/core/radio-option-constants';
+    import { writable } from 'svelte/store';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
@@ -16,45 +18,61 @@
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import toast, { Toaster } from 'svelte-french-toast';
     import { superForm } from 'sveltekit-superforms/client';
+    import StepperOtherRolesResult from '$lib/components/stepper/StepperOtherRolesResult.svelte';
     import type { PageData } from './$types';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
-    import {
-        _academicInfoSchema,
-        _serviceInfoRequestSchema,
-    } from '$lib/schemas/mypsm/employment/new-hire/schema';
     import { goto } from '$app/navigation';
     import {
-        _addExamApplicationForm,
-        _addSecretaryApprovalForm,
-        _submitExamResult,
+        _addCourseSecretaryApprovalForm,
+        _addIntegritySecretaryApprovalForm,
+        _addStateUnitSecretaryApprovalForm,
     } from './+page';
     import { zod } from 'sveltekit-superforms/adapters';
     import { error } from '@sveltejs/kit';
-    import { Badge } from 'flowbite-svelte';
+    import type { CourseFundApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
+    import {
+        _fundApplicationApprovalSchema,
+        _fundApplicationDetailResponseSchema,
+    } from '$lib/schemas/mypsm/course/fund-application-schema';
+    import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
+    import { CourseFundApplicationServices } from '$lib/services/implementation/mypsm/latihan/fundApplication.service';
     export let data: PageData;
 
-    let isReadonlySecretaryApprovalResult = writable<boolean>();
-    let isReadonlyExamResult = writable<boolean>();
-    let examApplicationIsFail = writable<boolean>();
+    let isReadonlyStateUnitDirectorApprovalResult = writable<boolean>(false);
+    let isReadonlyIntegritySecretaryApprovalResult = writable<boolean>(false);
+    let isReadonlyCourseSecretaryApprovalResult = writable<boolean>(false);
+    let fundApplicationIsFail = writable<boolean>(false);
 
-    $: data.responses.courseExamSecretaryApprovalResponse.data?.details
-        .status === false
-        ? examApplicationIsFail.set(true)
-        : examApplicationIsFail.set(false);
+    $: {
+        data.responses.fundApplicationCourseSecretaryApprovalResponse.data
+            ?.details.status === false ||
+        data.responses.fundApplicationIntegritySecretaryApprovalResponse.data
+            ?.details.status === false ||
+        data.responses.fundApplicationStateUnitDirectorApprovalResponse.data
+            ?.details.status === false
+            ? fundApplicationIsFail.set(true)
+            : fundApplicationIsFail.set(false);
 
-    $: data.responses.courseExamSecretaryApprovalResponse.data?.details
-        .status == null
-        ? isReadonlySecretaryApprovalResult.set(false)
-        : isReadonlySecretaryApprovalResult.set(true);
+        data.responses.fundApplicationStateUnitDirectorApprovalResponse.data
+            ?.details.status !== null
+            ? isReadonlyStateUnitDirectorApprovalResult.set(true)
+            : isReadonlyStateUnitDirectorApprovalResult.set(false);
 
-    $: data.responses.courseExamResultResponse.data?.details.examResult == ''
-        ? isReadonlyExamResult.set(false)
-        : isReadonlyExamResult.set(true);
+        data.responses.fundApplicationIntegritySecretaryApprovalResponse.data
+            ?.details.status !== null
+            ? isReadonlyIntegritySecretaryApprovalResult.set(true)
+            : isReadonlyIntegritySecretaryApprovalResult.set(false);
+
+        data.responses.fundApplicationCourseSecretaryApprovalResponse.data
+            ?.details.status !== null
+            ? isReadonlyCourseSecretaryApprovalResult.set(true)
+            : isReadonlyCourseSecretaryApprovalResult.set(false);
+    }
 
     // Superforms
-    const { form, enhance } = superForm(data.forms.examInfoForm, {
+    const { form, enhance } = superForm(data.forms.fundApplicationInfoForm, {
         SPA: true,
         dataType: 'json',
         invalidateAll: true,
@@ -65,7 +83,7 @@
     });
 
     const { form: personalInfoForm, enhance: personalInfoEnhance } = superForm(
-        data.forms.examPersonalInfoForm,
+        data.forms.fundApplicationPersonalInfoForm,
         {
             SPA: true,
             dataType: 'json',
@@ -78,7 +96,20 @@
     );
 
     const { form: serviceInfoForm, enhance: serviceInfoEnhance } = superForm(
-        data.forms.examServiceInfoForm,
+        data.forms.fundApplicationServiceInfoForm,
+        {
+            SPA: true,
+            dataType: 'json',
+            invalidateAll: true,
+            resetForm: false,
+            multipleSubmits: 'allow',
+            validationMethod: 'oninput',
+            validators: false,
+        },
+    );
+
+    const { form: documentsForm, enhance: documentsEnhance } = superForm(
+        data.forms.fundApplicationDocumentForm,
         {
             SPA: true,
             dataType: 'json',
@@ -91,71 +122,107 @@
     );
 
     const {
-        form: secretaryApprovalInfoForm,
-        errors: secretaryApprovalInfoErrors,
-        enhance: secretaryApprovalInfoEnhance,
-        isTainted: secretaryApprovalInfoIsTainted,
-    } = superForm(data.forms.examSecretaryApprovalForm, {
+        form: courseSecretaryApprovalInfoForm,
+        errors: courseSecretaryApprovalInfoErrors,
+        enhance: courseSecretaryApprovalInfoEnhance,
+        isTainted: courseSecretaryApprovalInfoIsTainted,
+    } = superForm(data.forms.fundApplicationCourseSecretaryApprovalForm, {
         SPA: true,
         dataType: 'json',
         invalidateAll: true,
         resetForm: false,
         multipleSubmits: 'allow',
         validationMethod: 'oninput',
-        validators: zod(_examApplicationApprovalSchema),
+        validators: zod(_fundApplicationApprovalSchema),
         onSubmit() {
-            if (!secretaryApprovalInfoIsTainted()) {
+            if (!courseSecretaryApprovalInfoIsTainted()) {
                 toast('Tiada perubahan data dikesan.');
                 error(400);
             }
 
-            $secretaryApprovalInfoForm.id = (
-                data.responses.examApplicationDetailResponse.data
-                    ?.details as CourseExamApplicationDetailResponseDTO
-            ).applicationId;
-            _addSecretaryApprovalForm($secretaryApprovalInfoForm);
+            $courseSecretaryApprovalInfoForm.id = (
+                data.responses.fundApplicationDetailResponse.data
+                    ?.details as CourseFundApplicationDetailResponseDTO
+            ).id;
+            _addCourseSecretaryApprovalForm($courseSecretaryApprovalInfoForm);
         },
     });
 
     const {
-        form: examResultInfoForm,
-        errors: examResultInfoErrors,
-        enhance: examResultInfoEnhance,
-        isTainted: examResultInfoIsTainted,
-    } = superForm(data.forms.examResultForm, {
+        form: integritySecretaryApprovalInfoForm,
+        errors: integritySecretaryApprovalInfoErrors,
+        enhance: integritySecretaryApprovalInfoEnhance,
+        isTainted: integritySecretaryApprovalInfoIsTainted,
+    } = superForm(data.forms.fundApplicationIntegritySecretaryApprovalForm, {
         SPA: true,
         dataType: 'json',
         invalidateAll: true,
         resetForm: false,
         multipleSubmits: 'allow',
         validationMethod: 'oninput',
-        validators: zod(_examApplicationResultResponseSchema),
+        validators: zod(_fundApplicationApprovalSchema),
         onSubmit() {
-            if (!examResultInfoIsTainted()) {
+            if (!integritySecretaryApprovalInfoIsTainted()) {
                 toast('Tiada perubahan data dikesan.');
                 error(400);
             }
 
-            $examResultInfoForm.id = (
-                data.responses.examApplicationDetailResponse.data
-                    ?.details as CourseExamApplicationDetailResponseDTO
-            ).applicationId;
-            _submitExamResult($examResultInfoForm);
+            $integritySecretaryApprovalInfoForm.id = (
+                data.responses.fundApplicationDetailResponse.data
+                    ?.details as CourseFundApplicationDetailResponseDTO
+            ).id;
+            _addIntegritySecretaryApprovalForm(
+                $integritySecretaryApprovalInfoForm,
+            );
         },
     });
+
+    const {
+        form: stateUnitDirectorApprovalInfoForm,
+        errors: stateUnitDirectorApprovalInfoErrors,
+        enhance: stateUnitDirectorApprovalInfoEnhance,
+        isTainted: stateUnitDirectorApprovalInfoIsTainted,
+    } = superForm(data.forms.fundApplicationIntegritySecretaryApprovalForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: zod(_fundApplicationApprovalSchema),
+        onSubmit() {
+            if (!stateUnitDirectorApprovalInfoIsTainted()) {
+                toast('Tiada perubahan data dikesan.');
+                error(400);
+            }
+
+            $stateUnitDirectorApprovalInfoForm.id = (
+                data.responses.fundApplicationDetailResponse.data
+                    ?.details as CourseFundApplicationDetailResponseDTO
+            ).id;
+            _addStateUnitSecretaryApprovalForm(
+                $stateUnitDirectorApprovalInfoForm,
+            );
+        },
+    });
+
+    const handleDownload = async (url: string) => {
+        await CourseFundApplicationServices.downloadAttachment(url);
+    };
 </script>
 
-<ContentHeader title="Maklumat Peperiksaan Yang Dipohon">
-    {#if data.responses.courseExamResultResponse.data?.details && data.responses.courseExamResultResponse.data?.details.examResult !== ''}
-        <Badge color="dark">Proses Peperiksaan Tamat</Badge>
-    {:else if $examApplicationIsFail}
-        <Badge color="red">Proses Permohonan Diberhentikan</Badge>
+<ContentHeader title="Maklumat Pembiayaan Pelajaran">
+    {#if data.responses.fundApplicationCourseSecretaryApprovalResponse.data?.details && data.responses.fundApplicationCourseSecretaryApprovalResponse.data?.details.status === true}
+        <Badge color="green">Permohonan BERJAYA</Badge>
+    {:else if $fundApplicationIsFail}
+        <Badge color="red">Permohonan TIDAK BERJAYA</Badge>
     {/if}
+
     <TextIconButton
         label="Kembali"
         type="neutral"
         onClick={() => {
-            goto('../rekod-peperiksaan');
+            goto('../pembiayaan');
         }}
     /></ContentHeader
 >
@@ -320,6 +387,15 @@
                     placeholder="-"
                     bind:val={$personalInfoForm.group}
                     options={data.selectionOptions.groupLookup}
+                ></CustomSelectField>
+
+                <CustomSelectField
+                    disabled
+                    id="program"
+                    label="Program"
+                    placeholder="-"
+                    bind:val={$personalInfoForm.program}
+                    options={data.selectionOptions.programLookup}
                 ></CustomSelectField>
 
                 <CustomTextField
@@ -648,19 +724,13 @@
                             placeholder="-"
                             bind:val={$serviceInfoForm.COLA}
                         ></CustomTextField>
-                        <!-- Tooltip body -->
-                        <!-- <Tooltip
-                        type="dark"
-                        triggeredBy="[id^='type-']"
-                        on:show={assignContent}>"{tooltipContent}"</Tooltip
-                    > -->
                     </div>
                 </div>
             </form>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Maklumat Peperiksaan LKIM Yang Dimohon" />
+        <StepperContentHeader title="Maklumat Pembelajaran Diikuti" />
         <StepperContentBody>
             <form
                 id="examApplicationInfoStepper"
@@ -668,211 +738,331 @@
                 use:enhance
                 class="flex w-full flex-col gap-2"
             >
+                <CustomSelectField
+                    disabled={true}
+                    id="academicLevel"
+                    label="Peringkat Kursus Pengajian"
+                    placeholder="-"
+                    bind:val={$form.academicLevel}
+                    options={data.lookups.educationLookup}
+                ></CustomSelectField>
                 <CustomTextField
-                    disabled
-                    id="applicationId"
-                    label="ID Permohonan Peperiksaan"
+                    disabled={true}
+                    id="courseName"
+                    label="Nama Kursus Pengajian"
                     type="text"
                     placeholder="-"
-                    bind:val={$form.applicationId}
+                    bind:val={$form.courseName}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled={true}
+                    id="institution"
+                    label="Nama IPTA"
+                    type="text"
+                    placeholder="-"
+                    bind:val={$form.institution}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled={true}
+                    id="learningInstitution"
+                    label="Institusi/Pusat Pembelajaran"
+                    type="text"
+                    placeholder="-"
+                    bind:val={$form.learningInstitution}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled={true}
+                    id="studyDuration"
+                    label="Tempoh Pengajian (Tahun)"
+                    type="text"
+                    placeholder="-"
+                    bind:val={$form.studyDuration}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled={true}
+                    id="courseApplicationDate"
+                    label="Tarikh Kemasukan Ke IPTA"
+                    type="date"
+                    placeholder="-"
+                    bind:val={$form.courseApplicationDate}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled={true}
+                    id="expectedFinishedStudyDate"
+                    label="Dijangka Tamat Pada"
+                    type="date"
+                    placeholder="-"
+                    bind:val={$form.expectedFinishedStudyDate}
                 ></CustomTextField>
 
                 <CustomSelectField
-                    disabled
-                    id="examTypeId"
-                    label="Jenis Peperiksaan"
+                    disabled={true}
+                    id="educationType"
+                    label="Jenis Pengajian"
                     placeholder="-"
-                    bind:val={$form.examTypeId}
-                    options={data.selectionOptions.examTypeLookup}
+                    bind:val={$form.educationTypeId}
+                    options={data.lookups.educationTypeLookup}
                 ></CustomSelectField>
 
-                <CustomTextField
-                    disabled
-                    id="examTitle"
-                    label="Tajuk Peperiksaan"
-                    type="text"
+                <CustomSelectField
+                    disabled={true}
+                    id="applicationType"
+                    label="Jenis Permohonan"
                     placeholder="-"
-                    bind:val={$form.examTitle}
-                ></CustomTextField>
-
-                <CustomTextField
-                    disabled
-                    id="employeeNumber"
-                    label="Nombor Pekerja Calon Peperiksaan"
-                    type="text"
-                    placeholder="-"
-                    bind:val={$form.employeeNumber}
-                ></CustomTextField>
-
-                <CustomTextField
-                    disabled
-                    id="employeeName"
-                    label="Nama Calon Peperiksaan"
-                    type="text"
-                    placeholder="-"
-                    bind:val={$form.employeeName}
-                ></CustomTextField>
-
-                <CustomTextField
-                    disabled
-                    id="examApplicationOpenDate"
-                    label="Tarikh Mula Permohonan"
-                    type="date"
-                    placeholder="-"
-                    bind:val={$form.examApplicationOpenDate}
-                ></CustomTextField>
-                <CustomTextField
-                    disabled
-                    id="examApplicationCloseDate"
-                    label="Tarikh Tutup Permohonan"
-                    type="date"
-                    placeholder="-"
-                    bind:val={$form.examApplicationCloseDate}
-                ></CustomTextField>
-                <CustomTextField
-                    disabled
-                    id="examDate"
-                    label="Tarikh Peperiksaan"
-                    type="date"
-                    placeholder="-"
-                    bind:val={$form.examDate}
-                ></CustomTextField>
-                <CustomTextField
-                    disabled
-                    id="examLocation"
-                    label="Lokasi Peperiksaan"
-                    type="text"
-                    placeholder="-"
-                    bind:val={$form.examLocation}
-                ></CustomTextField>
-
-                <!-- <CustomTextField
-                    disabled
-                    id="examStatus"
-                    label="Status Peperiksaan"
-                    type="text"
-                    placeholder="-"
-                    bind:val={$form.examStatus}
-                ></CustomTextField>
-
-                <CustomTextField
-                    disabled
-                    id="examResult"
-                    label="Keputusan Peperiksaan"
-                    type="text"
-                    placeholder="Dalam Proses"
-                    bind:val={$form.examResult}
-                ></CustomTextField> -->
+                    bind:val={$form.applicationTypeId}
+                    options={data.lookups.fundApplicationTypeLookup}
+                ></CustomSelectField>
             </form>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Pengesahan Semakan Urus Setia Latihan">
-            {#if !$isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole}
-                <TextIconButton
-                    type="primary"
-                    label="Simpan"
-                    form="examApplicationSecretaryApprovalForm"
-                ></TextIconButton>
-            {/if}
-        </StepperContentHeader>
-        <StepperContentBody>
-            <form
-                id="examApplicationSecretaryApprovalForm"
-                method="POST"
-                use:secretaryApprovalInfoEnhance
-                class="flex w-full flex-col gap-2.5"
-            >
-                <div class="mb-5">
-                    <b class="text-sm text-system-primary"
-                        >Keputusan Urus Setia Latihan</b
+        <StepperContentHeader title="Dokumen - Dokumen Sokongan yang Berkaitan"
+        ></StepperContentHeader>
+        <StepperContentBody
+            ><div class="flex w-full flex-col gap-2">
+                <div
+                    class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+                >
+                    <ContentHeader
+                        title="Dokumen - Dokumen Sokongan yang Berkaitan"
+                    ></ContentHeader>
+                    <p
+                        class="mt-2 h-fit w-full bg-bgr-primary text-sm font-medium text-system-primary"
                     >
+                        Fail-fail yang dimuat naik:
+                    </p>
+
+                    {#each $documentsForm.document as _, i}
+                        <div
+                            class="flex w-full flex-row items-center justify-between"
+                        >
+                            <label
+                                for=""
+                                class="block w-[20px] min-w-[20px] text-[11px] font-medium"
+                                >1.</label
+                            >
+                            <DownloadAttachment
+                                triggerDownload={() =>
+                                    handleDownload(
+                                        $documentsForm.document[i].document,
+                                    )}
+                                fileName={$documentsForm.document[i].document}
+                            ></DownloadAttachment>
+                        </div>
+                    {/each}
                 </div>
-
-                <input hidden bind:value={$secretaryApprovalInfoForm.id} />
-
-                <CustomTextField
-                    disabled={!data.role.isCourseSecretaryRole ||
-                        $isReadonlySecretaryApprovalResult}
-                    errors={$secretaryApprovalInfoErrors.remark}
-                    id="remark"
-                    label="Tindakan/Ulasan"
-                    placeholder="-"
-                    bind:val={$secretaryApprovalInfoForm.remark}
-                ></CustomTextField>
-                {#if data.role.isCourseSecretaryRole || $isReadonlySecretaryApprovalResult}
-                    <CustomSelectField
-                        disabled={!!(
-                            !data.role.isCourseSecretaryRole ||
-                            $isReadonlySecretaryApprovalResult
-                        )}
-                        errors={$secretaryApprovalInfoErrors.status}
-                        id="status"
-                        label="Keputusan"
-                        placeholder="-"
-                        bind:val={$secretaryApprovalInfoForm.status}
-                        options={certifyOptions}
-                    ></CustomSelectField>
-                {:else}
-                    <StepperOtherRolesResult />
-                {/if}
-            </form>
-            <hr />
-        </StepperContentBody>
+            </div></StepperContentBody
+        >
     </StepperContent>
-    {#if !$examApplicationIsFail && isReadonlySecretaryApprovalResult}
+    {#if data.response.fundReimbursementResponse.data}
         <StepperContent>
-            <StepperContentHeader title="Keputusan Panel">
-                {#if data.role.isCourseSecretaryRole && !isReadonlyExamResult}
+            <StepperContentHeader
+                title="Keputusan daripada Peranan - Peranan Lain"
+            >
+                {#if !$fundApplicationIsFail && !$isReadonlyStateUnitDirectorApprovalResult && (data.role.isStateDirectorRole || data.role.isUnitDirectorRole)}
                     <TextIconButton
                         type="primary"
                         label="Simpan"
-                        form="examApplicationPanelResultForm"
+                        form="stateUnitDirectorApprovalForm"
+                    ></TextIconButton>
+                {:else if !$fundApplicationIsFail && $isReadonlyStateUnitDirectorApprovalResult && !$isReadonlyIntegritySecretaryApprovalResult && data.role.isIntegritySecretaryRole}
+                    <TextIconButton
+                        type="primary"
+                        label="Simpan"
+                        form="integritySecretaryApprovalForm"
+                    ></TextIconButton>
+                {:else if !$fundApplicationIsFail && $isReadonlyStateUnitDirectorApprovalResult && $isReadonlyIntegritySecretaryApprovalResult && !$isReadonlyCourseSecretaryApprovalResult && data.role.isCourseSecretaryRole}
+                    <TextIconButton
+                        type="primary"
+                        label="Simpan"
+                        form="courseSecretaryApprovalForm"
                     ></TextIconButton>
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                <form
-                    id="examApplicationPanelResultForm"
-                    method="POST"
-                    use:examResultInfoEnhance
-                    class="flex w-full flex-col gap-2.5"
-                >
-                    <div class="mb-5">
-                        <b class="text-sm text-system-primary"
-                            >Keputusan daripada Panel Pemeriksa:</b
+                <div class="flex w-full flex-col gap-2.5">
+                    {#if !$fundApplicationIsFail && !$isReadonlyStateUnitDirectorApprovalResult && (data.role.isStateDirectorRole || data.role.isUnitDirectorRole)}
+                        <form
+                            id="stateUnitDirectorApprovalForm"
+                            method="POST"
+                            use:stateUnitDirectorApprovalInfoEnhance
+                            class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
                         >
-                    </div>
-
-                    <input hidden bind:value={$examResultInfoForm.id} />
-
-                    <CustomTextField
-                        disabled
-                        id="remark"
-                        label="Tajuk Peperiksaan"
-                        placeholder="-"
-                        bind:val={$examResultInfoForm.examTitle}
-                    ></CustomTextField>
-
-                    {#if data.role.isCourseSecretaryRole || $isReadonlyExamResult}
-                        <CustomSelectField
-                            disabled={!data.role.isCourseSecretaryRole ||
-                                $isReadonlyExamResult}
-                            errors={$examResultInfoErrors.examResult}
-                            id="examResult"
-                            label="Keputusan Panel"
-                            placeholder="-"
-                            bind:val={$examResultInfoForm.examResult}
-                            options={data.selectionOptions.examResultLookup}
-                        ></CustomSelectField>
-                    {:else}
-                        <span
-                            class="text-center text-sm italic text-system-primary"
-                            >Menunggu keputusan daripada panel.</span
+                            <div class="mb-5">
+                                <b class="text-sm text-system-primary"
+                                    >Pengarah Negeri/Bahagian</b
+                                >
+                            </div>
+                            <CustomTextField
+                                disabled={$isReadonlyStateUnitDirectorApprovalResult}
+                                errors={$stateUnitDirectorApprovalInfoErrors.remark}
+                                id="approverRemark"
+                                label="Tindakan/Ulasan"
+                                bind:val={$stateUnitDirectorApprovalInfoForm.remark}
+                            ></CustomTextField>
+                            <CustomSelectField
+                                disabled={$isReadonlyStateUnitDirectorApprovalResult}
+                                errors={$stateUnitDirectorApprovalInfoErrors.status}
+                                id="approverIsApproved"
+                                options={supportOptions}
+                                label={'Keputusan'}
+                                bind:val={$stateUnitDirectorApprovalInfoForm.status}
+                            ></CustomSelectField>
+                        </form>
+                    {:else if !$fundApplicationIsFail && $isReadonlyStateUnitDirectorApprovalResult && !$isReadonlyIntegritySecretaryApprovalResult && data.role.isIntegritySecretaryRole}
+                        <form
+                            id="integritySecretaryApprovalForm"
+                            method="POST"
+                            use:integritySecretaryApprovalInfoEnhance
+                            class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
                         >
+                            <div class="mb-5">
+                                <b class="text-sm text-system-primary"
+                                    >Urus Setia Integriti</b
+                                >
+                            </div>
+                            <CustomTextField
+                                disabled={$isReadonlyIntegritySecretaryApprovalResult}
+                                errors={$integritySecretaryApprovalInfoErrors.remark}
+                                id="approverRemark"
+                                label="Tindakan/Ulasan"
+                                bind:val={$integritySecretaryApprovalInfoForm.remark}
+                            ></CustomTextField>
+                            <CustomSelectField
+                                disabled={$isReadonlyIntegritySecretaryApprovalResult}
+                                errors={$integritySecretaryApprovalInfoErrors.status}
+                                id="approverIsApproved"
+                                options={integrityOptions}
+                                label={'Keputusan'}
+                                bind:val={$integritySecretaryApprovalInfoForm.status}
+                            ></CustomSelectField>
+                        </form>
+                    {:else if !$fundApplicationIsFail && $isReadonlyStateUnitDirectorApprovalResult && $isReadonlyIntegritySecretaryApprovalResult && !$isReadonlyCourseSecretaryApprovalResult && data.role.isCourseSecretaryRole}
+                        <form
+                            id="courseSecretaryApprovalForm"
+                            method="POST"
+                            use:courseSecretaryApprovalInfoEnhance
+                            class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                        >
+                            <div class="mb-5">
+                                <b class="text-sm text-system-primary"
+                                    >Urus Setia Latihan</b
+                                >
+                            </div>
+                            <CustomTextField
+                                disabled={$isReadonlyCourseSecretaryApprovalResult}
+                                errors={$courseSecretaryApprovalInfoErrors.remark}
+                                id="supporterRemark"
+                                label="Tindakan/Ulasan"
+                                bind:val={$courseSecretaryApprovalInfoForm.remark}
+                            ></CustomTextField>
+                            <CustomSelectField
+                                disabled={$isReadonlyCourseSecretaryApprovalResult}
+                                errors={$courseSecretaryApprovalInfoErrors.status}
+                                id="supporterIsApproved"
+                                options={certifyOptions}
+                                label={'Keputusan'}
+                                bind:val={$courseSecretaryApprovalInfoForm.status}
+                            ></CustomSelectField>
+                        </form>
                     {/if}
-                </form>
-                <hr />
+
+                    <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                        <div class="mb-5">
+                            <b class="text-sm text-system-primary"
+                                >Pengarah Negeri/Bahagian</b
+                            >
+                        </div>
+                        {#if $isReadonlyStateUnitDirectorApprovalResult}
+                            <CustomTextField
+                                disabled
+                                id="stateUnitDirectorRemark"
+                                label="Tindakan/Ulasan"
+                                val={data.responses
+                                    .fundApplicationStateUnitDirectorApprovalResponse
+                                    .data?.details.remark}
+                            ></CustomTextField>
+                            <CustomSelectField
+                                disabled
+                                id="stateUnitDirectorStatus"
+                                options={supportOptions}
+                                label={'Keputusan'}
+                                val={data.responses
+                                    .fundApplicationStateUnitDirectorApprovalResponse
+                                    .data?.details.status}
+                            ></CustomSelectField>
+                        {:else if $fundApplicationIsFail}
+                            <StepperFailStatement />
+                        {:else}
+                            <StepperOtherRolesResult />
+                        {/if}
+                    </div>
+                    <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                        <div class="mb-5">
+                            <b class="text-sm text-system-primary"
+                                >Urus Setia Integriti</b
+                            >
+                        </div>
+                        {#if $isReadonlyIntegritySecretaryApprovalResult}
+                            <CustomTextField
+                                disabled
+                                id="integrityCourseRemark"
+                                label="Tindakan/Ulasan"
+                                val={data.responses
+                                    .fundApplicationIntegritySecretaryApprovalResponse
+                                    .data?.details.remark}
+                            ></CustomTextField>
+                            <CustomSelectField
+                                disabled
+                                id="integrityCourseStatus"
+                                options={confirmOptions}
+                                label={'Keputusan'}
+                                val={data.responses
+                                    .fundApplicationIntegritySecretaryApprovalResponse
+                                    .data?.details.status}
+                            ></CustomSelectField>
+                        {:else if $fundApplicationIsFail}
+                            <StepperFailStatement />
+                        {:else}
+                            <StepperOtherRolesResult />
+                        {/if}
+                    </div>
+                    <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                        <div class="mb-5">
+                            <b class="text-sm text-system-primary"
+                                >Urus Setia Latihan</b
+                            >
+                        </div>
+                        {#if $isReadonlyCourseSecretaryApprovalResult}
+                            <CustomTextField
+                                disabled
+                                id="courseSecretaryRemark"
+                                label="Tindakan/Ulasan"
+                                val={data.responses
+                                    .fundApplicationCourseSecretaryApprovalResponse
+                                    .data?.details.remark}
+                            ></CustomTextField>
+                            <CustomSelectField
+                                disabled
+                                id="courseSecretaryStatus"
+                                options={certifyOptions}
+                                label={'Keputusan'}
+                                val={data.responses
+                                    .fundApplicationCourseSecretaryApprovalResponse
+                                    .data?.details.status}
+                            ></CustomSelectField>
+                        {:else if $fundApplicationIsFail}
+                            <StepperFailStatement />
+                        {:else}
+                            <StepperOtherRolesResult />
+                        {/if}
+                    </div>
+                </div>
             </StepperContentBody>
         </StepperContent>
     {/if}

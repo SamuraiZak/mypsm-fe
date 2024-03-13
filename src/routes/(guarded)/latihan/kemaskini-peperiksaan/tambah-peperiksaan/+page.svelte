@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/schema';
+    import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
     import { zod } from 'sveltekit-superforms/adapters';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
@@ -44,7 +44,7 @@
     const proxyExamDate = dateProxy(form, 'examDate', { format: 'date' });
 </script>
 
-<ContentHeader title="Maklumat Lantikan Baru"
+<ContentHeader title="Maklumat Peperiksaan"
     ><TextIconButton
         label="Kembali"
         type="neutral"

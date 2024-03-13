@@ -1,60 +1,48 @@
 <script lang="ts">
     import { certifyOptions } from '$lib/constants/core/radio-option-constants';
-    import type { CourseExamApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-application.dto';
     import { writable } from 'svelte/store';
-    import StepperOtherRolesResult from '$lib/components/stepper/StepperOtherRolesResult.svelte';
-    import {
-        _examApplicationApprovalSchema,
-        _examApplicationResultResponseSchema,
-    } from '$lib/schemas/mypsm/course/exam-schema';
-    import { _coursePersonalInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
-    import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import toast, { Toaster } from 'svelte-french-toast';
+    import StepperOtherRolesResult from '$lib/components/stepper/StepperOtherRolesResult.svelte';
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
-    import {
-        _academicInfoSchema,
-        _serviceInfoRequestSchema,
-    } from '$lib/schemas/mypsm/employment/new-hire/schema';
     import { goto } from '$app/navigation';
-    import {
-        _addExamApplicationForm,
-        _addSecretaryApprovalForm,
-        _submitExamResult,
-    } from './+page';
+    import { _addSecretaryApprovalForm } from './+page';
     import { zod } from 'sveltekit-superforms/adapters';
     import { error } from '@sveltejs/kit';
+    import type { CourseFundReimbursementDetailResponseDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement.dto';
+    import {
+        _fundReimbursementApprovalSchema,
+        _fundReimbursementDetailResponseSchema,
+    } from '$lib/schemas/mypsm/course/fund-reimbursement-schema';
     import { Badge } from 'flowbite-svelte';
     export let data: PageData;
 
-    let isReadonlySecretaryApprovalResult = writable<boolean>();
-    let isReadonlyExamResult = writable<boolean>();
-    let examApplicationIsFail = writable<boolean>();
+    let isReadonlySecretaryApprovalResult = writable<boolean>(false);
 
-    $: data.responses.courseExamSecretaryApprovalResponse.data?.details
-        .status === false
-        ? examApplicationIsFail.set(true)
-        : examApplicationIsFail.set(false);
+    let fundReimbursementIsFail = writable<boolean>(false);
 
-    $: data.responses.courseExamSecretaryApprovalResponse.data?.details
-        .status == null
-        ? isReadonlySecretaryApprovalResult.set(false)
-        : isReadonlySecretaryApprovalResult.set(true);
+    $: {
+        data.responses.fundReimbursementSecretaryApprovalResponse.data?.details
+            .status === false
+            ? fundReimbursementIsFail.set(true)
+            : fundReimbursementIsFail.set(false);
 
-    $: data.responses.courseExamResultResponse.data?.details.examResult == ''
-        ? isReadonlyExamResult.set(false)
-        : isReadonlyExamResult.set(true);
+        data.responses.fundReimbursementSecretaryApprovalResponse.data?.details
+            .status !== null
+            ? isReadonlySecretaryApprovalResult.set(true)
+            : isReadonlySecretaryApprovalResult.set(false);
+    }
 
     // Superforms
-    const { form, enhance } = superForm(data.forms.examInfoForm, {
+    const { form, enhance } = superForm(data.forms.fundReimbursementInfoForm, {
         SPA: true,
         dataType: 'json',
         invalidateAll: true,
@@ -65,7 +53,7 @@
     });
 
     const { form: personalInfoForm, enhance: personalInfoEnhance } = superForm(
-        data.forms.examPersonalInfoForm,
+        data.forms.fundReimbursementPersonalInfoForm,
         {
             SPA: true,
             dataType: 'json',
@@ -78,7 +66,7 @@
     );
 
     const { form: serviceInfoForm, enhance: serviceInfoEnhance } = superForm(
-        data.forms.examServiceInfoForm,
+        data.forms.fundReimbursementServiceInfoForm,
         {
             SPA: true,
             dataType: 'json',
@@ -95,14 +83,14 @@
         errors: secretaryApprovalInfoErrors,
         enhance: secretaryApprovalInfoEnhance,
         isTainted: secretaryApprovalInfoIsTainted,
-    } = superForm(data.forms.examSecretaryApprovalForm, {
+    } = superForm(data.forms.fundReimbursementSecretaryApprovalForm, {
         SPA: true,
         dataType: 'json',
         invalidateAll: true,
         resetForm: false,
         multipleSubmits: 'allow',
         validationMethod: 'oninput',
-        validators: zod(_examApplicationApprovalSchema),
+        validators: zod(_fundReimbursementApprovalSchema),
         onSubmit() {
             if (!secretaryApprovalInfoIsTainted()) {
                 toast('Tiada perubahan data dikesan.');
@@ -110,52 +98,25 @@
             }
 
             $secretaryApprovalInfoForm.id = (
-                data.responses.examApplicationDetailResponse.data
-                    ?.details as CourseExamApplicationDetailResponseDTO
-            ).applicationId;
+                data.responses.fundReimbursementDetailResponse.data
+                    ?.details as CourseFundReimbursementDetailResponseDTO
+            ).id;
             _addSecretaryApprovalForm($secretaryApprovalInfoForm);
-        },
-    });
-
-    const {
-        form: examResultInfoForm,
-        errors: examResultInfoErrors,
-        enhance: examResultInfoEnhance,
-        isTainted: examResultInfoIsTainted,
-    } = superForm(data.forms.examResultForm, {
-        SPA: true,
-        dataType: 'json',
-        invalidateAll: true,
-        resetForm: false,
-        multipleSubmits: 'allow',
-        validationMethod: 'oninput',
-        validators: zod(_examApplicationResultResponseSchema),
-        onSubmit() {
-            if (!examResultInfoIsTainted()) {
-                toast('Tiada perubahan data dikesan.');
-                error(400);
-            }
-
-            $examResultInfoForm.id = (
-                data.responses.examApplicationDetailResponse.data
-                    ?.details as CourseExamApplicationDetailResponseDTO
-            ).applicationId;
-            _submitExamResult($examResultInfoForm);
         },
     });
 </script>
 
-<ContentHeader title="Maklumat Peperiksaan Yang Dipohon">
-    {#if data.responses.courseExamResultResponse.data?.details && data.responses.courseExamResultResponse.data?.details.examResult !== ''}
-        <Badge color="dark">Proses Peperiksaan Tamat</Badge>
-    {:else if $examApplicationIsFail}
-        <Badge color="red">Proses Permohonan Diberhentikan</Badge>
+<ContentHeader title="Maklumat Tuntutan Pembiayaan Yuran Pembelajaran">
+    {#if data.responses.fundReimbursementSecretaryApprovalResponse.data?.details && data.responses.fundReimbursementSecretaryApprovalResponse.data?.details.status === true}
+        <Badge color="green">Permohonan LULUS</Badge>
+    {:else if $fundReimbursementIsFail}
+        <Badge color="red">Permohonan TIDAK BERJAYA</Badge>
     {/if}
     <TextIconButton
         label="Kembali"
         type="neutral"
         onClick={() => {
-            goto('../rekod-peperiksaan');
+            goto('../tuntutan-yuran');
         }}
     /></ContentHeader
 >
@@ -660,7 +621,7 @@
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Maklumat Peperiksaan LKIM Yang Dimohon" />
+        <StepperContentHeader title="Maklumat Pembelajaran Diikuti" />
         <StepperContentBody>
             <form
                 id="examApplicationInfoStepper"
@@ -668,101 +629,108 @@
                 use:enhance
                 class="flex w-full flex-col gap-2"
             >
-                <CustomTextField
-                    disabled
-                    id="applicationId"
-                    label="ID Permohonan Peperiksaan"
-                    type="text"
-                    placeholder="-"
-                    bind:val={$form.applicationId}
-                ></CustomTextField>
-
                 <CustomSelectField
-                    disabled
-                    id="examTypeId"
-                    label="Jenis Peperiksaan"
+                    disabled={true}
+                    id="academicLevel"
+                    label="Peringkat Kursus Pengajian"
                     placeholder="-"
-                    bind:val={$form.examTypeId}
-                    options={data.selectionOptions.examTypeLookup}
+                    bind:val={$form.academicLevel}
+                    options={data.lookups.educationLookup}
                 ></CustomSelectField>
 
                 <CustomTextField
-                    disabled
-                    id="examTitle"
-                    label="Tajuk Peperiksaan"
+                    disabled={true}
+                    id="courseName"
+                    label="Nama Kursus Pengajian"
                     type="text"
                     placeholder="-"
-                    bind:val={$form.examTitle}
+                    bind:val={$form.courseName}
+                ></CustomTextField>
+
+                <CustomSelectField
+                    disabled={true}
+                    id="institution"
+                    label="Tempat Pengajian"
+                    placeholder="-"
+                    bind:val={$form.institution}
+                    options={data.lookups.institutionLookup}
+                ></CustomSelectField>
+
+                <CustomSelectField
+                    disabled={true}
+                    id="learningInstitution"
+                    label="Institusi/Pusat Pembelajaran"
+                    placeholder="-"
+                    bind:val={$form.learningInstitution}
+                    options={data.lookups.institutionLookup}
+                ></CustomSelectField>
+
+                <CustomTextField
+                    disabled={true}
+                    id="studyDuration"
+                    label="Tempoh Pengajian (Tahun)"
+                    type="number"
+                    placeholder="-"
+                    bind:val={$form.studyDuration}
                 ></CustomTextField>
 
                 <CustomTextField
-                    disabled
-                    id="employeeNumber"
-                    label="Nombor Pekerja Calon Peperiksaan"
-                    type="text"
-                    placeholder="-"
-                    bind:val={$form.employeeNumber}
-                ></CustomTextField>
-
-                <CustomTextField
-                    disabled
-                    id="employeeName"
-                    label="Nama Calon Peperiksaan"
-                    type="text"
-                    placeholder="-"
-                    bind:val={$form.employeeName}
-                ></CustomTextField>
-
-                <CustomTextField
-                    disabled
-                    id="examApplicationOpenDate"
-                    label="Tarikh Mula Permohonan"
+                    disabled={true}
+                    id="courseApplicationDate"
+                    label="Tarikh Kemasukan Ke IPTA"
                     type="date"
                     placeholder="-"
-                    bind:val={$form.examApplicationOpenDate}
-                ></CustomTextField>
-                <CustomTextField
-                    disabled
-                    id="examApplicationCloseDate"
-                    label="Tarikh Tutup Permohonan"
-                    type="date"
-                    placeholder="-"
-                    bind:val={$form.examApplicationCloseDate}
-                ></CustomTextField>
-                <CustomTextField
-                    disabled
-                    id="examDate"
-                    label="Tarikh Peperiksaan"
-                    type="date"
-                    placeholder="-"
-                    bind:val={$form.examDate}
-                ></CustomTextField>
-                <CustomTextField
-                    disabled
-                    id="examLocation"
-                    label="Lokasi Peperiksaan"
-                    type="text"
-                    placeholder="-"
-                    bind:val={$form.examLocation}
-                ></CustomTextField>
-
-                <!-- <CustomTextField
-                    disabled
-                    id="examStatus"
-                    label="Status Peperiksaan"
-                    type="text"
-                    placeholder="-"
-                    bind:val={$form.examStatus}
+                    bind:val={$form.courseApplicationDate}
                 ></CustomTextField>
 
                 <CustomTextField
-                    disabled
-                    id="examResult"
-                    label="Keputusan Peperiksaan"
+                    disabled={true}
+                    id="finishedStudyDate"
+                    label="Tamat Pada"
+                    type="date"
+                    placeholder="-"
+                    bind:val={$form.finishedStudyDate}
+                ></CustomTextField>
+
+                <CustomSelectField
+                    disabled={true}
+                    id="semester"
+                    label="Tuntutan Untuk Semester"
+                    placeholder="-"
+                    bind:val={$form.semester}
+                    options={[
+                        {
+                            value: 4,
+                            name: 'Empat',
+                        },
+                        {
+                            value: 5,
+                            name: 'Lima',
+                        },
+                        {
+                            value: 6,
+                            name: 'Enam',
+                        },
+                    ]}
+                ></CustomSelectField>
+
+                <CustomTextField
+                    disabled={true}
+                    id="finalResult"
+                    label="Keputusan Akhir (CGPA)"
                     type="text"
-                    placeholder="Dalam Proses"
-                    bind:val={$form.examResult}
-                ></CustomTextField> -->
+                    placeholder="-"
+                    bind:val={$form.finalResult}
+                ></CustomTextField>
+
+                <CustomTextField
+                    disabled={true}
+                    id="totalClaim"
+                    label="Jumlah Tuntutan (RM)"
+                    type="number"
+                    placeholder="-"
+                    bind:val={$form.totalClaim}
+                ></CustomTextField>
             </form>
         </StepperContentBody>
     </StepperContent>
@@ -789,23 +757,22 @@
                     >
                 </div>
 
-                <input hidden bind:value={$secretaryApprovalInfoForm.id} />
+                {#if $isReadonlySecretaryApprovalResult || data.role.isCourseSecretaryRole}
+                    <input hidden bind:value={$secretaryApprovalInfoForm.id} />
 
-                <CustomTextField
-                    disabled={!data.role.isCourseSecretaryRole ||
-                        $isReadonlySecretaryApprovalResult}
-                    errors={$secretaryApprovalInfoErrors.remark}
-                    id="remark"
-                    label="Tindakan/Ulasan"
-                    placeholder="-"
-                    bind:val={$secretaryApprovalInfoForm.remark}
-                ></CustomTextField>
-                {#if data.role.isCourseSecretaryRole || $isReadonlySecretaryApprovalResult}
+                    <CustomTextField
+                        disabled={$isReadonlySecretaryApprovalResult ||
+                            !data.role.isCourseSecretaryRole}
+                        errors={$secretaryApprovalInfoErrors.remark}
+                        id="remark"
+                        label="Tindakan/Ulasan"
+                        placeholder="-"
+                        bind:val={$secretaryApprovalInfoForm.remark}
+                    ></CustomTextField>
+
                     <CustomSelectField
-                        disabled={!!(
-                            !data.role.isCourseSecretaryRole ||
-                            $isReadonlySecretaryApprovalResult
-                        )}
+                        disabled={$isReadonlySecretaryApprovalResult ||
+                            !data.role.isCourseSecretaryRole}
                         errors={$secretaryApprovalInfoErrors.status}
                         id="status"
                         label="Keputusan"
@@ -820,62 +787,6 @@
             <hr />
         </StepperContentBody>
     </StepperContent>
-    {#if !$examApplicationIsFail && isReadonlySecretaryApprovalResult}
-        <StepperContent>
-            <StepperContentHeader title="Keputusan Panel">
-                {#if data.role.isCourseSecretaryRole && !isReadonlyExamResult}
-                    <TextIconButton
-                        type="primary"
-                        label="Simpan"
-                        form="examApplicationPanelResultForm"
-                    ></TextIconButton>
-                {/if}
-            </StepperContentHeader>
-            <StepperContentBody>
-                <form
-                    id="examApplicationPanelResultForm"
-                    method="POST"
-                    use:examResultInfoEnhance
-                    class="flex w-full flex-col gap-2.5"
-                >
-                    <div class="mb-5">
-                        <b class="text-sm text-system-primary"
-                            >Keputusan daripada Panel Pemeriksa:</b
-                        >
-                    </div>
-
-                    <input hidden bind:value={$examResultInfoForm.id} />
-
-                    <CustomTextField
-                        disabled
-                        id="remark"
-                        label="Tajuk Peperiksaan"
-                        placeholder="-"
-                        bind:val={$examResultInfoForm.examTitle}
-                    ></CustomTextField>
-
-                    {#if data.role.isCourseSecretaryRole || $isReadonlyExamResult}
-                        <CustomSelectField
-                            disabled={!data.role.isCourseSecretaryRole ||
-                                $isReadonlyExamResult}
-                            errors={$examResultInfoErrors.examResult}
-                            id="examResult"
-                            label="Keputusan Panel"
-                            placeholder="-"
-                            bind:val={$examResultInfoForm.examResult}
-                            options={data.selectionOptions.examResultLookup}
-                        ></CustomSelectField>
-                    {:else}
-                        <span
-                            class="text-center text-sm italic text-system-primary"
-                            >Menunggu keputusan daripada panel.</span
-                        >
-                    {/if}
-                </form>
-                <hr />
-            </StepperContentBody>
-        </StepperContent>
-    {/if}
 </Stepper>
 
 <Toaster />

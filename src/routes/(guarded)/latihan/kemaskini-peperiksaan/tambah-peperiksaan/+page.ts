@@ -3,7 +3,7 @@ import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.c
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
-import { _examInfoRequestSchema } from '$lib/schemas/mypsm/course/schema';
+import { _examInfoRequestSchema } from '$lib/schemas/mypsm/course/exam-schema';
 import { CourseServices } from '$lib/services/implementation/mypsm/latihan/course.service.js';
 import { error } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';

@@ -4,7 +4,7 @@ import type {
     _examApplicationListResponseSchema,
     _examSetAttendanceRequestSchema,
     _examSetAttendanceResponseSchema,
-} from '$lib/schemas/mypsm/course/schema';
+} from '$lib/schemas/mypsm/course/exam-schema';
 import type { z } from 'zod';
 
 export type CourseExamApplicationListResponseDTO = z.infer<

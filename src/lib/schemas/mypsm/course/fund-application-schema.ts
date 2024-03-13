@@ -1,86 +1,64 @@
 //==========================================================
-//================== Course Schema ==============
+//================== Fund Application Schema ==============
 //==========================================================
 
 import {
     booleanSchema,
     codeSchema,
+    dateSchema,
     dateStringSchema,
-    longTextSchema,
-    minDateSchema,
     numberIdSchema,
-    requiredDateStringSchema,
+    numberSchema,
     shortTextSchema,
 } from '$lib/schemas/common/schema-type';
 import { z } from 'zod';
 
 // ==================================================
-// exam info schema
+// fund application schema
 // ==================================================
-export const _examIDschema = z.object({
+export const _fundApplicationIDschema = z.object({
     examId: z.number(),
 });
 
-export const _examInfoResponseSchema = z.object({
+export const _fundApplicationResponseSchema = z.object({
     id: z.number().readonly(),
-    examTypeId: numberIdSchema,
-    examTitle: codeSchema,
-    startDate: minDateSchema,
-    endDate: minDateSchema,
-    examDate: minDateSchema,
-    examLocation: longTextSchema,
-});
-
-export const _examInfoRequestSchema = _examInfoResponseSchema.omit({
-    id: true,
-});
-
-export const _editExamInfoRequestSchema = _examInfoResponseSchema;
-
-export const _examListResponseSchema = z.array(_examInfoResponseSchema);
-
-// ==================================================
-// exam application schema
-// ==================================================
-export const _addExamApplicationRequestSchema = z.object({
-    exams: z.array(_examIDschema),
-});
-
-export const _examApplicationInfoResponseSchema = z.object({
-    applicationId: z.number().readonly(),
-    employeeNumber: z.string().readonly(),
     employeeName: shortTextSchema,
     employeeIdentityNumber: shortTextSchema,
-    employeeGrade: codeSchema,
-    examTitle: codeSchema,
-    examTypeId: numberIdSchema,
-    examApplicationOpenDate: requiredDateStringSchema,
-    examApplicationCloseDate: requiredDateStringSchema,
-    examDate: requiredDateStringSchema,
-    examLocation: shortTextSchema,
-    examResult: shortTextSchema.nullish(),
-    examStatus: codeSchema,
+    courseApplicationDate: dateSchema,
+    courseName: shortTextSchema,
+    academicLevel: shortTextSchema,
+    coursePeriod: numberIdSchema,
+    status: z.string().readonly(),
 });
 
-export const _examApplicationListResponseSchema = z.array(
-    _examApplicationInfoResponseSchema,
+export const _fundApplicationListResponseSchema = z.array(
+    _fundApplicationResponseSchema,
 );
 
-export const _examApplicationDetailResponseSchema =
-    _examApplicationInfoResponseSchema
-        .omit({
-            examTypeId: true,
-            examResult: true,
-            examStatus: true,
-        })
-        .extend({
-            examType: shortTextSchema,
-        });
+export const _fundApplicationDetailResponseSchema = z.object({
+    id: z.number().readonly(),
+    academicLevel: shortTextSchema,
+    courseName: shortTextSchema,
+    institution: shortTextSchema,
+    learningInstitution: shortTextSchema,
+    studyDuration: numberSchema,
+    courseApplicationDate: dateStringSchema,
+    entryDateToInstituition: dateStringSchema,
+    expectedFinishedStudyDate: dateStringSchema,
+    educationTypeId: numberIdSchema,
+    applicationTypeId: numberIdSchema,
+});
+
+export const _createFundApplicationRequestSchema =
+    _fundApplicationDetailResponseSchema.omit({
+        id: true,
+        courseApplicationDate: true,
+    });
 
 // ==================================================
-// course staff personal info schema
+// fund application staff personal info schema
 // ==================================================
-export const _coursePersonalInfoResponseSchema = z
+export const _fundApplicationPersonalInfoResponseSchema = z
     .object({
         employeeNo: z.string(),
         name: shortTextSchema,
@@ -99,6 +77,7 @@ export const _coursePersonalInfoResponseSchema = z
         position: codeSchema,
         currentPlacement: codeSchema,
         group: codeSchema,
+        program: codeSchema,
         homeAddress: z.string().nullable(),
         mailAddress: z.string().nullable(),
         homeNo: z.string().nullable(),
@@ -115,9 +94,9 @@ export const _coursePersonalInfoResponseSchema = z
     });
 
 // ==================================================
-// course staff service info schema
+// fund application staff service info schema
 // ==================================================
-export const _courseServiceInfoResponseSchema = z
+export const _fundApplicationServiceInfoResponseSchema = z
     .object({
         currentGrade: z.string(),
         currentPosition: z.string(),
@@ -156,31 +135,25 @@ export const _courseServiceInfoResponseSchema = z
     });
 
 // ==================================================
-// course exam attendance schema
+// fund application approval schema
 // ==================================================
-export const _examSetAttendanceResponseSchema = z.object({
-    status: numberIdSchema,
-    details: shortTextSchema,
-});
-
-export const _examSetAttendanceRequestSchema = z.object({
-    id: numberIdSchema,
-    attendance: z.boolean(),
-});
-
-// ==================================================
-// course exam approval schema
-// ==================================================
-export const _examApplicationApprovalSchema = z.object({
+export const _fundApplicationApprovalSchema = z.object({
     id: numberIdSchema,
     remark: shortTextSchema,
     status: booleanSchema,
 });
 
 // ==================================================
-// course exam result schema
+// fund application document upload schema
 // ==================================================
-export const _examApplicationResultSchema = z.object({
+export const _fundApplicationDocumentSchema = z.object({
     id: numberIdSchema,
-    examResult: shortTextSchema,
+    document: z.array(z.object({ document: z.string() })),
+});
+export const _fundApplicationUploadDocSchema = z.object({
+    id: numberIdSchema,
+    documents: z
+        .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
+        .refine((f) => f.size < 4_000_000, 'Maximum 4 MB saiz muat naik.')
+        .array(),
 });

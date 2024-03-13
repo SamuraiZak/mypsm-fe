@@ -13,6 +13,13 @@ export const shortTextSchema = z
         message: 'Medan ini tidak boleh melebihi 124 karakter.',
     })
     .trim();
+
+export const requiredTextSchema = z
+    .string({ required_error: 'Medan ini tidak boleh kosong.' })
+    .min(4, {
+        message: 'Medan ini tidak boleh kosong.',
+    })
+    .trim();
 export const codeSchema = z
     .string({ required_error: 'Medan ini tidak boleh kosong.' })
     .min(1, {
@@ -75,10 +82,12 @@ export const booleanSchema = z.boolean({
     invalid_type_error: 'Medan ini haruslah jenis boolean.',
 });
 
-export const numberSchema = z.coerce.number({
-    required_error: 'Medan ini hendaklah diisi.',
-    invalid_type_error: 'Sila pastikan medan ini ditaip dengan angka',
-});
+export const numberSchema = z.coerce
+    .number({
+        required_error: 'Medan ini hendaklah diisi.',
+        invalid_type_error: 'Sila pastikan medan ini ditaip dengan angka',
+    })
+    .refine((x) => x > 0, { message: 'Medan ini tidak boleh dibiar kosong.' });
 
 export const numberIdSchema = z.coerce.number({
     required_error: 'Tidak tepat.',

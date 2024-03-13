@@ -3,29 +3,24 @@ import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto.js';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
-import type { CourseExamApplicationApprovalDTO } from '$lib/dto/mypsm/course/exam/course-exam-application-approval.dto.js';
-import type { CourseExamApplicationPersonalDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-application-personal-info.dto.js';
-import type { CourseExamApplicationServiceDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-application-service-info.dto.js';
-import type { CourseExamApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-application.dto.js';
-import type {
-    CourseExamApplicationResultRequestDTO,
-    CourseExamApplicationResultResponseDTO,
-} from '$lib/dto/mypsm/course/exam/course-exam-result.dto';
+import type { CourseFundApplicationApprovalDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-approval.dto';
+import type { CourseFundApplicationDocumentsResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-document.dto';
+import type { CourseFundApplicationPersonalDetailResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-personal-info.dto';
+import type { CourseFundApplicationServiceDetailResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-service-info.dto';
+import type { CourseFundApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
-    _coursePersonalInfoResponseSchema,
-    _courseServiceInfoResponseSchema,
-    _editExamInfoRequestSchema,
-    _examApplicationInfoResponseSchema,
-    _examApplicationResultRequestSchema,
-    _examApplicationResultResponseSchema,
-} from '$lib/schemas/mypsm/course/exam-schema';
+    _fundApplicationApprovalSchema,
+    _fundApplicationDetailResponseSchema,
+    _fundApplicationDocumentSchema,
+    _fundApplicationPersonalInfoResponseSchema,
+    _fundApplicationServiceInfoResponseSchema,
+} from '$lib/schemas/mypsm/course/fund-application-schema';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
-import { CourseServices } from '$lib/services/implementation/mypsm/latihan/course.service.js';
+import { CourseFundApplicationServices } from '$lib/services/implementation/mypsm/latihan/fundApplication.service.js';
 import { error } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms/client';
-import { _examApplicationApprovalSchema } from '../../../../../lib/schemas/mypsm/course/exam-schema';
 
 //==================================================
 //=============== Load Function ====================
@@ -38,73 +33,106 @@ export async function load({ params }) {
     currentRoleCode === RoleConstant.urusSetiaLatihan.code;
 
     const idRequestBody: commonIdRequestDTO = {
-        id: Number(params.examApplicationId),
+        id: Number(params.fundApplicationId),
     };
 
     const isCourseSecretaryRole: boolean =
         currentRoleCode === RoleConstant.urusSetiaLatihan.code;
+    const isIntegritySecretaryRole: boolean =
+        currentRoleCode === RoleConstant.urusSetiaIntegriti.code;
+    const isStateDirectorRole: boolean =
+        currentRoleCode === RoleConstant.pengarahNegeri.code;
+    const isUnitDirectorRole: boolean =
+        currentRoleCode === RoleConstant.pengarahBahagian.code;
 
-    let examApplicationDetailResponse: CommonResponseDTO = {};
-    let examPersonalDetailResponse: CommonResponseDTO = {};
-    let examServiceDetailResponse: CommonResponseDTO = {};
-    let courseExamSecretaryApprovalResponse: CommonResponseDTO = {};
-    let courseExamResultResponse: CommonResponseDTO = {};
+    let fundApplicationDetailResponse: CommonResponseDTO = {};
+    let fundApplicationPersonalDetailResponse: CommonResponseDTO = {};
+    let fundApplicationServiceDetailResponse: CommonResponseDTO = {};
+    let fundApplicationCourseSecretaryApprovalResponse: CommonResponseDTO = {};
+    let fundApplicationIntegritySecretaryApprovalResponse: CommonResponseDTO =
+        {};
+    let fundApplicationStateUnitDirectorApprovalResponse: CommonResponseDTO =
+        {};
 
-    examApplicationDetailResponse =
-        await CourseServices.getCourseExamApplicationDetail(idRequestBody);
-
-    examPersonalDetailResponse =
-        await CourseServices.getCourseExamApplicationPersonalDetail(
+    fundApplicationDetailResponse =
+        await CourseFundApplicationServices.getCourseFundApplicationDetail(
             idRequestBody,
         );
 
-    examServiceDetailResponse =
-        await CourseServices.getCourseExamApplicationServiceDetail(
+    fundApplicationPersonalDetailResponse =
+        await CourseFundApplicationServices.getCourseFundApplicationPersonalDetail(
             idRequestBody,
         );
 
-    courseExamSecretaryApprovalResponse =
-        await CourseServices.getCourseExamApplicationSecreataryApproval(
+    fundApplicationServiceDetailResponse =
+        await CourseFundApplicationServices.getCourseFundApplicationServiceDetail(
             idRequestBody,
         );
 
-    courseExamResultResponse =
-        await CourseServices.getCourseExamResult(idRequestBody);
+    fundApplicationCourseSecretaryApprovalResponse =
+        await CourseFundApplicationServices.getCourseFundApplicationCourseSecretaryApproval(
+            idRequestBody,
+        );
+
+    fundApplicationIntegritySecretaryApprovalResponse =
+        await CourseFundApplicationServices.getCourseFundApplicationIntegritySecretaryApproval(
+            idRequestBody,
+        );
+
+    fundApplicationStateUnitDirectorApprovalResponse =
+        await CourseFundApplicationServices.getCourseFundApplicationStateUnitDirectorApproval(
+            idRequestBody,
+        );
+
+    const fundApplicationDocumentInfoResponse: CommonResponseDTO =
+        await CourseFundApplicationServices.getCurrentCandidateDocuments(
+            idRequestBody,
+        );
 
     // ============================================================
     // Supervalidated form initialization
     // ============================================================
-    const examInfoForm = await superValidate(
-        examApplicationDetailResponse.data
-            ?.details as CourseExamApplicationDetailResponseDTO,
-        zod(_examApplicationInfoResponseSchema),
+    const fundApplicationInfoForm = await superValidate(
+        fundApplicationDetailResponse.data
+            ?.details as CourseFundApplicationDetailResponseDTO,
+        zod(_fundApplicationDetailResponseSchema),
     );
 
-    const examPersonalInfoForm = await superValidate(
-        examPersonalDetailResponse.data
-            ?.details as CourseExamApplicationPersonalDetailResponseDTO,
-        zod(_coursePersonalInfoResponseSchema),
+    const fundApplicationPersonalInfoForm = await superValidate(
+        fundApplicationPersonalDetailResponse.data
+            ?.details as CourseFundApplicationPersonalDetailResponseDTO,
+        zod(_fundApplicationPersonalInfoResponseSchema),
     );
 
-    const examServiceInfoForm = await superValidate(
-        examServiceDetailResponse.data
-            ?.details as CourseExamApplicationServiceDetailResponseDTO,
-        zod(_courseServiceInfoResponseSchema),
+    const fundApplicationServiceInfoForm = await superValidate(
+        fundApplicationServiceDetailResponse.data
+            ?.details as CourseFundApplicationServiceDetailResponseDTO,
+        zod(_fundApplicationServiceInfoResponseSchema),
     );
 
-    const examSecretaryApprovalForm = await superValidate(
-        courseExamSecretaryApprovalResponse.data
-            ?.details as CourseExamApplicationApprovalDTO,
-        zod(_examApplicationApprovalSchema),
+    const fundApplicationCourseSecretaryApprovalForm = await superValidate(
+        fundApplicationCourseSecretaryApprovalResponse.data
+            ?.details as CourseFundApplicationApprovalDTO,
+        zod(_fundApplicationApprovalSchema),
     );
 
-    const examResultForm = await superValidate(
-        courseExamResultResponse.data
-            ?.details as CourseExamApplicationResultResponseDTO,
-        zod(_examApplicationResultResponseSchema),
+    const fundApplicationIntegritySecretaryApprovalForm = await superValidate(
+        fundApplicationIntegritySecretaryApprovalResponse.data
+            ?.details as CourseFundApplicationApprovalDTO,
+        zod(_fundApplicationApprovalSchema),
     );
 
-    // ===========================================================================
+    const fundApplicationStateUnitDirectorApprovalForm = await superValidate(
+        fundApplicationStateUnitDirectorApprovalResponse.data
+            ?.details as CourseFundApplicationApprovalDTO,
+        zod(_fundApplicationApprovalSchema),
+    );
+
+    const fundApplicationDocumentForm = await superValidate(
+        fundApplicationDocumentInfoResponse.data
+            ?.details as CourseFundApplicationDocumentsResponseDTO,
+        zod(_fundApplicationDocumentSchema),
+    );
 
     // ==========================================================================
     // Get Lookup Functions
@@ -245,8 +273,6 @@ export async function load({ params }) {
 
     // ===========================================================================
 
-    // ===========================================================================
-
     const programLookupResponse: CommonResponseDTO =
         await LookupServices.getProgrammeEnums();
 
@@ -270,40 +296,32 @@ export async function load({ params }) {
 
     // ===========================================================================
 
-    const examTypeLookupResponse: CommonResponseDTO =
+    const fundApplicationTypeLookupResponse: CommonResponseDTO =
         await LookupServices.getExamTypeEnums();
 
-    const examTypeLookup: DropdownDTO[] = LookupServices.setSelectOptions(
-        examTypeLookupResponse,
-    );
-
-    // ===========================================================================
-
-    const examResultLookupResponse: CommonResponseDTO =
-        await LookupServices.getExamResultEnums();
-
-    const examResultLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsValueIsDescription(
-            examResultLookupResponse,
-        );
+    const fundApplicationTypeLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(fundApplicationTypeLookupResponse);
 
     // ===========================================================================
 
     return {
-        params,
         responses: {
-            examApplicationDetailResponse,
-            examPersonalDetailResponse,
-            examServiceDetailResponse,
-            courseExamSecretaryApprovalResponse,
-            courseExamResultResponse,
+            fundApplicationDetailResponse,
+            fundApplicationPersonalDetailResponse,
+            fundApplicationServiceDetailResponse,
+            fundApplicationCourseSecretaryApprovalResponse,
+            fundApplicationIntegritySecretaryApprovalResponse,
+            fundApplicationStateUnitDirectorApprovalResponse,
+            fundApplicationDocumentInfoResponse,
         },
         forms: {
-            examInfoForm,
-            examPersonalInfoForm,
-            examServiceInfoForm,
-            examSecretaryApprovalForm,
-            examResultForm,
+            fundApplicationInfoForm,
+            fundApplicationPersonalInfoForm,
+            fundApplicationServiceInfoForm,
+            fundApplicationCourseSecretaryApprovalForm,
+            fundApplicationIntegritySecretaryApprovalForm,
+            fundApplicationStateUnitDirectorApprovalForm,
+            fundApplicationDocumentForm,
         },
         selectionOptions: {
             identityCardColorLookup,
@@ -322,12 +340,14 @@ export async function load({ params }) {
             retirementBenefitLookup,
             schemeLookup,
             groupLookup,
-            examTypeLookup,
-            examResultLookup,
+            fundApplicationTypeLookup,
             programLookup,
         },
         role: {
             isCourseSecretaryRole,
+            isIntegritySecretaryRole,
+            isStateDirectorRole,
+            isUnitDirectorRole,
         },
     };
 }
@@ -335,34 +355,10 @@ export async function load({ params }) {
 //==================================================
 //=============== Submit Functions =================
 //==================================================
-export const _addExamApplicationForm = async (formData: object) => {
-    const form = await superValidate(formData, zod(_editExamInfoRequestSchema));
-
-    if (!form.valid) {
-        getErrorToast();
-        error(400, { message: 'Validation Not Passed!' });
-    }
-
-    const modifiedForm = {
-        id: form.data.id,
-        examTypeId: form.data.examTypeId,
-        examTitle: form.data.examTitle,
-        startDate: form.data.startDate.toISOString().split('T')[0],
-        endDate: form.data.endDate.toISOString().split('T')[0],
-        examDate: form.data.examDate.toISOString().split('T')[0],
-        examLocation: form.data.examLocation,
-    };
-
-    const response: CommonResponseDTO =
-        await CourseServices.editCourseExam(modifiedForm);
-
-    return { response };
-};
-
-export const _addSecretaryApprovalForm = async (formData: object) => {
+export const _addCourseSecretaryApprovalForm = async (formData: object) => {
     const form = await superValidate(
         formData,
-        zod(_examApplicationApprovalSchema),
+        zod(_fundApplicationApprovalSchema),
     );
 
     if (!form.valid) {
@@ -371,17 +367,17 @@ export const _addSecretaryApprovalForm = async (formData: object) => {
     }
 
     const response: CommonResponseDTO =
-        await CourseServices.setCourseExamApplicationSecretaryApproval(
-            form.data as CourseExamApplicationApprovalDTO,
+        await CourseFundApplicationServices.setCourseFundApplicationCourseSecretaryApproval(
+            form.data as CourseFundApplicationApprovalDTO,
         );
 
     return { response };
 };
 
-export const _submitExamResult = async (formData: object) => {
+export const _addIntegritySecretaryApprovalForm = async (formData: object) => {
     const form = await superValidate(
         formData,
-        zod(_examApplicationResultRequestSchema),
+        zod(_fundApplicationApprovalSchema),
     );
 
     if (!form.valid) {
@@ -390,8 +386,27 @@ export const _submitExamResult = async (formData: object) => {
     }
 
     const response: CommonResponseDTO =
-        await CourseServices.setCourseExamResult(
-            form.data as CourseExamApplicationResultRequestDTO,
+        await CourseFundApplicationServices.setCourseFundApplicationIntegritySecretaryApproval(
+            form.data as CourseFundApplicationApprovalDTO,
+        );
+
+    return { response };
+};
+
+export const _addStateUnitSecretaryApprovalForm = async (formData: object) => {
+    const form = await superValidate(
+        formData,
+        zod(_fundApplicationApprovalSchema),
+    );
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await CourseFundApplicationServices.setCourseFundApplicationStateUnitDirectorApproval(
+            form.data as CourseFundApplicationApprovalDTO,
         );
 
     return { response };
