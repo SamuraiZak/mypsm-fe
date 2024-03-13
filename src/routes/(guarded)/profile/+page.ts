@@ -6,10 +6,11 @@ import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-requ
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto.js';
-import type { Academic, academicRequestDTO, academicResponseDTO } from '$lib/dto/mypsm/profile/academic-detail.dto';
+import type { Academic, academicRequestDTO, academicResponseDTO, editAcademicRequestDTO } from '$lib/dto/mypsm/profile/academic-detail.dto';
 import type { profileIDRequestBody } from '$lib/dto/mypsm/profile/profile-employeeid-request.view-dto';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
+    _academicEditRequestSchema,
     _academicInfoSchema, _academicListRequestSchema, _academicListResponseSchema,
     _activityInfoSchema,
     _activityListRequestSchema,
@@ -557,6 +558,23 @@ export const _submitAcademicForm = async (formData: object) => {
     return { response };
 };
 
+// ============================================================
+// ============================================================
+export const _submitEditAcademicForm = async (formData: object) => {
+    console.log(formData)
+    const editAcademicInfoform = await superValidate(formData, (zod)(_academicEditRequestSchema));
+
+    if (!editAcademicInfoform.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    // const response: CommonResponseDTO =
+    //     await ProfileServices.editProfileAcademicDetails(editAcademicInfoform.data as editAcademicRequestDTO);
+
+    // return { response };
+};
+
 // ===============================================================
 // ===============================================================
 export const _submitExperienceForm = async (formData: object) => {
@@ -679,7 +697,7 @@ export const _submitAcademicInfoForm = async (formData: Academic[]) => {
         return fail(400);
     }
     const requestData: academicRequestDTO = {
-        academics: formData,
+        educations: formData,
     };
 
     console.log(requestData);

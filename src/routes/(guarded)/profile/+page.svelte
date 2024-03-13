@@ -56,6 +56,7 @@
         _submitActivityInfoForm,
         _submitDependencyForm,
         _submitDependencyInfoForm,
+        _submitEditAcademicForm,
         _submitExperienceForm,
         _submitExperienceInfoForm,
         _submitFamilyForm,
@@ -245,6 +246,7 @@
         form: academicInfoForm,
         errors: academicInfoError,
         enhance: academicInfoEnhance,
+        tainted: academicTaintedField,
         isTainted: academicInfoTainted,
     } = superForm(
         data.academicInfoForm,
@@ -254,19 +256,24 @@
             dataType: 'json',
             id: 'academicDetail',
             invalidateAll: true,
-            resetForm: false,
+            resetForm: true,
             multipleSubmits: 'allow',
             validationMethod: 'oninput',
-            validators: zod(_academicListResponseSchema),
-            onUpdate(event) {},
+            validators: false,
+            taintedMessage: 'Perubahan belum disimpan',
+            onUpdate() {
+                isEditableAcademic = false;
+            },
             async onSubmit() {
                 if (!academicInfoTainted()) {
                     toast('Tiada perubahan data dikesan.');
                     error(400);
                 }
-                const result = await _submitAcademicForm($academicInfoForm);
-                if (result.response.status === 'success')
-                    isReadonlyAcademicFormStepper = true;
+
+                const resultEdit =
+                    await _submitEditAcademicForm($academicInfoForm);
+                // if (resultEdit.response.status === 'success')
+                //     isEditableAcademic = false;
             },
         },
     );
@@ -1397,8 +1404,8 @@
                                 id="salaryMovementMonth"
                                 label={'Bulan KGT'}
                                 options={[
-                                     {
-                                        value: "undefined",
+                                    {
+                                        value: 'undefined',
                                         name: 'Tiada Maklumat',
                                     },
                                     {
@@ -1417,7 +1424,7 @@
                                         value: 10,
                                         name: 'Oktober',
                                     },
-                                    ]}
+                                ]}
                                 bind:val={$serviceInfoForm.salaryMovementMonth}
                             ></CustomSelectField>
 
@@ -1546,7 +1553,7 @@
                             />
                             <TextIconButton
                                 type="neutral"
-                                label="Kembali"
+                                label="Batal"
                                 onClick={() => (isCreateAcademic = false)}
                             />
                         {/if}
@@ -1559,13 +1566,12 @@
                         {:else}
                             <TextIconButton
                                 type="primary"
-                                label="Simpan"
-                                onClick={() => (isEditableAcademic = false)}
+                                label="Kemaskini"
                                 form="academicFormStepper"
                             />
                             <TextIconButton
                                 type="neutral"
-                                label="Kembali"
+                                label="Batal"
                                 onClick={() => (isEditableAcademic = false)}
                             />
                         {/if}
@@ -1610,114 +1616,126 @@
                             use:academicInfoEnhance
                             class="flex w-full flex-col gap-2"
                         >
-                            {#if $academicInfoForm.academics.length < 1}
+                            {#if $academicInfoForm.educations.length < 1}
                                 <div
                                     class="text-center text-sm italic text-system-primary"
                                 >
                                     Tiada maklumat.
                                 </div>
                             {:else}
-                                {#each $academicInfoForm.academics as _, i}
-                                    <CustomTabContent
-                                        title={`Akademik #${i + 1}`}
-                                    >
-                                        <CustomSelectField
-                                            disabled
-                                            id="majorId"
-                                            label={'Jurusan'}
-                                            options={data.selectionOptions
-                                                .majorMinorLookup}
-                                            bind:val={$academicInfoForm
-                                                .academics[i].majorId}
-                                        ></CustomSelectField>
+                                <CustomTab id="academics">
+                                    {#each $academicInfoForm.educations as key, i}
+                                        <CustomTabContent
+                                            title={`Akademik #${key.educationId}`}
+                                        >
+                                            <input
+                                                type="text"
+                                                hidden
+                                                bind:value={$academicInfoForm
+                                                    .educations[i].educationId}
+                                            />
+                                            <CustomSelectField
+                                                disabled={!isEditableAcademic}
+                                                id="majorId"
+                                                label={'Jurusan'}
+                                                options={data.selectionOptions
+                                                    .majorMinorLookup}
+                                                bind:val={$academicInfoForm
+                                                    .educations[i].majorId}
+                                            ></CustomSelectField>
 
-                                        <CustomSelectField
-                                            disabled
-                                            id="minorId"
-                                            label={'Bidang'}
-                                            bind:val={$academicInfoForm
-                                                .academics[i].minorId}
-                                            options={data.selectionOptions
-                                                .majorMinorLookup}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                disabled={!isEditableAcademic}
+                                                id="minorId"
+                                                label={'Bidang'}
+                                                bind:val={$academicInfoForm
+                                                    .educations[i].minorId}
+                                                options={data.selectionOptions
+                                                    .majorMinorLookup}
+                                            ></CustomSelectField>
 
-                                        <CustomSelectField
-                                            disabled
-                                            id="countryId"
-                                            label={'Negara'}
-                                            bind:val={$academicInfoForm
-                                                .academics[i].countryId}
-                                            options={data.selectionOptions
-                                                .countryLookup}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                disabled={!isEditableAcademic}
+                                                id="countryId"
+                                                label={'Negara'}
+                                                bind:val={$academicInfoForm
+                                                    .educations[i].countryId}
+                                                options={data.selectionOptions
+                                                    .countryLookup}
+                                            ></CustomSelectField>
 
-                                        <CustomSelectField
-                                            disabled
-                                            id="institutionId"
-                                            label={'Institusi'}
-                                            bind:val={$academicInfoForm
-                                                .academics[i].institutionId}
-                                            options={data.selectionOptions
-                                                .institutionLookup}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                disabled={!isEditableAcademic}
+                                                id="institutionId"
+                                                label={'Institusi'}
+                                                bind:val={$academicInfoForm
+                                                    .educations[i]
+                                                    .institutionId}
+                                                options={data.selectionOptions
+                                                    .institutionLookup}
+                                            ></CustomSelectField>
 
-                                        <CustomSelectField
-                                            disabled
-                                            id="educationLevelId"
-                                            label={'Taraf Pendidikan'}
-                                            bind:val={$academicInfoForm
-                                                .academics[i].educationLevelId}
-                                            options={data.selectionOptions
-                                                .educationLookup}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                disabled={!isEditableAcademic}
+                                                id="educationLevelId"
+                                                label={'Taraf Pendidikan'}
+                                                bind:val={$academicInfoForm
+                                                    .educations[i]
+                                                    .educationLevelId}
+                                                options={data.selectionOptions
+                                                    .educationLookup}
+                                            ></CustomSelectField>
 
-                                        <CustomSelectField
-                                            disabled
-                                            id="sponsorshipId"
-                                            label={'Penajaan'}
-                                            bind:val={$academicInfoForm
-                                                .academics[i].sponsorshipId}
-                                            options={data.selectionOptions
-                                                .sponsorshipLookup}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                disabled={!isEditableAcademic}
+                                                id="sponsorshipId"
+                                                label={'Penajaan'}
+                                                bind:val={$academicInfoForm
+                                                    .educations[i]
+                                                    .sponsorshipId}
+                                                options={data.selectionOptions
+                                                    .sponsorshipLookup}
+                                            ></CustomSelectField>
 
-                                        <CustomTextField
-                                            disabled
-                                            id="name"
-                                            label={'Nama Sijil/Pencapaian'}
-                                            type="text"
-                                            bind:val={$academicInfoForm
-                                                .academics[i].name}
-                                        ></CustomTextField>
+                                            <CustomTextField
+                                                disabled={!isEditableAcademic}
+                                                id="name"
+                                                label={'Nama Sijil/Pencapaian'}
+                                                type="text"
+                                                bind:val={$academicInfoForm
+                                                    .educations[i].name}
+                                            ></CustomTextField>
 
-                                        <CustomTextField
-                                            disabled
-                                            id="completionDate"
-                                            label="Tarikh Tamat Pembelajaran"
-                                            type="date"
-                                            bind:val={$academicInfoForm
-                                                .academics[i].completionDate}
-                                        ></CustomTextField>
+                                            <CustomTextField
+                                                disabled={!isEditableAcademic}
+                                                id="completionDate"
+                                                label="Tarikh Tamat Pembelajaran"
+                                                type="date"
+                                                bind:val={$academicInfoForm
+                                                    .educations[i]
+                                                    .completionDate}
+                                            ></CustomTextField>
 
-                                        <CustomTextField
-                                            disabled
-                                            id="finalGrade"
-                                            label={'Ijazah/ CGPA/ Gred'}
-                                            type="text"
-                                            bind:val={$academicInfoForm
-                                                .academics[i].finalGrade}
-                                        ></CustomTextField>
+                                            <CustomTextField
+                                                disabled={!isEditableAcademic}
+                                                id="finalGrade"
+                                                label={'Ijazah/ CGPA/ Gred'}
+                                                type="text"
+                                                bind:val={$academicInfoForm
+                                                    .educations[i].finalGrade}
+                                            ></CustomTextField>
 
-                                        <CustomTextField
-                                            disabled
-                                            id="field"
-                                            label={'Bidang'}
-                                            type="text"
-                                            bind:val={$academicInfoForm
-                                                .academics[i].field}
-                                        ></CustomTextField>
-                                    </CustomTabContent>
-                                {/each}
+                                            <CustomTextField
+                                                disabled={!isEditableAcademic}
+                                                id="field"
+                                                label={'Bidang'}
+                                                type="text"
+                                                bind:val={$academicInfoForm
+                                                    .educations[i].field}
+                                            ></CustomTextField>
+                                        </CustomTabContent>
+                                    {/each}
+                                </CustomTab>
                             {/if}
                         </form>
                     </StepperContentBody>
@@ -1816,6 +1834,7 @@
                                     Tiada maklumat.
                                 </div>
                             {:else}
+                            <CustomTab id="experiences">
                                 {#each $experienceInfoForm.experiences as _, i}
                                     <CustomTabContent
                                         title={`Pengalaman #${i + 1}`}
@@ -1891,6 +1910,7 @@
                                         ></CustomTextField>
                                     </CustomTabContent>
                                 {/each}
+                            </CustomTab>
                             {/if}
                         </form>
                     </StepperContentBody>
@@ -1990,6 +2010,7 @@
                                     Tiada maklumat.
                                 </div>
                             {:else}
+                            <CustomTab id="activities">
                                 {#each $activityInfoForm.activities as _, i}
                                     <CustomTabContent
                                         title={`Aktiviti #${i + 1}`}
@@ -2031,6 +2052,7 @@
                                         ></CustomTextField>
                                     </CustomTabContent>
                                 {/each}
+                            </CustomTab>
                             {/if}
                         </form>
                     </StepperContentBody>
@@ -2128,6 +2150,7 @@
                                     Tiada maklumat.
                                 </div>
                             {:else}
+                            <CustomTab id="families">
                                 {#each Object.entries($familyInfoForm.families) as [key, _], i}
                                     <CustomTabContent
                                         title={i +
@@ -2338,6 +2361,7 @@
                                         ></CustomSelectField>
                                     </CustomTabContent>
                                 {/each}
+                            </CustomTab>
                             {/if}
                         </form>
                     </StepperContentBody>

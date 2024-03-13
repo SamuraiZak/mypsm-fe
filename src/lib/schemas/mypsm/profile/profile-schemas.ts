@@ -184,7 +184,7 @@ export const _serviceInfoRequestSchema = _serviceDetailSchema.omit({
 
 export const _academicInfoSchema = z
     .object({
-        id: z.number().readonly(),
+        educationId: z.number().readonly(),
         majorId: numberIdSchema,
         minorId: numberIdSchema,
         countryId: numberIdSchema,
@@ -195,18 +195,17 @@ export const _academicInfoSchema = z
         completionDate: dateStringSchema,
         finalGrade: codeSchema,
         field: shortTextSchema,
-    })
-    .partial({
-        id: true,
     });
 
 export const _academicListResponseSchema = z.object({
-    academics: z.array(_academicInfoSchema),
+    educations: z.array(_academicInfoSchema),
 });
 
 export const _academicListRequestSchema = _academicListResponseSchema.pick({
-    academics: true,
+    educations: true,
 });
+
+export const _academicEditRequestSchema = _academicInfoSchema;
 
 //==========================================================
 //================== Experience Schema =====================
