@@ -7,8 +7,8 @@ export interface ContractExperience {
     address:      string;
     position:     string;
     positionCode: string;
-    startDate:    Date;
-    endDate:      Date;
+    startDate:    Date | string;
+    endDate:      Date | string;
     salary:       number;
 }
 

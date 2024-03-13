@@ -15,30 +15,16 @@ export const load = async () => {
     }
 }
 
-export const _submit = async (formData: object) => {
+export const _submit = async (formData: AddNewContractEmployeeDTO) => {
     const form = await superValidate(formData, zod(_addNewContractEmployeeSchema));
     if (form.valid) {
-        const tempFormData: AddNewContractEmployeeDTO = {
-            name: form.data.name,
-            email: form.data.email,
-            identityDocumentNumber: form.data.identityDocumentNumber,
-            startContract: form.data.startContract.toISOString().split('T')[0],
-            endContract: form.data.endContract.toISOString().split('T')[0],
-            wageRate: form.data.wageRate,
-            designation: form.data.designation,
-            reportDutyDate: form.data.reportDutyDate.toISOString().split('T')[0],
-        }
         const response: CommonResponseDTO =
             await ContractEmployeeServices.addNewContractEmployee(
-                tempFormData as AddNewContractEmployeeDTO,
+                form.data as AddNewContractEmployeeDTO
             )
-        if (form.valid) {
-            const result: string | null = 'success';
+        if(response.status == 'success'){
             goto('./');
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
+            return response
         }
     }
 };

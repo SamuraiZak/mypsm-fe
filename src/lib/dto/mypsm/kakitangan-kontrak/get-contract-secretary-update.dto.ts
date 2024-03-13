@@ -1,4 +1,4 @@
-export interface EditContractDetailSecretaryDTO {
+export interface GetContractSecretaryUpdateDTO {
     candidateId:               number;
     startContract:             string;
     endContract:               string;
@@ -19,15 +19,5 @@ export interface EditContractDetailSecretaryDTO {
     currentServiceStartDate:   string;
     firstConfirmServiceDate:   string;
     currentConfirmServiceDate: string;
-}
-
-// Converts JSON strings to/from your types
-export class EditContractDetailSecretaryDTOConvert {
-    public static fromJson(json: string): EditContractDetailSecretaryDTO {
-        return JSON.parse(json);
-    }
-
-    public static toJson(value: EditContractDetailSecretaryDTO): string {
-        return JSON.stringify(value);
-    }
+    isReadonly?:                boolean;
 }

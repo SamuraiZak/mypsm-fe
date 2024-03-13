@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 // =========================================================================
 export const shortTextSchema = z
-    .string({ required_error: 'Medan ini tidak boleh kosong.' })
+    .string({ required_error: 'Medan ini tidak boleh kosong.', invalid_type_error: 'Medan ini tidak boleh kosong.' })
     .min(4, {
         message: 'Medan ini hendaklah lebih daripada 4 karakter.',
     })

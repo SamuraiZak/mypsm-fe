@@ -223,10 +223,6 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Perlantikan Baru (Kontrak)',
-                            path: '/kakitangan-kontrak/lantikan-baru',
-                        },
-                        {
                             name: 'Pembaharuan Kontrak',
                             path: '/kakitangan-kontrak/pembaharuan',
                         },
@@ -252,6 +248,10 @@ export class SidebarConstant {
                             path: '/kakitangan-kontrak/lantikan-baru',
                         },
                     ],
+                },
+                {
+                    name: 'Tetapan',
+                    path: '/tetapan',
                 },
             ],
         },
@@ -1223,6 +1223,30 @@ export class SidebarConstant {
                 },
             ],
         },
+        // Urus Setia Khidmat Sokongan
+        {
+            role: RoleConstant.urusSetiaKhidmatSokongan.code,
+            navItems: [
+                {
+                    name: 'Halaman Utama',
+                    path: '/halaman-utama',
+                },
+                {
+                    name: 'Kakitangan Kontrak',
+                    path: '',
+                    subItems: [
+                        {
+                            name: 'Pembaharuan Kontrak',
+                            path: '/kakitangan-kontrak/pembaharuan',
+                        },
+                    ],
+                },
+                {
+                    name: 'Tetapan',
+                    path: '/tetapan',
+                },
+            ],
+        },
         // Urus Setia Integriti
         {
             role: RoleConstant.urusSetiaIntegriti.code,
@@ -1568,10 +1592,6 @@ export class SidebarConstant {
                             name: 'Perlantikan Baru (Kontrak)',
                             path: '/kakitangan-kontrak/lantikan-baru',
                         },
-                        {
-                            name: 'Pembaharuan Kontrak',
-                            path: '/kakitangan-kontrak/pembaharuan',
-                        },
                     ],
                 },
                 {
@@ -1649,8 +1669,8 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Perkhidmatan (Permohonan Panel Klinik)',
-                            path: '/perubatan/permohonan-panel-klinik',
+                            name: 'Perkhidmatan (Permohonan Klinik Panel)',
+                            path: '/perubatan/permohonan-klinik-panel',
                         },
                         {
                             name: 'Perkhidmatan (Bil Tuntutan Klinik)',

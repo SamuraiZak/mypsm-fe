@@ -17,11 +17,11 @@ export interface ContractDependency {
     identityDocumentNumber: string;
     address:                string;
     postcode:               string;
-    birthDate:              Date;
+    birthDate:              Date | string;
     workAddress:            string;
     workPostcode:           string;
     phoneNumber:            string;
-    marriageDate:           Date | null;
+    marriageDate:           Date | string | null;
     inSchool:               boolean;
 }
 

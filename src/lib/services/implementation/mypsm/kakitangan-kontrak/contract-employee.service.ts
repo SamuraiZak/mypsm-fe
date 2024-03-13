@@ -10,6 +10,7 @@ import {
     type CommonListRequestDTO,
 } from '$lib/dto/core/common/common-list-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
+import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
 import { AddNewContractEmployeeAcademicDTOConvert, type AddNewContractEmployeeAcademicDTO } from '$lib/dto/mypsm/kakitangan-kontrak/add-contract-academic.dto';
 import { AddNewContractEmployeeActivityDTOConvert, type AddNewContractEmployeeActivityDTO } from '$lib/dto/mypsm/kakitangan-kontrak/add-contract-activity.dto';
 import { AddNewContractEmployeeDependencyDTOConvert, type AddNewContractEmployeeDependencyDTO } from '$lib/dto/mypsm/kakitangan-kontrak/add-contract-dependency.dto';
@@ -72,6 +73,28 @@ export class ContractEmployeeServices {
             return CommonResponseConstant.httpError;
         }
     }
+    // get contract employee personal detail
+    static async getContractPersonalDetail(param: CandidateIDRequestBody) {
+        try {
+            const url: Input = 'contracts/personal_detail/get';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 
     //add new contract employee
     static async addNewContractEmployee(param: AddNewContractEmployeeDTO) {
@@ -83,7 +106,7 @@ export class ContractEmployeeServices {
                     body: AddNewContractEmployeeDTOConvert.toJson(param),
                 })
                 .json();
-                
+
             const response: Response = await getPromiseToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
@@ -98,7 +121,7 @@ export class ContractEmployeeServices {
         }
     }
 
-    //edit new contract employee detail
+    //edit new contract employee personal detail
     static async editNewContractEmployeeDetail(param: EditNewContractEmployeeDetailDTO) {
         try {
             let url: Input = 'contracts/personal_detail/add';
@@ -108,7 +131,7 @@ export class ContractEmployeeServices {
                     body: EditNewContractEmployeeDetailDTOConvert.toJson(param),
                 })
                 .json();
-                
+
             const response: Response = await getPromiseToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
@@ -133,7 +156,7 @@ export class ContractEmployeeServices {
                     body: AddNewContractEmployeeAcademicDTOConvert.toJson(param),
                 })
                 .json();
-                
+
             const response: Response = await getPromiseToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
@@ -153,17 +176,15 @@ export class ContractEmployeeServices {
         try {
             let url: Input = 'contracts/academic/get';
 
-            const promiseRes: Promise<Response> = http
+            const response: Response = await http
                 .post(url, {
                     body: CandidateIDRequestBodyConvert.toJson(param),
                 })
                 .json();
-                
-            const response: Response = await getPromiseToast(promiseRes);
+
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                invalidateAll()
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -183,12 +204,35 @@ export class ContractEmployeeServices {
                     body: AddNewContractEmployeeExperienceDTOConvert.toJson(param),
                 })
                 .json();
-                
+
             const response: Response = await getPromiseToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
                 invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get contract experience detail
+    static async getContractExperienceDetail(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/experience/get';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -208,12 +252,35 @@ export class ContractEmployeeServices {
                     body: AddNewContractEmployeeActivityDTOConvert.toJson(param),
                 })
                 .json();
-                
+
             const response: Response = await getPromiseToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
                 invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get contract experience detail
+    static async getContractActivityDetail(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/activity/get';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -233,12 +300,35 @@ export class ContractEmployeeServices {
                     body: AddNewContractEmployeeDependencyDTOConvert.toJson(param),
                 })
                 .json();
-                
+
             const response: Response = await getPromiseToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
                 invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get contract experience detail
+    static async getContractFamilyDetail(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/family/get';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -258,12 +348,35 @@ export class ContractEmployeeServices {
                     body: AddNewContractEmployeeDependencyDTOConvert.toJson(param),
                 })
                 .json();
-                
+
             const response: Response = await getPromiseToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
                 invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get contract non family detail
+    static async getContractNonFamilyDetail(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/dependant/get';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -283,7 +396,7 @@ export class ContractEmployeeServices {
                     body: AddContractNextOfKinDTOConvert.toJson(param),
                 })
                 .json();
-                
+
             const response: Response = await getPromiseToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
@@ -298,31 +411,99 @@ export class ContractEmployeeServices {
         }
     }
 
-    // create contract employee documents //multipart form
+    //get contract next of kin detail
+    static async getContractNextOfKinDetail(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/next_of_kin/get';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // add contract employee documents //multipart form
     static async addNewContractEmployeeDocument(param: FormData) {
         try {
             const url: Input = 'contracts/document/add';
-            
+
             // param.append('key', 'document');
             param.append('key', 'document')
             // get the promise response
             const promiseRes: Promise<Response> = http
                 .post(url, {
                     body: param,
-                    headers: {
-                        Accept: 'multipart/form-data',
-                        'Content-type': 'multipart/form-data;',
-                    },
+                    headers: undefined
                 })
                 .json();
             // await toast for resolved or rejected state
             const response: Response = await getPromiseToast(promiseRes);
-
+            console.log(response)
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
-            console.log(result)
+
             if (result.status == 'success') {
                 await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // download documents
+    static async downloadContractAttachment(param: string) {
+        try {
+            const url: Input = param;
+
+            // get the promise response
+            const promiseRes = await http.get(url, {
+                prefixUrl: '',
+                headers: {
+                    Accept: 'application/pdf',
+                    'Content-type': 'application/pdf',
+                },
+            });
+
+            if (promiseRes.status == 200) {
+                window.open(promiseRes.url);
+                return promiseRes.url;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get contract document detail
+    static async getContractDocument(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/document/get';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -342,12 +523,35 @@ export class ContractEmployeeServices {
                     body: EditContractDetailSecretaryDTOConvert.toJson(param),
                 })
                 .json();
-                
+
             const response: Response = await getPromiseToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
                 invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get contract secretary update detail
+    static async getContractSecretaryUpdate(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/secretary_update/get';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -367,12 +571,35 @@ export class ContractEmployeeServices {
                     body: ContractCommonRoleResultDTOConvert.toJson(param),
                 })
                 .json();
-                
+
             const response: Response = await getPromiseToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
                 invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get contract secretary result
+    static async getContractSecretaryResult(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/secretary_approval/get';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -392,7 +619,7 @@ export class ContractEmployeeServices {
                     body: AddContractApproverSupporterDTOConvert.toJson(param),
                 })
                 .json();
-                
+
             const response: Response = await getPromiseToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
@@ -407,6 +634,51 @@ export class ContractEmployeeServices {
         }
     }
 
+    //get contract assigned supporter and approver
+    static async getContractSupporterApprover(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/set_approver_supporter/get';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get supporter waiting for approval table
+    static async getContractSupporterTable(param: CommonListRequestDTO) {
+        try {
+            let url: Input = 'contracts/supporter_approval/list';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
     //add supporter result
     static async addContractSupporterResult(param: ContractCommonRoleResultDTO) {
         try {
@@ -417,7 +689,7 @@ export class ContractEmployeeServices {
                     body: ContractCommonRoleResultDTOConvert.toJson(param),
                 })
                 .json();
-                
+
             const response: Response = await getPromiseToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
@@ -432,6 +704,51 @@ export class ContractEmployeeServices {
         }
     }
 
+    //get contract supporter result
+    static async getContractSupporterResult(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/supporter_approval/get';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get approver waiting for approval table
+    static async getContractApproverTable(param: CommonListRequestDTO) {
+        try {
+            let url: Input = 'contracts/approver_approval/list';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
     //add approver result
     static async addContractApproverResult(param: ContractCommonRoleResultDTO) {
         try {
@@ -442,12 +759,83 @@ export class ContractEmployeeServices {
                     body: ContractCommonRoleResultDTOConvert.toJson(param),
                 })
                 .json();
-                
+
             const response: Response = await getPromiseToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
                 invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get contract approver result
+    static async getContractApproverResult(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/approver_approval/get';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //add employee number
+    static async getContractEmployeeNumber(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/employee/get';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // ====================================================================
+    // renew contract services
+    // ====================================================================
+    static async getRenewContractList(param: CommonListRequestDTO) {
+        try {
+            let url: Input = 'contracts/renew/list';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
