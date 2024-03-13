@@ -1,5 +1,7 @@
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
+import { SidebarConstant } from '$lib/constants/core/sidebar.constant';
 import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
+import type { NavItem, SidebarDTO } from '$lib/dto/core/sidebar/sidebar.dto';
 import { redirect } from '@sveltejs/kit';
 
 const authorisedRoleCode: string[] = [
@@ -11,25 +13,14 @@ export const load = async () => {
     const currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
     );
-    if (currentRoleCode !== null) {
-        if (authorisedRoleCode.includes(currentRoleCode)) {
-            // TODO: YOUR CODE
-        } else {
-            // TODO:
-            console.error(401);
-        }
-    } else {
-        throw redirect(300, '../../login');
-    }
-    // let token: string | null = localStorage.getItem(
-    //     LocalStorageKeyConstant.accessToken,
-    // );
 
-    // if (token == null) {
-    //     throw redirect(300, '../../login');
-    // }
+    const navigationList: NavItem[] =
+        SidebarConstant.sidebar.find((item) => item.role == currentRoleCode)
+            ?.navItems ?? [];
 
-    // TODO: get list of agendas
-
-    // TODO: get list
+    return {
+        props: {
+            navigationList,
+        },
+    };
 };

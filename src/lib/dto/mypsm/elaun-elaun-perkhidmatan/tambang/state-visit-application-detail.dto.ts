@@ -1,5 +1,7 @@
 export interface ServiceAllowanceStateVisitDetailDTO {
+    allowanceId?: number;
     allowanceTypeCode: string;
+    allowanceType?: string;
     applyCode: string;
     stateCode: string;
     familyDetail: StateVisitFamilyDetail[];

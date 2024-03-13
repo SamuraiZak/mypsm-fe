@@ -1,16 +1,33 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
+    import SvgArrowRightSquareFill from '$lib/assets/svg/SvgArrowRightSquareFill.svelte';
     import SvgBookSolid from '$lib/assets/svg/SvgBookSolid.svelte';
     import SvgCalendarSolid from '$lib/assets/svg/SvgCalendarSolid.svelte';
     import SvgChequeSolid from '$lib/assets/svg/SvgChequeSolid.svelte';
     import SvgCoinSolid from '$lib/assets/svg/SvgCoinSolid.svelte';
     import SvgHammerSolid from '$lib/assets/svg/SvgHammerSolid.svelte';
     import SvgHouseSolid from '$lib/assets/svg/SvgHouseSolid.svelte';
+    import SvgInfoSolid from '$lib/assets/svg/SvgInfoSolid.svelte';
     import SvgStethescope from '$lib/assets/svg/SvgStethescope.svelte';
     import SvgTieSolid from '$lib/assets/svg/SvgTieSolid.svelte';
     import QuickLinkCard from '$lib/components/card/QuickLinkCard.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
+    import type { NavItem } from '$lib/dto/core/sidebar/sidebar.dto';
+    import type { PageData } from './$types';
+
+    export let data: PageData;
+
+    function handleQuicklinkClick(nav: NavItem) {
+        if (nav.path !== '') {
+            goto(nav.path);
+        } else {
+            if (nav.subItems !== undefined) {
+                const url = nav.subItems[0].path;
+                goto(url);
+            }
+        }
+    }
 </script>
 
 <section
@@ -38,366 +55,38 @@
         <!-- group body starts here -->
 
         <div class="flex w-full flex-col items-center justify-start gap-2">
-            <CustomTab>
-                <CustomTabContent title="Agenda">
-                    <!-- button group starts here -->
-                    <div
-                        class="grid w-full grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-3"
+            <div
+                class="grid w-full grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-5"
+            >
+                {#each data.props.navigationList as nav}
+                    <button
+                        on:click={() => {
+                            handleQuicklinkClick(nav);
+                        }}
+                        class="flex flex-row items-center justify-start gap-2 rounded-md border p-2 hover:border-ios-activeColors-activeBlue-light"
                     >
-                        <!-- perjawatan -->
-                        <QuickLinkCard
-                            title="Perjawatan"
-                            agendaCount={2}
-                            url="/perjawatan/pemangkuan"
+                        <div
+                            class="flex h-fit min-h-10 w-fit flex-row items-center justify-start"
                         >
-                            <SvgTieSolid slot="icon" size="20"></SvgTieSolid>
-                        </QuickLinkCard>
-
-                        <!-- Cuti -->
-                        <QuickLinkCard
-                            title="Cuti"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
+                            <span
+                                class="flex h-fit w-fit flex-col items-center justify-center text-wrap text-center text-base font-medium text-blue-400"
+                            >
+                                <SvgArrowRightSquareFill size="25"
+                                ></SvgArrowRightSquareFill>
+                            </span>
+                        </div>
+                        <div
+                            class="flex h-fit min-h-10 w-full flex-row items-center justify-start"
                         >
-                            <SvgCalendarSolid slot="icon" size="20"
-                            ></SvgCalendarSolid>
-                        </QuickLinkCard>
-
-                        <!-- Gaji -->
-                        <QuickLinkCard
-                            title="Gaji"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgCoinSolid slot="icon" size="20"></SvgCoinSolid>
-                        </QuickLinkCard>
-
-                        <!-- Elaun -->
-                        <QuickLinkCard
-                            title="Elaun-elaun Perkhidmatan"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgChequeSolid slot="icon" size="20"
-                            ></SvgChequeSolid>
-                        </QuickLinkCard>
-
-                        <!-- Integriti -->
-                        <QuickLinkCard
-                            title="Integriti"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgHammerSolid slot="icon" size="20"
-                            ></SvgHammerSolid>
-                        </QuickLinkCard>
-
-                        <!-- Latihan -->
-                        <QuickLinkCard
-                            title="Latihan"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgBookSolid slot="icon" size="20"></SvgBookSolid>
-                        </QuickLinkCard>
-
-                        <!-- Pinjaman & Kuarters -->
-                        <QuickLinkCard
-                            title="Pinjaman & Kuarters"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgHouseSolid slot="icon" size="20"
-                            ></SvgHouseSolid>
-                        </QuickLinkCard>
-
-                        <!-- Perubatan -->
-                        <QuickLinkCard
-                            title="Perubatan"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgStethescope slot="icon" size="20"
-                            ></SvgStethescope>
-                        </QuickLinkCard>
-
-                        <!-- Rekod Perkhidmatan -->
-                        <QuickLinkCard
-                            title="Rekod Perkhidmatan"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgCalendarSolid slot="icon" size="20"
-                            ></SvgCalendarSolid>
-                        </QuickLinkCard>
-                    </div>
-                    <!-- button group ends here -->
-                </CustomTabContent>
-                <CustomTabContent title="Notifikasi">
-                    <!-- button group starts here -->
-                    <div class=" flex w-full flex-col gap-2.5 justify-start">
-                        <!-- perjawatan -->
-                        <QuickLinkCard
-                            title="Perjawatan"
-                            agendaCount={2}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgTieSolid slot="icon" size="20"></SvgTieSolid>
-                        </QuickLinkCard>
-
-                        <!-- Cuti -->
-                        <QuickLinkCard
-                            title="Cuti"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgCalendarSolid slot="icon" size="20"
-                            ></SvgCalendarSolid>
-                        </QuickLinkCard>
-
-                        <!-- Gaji -->
-                        <QuickLinkCard
-                            title="Gaji"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgCoinSolid slot="icon" size="20"></SvgCoinSolid>
-                        </QuickLinkCard>
-
-                        <!-- Elaun -->
-                        <QuickLinkCard
-                            title="Elaun-elaun Perkhidmatan"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgChequeSolid slot="icon" size="20"
-                            ></SvgChequeSolid>
-                        </QuickLinkCard>
-
-                        <!-- Integriti -->
-                        <QuickLinkCard
-                            title="Integriti"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgHammerSolid slot="icon" size="20"
-                            ></SvgHammerSolid>
-                        </QuickLinkCard>
-
-                        <!-- Latihan -->
-                        <QuickLinkCard
-                            title="Latihan"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgBookSolid slot="icon" size="20"></SvgBookSolid>
-                        </QuickLinkCard>
-
-                        <!-- Pinjaman & Kuarters -->
-                        <QuickLinkCard
-                            title="Pinjaman & Kuarters"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgHouseSolid slot="icon" size="20"
-                            ></SvgHouseSolid>
-                        </QuickLinkCard>
-
-                        <!-- Perubatan -->
-                        <QuickLinkCard
-                            title="Perubatan"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgStethescope slot="icon" size="20"
-                            ></SvgStethescope>
-                        </QuickLinkCard>
-
-                        <!-- Rekod Perkhidmatan -->
-                        <QuickLinkCard
-                            title="Rekod Perkhidmatan"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgCalendarSolid slot="icon" size="20"
-                            ></SvgCalendarSolid>
-                        </QuickLinkCard>
-                        <!-- perjawatan -->
-                        <QuickLinkCard
-                            title="Perjawatan"
-                            agendaCount={2}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgTieSolid slot="icon" size="20"></SvgTieSolid>
-                        </QuickLinkCard>
-
-                        <!-- Cuti -->
-                        <QuickLinkCard
-                            title="Cuti"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgCalendarSolid slot="icon" size="20"
-                            ></SvgCalendarSolid>
-                        </QuickLinkCard>
-
-                        <!-- Gaji -->
-                        <QuickLinkCard
-                            title="Gaji"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgCoinSolid slot="icon" size="20"></SvgCoinSolid>
-                        </QuickLinkCard>
-
-                        <!-- Elaun -->
-                        <QuickLinkCard
-                            title="Elaun-elaun Perkhidmatan"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgChequeSolid slot="icon" size="20"
-                            ></SvgChequeSolid>
-                        </QuickLinkCard>
-
-                        <!-- Integriti -->
-                        <QuickLinkCard
-                            title="Integriti"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgHammerSolid slot="icon" size="20"
-                            ></SvgHammerSolid>
-                        </QuickLinkCard>
-
-                        <!-- Latihan -->
-                        <QuickLinkCard
-                            title="Latihan"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgBookSolid slot="icon" size="20"></SvgBookSolid>
-                        </QuickLinkCard>
-
-                        <!-- Pinjaman & Kuarters -->
-                        <QuickLinkCard
-                            title="Pinjaman & Kuarters"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgHouseSolid slot="icon" size="20"
-                            ></SvgHouseSolid>
-                        </QuickLinkCard>
-
-                        <!-- Perubatan -->
-                        <QuickLinkCard
-                            title="Perubatan"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgStethescope slot="icon" size="20"
-                            ></SvgStethescope>
-                        </QuickLinkCard>
-
-                        <!-- Rekod Perkhidmatan -->
-                        <QuickLinkCard
-                            title="Rekod Perkhidmatan"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgCalendarSolid slot="icon" size="20"
-                            ></SvgCalendarSolid>
-                        </QuickLinkCard>
-                        <!-- perjawatan -->
-                        <QuickLinkCard
-                            title="Perjawatan"
-                            agendaCount={2}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgTieSolid slot="icon" size="20"></SvgTieSolid>
-                        </QuickLinkCard>
-
-                        <!-- Cuti -->
-                        <QuickLinkCard
-                            title="Cuti"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgCalendarSolid slot="icon" size="20"
-                            ></SvgCalendarSolid>
-                        </QuickLinkCard>
-
-                        <!-- Gaji -->
-                        <QuickLinkCard
-                            title="Gaji"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgCoinSolid slot="icon" size="20"></SvgCoinSolid>
-                        </QuickLinkCard>
-
-                        <!-- Elaun -->
-                        <QuickLinkCard
-                            title="Elaun-elaun Perkhidmatan"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgChequeSolid slot="icon" size="20"
-                            ></SvgChequeSolid>
-                        </QuickLinkCard>
-
-                        <!-- Integriti -->
-                        <QuickLinkCard
-                            title="Integriti"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgHammerSolid slot="icon" size="20"
-                            ></SvgHammerSolid>
-                        </QuickLinkCard>
-
-                        <!-- Latihan -->
-                        <QuickLinkCard
-                            title="Latihan"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgBookSolid slot="icon" size="20"></SvgBookSolid>
-                        </QuickLinkCard>
-
-                        <!-- Pinjaman & Kuarters -->
-                        <QuickLinkCard
-                            title="Pinjaman & Kuarters"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgHouseSolid slot="icon" size="20"
-                            ></SvgHouseSolid>
-                        </QuickLinkCard>
-
-                        <!-- Perubatan -->
-                        <QuickLinkCard
-                            title="Perubatan"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgStethescope slot="icon" size="20"
-                            ></SvgStethescope>
-                        </QuickLinkCard>
-
-                        <!-- Rekod Perkhidmatan -->
-                        <QuickLinkCard
-                            title="Rekod Perkhidmatan"
-                            agendaCount={0}
-                            url="/perjawatan/pemangkuan"
-                        >
-                            <SvgCalendarSolid slot="icon" size="20"
-                            ></SvgCalendarSolid>
-                        </QuickLinkCard>
-                    </div>
-                    <!-- button group ends here -->
-                </CustomTabContent>
-            </CustomTab>
+                            <span
+                                class="h-fit w-full text-wrap text-left text-base font-medium"
+                            >
+                                {nav.name}
+                            </span>
+                        </div>
+                    </button>
+                {/each}
+            </div>
         </div>
 
         <!-- group body ends here -->

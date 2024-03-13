@@ -7,13 +7,14 @@
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import { goto } from '$app/navigation';
     import { Toaster } from 'svelte-french-toast';
+    import { zodClient } from 'sveltekit-superforms/adapters';
 
     export let data: PageData;
 
     const { form, errors, enhance } = superForm(data.props.form, {
         SPA: true,
         taintedMessage: false,
-        validators: _updatePasswordSchema,
+        validators: zodClient(_updatePasswordSchema),
         onUpdate({ form }) {},
         onSubmit(input) {
             _submit($form);

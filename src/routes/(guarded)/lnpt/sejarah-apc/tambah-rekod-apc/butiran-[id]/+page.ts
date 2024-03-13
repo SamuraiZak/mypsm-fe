@@ -9,6 +9,7 @@ import type { ApcAddDTO } from '$lib/dto/mypsm/lnpt/apc-add.dto';
 import { LNPTServices } from '$lib/services/implementation/mypsm/lnpt/lnpt.service';
 import { EmployeeServices } from '$lib/services/implementation/mypsm/shared/employee.service';
 import { error } from '@sveltejs/kit';
+import { zod } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
@@ -28,7 +29,7 @@ export async function load({ params }) {
     if (currentRoleCode !== null && guard.includes(currentRoleCode)) {
         // TODO: your code here
 
-        const form = await superValidate(_addApcSchema);
+        const form = await superValidate(zod(_addApcSchema));
 
         form.data.employeeId = parseInt(params.id);
 
@@ -58,9 +59,9 @@ export async function load({ params }) {
     }
 }
 
-export async function _submitForm(formData: object) {
+export async function _submitForm(formData: ApcAddDTO) {
     console.log(formData);
-    const form = await superValidate(formData, _addApcSchema);
+    const form = await superValidate(formData, zod(_addApcSchema));
 
     if (form.valid) {
         const response: CommonResponseDTO = await LNPTServices.addApcRecord(

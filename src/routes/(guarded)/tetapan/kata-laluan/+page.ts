@@ -3,6 +3,7 @@ import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto
 import { getErrorToast, getSuccessToast } from '$lib/helpers/core/toast.helper';
 import { AccountServices } from '$lib/services/implementation/core/account/account.service';
 import { error } from '@sveltejs/kit';
+import { zod } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
@@ -30,12 +31,12 @@ export const _updatePasswordSchema = z
     });
 
 export const load = async () => {
-    const form = await superValidate(_updatePasswordSchema);
+    const form = await superValidate(zod(_updatePasswordSchema));
     return { props: { form } };
 };
 
 export const _submit = async (formData: UpdatePasswordRequestDTO) => {
-    const form = await superValidate(formData, _updatePasswordSchema);
+    const form = await superValidate(formData, zod(_updatePasswordSchema));
 
     if (form.valid) {
         const response: CommonResponseDTO =

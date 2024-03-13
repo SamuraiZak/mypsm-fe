@@ -36,6 +36,14 @@ export const _serviceAllowanceApproverFeedbackSchema = z.object({
     status: z.boolean(),
 });
 
+// common director feedback form
+export const _serviceAllowanceDirectorFeedbackSchema = z.object({
+    allowanceId: z.number(),
+    allowanceTypeCode: z.string(),
+    remark: z.string(),
+    status: z.boolean(),
+});
+
 export const _allowanceFamilyDetailSchema = z.object({
     name: z.string(),
     age: z.number(),

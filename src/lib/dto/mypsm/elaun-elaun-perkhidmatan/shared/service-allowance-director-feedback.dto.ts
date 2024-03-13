@@ -1,4 +1,4 @@
-export interface ServiceAllowanceApproverFeedbackDTO {
+export interface ServiceAllowanceDirectorFeedbackDTO {
     allowanceId: number;
     allowanceTypeCode: string;
     remark: string;
@@ -7,12 +7,12 @@ export interface ServiceAllowanceApproverFeedbackDTO {
 }
 
 // Converts JSON strings to/from your types
-export class ServiceAllowanceApproverFeedbackConvert {
-    public static fromJson(json: string): ServiceAllowanceApproverFeedbackDTO {
+export class ServiceAllowanceDirectorFeedbackConvert {
+    public static fromJson(json: string): ServiceAllowanceDirectorFeedbackDTO {
         return JSON.parse(json);
     }
 
-    public static toJson(value: ServiceAllowanceApproverFeedbackDTO): string {
+    public static toJson(value: ServiceAllowanceDirectorFeedbackDTO): string {
         return JSON.stringify(value);
     }
 }

@@ -4,15 +4,23 @@
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import { _forgotPasswordSchema, _submit } from './+page';
+    import { zodClient } from 'sveltekit-superforms/adapters';
+    import { Toaster } from 'svelte-french-toast';
 
     export let data: PageData;
 
+    let result: boolean | null = null;
+
     const { form, errors, enhance } = superForm(data.props.form, {
         SPA: true,
-        validators: _forgotPasswordSchema,
+        validators: zodClient(_forgotPasswordSchema),
         onUpdate({ form }) {},
         onSubmit(input) {
-            _submit($form);
+            _submit($form).then((value) => {
+                if (value !== null) {
+                    result = value.requestSuccess;
+                }
+            });
         },
     });
 </script>
@@ -89,4 +97,4 @@
     <!-- form wrapper ends here -->
 </div>
 <!-- login card ends here -->
-
+<Toaster></Toaster>

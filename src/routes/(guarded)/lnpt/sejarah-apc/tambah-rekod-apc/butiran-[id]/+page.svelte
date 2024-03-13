@@ -16,6 +16,7 @@
     } from '$lib/helpers/core/toast.helper';
     import type { CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
+    import { zodClient } from 'sveltekit-superforms/adapters';
 
     export let data: PageData;
 
@@ -23,7 +24,7 @@
 
     const { form, errors, enhance } = superForm(data.form, {
         SPA: true,
-        validators: _addApcSchema,
+        validators: zodClient(_addApcSchema),
         onUpdate(event) {},
         onSubmit() {
             $form.employeeId = data.props.employeeDetails.employeeId;

@@ -4,6 +4,10 @@
 
 import { CommonResponseConstant } from '$lib/constants/core/common-response.constant';
 import {
+    ResetPasswordConvert,
+    type ResetPasswordDTO,
+} from '$lib/dto/core/account/reset-password.dto';
+import {
     UpdatePasswordRequestConvert,
     type UpdatePasswordRequestDTO,
 } from '$lib/dto/core/account/update-password.dto';
@@ -17,6 +21,7 @@ import {
 } from '$lib/dto/core/common/common-response.dto';
 import type { Input } from 'ky';
 import http from '../../service-provider.service';
+import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 
 export class AccountServices {
     // get account details
@@ -64,6 +69,30 @@ export class AccountServices {
                     },
                 };
                 return errorResult;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async forgotPassword(param: ResetPasswordDTO) {
+        try {
+            let url: Input = 'auth/reset_password';
+
+            const responsePromise: Promise<Response> = http
+                .post(url, {
+                    body: ResetPasswordConvert.toJson(param),
+                })
+                .json();
+
+            const response = await getPromiseToast(responsePromise);
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
             }
         } catch (error) {
             return CommonResponseConstant.httpError;
