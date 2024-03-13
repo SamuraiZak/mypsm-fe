@@ -2,6 +2,7 @@ import { goto } from '$app/navigation';
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { CourseFundApplicationUploadDocumentsRequestDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-document.dto';
 import type { CourseAddFundApplicationRequestDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
@@ -68,27 +69,37 @@ export const _createFundApplicationForm = async (formData: FormData) => {
             form.data as CourseAddFundApplicationRequestDTO,
         );
 
-    if (response.status === 'success')
-        setTimeout(() => {
-            goto('../pembiayaan');
-        }, 2000);
-
     return { response };
 };
 
-export const _submitDocumentForm = async (file: File) => {
+export const _submitDocumentForm = async (id: number, files: File[]) => {
     const documentData = new FormData();
-    documentData.append('documents', file as File);
 
-    const form = await superValidate(documentData, zod(_fundApplicationUploadDocSchema));
+    files.forEach((file) => {
+        documentData.append('documents', file);
+    });
 
-    if (!form.valid) {
+    const form = await superValidate(
+        documentData,
+        zod(_fundApplicationUploadDocSchema),
+    );
+
+    form.data.id = 1;
+    console.log(form);
+
+    if (!form.valid || form.data.id === undefined) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
     }
     const response: CommonResponseDTO =
         await CourseFundApplicationServices.uploadFundApplicationEmployeeDocument(
-            documentData,
+            form.data as CourseFundApplicationUploadDocumentsRequestDTO,
         );
+
+    if (response.status === 'success')
+        setTimeout(() => {
+            goto('../pembiayaan');
+        }, 2000);
+
     return { response };
 };
