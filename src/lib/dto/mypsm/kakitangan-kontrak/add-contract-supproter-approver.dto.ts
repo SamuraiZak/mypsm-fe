@@ -2,6 +2,7 @@ export interface AddContractApproverSupporterDTO {
     candidateId: number;
     supporterId: number;
     approverId:  number;
+    isReadonly?: boolean;
 }
 
 // Converts JSON strings to/from your types

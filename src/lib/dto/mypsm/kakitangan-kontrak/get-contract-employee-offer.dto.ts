@@ -3,5 +3,6 @@ export interface GetContractEmployeeOffer {
     candidateName: string;
     temporaryId:   string;
     email:         string;
+    status:        string;
     remark:        string;
 }

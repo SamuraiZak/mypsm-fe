@@ -1,6 +1,7 @@
 export interface GetContracSecretaryResultDTO {
     id:     number;
-    name:   string;
+    name?:   string;
     remark: string;
     status: boolean;
+    isReadonly?: boolean;
 }

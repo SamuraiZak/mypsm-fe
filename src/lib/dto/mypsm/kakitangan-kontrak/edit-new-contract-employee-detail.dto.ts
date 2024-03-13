@@ -31,6 +31,7 @@ export interface EditNewContractEmployeeDetailDTO {
     isInternalRelationship:   boolean;
     employeeNumber:           string | null;
     relationshipId:           number | null;
+    isReadonly?:                boolean;
 }
 
 // Converts JSON strings to/from your types

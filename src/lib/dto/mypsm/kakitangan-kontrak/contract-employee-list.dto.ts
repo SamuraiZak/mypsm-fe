@@ -1,9 +1,11 @@
 export interface ContractEmployeeListDTO {
-    candidateId?:    number;
-    candidateName:  string | null;
-    temporaryId:    string | null;
-    identityCardNo: string | null;
-    email?:          string;
+    candidateId:    number;
+    candidateName:  string;
+    temporaryId:    string;
+    identityCardNo: string;
+    email:          string;
+    status:         string;
+    remark:         string | null ;
 }
 
 // Converts JSON strings to/from your types

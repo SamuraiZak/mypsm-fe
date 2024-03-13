@@ -1,5 +1,6 @@
 export interface GetContractAcademicDetailDTO {
     academicList: AcademicList[];
+    isReadonly:         boolean;
 }
 
 export interface AcademicList {

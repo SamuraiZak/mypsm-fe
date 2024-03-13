@@ -4,16 +4,16 @@ import {
 } from '$lib/schemas/common/schema-type';
 import { z } from 'zod';
 
-const stringToMinDate = shortTextSchema.refine((val) => {
+const stringToMinDate = z.string({ required_error: 'Medan ini tidak boleh kosong.', invalid_type_error: 'Medan ini tidak boleh kosong.' }).refine((val) => {
     const convertedStringToDate = new Date(val);
     const currentDate = new Date();
-return convertedStringToDate > currentDate;
+    return convertedStringToDate > currentDate;
 }, { message: "Tarikh tidak boleh kurang dari tarikh semasa." })
 
-const stringToMaxDate = shortTextSchema.refine((val) => {
+const stringToMaxDate = z.string({ required_error: 'Medan ini tidak boleh kosong.', invalid_type_error: 'Medan ini tidak boleh kosong.' }).refine((val) => {
     const convertedStringToDate = new Date(val);
     const currentDate = new Date();
-return convertedStringToDate < currentDate;
+    return convertedStringToDate < currentDate;
 }, { message: "Tarikh tidak boleh lebih dari tarikh semasa." })
 
 export const numberSchema = z.coerce.number({
@@ -84,6 +84,7 @@ export const _editNewContractEmployeeSchema = z.object({
     isInternalRelationship: booleanSchema.default(false),
     employeeNumber: optionalTextSchema,
     relationshipId: optionalNumberSchema,
+    isReadonly: booleanSchema.default(false),
 })
 
 export const _addContractAcademicSchema = z.object({
@@ -97,9 +98,6 @@ export const _addContractAcademicSchema = z.object({
     completionDate: stringToMaxDate,
     finalGrade: shortTextSchema,
     field: shortTextSchema,
-})
-export const _contractAcademicSchema = z.object({
-    academics: _addContractAcademicSchema.array(),
 })
 
 export const _addContractExperienceSchema = z.object({
@@ -170,6 +168,7 @@ export const _addContractViewSecretaryUpdate = z.object({
     currentServiceStartDate: stringToMinDate,
     firstConfirmServiceDate: stringToMinDate,
     currentConfirmServiceDate: stringToMinDate,
+    isReadonly: booleanSchema.default(false)
 })
 
 export const _addContractCommonRoleResult = z.object({
@@ -177,11 +176,13 @@ export const _addContractCommonRoleResult = z.object({
     name: shortTextSchema.optional(),
     status: booleanSchema,
     remark: shortTextSchema,
+    isReadonly: booleanSchema.default(false)
 })
 export const _addContractSupporterApprover = z.object({
     candidateId: numberSchema,
     supporterId: numberSchema,
     approverId: numberSchema,
+    isReadonly: booleanSchema.default(false)
 })
 
 export const _getContractEmployeeNumber = z.object({
