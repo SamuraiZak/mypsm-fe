@@ -26,10 +26,9 @@ export const load = async () => {
         filter: {
             employeeNumber: null,
             employeeName: null,
-            employeeIdentityNumber: null,
+            identityDocumentNumber: null,
             examTypeId: null,
             examTitle: null,
-            examDate: null,
             examResult: null,
             examStatus: null,
         },

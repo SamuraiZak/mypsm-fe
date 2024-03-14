@@ -1,14 +1,16 @@
+import { goto } from '$app/navigation';
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant.js';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
-import type { CourseFundApplicationListResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
+import type { CourseFundReimbursementListResponseDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement.dto';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { CourseFundReimbursementServices } from '$lib/services/implementation/mypsm/latihan/fundReimbursement.service';
 
 export const load = async () => {
-    let fundApplicationResponse: CommonResponseDTO = {};
+    let fundReimbursementResponse: CommonResponseDTO = {};
     let fundReimbursementList = [];
 
     const currentRoleCode = localStorage.getItem(
@@ -25,19 +27,22 @@ export const load = async () => {
         filter: {
             employeeNumber: null,
             employeeName: null,
-            employeeIdentityNumber: null,
+            identityDocumentNumber: null,
+            courseApplicationDate: null,
+            totalClaim: null,
+            status: null,
         },
     };
 
-    // fund application list
-    fundApplicationResponse =
+    // fund reimbursement list
+    fundReimbursementResponse =
         await CourseFundReimbursementServices.getCourseFundReimbursementList(
             param,
         );
 
     fundReimbursementList =
-        (fundApplicationResponse.data
-            ?.dataList as CourseFundApplicationListResponseDTO) ?? [];
+        (fundReimbursementResponse.data
+            ?.dataList as CourseFundReimbursementListResponseDTO) ?? [];
 
     // ==========================================================================
     // Get Lookup Functions
@@ -97,7 +102,7 @@ export const load = async () => {
             fundReimbursementList,
         },
         responses: {
-            fundApplicationResponse,
+            fundReimbursementResponse,
         },
         lookups: {
             statusLookup,
@@ -119,4 +124,28 @@ export const _updateTable = async (param: CommonListRequestDTO) => {
         param,
         response,
     };
+};
+
+export const _checkIfDocumentExist = async (isStaff: boolean, id: number) => {
+    const requestBody: commonIdRequestDTO = {
+        id: Number(id),
+    };
+
+    // ==========================================================================
+    // Check if document exist
+    // ==========================================================================
+    const fundReimbursementDocumentInfoResponse: CommonResponseDTO =
+        await CourseFundReimbursementServices.getCurrentCandidateDocuments(
+            requestBody,
+        );
+
+    if (fundReimbursementDocumentInfoResponse.status === 'error') {
+        if (isStaff) {
+            goto(`./tuntutan-yuran/${id}/document-upload`);
+        } else {
+            goto(`./tuntutan-yuran/${id}`);
+        }
+    } else {
+        goto(`./tuntutan-yuran/${id}`);
+    }
 };
