@@ -150,28 +150,19 @@ export class CourseFundApplicationServices {
     }
 
     // create fund application employee documents //multipart form
-    static async uploadFundApplicationEmployeeDocument(
-        param: CourseFundApplicationUploadDocumentsRequestDTO,
-    ) {
+    static async uploadFundApplicationEmployeeDocument(param: FormData) {
         try {
-            const url: Input = 'fundapplications/document/add';
+            const url: Input = 'course/fund_application/document/add';
 
-            // param.append('key', 'document');
-            const params = new FormData();
-            params.append('id', param.id.toString());
-            // Append each file
-            param.documents.forEach((file) => {
-                params.append('files', file);
-            });
+            for (const entry of param.entries()) {
+                const [name, value] = entry;
+                console.log(`Name: ${name}, Value: ${value}`);
+            }
 
             // get the promise response
             const promiseRes: Promise<Response> = http
                 .post(url, {
-                    body: params,
-                    headers: {
-                        Accept: 'multipart/form-data',
-                        'Content-type': 'multipart/form-data;',
-                    },
+                    body: param,
                 })
                 .json();
             // await toast for resolved or rejected state
