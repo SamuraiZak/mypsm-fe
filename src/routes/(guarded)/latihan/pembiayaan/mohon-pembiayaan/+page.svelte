@@ -48,7 +48,7 @@
         },
         taintedMessage: 'Permohonon anda belum selesai.',
     });
-    
+
     const {
         form: fundApplicationUploadDocumentForm,
         errors: fundApplicationUploadDocumentError,
@@ -92,16 +92,14 @@
 </script>
 
 <ContentHeader title="Maklumat Pembiayaan Pelajaran">
-    {#if !enableUploadDocument}
-        <TextIconButton
-            label="Kembali"
-            type="neutral"
-            onClick={() => {
-                goto('../pembiayaan');
-            }}
-        />
-    {/if}
-</ContentHeader>
+    <TextIconButton
+        label={enableUploadDocument ? 'Muat Naik Kemudian' : 'Kembali'}
+        type="neutral"
+        onClick={() => {
+            goto('../pembiayaan');
+        }}
+    />
+</ContentHeader>D
 <Stepper>
     <StepperContent>
         <StepperContentHeader title="Maklumat Pelajaran Yang Akan Diikuti">
