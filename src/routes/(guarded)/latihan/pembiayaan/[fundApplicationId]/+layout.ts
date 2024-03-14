@@ -305,6 +305,7 @@ export async function load({ params }) {
     // ===========================================================================
 
     return {
+        idRequestBody,
         responses: {
             fundApplicationDetailResponse,
             fundApplicationPersonalDetailResponse,
