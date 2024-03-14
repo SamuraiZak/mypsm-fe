@@ -5,7 +5,7 @@ export const renameExamTypeKeyValue = async (response: CommonResponseDTO) => {
     if (response.status === 'success' && response.data?.dataList) {
         const modifiedTableData = response.data.dataList.map((item) => ({
             ...item,
-            examTypeId: item.examTypeId === 1 ? 'Perkhidmatan' : 'PSL',
+            examTypeId: item.examTypeId === 1 ? 'PSL' : 'Perkhidmatan',
         }));
         response.data.dataList = modifiedTableData;
     }
