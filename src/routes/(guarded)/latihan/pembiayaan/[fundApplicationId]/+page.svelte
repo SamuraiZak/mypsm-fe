@@ -1,4 +1,5 @@
 <script lang="ts">
+    import StepperFileNotUploaded from '$lib/components/stepper/StepperFileNotUploaded.svelte';
     import StepperFailStatement from '$lib/components/stepper/StepperFailStatement.svelte';
     import {
         integrityOptions,
@@ -19,7 +20,6 @@
     import toast, { Toaster } from 'svelte-french-toast';
     import { superForm } from 'sveltekit-superforms/client';
     import StepperOtherRolesResult from '$lib/components/stepper/StepperOtherRolesResult.svelte';
-    import type { PageData } from './$types';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
@@ -28,7 +28,7 @@
         _addCourseSecretaryApprovalForm,
         _addIntegritySecretaryApprovalForm,
         _addStateUnitSecretaryApprovalForm,
-    } from './+page';
+    } from './+layout';
     import { zod } from 'sveltekit-superforms/adapters';
     import { error } from '@sveltejs/kit';
     import type { CourseFundApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
@@ -38,14 +38,20 @@
     } from '$lib/schemas/mypsm/course/fund-application-schema';
     import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     import { CourseFundApplicationServices } from '$lib/services/implementation/mypsm/latihan/fundApplication.service';
-    export let data: PageData;
+    import type { LayoutData } from './$types';
+    export let data: LayoutData;
 
     let isReadonlyStateUnitDirectorApprovalResult = writable<boolean>(false);
     let isReadonlyIntegritySecretaryApprovalResult = writable<boolean>(false);
     let isReadonlyCourseSecretaryApprovalResult = writable<boolean>(false);
     let fundApplicationIsFail = writable<boolean>(false);
+    let fundApplicationNotUploaded = writable<boolean>(false);
 
     $: {
+        data.responses.fundApplicationDocumentInfoResponse.status === 'error'
+            ? fundApplicationNotUploaded.set(true)
+            : fundApplicationNotUploaded.set(false);
+
         data.responses.fundApplicationCourseSecretaryApprovalResponse.data
             ?.details.status === false ||
         data.responses.fundApplicationIntegritySecretaryApprovalResponse.data
@@ -823,43 +829,48 @@
     <StepperContent>
         <StepperContentHeader title="Dokumen - Dokumen Sokongan yang Berkaitan"
         ></StepperContentHeader>
-        <StepperContentBody
-            ><div class="flex w-full flex-col gap-2">
-                <div
-                    class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
-                >
-                    <ContentHeader
-                        title="Dokumen - Dokumen Sokongan yang Berkaitan"
-                    ></ContentHeader>
-                    <p
-                        class="mt-2 h-fit w-full bg-bgr-primary text-sm font-medium text-system-primary"
+        <StepperContentBody>
+            {#if $fundApplicationNotUploaded}
+                <StepperFileNotUploaded />
+            {:else}
+                <div class="flex w-full flex-col gap-2">
+                    <div
+                        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
                     >
-                        Fail-fail yang dimuat naik:
-                    </p>
-
-                    {#each $documentsForm.document as _, i}
-                        <div
-                            class="flex w-full flex-row items-center justify-between"
+                        <ContentHeader
+                            title="Dokumen - Dokumen Sokongan yang Berkaitan"
+                        ></ContentHeader>
+                        <p
+                            class="mt-2 h-fit w-full bg-bgr-primary text-sm font-medium text-system-primary"
                         >
-                            <label
-                                for=""
-                                class="block w-[20px] min-w-[20px] text-[11px] font-medium"
-                                >1.</label
+                            Fail-fail yang dimuat naik:
+                        </p>
+
+                        {#each $documentsForm.document as _, i}
+                            <div
+                                class="flex w-full flex-row items-center justify-between"
                             >
-                            <DownloadAttachment
-                                triggerDownload={() =>
-                                    handleDownload(
-                                        $documentsForm.document[i].document,
-                                    )}
-                                fileName={$documentsForm.document[i].document}
-                            ></DownloadAttachment>
-                        </div>
-                    {/each}
+                                <label
+                                    for=""
+                                    class="block w-[20px] min-w-[20px] text-[11px] font-medium"
+                                    >1.</label
+                                >
+                                <DownloadAttachment
+                                    triggerDownload={() =>
+                                        handleDownload(
+                                            $documentsForm.document[i].document,
+                                        )}
+                                    fileName={$documentsForm.document[i]
+                                        .document}
+                                ></DownloadAttachment>
+                            </div>
+                        {/each}
+                    </div>
                 </div>
-            </div></StepperContentBody
-        >
+            {/if}
+        </StepperContentBody>
     </StepperContent>
-    {#if data.response.fundReimbursementResponse.data}
+    {#if !$fundApplicationNotUploaded}
         <StepperContent>
             <StepperContentHeader
                 title="Keputusan daripada Peranan - Peranan Lain"

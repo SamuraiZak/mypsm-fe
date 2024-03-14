@@ -23,13 +23,20 @@
         _fundReimbursementDetailResponseSchema,
     } from '$lib/schemas/mypsm/course/fund-reimbursement-schema';
     import { Badge } from 'flowbite-svelte';
+    import StepperFileNotUploaded from '$lib/components/stepper/StepperFileNotUploaded.svelte';
+    import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
+    import { CourseFundReimbursementServices } from '$lib/services/implementation/mypsm/latihan/fundReimbursement.service';
     export let data: PageData;
 
     let isReadonlySecretaryApprovalResult = writable<boolean>(false);
 
     let fundReimbursementIsFail = writable<boolean>(false);
 
+    let fundReimbursementNotUploaded = writable<boolean>(false);
     $: {
+        data.responses.fundReimbursementDocumentInfoResponse.status === 'error'
+            ? fundReimbursementNotUploaded.set(true)
+            : fundReimbursementNotUploaded.set(false);
         data.responses.fundReimbursementSecretaryApprovalResponse.data?.details
             .status === false
             ? fundReimbursementIsFail.set(true)
@@ -51,6 +58,19 @@
         validationMethod: 'oninput',
         validators: false,
     });
+
+    const { form: reimbursementDocumentsForm } = superForm(
+        data.forms.fundReimbursementDocumentForm,
+        {
+            SPA: true,
+            dataType: 'json',
+            invalidateAll: true,
+            resetForm: false,
+            multipleSubmits: 'allow',
+            validationMethod: 'oninput',
+            validators: false,
+        },
+    );
 
     const { form: personalInfoForm, enhance: personalInfoEnhance } = superForm(
         data.forms.fundReimbursementPersonalInfoForm,
@@ -104,6 +124,10 @@
             _addSecretaryApprovalForm($secretaryApprovalInfoForm);
         },
     });
+
+    const handleDownload = async (url: string) => {
+        await CourseFundReimbursementServices.downloadAttachment(url);
+    };
 </script>
 
 <ContentHeader title="Maklumat Tuntutan Pembiayaan Yuran Pembelajaran">
@@ -624,7 +648,7 @@
         <StepperContentHeader title="Maklumat Pembelajaran Diikuti" />
         <StepperContentBody>
             <form
-                id="examApplicationInfoStepper"
+                id="examReimbursementInfoStepper"
                 method="POST"
                 use:enhance
                 class="flex w-full flex-col gap-2"
@@ -735,58 +759,109 @@
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Pengesahan Semakan Urus Setia Latihan">
-            {#if !$isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole}
-                <TextIconButton
-                    type="primary"
-                    label="Simpan"
-                    form="examApplicationSecretaryApprovalForm"
-                ></TextIconButton>
-            {/if}
-        </StepperContentHeader>
+        <StepperContentHeader title="Dokumen - Dokumen Sokongan yang Berkaitan"
+        ></StepperContentHeader>
         <StepperContentBody>
-            <form
-                id="examApplicationSecretaryApprovalForm"
-                method="POST"
-                use:secretaryApprovalInfoEnhance
-                class="flex w-full flex-col gap-2.5"
-            >
-                <div class="mb-5">
-                    <b class="text-sm text-system-primary"
-                        >Keputusan Urus Setia Latihan</b
+            {#if $fundReimbursementNotUploaded}
+                <StepperFileNotUploaded />
+            {:else}
+                <div class="flex w-full flex-col gap-2">
+                    <div
+                        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
                     >
+                        <ContentHeader
+                            title="Dokumen - Dokumen Sokongan yang Berkaitan"
+                        ></ContentHeader>
+                        <p
+                            class="mt-2 h-fit w-full bg-bgr-primary text-sm font-medium text-system-primary"
+                        >
+                            Fail-fail yang dimuat naik:
+                        </p>
+
+                        {#each $reimbursementDocumentsForm.document as _, i}
+                            <div
+                                class="flex w-full flex-row items-center justify-between"
+                            >
+                                <label
+                                    for=""
+                                    class="block w-[20px] min-w-[20px] text-[11px] font-medium"
+                                    >1.</label
+                                >
+                                <DownloadAttachment
+                                    triggerDownload={() =>
+                                        handleDownload(
+                                            $reimbursementDocumentsForm
+                                                .document[i].document,
+                                        )}
+                                    fileName={$reimbursementDocumentsForm
+                                        .document[i].document}
+                                ></DownloadAttachment>
+                            </div>
+                        {/each}
+                    </div>
                 </div>
-
-                {#if $isReadonlySecretaryApprovalResult || data.role.isCourseSecretaryRole}
-                    <input hidden bind:value={$secretaryApprovalInfoForm.id} />
-
-                    <CustomTextField
-                        disabled={$isReadonlySecretaryApprovalResult ||
-                            !data.role.isCourseSecretaryRole}
-                        errors={$secretaryApprovalInfoErrors.remark}
-                        id="remark"
-                        label="Tindakan/Ulasan"
-                        placeholder="-"
-                        bind:val={$secretaryApprovalInfoForm.remark}
-                    ></CustomTextField>
-
-                    <CustomSelectField
-                        disabled={$isReadonlySecretaryApprovalResult ||
-                            !data.role.isCourseSecretaryRole}
-                        errors={$secretaryApprovalInfoErrors.status}
-                        id="status"
-                        label="Keputusan"
-                        placeholder="-"
-                        bind:val={$secretaryApprovalInfoForm.status}
-                        options={certifyOptions}
-                    ></CustomSelectField>
-                {:else}
-                    <StepperOtherRolesResult />
-                {/if}
-            </form>
-            <hr />
+            {/if}
         </StepperContentBody>
     </StepperContent>
+
+    {#if !$fundReimbursementNotUploaded}
+        <StepperContent>
+            <StepperContentHeader title="Pengesahan Semakan Urus Setia Latihan">
+                {#if !$isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole}
+                    <TextIconButton
+                        type="primary"
+                        label="Simpan"
+                        form="examReimbursementSecretaryApprovalForm"
+                    ></TextIconButton>
+                {/if}
+            </StepperContentHeader>
+            <StepperContentBody>
+                <form
+                    id="examReimbursementSecretaryApprovalForm"
+                    method="POST"
+                    use:secretaryApprovalInfoEnhance
+                    class="flex w-full flex-col gap-2.5"
+                >
+                    <div class="mb-5">
+                        <b class="text-sm text-system-primary"
+                            >Keputusan Urus Setia Latihan</b
+                        >
+                    </div>
+
+                    {#if $isReadonlySecretaryApprovalResult || data.role.isCourseSecretaryRole}
+                        <input
+                            hidden
+                            bind:value={$secretaryApprovalInfoForm.id}
+                        />
+
+                        <CustomTextField
+                            disabled={$isReadonlySecretaryApprovalResult ||
+                                !data.role.isCourseSecretaryRole}
+                            errors={$secretaryApprovalInfoErrors.remark}
+                            id="remark"
+                            label="Tindakan/Ulasan"
+                            placeholder="-"
+                            bind:val={$secretaryApprovalInfoForm.remark}
+                        ></CustomTextField>
+
+                        <CustomSelectField
+                            disabled={$isReadonlySecretaryApprovalResult ||
+                                !data.role.isCourseSecretaryRole}
+                            errors={$secretaryApprovalInfoErrors.status}
+                            id="status"
+                            label="Keputusan"
+                            placeholder="-"
+                            bind:val={$secretaryApprovalInfoForm.status}
+                            options={certifyOptions}
+                        ></CustomSelectField>
+                    {:else}
+                        <StepperOtherRolesResult />
+                    {/if}
+                </form>
+                <hr />
+            </StepperContentBody>
+        </StepperContent>
+    {/if}
 </Stepper>
 
 <Toaster />
