@@ -76,8 +76,8 @@
                 bind:inputValue={examTable.param.filter.examTitle}
             ></FilterTextField>
             <FilterSelectField
-                label="Status"
-                options={data.selectionOptions.statusLookup}
+                label="Jenis Peperiksaan"
+                options={data.selectionOptions.examTypeLookup}
                 bind:inputValue={examTable.param.filter.examTypeId}
             ></FilterSelectField>
         </FilterCard>

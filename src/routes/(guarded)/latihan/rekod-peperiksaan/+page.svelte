@@ -75,7 +75,7 @@
         <FilterCard onSearch={_updateExamTable}>
             <FilterTextField
                 label="No. Kad Pengenalan"
-                bind:inputValue={examTable.param.filter.employeeIdentityNumber}
+                bind:inputValue={examTable.param.filter.identityDocumentNumber}
             ></FilterTextField>
             <FilterTextField
                 label="Nombor Pekerja"
@@ -88,10 +88,6 @@
             <FilterTextField
                 label="Tajuk Peperiksaan"
                 bind:inputValue={examTable.param.filter.examTitle}
-            ></FilterTextField>
-            <FilterTextField
-                label="Tarikh Peperiksaan"
-                bind:inputValue={examTable.param.filter.examDate}
             ></FilterTextField>
             <FilterSelectField
                 label="Jenis Peperiksaan"
