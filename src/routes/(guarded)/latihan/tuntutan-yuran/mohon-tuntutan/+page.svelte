@@ -17,7 +17,10 @@
     } from '$lib/schemas/mypsm/employment/new-hire/schema';
     import { goto } from '$app/navigation';
     import { _createFundReimbursementForm, _submitDocumentForm } from './+page';
-    import { _fundReimbursementDetailResponseSchema, _fundReimbursementUploadDocSchema } from '$lib/schemas/mypsm/course/fund-reimbursement-schema';
+    import {
+        _fundReimbursementDetailResponseSchema,
+        _fundReimbursementUploadDocSchema,
+    } from '$lib/schemas/mypsm/course/fund-reimbursement-schema';
     import type { PageData } from './$types';
     import FileInputField from '$lib/components/inputs/file-input-field/FileInputField.svelte';
     import FileInputFieldChildren from '$lib/components/inputs/file-input-field/FileInputFieldChildren.svelte';
@@ -35,7 +38,9 @@
         validationMethod: 'oninput',
         validators: zod(_fundReimbursementDetailResponseSchema),
         async onSubmit(formData) {
-            const result = await _createFundReimbursementForm(formData.formData);
+            const result = await _createFundReimbursementForm(
+                formData.formData,
+            );
 
             if (result.response.status === 'success') {
                 enableUploadDocument = true;
@@ -45,7 +50,6 @@
         taintedMessage: false,
     });
 
-        
     const {
         form: fundReimbursementUploadDocumentForm,
         errors: fundReimbursementUploadDocumentError,
@@ -90,7 +94,7 @@
 
 <ContentHeader title="Maklumat Pembiayaan Pelajaran"
     ><TextIconButton
-        label="Kembali"
+        label={enableUploadDocument ? 'Muat Naik Kemudian' : 'Kembali'}
         type="neutral"
         onClick={() => {
             goto('../tuntutan-yuran');
