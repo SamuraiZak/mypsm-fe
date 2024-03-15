@@ -11,7 +11,6 @@ const httpFormData = ky.create({
     prefixUrl: env.PUBLIC_BASE_API_URL,
     headers: {
         Accept: 'multipart/form-data',
-        'Content-type': 'multipart/form-data',
     },
     timeout: 25000,
     credentials: 'include',
