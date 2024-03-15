@@ -198,14 +198,16 @@ export const _academicInfoSchema = z
     });
 
 export const _academicListResponseSchema = z.object({
-    educations: z.array(_academicInfoSchema),
+    academics: z.array(_academicInfoSchema),
 });
 
-export const _academicListRequestSchema = _academicListResponseSchema.pick({
-    educations: true,
+export const _academicListRequestSchema = z.object({
+    academics: z.array(_academicInfoSchema),
 });
 
-export const _academicEditRequestSchema = _academicInfoSchema;
+export const _academicEditRequestSchema = z.object({
+    academics: z.array(_academicInfoSchema.omit({ educationId: true }).extend({ id: numberIdSchema })),
+});
 
 //==========================================================
 //================== Experience Schema =====================
@@ -217,10 +219,10 @@ export const _experienceInfoSchema = z.object({
     address: shortTextSchema,
     position: shortTextSchema,
     description: shortTextSchema,
-    positionCode: codeSchema,
+    // positionCode: codeSchema.nullable(),
     startDate: dateStringSchema,
     endDate: dateStringSchema,
-    grade: shortTextSchema,
+    grade: z.string(),
 });
 
 export const _experienceListResponseSchema = z.object({
@@ -230,6 +232,11 @@ export const _experienceListResponseSchema = z.object({
 
 export const _experienceListRequestSchema = z.object({
     experiences: z.array(_experienceInfoSchema.omit({ id: true })),
+
+});
+
+export const _experienceEditRequestSchema = z.object({
+    experiences: z.array(_experienceInfoSchema),
 
 });
 //==========================================================
@@ -253,6 +260,10 @@ export const _activityListRequestSchema = _activityListResponseSchema.pick({
     activities: true,
 });
 
+export const _activityEditRequestSchema = _activityListResponseSchema.pick({
+    activities: true,
+});
+
 
 //==========================================================
 //================== Realations Schema =====================
@@ -260,6 +271,7 @@ export const _activityListRequestSchema = _activityListResponseSchema.pick({
 
 export const _relationsSchema = z
     .object({
+        familyId:numberIdSchema,
         birthCountryId: numberIdSchema,
         birthStateId: numberIdSchema,
         relationshipId: numberIdSchema,
@@ -300,28 +312,37 @@ export const _relationsSchema = z
 
 export const _familyListResponseSchema = z.object({
     families: z.array(_relationsSchema),
-    isReadOnly: z.boolean().readonly(),
 });
 
 export const _dependencyListResponseSchema = z.object({
-    families: z.array(_relationsSchema),
-    isReadOnly: z.boolean().readonly(),
+    dependents: z.array(_relationsSchema),
 });
 
 export const _nextOfKinListResponseSchema = z.object({
-    families: z.array(_relationsSchema),
-    isReadOnly: z.boolean().readonly(),
+    nextOfKins: z.array(_relationsSchema),
 });
 
 export const _familyListRequestSchema = _familyListResponseSchema.pick({
     families: true,
 });
 
-export const _dependencyListRequestSchema = _dependencyListResponseSchema.pick({
+export const _familyEditRequestSchema = _familyListResponseSchema.pick({
     families: true,
 });
 
+export const _dependencyListRequestSchema = z.object({
+    families: z.array(_relationsSchema),
+});
+
+export const _dependencyEditRequestSchema = z.object({
+    families: z.array(_relationsSchema),
+});
+
 export const _nextOfKinListRequestSchema = z.object({
+    families: z.array(_relationsSchema),
+});
+
+export const _nextOfKinEditRequestSchema = z.object({
     families: z.array(_relationsSchema),
 });
 

@@ -12,12 +12,12 @@ import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '../../service-provider.service';
 import type { CandidatePersonalRequestDTO } from '$lib/dto/mypsm/profile/personal-detail.dto';
 import type { serviceRequestDTO } from '$lib/dto/mypsm/profile/service-detail.dto';
-import type { academicRequestDTO } from '$lib/dto/mypsm/profile/academic-detail.dto';
-import type { experiencesRequestDTO } from '$lib/dto/mypsm/profile/experience-detail.dto';
+import type { academicRequestDTO, editAcademicRequestDTO } from '$lib/dto/mypsm/profile/academic-detail.dto';
+import type { experiencesEditRequestDTO, experiencesRequestDTO } from '$lib/dto/mypsm/profile/experience-detail.dto';
 import type { dependencyRequestDTO, familyRequestDTO, nextOfKinRequestDTO } from '$lib/dto/mypsm/profile/relation-detail.dto';
 import type { medicalAssessmentRequestDTO } from '$lib/dto/mypsm/profile/medical-assessment.dto';
 import type { generalAssessmentRequestDTO } from '$lib/dto/mypsm/profile/general-assessment.dto';
-import type { activityRequestDTO } from '$lib/dto/mypsm/profile/activity-detail.dto';
+import type { activityEditRequestDTO, activityRequestDTO } from '$lib/dto/mypsm/profile/activity-detail.dto';
 
 
 
@@ -232,12 +232,12 @@ export class ProfileServices {
     //========= Edit Academic Detail ==============
     //============================================
 
-    static async editProfileAcademicDetails(param: academicRequestDTO) {
+    static async editProfileAcademicDetails(param: editAcademicRequestDTO) {
         try {
             const url: Input = 'profile/academic/edit';
 
             // get the promise response
-            const promiseRes: Promise<Response> = http.post(url, {
+            const promiseRes: Promise<Response> = http.put(url, {
                 body: JSON.stringify(param),
             }).json();
 
@@ -322,12 +322,12 @@ export class ProfileServices {
     //========= Edit experience Detail ==============
     //============================================
 
-    static async editProfileExperienceDetails(param: experiencesRequestDTO) {
+    static async editProfileExperienceDetails(param: experiencesEditRequestDTO) {
         try {
             const url: Input = 'profile/experience/edit';
 
             // get the promise response
-            const promiseRes: Promise<Response> = http.post(url, {
+            const promiseRes: Promise<Response> = http.put(url, {
                 body: JSON.stringify(param),
             }).json();
 
@@ -413,12 +413,12 @@ export class ProfileServices {
     //========= Edit Activity Detail ==============
     //============================================
 
-    static async editProfileActivityDetails(param: activityRequestDTO) {
+    static async editProfileActivityDetails(param: activityEditRequestDTO) {
         try {
             const url: Input = 'profile/activity/edit';
 
             // get the promise response
-            const promiseRes: Promise<Response> = http.post(url, {
+            const promiseRes: Promise<Response> = http.put(url, {
                 body: JSON.stringify(param),
             }).json();
 
@@ -510,7 +510,7 @@ export class ProfileServices {
             const url: Input = 'profile/family/edit';
 
             // get the promise response
-            const promiseRes: Promise<Response> = http.post(url, {
+            const promiseRes: Promise<Response> = http.put(url, {
                 body: JSON.stringify(param),
             }).json();
 
@@ -599,7 +599,7 @@ export class ProfileServices {
             const url: Input = 'profile/dependent/edit';
 
             // get the promise response
-            const promiseRes: Promise<Response> = http.post(url, {
+            const promiseRes: Promise<Response> = http.put(url, {
                 body: JSON.stringify(param),
             }).json();
 
@@ -689,7 +689,7 @@ export class ProfileServices {
             const url: Input = 'profile/next_of_kin/edit';
 
             // get the promise response
-            const promiseRes: Promise<Response> = http.post(url, {
+            const promiseRes: Promise<Response> = http.put(url, {
                 body: JSON.stringify(param),
             }).json();
 
