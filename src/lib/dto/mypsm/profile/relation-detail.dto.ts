@@ -1,4 +1,4 @@
-import type { _dependencyListRequestSchema, _dependencyListResponseSchema, _familyListRequestSchema, _familyListResponseSchema, _nextOfKinListRequestSchema, _nextOfKinListResponseSchema, _relationsSchema } from '$lib/schemas/mypsm/profile/profile-schemas';
+import type { _dependencyEditRequestSchema, _dependencyListRequestSchema, _dependencyListResponseSchema, _familyListRequestSchema, _familyListResponseSchema, _nextOfKinEditRequestSchema, _nextOfKinListRequestSchema, _nextOfKinListResponseSchema, _relationsSchema } from '$lib/schemas/mypsm/profile/profile-schemas';
 import type { z } from 'zod';
 
 export type familyResponseDTO = z.infer<
@@ -21,6 +21,16 @@ export type dependencyRequestDTO = z.infer<
 >;
 export type nextOfKinRequestDTO = z.infer<
     typeof _nextOfKinListRequestSchema
+>;
+
+
+
+export type dependencyEditRequestDTO = z.infer<
+    typeof _dependencyEditRequestSchema
+>;
+
+export type nextOfKinEditRequestDTO = z.infer<
+    typeof _nextOfKinEditRequestSchema
 >;
 
 export type Family = z.infer<typeof _relationsSchema>;
