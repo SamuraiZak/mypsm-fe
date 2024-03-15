@@ -74,6 +74,18 @@ export const getErrorToast = async (message?: string) => {
     }
 };
 
+export const getInsufficientFileToast = async (message?: string) => {
+    if (message !== undefined) {
+        toast.error(message, {
+            style: 'background: #333; color: #fff;',
+        });
+    } else {
+        toast.error('Dokumen sokongan hendaklah lebih daripada 1.', {
+            style: 'background: #333; color: #fff;',
+        });
+    }
+};
+
 export const getSuccessToast = async () => {
     toast.success('Berjaya disimpan!', {
         style: 'background: #333; color: #fff;',
