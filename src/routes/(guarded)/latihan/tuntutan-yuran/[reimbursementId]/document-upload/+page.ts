@@ -2,8 +2,10 @@ import { goto } from '$app/navigation';
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
-import type { CourseFundReimbursementUploadDocumentsRequestDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement-document.dto';
-import { getErrorToast } from '$lib/helpers/core/toast.helper';
+import {
+    getErrorToast,
+    getInsufficientFileToast,
+} from '$lib/helpers/core/toast.helper';
 import { _fundReimbursementUploadDocSchema } from '$lib/schemas/mypsm/course/fund-reimbursement-schema';
 import { CourseFundReimbursementServices } from '$lib/services/implementation/mypsm/latihan/fundReimbursement.service';
 import { error } from '@sveltejs/kit';
@@ -48,17 +50,19 @@ export async function load({ params }) {
 export const _submitDocumentForm = async (id: number, files: File[]) => {
     const documentData = new FormData();
 
+    if (files.length < 2) {
+        getInsufficientFileToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
     files.forEach((file) => {
-        documentData.append('documents', file);
+        documentData.append('documents', file, file.name);
     });
+    documentData.append('id', id.toString());
 
     const form = await superValidate(
         documentData,
         zod(_fundReimbursementUploadDocSchema),
     );
-
-    form.data.id = 1;
-    console.log(form);
 
     if (!form.valid || form.data.id === undefined) {
         getErrorToast();
@@ -66,13 +70,13 @@ export const _submitDocumentForm = async (id: number, files: File[]) => {
     }
     const response: CommonResponseDTO =
         await CourseFundReimbursementServices.uploadFundReimbursementEmployeeDocument(
-            form.data as CourseFundReimbursementUploadDocumentsRequestDTO,
+            documentData,
         );
 
     if (response.status === 'success')
         setTimeout(() => {
-            goto('../pembiayaan');
-        }, 2000);
+            goto(`../${id}`);
+        }, 1000);
 
     return { response };
 };
