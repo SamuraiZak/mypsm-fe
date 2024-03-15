@@ -12,20 +12,25 @@ import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
     _academicEditRequestSchema,
     _academicInfoSchema, _academicListRequestSchema, _academicListResponseSchema,
+    _activityEditRequestSchema,
     _activityInfoSchema,
     _activityListRequestSchema,
     _activityListResponseSchema,
+    _dependencyEditRequestSchema,
     _dependencyListRequestSchema,
     _dependencyListResponseSchema,
     _diseaseInfoCollectionSchema,
+    _experienceEditRequestSchema,
     _experienceInfoSchema,
     _experienceListRequestSchema,
     _experienceListResponseSchema,
+    _familyEditRequestSchema,
     _familyListRequestSchema,
     _familyListResponseSchema,
     _generalAssessmentListRequestSchema,
     _generalAssessmentListResponseSchema,
     _medicalAssessmentListResponseSchema,
+    _nextOfKinEditRequestSchema,
     _nextOfKinListRequestSchema,
     _nextOfKinListResponseSchema,
     _personalInfoRequestSchema,
@@ -43,9 +48,9 @@ import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { fail } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { Experience, experiencesRequestDTO, experiencesResponseDTO } from '$lib/dto/mypsm/profile/experience-detail.dto';
+import type { Experience, experiencesEditRequestDTO, experiencesRequestDTO, experiencesResponseDTO } from '$lib/dto/mypsm/profile/experience-detail.dto';
 import type { Activity, activityRequestDTO, activityResponseDTO } from '$lib/dto/mypsm/profile/activity-detail.dto';
-import type { Dependency, Family, NextOfKin, dependencResponseDTO, dependencyRequestDTO, familyRequestDTO, familyResponseDTO, nextOfKinRequestDTO, nextOfKinResponseDTO } from '$lib/dto/mypsm/profile/relation-detail.dto';
+import type { Dependency, Family, NextOfKin, dependencResponseDTO, dependencyEditRequestDTO, dependencyRequestDTO, familyRequestDTO, familyResponseDTO, nextOfKinEditRequestDTO, nextOfKinRequestDTO, nextOfKinResponseDTO } from '$lib/dto/mypsm/profile/relation-detail.dto';
 import type { CandidatePersonalRequestDTO, CandidatePersonalResponseDTO } from '$lib/dto/mypsm/profile/personal-detail.dto';
 import type { serviceRequestDTO, serviceResponseDTO } from '$lib/dto/mypsm/profile/service-detail.dto';
 import type { medicalAssessmentRequestDTO, medicalAssessmentResponseDTO } from '$lib/dto/mypsm/profile/medical-assessment.dto';
@@ -142,9 +147,11 @@ export async function load({ }) {
         _dependencyListResponseSchema))
         ;
 
+
     const familyInfoForm = await superValidate(familyInfoResponse.data?.details as familyResponseDTO, zod(
         _familyListResponseSchema))
         ;
+        console.log(familyInfoResponse.data?.details)
 
     const nextOFKInInfoForm = await superValidate(nextOfKinInfoResponse.data?.details as nextOfKinResponseDTO, zod(
         _nextOfKinListResponseSchema))
@@ -423,7 +430,7 @@ export async function load({ }) {
             name: 'Tidak',
         },
     ];
-
+   
     const diseaseCollectionForm = await superValidate(zod(_diseaseInfoCollectionSchema));
 
     // diseaseList.disease.forEach(element => {
@@ -562,22 +569,46 @@ export const _submitAcademicForm = async (formData: object) => {
 // ============================================================
 export const _submitEditAcademicForm = async (formData: object) => {
     console.log(formData)
-    const editAcademicInfoform = await superValidate(formData, (zod)(_academicEditRequestSchema));
 
+    const modifiedIdBody = (formData as academicResponseDTO).academics.map((value) =>
+    (
+        {
+            id: value.educationId,
+            name: value.name,
+            majorId: value.majorId,
+            minorId: value.minorId,
+            countryId: value.countryId,
+            institutionId: value.institutionId,
+            educationLevelId: value.educationId,
+            sponsorshipId: value.sponsorshipId,
+            completionDate: value.completionDate,
+            finalGrade: value.finalGrade,
+            field: value.field,
+        }
+    )
+    )
+    const modifiedRequest: editAcademicRequestDTO = {
+        academics: modifiedIdBody
+    }
+    const editAcademicInfoform = await superValidate(modifiedRequest, (zod)(_academicEditRequestSchema));
+
+    console.log(editAcademicInfoform)
     if (!editAcademicInfoform.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    // const response: CommonResponseDTO =
-    //     await ProfileServices.editProfileAcademicDetails(editAcademicInfoform.data as editAcademicRequestDTO);
+    const response: CommonResponseDTO =
+        await ProfileServices.editProfileAcademicDetails(editAcademicInfoform.data as editAcademicRequestDTO);
 
-    // return { response };
+    return { response };
 };
 
 // ===============================================================
 // ===============================================================
 export const _submitExperienceForm = async (formData: object) => {
+
+    console.log(formData)
     const experienceInfoform = await superValidate(formData, (zod)(_experienceListRequestSchema));
 
     if (!experienceInfoform.valid) {
@@ -593,6 +624,25 @@ export const _submitExperienceForm = async (formData: object) => {
 
 // ===============================================================
 // ===============================================================
+export const _submitEditExperienceForm = async (formData: object) => {
+    const experienceInfoform = await superValidate(formData, (zod)(_experienceEditRequestSchema));
+    console.log(formData)
+    if (!experienceInfoform.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await ProfileServices.editProfileExperienceDetails(experienceInfoform.data as experiencesEditRequestDTO);
+
+    return { response };
+};
+
+
+
+
+// ===============================================================
+// ===============================================================
 export const _submitActivityForm = async (formData: object) => {
     const activityInfoform = await superValidate(formData, (zod)(_activityListRequestSchema));
 
@@ -603,6 +653,24 @@ export const _submitActivityForm = async (formData: object) => {
 
     const response: CommonResponseDTO =
         await ProfileServices.addProfileActivityDetails(activityInfoform.data as activityRequestDTO);
+
+    return { response };
+};
+
+
+
+// ===============================================================
+// ===============================================================
+export const _submitEditActivityForm = async (formData: object) => {
+    const activityInfoform = await superValidate(formData, (zod)(_activityEditRequestSchema));
+
+    if (!activityInfoform.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await ProfileServices.editProfileActivityDetails(activityInfoform.data as activityRequestDTO);
 
     return { response };
 };
@@ -627,6 +695,26 @@ export const _submitFamilyForm = async (formData: object) => {
 // ===============================================================
 // ===============================================================
 
+export const _submitEditFamilyForm = async (formData: object) => {
+
+   
+    const familyInfoform = await superValidate(formData, (zod)(_familyEditRequestSchema));
+    console.log(familyInfoform)
+    if (!familyInfoform.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await ProfileServices.editProfileFamilyDetails(familyInfoform.data as familyRequestDTO);
+
+    return { response };
+};
+
+
+// ===============================================================
+// ===============================================================
+
 export const _submitDependencyForm = async (formData: object) => {
     const dependencyInfoform = await superValidate(formData, (zod)(_dependencyListRequestSchema));
 
@@ -637,6 +725,23 @@ export const _submitDependencyForm = async (formData: object) => {
 
     const response: CommonResponseDTO =
         await ProfileServices.addProfileDependentDetails(dependencyInfoform.data as dependencyRequestDTO);
+
+    return { response };
+};
+
+// ===============================================================
+// ===============================================================
+
+export const _submitEditDependencyForm = async (formData: object) => {
+    const dependencyInfoform = await superValidate(formData, (zod)(_dependencyEditRequestSchema));
+
+    if (!dependencyInfoform.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await ProfileServices.editProfileDependentDetails(dependencyInfoform.data as dependencyEditRequestDTO);
 
     return { response };
 };
@@ -653,6 +758,22 @@ export const _submitNextOfKinForm = async (formData: object) => {
 
     const response: CommonResponseDTO =
         await ProfileServices.addProfileNextOfKinDetails(nextOfKinform.data as nextOfKinRequestDTO);
+
+    return { response };
+};
+
+// ================================================================
+// ================================================================
+export const _submitEditNextOfKinForm = async (formData: object) => {
+    const nextOfKinform = await superValidate(formData, (zod)(_nextOfKinEditRequestSchema));
+    console.log(nextOfKinform)
+    if (!nextOfKinform.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await ProfileServices.editProfileNextOfKinDetails(nextOfKinform.data as nextOfKinEditRequestDTO);
 
     return { response };
 };
@@ -697,7 +818,7 @@ export const _submitAcademicInfoForm = async (formData: Academic[]) => {
         return fail(400);
     }
     const requestData: academicRequestDTO = {
-        educations: formData,
+        academics: formData,
     };
 
     console.log(requestData);

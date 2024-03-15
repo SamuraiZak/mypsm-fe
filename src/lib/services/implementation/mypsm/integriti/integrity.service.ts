@@ -102,4 +102,37 @@ export class IntegrityServices {
         }
     }
 
+     // ===================================================
+    // ============ list table Tambah rekod =========
+    // ==================================================
+
+    static async getSurcajListAddDetails(
+        param: CommonListRequestDTO,
+    ) {
+        try {
+            const url: Input = 'integrity/surcharge/add';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
 }
