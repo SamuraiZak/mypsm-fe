@@ -1,8 +1,10 @@
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant";
 import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
+import type { RenewContractAddDTO } from "$lib/dto/mypsm/kakitangan-kontrak/renew-contract-add.dto";
 import type { RenewContractListResponseDTO } from "$lib/dto/mypsm/kakitangan-kontrak/renew-contract-list-response.dto";
 import type { RenewContractListDTO } from "$lib/dto/mypsm/kakitangan-kontrak/renew-contract-list.dto";
+import { getSuccessToast } from "$lib/helpers/core/toast.helper";
 import { ContractEmployeeServices } from "$lib/services/implementation/mypsm/kakitangan-kontrak/contract-employee.service";
 
 export const load = async () => {
@@ -15,6 +17,8 @@ export const load = async () => {
     //near expired contract table
     const nearExpiredContractFilter: RenewContractListDTO = {
         dataType: 0,
+        identityCard: null,
+        temporaryId: null,
     }
     const nearExpiredContractParam: CommonListRequestDTO = {
         pageNum: 1,
@@ -27,6 +31,8 @@ export const load = async () => {
     //renew contract in process table
     const renewContract: RenewContractListDTO = {
         dataType: 1,
+        identityCard: null,
+        temporaryId: null,
     }
     const renewContractParam: CommonListRequestDTO = {
         pageNum: 1,
@@ -56,5 +62,15 @@ export const load = async () => {
         renewContractParam,
         renewContractListResponse,
         renewContractList,
+    }
+}
+
+export const _addSelectedContractForRenew = async (selectedContract: RenewContractAddDTO) => {
+    const response: CommonResponseDTO =
+        await ContractEmployeeServices.addRenewContract(selectedContract);
+    
+    if(response.message =="success"){
+        getSuccessToast();
+        return response
     }
 }

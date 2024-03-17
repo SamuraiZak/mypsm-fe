@@ -10,12 +10,11 @@
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import { _updateContractEmployeeListTable } from './+page';
-    import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
-    import { ContractEmployeeServices } from '$lib/services/implementation/mypsm/kakitangan-kontrak/contract-employee.service';
     import type { GetContractEmployeeOffer } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-employee-offer.dto';
+    import { Modal } from 'flowbite-svelte';
     export let data: PageData;
     let rowData: GetContractEmployeeOffer;
-
+    let openModal: boolean = false;
     //table for urus setia/penyokong/pelulus
     let param: CommonListRequestDTO = data.contractEmployeeListParam;
     let contractEmployeeListTable: TableDTO = {
@@ -29,7 +28,7 @@
         data: data.contractEmployeeList ?? [],
         hiddenData: ['candidateId'],
     };
-    console.log(data.contractEmployeeList);
+
     //table for calon kakitangan kontrak
     let contractOfferTable: TableDTO = {
         param: param,
@@ -68,7 +67,7 @@
     <ContentHeader title="Perlantikan Baharu (Kontrak)">
         {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code}
             <TextIconButton
-                onClick={() => goto('./lantikan-baru/baru')}
+                onClick={() => goto('./lantikan-baru/permohonan-baru')}
                 icon="add"
                 type="primary"
                 label="Tambah Kontrak Baru"
@@ -108,11 +107,16 @@
                     enableDetail
                     bind:tableData={contractEmployeeListTable}
                     bind:passData={rowData}
-                    detailActions={() =>
-                        goto(
-                            './lantikan-baru/butiran-calon-' +
-                                rowData.candidateId,
-                        )}
+                    detailActions={() => {
+                        if (rowData.status == 'Baru') {
+                            openModal = true;
+                        } else {
+                            goto(
+                                './lantikan-baru/butiran-calon-' +
+                                    rowData.candidateId,
+                            );
+                        }
+                    }}
                 />
             </div>
         {:else if data.currentRoleCode === UserRoleConstant.calonKontrak.code}
@@ -136,3 +140,13 @@
         {/if}
     </div>
 </section>
+
+<Modal class="w-[200px] flex" bind:open={openModal}>
+    <div class="flex flex-row gap-2.5 justify-center">
+        <TextIconButton
+            label="Kemaskini Semula"
+            type="primary"
+            onClick={() => goto('./lantikan-baru/permohonan-' + rowData.candidateId)}
+        />
+    </div>
+</Modal>
