@@ -1,23 +1,33 @@
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant";
+import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
+import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
+import type { MedicalClinicPanelClaimList, MedicalClinicPanelClaimListFilter } from "$lib/dto/mypsm/perubatan/medical-claim-list.dto";
+import { MedicalServices } from "$lib/services/implementation/mypsm/perubatan/medical.service";
 
 export const load = async () => {
-    let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
-    const param = {
+    let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode);
+    let clinicPanelMedicalClaimList: MedicalClinicPanelClaimList[] = [];
+    const filter: MedicalClinicPanelClaimListFilter = {
+        code: null,
+        description: null,
+    }
+    const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
         orderBy: null,
         orderType: null,
+        filter: filter
     };
 
-    const dataList = [
-        { id: 1, kodKlinik: 28341, namaKlinik: 'Klinik Wee', negeri: 'Selangor', bulan: 'Mei 2026', tarikhDilantik: '2023-11-01', tarikhTamat: '2024-06-30', jumlahTuntutanKeseluruhan: '5,000.00', jumlahTuntutanTahunSemasa: 'Tiada', status: 'Baru', },
-        { id: 2, kodKlinik: 28342, namaKlinik: 'Klinik Loh', negeri: 'Sarawak', bulan: 'Mei 2026', tarikhDilantik: '2023-11-01', tarikhTamat: '2024-06-30', jumlahTuntutanKeseluruhan: '5,000.00', jumlahTuntutanTahunSemasa: 'Tiada', status: 'Disokong', },
-        { id: 2, kodKlinik: 28342, namaKlinik: 'Klinik Haiwan', negeri: 'Kelantan', bulan: 'Mei 2026', tarikhDilantik: '2023-11-01', tarikhTamat: '2024-06-30', jumlahTuntutanKeseluruhan: '5,000.00', jumlahTuntutanTahunSemasa: 'Tiada', status: 'Disokong', },
-    ];
+    const clinicPanelMedicalClaimListResponse: CommonResponseDTO =
+        await MedicalServices.getMedicalClinicPanelClaimList(param)
+    clinicPanelMedicalClaimList =
+        clinicPanelMedicalClaimListResponse.data?.dataList as MedicalClinicPanelClaimList[]
 
     return {
         currentRoleCode,
         param,
-        dataList,
+        clinicPanelMedicalClaimListResponse,
+        clinicPanelMedicalClaimList,
     }
 }

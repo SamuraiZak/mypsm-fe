@@ -6,28 +6,33 @@
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type { ClinicPanelClaimList } from '$lib/dto/mypsm/perubatan/clinic-panel-claim-list.dto';
     import type { PageData } from './$types';
 
     export let data: PageData;
-    let rowData: any;
-
-    let klinikPanelTable: TableDTO = {
+    let rowData: ClinicPanelClaimList;
+    let claimListTable: TableDTO = {
         param: data.param,
-        meta: {
-            pageSize: data.dataList.length,
+        meta: data.clinicPanelClaimListResponse.data?.meta ?? {
+            pageSize: 5,
             pageNum: 1,
-            totalData: data.dataList.length,
+            totalData: 4,
             totalPage: 1,
         },
-        data: data.dataList ?? [],
-        hiddenData: ['id'],
+        data: data.clinicPanelClaimList ?? [],
+        hiddenData: ['clinicId'],
     };
+
 </script>
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Rekod Bil Tuntutan Kakitangan">
-        
+    <ContentHeader title="Rekod Bil Tuntutan Klinik Panel">
+        <TextIconButton
+            label="Tambah Bil Tuntutan"
+            icon="add"
+            onClick={() => goto('/klinik-panel/bil-tuntutan-panel-klinik/baru')}
+        />
     </ContentHeader>
 </section>
 
@@ -38,18 +43,17 @@
         <FilterCard onSearch={() => {}}>
             <FilterTextField label="Kod Klinik" inputValue={''} />
             <FilterTextField label="Nama Klinik" inputValue={''} />
-            <FilterTextField label="Bulan" inputValue={''} />
-            <FilterTextField label="Negeri" inputValue={''} />
+            <FilterTextField label="Status" inputValue={''} />
         </FilterCard>
-        <div class="flex max-h-full w-full flex-col items-start justify-start">
-            <CustomTable
-                title="Rekod Bil Tuntutan Klinik Panel"
-                bind:tableData={klinikPanelTable}
-                bind:passData={rowData}
-                enableDetail
-                detailActions={() =>
-                    goto('./bil-tuntutan-klinik/butiran/' + rowData.id)}
-            />
-        </div>
+
+        <CustomTable
+            title="Senarai Bil Rawatan"
+            bind:tableData={claimListTable}
+            bind:passData={rowData}
+            enableDetail
+            detailActions={() =>
+                goto('./bil-tuntutan-panel-klinik/butiran/'+rowData.clinicId)
+            }
+        />
     </div>
 </section>
