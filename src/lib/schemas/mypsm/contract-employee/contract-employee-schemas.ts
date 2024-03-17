@@ -32,10 +32,16 @@ const phoneSchema = z.string().refine(x => /^[0-9]+$/.test(x) && (x.length == 11
     });
 const optionalNumberSchema = z.number().refine(x => x > 0, { message: "Sila tetapkan pilihan anda." }).nullable().default(null);
 const optionalTextSchema = z.string().min(4, { message: "Medan hendaklah lebih dari 4 karakter." }).nullable().default(null);
-
+const maxTextSchema = z
+.string({ required_error: 'Medan ini tidak boleh kosong.', invalid_type_error: 'Medan ini tidak boleh kosong.' })
+.max(32, {
+    message: 'Medan ini tidak boleh melebihi 32 karakter.',
+})
+.trim()
 
 
 export const _addNewContractEmployeeSchema = z.object({
+    candidateId: numberSchema.optional(),
     name: shortTextSchema,
     email: z.string({
         invalid_type_error: "Medan ini tidak boleh dibiar kosong."
@@ -64,7 +70,7 @@ export const _editNewContractEmployeeSchema = z.object({
     phoneNumber: phoneSchema,
     assetDeclarationStatusId: optionalNumberSchema,
     name: shortTextSchema,
-    alternativeName: shortTextSchema,
+    alternativeName: maxTextSchema,
     identityDocumentColor: shortTextSchema,
     identityDocumentNumber: identificationCardSchema,
     email: emailSchema,
