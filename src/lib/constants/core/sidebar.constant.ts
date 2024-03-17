@@ -235,7 +235,7 @@ export class SidebarConstant {
             ],
         },
 
-        //Kakitangan Kontrak
+        //Calon Kakitangan Kontrak
         {
             role: RoleConstant.calonKontrak.code,
             navItems: [
@@ -344,23 +344,23 @@ export class SidebarConstant {
                 },
                 {
                     name: ' Maklumat Bil Rawatan',
-                    path: '/maklumat-bil-rawatan',
+                    path: '/klinik-panel/maklumat-bil-rawatan',
                 },
                 {
                     name: 'Maklumat Kakitangan',
-                    path: '/maklumat-kakitangan',
+                    path: '/klinik-panel/maklumat-kakitangan',
                 },
                 {
                     name: 'Sejarah Tuntutan',
-                    path: '/sejarah-tuntutan',
+                    path: '/klinik-panel/sejarah-tuntutan',
                 },
                 {
                     name: 'Bil Tuntutan Panel Klinik',
-                    path: '/bil-tuntutan-panel-klinik',
+                    path: '/klinik-panel/bil-tuntutan-panel-klinik',
                 },
                 {
                     name: 'Profil',
-                    path: '/profil',
+                    path: '/klinik-panel/profil',
                 },
                 {
                     name: 'Tetapan',
