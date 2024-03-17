@@ -4,6 +4,6 @@
 
 export interface DropdownDTO {
     value: any;
-    name: string;
+    name: string | undefined;
     url?: string;
 }
