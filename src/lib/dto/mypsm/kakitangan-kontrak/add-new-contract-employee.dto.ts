@@ -1,16 +1,14 @@
 export interface AddNewContractEmployeeDTO {
+    candidateId?:    number;
     name:           string;
     email:          string;
-    identityDocumentNumber: string;
     startContract:  string;
     endContract:    string;
+    identityDocumentNumber: string;
     wageRate:       number;
     designation:    string;
     reportDutyDate: string;
 }
-// import type { _addNewContractEmployeeSchema } from '$lib/schemas/mypsm/contract-employee/contract-employee-schemas';
-// import type { z } from 'zod';
-// export type AddNewContractEmployeeDTO = z.infer<typeof _addNewContractEmployeeSchema>;
 // Converts JSON strings to/from your types
 
 export class AddNewContractEmployeeDTOConvert {

@@ -33,7 +33,7 @@ export interface GetContractPersonalDetailDTO {
     employeeName?:            string;
     employeePosition?:        string;
     relationshipId:           number | null;
-    phoneNumber:              string;
+    phoneNumber?:              string;
     isReadonly?:              boolean;
 }
 
