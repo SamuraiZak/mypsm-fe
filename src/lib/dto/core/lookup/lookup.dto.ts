@@ -9,6 +9,16 @@ export interface LookupDTO {
     year?: number;
     url?: string;
     countryCode?: string;
+
+    employeeId?: number;
+    employeeNumber?: string;
+    name?: string;
+    identityCard?: string;
+    program?: string;
+    scheme?: string;
+    grade?: string;
+    position?: string;
+    placement?: string;
 }
 
 // Converts JSON strings to/from your types

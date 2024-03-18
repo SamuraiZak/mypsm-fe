@@ -8,6 +8,8 @@ import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
 import { LookupHelper } from '$lib/helpers/core/lookup.helper';
 import type { Input } from 'ky';
 import http from '../../service-provider.service';
+import { CommonEmployeeConvert, type CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
+import { CommonListRequestConvert, type CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 
 export class LookupServices {
     // =======================================
@@ -1018,6 +1020,32 @@ export class LookupServices {
         }
     }
 
+    // employee list dropdown for supporter & approver
+    static async getEmployeeList(param: CommonListRequestDTO) {
+        try {
+            const url: Input = 'employee/list';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param)
+                })
+                .json();
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+
+
     // Sets the dropdown selection options
     static setSelectOptions = (param: CommonResponseDTO): DropdownDTO[] => {
         const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
@@ -1051,4 +1079,11 @@ export class LookupServices {
         const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
         return LookupHelper.toDropdownBothAreCode(lookupItems);
     };
+
+    static setSelectOptionSupporterAndApprover = (
+        param: CommonResponseDTO
+    ): DropdownDTO[] => {
+        const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
+        return LookupHelper.toDropdownSuppporterAndApprover(lookupItems);
+    }
 }

@@ -69,4 +69,13 @@ export class LookupHelper {
 
         return dropdownList;
     }
+
+    static toDropdownSuppporterAndApprover(lookupList: LookupDTO[]) {
+        const dropdownList: DropdownDTO[] = lookupList.map((lookup) => ({
+            value: lookup.employeeId,
+            name: lookup.name,
+        }));
+
+        return dropdownList;
+    }
 }
