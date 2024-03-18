@@ -1,5 +1,5 @@
-export interface ServiceAllowanceBantuanPakaianPanasDetailDTO {
-    allowanceId: number;
+export interface ServiceAllowanceBantuanPakaianIstiadatDetailDTO {
+    allowanceID: number;
     allowanceTypeCode: string;
     allowanceType: string;
     reason: string;
@@ -8,15 +8,15 @@ export interface ServiceAllowanceBantuanPakaianPanasDetailDTO {
 }
 
 // Converts JSON strings to/from your types
-export class ServiceAllowanceBantuanPakaianPanasDetailConvert {
+export class ServiceAllowanceBantuanPakaianIstiadatDetailConvert {
     public static fromJson(
         json: string,
-    ): ServiceAllowanceBantuanPakaianPanasDetailDTO {
+    ): ServiceAllowanceBantuanPakaianIstiadatDetailDTO {
         return JSON.parse(json);
     }
 
     public static toJson(
-        value: ServiceAllowanceBantuanPakaianPanasDetailDTO,
+        value: ServiceAllowanceBantuanPakaianIstiadatDetailDTO,
     ): string {
         return JSON.stringify(value);
     }
