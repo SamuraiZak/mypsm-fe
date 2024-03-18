@@ -4,6 +4,7 @@ import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto
 import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto.js';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { CourseFundReimbursementApprovalDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement-approval.dto';
+import type { CourseFundReimbursementDocumentsResponseDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement-document.dto';
 import type { CourseFundReimbursementPersonalDetailResponseDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement-personal-info.dto';
 import type { CourseFundReimbursementServiceDetailResponseDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement-service-info.dto';
 import type { CourseFundReimbursementDetailResponseDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement.dto';
@@ -11,6 +12,7 @@ import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
     _fundReimbursementApprovalSchema,
     _fundReimbursementDetailResponseSchema,
+    _fundReimbursementDocumentSchema,
     _fundReimbursementPersonalInfoResponseSchema,
     _fundReimbursementServiceInfoResponseSchema,
 } from '$lib/schemas/mypsm/course/fund-reimbursement-schema';
@@ -67,6 +69,10 @@ export async function load({ params }) {
     // await CourseFundReimbursementServices.setCourseExamResult(
     //     idRequestBody,
     // );
+    const fundReimbursementDocumentInfoResponse: CommonResponseDTO =
+        await CourseFundReimbursementServices.getCurrentCandidateDocuments(
+            idRequestBody,
+        );
 
     // ============================================================
     // Supervalidated form initialization
@@ -75,30 +81,42 @@ export async function load({ params }) {
         fundReimbursementDetailResponse.data
             ?.details as CourseFundReimbursementDetailResponseDTO,
         zod(_fundReimbursementDetailResponseSchema),
+        { errors: false },
     );
 
     const fundReimbursementPersonalInfoForm = await superValidate(
         fundReimbursementPersonalDetailResponse.data
             ?.details as CourseFundReimbursementPersonalDetailResponseDTO,
         zod(_fundReimbursementPersonalInfoResponseSchema),
+        { errors: false },
     );
 
     const fundReimbursementServiceInfoForm = await superValidate(
         fundReimbursementServiceDetailResponse.data
             ?.details as CourseFundReimbursementServiceDetailResponseDTO,
         zod(_fundReimbursementServiceInfoResponseSchema),
+        { errors: false },
     );
 
     const fundReimbursementSecretaryApprovalForm = await superValidate(
         fundReimbursementSecretaryApprovalResponse.data
             ?.details as CourseFundReimbursementApprovalDTO,
         zod(_fundReimbursementApprovalSchema),
+        { errors: false },
     );
 
     const fundReimbursementResultForm = await superValidate(
         fundReimbursementResultResponse.data
             ?.details as CourseFundReimbursementApprovalDTO,
         zod(_fundReimbursementApprovalSchema),
+        { errors: false },
+    );
+
+    const fundReimbursementDocumentForm = await superValidate(
+        fundReimbursementDocumentInfoResponse.data
+            ?.details as CourseFundReimbursementDocumentsResponseDTO,
+        zod(_fundReimbursementDocumentSchema),
+        { errors: false },
     );
 
     // ===========================================================================
@@ -282,6 +300,7 @@ export async function load({ params }) {
             fundReimbursementServiceDetailResponse,
             fundReimbursementSecretaryApprovalResponse,
             fundReimbursementResultResponse,
+            fundReimbursementDocumentInfoResponse,
         },
         forms: {
             fundReimbursementInfoForm,
@@ -289,6 +308,7 @@ export async function load({ params }) {
             fundReimbursementServiceInfoForm,
             fundReimbursementSecretaryApprovalForm,
             fundReimbursementResultForm,
+            fundReimbursementDocumentForm,
         },
         selectionOptions: {
             identityCardColorLookup,

@@ -96,42 +96,49 @@ export async function load({ params }) {
         fundApplicationDetailResponse.data
             ?.details as CourseFundApplicationDetailResponseDTO,
         zod(_fundApplicationDetailResponseSchema),
+        { errors: false },
     );
 
     const fundApplicationPersonalInfoForm = await superValidate(
         fundApplicationPersonalDetailResponse.data
             ?.details as CourseFundApplicationPersonalDetailResponseDTO,
         zod(_fundApplicationPersonalInfoResponseSchema),
+        { errors: false },
     );
 
     const fundApplicationServiceInfoForm = await superValidate(
         fundApplicationServiceDetailResponse.data
             ?.details as CourseFundApplicationServiceDetailResponseDTO,
         zod(_fundApplicationServiceInfoResponseSchema),
+        { errors: false },
     );
 
     const fundApplicationCourseSecretaryApprovalForm = await superValidate(
         fundApplicationCourseSecretaryApprovalResponse.data
             ?.details as CourseFundApplicationApprovalDTO,
         zod(_fundApplicationApprovalSchema),
+        { errors: false },
     );
 
     const fundApplicationIntegritySecretaryApprovalForm = await superValidate(
         fundApplicationIntegritySecretaryApprovalResponse.data
             ?.details as CourseFundApplicationApprovalDTO,
         zod(_fundApplicationApprovalSchema),
+        { errors: false },
     );
 
     const fundApplicationStateUnitDirectorApprovalForm = await superValidate(
         fundApplicationStateUnitDirectorApprovalResponse.data
             ?.details as CourseFundApplicationApprovalDTO,
         zod(_fundApplicationApprovalSchema),
+        { errors: false },
     );
 
     const fundApplicationDocumentForm = await superValidate(
         fundApplicationDocumentInfoResponse.data
             ?.details as CourseFundApplicationDocumentsResponseDTO,
         zod(_fundApplicationDocumentSchema),
+        { errors: false },
     );
 
     // ==========================================================================
@@ -305,6 +312,7 @@ export async function load({ params }) {
     // ===========================================================================
 
     return {
+        idRequestBody,
         responses: {
             fundApplicationDetailResponse,
             fundApplicationPersonalDetailResponse,

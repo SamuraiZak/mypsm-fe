@@ -2,16 +2,11 @@ import { goto } from '$app/navigation';
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
-import type { CourseAddFundApplicationRequestDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
 import {
     getErrorToast,
     getInsufficientFileToast,
 } from '$lib/helpers/core/toast.helper';
-import {
-    _createFundApplicationRequestSchema,
-    _fundApplicationDetailResponseSchema,
-    _fundApplicationUploadDocSchema,
-} from '$lib/schemas/mypsm/course/fund-application-schema';
+import { _fundApplicationUploadDocSchema } from '$lib/schemas/mypsm/course/fund-application-schema';
 import { CourseFundApplicationServices } from '$lib/services/implementation/mypsm/latihan/fundApplication.service';
 import { error } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -20,7 +15,9 @@ import { superValidate } from 'sveltekit-superforms/client';
 //==================================================
 //=============== Load Function ====================
 //==================================================
-export async function load() {
+export async function load({ params }) {
+    const fundApplicationId = Number(params.fundApplicationId);
+
     const currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
     );
@@ -34,10 +31,6 @@ export async function load() {
     // ============================================================
     // Supervalidated form initialization
     // ============================================================
-    const fundApplicationInfoForm = await superValidate(
-        zod(_fundApplicationDetailResponseSchema),
-        { errors: false },
-    );
 
     const fundApplicationUploadDocumentForm = await superValidate(
         zod(_fundApplicationUploadDocSchema),
@@ -47,7 +40,7 @@ export async function load() {
     // ===========================================================================
 
     return {
-        fundApplicationInfoForm,
+        fundApplicationId,
         fundApplicationUploadDocumentForm,
     };
 }
@@ -55,27 +48,6 @@ export async function load() {
 //==================================================
 //=============== Submit Functions =================
 //==================================================
-export const _createFundApplicationForm = async (formData: FormData) => {
-    const form = await superValidate(
-        formData,
-        zod(_createFundApplicationRequestSchema),
-    );
-
-    console.log(form);
-
-    if (!form.valid) {
-        getErrorToast();
-        error(400, { message: 'Validation Not Passed!' });
-    }
-
-    const response: CommonResponseDTO =
-        await CourseFundApplicationServices.createCourseFundApplication(
-            form.data as CourseAddFundApplicationRequestDTO,
-        );
-
-    return { response };
-};
-
 export const _submitDocumentForm = async (id: number, files: File[]) => {
     const documentData = new FormData();
 

@@ -1,7 +1,9 @@
+import { goto } from '$app/navigation';
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant.js';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { CourseFundReimbursementListResponseDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement.dto';
 import { renameExamTypeKeyValue } from '$lib/helpers/mypsm/course/exam-type.helper';
@@ -26,7 +28,9 @@ export const load = async () => {
         filter: {
             employeeNumber: null,
             employeeName: null,
-            employeeIdentityNumber: null,
+            identityDocumentNumber: null,
+            courseApplicationDate: null,
+            status: null,
         },
     };
 
@@ -137,4 +141,28 @@ export const _updateTable = async (param: CommonListRequestDTO) => {
         param,
         response,
     };
+};
+
+export const _checkIfDocumentExist = async (isStaff: boolean, id: number) => {
+    const requestBody: commonIdRequestDTO = {
+        id: Number(id),
+    };
+
+    // ==========================================================================
+    // Check if document exist
+    // ==========================================================================
+    const fundApplicationDocumentInfoResponse: CommonResponseDTO =
+        await CourseFundApplicationServices.getCurrentCandidateDocuments(
+            requestBody,
+        );
+
+    if (fundApplicationDocumentInfoResponse.status === 'error') {
+        if (isStaff) {
+            goto(`./pembiayaan/${id}/document-upload`);
+        } else {
+            goto(`./pembiayaan/${id}`);
+        }
+    } else {
+        goto(`./pembiayaan/${id}`);
+    }
 };

@@ -27,7 +27,9 @@ export async function load() {
     // ============================================================
     // Supervalidated form initialization
     // ============================================================
-    const examInfoForm = await superValidate(zod(_examInfoRequestSchema));
+    const examInfoForm = await superValidate(zod(_examInfoRequestSchema), {
+        errors: false,
+    });
 
     // ===========================================================================
 

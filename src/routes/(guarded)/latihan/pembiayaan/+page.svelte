@@ -1,15 +1,18 @@
 <script lang="ts">
+    import { _checkIfDocumentExist } from './+layout';
     import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
     import { _updateTable } from './+layout';
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
+    import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import type { LayoutData } from './$types';
     import type { CourseFundApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
+    import FilterDateField from '$lib/components/table/filter/FilterDateField.svelte';
 
     export let data: LayoutData;
     let rowData: CourseFundApplicationDetailResponseDTO;
@@ -46,8 +49,7 @@
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Rekod Pembiayaan Pelajaran"
-    ></ContentHeader>
+    <ContentHeader title="Rekod Pembiayaan Pelajaran"></ContentHeader>
 </section>
 
 <!-- content body starts here -->
@@ -75,7 +77,7 @@
             <FilterTextField
                 label="No. Kad Pengenalan"
                 bind:inputValue={fundApplicationTable.param.filter
-                    .employeeIdentityNumber}
+                    .identityDocumentNumber}
             ></FilterTextField>
             <FilterTextField
                 label="Nombor Pekerja"
@@ -86,6 +88,16 @@
                 label="Nama Pekerja"
                 bind:inputValue={fundApplicationTable.param.filter.employeeName}
             ></FilterTextField>
+            <FilterDateField
+                label="Tarikh Kemasukan Pelajaran"
+                bind:inputValue={fundApplicationTable.param.filter
+                    .courseApplicationDate}
+            ></FilterDateField>
+            <FilterSelectField
+                label="Status"
+                options={data.lookups.statusLookup}
+                bind:inputValue={fundApplicationTable.param.filter.status}
+            ></FilterSelectField>
         </FilterCard>
         <div class="flex max-h-full w-full flex-col items-start justify-start">
             <CustomTable
@@ -95,9 +107,7 @@
                 bind:tableData={fundApplicationTable}
                 bind:passData={rowData}
                 detailActions={() => {
-                    const route = `./pembiayaan/${rowData.id}`;
-
-                    goto(route);
+                    _checkIfDocumentExist(data.roles.isStaffRole, rowData.id);
                 }}
             ></CustomTable>
         </div>

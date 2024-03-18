@@ -1,23 +1,25 @@
 <script lang="ts">
-    import type { CourseFundApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
+    import type { CourseFundReimbursementDetailResponseDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement.dto';
     import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
-    import { _updateTable } from './+layout';
+    import { _checkIfDocumentExist, _updateTable } from './+layout';
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import type { LayoutData } from './$types';
+    import FilterNumberField from '$lib/components/table/filter/FilterNumberField.svelte';
 
     export let data: LayoutData;
-    let rowData: CourseFundApplicationDetailResponseDTO;
+    let rowData: CourseFundReimbursementDetailResponseDTO;
     let param: CommonListRequestDTO = data.param;
 
     let fundReimbursementTable: TableDTO = {
         param: param,
-        meta: data.responses.fundApplicationResponse.data?.meta ?? {
+        meta: data.responses.fundReimbursementResponse.data?.meta ?? {
             pageNum: 1,
             pageSize: 5,
             totalData: 4,
@@ -75,7 +77,7 @@
             <FilterTextField
                 label="No. Kad Pengenalan"
                 bind:inputValue={fundReimbursementTable.param.filter
-                    .employeeIdentityNumber}
+                    .identityDocumentNumber}
             ></FilterTextField>
             <FilterTextField
                 label="Nombor Pekerja"
@@ -87,6 +89,15 @@
                 bind:inputValue={fundReimbursementTable.param.filter
                     .employeeName}
             ></FilterTextField>
+            <FilterNumberField
+                label="Jumlah Tuntutan"
+                bind:inputValue={fundReimbursementTable.param.filter.totalClaim}
+            ></FilterNumberField>
+            <FilterSelectField
+                label="Status"
+                options={data.lookups.statusLookup}
+                bind:inputValue={fundReimbursementTable.param.filter.status}
+            ></FilterSelectField>
         </FilterCard>
         <div class="flex max-h-full w-full flex-col items-start justify-start">
             <CustomTable
@@ -96,9 +107,7 @@
                 bind:tableData={fundReimbursementTable}
                 bind:passData={rowData}
                 detailActions={() => {
-                    const route = `./tuntutan-yuran/${rowData.id}`;
-
-                    goto(route);
+                    _checkIfDocumentExist(data.roles.isStaffRole, rowData.id);
                 }}
             ></CustomTable>
         </div>

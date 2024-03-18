@@ -1,6 +1,7 @@
 <script lang="ts">
     import { certifyOptions } from '$lib/constants/core/radio-option-constants';
     import type { CourseExamApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-application.dto';
+    import StepperFailStatement from '$lib/components/stepper/StepperFailStatement.svelte';
     import { writable } from 'svelte/store';
     import StepperOtherRolesResult from '$lib/components/stepper/StepperOtherRolesResult.svelte';
     import {
@@ -35,9 +36,9 @@
     import { Badge } from 'flowbite-svelte';
     export let data: PageData;
 
-    let isReadonlySecretaryApprovalResult = writable<boolean>();
-    let isReadonlyExamResult = writable<boolean>();
-    let examApplicationIsFail = writable<boolean>();
+    let isReadonlySecretaryApprovalResult = writable<boolean>(false);
+    let isReadonlyExamResult = writable<boolean>(false);
+    let examApplicationIsFail = writable<boolean>(false);
 
     $: data.responses.courseExamSecretaryApprovalResponse.data?.details
         .status === false
@@ -45,11 +46,11 @@
         : examApplicationIsFail.set(false);
 
     $: data.responses.courseExamSecretaryApprovalResponse.data?.details
-        .status == null
+        .status === null
         ? isReadonlySecretaryApprovalResult.set(false)
         : isReadonlySecretaryApprovalResult.set(true);
 
-    $: data.responses.courseExamResultResponse.data?.details.examResult == ''
+    $: data.responses.courseExamResultResponse.data?.details.examResult === ''
         ? isReadonlyExamResult.set(false)
         : isReadonlyExamResult.set(true);
 
@@ -820,10 +821,10 @@
             <hr />
         </StepperContentBody>
     </StepperContent>
-    {#if !$examApplicationIsFail && isReadonlySecretaryApprovalResult}
+    {#if $isReadonlySecretaryApprovalResult}
         <StepperContent>
             <StepperContentHeader title="Keputusan Panel">
-                {#if data.role.isCourseSecretaryRole && !isReadonlyExamResult}
+                {#if !$examApplicationIsFail && $isReadonlySecretaryApprovalResult && !$isReadonlyExamResult && data.role.isCourseSecretaryRole}
                     <TextIconButton
                         type="primary"
                         label="Simpan"
@@ -854,10 +855,9 @@
                         bind:val={$examResultInfoForm.examTitle}
                     ></CustomTextField>
 
-                    {#if data.role.isCourseSecretaryRole || $isReadonlyExamResult}
+                    {#if !$examApplicationIsFail && (($isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole) || ($isReadonlyExamResult && (!data.role.isCourseSecretaryRole || data.role.isCourseSecretaryRole)))}
                         <CustomSelectField
-                            disabled={!data.role.isCourseSecretaryRole ||
-                                $isReadonlyExamResult}
+                            disabled={$isReadonlyExamResult}
                             errors={$examResultInfoErrors.examResult}
                             id="examResult"
                             label="Keputusan Panel"
@@ -865,6 +865,8 @@
                             bind:val={$examResultInfoForm.examResult}
                             options={data.selectionOptions.examResultLookup}
                         ></CustomSelectField>
+                    {:else if $examApplicationIsFail}
+                        <StepperFailStatement />
                     {:else}
                         <span
                             class="text-center text-sm italic text-system-primary"

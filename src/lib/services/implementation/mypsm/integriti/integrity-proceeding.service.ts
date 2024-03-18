@@ -1,5 +1,5 @@
 // ===============================================================
-// Fund Application Services
+// Integrity - proceeding Services
 // ===============================================================
 
 import { invalidateAll } from '$app/navigation';
@@ -9,18 +9,19 @@ import {
     type CommonListRequestDTO,
 } from '$lib/dto/core/common/common-list-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
-import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
-import type { CourseFundApplicationApprovalDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-approval.dto';
+import type { ProceedingAppealResultDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-appeal.dto';
+import type { ProceedingApproverResultDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-approver-result.dto';
+import type { ProceedingSuspensionRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-create-suspension-request.dto';
+import type { ProceedingStaffDetailRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-staff-detail-request.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
-import httpFormData from '$lib/services/implementation/service-provider-formdata.service';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
 
-export class CourseFundApplicationServices {
-    // get list of fund applications
-    static async getCourseFundApplicationList(param: CommonListRequestDTO) {
+export class IntegrityProceedingServices {
+    // get list of proceeding - employee
+    static async getEmployeeList(param: CommonListRequestDTO) {
         try {
-            const url: Input = 'course/fund_application/list';
+            const url: Input = 'integrity/proceeding/employee_list';
 
             // get the promise response
             const response: Response = await http
@@ -42,10 +43,37 @@ export class CourseFundApplicationServices {
         }
     }
 
-    // get course fund applications details
-    static async getCourseFundApplicationDetail(param: commonIdRequestDTO) {
+    // get list of proceeding - charge
+    static async getProceedingChargeRecordList(param: CommonListRequestDTO) {
         try {
-            const url: Input = 'course/fund_application/get';
+            const url: Input = 'integrity/proceeding/accusation/list';
+
+            // get the promise response
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // get course proceeding - staff details
+    static async getProceedingStaffDetail(
+        param: ProceedingStaffDetailRequestDTO,
+    ) {
+        try {
+            const url: Input = 'integrity/proceeding/employee_details';
 
             // get the promise response
             const response: Response = await http
@@ -67,10 +95,10 @@ export class CourseFundApplicationServices {
         }
     }
 
-    // create fund applications record
-    static async createCourseFundApplication<T>(param: T) {
+    // create proceeding - add charge meeting result
+    static async createProceedingChargeMeetingResult<T>(param: T) {
         try {
-            const url: Input = 'course/fund_application/add';
+            const url: Input = 'integrity/proceeding/accusation/add';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -96,147 +124,16 @@ export class CourseFundApplicationServices {
         }
     }
 
-    // get employee documents
-    static async getCurrentCandidateDocuments(param: commonIdRequestDTO) {
-        try {
-            const url: Input = 'course/fund_application/document/get';
+    // =====================================================
+    // create proceeding - get charge meeting result
+    // =====================================================
 
-            // get the promise response
-            const promiseRes: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            // await toast for resolved or rejected state
-            const response: Response = await promiseRes;
-
-            // parse the json response to object
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // download documents
-    static async downloadAttachment(param: string) {
-        try {
-            const url: Input = param;
-
-            // get the promise response
-            const promiseRes = await http.get(url, {
-                prefixUrl: '',
-                headers: {
-                    Accept: 'application/pdf',
-                    'Content-type': 'application/pdf',
-                },
-            });
-
-            if (promiseRes.status == 200) {
-                window.open(promiseRes.url);
-                return promiseRes.url;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // create fund application employee documents //multipart form
-    static async uploadFundApplicationEmployeeDocument(param: FormData) {
-        try {
-            const url: Input = 'course/fund_application/document/add';
-
-            // get the promise response
-            const promiseRes: Promise<Response> = httpFormData
-                .post(url, {
-                    body: param,
-                })
-                .json();
-            // await toast for resolved or rejected state
-            const response: Response = await getPromiseToast(promiseRes);
-
-            // parse the json response to object
-            const result = CommonResponseConvert.fromResponse(response);
-            console.log(result);
-            if (result.status == 'success') {
-                await invalidateAll();
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // get personal detail fund application details
-    static async getCourseFundApplicationPersonalDetail(
-        param: commonIdRequestDTO,
+    // create proceeding - add integrity director result
+    static async createProceedingChargesIntegrityDirectorResult(
+        param: ProceedingApproverResultDTO,
     ) {
         try {
-            const url: Input = 'course/fund_application/personal_detail';
-
-            // get the promise response
-            const response: Response = await http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            // parse the json response to object
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // get service detail fund application details
-    static async getCourseFundApplicationServiceDetail(
-        param: commonIdRequestDTO,
-    ) {
-        try {
-            const url: Input = 'course/fund_application/employee_detail';
-
-            // get the promise response
-            const response: Response = await http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            // parse the json response to object
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // set course secretary approval for fund application
-    static async setCourseFundApplicationCourseSecretaryApproval(
-        param: CourseFundApplicationApprovalDTO,
-    ) {
-        try {
-            const url: Input = 'course/fund_application/certifier_approval/add';
+            const url: Input = 'integrity/proceeding/accusation/confirmation';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -262,17 +159,16 @@ export class CourseFundApplicationServices {
         }
     }
 
-    // get course secretary approval exam application
-    static async getCourseFundApplicationCourseSecretaryApproval(
-        param: commonIdRequestDTO,
-    ) {
+    // get list of charger
+    static async getProceedingListOfCharges(param: CommonListRequestDTO) {
         try {
-            const url: Input = 'course/fund_application/certifier_approval/get';
+            const url: Input =
+                'integrity/proceeding/sentencing/accusation_list';
 
             // get the promise response
             const response: Response = await http
                 .post(url, {
-                    body: JSON.stringify(param),
+                    body: CommonListRequestConvert.toJson(param),
                 })
                 .json();
 
@@ -289,12 +185,10 @@ export class CourseFundApplicationServices {
         }
     }
 
-    // set integrity secretary approval for fund application
-    static async setCourseFundApplicationIntegritySecretaryApproval(
-        param: CourseFundApplicationApprovalDTO,
-    ) {
+    // create proceeding - add sentencing result
+    static async createProceedingSentencing<T>(param: T) {
         try {
-            const url: Input = 'course/fund_application/confirmer_approval/add';
+            const url: Input = 'integrity/proceeding/sentencing/add';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -320,39 +214,12 @@ export class CourseFundApplicationServices {
         }
     }
 
-    // get integrity secretary approval exam application
-    static async getCourseFundApplicationIntegritySecretaryApproval(
-        param: commonIdRequestDTO,
+    // create proceeding - add integrity director result - sentencing
+    static async createProceedingSentencingIntegrityDirectorResult(
+        param: ProceedingApproverResultDTO,
     ) {
         try {
-            const url: Input = 'course/fund_application/confirmer_approval/get';
-
-            // get the promise response
-            const response: Response = await http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            // parse the json response to object
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // set state or unit director approval for fund application
-    static async setCourseFundApplicationStateUnitDirectorApproval(
-        param: CourseFundApplicationApprovalDTO,
-    ) {
-        try {
-            const url: Input = 'course/fund_application/supporter_approval/add';
+            const url: Input = 'integrity/proceeding/sentencing/confirmation';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -378,24 +245,119 @@ export class CourseFundApplicationServices {
         }
     }
 
-    // get state or unit director approval exam application
-    static async getCourseFundApplicationStateUnitDirectorApproval(
-        param: commonIdRequestDTO,
-    ) {
+    // create proceeding - add appeal
+    static async createProceedingAppeal(param: ProceedingAppealResultDTO) {
         try {
-            const url: Input = 'course/fund_application/supporter_approval/get';
+            const url: Input = 'integrity/proceeding/appeal/add';
 
             // get the promise response
-            const response: Response = await http
+            const promiseRes: Promise<Response> = http
                 .post(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
 
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // create proceeding - add integrity director result - appeal
+    static async createProceedingAppealIntegrityDirectorResult(
+        param: ProceedingApproverResultDTO,
+    ) {
+        try {
+            const url: Input = 'integrity/proceeding/appeal/confirmation';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // create proceeding - add suspension
+    static async createProceedingSuspension(
+        param: ProceedingSuspensionRequestDTO,
+    ) {
+        try {
+            const url: Input = 'integrity/proceeding/suspension/add';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // create proceeding - add criminal suspension
+    static async createProceedingCriminal(
+        param: ProceedingSuspensionRequestDTO,
+    ) {
+        try {
+            const url: Input = 'integrity/proceeding/criminal/add';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;

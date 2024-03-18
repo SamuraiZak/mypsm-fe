@@ -11,8 +11,8 @@ import {
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
 import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
 import type { CourseFundReimbursementApprovalDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement-approval.dto';
-import type { CourseFundReimbursementUploadDocumentsRequestDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement-document.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
+import httpFormData from '$lib/services/implementation/service-provider-formdata.service';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
 
@@ -96,7 +96,6 @@ export class CourseFundReimbursementServices {
         }
     }
 
-    
     // get employee documents
     static async getCurrentCandidateDocuments(param: commonIdRequestDTO) {
         try {
@@ -151,28 +150,14 @@ export class CourseFundReimbursementServices {
     }
 
     // create fund reimbursements employee documents //multipart form
-    static async uploadFundReimbursementEmployeeDocument(
-        param: CourseFundReimbursementUploadDocumentsRequestDTO,
-    ) {
+    static async uploadFundReimbursementEmployeeDocument(param: FormData) {
         try {
             const url: Input = 'course/fund_reimbursement/document/add';
 
-            // param.append('key', 'document');
-            const params = new FormData();
-            params.append('id', param.id.toString());
-            // Append each file
-            param.documents.forEach((file) => {
-                params.append('files', file);
-            });
-
             // get the promise response
-            const promiseRes: Promise<Response> = http
+            const promiseRes: Promise<Response> = httpFormData
                 .post(url, {
-                    body: params,
-                    headers: {
-                        Accept: 'multipart/form-data',
-                        'Content-type': 'multipart/form-data;',
-                    },
+                    body: param,
                 })
                 .json();
             // await toast for resolved or rejected state
@@ -191,7 +176,6 @@ export class CourseFundReimbursementServices {
             return CommonResponseConstant.httpError;
         }
     }
-
 
     // get personal detail fund reimbursement details
     static async getCourseFundReimbursementPersonalDetail(
