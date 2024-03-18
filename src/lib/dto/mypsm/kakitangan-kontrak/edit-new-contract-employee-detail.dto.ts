@@ -9,7 +9,7 @@ export interface EditNewContractEmployeeDetailDTO {
     birthCountryId:           number;
     birthStateId:             number;
     phoneNumber:              string;
-    assetDeclarationStatusId: number | null;
+    assetDeclarationStatusId: number;
     name:                     string;
     alternativeName:          string;
     identityDocumentColor:    string;
@@ -29,8 +29,10 @@ export interface EditNewContractEmployeeDetailDTO {
     mailPostcode:             string;
     isExPoliceOrSoldier:      boolean;
     isInternalRelationship:   boolean;
-    employeeNumber:           string | null;
-    relationshipId:           number | null;
+    employeeNumber?:           string | null;
+    employeeName:            string | null;
+    employeePosition?:        string | null;
+    relationshipId?:           number | null;
     isReadonly?:                boolean;
 }
 

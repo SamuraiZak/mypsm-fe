@@ -128,16 +128,19 @@
         taintedMessage: false,
         id: 'addContractPersonalDetailForm',
         invalidateAll: true,
-        validationMethod: 'onsubmit',
+        resetForm: false,
         validators: zod(_editNewContractEmployeeSchema),
-        onSubmit() {
+        async onSubmit() {
             if (!$editNewContractEmployeeDetailForm.isInternalRelationship) {
                 $editNewContractEmployeeDetailForm.employeeNumber = null;
+                $editNewContractEmployeeDetailForm.employeeName = null;
+                $editNewContractEmployeeDetailForm.employeePosition = null;
                 $editNewContractEmployeeDetailForm.relationshipId = null;
             }
-            _submitEditNewContractEmployeeDetailForm(
+            const readOnly = await _submitEditNewContractEmployeeDetailForm(
                 $editNewContractEmployeeDetailForm,
             );
+            
         },
     });
 
@@ -403,11 +406,21 @@
     }
 
     $: {
-        data.setSupporterApproverForm.valid ? $setSupporterApproverForm.isReadonly = true : $setSupporterApproverForm.isReadonly = false;
-        data.supporterContractResultForm.valid ? $supporterContractResultForm.isReadonly = true : $supporterContractResultForm.isReadonly = false;
-        data.approverContractResultForm.valid ? $approverContractResultForm.isReadonly = true : $approverContractResultForm.isReadonly = false;
-        data.updateContractDetailForm.valid ? $updateContractDetailForm.isReadonly = true : $updateContractDetailForm.isReadonly = false;
-        data.contractUploadDocumentForm.valid ? data.getContractDocuments.isReadonly = true : data.getContractDocuments.isReadonly = false;
+        data.setSupporterApproverForm.valid
+            ? ($setSupporterApproverForm.isReadonly = true)
+            : ($setSupporterApproverForm.isReadonly = false);
+        data.supporterContractResultForm.valid
+            ? ($supporterContractResultForm.isReadonly = true)
+            : ($supporterContractResultForm.isReadonly = false);
+        data.approverContractResultForm.valid
+            ? ($approverContractResultForm.isReadonly = true)
+            : ($approverContractResultForm.isReadonly = false);
+        data.updateContractDetailForm.valid
+            ? ($updateContractDetailForm.isReadonly = true)
+            : ($updateContractDetailForm.isReadonly = false);
+        data.contractUploadDocumentForm.valid
+            ? (data.getContractDocuments.isReadonly = true)
+            : (data.getContractDocuments.isReadonly = false);
     }
 
     const handleOnInput = (e: Event) => {
@@ -465,18 +478,14 @@
                     <CustomTextField
                         label="Nama Penuh"
                         id="name"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        disabled
                         bind:val={$editNewContractEmployeeDetailForm.name}
                         errors={$editNewContractEmployeeDetailError.name}
                     />
                     <CustomSelectField
                         label="Gelaran Nama"
                         id="titleId"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         options={data.lookup.titleLookup}
                         bind:val={$editNewContractEmployeeDetailForm.titleId}
                         errors={$editNewContractEmployeeDetailError.titleId}
@@ -484,27 +493,21 @@
                     <CustomTextField
                         label="Nama Lain"
                         id="alternativeName"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         bind:val={$editNewContractEmployeeDetailForm.alternativeName}
                         errors={$editNewContractEmployeeDetailError.alternativeName}
                     />
                     <CustomTextField
                         label="No. Kad Pengenalan"
                         id="identityDocumentNumber"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        disabled
                         bind:val={$editNewContractEmployeeDetailForm.identityDocumentNumber}
                         errors={$editNewContractEmployeeDetailError.identityDocumentNumber}
                     />
                     <CustomSelectField
                         label="Jenis Kad Pengenalan"
                         id="identityDocumentColor"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         options={data.lookup.identityCardTypeLookup}
                         bind:val={$editNewContractEmployeeDetailForm.identityDocumentColor}
                         errors={$editNewContractEmployeeDetailError.identityDocumentColor}
@@ -512,18 +515,14 @@
                     <CustomTextField
                         label="Emel"
                         id="email"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         bind:val={$editNewContractEmployeeDetailForm.email}
                         errors={$editNewContractEmployeeDetailError.email}
                     />
                     <CustomTextField
                         label="No. Telefon Bimbit"
                         placeholder="01104220000"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         id="phoneNumber"
                         bind:val={$editNewContractEmployeeDetailForm.phoneNumber}
                         errors={$editNewContractEmployeeDetailError.phoneNumber}
@@ -532,9 +531,7 @@
                     <CustomTextField
                         label="Tarikh Lahir"
                         id="birthDate"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         type="date"
                         bind:val={$editNewContractEmployeeDetailForm.birthDate}
                         errors={$editNewContractEmployeeDetailError.birthDate}
@@ -542,9 +539,7 @@
                     <CustomSelectField
                         label="Negeri Kelahiran"
                         id="birthStateId"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         options={data.lookup.stateLookup}
                         bind:val={$editNewContractEmployeeDetailForm.birthStateId}
                         errors={$editNewContractEmployeeDetailError.birthStateId}
@@ -552,9 +547,7 @@
                     <CustomSelectField
                         label="Negara Kelahiran"
                         id="birthCountryId"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         options={data.lookup.countryLookup}
                         bind:val={$editNewContractEmployeeDetailForm.birthCountryId}
                         errors={$editNewContractEmployeeDetailError.birthCountryId}
@@ -562,9 +555,7 @@
                     <CustomSelectField
                         label="Warganegara"
                         id="nationalityId"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         options={data.lookup.nationalityLookup}
                         bind:val={$editNewContractEmployeeDetailForm.nationalityId}
                         errors={$editNewContractEmployeeDetailError.nationalityId}
@@ -572,9 +563,7 @@
                     <CustomSelectField
                         label="Bangsa"
                         id="raceId"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         options={data.lookup.raceLookup}
                         bind:val={$editNewContractEmployeeDetailForm.raceId}
                         errors={$editNewContractEmployeeDetailError.raceId}
@@ -582,9 +571,7 @@
                     <CustomSelectField
                         label="Agama"
                         id="religionId"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         options={data.lookup.religionLookup}
                         bind:val={$editNewContractEmployeeDetailForm.religionId}
                         errors={$editNewContractEmployeeDetailError.religionId}
@@ -592,9 +579,7 @@
                     <CustomSelectField
                         label="Etnik"
                         id="ethnicId"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         options={data.lookup.ethnicLookup}
                         bind:val={$editNewContractEmployeeDetailForm.ethnicId}
                         errors={$editNewContractEmployeeDetailError.ethnicId}
@@ -602,9 +587,7 @@
                     <CustomSelectField
                         label="Jantina"
                         id="genderId"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         options={data.lookup.genderLookup}
                         bind:val={$editNewContractEmployeeDetailForm.genderId}
                         errors={$editNewContractEmployeeDetailError.genderId}
@@ -612,9 +595,7 @@
                     <CustomSelectField
                         label="Status"
                         id="maritalId"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         options={data.lookup.maritalLookup}
                         bind:val={$editNewContractEmployeeDetailForm.maritalId}
                         errors={$editNewContractEmployeeDetailError.maritalId}
@@ -622,18 +603,14 @@
                     <CustomTextField
                         label="Alamat Rumah"
                         id="homeAddress"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         bind:val={$editNewContractEmployeeDetailForm.homeAddress}
                         errors={$editNewContractEmployeeDetailError.homeAddress}
                     />
                     <CustomSelectField
                         label="Bandar Alamat Rumah"
                         id="homeCityId"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         options={data.lookup.cityLookup}
                         bind:val={$editNewContractEmployeeDetailForm.homeCityId}
                         errors={$editNewContractEmployeeDetailError.homeCityId}
@@ -641,9 +618,7 @@
                     <CustomSelectField
                         label="Negeri Alamat Rumah"
                         id="homeStateId"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         options={data.lookup.stateLookup}
                         bind:val={$editNewContractEmployeeDetailForm.homeStateId}
                         errors={$editNewContractEmployeeDetailError.homeStateId}
@@ -651,9 +626,7 @@
                     <CustomSelectField
                         label="Negara Alamat Rumah"
                         id="homeCountryId"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         options={data.lookup.countryLookup}
                         bind:val={$editNewContractEmployeeDetailForm.homeCountryId}
                         errors={$editNewContractEmployeeDetailError.homeCountryId}
@@ -661,9 +634,7 @@
                     <CustomTextField
                         label="Poskod Alamat Rumah"
                         id="homePostcode"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         bind:val={$editNewContractEmployeeDetailForm.homePostcode}
                         errors={$editNewContractEmployeeDetailError.homePostcode}
                     />
@@ -678,9 +649,7 @@
                         <CustomTextField
                             label="Alamat Surat Menyurat"
                             disabled={sameAddress ||
-                                $editNewContractEmployeeDetailForm.isReadonly ||
-                                data.currentRoleCode !==
-                                    UserRoleConstant.calonKontrak.code}
+                                $editNewContractEmployeeDetailForm.isReadonly}
                             id="mailAddress"
                             bind:val={$editNewContractEmployeeDetailForm.mailAddress}
                             errors={$editNewContractEmployeeDetailError.mailAddress}
@@ -688,9 +657,7 @@
                         <CustomSelectField
                             label="Bandar Alamat Surat Menyurat"
                             disabled={sameAddress ||
-                                $editNewContractEmployeeDetailForm.isReadonly ||
-                                data.currentRoleCode !==
-                                    UserRoleConstant.calonKontrak.code}
+                                $editNewContractEmployeeDetailForm.isReadonly}
                             options={data.lookup.cityLookup}
                             id="mailCityId"
                             bind:val={$editNewContractEmployeeDetailForm.mailCityId}
@@ -699,9 +666,7 @@
                         <CustomSelectField
                             label="Negeri Alamat Surat Menyurat"
                             disabled={sameAddress ||
-                                $editNewContractEmployeeDetailForm.isReadonly ||
-                                data.currentRoleCode !==
-                                    UserRoleConstant.calonKontrak.code}
+                                $editNewContractEmployeeDetailForm.isReadonly}
                             options={data.lookup.stateLookup}
                             id="mailStateId"
                             bind:val={$editNewContractEmployeeDetailForm.mailStateId}
@@ -710,9 +675,7 @@
                         <CustomSelectField
                             label="Negara Alamat Surat Menyurat"
                             disabled={sameAddress ||
-                                $editNewContractEmployeeDetailForm.isReadonly ||
-                                data.currentRoleCode !==
-                                    UserRoleConstant.calonKontrak.code}
+                                $editNewContractEmployeeDetailForm.isReadonly}
                             options={data.lookup.countryLookup}
                             id="mailCountryId"
                             bind:val={$editNewContractEmployeeDetailForm.mailCountryId}
@@ -721,9 +684,7 @@
                         <CustomTextField
                             label="Poskod Alamat Surat Menyurat"
                             disabled={sameAddress ||
-                                $editNewContractEmployeeDetailForm.isReadonly ||
-                                data.currentRoleCode !==
-                                    UserRoleConstant.calonKontrak.code}
+                                $editNewContractEmployeeDetailForm.isReadonly}
                             id="mailPostcode"
                             bind:val={$editNewContractEmployeeDetailForm.mailPostcode}
                             errors={$editNewContractEmployeeDetailError.mailPostcode}
@@ -732,9 +693,7 @@
                     <CustomSelectField
                         errors={$editNewContractEmployeeDetailError.assetDeclarationStatusId}
                         id="assetDeclarationStatusId"
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         label="Status Pengikstiharan Harta"
                         bind:val={$editNewContractEmployeeDetailForm.assetDeclarationStatusId}
                         options={data.lookup.assetDeclarationLookup}
@@ -744,27 +703,21 @@
                         <CustomTextField
                             errors={$editNewContractEmployeeDetailError.propertyDeclarationDate}
                             id="propertyDeclarationDate"
-                            disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                                data.currentRoleCode !==
-                                    UserRoleConstant.calonKontrak.code}
+                            bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                             type="date"
                             label="Tarikh Pengikstiharan Harta"
                             bind:val={$editNewContractEmployeeDetailForm.propertyDeclarationDate}
                         />
                     {/if}
                     <CustomRadioBoolean
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         id="isExPoliceOrSoldier"
                         label="Bekas Polis/Tentera"
                         bind:val={$editNewContractEmployeeDetailForm.isExPoliceOrSoldier}
                         errors={$editNewContractEmployeeDetailError.isExPoliceOrSoldier}
                     />
                     <CustomRadioBoolean
-                        disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                            data.currentRoleCode !==
-                                UserRoleConstant.calonKontrak.code}
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                         id="isInternalRelationship"
                         label="Perhubungan Dengan Kakitangan LKIM"
                         bind:val={$editNewContractEmployeeDetailForm.isInternalRelationship}
@@ -774,18 +727,14 @@
                         <CustomTextField
                             label="Nama Kakitangan LKIM"
                             id="employeeNumber"
-                            disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                                data.currentRoleCode !==
-                                    UserRoleConstant.calonKontrak.code}
+                            bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                             bind:val={$editNewContractEmployeeDetailForm.employeeNumber}
                             errors={$editNewContractEmployeeDetailError.employeeNumber}
                         />
                         <CustomSelectField
                             label="Hubungan Kakitangan LKIM"
                             id="relationshipId"
-                            disabled={$editNewContractEmployeeDetailForm.isReadonly ||
-                                data.currentRoleCode !==
-                                    UserRoleConstant.calonKontrak.code}
+                            bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
                             options={data.lookup.relationshipLookup}
                             bind:val={$editNewContractEmployeeDetailForm.relationshipId}
                             errors={$editNewContractEmployeeDetailError.relationshipId}
@@ -2550,14 +2499,16 @@
                         {/if}
                         <CustomTextField
                             label="Tindakan/Ulasan Urus Setia Perjawatan"
-                            disabled={$secretaryContractResultForm.remark !== null }
+                            disabled={$secretaryContractResultForm.remark !==
+                                null}
                             id="remark"
                             bind:val={$secretaryContractResultForm.remark}
                             errors={$secretaryContractResultError.remark}
                         />
                         <CustomRadioBoolean
                             label="Keputusan"
-                            disabled={$secretaryContractResultForm.status !== null }
+                            disabled={$secretaryContractResultForm.status !==
+                                null}
                             id="status"
                             options={secretaryOption}
                             bind:val={$secretaryContractResultForm.status}
@@ -2585,28 +2536,28 @@
                         use:setSupporterApproverEnhance
                     >
                         <CustomSelectField
-                        label="Penyokong"
-                        disabled={$setSupporterApproverForm.isReadonly}
-                        id="supporterId"
-                        options={data.lookup.supporterApproverLookup}
-                        bind:val={$setSupporterApproverForm.supporterId}
-                        errors={$setSupporterApproverError.supporterId}
-                    />
-                    <CustomSelectField
-                        label="Pelulus"
-                        disabled={$setSupporterApproverForm.isReadonly}
-                        id="approverId"
-                        options={data.lookup.supporterApproverLookup}
-                        bind:val={$setSupporterApproverForm.approverId}
-                        errors={$setSupporterApproverError.approverId}
-                    />
+                            label="Penyokong"
+                            disabled={$setSupporterApproverForm.isReadonly}
+                            id="supporterId"
+                            options={data.lookup.supporterApproverLookup}
+                            bind:val={$setSupporterApproverForm.supporterId}
+                            errors={$setSupporterApproverError.supporterId}
+                        />
+                        <CustomSelectField
+                            label="Pelulus"
+                            disabled={$setSupporterApproverForm.isReadonly}
+                            id="approverId"
+                            options={data.lookup.supporterApproverLookup}
+                            bind:val={$setSupporterApproverForm.approverId}
+                            errors={$setSupporterApproverError.approverId}
+                        />
                     </form>
                 </StepperContentBody>
             </StepperContent>
 
             <StepperContent>
                 <StepperContentHeader title="Keputusan Penyokong">
-                    {#if  !$supporterContractResultForm.isReadonly && data.currentRoleCode == UserRoleConstant.penyokong.code}
+                    {#if !$supporterContractResultForm.isReadonly && data.currentRoleCode == UserRoleConstant.penyokong.code}
                         <TextIconButton
                             label="Simpan"
                             form="supporterContractResultForm"
@@ -2632,14 +2583,18 @@
                         {/if}
                         <CustomTextField
                             label="Tindakan/Ulasan Urus Setia Perjawatan"
-                            disabled={$supporterContractResultForm.isReadonly || data.currentRoleCode !== UserRoleConstant.penyokong.code}
+                            disabled={$supporterContractResultForm.isReadonly ||
+                                data.currentRoleCode !==
+                                    UserRoleConstant.penyokong.code}
                             id="remark"
                             bind:val={$supporterContractResultForm.remark}
                             errors={$supporterContractResultError.remark}
                         />
                         <CustomRadioBoolean
                             label="Keputusan"
-                            disabled={$supporterContractResultForm.isReadonly || data.currentRoleCode !== UserRoleConstant.penyokong.code}
+                            disabled={$supporterContractResultForm.isReadonly ||
+                                data.currentRoleCode !==
+                                    UserRoleConstant.penyokong.code}
                             id="status"
                             options={data.lookup.supportOption}
                             bind:val={$supporterContractResultForm.status}
@@ -2676,14 +2631,20 @@
                         {/if}
                         <CustomTextField
                             label="Tindakan/Ulasan Urus Setia Perjawatan"
-                            disabled={$approverContractResultForm.remark !==null || data.currentRoleCode !== UserRoleConstant.pelulus.code}
+                            disabled={$approverContractResultForm.remark !==
+                                null ||
+                                data.currentRoleCode !==
+                                    UserRoleConstant.pelulus.code}
                             id="remark"
                             bind:val={$approverContractResultForm.remark}
                             errors={$approverContractResultError.remark}
                         />
                         <CustomRadioBoolean
                             label="Keputusan"
-                            disabled={$approverContractResultForm.remark !== null || data.currentRoleCode !== UserRoleConstant.pelulus.code}
+                            disabled={$approverContractResultForm.remark !==
+                                null ||
+                                data.currentRoleCode !==
+                                    UserRoleConstant.pelulus.code}
                             id="status"
                             options={data.lookup.approveOption}
                             bind:val={$approverContractResultForm.status}
@@ -2693,38 +2654,38 @@
             </StepperContent>
 
             {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code && $approverContractResultForm.status}
-            <StepperContent>
-                <StepperContentHeader title="No. Pekerja Calon"
-                ></StepperContentHeader>
-                <StepperContentBody>
-                    <ContentHeader
-                        title="Tindakan: Tekan butang untuk memperolehi No. Pekerja kakitangan kontrak."
-                        borderClass="border-none"
-                    />
-                    <form
-                        class="flex w-full flex-col justify-start gap-2.5 pb-10"
-                        method="POST"
-                        id="getContractEmployeeNumberForm"
-                        use:getContractEmployeeNumberEnhance
-                    >
-                        <div class="flex justify-start">
-                            <TextIconButton
-                                label="No. Pekerja"
-                                icon="create"
-                                type="primary"
-                                form="getContractEmployeeNumberForm"
-                            />
-                        </div>
-                        <CustomTextField
-                            id="employeeNumber"
-                            label="No. Pekerja"
-                            disabled
-                            placeholder=""
-                            bind:val={$getContractEmployeeNumberForm.employeeNumber}
+                <StepperContent>
+                    <StepperContentHeader title="No. Pekerja Calon"
+                    ></StepperContentHeader>
+                    <StepperContentBody>
+                        <ContentHeader
+                            title="Tindakan: Tekan butang untuk memperolehi No. Pekerja kakitangan kontrak."
+                            borderClass="border-none"
                         />
-                    </form>
-                </StepperContentBody>
-            </StepperContent>
+                        <form
+                            class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                            method="POST"
+                            id="getContractEmployeeNumberForm"
+                            use:getContractEmployeeNumberEnhance
+                        >
+                            <div class="flex justify-start">
+                                <TextIconButton
+                                    label="No. Pekerja"
+                                    icon="create"
+                                    type="primary"
+                                    form="getContractEmployeeNumberForm"
+                                />
+                            </div>
+                            <CustomTextField
+                                id="employeeNumber"
+                                label="No. Pekerja"
+                                disabled
+                                placeholder=""
+                                bind:val={$getContractEmployeeNumberForm.employeeNumber}
+                            />
+                        </form>
+                    </StepperContentBody>
+                </StepperContent>
             {/if}
         {/if}
     </Stepper>

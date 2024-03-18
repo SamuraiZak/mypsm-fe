@@ -164,20 +164,20 @@ export const load = async ({ params }) => {
     }
 
     //form validation
-    const editNewContractEmployeeDetailForm = await superValidate(getContractPersonalDetail.homeAddress !== "" ? getContractPersonalDetail : undefined, zod(_editNewContractEmployeeSchema));
+    const editNewContractEmployeeDetailForm = await superValidate(getContractPersonalDetail, zod(_editNewContractEmployeeSchema), { errors: false });
     const academicDetailForm = await superValidate(zod(_addContractAcademicSchema));
     const experienceDetailForm = await superValidate(zod(_addContractExperienceSchema));
     const activityDetailForm = await superValidate(zod(_addContractActivitySchema));
     const familyDetailForm = await superValidate(zod(_commonContractDependencySchema));
     const dependantDetailForm = await superValidate(zod(_commonContractDependencySchema));
     const nextOfKinDetailForm = await superValidate(zod(_commonContractDependencySchema));
-    const updateContractDetailForm = await superValidate(getSecretaryUpdate.bankName !== "" ? getSecretaryUpdate : undefined, zod(_addContractViewSecretaryUpdate));
-    const secretaryContractResultForm = await superValidate(getSecretaryResult.status !== null ? getSecretaryResult : undefined, zod(_addContractCommonRoleResult));
-    const setSupporterApproverForm = await superValidate(getContractSupporterApproverResponse.status == "success" ? getSupporterApprover : undefined, zod(_addContractSupporterApprover));
-    const supporterContractResultForm = await superValidate(getSupporterResult.isReadonly ? getSupporterResult : undefined, zod(_addContractCommonRoleResult));
-    const approverContractResultForm = await superValidate(getApproverResult.remark !== null ? getApproverResult : undefined, zod(_addContractCommonRoleResult));
+    const updateContractDetailForm = await superValidate(getSecretaryUpdate, zod(_addContractViewSecretaryUpdate), { errors: false });
+    const secretaryContractResultForm = await superValidate(getSecretaryResult, zod(_addContractCommonRoleResult), { errors: false });
+    const setSupporterApproverForm = await superValidate(getSupporterApprover, zod(_addContractSupporterApprover), { errors: false });
+    const supporterContractResultForm = await superValidate(getSupporterResult, zod(_addContractCommonRoleResult), { errors: false });
+    const approverContractResultForm = await superValidate(getApproverResult, zod(_addContractCommonRoleResult), { errors: false });
     const contractUploadDocumentForm = await superValidate(zod(_uploadDocSchema));
-    const getContractEmployeeNumberForm = await superValidate(getContractApproverResultResponse.status == "success" ? getContractEmployeeNumber : undefined, zod(_getContractEmployeeNumber));
+    const getContractEmployeeNumberForm = await superValidate(getContractEmployeeNumber, zod(_getContractEmployeeNumber), { errors: false });
 
     return {
         currentRoleCode,
@@ -211,8 +211,9 @@ export const load = async ({ params }) => {
 
 export const _submitEditNewContractEmployeeDetailForm = async (formData: EditNewContractEmployeeDetailDTO) => {
     const form = await superValidate(formData, zod(_editNewContractEmployeeSchema));
+    console.log(form)
     if (form.valid) {
-        const { isReadonly, ...tempObj } = form.data
+        const { isReadonly,employeeName,employeePosition, ...tempObj } = form.data
         const response: CommonResponseDTO =
             await ContractEmployeeServices.editNewContractEmployeeDetail(
                 tempObj as EditNewContractEmployeeDetailDTO
