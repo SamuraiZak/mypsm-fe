@@ -34,6 +34,7 @@ export async function load({ params }) {
 
     const fundReimbursementUploadDocumentForm = await superValidate(
         zod(_fundReimbursementUploadDocSchema),
+        { errors: false },
     );
 
     // ===========================================================================

@@ -34,6 +34,7 @@ export async function load({ params }) {
 
     const fundApplicationUploadDocumentForm = await superValidate(
         zod(_fundApplicationUploadDocSchema),
+        { errors: false },
     );
 
     // ===========================================================================

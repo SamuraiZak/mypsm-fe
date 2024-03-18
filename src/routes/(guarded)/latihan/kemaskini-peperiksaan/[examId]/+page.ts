@@ -41,6 +41,7 @@ export async function load({ params }) {
     const examInfoForm = await superValidate(
         examDetailResponse.data?.details as CourseExamDetailResponseDTO,
         zod(_examInfoResponseSchema),
+        { errors: false },
     );
 
     // ===========================================================================

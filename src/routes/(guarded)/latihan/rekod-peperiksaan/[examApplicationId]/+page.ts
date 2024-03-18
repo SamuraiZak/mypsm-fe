@@ -78,30 +78,35 @@ export async function load({ params }) {
         examApplicationDetailResponse.data
             ?.details as CourseExamApplicationDetailResponseDTO,
         zod(_examApplicationInfoResponseSchema),
+        { errors: false },
     );
 
     const examPersonalInfoForm = await superValidate(
         examPersonalDetailResponse.data
             ?.details as CourseExamApplicationPersonalDetailResponseDTO,
         zod(_coursePersonalInfoResponseSchema),
+        { errors: false },
     );
 
     const examServiceInfoForm = await superValidate(
         examServiceDetailResponse.data
             ?.details as CourseExamApplicationServiceDetailResponseDTO,
         zod(_courseServiceInfoResponseSchema),
+        { errors: false },
     );
 
     const examSecretaryApprovalForm = await superValidate(
         courseExamSecretaryApprovalResponse.data
             ?.details as CourseExamApplicationApprovalDTO,
         zod(_examApplicationApprovalSchema),
+        { errors: false },
     );
 
     const examResultForm = await superValidate(
         courseExamResultResponse.data
             ?.details as CourseExamApplicationResultResponseDTO,
         zod(_examApplicationResultResponseSchema),
+        { errors: false },
     );
 
     // ===========================================================================

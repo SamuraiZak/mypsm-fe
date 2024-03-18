@@ -81,36 +81,42 @@ export async function load({ params }) {
         fundReimbursementDetailResponse.data
             ?.details as CourseFundReimbursementDetailResponseDTO,
         zod(_fundReimbursementDetailResponseSchema),
+        { errors: false },
     );
 
     const fundReimbursementPersonalInfoForm = await superValidate(
         fundReimbursementPersonalDetailResponse.data
             ?.details as CourseFundReimbursementPersonalDetailResponseDTO,
         zod(_fundReimbursementPersonalInfoResponseSchema),
+        { errors: false },
     );
 
     const fundReimbursementServiceInfoForm = await superValidate(
         fundReimbursementServiceDetailResponse.data
             ?.details as CourseFundReimbursementServiceDetailResponseDTO,
         zod(_fundReimbursementServiceInfoResponseSchema),
+        { errors: false },
     );
 
     const fundReimbursementSecretaryApprovalForm = await superValidate(
         fundReimbursementSecretaryApprovalResponse.data
             ?.details as CourseFundReimbursementApprovalDTO,
         zod(_fundReimbursementApprovalSchema),
+        { errors: false },
     );
 
     const fundReimbursementResultForm = await superValidate(
         fundReimbursementResultResponse.data
             ?.details as CourseFundReimbursementApprovalDTO,
         zod(_fundReimbursementApprovalSchema),
+        { errors: false },
     );
 
     const fundReimbursementDocumentForm = await superValidate(
         fundReimbursementDocumentInfoResponse.data
             ?.details as CourseFundReimbursementDocumentsResponseDTO,
         zod(_fundReimbursementDocumentSchema),
+        { errors: false },
     );
 
     // ===========================================================================

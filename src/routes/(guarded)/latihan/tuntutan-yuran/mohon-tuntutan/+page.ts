@@ -2,9 +2,11 @@ import { goto } from '$app/navigation';
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
-import type { CourseFundReimbursementUploadDocumentsRequestDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement-document.dto';
 import type { CourseAddFundReimbursementRequestDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement.dto';
-import { getErrorToast } from '$lib/helpers/core/toast.helper';
+import {
+    getErrorToast,
+    getInsufficientFileToast,
+} from '$lib/helpers/core/toast.helper';
 import {
     _createFundReimbursementRequestSchema,
     _fundReimbursementDetailResponseSchema,
@@ -34,10 +36,12 @@ export async function load() {
     // ============================================================
     const reimbursementInfoForm = await superValidate(
         zod(_fundReimbursementDetailResponseSchema),
+        { errors: false },
     );
 
     const fundReimbursementUploadDocumentForm = await superValidate(
         zod(_fundReimbursementUploadDocSchema),
+        { errors: false },
     );
 
     return {
@@ -78,17 +82,19 @@ export const _createFundReimbursementForm = async (formData: FormData) => {
 export const _submitDocumentForm = async (id: number, files: File[]) => {
     const documentData = new FormData();
 
+    if (files.length < 2) {
+        getInsufficientFileToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
     files.forEach((file) => {
-        documentData.append('documents', file);
+        documentData.append('documents', file, file.name);
     });
+    documentData.append('id', id.toString());
 
     const form = await superValidate(
         documentData,
         zod(_fundReimbursementUploadDocSchema),
     );
-
-    form.data.id = 1;
-    console.log(form);
 
     if (!form.valid || form.data.id === undefined) {
         getErrorToast();
@@ -96,13 +102,13 @@ export const _submitDocumentForm = async (id: number, files: File[]) => {
     }
     const response: CommonResponseDTO =
         await CourseFundReimbursementServices.uploadFundReimbursementEmployeeDocument(
-            form.data as CourseFundReimbursementUploadDocumentsRequestDTO,
+            documentData,
         );
 
     if (response.status === 'success')
         setTimeout(() => {
-            goto('../pembiayaan');
-        }, 2000);
+            goto(`../${id}`);
+        }, 1000);
 
     return { response };
 };
