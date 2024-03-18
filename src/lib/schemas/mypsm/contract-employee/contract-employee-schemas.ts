@@ -32,10 +32,16 @@ const phoneSchema = z.string().refine(x => /^[0-9]+$/.test(x) && (x.length == 11
     });
 const optionalNumberSchema = z.number().refine(x => x > 0, { message: "Sila tetapkan pilihan anda." }).nullable().default(null);
 const optionalTextSchema = z.string().min(4, { message: "Medan hendaklah lebih dari 4 karakter." }).nullable().default(null);
-
+const maxTextSchema = z
+.string({ required_error: 'Medan ini tidak boleh kosong.', invalid_type_error: 'Medan ini tidak boleh kosong.' })
+.max(32, {
+    message: 'Medan ini tidak boleh melebihi 32 karakter.',
+})
+.trim()
 
 
 export const _addNewContractEmployeeSchema = z.object({
+    candidateId: numberSchema.optional(),
     name: shortTextSchema,
     email: z.string({
         invalid_type_error: "Medan ini tidak boleh dibiar kosong."
@@ -62,10 +68,10 @@ export const _editNewContractEmployeeSchema = z.object({
     birthCountryId: numberSchema,
     birthStateId: numberSchema,
     phoneNumber: phoneSchema,
-    assetDeclarationStatusId: optionalNumberSchema,
+    assetDeclarationStatusId: numberSchema,
     name: shortTextSchema,
-    alternativeName: shortTextSchema,
-    identityDocumentColor: shortTextSchema,
+    alternativeName: maxTextSchema,
+    identityDocumentColor: shortTextSchema.default("biru"),
     identityDocumentNumber: identificationCardSchema,
     email: emailSchema,
     propertyDeclarationDate: stringToMaxDate.nullable().default(null),
@@ -83,6 +89,8 @@ export const _editNewContractEmployeeSchema = z.object({
     isExPoliceOrSoldier: booleanSchema.default(false),
     isInternalRelationship: booleanSchema.default(false),
     employeeNumber: optionalTextSchema,
+    employeeName: optionalTextSchema,
+    employeePosition: optionalTextSchema,
     relationshipId: optionalNumberSchema,
     isReadonly: booleanSchema.default(false),
 })

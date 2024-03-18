@@ -6,20 +6,21 @@
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type { MedicalClinicPanelClaimList } from '$lib/dto/mypsm/perubatan/medical-claim-list.dto';
     import type { PageData } from './$types';
 
     export let data: PageData;
-    let rowData: any;
+    let rowData: MedicalClinicPanelClaimList;
 
     let klinikPanelTable: TableDTO = {
         param: data.param,
-        meta: {
-            pageSize: data.dataList.length,
+        meta: data.clinicPanelMedicalClaimListResponse.data?.meta ?? {
+            pageSize: 5,
             pageNum: 1,
-            totalData: data.dataList.length,
+            totalData: 4,
             totalPage: 1,
         },
-        data: data.dataList ?? [],
+        data: data.clinicPanelMedicalClaimList ?? [],
         hiddenData: ['id'],
     };
 </script>

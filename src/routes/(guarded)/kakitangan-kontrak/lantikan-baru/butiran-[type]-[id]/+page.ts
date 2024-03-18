@@ -1,6 +1,9 @@
+import { invalidateAll } from "$app/navigation";
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant";
 import type { CandidateIDRequestBody } from "$lib/dto/core/common/candidate-id-request.view-dto.js";
+import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto.js";
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
+import type { CommonEmployeeDTO } from "$lib/dto/core/common/employee/employee.dto.js";
 import type { DropdownDTO } from "$lib/dto/core/dropdown/dropdown.dto";
 import type { RadioDTO } from "$lib/dto/core/radio/radio.dto.js";
 import type { AddNewContractEmployeeAcademicDTO, ContractAcademic } from "$lib/dto/mypsm/kakitangan-kontrak/add-contract-academic.dto.js";
@@ -10,7 +13,7 @@ import type { AddNewContractEmployeeExperienceDTO } from "$lib/dto/mypsm/kakitan
 import type { AddContractNextOfKinDTO } from "$lib/dto/mypsm/kakitangan-kontrak/add-contract-next-of-kin.dto.js";
 import type { AddContractApproverSupporterDTO } from "$lib/dto/mypsm/kakitangan-kontrak/add-contract-supproter-approver.dto.js";
 import type { EditNewContractEmployeeDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/edit-new-contract-employee-detail.dto.js";
-import type { AcademicList, GetContractAcademicDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-academic-detail.dto.js";
+import type { GetContractAcademicDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-academic-detail.dto.js";
 import type { GetContractActivityDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-activity-detail.dto.js";
 import type { GetContractDependencyDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-dependency-detail.dto.js";
 import type { GetContractDocumentDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-document.dto.js";
@@ -138,44 +141,44 @@ export const load = async ({ params }) => {
     getSecretaryResult =
         await getContractSecretaryResultResponse.data?.details as GetContracSecretaryResultDTO;
     // ========================== get assigned supporter and approver
-    getContractSupporterApproverResponse =
-        await ContractEmployeeServices.getContractSupporterApprover(contractId)
-    getSupporterApprover =
-        await getContractSupporterApproverResponse.data?.details as GetContractSupporterApproverDTO;
-    // ========================== get assigned supporter result
-    getContractSupporterResultResponse =
-        await ContractEmployeeServices.getContractSupporterResult(contractId)
-    getSupporterResult =
-        await getContractSupporterResultResponse.data?.details as GetContractSupporterApproverResultDTO;
-    // ========================== get assigned approver result
-    getContractApproverResultResponse =
-        await ContractEmployeeServices.getContractApproverResult(contractId)
-    getApproverResult =
-        await getContractApproverResultResponse.data?.details as GetContractSupporterApproverResultDTO;
-    // ========================== get contract employee number 
-    getContractEmployeeNumberResponse =
-        await ContractEmployeeServices.getContractEmployeeNumber(contractId)
-    getContractEmployeeNumber =
-        await getContractEmployeeNumberResponse.data?.details as GetContractEmployeeNumberDTO;
+    if (getContractDocumentsResponse.status == "success") {
+        getContractSupporterApproverResponse =
+            await ContractEmployeeServices.getContractSupporterApprover(contractId)
+        getSupporterApprover =
+            await getContractSupporterApproverResponse.data?.details as GetContractSupporterApproverDTO;
+        // ========================== get assigned supporter result
+        getContractSupporterResultResponse =
+            await ContractEmployeeServices.getContractSupporterResult(contractId)
+        getSupporterResult =
+            await getContractSupporterResultResponse.data?.details as GetContractSupporterApproverResultDTO;
+        // ========================== get assigned approver result
+        getContractApproverResultResponse =
+            await ContractEmployeeServices.getContractApproverResult(contractId)
+        getApproverResult =
+            await getContractApproverResultResponse.data?.details as GetContractSupporterApproverResultDTO;
+        // ========================== get contract employee number 
+        getContractEmployeeNumberResponse =
+            await ContractEmployeeServices.getContractEmployeeNumber(contractId)
+        getContractEmployeeNumber =
+            await getContractEmployeeNumberResponse.data?.details as GetContractEmployeeNumberDTO;
+    }
 
     //form validation
-    const editNewContractEmployeeDetailForm = await superValidate(getContractPersonalDetail, zod(_editNewContractEmployeeSchema));
+    const editNewContractEmployeeDetailForm = await superValidate(getContractPersonalDetail, zod(_editNewContractEmployeeSchema), { errors: false });
     const academicDetailForm = await superValidate(zod(_addContractAcademicSchema));
     const experienceDetailForm = await superValidate(zod(_addContractExperienceSchema));
     const activityDetailForm = await superValidate(zod(_addContractActivitySchema));
     const familyDetailForm = await superValidate(zod(_commonContractDependencySchema));
     const dependantDetailForm = await superValidate(zod(_commonContractDependencySchema));
     const nextOfKinDetailForm = await superValidate(zod(_commonContractDependencySchema));
-    const updateContractDetailForm = await superValidate(getSecretaryUpdate, zod(_addContractViewSecretaryUpdate));
-    const secretaryContractResultForm = await superValidate(getSecretaryResult, zod(_addContractCommonRoleResult));
-
-    const setSupporterApproverForm = await superValidate(getSupporterApprover, zod(_addContractSupporterApprover));
-
-    const supporterContractResultForm = await superValidate(getSupporterResult, zod(_addContractCommonRoleResult));
-    const approverContractResultForm = await superValidate(getApproverResult, zod(_addContractCommonRoleResult));
+    const updateContractDetailForm = await superValidate(getSecretaryUpdate, zod(_addContractViewSecretaryUpdate), { errors: false });
+    const secretaryContractResultForm = await superValidate(getSecretaryResult, zod(_addContractCommonRoleResult), { errors: false });
+    const setSupporterApproverForm = await superValidate(getSupporterApprover, zod(_addContractSupporterApprover), { errors: false });
+    const supporterContractResultForm = await superValidate(getSupporterResult, zod(_addContractCommonRoleResult), { errors: false });
+    const approverContractResultForm = await superValidate(getApproverResult, zod(_addContractCommonRoleResult), { errors: false });
     const contractUploadDocumentForm = await superValidate(zod(_uploadDocSchema));
-    const getContractEmployeeNumberForm = await superValidate(getContractEmployeeNumber, zod(_getContractEmployeeNumber));
-    console.log(editNewContractEmployeeDetailForm)
+    const getContractEmployeeNumberForm = await superValidate(getContractEmployeeNumber, zod(_getContractEmployeeNumber), { errors: false });
+
     return {
         currentRoleCode,
         contractId,
@@ -208,8 +211,9 @@ export const load = async ({ params }) => {
 
 export const _submitEditNewContractEmployeeDetailForm = async (formData: EditNewContractEmployeeDetailDTO) => {
     const form = await superValidate(formData, zod(_editNewContractEmployeeSchema));
+    console.log(form)
     if (form.valid) {
-        const { isReadonly, ...tempObj } = form.data
+        const { isReadonly,employeeName,employeePosition, ...tempObj } = form.data
         const response: CommonResponseDTO =
             await ContractEmployeeServices.editNewContractEmployeeDetail(
                 tempObj as EditNewContractEmployeeDetailDTO
@@ -315,7 +319,9 @@ export const _submitSetSupporterApproverForm = async (formData: AddContractAppro
             await ContractEmployeeServices.addContractApproverSupporter(
                 tempObj as AddContractApproverSupporterDTO
             )
-        return { response }
+        if (response.status == "success") {
+            return { response }
+        }
     }
 };
 
@@ -341,7 +347,9 @@ export const _submitApproverContractResultForm = async (formData: ContractCommon
             await ContractEmployeeServices.addContractApproverResult(
                 tempObj as ContractCommonRoleResultDTO
             )
-        return { response }
+        if (response.status == "success") {
+            return { response }
+        }
     }
 };
 export const _submitGetContractEmployeeNumberForm = async (contractId: CandidateIDRequestBody) => {
@@ -486,6 +494,28 @@ const getLookup = async () => {
     const serviceTypeLookup: DropdownDTO[] = LookupServices.setSelectOptions(
         serviceTypeLookupResponse,
     );
+    // -------------------------------------------------------
+    const suppAppResponse: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 350,
+        orderBy: null,
+        orderType: null,
+        filter: {
+            program: "TETAP",
+            employeeNumber: null,
+            name: null,
+            identityCard: null,
+            scheme: null,
+            grade: null,
+            position: null,
+        },
+    }
+    const supporterApproverResponse: CommonResponseDTO =
+        await LookupServices.getEmployeeList(suppAppResponse);
+
+    const supporterApproverLookup: DropdownDTO[] = LookupServices.setSelectOptionSupporterAndApprover(
+        supporterApproverResponse,
+    );
 
     const supportOption: RadioDTO[] = [
         { name: "Sokong", value: true },
@@ -519,6 +549,7 @@ const getLookup = async () => {
         serviceTypeLookup,
         supportOption,
         approveOption,
+        supporterApproverLookup,
     }
 }
 

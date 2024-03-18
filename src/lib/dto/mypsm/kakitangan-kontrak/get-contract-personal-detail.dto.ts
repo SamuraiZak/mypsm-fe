@@ -9,13 +9,13 @@ export interface GetContractPersonalDetailDTO {
     maritalId:                number;
     birthCountryId:           number;
     birthStateId:             number;
-    assetDeclarationStatusId: number | null;
+    assetDeclarationStatusId: number;
     name:                     string;
     alternativeName:          string;
     identityDocumentColor:    string;
     identityDocumentNumber:   string;
     email:                    string;
-    propertyDeclarationDate:  string;
+    propertyDeclarationDate:  string | null;
     birthDate:                string;
     homeAddress:              string;
     homeCountryId:            number;
@@ -29,11 +29,11 @@ export interface GetContractPersonalDetailDTO {
     mailPostcode:             string;
     isExPoliceOrSoldier:      boolean;
     isInternalRelationship:   boolean;
-    employeeNumber:           string | null;
-    employeeName?:            string;
-    employeePosition?:        string;
+    employeeNumber?:           string | null;
+    employeeName:            string | null;
+    employeePosition?:        string | null;
     relationshipId:           number | null;
-    phoneNumber:              string;
+    phoneNumber?:              string;
     isReadonly?:              boolean;
 }
 

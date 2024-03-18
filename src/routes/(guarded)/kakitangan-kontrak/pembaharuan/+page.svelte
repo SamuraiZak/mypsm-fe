@@ -6,13 +6,21 @@
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
-    import type { RenewContractAddDTO } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-add.dto';
+    import type {
+        Contractor,
+        RenewContractAddDTO,
+    } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-add.dto';
     import type { RenewContractListResponseDTO } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-list-response.dto';
+    import { Toaster } from 'svelte-french-toast';
+    import { _addSelectedContractForRenew } from './+page';
     import type { PageData } from './$types';
+    import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
 
     export let data: PageData;
     let rowData = {} as RenewContractListResponseDTO;
-    let selectedContract = {} as RenewContractAddDTO;
+    let selectedContract: RenewContractAddDTO = {
+        contractors: [],
+    };
 
     // table for near expired contract
     let nearExpiredContractTable: TableDTO = {
@@ -20,10 +28,11 @@
         meta: data.nearExpiredContractListResponse.data?.meta ?? {
             pageSize: 5,
             pageNum: 1,
-            totalData: 0,
+            totalData: 4,
             totalPage: 1,
         },
         data: data.nearExpiredContractList ?? [],
+        selectedData: [],
     };
 
     //table for renewing contract
@@ -32,11 +41,15 @@
         meta: data.renewContractListResponse.data?.meta ?? {
             pageSize: 5,
             pageNum: 1,
-            totalData: 0,
+            totalData: 4,
             totalPage: 1,
         },
         data: data.renewContractList ?? [],
+        hiddenData: ['contractId'],
     };
+
+    $: selectedContract.contractors =
+        (nearExpiredContractTable.selectedData as Contractor[]) ?? [];
 </script>
 
 <!-- content header starts here -->
@@ -65,23 +78,30 @@
                     goto('./pembaharuan/butiran/' + rowData.contractId)}
             />
 
-            <ContentHeader
-                title="Tindakan: Pilih Kakitangan Untuk Dinilai Dalam Proses Pembaharuan Kontrak"
-                borderClass="border-none"
-            >
-                <TextIconButton
-                    label="Hantar Untuk Dinilai"
-                    type="primary"
-                    onClick={() => {}}
-                />
-            </ContentHeader>
+            {#if data.currentRoleCode == UserRoleConstant.urusSetiaKhidmatSokongan.code}
+                <ContentHeader
+                    title="Tindakan: Pilih Kakitangan Untuk Dinilai Dalam Proses Pembaharuan Kontrak"
+                    borderClass="border-none"
+                >
+                    {#if selectedContract.contractors.length > 0}
+                        <TextIconButton
+                            label="Hantar Untuk Dinilai"
+                            type="primary"
+                            onClick={() => {
+                                _addSelectedContractForRenew(selectedContract);
+                            }}
+                        />
+                    {/if}
+                </ContentHeader>
 
-            <CustomTable
-                title="Senarai Kontrak Yang Hampir Tamat"
-                bind:tableData={nearExpiredContractTable}
-                bind:passData={selectedContract.contractors}
-                enableAdd
-            />
+                <CustomTable
+                    title="Senarai Kontrak Yang Hampir Tamat"
+                    bind:tableData={nearExpiredContractTable}
+                    enableAdd
+                />
+            {/if}
         </div>
     </div>
 </section>
+
+<Toaster />

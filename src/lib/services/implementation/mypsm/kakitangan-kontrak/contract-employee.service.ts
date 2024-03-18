@@ -19,6 +19,7 @@ import { AddContractNextOfKinDTOConvert, type AddContractNextOfKinDTO } from '$l
 import { AddContractApproverSupporterDTOConvert, type AddContractApproverSupporterDTO } from '$lib/dto/mypsm/kakitangan-kontrak/add-contract-supproter-approver.dto';
 import { AddNewContractEmployeeDTOConvert, type AddNewContractEmployeeDTO } from '$lib/dto/mypsm/kakitangan-kontrak/add-new-contract-employee.dto';
 import { EditNewContractEmployeeDetailDTOConvert, type EditNewContractEmployeeDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/edit-new-contract-employee-detail.dto';
+import { RenewContractAddDTOConvert, type RenewContractAddDTO } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-add.dto';
 import { EditContractDetailSecretaryDTOConvert, type EditContractDetailSecretaryDTO } from '$lib/dto/mypsm/kakitangan-kontrak/update-contract-detail-secretary.dto';
 import { ContractCommonRoleResultDTOConvert, type ContractCommonRoleResultDTO } from '$lib/dto/mypsm/kakitangan-kontrak/update-contract-secretary-result.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
@@ -103,6 +104,54 @@ export class ContractEmployeeServices {
 
             const promiseRes: Promise<Response> = http
                 .post(url, {
+                    body: AddNewContractEmployeeDTOConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // get new contract for edit
+    static async getCurrentContractDetail(param: CandidateIDRequestBody) {
+        try {
+            const url: Input = 'contracts/detail';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //edit current contract
+    static async editCurrentContract(param: AddNewContractEmployeeDTO) {
+        try {
+            let url: Input = 'contracts/edit';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
                     body: AddNewContractEmployeeDTOConvert.toJson(param),
                 })
                 .json();
@@ -450,7 +499,7 @@ export class ContractEmployeeServices {
                 .json();
             // await toast for resolved or rejected state
             const response: Response = await getPromiseToast(promiseRes);
-            console.log(response)
+  
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
 
@@ -624,7 +673,6 @@ export class ContractEmployeeServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                invalidateAll()
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -830,6 +878,236 @@ export class ContractEmployeeServices {
             const response: Response = await http
                 .post(url, {
                     body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //add selected contract for renew
+    static async addRenewContract(param: RenewContractAddDTO) {
+        try {
+            let url: Input = 'contracts/renew/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: RenewContractAddDTOConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get renew contract personal detail
+    static async getRenewContractPersonalDetail(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/renew/personal_detail';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get renew contract academic detail
+    static async getRenewContractAcademic(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/renew/academic';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get renew contract experience detail
+    static async getRenewContractExperience(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/renew/experience';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get renew contract activity detail
+    static async getRenewContractActivity(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/renew/activities';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get renew contract family detail
+    static async getRenewContractFamily(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/renew/family';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get renew contract non family detail
+    static async getRenewContractNonFamily(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/renew/dependent';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get renew contract next of kin detail
+    static async getRenewContractNextOfKin(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/renew/next_of_kin';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //get renew contract document
+    static async getRenewContractDocument(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/renew/document';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //get renew contract information
+    static async getRenewContractInfo(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = 'contracts/renew/contract_information';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
                 })
                 .json();
 

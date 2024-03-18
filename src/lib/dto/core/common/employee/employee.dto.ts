@@ -1,12 +1,12 @@
 export interface CommonEmployeeDTO {
     employeeId: number;
-    employeeNumber: string;
-    name: string;
-    identityCard: string;
+    employeeNumber: string | null;
+    name: string | null;
+    identityCard: string | null;
     program: string;
-    scheme: string;
-    grade: string;
-    position?: string;
+    scheme: string | null;
+    grade: string | null;
+    position?: string | null;
     placement?: string;
 }
 

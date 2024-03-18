@@ -12,8 +12,23 @@
     import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
+    import { Accordion, AccordionItem, Modal } from 'flowbite-svelte';
+    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import CustomTable from '$lib/components/table/CustomTable.svelte';
 
     export let data: PageData;
+    let tuntutanModal: boolean = false;
+    let tuntutanTable: TableDTO = {
+        param: data.param,
+        meta: {
+            pageSize: data.dataList.length,
+            pageNum: 1,
+            totalData: data.dataList.length,
+            totalPage: 1,
+        },
+        data: data.dataList ?? [],
+    };
+
 </script>
 
 <!-- content header starts here -->
@@ -23,7 +38,7 @@
             icon="cancel"
             type="neutral"
             label="Tutup"
-            onClick={() => goto("/perubatan/bil-tuntutan-klinik")}
+            onClick={() => goto('/perubatan/bil-tuntutan-klinik')}
         />
     </ContentHeader>
 </section>
@@ -47,7 +62,10 @@
                     id="clinicDetailForm"
                     method="POST"
                 >
-                <ContentHeader title="Maklumat Klinik" borderClass="border-none"/>
+                    <ContentHeader
+                        title="Maklumat Klinik"
+                        borderClass="border-none"
+                    />
                     <CustomTextField
                         label="Nama Klinik"
                         id=""
@@ -97,7 +115,10 @@
                         val=""
                         errors={[]}
                     />
-                    <ContentHeader title="Maklumat Tuntutan" borderClass="border-none"/>
+                    <ContentHeader
+                        title="Maklumat Tuntutan"
+                        borderClass="border-none"
+                    />
                     <CustomTextField
                         label="Bulan"
                         id=""
@@ -138,22 +159,118 @@
                     id="clinicAppointmentForm"
                     method="POST"
                 >
-                    <CustomTextField
-                        label="Tarikh Mula Lantikan"
-                        id=""
-                        type="date"
-                        disabled={false}
-                        val=""
-                        errors={[]}
-                    />
-                    <CustomTextField
-                        label="Tarikh  Tamat Lantikan"
-                        id=""
-                        type="date"
-                        disabled={false}
-                        val=""
-                        errors={[]}
-                    />
+                    <Accordion>
+                        <AccordionItem>
+                            <span
+                                slot="header"
+                                class="text-sm text-ios-labelColors-link-light"
+                                >Tuntutan 1</span
+                            >
+                            <div class="flex flex-col gap-2.5">
+                                <CustomTextField
+                                    label="Nama Kakitangan"
+                                    id=""
+                                    disabled={false}
+                                    val=""
+                                    errors={[]}
+                                />
+                                <CustomTextField
+                                    label="No Kad Pengenalan"
+                                    id=""
+                                    disabled={false}
+                                    val=""
+                                    errors={[]}
+                                />
+                                <div class="flex w-full flex-col items-end">
+                                    <TextIconButton
+                                        label="Tindakan"
+                                        type="neutral"
+                                        icon="edit"
+                                        onClick={() => (tuntutanModal = true)}
+                                    />
+                                </div>
+                                <CustomTable
+                                    title="Butiran Tuntutan"
+                                    tableData={tuntutanTable}
+                                    hiddenFooter
+                                />
+                                <Modal
+                                    title="Tuntutan 1"
+                                    bind:open={tuntutanModal}
+                                >
+                                    <div
+                                        class="flex w-full flex-row items-start justify-evenly"
+                                    >
+                                        <ContentHeader
+                                            title="Klinik"
+                                            borderClass="border-none"
+                                        />
+                                        <CustomTextField
+                                            label="Tindakan/Ulasan"
+                                            placeholder="Simpan ke klinik semula untuk membuat pembetulan"
+                                            id=""
+                                            disabled={false}
+                                            val=""
+                                            errors={[]}
+                                        />
+                                    </div>
+                                    <div
+                                        class="flex w-full flex-row items-start justify-evenly"
+                                    >
+                                        <ContentHeader
+                                            title="Kakitangan"
+                                            borderClass="border-none"
+                                        />
+                                        <CustomTextField
+                                            label="Tindakan/Ulasan"
+                                            placeholder="Simpan ke kakitangan untuk membuat pembayaran rawatan yang tidak ditanggung oleh LKIM"
+                                            id=""
+                                            disabled={false}
+                                            val=""
+                                            errors={[]}
+                                        />
+                                    </div>
+                                    <CustomTextField
+                                        label="Jumlah Perlu Ditanggung Oleh Kakitangan (RM)"
+                                        id=""
+                                        type="number"
+                                        disabled={false}
+                                        val=""
+                                        errors={[]}
+                                    />
+                                    <div
+                                        class="flex w-full flex-col justify-start gap-0 border-t"
+                                    >
+                                        <ContentHeader
+                                            title="Maklumat Rawatan/Ubat"
+                                            borderClass="border-none"
+                                        />
+                                        {#each data.dataList as treatment, i}
+                                            <span
+                                                class="text-sm text-ios-labelColors-secondaryLabel-light"
+                                                >{treatment.rawatan[i]}</span
+                                            >
+                                        {/each}
+                                    </div>
+                                    <CustomTextField
+                                        label="Jumlah Tanggungan Oleh LKIM (RM)"
+                                        id=""
+                                        disabled={false}
+                                        val=""
+                                        errors={[]}
+                                    />
+                                    <div class="flex w-full flex-col items-end">
+                                        <TextIconButton
+                                            label="SAH"
+                                            type="primary"
+                                            icon="check"
+                                            onClick={() => {}}
+                                        />
+                                    </div>
+                                </Modal>
+                            </div>
+                        </AccordionItem>
+                    </Accordion>
                 </form>
             </StepperContentBody>
         </StepperContent>

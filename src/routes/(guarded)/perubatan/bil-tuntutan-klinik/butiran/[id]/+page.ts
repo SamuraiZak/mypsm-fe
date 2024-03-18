@@ -5,9 +5,21 @@ export const load = async ({params}) => {
     const currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
     const lookup = getLookup();
 
+    const param = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: null,
+        orderType: null,
+    };
+    const dataList = [
+        { namaPesakit: "Siti Aminah", noKadPengenalan: "910822032872", rawatan: ["Batuk" ,"Selesema"], hubungan: "Isteri", jumlah: "10000"}
+    ]
+
     return {
         currentRoleCode,
         lookup,
+        param,
+        dataList,
     }
 }
 

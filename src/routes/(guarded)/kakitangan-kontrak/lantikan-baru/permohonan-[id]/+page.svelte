@@ -18,12 +18,14 @@
         id: "addContractForm",
         validators: zod(_addNewContractEmployeeSchema),
         onSubmit() {
-            _submit($form);
+            if(data.isEditing == "baru"){
+                _submit($form, data.isEditing);
+            } else {
+                $form.candidateId = data.contractId.id;
+                _submit($form, data.isEditing)
+            }
         },
     });
-    const proxyStartContract = dateProxy(form, 'startContract', { format: 'date' });
-    const proxyEndContract = dateProxy(form, 'endContract', { format: 'date' });
-    const proxyReporDutyDate = dateProxy(form, 'reportDutyDate', { format: 'date' });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">

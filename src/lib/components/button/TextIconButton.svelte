@@ -8,6 +8,8 @@
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import { DropdownItem, Dropdown } from 'flowbite-svelte';
     import SvgBlock from '$lib/assets/svg/SvgBlock.svelte';
+    import SvgDocument from '$lib/assets/svg/SvgDocument.svelte';
+    import SvgInfoSolid from '$lib/assets/svg/SvgInfoSolid.svelte';
 
     export let form: string = '';
     export let type: string = 'primary' || 'danger' || 'neutral';
@@ -55,6 +57,8 @@
                 <SvgPlus size="20" />
             {:else if icon == 'block'}
                 <SvgBlock size="20" />
+            {:else if icon == 'edit'}
+                <SvgInfoSolid size="20" />
             {:else}
                 <slot />
             {/if}
