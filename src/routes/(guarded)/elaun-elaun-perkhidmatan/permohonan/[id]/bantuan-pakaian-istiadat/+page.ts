@@ -251,38 +251,32 @@ export async function load({ params }) {
                 };
             }
         }
-
-        // return page data
-        return {
-            props: {
-                // role code
-                currentRoleCode,
-                // id of the application 0:new other:exsiting application
-                currentApplicationId,
-                // forms
-                allowanceDetailForm,
-                verificationForm,
-                suppporterApproverDetailForm,
-                directorFeedbackForm,
-                supporterFeedbackForm,
-                approverFeedbackForm,
-                // field options
-                allowanceTypeOption,
-                verificationStatusOption,
-                supportStatusOption,
-                approvalStatusOption,
-                // full application detail
-                currentApplicationDetail,
-            },
-        };
     }
+    // return page data
+    const a = 0;
+
+    return {
+        a,
+        props: {
+            currentRoleCode,
+            currentApplicationId,
+            allowanceDetailForm,
+            verificationForm,
+            suppporterApproverDetailForm,
+            directorFeedbackForm,
+            supporterFeedbackForm,
+            approverFeedbackForm,
+            allowanceTypeOption,
+            verificationStatusOption,
+            supportStatusOption,
+            approvalStatusOption,
+            currentApplicationDetail,
+        },
+    };
 }
 
 // =======================================================================
 // Form Submitter Functions
 // =======================================================================
 
-// submit application detail form
-export const _submitAllowanceDetailForm = async (params:FormData) => {
-    
-}
+export const _submitAllowanceDetail = async (formData: object) => {};

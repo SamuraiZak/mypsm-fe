@@ -1,22 +1,21 @@
-export interface ServiceAllowanceBantuanPakaianPanasDetailDTO {
+export interface ServiceAllowanceBayaranBalikPassportDetailDTO {
     allowanceId: number;
     allowanceTypeCode: string;
     allowanceType: string;
+    renewDate: Date;
     reason: string;
-    personal: number;
-    partner: number;
 }
 
 // Converts JSON strings to/from your types
-export class ServiceAllowanceBantuanPakaianPanasDetailConvert {
+export class ServiceAllowanceBayaranBalikPassportDetailConvert {
     public static fromJson(
         json: string,
-    ): ServiceAllowanceBantuanPakaianPanasDetailDTO {
+    ): ServiceAllowanceBayaranBalikPassportDetailDTO {
         return JSON.parse(json);
     }
 
     public static toJson(
-        value: ServiceAllowanceBantuanPakaianPanasDetailDTO,
+        value: ServiceAllowanceBayaranBalikPassportDetailDTO,
     ): string {
         return JSON.stringify(value);
     }
