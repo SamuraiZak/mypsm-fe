@@ -1714,6 +1714,33 @@ export class SidebarConstant {
             ],
         },
         // urus Seta Tatatertib
+        {
+            role: RoleConstant.urusSetiaTatatertib.code,
+            navItems: [
+                {
+                    name: 'Halaman Utama',
+                    path: '/halaman-utama',
+                },
+                {
+                    name: 'Integriti',
+                    path: '',
+                    subItems: [
+                        {
+                            name: 'Surcaj',
+                            path: '/integriti/surcaj',
+                        },
+                        {
+                            name: 'Prosiding Tatatertib',
+                            path: '/integriti/prosiding',
+                        },
+                        {
+                            name: 'Prosiding Tatatertib - Rayuan',
+                            path: '/integriti/rayuan',
+                        },
+                    ],
+                },
+            ],
+        },
 
         // unit negeri
         {
