@@ -1,68 +1,69 @@
-import { goto } from '$app/navigation';
-import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
-import { RoleConstant } from '$lib/constants/core/role.constant';
+import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant.js';
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
-import { getErrorToast } from '$lib/helpers/core/toast.helper';
-import { _examInfoRequestSchema } from '$lib/schemas/mypsm/course/exam-schema';
-import { CourseServices } from '$lib/services/implementation/mypsm/latihan/course.service.js';
-import { error } from '@sveltejs/kit';
-import { zod } from 'sveltekit-superforms/adapters';
-import { superValidate } from 'sveltekit-superforms/client';
+import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
+import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
+import { IntegrityProceedingServices } from '$lib/services/implementation/mypsm/integriti/integrity-proceeding.service';
 
-//==================================================
-//=============== Load Function ====================
-//==================================================
-export async function load() {
+export const load = async () => {
+    let proceedingListResponse: CommonResponseDTO = {};
+    let proceedingList = [];
+
     const currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
     );
 
-    const isCourseSecretaryRole =
-        currentRoleCode === RoleConstant.urusSetiaLatihan.code;
+    const param: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: 'name',
+        orderType: null,
+        filter: {
+            grade: null,
+            position: null,
+            year: null,
+            name: null,
+        },
+    };
 
-    if (!isCourseSecretaryRole) {
-        error(401, { message: 'Akses ditolak' });
-    }
+    // proceeding list
+    proceedingListResponse =
+        await IntegrityProceedingServices.getEmployeeList(param);
 
-    // ============================================================
-    // Supervalidated form initialization
-    // ============================================================
-    const examInfoForm = await superValidate(zod(_examInfoRequestSchema));
+    proceedingList = proceedingListResponse.data?.dataList ?? [];
+
+    // ==========================================================================
+    // Get Lookup Functions
+    // ==========================================================================
+    const statusLookupResponse: CommonResponseDTO =
+        await LookupServices.getStatusEnums();
+
+    const statusLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsInString(statusLookupResponse);
 
     // ===========================================================================
 
     return {
-        examInfoForm,
+        param,
+        currentRoleCode,
+        list: {
+            proceedingList,
+        },
+        responses: {
+            proceedingListResponse,
+        },
+        selectionOptions: {
+            statusLookup,
+        },
     };
-}
+};
 
-//==================================================
-//=============== Submit Functions =================
-//==================================================
-export const _createExamForm = async (formData: FormData) => {
-    const form = await superValidate(formData, zod(_examInfoRequestSchema));
-
-    if (!form.valid) {
-        getErrorToast();
-        error(400, { message: 'Validation Not Passed!' });
-    }
-
-    const modifiedForm = {
-        examTypeId: form.data.examTypeId,
-        examTitle: form.data.examTitle,
-        startDate: form.data.startDate.toISOString().split('T')[0],
-        endDate: form.data.endDate.toISOString().split('T')[0],
-        examDate: form.data.examDate.toISOString().split('T')[0],
-        examLocation: form.data.examLocation,
-    };
-
+export const _updateTable = async (param: CommonListRequestDTO) => {
     const response: CommonResponseDTO =
-        await CourseServices.createCourseExam(modifiedForm);
+        await IntegrityProceedingServices.getEmployeeList(param);
 
-    if (response.status === 'success')
-        setTimeout(() => {
-            goto('../kemaskini-peperiksaan');
-        }, 2000);
-
-    return { response };
+    return {
+        param,
+        response,
+    };
 };

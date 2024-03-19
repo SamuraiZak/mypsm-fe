@@ -1,127 +1,98 @@
 <script lang="ts">
-    import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
-    import { zod } from 'sveltekit-superforms/adapters';
-    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
-    import Stepper from '$lib/components/stepper/Stepper.svelte';
-    import StepperContent from '$lib/components/stepper/StepperContent.svelte';
-    import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
-    import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
-    import { Toaster } from 'svelte-french-toast';
-    import { dateProxy, superForm } from 'sveltekit-superforms/client';
-    import type { PageData } from './$types';
-    import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
-    import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
-    import TextIconButton from '$lib/components/button/TextIconButton.svelte';
-    import {
-        _academicInfoSchema,
-        _serviceInfoRequestSchema,
-    } from '$lib/schemas/mypsm/employment/new-hire/schema';
     import { goto } from '$app/navigation';
-    import { _createExamForm } from './+page';
+    import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
+    import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
+    import CustomTable from '$lib/components/table/CustomTable.svelte';
+    import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
+    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
+    import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
+    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import TextIconButton from '$lib/components/button/TextIconButton.svelte';
+    import type {
+        ProceedingChargeDetailResponseDTO,
+        ProceedingChargeListResponseDTO,
+    } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
+    import type { PageData } from './$types';
+    import { _updateTable } from './+page';
+
     export let data: PageData;
+    let rowData: ProceedingChargeDetailResponseDTO;
+    let param: CommonListRequestDTO = data.param;
 
-    // Superforms
-    const { form, errors, enhance } = superForm(data.examInfoForm, {
-        SPA: true,
-        dataType: 'json',
-        invalidateAll: true,
-        resetForm: true,
-        multipleSubmits: 'prevent',
-        validationMethod: 'oninput',
-        validators: zod(_examInfoResponseSchema),
-        onSubmit(formData) {
-            _createExamForm(formData.formData);
+    // Table list - new application view for secretary role
+    let proceedingTable: TableDTO = {
+        param: param,
+        meta: data.responses.proceedingListResponse.data?.meta ?? {
+            pageNum: 1,
+            pageSize: 5,
+            totalData: 4,
+            totalPage: 1,
         },
-        taintedMessage: false,
-    });
+        data:
+            (data.list.proceedingList as ProceedingChargeListResponseDTO) ?? [],
+        hiddenData: ['id'],
+    };
 
-    const proxyExamApplicationStartDate = dateProxy(form, 'startDate', {
-        format: 'date',
-    });
-    const proxyExamApplicationEndDate = dateProxy(form, 'endDate', {
-        format: 'date',
-    });
-    const proxyExamDate = dateProxy(form, 'examDate', { format: 'date' });
+    async function _updateProceedingTable() {
+        _updateTable(proceedingTable.param).then((value) => {
+            proceedingTable.data = value.response.data?.dataList ?? [];
+            proceedingTable.meta = value.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            proceedingTable.param.pageSize = proceedingTable.meta.pageSize;
+            proceedingTable.param.pageNum = proceedingTable.meta.pageNum;
+        });
+    }
 </script>
 
-<ContentHeader title="Maklumat Peperiksaan"
-    ><TextIconButton
-        label="Kembali"
-        type="neutral"
-        onClick={() => {
-            goto('../../latihan/kemaskini-peperiksaan');
-        }}
-    /></ContentHeader
+<!-- content header starts here -->
+<section class="flex w-full flex-col items-start justify-start">
+    <ContentHeader title="Tambah Rekod Prosiding"></ContentHeader>
+</section>
+
+<!-- content body starts here -->
+<!-- notes: you may change the flex directions but do not change the height and max height of this section -->
+<section
+    class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
-<Stepper>
-    <StepperContent>
-        <StepperContentHeader title="Maklumat Peperiksaan LKIM">
+    <div
+        class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
+    >
+        <ContentHeader title="" borderClass="border-none">
             <TextIconButton
-                type="primary"
-                label="Simpan"
-                form="examFormStepper"
+                label="Kembali"
+                type="neutral"
+                onClick={() => {
+                    goto('../prosiding');
+                }}
             />
-        </StepperContentHeader>
-        <StepperContentBody
-            ><!-- Maklumat Peperiksaan -->
-            <form
-                id="examFormStepper"
-                method="POST"
-                use:enhance
-                class="flex w-full flex-col gap-2"
-            >
-                <CustomSelectField
-                    disabled={false}
-                    errors={$errors.examTypeId}
-                    id="examTypeId"
-                    label="Jenis Peperiksaan"
-                    bind:val={$form.examTypeId}
-                    options={data.selectionOptions.examTypeLookup}
-                ></CustomSelectField>
-                <CustomTextField
-                    disabled={false}
-                    errors={$errors.examTitle}
-                    id="examTitle"
-                    label="Tajuk Peperiksaan"
-                    type="text"
-                    bind:val={$form.examTitle}
-                ></CustomTextField>
+        </ContentHeader>
+        <!-- Table filter placeholder -->
+        <FilterCard onSearch={_updateProceedingTable}>
+            <FilterSelectField
+                label="Status"
+                options={data.selectionOptions.statusLookup}
+                bind:inputValue={proceedingTable.param.filter.status}
+            ></FilterSelectField>
+        </FilterCard>
+        <div class="flex max-h-full w-full flex-col items-start justify-start">
+            <CustomTable
+                title="Senarai Pekerja"
+                onUpdate={_updateProceedingTable}
+                enableSelect
+                bind:tableData={proceedingTable}
+                bind:passData={rowData}
+                selectActions={() => {
+                    const route = `./prosiding/${rowData.integrityId}-${rowData.employeeId}`;
 
-                <CustomTextField
-                    disabled={false}
-                    errors={$errors.startDate}
-                    id="startDate"
-                    label="Tarikh Mula Permohonan"
-                    type="date"
-                    bind:val={$proxyExamApplicationStartDate}
-                ></CustomTextField>
-                <CustomTextField
-                    disabled={false}
-                    errors={$errors.endDate}
-                    id="endDate"
-                    label="Tarikh Tutup Permohonan"
-                    type="date"
-                    bind:val={$proxyExamApplicationEndDate}
-                ></CustomTextField>
-                <CustomTextField
-                    disabled={false}
-                    errors={$errors.examDate}
-                    id="examDate"
-                    label="Tarikh Peperiksaan"
-                    type="date"
-                    bind:val={$proxyExamDate}
-                ></CustomTextField>
-                <CustomTextField
-                    disabled={false}
-                    errors={$errors.examLocation}
-                    id="examLocation"
-                    label="Lokasi Peperiksaan"
-                    type="text"
-                    bind:val={$form.examLocation}
-                ></CustomTextField>
-            </form>
-        </StepperContentBody>
-    </StepperContent>
-</Stepper>
+                    goto(route);
+                }}
+            ></CustomTable>
+        </div>
+    </div>
+</section>
 
-<Toaster />
+<!-- <Toaster /> -->
