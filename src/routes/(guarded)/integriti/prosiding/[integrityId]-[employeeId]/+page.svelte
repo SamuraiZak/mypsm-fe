@@ -45,19 +45,14 @@
         <StepperContentHeader title="Maklumat Peribadi"></StepperContentHeader>
         <StepperContentBody
             ><!-- Maklumat Peperiksaan -->
-            <form
-                id="personalInfoStepper"
-                method="POST"
-                use:enhance
-                class="flex w-full flex-col gap-2"
-            >
+            <div class="flex w-full flex-col gap-2">
                 <CustomTextField
                     disabled
                     id="employeeNumber"
                     label={'No. Pekerja'}
                     type="text"
                     placeholder="-"
-                    bind:val={$form.personalDetail.employeeNumber}
+                    bind:val={$form.employeeDetail.employeeNumber}
                 ></CustomTextField>
 
                 <CustomTextField
@@ -66,7 +61,7 @@
                     label={'Nama Penuh'}
                     type="text"
                     placeholder="-"
-                    bind:val={$form.personalDetail.fullName}
+                    bind:val={$form.employeeDetail.fullName}
                 ></CustomTextField>
 
                 <CustomTextField
@@ -75,7 +70,7 @@
                     label={'Nama Lain'}
                     type="text"
                     placeholder="-"
-                    bind:val={$form.personalDetail.alternativeName}
+                    bind:val={$form.employeeDetail.alternativeName}
                 ></CustomTextField>
 
                 <CustomTextField
@@ -84,7 +79,7 @@
                     label={'No. Kad Pengenalan'}
                     type="text"
                     placeholder="-"
-                    bind:val={$form.personalDetail.identityCardNumber}
+                    bind:val={$form.employeeDetail.identityCardNumber}
                 ></CustomTextField>
 
                 <CustomSelectField
@@ -93,7 +88,7 @@
                     label={'Jenis Kad Pengenalan'}
                     placeholder="-"
                     options={data.lookups.identityCardColorLookup}
-                    bind:val={$form.personalDetail.icColour}
+                    bind:val={$form.employeeDetail.icColour}
                 ></CustomSelectField>
 
                 <CustomTextField
@@ -102,7 +97,7 @@
                     label={'Emel'}
                     type="text"
                     placeholder="-"
-                    bind:val={$form.personalDetail.email}
+                    bind:val={$form.employeeDetail.email}
                 ></CustomTextField>
 
                 <CustomTextField
@@ -111,7 +106,7 @@
                     id="birthDate"
                     label="Tarikh Lahir"
                     placeholder="-"
-                    bind:val={$form.personalDetail.birthDate}
+                    bind:val={$form.employeeDetail.birthDate}
                 ></CustomTextField>
 
                 <CustomTextField
@@ -119,7 +114,7 @@
                     id="birthplace"
                     label="Tempat Lahir"
                     placeholder="-"
-                    bind:val={$form.personalDetail.birthplace}
+                    bind:val={$form.employeeDetail.birthplace}
                 ></CustomTextField>
 
                 <CustomTextField
@@ -127,7 +122,7 @@
                     id="nationality"
                     label="Warganegara"
                     placeholder="-"
-                    bind:val={$form.personalDetail.nationality}
+                    bind:val={$form.employeeDetail.nationality}
                 ></CustomTextField>
 
                 <CustomTextField
@@ -135,7 +130,7 @@
                     id="race"
                     label="Bangsa"
                     placeholder="-"
-                    bind:val={$form.personalDetail.race}
+                    bind:val={$form.employeeDetail.race}
                 ></CustomTextField>
 
                 <CustomTextField
@@ -143,7 +138,7 @@
                     id="ethnic"
                     label="Etnik"
                     placeholder="-"
-                    bind:val={$form.personalDetail.ethnic}
+                    bind:val={$form.employeeDetail.ethnic}
                 ></CustomTextField>
 
                 <CustomTextField
@@ -151,7 +146,7 @@
                     id="religion"
                     label="Agama"
                     placeholder="-"
-                    bind:val={$form.personalDetail.religion}
+                    bind:val={$form.employeeDetail.religion}
                 ></CustomTextField>
 
                 <CustomTextField
@@ -159,7 +154,7 @@
                     id="gender"
                     label="Jantina"
                     placeholder="-"
-                    bind:val={$form.personalDetail.gender}
+                    bind:val={$form.employeeDetail.gender}
                 ></CustomTextField>
 
                 <CustomTextField
@@ -167,7 +162,7 @@
                     id="marital"
                     label="Status Perkahwinan"
                     placeholder="-"
-                    bind:val={$form.personalDetail.marital}
+                    bind:val={$form.employeeDetail.marital}
                 ></CustomTextField>
 
                 <CustomTextField
@@ -175,7 +170,7 @@
                     id="homeAddress"
                     label="Alamat Rumah"
                     placeholder="-"
-                    bind:val={$form.personalDetail.homeAddress}
+                    bind:val={$form.employeeDetail.homeAddress}
                 />
 
                 <CustomTextField
@@ -183,7 +178,7 @@
                     id="mailAddress"
                     label="Alamat Surat Menyurat"
                     placeholder="-"
-                    bind:val={$form.personalDetail.mailAddress}
+                    bind:val={$form.employeeDetail.mailAddress}
                 />
 
                 <CustomTextField
@@ -192,7 +187,7 @@
                     id="houseLoanType"
                     label="Perumahan"
                     placeholder="-"
-                    bind:val={$form.personalDetail.houseLoanType}
+                    bind:val={$form.employeeDetail.houseLoanType}
                 />
 
                 <CustomTextField
@@ -201,7 +196,7 @@
                     id="houseLoan"
                     label="Pinjaman Perumahan"
                     placeholder="-"
-                    bind:val={$form.personalDetail.houseLoan}
+                    bind:val={$form.employeeDetail.houseLoan}
                 />
 
                 <CustomTextField
@@ -210,7 +205,7 @@
                     id="vehicleLoan"
                     label="Pinjaman Kenderaan"
                     placeholder="-"
-                    bind:val={$form.personalDetail.vehicleLoan}
+                    bind:val={$form.employeeDetail.vehicleLoan}
                 />
 
                 <CustomSelectField
@@ -218,7 +213,7 @@
                     id="isExPolice"
                     label="Bekas Polis / Tentera"
                     placeholder="-"
-                    bind:val={$form.personalDetail.isExPolice}
+                    bind:val={$form.employeeDetail.isExPolice}
                     options={data.lookups.generalLookup}
                 ></CustomSelectField>
 
@@ -227,38 +222,38 @@
                     id="isRelatedToLKIM"
                     label="Perhubungan Dengan Kakitangan LKIM"
                     placeholder="-"
-                    bind:val={$form.personalDetail.isRelatedToLKIM}
+                    bind:val={$form.employeeDetail.isRelatedToLKIM}
                     options={data.lookups.generalLookup}
                 ></CustomSelectField>
 
-                {#if $form.personalDetail.isRelatedToLKIM}
+                {#if $form.employeeDetail.isRelatedToLKIM}
                     <CustomTextField
                         id="employeeNumber"
                         label="No. Pekerja LKIM"
-                        bind:val={$form.personalDetail.relationDetail
+                        bind:val={$form.employeeDetail.relationDetail
                             .employeeNumber}
                     ></CustomTextField>
 
                     <CustomTextField
                         id="employeeName"
                         label={'Nama Kakitangan LKIM'}
-                        bind:val={$form.personalDetail.relationDetail.fullName}
+                        bind:val={$form.employeeDetail.relationDetail.fullName}
                     ></CustomTextField>
 
                     <CustomTextField
                         id="relationDetailPosition"
                         label="Jawatan Kakitangan LKIM"
-                        bind:val={$form.personalDetail.relationDetail.position}
+                        bind:val={$form.employeeDetail.relationDetail.position}
                     ></CustomTextField>
 
                     <CustomTextField
                         id="relationDetailRelationship"
                         label="Hubungan"
-                        bind:val={$form.personalDetail.relationDetail
+                        bind:val={$form.employeeDetail.relationDetail
                             .relationship}
                     ></CustomTextField>
                 {/if}
-            </form>
+            </div>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
