@@ -1,68 +1,45 @@
-// =====================================================================
+// ================================================================
 // Service Allowance Schema
-// =====================================================================
+// ================================================================
 
 import * as z from 'zod';
 
-// common verification detail schema
-export const _serviceAllowanceVerificationSchema = z.object({
+export const ServiceAllowanceEndorsementSchema = z.object({
     allowanceId: z.number(),
     allowanceTypeCode: z.string(),
-    remark: z.string().optional(),
+    remark: z.string(),
     status: z.boolean(),
 });
 
-// common supporter and approver detail schema
-export const _serviceAllowanceSuppAppDetailSchema = z.object({
+export type ServiceAllowanceEndorsementSchema = z.infer<
+    typeof ServiceAllowanceEndorsementSchema
+>;
+
+export const ServiceAllowanceEndorserDetailSchema = z.object({
     allowanceId: z.number(),
     allowanceTypeCode: z.string(),
     supporter: z.string(),
     approver: z.string(),
 });
+export type ServiceAllowanceEndorserDetail = z.infer<
+    typeof ServiceAllowanceEndorserDetailSchema
+>;
 
-// common supporter feedback schema
-export const _serviceAllowanceSupporterFeedbackSchema = z.object({
-    allowanceId: z.number(),
-    allowanceTypeCode: z.string(),
-    remark: z.string(),
-    status: z.boolean(),
-});
-
-// common approver feedback form
-export const _serviceAllowanceApproverFeedbackSchema = z.object({
-    allowanceId: z.number(),
-    allowanceTypeCode: z.string(),
-    remark: z.string(),
-    status: z.boolean(),
-});
-
-// common director feedback form
-export const _serviceAllowanceDirectorFeedbackSchema = z.object({
-    allowanceId: z.number(),
-    allowanceTypeCode: z.string(),
-    remark: z.string(),
-    status: z.boolean(),
-});
-
-export const _allowanceFamilyDetailSchema = z.object({
+export const ServiceAllowanceDocumentSchema = z.object({
+    base64: z.string(),
     name: z.string(),
-    age: z.number(),
-    relationshipCode: z.string(),
 });
+export type ServiceAllowanceDocument = z.infer<
+    typeof ServiceAllowanceDocumentSchema
+>;
 
-export const _addTambangMengunjungiWilayahAsalSchemaSchema = z.object({
+export const ServiceAllowanceInfoCeremonyDressSchema = z.object({
+    documents: z.array(ServiceAllowanceDocumentSchema),
     allowanceTypeCode: z.string(),
-    applyCode: z.string(),
-    stateCode: z.string(),
-    familyDetail: z.array(_allowanceFamilyDetailSchema),
+    reason: z.string(),
+    personal: z.number(),
+    partner: z.number(),
 });
-
-// tambang upload schema
-export const _serviceAllowanceUploadDocsTambang = z.object({
-    documents: z
-        .instanceof(File, { message: 'Please upload a file.' })
-        .refine((f) => f.size < 100_000_000, 'Max 100 MB upload size.')
-        .array(),
-    allowanceId: z.string(),
-    allowanceTypeCode: z.string(),
-});
+export type ServiceAllowanceInfoCeremonyDress = z.infer<
+    typeof ServiceAllowanceInfoCeremonyDressSchema
+>;
