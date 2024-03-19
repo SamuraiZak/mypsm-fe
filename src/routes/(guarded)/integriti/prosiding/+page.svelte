@@ -30,7 +30,7 @@
         },
         data:
             (data.list.proceedingList as ProceedingChargeListResponseDTO) ?? [],
-        // hiddenData: ['integrityId', 'employeeId'],
+        hiddenData: ['integrityId', 'employeeId'],
     };
 
     async function _updateProceedingTable() {
