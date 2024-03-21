@@ -29,7 +29,15 @@
             totalPage: 1,
         },
         data:
-            (data.list.proceedingList as ProceedingChargeListResponseDTO) ?? [],
+            (
+                data.list.proceedingList as ProceedingChargeListResponseDTO
+            ).filter((type) => {
+                if (data.roles.isDisciplineSecretaryRole) {
+                    return type.disciplinaryType === 'Pertuduhan';
+                } else if (data.roles.isIntegritySecretaryRole) {
+                    return type.disciplinaryType === 'Tahan Kerja';
+                }
+            }) ?? [],
         hiddenData: ['integrityId', 'employeeId'],
     };
 
