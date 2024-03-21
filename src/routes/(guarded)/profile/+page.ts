@@ -53,7 +53,7 @@ import type { Activity, activityRequestDTO, activityResponseDTO } from '$lib/dto
 import type { Dependency, Family, NextOfKin, dependencResponseDTO, dependencyEditRequestDTO, dependencyRequestDTO, familyRequestDTO, familyResponseDTO, nextOfKinEditRequestDTO, nextOfKinRequestDTO, nextOfKinResponseDTO } from '$lib/dto/mypsm/profile/relation-detail.dto';
 import type { CandidatePersonalRequestDTO, CandidatePersonalResponseDTO } from '$lib/dto/mypsm/profile/personal-detail.dto';
 import type { serviceRequestDTO, serviceResponseDTO } from '$lib/dto/mypsm/profile/service-detail.dto';
-import type { medicalAssessmentRequestDTO, medicalAssessmentResponseDTO } from '$lib/dto/mypsm/profile/medical-assessment.dto';
+import type { diseaseInfoDTO, medicalAssessmentRequestDTO, medicalAssessmentResponseDTO } from '$lib/dto/mypsm/profile/medical-assessment.dto';
 import type { generalAssessmentRequestDTO, generalAssessmentResponseDTO } from '$lib/dto/mypsm/profile/general-assessment.dto';
 import type { MedicalDiseaseListDTO } from '$lib/dto/mypsm/profile/medical-disease-list.dto';
 import { z } from 'zod';
@@ -432,7 +432,8 @@ export async function load({ }) {
     ];
    
     const diseaseCollectionForm = await superValidate(zod(_diseaseInfoCollectionSchema));
-
+        
+        console.log(medicalHistoryForm)
     // diseaseList.disease.forEach(element => {
     //     diseaseCollectionForm.data.medicalHistory.push({
     //         disease: element,
@@ -442,11 +443,32 @@ export async function load({ }) {
     //     })
     // });
 
+    const medicalHistoryDetailForm = await superValidate(zod(_diseaseInfoCollectionSchema));
+
+    let medicalHistoryFormRequest : medicalAssessmentRequestDTO = {
+        medicalHistory:[],
+    }
+
+    diseaseList.disease.forEach(item => {
+        let medicalDisease: diseaseInfoDTO = {
+            id: 1,
+            disease: item,
+            isPersonal: false,
+            isFamily: false,
+            remark: '',
+        }
+
+        medicalHistoryFormRequest.medicalHistory.push(medicalDisease);
+    });
+
+    medicalHistoryForm.data.medicalHistory = medicalHistoryFormRequest.medicalHistory;
+
 
     // ============================================================
     // Superformed the data
     // ============================================================
     return {
+        medicalHistoryFormRequest,
         personalDetail,
         serviceInfoForm,
         academicInfoForm,
@@ -608,9 +630,9 @@ export const _submitEditAcademicForm = async (formData: object) => {
 // ===============================================================
 export const _submitExperienceForm = async (formData: object) => {
 
-    console.log(formData)
+   
     const experienceInfoform = await superValidate(formData, (zod)(_experienceListRequestSchema));
-
+    console.log(experienceInfoform)
     if (!experienceInfoform.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
@@ -783,15 +805,26 @@ export const _submitEditNextOfKinForm = async (formData: object) => {
 export const _submitMedicalHistoryForm = async (formData: object) => {
     const historyMedicalform = await superValidate(formData, (zod)(_diseaseInfoCollectionSchema));
 
-    if (!historyMedicalform.valid) {
-        getErrorToast();
+    if (historyMedicalform.valid) {
+        const response: CommonResponseDTO =
+        await ProfileServices.addProfileMedicalAssessmentDetails(historyMedicalform.data as medicalAssessmentRequestDTO);
+
+        return { response };
+    } else {
+        console.log("not valid");
+        getErrorToast("not valid");
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    const response: CommonResponseDTO =
-        await ProfileServices.addProfileMedicalAssessmentDetails(historyMedicalform.data as medicalAssessmentRequestDTO);
+    // if (!historyMedicalform.valid) {
+    //     getErrorToast();
+    //     error(400, { message: 'Validation Not Passed!' });
+    // }
 
-    return { response };
+    // const response: CommonResponseDTO =
+    //     await ProfileServices.addProfileMedicalAssessmentDetails(historyMedicalform.data as medicalAssessmentRequestDTO);
+
+    
 };
 
 

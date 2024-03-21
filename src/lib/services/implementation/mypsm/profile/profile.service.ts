@@ -833,7 +833,9 @@ export class ProfileServices {
             const url: Input = 'profile/assessment/medical/add';
 
             // get the promise response
-            const promiseRes: Promise<Response> = http.get(url).json();
+            const promiseRes: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param)
+            }).json();
 
             // await toast for resolved or rejected state
             const response: Response = await getPromiseToast(promiseRes);

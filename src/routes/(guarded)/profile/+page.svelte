@@ -400,7 +400,6 @@
             validationMethod: 'oninput',
             validators: zod(_dependencyListResponseSchema),
             onUpdate() {
-
                 isEditableDependency = false;
             },
             async onSubmit() {
@@ -441,9 +440,10 @@
                     error(400);
                 }
 
-                const editResulNextOfKin = await _submitEditNextOfKinForm($nextOfKinInfoForm);
+                const editResulNextOfKin =
+                    await _submitEditNextOfKinForm($nextOfKinInfoForm);
                 if (editResulNextOfKin.response.status === 'success')
-                isReadonlyNextOfKinFormStepper = true;
+                    isReadonlyNextOfKinFormStepper = true;
             },
         },
     );
@@ -695,10 +695,11 @@
         validationMethod: 'oninput',
         validators: zod(_diseaseInfoCollectionSchema),
         async onSubmit(formData) {
-            if (!medicalHistoryTainted()) {
-                toast('Tiada perubahan data dikesan.');
-                error(400);
-            }
+            // if (!medicalHistoryTainted()) {
+            //     toast('Tiada perubahan data dikesan.');
+            //     error(400);
+            // }
+            
             const result = await _submitMedicalHistoryForm($medicalHistoryForm);
             if (result.response.status === 'success')
                 isReadonlyHistoryMedicalFormStepper = true;
@@ -2465,205 +2466,211 @@
                                     Tiada maklumat.
                                 </div>
                             {:else}
-                            <CustomTab id="dependents">
-                                {#each Object.entries($dependencyInfoForm.dependents) as [key, _], i}
-                                    <CustomTabContent
-                                        title={i +
-                                            1 +
-                                            '. ' +
-                                            $dependencyInfoForm.dependents[i]
-                                                .name}
-                                    >
-                                        <CustomTextField
-                                            id="name"
-                                            label={'Nama'}
-                                            type="text"
-                                            disabled={!isEditableDependency}
-                                            bind:val={$dependencyInfoForm
-                                                .dependents[i].name}
-                                        ></CustomTextField>
+                                <CustomTab id="dependents">
+                                    {#each Object.entries($dependencyInfoForm.dependents) as [key, _], i}
+                                        <CustomTabContent
+                                            title={i +
+                                                1 +
+                                                '. ' +
+                                                $dependencyInfoForm.dependents[
+                                                    i
+                                                ].name}
+                                        >
+                                            <CustomTextField
+                                                id="name"
+                                                label={'Nama'}
+                                                type="text"
+                                                disabled={!isEditableDependency}
+                                                bind:val={$dependencyInfoForm
+                                                    .dependents[i].name}
+                                            ></CustomTextField>
 
-                                        <CustomTextField
-                                            id="alternativeName"
-                                            label={'Nama Lain'}
-                                            type="text"
-                                            disabled={!isEditableDependency}
-                                            bind:val={$dependencyInfoForm
-                                                .dependents[i].alternativeName}
-                                        ></CustomTextField>
-                                        <CustomSelectField
-                                            id="identityDocumentColor"
-                                            label={'Jenis Kad Pengenalan'}
-                                            disabled={!isEditableDependency}
-                                            options={data.selectionOptions
-                                                .identityCardColorLookup}
-                                            val=""
-                                        ></CustomSelectField>
-                                        <CustomTextField
-                                            id="identityDocumentNumber"
-                                            type="number"
-                                            label={'Nombor Kad Pengenalan'}
-                                            disabled={!isEditableDependency}
-                                            bind:val={$dependencyInfoForm
-                                                .dependents[i]
-                                                .identityDocumentColor}
-                                        ></CustomTextField>
+                                            <CustomTextField
+                                                id="alternativeName"
+                                                label={'Nama Lain'}
+                                                type="text"
+                                                disabled={!isEditableDependency}
+                                                bind:val={$dependencyInfoForm
+                                                    .dependents[i]
+                                                    .alternativeName}
+                                            ></CustomTextField>
+                                            <CustomSelectField
+                                                id="identityDocumentColor"
+                                                label={'Jenis Kad Pengenalan'}
+                                                disabled={!isEditableDependency}
+                                                options={data.selectionOptions
+                                                    .identityCardColorLookup}
+                                                val=""
+                                            ></CustomSelectField>
+                                            <CustomTextField
+                                                id="identityDocumentNumber"
+                                                type="number"
+                                                label={'Nombor Kad Pengenalan'}
+                                                disabled={!isEditableDependency}
+                                                bind:val={$dependencyInfoForm
+                                                    .dependents[i]
+                                                    .identityDocumentColor}
+                                            ></CustomTextField>
 
-                                        <CustomTextField
-                                            id="address"
-                                            label={'Alamat'}
-                                            disabled={!isEditableDependency}
-                                            bind:val={$dependencyInfoForm
-                                                .dependents[i]
-                                                .identityDocumentNumber}
-                                        ></CustomTextField>
+                                            <CustomTextField
+                                                id="address"
+                                                label={'Alamat'}
+                                                disabled={!isEditableDependency}
+                                                bind:val={$dependencyInfoForm
+                                                    .dependents[i]
+                                                    .identityDocumentNumber}
+                                            ></CustomTextField>
 
-                                        <CustomTextField
-                                            id="postcode"
-                                            label={'Poskod'}
-                                            type="text"
-                                            disabled={!isEditableDependency}
-                                            bind:val={$dependencyInfoForm
-                                                .dependents[i].postcode}
-                                        ></CustomTextField>
+                                            <CustomTextField
+                                                id="postcode"
+                                                label={'Poskod'}
+                                                type="text"
+                                                disabled={!isEditableDependency}
+                                                bind:val={$dependencyInfoForm
+                                                    .dependents[i].postcode}
+                                            ></CustomTextField>
 
-                                        <CustomTextField
-                                            disabled={!isEditableDependency}
-                                            type="date"
-                                            id="birthDate"
-                                            label={'Tarikh Lahir'}
-                                            bind:val={$dependencyInfoForm
-                                                .dependents[i].birthDate}
-                                        ></CustomTextField>
+                                            <CustomTextField
+                                                disabled={!isEditableDependency}
+                                                type="date"
+                                                id="birthDate"
+                                                label={'Tarikh Lahir'}
+                                                bind:val={$dependencyInfoForm
+                                                    .dependents[i].birthDate}
+                                            ></CustomTextField>
 
-                                        <CustomSelectField
-                                            id="birthCountryId"
-                                            label={'Negara Kelahiran'}
-                                            disabled={!isEditableDependency}
-                                            options={data.selectionOptions
-                                                .countryLookup}
-                                            bind:val={$dependencyInfoForm
-                                                .dependents[i].birthCountryId}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                id="birthCountryId"
+                                                label={'Negara Kelahiran'}
+                                                disabled={!isEditableDependency}
+                                                options={data.selectionOptions
+                                                    .countryLookup}
+                                                bind:val={$dependencyInfoForm
+                                                    .dependents[i]
+                                                    .birthCountryId}
+                                            ></CustomSelectField>
 
-                                        <CustomSelectField
-                                            id="birthStateId"
-                                            label={'Negeri Kelahiran'}
-                                            options={data.selectionOptions
-                                                .stateLookup}
-                                            disabled={!isEditableDependency}
-                                            bind:val={$dependencyInfoForm
-                                                .dependents[i].birthStateId}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                id="birthStateId"
+                                                label={'Negeri Kelahiran'}
+                                                options={data.selectionOptions
+                                                    .stateLookup}
+                                                disabled={!isEditableDependency}
+                                                bind:val={$dependencyInfoForm
+                                                    .dependents[i].birthStateId}
+                                            ></CustomSelectField>
 
-                                        <CustomSelectField
-                                            id="relationshipId"
-                                            label={'Hubungan'}
-                                            disabled={!isEditableDependency}
-                                            options={data.selectionOptions
-                                                .relationshipLookup}
-                                            bind:val={$dependencyInfoForm
-                                                .dependents[i].relationshipId}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                id="relationshipId"
+                                                label={'Hubungan'}
+                                                disabled={!isEditableDependency}
+                                                options={data.selectionOptions
+                                                    .relationshipLookup}
+                                                bind:val={$dependencyInfoForm
+                                                    .dependents[i]
+                                                    .relationshipId}
+                                            ></CustomSelectField>
 
-                                        <CustomSelectField
-                                            id="educationLevelId"
-                                            label={'Taraf Pendidikan'}
-                                            options={data.selectionOptions
-                                                .educationLookup}
-                                            disabled={!isEditableDependency}
-                                            bind:val={$dependencyInfoForm
-                                                .dependents[i].educationLevelId}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                id="educationLevelId"
+                                                label={'Taraf Pendidikan'}
+                                                options={data.selectionOptions
+                                                    .educationLookup}
+                                                disabled={!isEditableDependency}
+                                                bind:val={$dependencyInfoForm
+                                                    .dependents[i]
+                                                    .educationLevelId}
+                                            ></CustomSelectField>
 
-                                        <CustomSelectField
-                                            id="raceId"
-                                            label={'Bangsa'}
-                                            disabled={!isEditableDependency}
-                                            options={data.selectionOptions
-                                                .raceLookup}
-                                            bind:val={$dependencyInfoForm
-                                                .dependents[i].raceId}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                id="raceId"
+                                                label={'Bangsa'}
+                                                disabled={!isEditableDependency}
+                                                options={data.selectionOptions
+                                                    .raceLookup}
+                                                bind:val={$dependencyInfoForm
+                                                    .dependents[i].raceId}
+                                            ></CustomSelectField>
 
-                                        <CustomSelectField
-                                            id="nationalityId"
-                                            label={'Kewarganegaraan'}
-                                            disabled={!isEditableDependency}
-                                            options={data.selectionOptions
-                                                .nationalityLookup}
-                                            bind:val={$dependencyInfoForm
-                                                .dependents[i].nationalityId}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                id="nationalityId"
+                                                label={'Kewarganegaraan'}
+                                                disabled={!isEditableDependency}
+                                                options={data.selectionOptions
+                                                    .nationalityLookup}
+                                                bind:val={$dependencyInfoForm
+                                                    .dependents[i]
+                                                    .nationalityId}
+                                            ></CustomSelectField>
 
-                                        <CustomSelectField
-                                            id="maritalId"
-                                            label={'Status Perkhahwinan'}
-                                            disabled={!isEditableDependency}
-                                            options={data.selectionOptions
-                                                .maritalLookup}
-                                            bind:val={$dependencyInfoForm
-                                                .dependents[i].maritalId}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                id="maritalId"
+                                                label={'Status Perkhahwinan'}
+                                                disabled={!isEditableDependency}
+                                                options={data.selectionOptions
+                                                    .maritalLookup}
+                                                bind:val={$dependencyInfoForm
+                                                    .dependents[i].maritalId}
+                                            ></CustomSelectField>
 
-                                        <CustomSelectField
-                                            id="genderId"
-                                            label={'Jantina'}
-                                            options={data.selectionOptions
-                                                .genderLookup}
-                                            disabled={!isEditableDependency}
-                                            bind:val={$dependencyInfoForm
-                                                .dependents[i].genderId}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                id="genderId"
+                                                label={'Jantina'}
+                                                options={data.selectionOptions
+                                                    .genderLookup}
+                                                disabled={!isEditableDependency}
+                                                bind:val={$dependencyInfoForm
+                                                    .dependents[i].genderId}
+                                            ></CustomSelectField>
 
-                                        <CustomTextField
-                                            id="workAddress"
-                                            label={'Alamat Majikan'}
-                                            type="text"
-                                            disabled={!isEditableDependency}
-                                            bind:val={$dependencyInfoForm
-                                                .dependents[i].workAddress}
-                                        ></CustomTextField>
+                                            <CustomTextField
+                                                id="workAddress"
+                                                label={'Alamat Majikan'}
+                                                type="text"
+                                                disabled={!isEditableDependency}
+                                                bind:val={$dependencyInfoForm
+                                                    .dependents[i].workAddress}
+                                            ></CustomTextField>
 
-                                        <CustomTextField
-                                            id="workPostcode"
-                                            label={'Poskod Majikan'}
-                                            type="text"
-                                            disabled={!isEditableDependency}
-                                            bind:val={$dependencyInfoForm
-                                                .dependents[i].workPostcode}
-                                        ></CustomTextField>
+                                            <CustomTextField
+                                                id="workPostcode"
+                                                label={'Poskod Majikan'}
+                                                type="text"
+                                                disabled={!isEditableDependency}
+                                                bind:val={$dependencyInfoForm
+                                                    .dependents[i].workPostcode}
+                                            ></CustomTextField>
 
-                                        <CustomTextField
-                                            id="phoneNumber"
-                                            label={'Nombor Mobil'}
-                                            type="text"
-                                            disabled={!isEditableDependency}
-                                            bind:val={$dependencyInfoForm
-                                                .dependents[i].phoneNumber}
-                                        ></CustomTextField>
+                                            <CustomTextField
+                                                id="phoneNumber"
+                                                label={'Nombor Mobil'}
+                                                type="text"
+                                                disabled={!isEditableDependency}
+                                                bind:val={$dependencyInfoForm
+                                                    .dependents[i].phoneNumber}
+                                            ></CustomTextField>
 
-                                        <CustomTextField
-                                            type="date"
-                                            id="marriageDate"
-                                            disabled={!isEditableDependency}
-                                            label={'Tarikh Kahwin'}
-                                            bind:val={$dependencyInfoForm
-                                                .dependents[i].marriageDate}
-                                        ></CustomTextField>
+                                            <CustomTextField
+                                                type="date"
+                                                id="marriageDate"
+                                                disabled={!isEditableDependency}
+                                                label={'Tarikh Kahwin'}
+                                                bind:val={$dependencyInfoForm
+                                                    .dependents[i].marriageDate}
+                                            ></CustomTextField>
 
-                                        <CustomSelectField
-                                            id="inSchool"
-                                            label={'Bersekolah'}
-                                            disabled={!isEditableDependency}
-                                            options={data.selectionOptions
-                                                .generalLookup}
-                                            bind:val={$dependencyInfoForm
-                                                .dependents[i].inSchool}
-                                        ></CustomSelectField>
-                                    </CustomTabContent>
-                                {/each}
-                            </CustomTab>
+                                            <CustomSelectField
+                                                id="inSchool"
+                                                label={'Bersekolah'}
+                                                disabled={!isEditableDependency}
+                                                options={data.selectionOptions
+                                                    .generalLookup}
+                                                bind:val={$dependencyInfoForm
+                                                    .dependents[i].inSchool}
+                                            ></CustomSelectField>
+                                        </CustomTabContent>
+                                    {/each}
+                                </CustomTab>
                             {/if}
                         </form>
                     </StepperContentBody>
@@ -2721,12 +2728,12 @@
                                     <div class="mb-2.5 text-sm font-medium">
                                         <p>Preview Rekod Untuk Disimpan</p>
                                     </div>
-                                    {#each tempNextOfKin as nextOfKin, i}
+                                    {#each tempNextOfKin as nextOfKins, i}
                                         <div
                                             class="text-sm text-system-primary"
                                         >
                                             <p>
-                                                {i + 1}. Maklumat Waris - {nextOfKin.name}
+                                                {i + 1}. Maklumat Waris - {nextOfKins.name}
                                             </p>
                                         </div>
                                     {/each}
@@ -2760,202 +2767,208 @@
                                     Tiada maklumat.
                                 </div>
                             {:else}
-                            <CustomTab id="nextOfKins">
-                                {#each Object.entries($nextOfKinInfoForm.nextOfKins) as [key, _], i}
-                                    <CustomTabContent
-                                    title={i +
-                                        1 +
-                                        '. ' +
-                                        $familyInfoForm.families[i]
-                                            .name}>
-                                        <CustomTextField
-                                            id="name"
-                                            label={'Nama'}
-                                            type="text"
-                                            disabled={!isEditableNextOfKin}
-                                            bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i].name}
-                                        ></CustomTextField>
+                                <CustomTab id="nextOfKins">
+                                    {#each Object.entries($nextOfKinInfoForm.nextOfKins) as [key, _], i}
+                                        <CustomTabContent
+                                            title={i +
+                                                1 +
+                                                '. ' +
+                                                $nextOfKinInfoForm.nextOfKins[i]
+                                                    .name}
+                                        >
+                                            <CustomTextField
+                                                id="name"
+                                                label={'Nama'}
+                                                type="text"
+                                                disabled={!isEditableNextOfKin}
+                                                bind:val={$nextOfKinInfoForm
+                                                    .nextOfKins[i].name}
+                                            ></CustomTextField>
 
-                                        <CustomTextField
-                                            id="alternativeName"
-                                            label={'Nama Lain'}
-                                            type="text"
-                                            disabled
-                                            bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i].alternativeName}
-                                        ></CustomTextField>
-                                        <CustomSelectField
-                                            id="identityDocumentColor"
-                                            label={'Jenis Kad Pengenalan'}
-                                            disabled={!isEditableNextOfKin}
-                                            options={data.selectionOptions
-                                                .identityCardColorLookup}
-                                            val=""
-                                        ></CustomSelectField>
-                                        <CustomTextField
-                                            id="identityDocumentNumber"
-                                            type="number"
-                                            label={'Nombor Kad Pengenalan'}
-                                            disabled={!isEditableNextOfKin}
-                                            bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i]
-                                                .identityDocumentColor}
-                                        ></CustomTextField>
+                                            <CustomTextField
+                                                id="alternativeName"
+                                                label={'Nama Lain'}
+                                                type="text"
+                                                disabled
+                                                bind:val={$nextOfKinInfoForm
+                                                    .nextOfKins[i]
+                                                    .alternativeName}
+                                            ></CustomTextField>
+                                            <CustomSelectField
+                                                id="identityDocumentColor"
+                                                label={'Jenis Kad Pengenalan'}
+                                                disabled={!isEditableNextOfKin}
+                                                options={data.selectionOptions
+                                                    .identityCardColorLookup}
+                                                val=""
+                                            ></CustomSelectField>
+                                            <CustomTextField
+                                                id="identityDocumentNumber"
+                                                type="number"
+                                                label={'Nombor Kad Pengenalan'}
+                                                disabled={!isEditableNextOfKin}
+                                                bind:val={$nextOfKinInfoForm
+                                                    .nextOfKins[i]
+                                                    .identityDocumentColor}
+                                            ></CustomTextField>
 
-                                        <CustomTextField
-                                            id="address"
-                                            label={'Alamat'}
-                                            disabled={!isEditableNextOfKin}
-                                            bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i]
-                                                .identityDocumentNumber}
-                                        ></CustomTextField>
+                                            <CustomTextField
+                                                id="address"
+                                                label={'Alamat'}
+                                                disabled={!isEditableNextOfKin}
+                                                bind:val={$nextOfKinInfoForm
+                                                    .nextOfKins[i]
+                                                    .identityDocumentNumber}
+                                            ></CustomTextField>
 
-                                        <CustomTextField
-                                            id="postcode"
-                                            label={'Poskod'}
-                                            type="text"
-                                            disabled={!isEditableNextOfKin}
-                                            bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i].postcode}
-                                        ></CustomTextField>
+                                            <CustomTextField
+                                                id="postcode"
+                                                label={'Poskod'}
+                                                type="text"
+                                                disabled={!isEditableNextOfKin}
+                                                bind:val={$nextOfKinInfoForm
+                                                    .nextOfKins[i].postcode}
+                                            ></CustomTextField>
 
-                                        <CustomTextField
-                                            disabled={!isEditableNextOfKin}
-                                            type="date"
-                                            id="birthDate"
-                                            label={'Tarikh Lahir'}
-                                            bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i].birthDate}
-                                        ></CustomTextField>
+                                            <CustomTextField
+                                                disabled={!isEditableNextOfKin}
+                                                type="date"
+                                                id="birthDate"
+                                                label={'Tarikh Lahir'}
+                                                bind:val={$nextOfKinInfoForm
+                                                    .nextOfKins[i].birthDate}
+                                            ></CustomTextField>
 
-                                        <CustomSelectField
-                                            id="birthCountryId"
-                                            label={'Negara Kelahiran'}
-                                            disabled={!isEditableNextOfKin}
-                                            options={data.selectionOptions
-                                                .countryLookup}
-                                            bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i].birthCountryId}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                id="birthCountryId"
+                                                label={'Negara Kelahiran'}
+                                                disabled={!isEditableNextOfKin}
+                                                options={data.selectionOptions
+                                                    .countryLookup}
+                                                bind:val={$nextOfKinInfoForm
+                                                    .nextOfKins[i]
+                                                    .birthCountryId}
+                                            ></CustomSelectField>
 
-                                        <CustomSelectField
-                                            id="birthStateId"
-                                            label={'Negeri Kelahiran'}
-                                            options={data.selectionOptions
-                                                .stateLookup}
-                                            disabled={!isEditableNextOfKin}
-                                            bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i].birthStateId}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                id="birthStateId"
+                                                label={'Negeri Kelahiran'}
+                                                options={data.selectionOptions
+                                                    .stateLookup}
+                                                disabled={!isEditableNextOfKin}
+                                                bind:val={$nextOfKinInfoForm
+                                                    .nextOfKins[i].birthStateId}
+                                            ></CustomSelectField>
 
-                                        <CustomSelectField
-                                            id="relationshipId"
-                                            label={'Hubungan'}
-                                            disabled={!isEditableNextOfKin}
-                                            options={data.selectionOptions
-                                                .relationshipLookup}
-                                            bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i].relationshipId}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                id="relationshipId"
+                                                label={'Hubungan'}
+                                                disabled={!isEditableNextOfKin}
+                                                options={data.selectionOptions
+                                                    .relationshipLookup}
+                                                bind:val={$nextOfKinInfoForm
+                                                    .nextOfKins[i]
+                                                    .relationshipId}
+                                            ></CustomSelectField>
 
-                                        <CustomSelectField
-                                            id="educationLevelId"
-                                            label={'Taraf Pendidikan'}
-                                            options={data.selectionOptions
-                                                .educationLookup}
-                                            disabled={!isEditableNextOfKin}
-                                            bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i].educationLevelId}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                id="educationLevelId"
+                                                label={'Taraf Pendidikan'}
+                                                options={data.selectionOptions
+                                                    .educationLookup}
+                                                disabled={!isEditableNextOfKin}
+                                                bind:val={$nextOfKinInfoForm
+                                                    .nextOfKins[i]
+                                                    .educationLevelId}
+                                            ></CustomSelectField>
 
-                                        <CustomSelectField
-                                            id="raceId"
-                                            label={'Bangsa'}
-                                            disabled={!isEditableNextOfKin}
-                                            options={data.selectionOptions
-                                                .raceLookup}
-                                            bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i].raceId}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                id="raceId"
+                                                label={'Bangsa'}
+                                                disabled={!isEditableNextOfKin}
+                                                options={data.selectionOptions
+                                                    .raceLookup}
+                                                bind:val={$nextOfKinInfoForm
+                                                    .nextOfKins[i].raceId}
+                                            ></CustomSelectField>
 
-                                        <CustomSelectField
-                                            id="nationalityId"
-                                            label={'Kewarganegaraan'}
-                                            disabled={!isEditableNextOfKin}
-                                            options={data.selectionOptions
-                                                .nationalityLookup}
-                                            bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i].nationalityId}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                id="nationalityId"
+                                                label={'Kewarganegaraan'}
+                                                disabled={!isEditableNextOfKin}
+                                                options={data.selectionOptions
+                                                    .nationalityLookup}
+                                                bind:val={$nextOfKinInfoForm
+                                                    .nextOfKins[i]
+                                                    .nationalityId}
+                                            ></CustomSelectField>
 
-                                        <CustomSelectField
-                                            id="maritalId"
-                                            label={'Status Perkhahwinan'}
-                                            disabled={!isEditableNextOfKin}
-                                            options={data.selectionOptions
-                                                .maritalLookup}
-                                            bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i].maritalId}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                id="maritalId"
+                                                label={'Status Perkhahwinan'}
+                                                disabled={!isEditableNextOfKin}
+                                                options={data.selectionOptions
+                                                    .maritalLookup}
+                                                bind:val={$nextOfKinInfoForm
+                                                    .nextOfKins[i].maritalId}
+                                            ></CustomSelectField>
 
-                                        <CustomSelectField
-                                            id="genderId"
-                                            label={'Jantina'}
-                                            options={data.selectionOptions
-                                                .genderLookup}
-                                            disabled={!isEditableNextOfKin}
-                                            bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i].genderId}
-                                        ></CustomSelectField>
+                                            <CustomSelectField
+                                                id="genderId"
+                                                label={'Jantina'}
+                                                options={data.selectionOptions
+                                                    .genderLookup}
+                                                disabled={!isEditableNextOfKin}
+                                                bind:val={$nextOfKinInfoForm
+                                                    .nextOfKins[i].genderId}
+                                            ></CustomSelectField>
 
-                                        <CustomTextField
-                                            id="workAddress"
-                                            label={'Alamat Majikan'}
-                                            type="text"
-                                            disabled={!isEditableNextOfKin}
-                                            bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i].workAddress}
-                                        ></CustomTextField>
+                                            <CustomTextField
+                                                id="workAddress"
+                                                label={'Alamat Majikan'}
+                                                type="text"
+                                                disabled={!isEditableNextOfKin}
+                                                bind:val={$nextOfKinInfoForm
+                                                    .nextOfKins[i].workAddress}
+                                            ></CustomTextField>
 
-                                        <CustomTextField
-                                            id="workPostcode"
-                                            label={'Poskod Majikan'}
-                                            type="text"
-                                            disabled={!isEditableNextOfKin}
-                                            bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i].workPostcode}
-                                        ></CustomTextField>
+                                            <CustomTextField
+                                                id="workPostcode"
+                                                label={'Poskod Majikan'}
+                                                type="text"
+                                                disabled={!isEditableNextOfKin}
+                                                bind:val={$nextOfKinInfoForm
+                                                    .nextOfKins[i].workPostcode}
+                                            ></CustomTextField>
 
-                                        <CustomTextField
-                                            id="phoneNumber"
-                                            label={'Nombor Mobil'}
-                                            type="text"
-                                            disabled={!isEditableNextOfKin}
-                                            bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i].phoneNumber}
-                                        ></CustomTextField>
+                                            <CustomTextField
+                                                id="phoneNumber"
+                                                label={'Nombor Mobil'}
+                                                type="text"
+                                                disabled={!isEditableNextOfKin}
+                                                bind:val={$nextOfKinInfoForm
+                                                    .nextOfKins[i].phoneNumber}
+                                            ></CustomTextField>
 
-                                        <CustomTextField
-                                            disabled={!isEditableNextOfKin}
-                                            type="date"
-                                            id="marriageDate"
-                                            label={'Tarikh Kahwin'}
-                                            bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i].marriageDate}
-                                        ></CustomTextField>
+                                            <CustomTextField
+                                                disabled={!isEditableNextOfKin}
+                                                type="date"
+                                                id="marriageDate"
+                                                label={'Tarikh Kahwin'}
+                                                bind:val={$nextOfKinInfoForm
+                                                    .nextOfKins[i].marriageDate}
+                                            ></CustomTextField>
 
-                                        <CustomSelectField
-                                            id="inSchool"
-                                            label={'Bersekolah'}
-                                            disabled={!isEditableNextOfKin}
-                                            bind:val={$nextOfKinInfoForm
-                                                .nextOfKins[i].inSchool}
-                                        ></CustomSelectField>
-                                    </CustomTabContent>
-                                {/each}
-                            </CustomTab>
+                                            <CustomSelectField
+                                                id="inSchool"
+                                                label={'Bersekolah'}
+                                                disabled={!isEditableNextOfKin}
+                                                bind:val={$nextOfKinInfoForm
+                                                    .nextOfKins[i].inSchool}
+                                            ></CustomSelectField>
+                                        </CustomTabContent>
+                                    {/each}
+                                </CustomTab>
                             {/if}
                         </form>
                     </StepperContentBody>
@@ -3151,656 +3164,62 @@
                                 use:medicalHistoryEnhance
                                 method="POST"
                             >
-                                <div class="flex w-full flex-col gap-2">
-                                    {#each data.diseaseCollectionForm.data.medicalHistory as formDisease, index}
-                                        <div class="flex flex-row">
-                                            <!-- <label
-                                                for="diseases"
-                                                class="w-full min-w-[220px] text-sm"
-                                                >{$medicalHistoryForm
-                                                    .medicalHistory[i]
-                                                    .diseases}</label
-                                            > -->
-                                            <label
-                                                for="diseases"
-                                                class="w-full min-w-[220px] text-sm"
-                                                >{formDisease.disease}</label
+                                <div
+                                    class="flex w-full flex-col items-center justify-start gap-2"
+                                >
+                                    {#each $medicalHistoryForm.medicalHistory as item, index}
+                                        <div
+                                            class="flex w-full flex-row items-center justify-start gap-2"
+                                        >
+                                            <div
+                                                class="flex w-full flex-col gap-2"
+                                            >
+                                                <CustomTextField
+                                                    disabled
+                                                    id="diseaseName"
+                                                    label={'Penyakit'}
+                                                    bind:val={$medicalHistoryForm.medicalHistory[index].disease}
+                                                ></CustomTextField>
+                                            </div>
+                                            <div
+                                                class="flex w-full flex-col gap-2"
                                             >
 
-                                            <CustomRadioBoolean
-                                                disabled={isReadonlyHistoryMedicalFormStepper}
-                                                options={commonOptions}
-                                                id="isPesonal"
-                                                bind:val={formDisease.isPersonal}
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                            <CustomRadioBoolean
-                                                label=""
-                                                disabled={isReadonlyHistoryMedicalFormStepper}
-                                                options={commonOptions}
-                                                id="isPesonal"
-                                                bind:val={formDisease.isFamily}
-                                            ></CustomRadioBoolean>
+                                                <CustomRadioBoolean
+                                                    disabled={isReadonlyHistoryMedicalFormStepper}
+                                                    options={commonOptions}
+                                                    id="isPersonal"
+                                                    bind:val={$medicalHistoryForm.medicalHistory[index].isPersonal}
+                                                    label="Sendiri"
+                                                ></CustomRadioBoolean>
+                                            </div>
+                                            <div
+                                                class="flex w-full flex-col gap-2"
+                                            >
+                                                <CustomRadioBoolean
+                                                    disabled={isReadonlyHistoryMedicalFormStepper}
+                                                    options={commonOptions}
+                                                    id="isPesonal"
+                                                    bind:val={$medicalHistoryForm.medicalHistory[index].isFamily}
+                                                    label="Keluarga"
+                                                ></CustomRadioBoolean>
+                                            </div>
 
-                                            <CustomTextField
+                                            <div
+                                                class="flex w-full flex-col gap-2"
+                                            >
+                                                <CustomTextField
                                                 disabled={isReadonlyHistoryMedicalFormStepper}
-                                                id="remark"
-                                                label=""
-                                                type="text"
-                                                bind:val={formDisease.remark}
-                                            ></CustomTextField>
+                                                    id="remark"
+                                                    label={'Ulasan'}
+                                                    bind:val={$medicalHistoryForm.medicalHistory[index].remark}
+                                                ></CustomTextField>
+                                            </div>
                                         </div>
                                     {/each}
-                                    <!-- {#each $medicalHistoryForm.medicalHistory as _, i}
-                                        <div class="flex flex-row"> -->
-                                    <!-- <label
-                                                for="diseases"
-                                                class="w-full min-w-[220px] text-sm"
-                                                >{$medicalHistoryForm
-                                                    .medicalHistory[i]
-                                                    .diseases}</label
-                                            > -->
-                                    <!-- <label
-                                                for="diseases"
-                                                class="w-full min-w-[220px] text-sm"
-                                                >{data.diseaseList.disease[i]}</label
-                                            >
-                                            <input
-                                                hidden
-                                                bind:value={$medicalHistoryForm
-                                                    .medicalHistory[i].id}
-                                            />
-                                            <CustomRadioBoolean
-                                                disabled
-                                                options={commonOptions}
-                                                id="isPesonal"
-                                                bind:val={$medicalHistoryForm
-                                                    .medicalHistory[i]
-                                                    .isPersonal}
-                                            ></CustomRadioBoolean>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                options={commonOptions}
-                                                id="isFamily"
-                                                bind:val={$medicalHistoryForm
-                                                    .medicalHistory[i].isFamily}
-                                            ></CustomRadioBoolean>
-                                            <CustomTextField
-                                                disabled
-                                                id="remark"
-                                                label=""
-                                                type="text"
-                                                bind:val={$medicalHistoryForm
-                                                    .medicalHistory[i].remark}
-                                            ></CustomTextField>
-                                        </div>
-                                    {/each} -->
-                                    <!-- <table
-                                    class="text-left text-sm {stepperFormTitleClass}"
-                                >
-                                        
-
-                                    <tr>
-                                        <th></th>
-                                        <th>SENDIRI</th>
-                                        <th>KELUARGA</th>
-                                        <th>ULASAN</th>
-                                    </tr>
-                                    <tr>
-                                        <td>Penyakit sejak lahir atau baka</td>
-
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="sendiriPenyakitSejakLahir"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="keluargaPenyakitSejakLahir"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-                                        <td>
-                                            <CustomTextField
-                                                disabled
-                                                id="penyakitSejakLahir"
-                                                label=""
-                                                type="text"
-                                                val=""
-                                            ></CustomTextField>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Alahan</td>
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="sendiriAlahan"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="keluargaAlahan"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-                                        <td>
-                                            <CustomTextField
-                                                disabled
-                                                id="alahan"
-                                                label=""
-                                                type="text"
-                                                val=""
-                                            ></CustomTextField>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sakit jiwa</td>
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="sendiriSakitJiwa"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="keluargaSakitJiwa"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-                                        <td>
-                                            <CustomTextField
-                                                disabled
-                                                id="sakitJiwa"
-                                                label=""
-                                                type="text"
-                                                val=""
-                                            ></CustomTextField>
-                                        </td>
-                                    </tr><tr>
-                                        <td
-                                            >Epilepsi, sawan, angin ahmar,
-                                            penyakit saraf</td
-                                        >
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="sendiriEpilepsi"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="keluargaEpilepsi"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-                                        <td>
-                                            <CustomTextField
-                                                disabled
-                                                id="epilepsi"
-                                                label=""
-                                                type="text"
-                                                val=""
-                                            ></CustomTextField>
-                                        </td>
-                                    </tr><tr>
-                                        <td>Darah tinggi</td>
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="sendiriDarahTinggi"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="keluargaDarahTinggi"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-                                        <td>
-                                            <CustomTextField
-                                                disabled
-                                                id="darahTinggi"
-                                                label=""
-                                                type="text"
-                                                val=""
-                                            ></CustomTextField>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Kencing manis</td>
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="sendiriKencingManis"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="keluargaKencingManis"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-                                        <td>
-                                            <CustomTextField
-                                                disabled
-                                                id="kencingManis"
-                                                label=""
-                                                type="text"
-                                                val=""
-                                            ></CustomTextField>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jantung atatu salur darah</td>
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="sendiriJantung"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="keluargaJantung"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-                                        <td>
-                                            <CustomTextField
-                                                disabled
-                                                id="jantungAtatuSalurDarah"
-                                                label=""
-                                                type="text"
-                                                val=""
-                                            ></CustomTextField>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td>Asma</td>
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="sendiriAsma"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="keluargaAsma"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-                                        <td>
-                                            <CustomTextField
-                                                disabled
-                                                id="asma"
-                                                label=""
-                                                type="text"
-                                                val=""
-                                            ></CustomTextField>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sakit buah pinggang</td>
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="sendiriSakitBuahPinggang"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="keluargaSakitBuahPinggang"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-                                        <td>
-                                            <CustomTextField
-                                                disabled
-                                                id="sakitBuahPinggang"
-                                                label=""
-                                                type="text"
-                                                val=""
-                                            ></CustomTextField>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Barah</td>
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="sendiriBarah"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="keluargaBarah"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-                                        <td>
-                                            <CustomTextField
-                                                disabled
-                                                id="barah"
-                                                label=""
-                                                type="text"
-                                                val=""
-                                            ></CustomTextField>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Batuk kering</td>
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="sendiriBatukKering"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="keluargaBatukKering"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-                                        <td>
-                                            <CustomTextField
-                                                disabled
-                                                id="batukKering"
-                                                label=""
-                                                type="text"
-                                                val=""
-                                            ></CustomTextField>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Ketagihan dadah</td>
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="sendiriKetagihanDadah"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="keluargaKetagihanDadah"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-                                        <td>
-                                            <CustomTextField
-                                                disabled
-                                                id="ketagihanDadah"
-                                                label=""
-                                                type="text"
-                                                val=""
-                                            ></CustomTextField>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>AIDS, HIV</td>
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="sendiriAIDS"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="keluargaAIDS"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-                                        <td>
-                                            <CustomTextField
-                                                disabled
-                                                id="AIDS"
-                                                label=""
-                                                type="text"
-                                                val=""
-                                            ></CustomTextField>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Hepatitis B</td>
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="sendiriHepatitisB"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="keluargaHepatitisB"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-                                        <td>
-                                            <CustomTextField
-                                                disabled
-                                                id="hepatitisB"
-                                                label=""
-                                                type="text"
-                                                val=""
-                                            ></CustomTextField>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sejarah pembedahan</td>
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="sendiriSejarahPembedahan"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="keluargaSejarahPembedahan"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-                                        <td>
-                                            <CustomTextField
-                                                disabled
-                                                id="sejarahPembedahan"
-                                                label=""
-                                                type="text"
-                                                val=""
-                                            ></CustomTextField>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Kecacatan anggota, pancaindera</td>
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="sendiriKecacatan"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="keluargaKecacatan"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-                                        <td>
-                                            <CustomTextField
-                                                disabled
-                                                id="kecacatan"
-                                                label=""
-                                                type="text"
-                                                val=""
-                                            ></CustomTextField>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Merokok</td>
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="sendiriMerokok"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="keluargaMerokok"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-                                        <td>
-                                            <CustomTextField
-                                                disabled
-                                                id="merokok"
-                                                label=""
-                                                type="text"
-                                                val=""
-                                            ></CustomTextField>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Penyakit serius lain</td>
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="sendiriPenyakitSeriusLain"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="keluargaPenyakitSeriusLain"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-                                        <td>
-                                            <CustomTextField
-                                                disabled
-                                                id="penyakitSeriusLain"
-                                                label=""
-                                                type="text"
-                                                val=""
-                                            ></CustomTextField>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sedang menerima rawatan</td>
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="sendiriSedangMenerimaRawatan"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-
-                                        <td>
-                                            <CustomRadioBoolean
-                                                disabled
-                                                id="keluargaSedangMenerimaRawatan"
-                                                val=""
-                                                label=""
-                                            ></CustomRadioBoolean>
-                                        </td>
-                                        <td>
-                                            <CustomTextField
-                                                disabled
-                                                id="sedangMenerimaRawatan"
-                                                label=""
-                                                type="text"
-                                                val=""
-                                            ></CustomTextField>
-                                        </td>
-                                    </tr>
-                                </table> -->
                                 </div>
+                               
+                              
                             </form>
                         </div></StepperContentBody
                     >
@@ -5237,12 +4656,12 @@
         </div> -->
 
         <CustomSelectField
-                                            id="inSchool"
-                                            label={'Bersekolah'}
-                                            errors={$addNextOfKinErrors.inSchool}
-                                            bind:val={$addNextOfKinModal.inSchool}
-                                            options={data.selectionOptions.generalLookup}
-                                        ></CustomSelectField>
+            id="inSchool"
+            label={'Bersekolah'}
+            errors={$addNextOfKinErrors.inSchool}
+            bind:val={$addNextOfKinModal.inSchool}
+            options={data.selectionOptions.generalLookup}
+        ></CustomSelectField>
 
         <TextIconButton
             type="primary"

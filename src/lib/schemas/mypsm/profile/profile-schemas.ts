@@ -206,7 +206,7 @@ export const _academicListRequestSchema = z.object({
 });
 
 export const _academicEditRequestSchema = z.object({
-    academics: z.array(_academicInfoSchema.omit({ educationId: true }).extend({ id: numberIdSchema })),
+    academics: z.array(_academicInfoSchema.omit({ educationId: true }).extend({ id: numberIdSchema.optional() })),
 });
 
 //==========================================================
@@ -214,7 +214,7 @@ export const _academicEditRequestSchema = z.object({
 //==========================================================
 
 export const _experienceInfoSchema = z.object({
-    id: numberSchema,
+    id: numberSchema.optional(),
     company: shortTextSchema,
     address: shortTextSchema,
     position: shortTextSchema,
@@ -244,7 +244,7 @@ export const _experienceEditRequestSchema = z.object({
 //==========================================================
 
 export const _activityInfoSchema = z.object({
-    id: numberSchema,
+    id: numberSchema.optional(),
     name: shortTextSchema,
     joinDate: dateStringSchema,
     position: shortTextSchema,
@@ -374,7 +374,7 @@ export let _diseaseInfoSchema = z.object({
     disease: z.string(),
     isPersonal: z.boolean(),
     isFamily: z.boolean(),
-    remark: z.string(),
+    remark: z.string().optional(),
 });
 
 export let _diseaseInfoCollectionSchema = z.object({
