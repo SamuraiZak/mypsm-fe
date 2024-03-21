@@ -1,6 +1,5 @@
 import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
-import { PTBKWAPServices } from "$lib/services/implementation/mypsm/PTB-KWAP/PTB.service";
 import { IntegrityServices } from "$lib/services/implementation/mypsm/integriti/integrity.service";
 
 
@@ -25,20 +24,18 @@ export const load = async () => {
     };
 
     
-    let secretariatSurcajViewResponse: CommonResponseDTO;
-    let secretariatSurcajViewTable = [];
+    let directorSurcajViewResponse: CommonResponseDTO;
+    let directorSurcajViewTable = [];
 
     let surcajViewResponse: CommonResponseDTO;
     let surcajViewTable = [];
     
 
+    directorSurcajViewResponse = await IntegrityServices.getSurcajListDetails(param);
+    directorSurcajViewTable = directorSurcajViewResponse.data?.dataList ?? [];
 
-
-    secretariatSurcajViewResponse = await IntegrityServices.getSurcajListDetails(param);
-    secretariatSurcajViewTable = secretariatSurcajViewResponse.data?.dataList ?? [];
-
-    surcajViewResponse = await IntegrityServices.getSecretariatSurcajListDetails(param);
+    surcajViewResponse = await IntegrityServices.getDirectorSurcajListDetails(param);
     surcajViewTable = surcajViewResponse.data?.dataList ?? [];
 
-    return { param,surcajViewTable,secretariatSurcajViewTable };
+    return { param,surcajViewTable,directorSurcajViewTable };
 };

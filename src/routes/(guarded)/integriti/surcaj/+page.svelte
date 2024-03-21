@@ -21,9 +21,20 @@
         LocalStorageKeyConstant.currentRoleCode,
     );
 
+     // urusetia
+     let urusetia = UserRoleConstant.urusSetiaIntegriti.code;
+
+      // kakitangan
+    let kakitangan = UserRoleConstant.kakitangan.code;
+    
+    // pengarah Integriti
+    let pengarah = UserRoleConstant.pengarahIntegriti.code;
+
+
+
     let rowData: any;
 
-    let secretariatSurcajtable: TableDTO = {
+    let directorSurcajtable: TableDTO = {
         param: param,
         meta: {
             pageSize: 5,
@@ -31,7 +42,7 @@
             totalData: 4,
             totalPage: 1,
         },
-        data: data.secretariatSurcajViewTable ?? [],
+        data: data.directorSurcajViewTable ?? [],
     };
     let surcajtable: TableDTO = {
         param: param,
@@ -60,7 +71,7 @@
     </CustomTabContent>
 </section>
 
-
+{#if currentRoleCode === pengarah}
 <section class="flex w-full flex-col items-start justify-start">
     <CustomTabContent title="Senarai Tindakan/Ulasan Tatatertib">
         <FilterCard></FilterCard>
@@ -69,9 +80,10 @@
             <CustomTable
                 enableDetail
                 bind:passData={rowData}
-                bind:tableData={secretariatSurcajtable}
+                bind:tableData={directorSurcajtable}
             ></CustomTable>
 
         </div>
     </CustomTabContent>
 </section>
+{/if}

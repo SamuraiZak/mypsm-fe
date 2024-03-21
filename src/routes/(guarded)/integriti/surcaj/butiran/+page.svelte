@@ -11,6 +11,9 @@
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
 
     export let data: PageData;
+
+
+    
 </script>
 
 <!------------------------------------------------------>
@@ -42,14 +45,14 @@
                             errors={$personalInfoError.employeeNo}
                             bind:val={editMode ? data.personalDetails.employeeNo : $personalInfoForm.employeeNumber}
                         ></CustomTextField> -->
-                        
-                        <CustomTextField
-                        disabled
-                        id="employeeNumber"
-                        label={'No. Pekerja'}
-                        type="text"
-                        val=""
-                    ></CustomTextField>
+
+                <CustomTextField
+                    disabled
+                    id="employeeNumber"
+                    label={'No. Pekerja'}
+                    type="text"
+                    val=""
+                ></CustomTextField>
                 <CustomTextField
                     disabled
                     id="identityCardNumber"
@@ -59,19 +62,19 @@
                 ></CustomTextField>
                 <CustomTextField
                     disabled
-                    id="name"
+                    id="fullName"
                     label={'Nama Penuh'}
                     type="text"
                     val=""
                 ></CustomTextField>
                 <!--      -->
-                <CustomSelectField
+                <!-- <CustomSelectField
                     disabled
                     id="titleId"
                     label="Gelaran"
                     options={data.selectionOptions.titleLookup}
                     val=""
-                ></CustomSelectField>
+                ></CustomSelectField> -->
 
                 <CustomTextField
                     disabled
@@ -87,7 +90,7 @@
                                 .identityCardColorLookup} -->
                 <CustomSelectField
                     disabled
-                    id="identityDocumentColor"
+                    id="icColour"
                     label="Jenis Kad Pengenalan"
                     options={data.selectionOptions.identityCardColorLookup}
                     val=""
@@ -103,23 +106,23 @@
                 <!--   -->
                 <CustomSelectField
                     disabled
-                    id="birthStateId"
+                    id="birthplace"
                     label="Tempat Lahir"
                     options={data.selectionOptions.stateLookup}
                     val=""
                 ></CustomSelectField>
                 <!--  -->
-                <CustomSelectField
+                <!-- <CustomSelectField
                     disabled
                     id="birthCountryId"
                     label="Tempat Lahir"
                     options={data.selectionOptions.countryLookup}
                     val=""
-                ></CustomSelectField>
+                ></CustomSelectField> -->
                 <!--   -->
                 <CustomSelectField
                     disabled
-                    id="nationalityId"
+                    id="nationality"
                     label="Warganegara"
                     options={data.selectionOptions.nationalityLookup}
                     val=""
@@ -127,7 +130,7 @@
                 <!--  -->
                 <CustomSelectField
                     disabled
-                    id="raceId"
+                    id="race"
                     label="Bangsa"
                     options={data.selectionOptions.raceLookup}
                     val=""
@@ -135,7 +138,7 @@
                 <!--  -->
                 <CustomSelectField
                     disabled
-                    id="ethnicId"
+                    id="ethnic"
                     label="Etnik"
                     options={data.selectionOptions.ethnicityLookup}
                     val=""
@@ -143,7 +146,7 @@
                 <!--  -->
                 <CustomSelectField
                     disabled
-                    id="religionId"
+                    id="religion"
                     label="Agama"
                     options={data.selectionOptions.religionLookup}
                     val=""
@@ -151,7 +154,7 @@
                 <!--   -->
                 <CustomSelectField
                     disabled
-                    id="genderId"
+                    id="gender"
                     label="Jantina"
                     options={data.selectionOptions.genderLookup}
                     val=""
@@ -159,7 +162,7 @@
                 <!--  -->
                 <CustomSelectField
                     disabled
-                    id="maritalId"
+                    id="marital"
                     label="Status Perkahwinan"
                     options={data.selectionOptions.maritalLookup}
                     val=""
@@ -181,36 +184,36 @@
                     val=""
                 />
                 <!--   -->
-                <CustomSelectField
+                <!-- <CustomSelectField
                     disabled
                     id="homeCountryId"
                     label="Negara Kediaman"
                     options={data.selectionOptions.countryLookup}
                     val=""
-                ></CustomSelectField>
+                ></CustomSelectField> -->
                 <!--   -->
-                <CustomSelectField
+                <!-- <CustomSelectField
                     disabled
                     id="homeStateId"
                     label="Negeri Kediaman"
                     options={data.selectionOptions.stateLookup}
                     val=""
-                ></CustomSelectField>
+                ></CustomSelectField> -->
                 <!--    -->
-                <CustomSelectField
+                <!-- <CustomSelectField
                     disabled
                     id="homeCityId"
                     label="Daerah Kediaman"
                     options={data.selectionOptions.cityLookup}
                     val=""
-                ></CustomSelectField>
+                ></CustomSelectField> -->
 
-                <CustomTextField
+                <!-- <CustomTextField
                     disabled
                     id="homePostcode"
                     label="Poskod Rumah"
                     val=""
-                />
+                /> -->
 
                 <CustomTextField
                     disabled
@@ -219,23 +222,23 @@
                     val=""
                 />
                 <!--  -->
-                <CustomSelectField
+                <!-- <CustomSelectField
                     disabled
                     id="mailCountryId"
                     label="Negara Surat Menyurat"
                     options={data.selectionOptions.countryLookup}
                     val=""
-                ></CustomSelectField>
+                ></CustomSelectField> -->
                 <!--  -->
-                <CustomSelectField
+                <!-- <CustomSelectField
                     disabled
                     id="mailStateId"
                     label="Negeri Surat Menyurat"
                     options={data.selectionOptions.stateLookup}
                     val=""
-                ></CustomSelectField>
+                ></CustomSelectField> -->
                 <!--  -->
-                <CustomSelectField
+                <!-- <CustomSelectField
                     disabled
                     id="mailCityId"
                     label="Daerah Surat Menyurat"
@@ -248,7 +251,7 @@
                     id="mailPostcode"
                     label="Poskod Surat Menyurat"
                     val=""
-                />
+                /> -->
                 <!-- <CustomSelectField
                             disabled
                             errors={$personalInfoError.houseLoanType}
@@ -359,18 +362,18 @@
                     use:serviceInfoEnhance
                     class="flex w-full flex-col gap-2"
                 > -->
-           
+
             <!-- options={data.selectionOptions.gradeLookup} -->
             <CustomSelectField
                 disabled
-                id="gradeId"
+                id="currentGrade"
                 label={'Gred Semasa'}
                 val=""
             ></CustomSelectField>
             <!--  -->
             <CustomSelectField
                 disabled
-                id="positionId"
+                id="currentPosition"
                 label={'Jawatan'}
                 options={data.selectionOptions.positionLookup}
                 val=""
@@ -378,7 +381,7 @@
             <!-- -->
             <CustomSelectField
                 disabled
-                id="placementId"
+                id="placement"
                 label={'Penempatan'}
                 options={data.selectionOptions.placementLookup}
                 val=""
@@ -386,7 +389,7 @@
             <!--  -->
             <CustomSelectField
                 disabled
-                id="serviceTypeId"
+                id="serviceType"
                 label={'Taraf Perkhidmatan'}
                 options={data.selectionOptions.serviceTypeLookup}
                 val=""
@@ -472,7 +475,7 @@
                 val=""
             ></CustomTextField>
 
-            <CustomTextField
+            <!-- <CustomTextField
                 disabled
                 id="confirmServiceDate"
                 label={'Tarikh Disahkan Jawatan'}
@@ -492,7 +495,7 @@
                 label={'Mula Dilantik Perkhidmatan Sekarang'}
                 type="date"
                 val=""
-            ></CustomTextField>
+            ></CustomTextField> -->
             <CustomTextField
                 disabled
                 id="firstEffectiveDate"
@@ -535,7 +538,7 @@
                 type="date"
                 val=""
             ></CustomTextField>
-            <CustomTextField
+            <!-- <CustomTextField
                 disabled
                 id="actingDate"
                 label={'Pemangkuan Sekarang'}
@@ -549,7 +552,7 @@
                 label={'Tanggung Kerja Sekarang'}
                 type="text"
                 val=""
-            ></CustomTextField>
+            ></CustomTextField> -->
             <CustomTextField
                 disabled
                 id="pensionScheme"
@@ -557,7 +560,7 @@
                 type="text"
                 val=""
             ></CustomTextField>
-            <CustomTextField
+            <!-- <CustomTextField
                 disabled
                 id="lastSalaryRaiseDate"
                 label={'Kenaikan Gaji Akhir'}
@@ -592,15 +595,15 @@
                     },
                 ]}
                 val=""
-            ></CustomSelectField>
+            ></CustomSelectField> -->
 
-            <CustomTextField
+            <!-- <CustomTextField
                 disabled
                 id="lastPromotionDate"
                 label={'Kenaikan Pangkat Akhir'}
                 type="text"
                 val=""
-            ></CustomTextField>
+            ></CustomTextField> -->
 
             <CustomTextField
                 disabled
@@ -719,27 +722,27 @@
         <StepperContentBody>
             <CustomSelectField
                 disabled={true}
-                id="meetings-dropdown"
+                id="meetingType"
                 label="Nama dan Bil Mesyuarat"
                 val=""
             ></CustomSelectField>
             <CustomTextField
                 type="date"
                 disabled={true}
-                id=""
+                id="meetingDate"
                 label="Tarikh Mesyuarat"
                 val=""
             />
             <CustomTextField
                 disabled={true}
-                id="surcharge-amount"
+                id="amount"
                 type="number"
                 label={'Jumlah Bayaran (RM)'}
                 val=""
             ></CustomTextField>
             <CustomSelectField
                 disabled={true}
-                id="payment-dropdown"
+                id="paymentType"
                 label="Cara Bayaran Balik"
                 val=""
                 options={[
@@ -749,7 +752,7 @@
             ></CustomSelectField>
             <CustomSelectField
                 disabled
-                id="payment-period-dropdown"
+                id="duration"
                 label="Tempoh Bayaran Balik (bulan)"
                 val=""
                 options={[
@@ -761,7 +764,21 @@
                     { value: '6', name: '6 Bulan' },
                 ]}
             ></CustomSelectField>
-            <CustomTextField id="" label="Tarikh Berkuatkuasa" val="" />
+            <CustomTextField
+                id="effectiveDate"
+                label="Tarikh Berkuatkuasa"
+                val=""
+            />
+            <CustomTextField
+                id="meetingResult"
+                label="Keputusan Mesyuarat"
+                val=""
+            />
+            <CustomTextField
+                id="remark"
+                label="Ulasan"
+                val=""
+            />
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -778,7 +795,7 @@
                     disabled
                     type="text"
                     id="integrity-director-name"
-                    label="Nama" 
+                    label="Nama"
                     val=""
                 ></CustomTextField>
                 <CustomTextField
