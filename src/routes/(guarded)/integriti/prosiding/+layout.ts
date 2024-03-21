@@ -1,4 +1,5 @@
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant.js';
+import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
@@ -7,17 +8,26 @@ import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.
 import { IntegrityProceedingServices } from '$lib/services/implementation/mypsm/integriti/integrity-proceeding.service';
 
 export const load = async () => {
-    let proceedingListResponse: CommonResponseDTO = {};
-    let proceedingList = [];
-
     const currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
     );
 
+    const isDisciplineSecretaryRole =
+        currentRoleCode === RoleConstant.urusSetiaTatatertib.code;
+
+    const isIntegritySecretaryRole =
+        currentRoleCode === RoleConstant.urusSetiaIntegriti.code;
+
+    const isIntegrityDirectorRole =
+        currentRoleCode === RoleConstant.pengarahIntegriti.code;
+
+    let proceedingListResponse: CommonResponseDTO = {};
+    let proceedingList = [];
+
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: 'id',
+        orderBy: 'integrityId',
         orderType: 1,
         filter: {
             proceedingTypeId: null, // 0 or Null: All | 1: Perkhidmatan | 2: PSL
@@ -57,6 +67,11 @@ export const load = async () => {
         },
         selectionOptions: {
             statusLookup,
+        },
+        roles: {
+            isDisciplineSecretaryRole,
+            isIntegritySecretaryRole,
+            isIntegrityDirectorRole,
         },
     };
 };
