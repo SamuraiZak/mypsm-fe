@@ -35,6 +35,7 @@ import {
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import type { Input } from 'ky';
 import http from '../../service-provider.service';
+import httpFormData from '../../service-provider-formdata.service';
 
 export class ServiceAllowanceBantuanPakaianIstiadatService {
     // get application details
@@ -67,7 +68,7 @@ export class ServiceAllowanceBantuanPakaianIstiadatService {
         try {
             let url: Input = 'service_allowance/ceremony_clothing/add';
 
-            const response: Response = await http
+            const response: Response = await httpFormData
                 .post(url, {
                     body: param,
                 })

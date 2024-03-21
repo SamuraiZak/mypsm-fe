@@ -1,8 +1,7 @@
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
-import type { ServiceAllowanceFilterDTO } from '$lib/dto/mypsm/elaun-elaun-perkhidmatan/service-allowance-filter.dto';
-import type { ServiceAllowanceDTO } from '$lib/dto/mypsm/elaun-elaun-perkhidmatan/service-allowance.dto';
+import type { ServiceAllowanceListFilterDTO, ServiceAllowanceListItemDTO } from '$lib/dto/mypsm/elaun-elaun-perkhidmatan/service-allowance.dto';
 import { ServiceAllowanceServices } from '$lib/services/implementation/mypsm/elaun-elaun-perkhidmatan/service-allowance.service';
 
 export async function load() {
@@ -12,10 +11,10 @@ export async function load() {
         'unknown';
 
     // prepare empty allowance list
-    let allowanceList: ServiceAllowanceDTO[] = [];
+    let allowanceList: ServiceAllowanceListItemDTO[] = [];
 
     // list request filter
-    const allowanceListFilter: ServiceAllowanceFilterDTO = {
+    const allowanceListFilter: ServiceAllowanceListFilterDTO = {
         employeeNumber: null,
         name: null,
         allowanceType: null,
@@ -40,7 +39,7 @@ export async function load() {
 
     if (allowanceListResponse.status == 'success') {
         allowanceList = allowanceListResponse.data
-            ?.dataList as ServiceAllowanceDTO[];
+            ?.dataList as ServiceAllowanceListItemDTO[];
     }
 
     return {

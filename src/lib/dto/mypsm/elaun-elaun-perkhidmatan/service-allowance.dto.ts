@@ -1,136 +1,120 @@
-import type { ServiceAllowanceBantuanMengurusJenazahDetailDTO } from './bantuan-mengurus-jenazah/bantuan-mengurus-jenazah.dto';
-import type { ServiceAllowanceBantuanPakaianIstiadatDetailDTO } from './bantuan-pakaian-istiadat/bantuan-pakaian-istiadat.dto';
-import type { ServiceAllowanceBantuanPakaianPanasDetailDTO } from './bantuan-pakaian-panas/bantuan-pakaian-panas.dto';
-import type { ServiceAllowanceBayaranBalikShippingDetailDTO } from './bayaran-balik-pengangkutan-barang-melalui-jalan-laut/bayaran-balik-shipping.dto';
-import type { ServiceAllowanceInsuransKesihatanDetailDTO } from './insurans-kesihatan/insurans-kesihatan.dto';
-import type { ServiceAllowanceBayaranBalikPassportDetailDTO } from './pembayaran-balik-passport/bayaran-balik-passport.dto';
-import type { ServiceAllowancePerpindahanRumahDetailDTO } from './perpindahan-rumah/perpindahan-rumah.dto';
-import type { ServiceAllowanceApproverFeedbackDTO } from './shared/service-allowance-app-feedback.dto';
-import type { ServiceAllowanceConfirmationDTO } from './shared/service-allowance-confirmation.dto';
-import type { ServiceAllowanceDirectorFeedbackDTO } from './shared/service-allowance-director-feedback.dto';
-import type { ServiceAllowanceDownloadDTO } from './shared/service-allowance-download.dto';
-import type { ServiceAllowanceSuppAppDetailDTO } from './shared/service-allowance-supp-app-detail.dto';
-import type { ServiceAllowanceSuppFeedbackDTO } from './shared/service-allowance-supp-feedback.dto';
-import type { ServiceAllowanceVerificationDTO } from './shared/service-allowance-verification.dto';
-import type { ServiceAllowanceTabungKebajikanDetailDTO } from './tabung-kebajikan-kakitangan/tabung-kebajikan-kakitangan.dto';
-import type { ServiceAllowanceTambangMengunjungiWilayahAsalDetailDTO } from './tambang-mengunjungi-wilayah-asal/tambang-mengunjungi-wilayah-asal.dto';
+// ================================================================
+// Service Allowance Common DTO
+// ================================================================
 
-export interface ServiceAllowanceDTO {
-    allowanceId: string;
-    employeeID: string;
-    name: string;
-    identityCardNumber: string;
-    allowanceType: string;
+// TODO 1: Service Allowance List Item DTO
+export interface ServiceAllowanceListItemDTO {
+    allowanceId: string | null;
+    employeeId: string | null;
+    employeeNumber: string | null;
+    name: string | null;
+    identityCardNumber: string | null;
+    allowanceType: string | null;
     allowanceTypeCode: string | null;
-    category: string;
-    applicationDate: string;
-    total: number;
-    status: string;
-    remark: string | null;
+    category: string | null;
+    applicationDate: Date | null;
+    total: number | null;
+    status: string | null;
+    remark: null | null;
 }
 
-// Converts JSON strings to/from your types
-export class ServiceAllowanceConvert {
-    public static fromJson(json: string): ServiceAllowanceDTO {
-        return JSON.parse(json);
-    }
-
-    public static toJson(value: ServiceAllowanceDTO): string {
-        return JSON.stringify(value);
-    }
+export interface ServiceAllowanceListFilterDTO {
+    employeeNumber?: string | null;
+    name?: string | null;
+    allowanceType?: string | null;
+    applicationDate?: string | null;
+    status?: string | null;
 }
 
-// bantuan mengurus jenazah
-export interface ServiceAllowanceBantuanMengurusJenazahApplicationDTO {
-    applicationDetail: ServiceAllowanceBantuanMengurusJenazahDetailDTO | null;
-    download: ServiceAllowanceDownloadDTO | null;
-    confirmation: ServiceAllowanceConfirmationDTO | null;
-    verification: ServiceAllowanceVerificationDTO;
-    supportApprover: ServiceAllowanceSuppAppDetailDTO;
-    support: ServiceAllowanceSuppFeedbackDTO;
-    approval: ServiceAllowanceApproverFeedbackDTO;
+// TODO 2: Service Allowance Endorsement DTO
+export interface ServiceAllowanceEndorsementDTO {
+    allowanceId?: number | null;
+    allowanceTypeCode?: string | null;
+    name?: string | null;
+    remark?: string | null;
+    status?: boolean | null;
+    statusDescription?: string | null;
 }
 
-// bantuan pakaian istiadat application dto
-export interface ServiceAllowanceBantuanPakaianIstiadatApplicationDTO {
-    applicationDetail: ServiceAllowanceBantuanPakaianIstiadatDetailDTO | null;
-    download: ServiceAllowanceDownloadDTO | null;
-    directorSupport: ServiceAllowanceDirectorFeedbackDTO | null;
-    verification: ServiceAllowanceVerificationDTO | null;
-    supportApprover: ServiceAllowanceSuppAppDetailDTO | null;
-    support: ServiceAllowanceSuppFeedbackDTO | null;
-    approval: ServiceAllowanceApproverFeedbackDTO | null;
+// TODO 3: Service Allowance
+export interface ServiceAllowanceEndorserDetailDTO {
+    allowanceId?: number | null;
+    allowanceTypeCode?: string | null;
+    supporter?: string | null;
+    approver?: string | null;
 }
 
-// bantuan pakaian panas
-export interface ServiceAllowanceBantuanPakaianPanasApplicationDTO {
-    applicationDetail: ServiceAllowanceBantuanPakaianPanasDetailDTO | null;
-    download: ServiceAllowanceDownloadDTO | null;
-    directorSupport: ServiceAllowanceDirectorFeedbackDTO | null;
-    verification: ServiceAllowanceVerificationDTO | null;
-    supportApprover: ServiceAllowanceSuppAppDetailDTO | null;
-    support: ServiceAllowanceSuppFeedbackDTO | null;
-    approval: ServiceAllowanceApproverFeedbackDTO | null;
+// TODO : Service Allowance Document DTO
+export interface ServiceAllowanceDocumentDTO {
+    name: string;
+    base64: string;
 }
 
-// bayaran balik shipping
-export interface ServiceAllowanceBayaranBalikShippingApplicationDTO {
-    applicationDetail: ServiceAllowanceBayaranBalikShippingDetailDTO | null;
-    download: ServiceAllowanceDownloadDTO | null;
-    supporterApprover: ServiceAllowanceSuppAppDetailDTO | null;
-    support: ServiceAllowanceSuppFeedbackDTO | null;
-    approval: ServiceAllowanceApproverFeedbackDTO | null;
+// TODO: Service Allowance Family Detail DTO
+export interface ServiceAllowanceFamilyDetailDTO {
+    name?: string;
+    age?: number;
+    relationshipCode?: string;
 }
 
-// insurans kesihatan
-export interface ServiceAllowanceInsuransKesihatanApplicationDTO {
-    applicationDetail: ServiceAllowanceInsuransKesihatanDetailDTO | null;
-    download: ServiceAllowanceDownloadDTO | null;
-    verification: ServiceAllowanceVerificationDTO | null;
-    supportApprover: ServiceAllowanceSuppAppDetailDTO | null;
-    support: ServiceAllowanceSuppFeedbackDTO | null;
-    approval: ServiceAllowanceApproverFeedbackDTO | null;
+// ================================================================
+// Service Allowance Info DTO
+// ================================================================
+// Bantuan Pakaian Istiadat
+export interface ServiceAllowanceInfoCeremonyDressDTO {
+    documents?: Document[] | File[];
+    allowanceId?: number | null;
+    allowanceTypeCode?: string | null;
+    allowanceType?: string | null;
+    reason?: string | null;
+    personal?: number | null;
+    partner?: number | null;
 }
 
-// bayaran balik passport
-export interface ServiceAllowanceBayaranBalikPassportApplicationDTO {
-    applicationDetail: ServiceAllowanceBayaranBalikPassportDetailDTO | null;
-    download: ServiceAllowanceDownloadDTO | null;
-    directorSupport: ServiceAllowanceDirectorFeedbackDTO | null;
-    verification: ServiceAllowanceVerificationDTO | null;
-    supportApprover: ServiceAllowanceSuppAppDetailDTO | null;
-    support: ServiceAllowanceSuppFeedbackDTO | null;
-    approval: ServiceAllowanceApproverFeedbackDTO | null;
-}
+// Bantuan Pakaian Panas
+export interface ServiceAllowanceInfoWarmClothesDTO {}
 
-// perpindahan rumah
-export interface ServiceAllowancePerpindahanRumahApplicationDTO {
-    applicationDetail: ServiceAllowancePerpindahanRumahDetailDTO | null;
-    download: ServiceAllowanceDownloadDTO | null;
-    confirmation: ServiceAllowanceConfirmationDTO | null;
-    verification: ServiceAllowanceVerificationDTO | null;
-    supportApprover: ServiceAllowanceSuppAppDetailDTO | null;
-    support: ServiceAllowanceSuppFeedbackDTO | null;
-    approval: ServiceAllowanceApproverFeedbackDTO | null;
-}
+// Tambang Mengunjungi Wilayah Asal
+export interface ServiceAllowanceInfoHometownVisitDTO {}
 
-// tabung kebajikan kakitangan
-export interface ServiceAllowanceTabungKebajikanKakitanganApplicationDTO {
-    applicationDetail: ServiceAllowanceTabungKebajikanDetailDTO | null;
-    download: ServiceAllowanceDownloadDTO | null;
-    directorSupport: ServiceAllowanceDirectorFeedbackDTO | null;
-    verification: ServiceAllowanceVerificationDTO | null;
-    supportApprover: ServiceAllowanceSuppAppDetailDTO | null;
-    support: ServiceAllowanceSuppFeedbackDTO | null;
-    approval: ServiceAllowanceApproverFeedbackDTO | null;
-}
+// Bantuan Mengurus Jenazah
+export interface ServiceAllowanceInfoFuneralDTO {}
 
-// tambang mengunjungi wilayah asal
-export interface ServiceAllowanceTambangMengunjungiWilayahAsalApplicationDTO {
-    applicationDetail: ServiceAllowanceTambangMengunjungiWilayahAsalDetailDTO | null;
-    download: ServiceAllowanceDownloadDTO | null;
-    verification: ServiceAllowanceVerificationDTO | null;
-    supportApprover: ServiceAllowanceSuppAppDetailDTO | null;
-    support: ServiceAllowanceSuppFeedbackDTO | null;
-    approval: ServiceAllowanceApproverFeedbackDTO | null;
+// Tabung Kebajikan Kakitangan
+export interface ServiceAllowanceInfoWelfareFundDTO {}
+
+// Perpindahan Rumah
+export interface ServiceAllowanceInfoHouseMovingDTO {}
+
+// Bayaran Balik Passport
+export interface ServiceAllowanceInfoPassportClaimDTO {}
+
+// Bayaran Balik Insurans Kesihatan
+export interface ServiceAllowanceInfoHealthInsuranceDTO {}
+
+//  Bayaran Balik Pengangkutan Barang Melalui Jalan Darat
+export interface ServiceAllowanceShippingClaimDTO {}
+
+// ================================================================
+// Service Allowance Applciation DTO
+// ================================================================
+export interface ServiceAllowanceApplicationDTO {
+    applicationDetail?:
+        | ServiceAllowanceInfoCeremonyDressDTO
+        | ServiceAllowanceInfoWarmClothesDTO
+        | ServiceAllowanceInfoHometownVisitDTO
+        | ServiceAllowanceInfoFuneralDTO
+        | ServiceAllowanceInfoWelfareFundDTO
+        | ServiceAllowanceInfoHouseMovingDTO
+        | ServiceAllowanceInfoPassportClaimDTO
+        | ServiceAllowanceInfoHealthInsuranceDTO
+        | ServiceAllowanceShippingClaimDTO
+        | null;
+    directorSupport?: ServiceAllowanceEndorsementDTO | null;
+    verification?: ServiceAllowanceEndorsementDTO | null;
+    supportApprover?: ServiceAllowanceEndorserDetailDTO | null;
+    support?: ServiceAllowanceEndorsementDTO | null;
+    approval?: ServiceAllowanceEndorsementDTO | null;
+    secretaryVerification?: ServiceAllowanceEndorsementDTO | null;
+    confirmation?: ServiceAllowanceEndorsementDTO | null;
 }

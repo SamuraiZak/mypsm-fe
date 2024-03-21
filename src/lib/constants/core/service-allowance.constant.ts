@@ -3,6 +3,10 @@
 // ===============================================================
 
 import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
+import type {
+    ServiceAllowanceStepperDTO,
+    ServiceAllowanceURLDTO,
+} from '$lib/dto/mypsm/elaun-elaun-perkhidmatan/service-allowance-stepper.dto';
 
 export class ServiceAllowanceTypeConstant {
     public static bantuanPakaianIstiadat: LookupDTO = {
@@ -71,4 +75,217 @@ export class ServiceAllowanceTypeConstant {
         this.insuransKesihatan,
         this.bayaranBalikPengangkutanBarang,
     ];
+}
+
+export class ServiceAllowanceStepperConstant {
+    public static ceremonyDress: ServiceAllowanceStepperDTO = {
+        detail: true,
+        upload: false,
+        directorFeedback: false,
+        secretaryCheck: true,
+        endorserDetail: true,
+        supporterFeedback: true,
+        approverFeedback: true,
+        secretaryVerification: false,
+        confirmation: false,
+    };
+    public static warmClothes: ServiceAllowanceStepperDTO = {
+        detail: true,
+        upload: false,
+        directorFeedback: true,
+        secretaryCheck: true,
+        endorserDetail: true,
+        supporterFeedback: true,
+        approverFeedback: true,
+        secretaryVerification: false,
+        confirmation: false,
+    };
+    public static hometownVisit: ServiceAllowanceStepperDTO = {
+        detail: true,
+        upload: true,
+        directorFeedback: true,
+        secretaryCheck: true,
+        endorserDetail: true,
+        supporterFeedback: true,
+        approverFeedback: true,
+        secretaryVerification: false,
+        confirmation: false,
+    };
+    public static funeral: ServiceAllowanceStepperDTO = {
+        detail: true,
+        upload: false,
+        directorFeedback: false,
+        secretaryCheck: true,
+        endorserDetail: true,
+        supporterFeedback: true,
+        approverFeedback: true,
+        secretaryVerification: true,
+        confirmation: true,
+    };
+    public static welfareFund: ServiceAllowanceStepperDTO = {
+        detail: true,
+        upload: false,
+        directorFeedback: true,
+        secretaryCheck: true,
+        endorserDetail: true,
+        supporterFeedback: true,
+        approverFeedback: true,
+        secretaryVerification: false,
+        confirmation: false,
+    };
+    public static houseMoving: ServiceAllowanceStepperDTO = {
+        detail: true,
+        upload: false,
+        directorFeedback: true,
+        secretaryCheck: true,
+        endorserDetail: true,
+        supporterFeedback: true,
+        approverFeedback: true,
+        secretaryVerification: false,
+        confirmation: false,
+    };
+    public static passportClaim: ServiceAllowanceStepperDTO = {
+        detail: true,
+        upload: false,
+        directorFeedback: true,
+        secretaryCheck: true,
+        endorserDetail: true,
+        supporterFeedback: true,
+        approverFeedback: true,
+        secretaryVerification: false,
+        confirmation: false,
+    };
+    public static healthInsurance: ServiceAllowanceStepperDTO = {
+        detail: true,
+        upload: false,
+        directorFeedback: false,
+        secretaryCheck: true,
+        endorserDetail: true,
+        supporterFeedback: true,
+        approverFeedback: true,
+        secretaryVerification: false,
+        confirmation: false,
+    };
+    public static shippingClaim: ServiceAllowanceStepperDTO = {
+        detail: true,
+        upload: false,
+        directorFeedback: false,
+        secretaryCheck: false,
+        endorserDetail: true,
+        supporterFeedback: true,
+        approverFeedback: true,
+        secretaryVerification: false,
+        confirmation: false,
+    };
+}
+
+// Service Allowance API constant
+export class ServiceAllowanceAPIConstant {
+    public static ceremonyDress: ServiceAllowanceURLDTO = {
+        detail: 'service_allowance/ceremony_clothing/add_base64',
+        upload: '',
+        directorFeedback:
+            'service_allowance/ceremony_clothing/director_support',
+        secretaryCheck: 'service_allowance/ceremony_clothing/verification',
+        endorserDetail:
+            'service_allowance/ceremony_clothing/supporter_approver',
+        supporterFeedback:
+            'service_allowance/ceremony_clothing/appointed_support',
+        approverFeedback: 'service_allowance/ceremony_clothing/approval',
+        secretaryVerification: '',
+        confirmation: '',
+    };
+    public static warmClothes: ServiceAllowanceURLDTO = {
+        detail: 'service_allowance/winter_clothing/add',
+        upload: '',
+        directorFeedback: 'service_allowance/winter_clothing/director_support',
+        secretaryCheck: 'service_allowance/winter_clothing/verification',
+        endorserDetail: 'service_allowance/winter_clothing/supporter_approver',
+        supporterFeedback:
+            'service_allowance/winter_clothing/appointed_support',
+        approverFeedback: 'service_allowance/winter_clothing/approval',
+        secretaryVerification: '',
+        confirmation: '',
+    };
+    public static hometownVisit: ServiceAllowanceURLDTO = {
+        detail: 'service_allowance/state_visit/add',
+        upload: 'service_allowance/state_visit/upload',
+        directorFeedback: '',
+        secretaryCheck: 'service_allowance/state_visit/verification',
+        endorserDetail: 'service_allowance/state_visit/supporter_approver',
+        supporterFeedback: 'service_allowance/state_visit/support',
+        approverFeedback: 'service_allowance/state_visit/approval',
+        secretaryVerification: '',
+        confirmation: '',
+    };
+    public static funeral: ServiceAllowanceURLDTO = {
+        detail: 'service_allowance/funeral_arrangement/add',
+        upload: '',
+        directorFeedback: '',
+        secretaryCheck: 'service_allowance/funeral_arrangement/verification',
+        endorserDetail:
+            'service_allowance/funeral_arrangement/supporter_approver',
+        supporterFeedback: 'service_allowance/funeral_arrangement/support',
+        approverFeedback: 'service_allowance/funeral_arrangement/approval',
+        secretaryVerification:
+            'service_allowance/funeral_arrangement/secretary_verification',
+        confirmation: 'service_allowance/funeral_arrangement/confirmation',
+    };
+    public static welfareFund: ServiceAllowanceURLDTO = {
+        detail: 'service_allowance/welfare_fund/add',
+        upload: '',
+        directorFeedback: 'service_allowance/welfare_fund/director_support',
+        secretaryCheck: 'service_allowance/welfare_fund/verification',
+        endorserDetail: 'service_allowance/welfare_fund/supporter_approver',
+        supporterFeedback: 'service_allowance/welfare_fund/appointed_support',
+        approverFeedback: 'service_allowance/welfare_fund/approval',
+        secretaryVerification: '',
+        confirmation: '',
+    };
+    public static houseMoving: ServiceAllowanceURLDTO = {
+        detail: 'service_allowance/house_moving/add',
+        upload: '',
+        directorFeedback: 'service_allowance/house_moving/confirmation',
+        secretaryCheck: 'service_allowance/house_moving/verification',
+        endorserDetail: 'service_allowance/house_moving/supporter_approver',
+        supporterFeedback: 'service_allowance/house_moving/support',
+        approverFeedback: 'service_allowance/house_moving/approval',
+        secretaryVerification: '',
+        confirmation: '',
+    };
+    public static passportClaim: ServiceAllowanceURLDTO = {
+        detail: 'service_allowance/passport_payment/add',
+        upload: '',
+        directorFeedback: 'service_allowance/passport_payment/director_support',
+        secretaryCheck: 'service_allowance/passport_payment/verification',
+        endorserDetail: 'service_allowance/passport_payment/supporter_approver',
+        supporterFeedback:
+            'service_allowance/passport_payment/appointed_support',
+        approverFeedback: 'service_allowance/passport_payment/approval',
+        secretaryVerification: '',
+        confirmation: '',
+    };
+    public static healthInsurance: ServiceAllowanceURLDTO = {
+        detail: 'service_allowance/insurance_payment/add',
+        upload: '',
+        directorFeedback: '',
+        secretaryCheck: 'service_allowance/insurance_payment/verification',
+        endorserDetail:
+            'service_allowance/insurance_payment/supporter_approver',
+        supporterFeedback: 'service_allowance/insurance_payment/support',
+        approverFeedback: 'service_allowance/insurance_payment/approval',
+        secretaryVerification: '',
+        confirmation: '',
+    };
+    public static shippingClaim: ServiceAllowanceURLDTO = {
+        detail: 'service_allowance/cargo_shipping/add',
+        upload: '',
+        directorFeedback: '',
+        secretaryCheck: '',
+        endorserDetail: 'service_allowance/cargo_shipping/supporter_approver',
+        supporterFeedback: 'service_allowance/cargo_shipping/support',
+        approverFeedback: 'service_allowance/cargo_shipping/approval',
+        secretaryVerification: '',
+        confirmation: '',
+    };
 }

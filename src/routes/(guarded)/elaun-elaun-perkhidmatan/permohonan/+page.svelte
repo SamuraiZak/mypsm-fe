@@ -11,13 +11,13 @@
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
-    import type { ServiceAllowanceDTO } from '$lib/dto/mypsm/elaun-elaun-perkhidmatan/service-allowance.dto';
+    import type { ServiceAllowanceListItemDTO } from '$lib/dto/mypsm/elaun-elaun-perkhidmatan/service-allowance.dto';
     import type { PageData } from './$types';
     import { _updateAllowanceTable } from './+page';
 
     export let data: PageData;
 
-    let selectedRecord: ServiceAllowanceDTO;
+    let selectedRecord: ServiceAllowanceListItemDTO;
 
     let allowanceTable: TableDTO = {
         param: data.props.allowanceListRequestBody,
@@ -55,7 +55,14 @@
             '/elaun-elaun-perkhidmatan/permohonan/' +
             selectedRecord.allowanceId +
             '/' +
-            currentAllowanceType?.url;
+            currentAllowanceType?.code;
+
+        goto(redirectUrl);
+    }
+
+    function _newApplication() {
+        let redirectUrl: string = '/elaun-elaun-perkhidmatan/permohonan/Baru'+
+        '/' + ServiceAllowanceTypeConstant.bantuanPakaianIstiadat.code;
 
         goto(redirectUrl);
     }
@@ -67,9 +74,7 @@
             label="Permohonan Baru"
             icon="add"
             onClick={() => {
-                goto(
-                    '/elaun-elaun-perkhidmatan/permohonan/baru/bantuan-mengurus-jenazah',
-                );
+                _newApplication();
             }}
         ></TextIconButton>
     </ContentHeader>
