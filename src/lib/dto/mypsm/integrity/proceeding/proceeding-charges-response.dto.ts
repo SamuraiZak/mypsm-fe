@@ -4,3 +4,7 @@ import type { z } from 'zod';
 export type ProceedingChargeListResponseDTO = z.infer<
     typeof _proceedingChargeSchema
 >[];
+
+export type ProceedingChargeDetailResponseDTO = z.infer<
+    typeof _proceedingChargeSchema
+>;

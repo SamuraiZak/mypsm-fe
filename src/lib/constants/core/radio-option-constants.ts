@@ -64,3 +64,14 @@ export const commonOptions: RadioDTO[] = [
         name: 'TIDAK',
     },
 ];
+
+export const proceedingMeetingOptions: RadioDTO[] = [
+    {
+        value: true,
+        name: 'BERSALAH',
+    },
+    {
+        value: false,
+        name: 'TIDAK BERSALAH',
+    },
+];

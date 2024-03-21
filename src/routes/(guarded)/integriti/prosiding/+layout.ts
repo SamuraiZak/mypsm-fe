@@ -1,40 +1,49 @@
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant.js';
+import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
-import type { CourseExamListResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-list-response.dto';
-import { renameExamTypeKeyValue } from '$lib/helpers/mypsm/course/exam-type.helper';
+import type { ProceedingChargeListResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
-import { CourseServices } from '$lib/services/implementation/mypsm/latihan/course.service';
+import { IntegrityProceedingServices } from '$lib/services/implementation/mypsm/integriti/integrity-proceeding.service';
 
 export const load = async () => {
-    let examListResponse: CommonResponseDTO = {};
-    let examList = [];
-
     const currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
     );
 
+    const isDisciplineSecretaryRole =
+        currentRoleCode === RoleConstant.urusSetiaTatatertib.code;
+
+    const isIntegritySecretaryRole =
+        currentRoleCode === RoleConstant.urusSetiaIntegriti.code;
+
+    const isIntegrityDirectorRole =
+        currentRoleCode === RoleConstant.pengarahIntegriti.code;
+
+    let proceedingListResponse: CommonResponseDTO = {};
+    let proceedingList = [];
+
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: 'id',
+        orderBy: 'integrityId',
         orderType: 1,
         filter: {
-            examTypeId: null, // 0 or Null: All | 1: Perkhidmatan | 2: PSL
+            proceedingTypeId: null, // 0 or Null: All | 1: Perkhidmatan | 2: PSL
             identityCard: null, //string | null | undefined;
             temporaryId: null, //string | null | undefined;
             status: null, // status code from lookup | null | undefined;
         },
     };
 
-    // exam list
-    examListResponse = await CourseServices.getCourseExamList(param);
+    // proceeding list
+    proceedingListResponse =
+        await IntegrityProceedingServices.getProceedingChargeRecordList(param);
 
-    await renameExamTypeKeyValue(examListResponse);
-
-    examList =
-        (examListResponse.data?.dataList as CourseExamListResponseDTO) ?? [];
+    proceedingList =
+        (proceedingListResponse.data
+            ?.dataList as ProceedingChargeListResponseDTO) ?? [];
 
     // ==========================================================================
     // Get Lookup Functions
@@ -47,36 +56,30 @@ export const load = async () => {
 
     // ===========================================================================
 
-    const examTypeLookupResponse: CommonResponseDTO =
-        await LookupServices.getExamTypeEnums();
-
-    const examTypeLookup: DropdownDTO[] = LookupServices.setSelectOptions(
-        examTypeLookupResponse,
-    );
-
-    // ===========================================================================
-
     return {
         param,
         currentRoleCode,
         list: {
-            examList,
+            proceedingList,
         },
         responses: {
-            examListResponse,
+            proceedingListResponse,
         },
         selectionOptions: {
-            examTypeLookup,
             statusLookup,
+        },
+        roles: {
+            isDisciplineSecretaryRole,
+            isIntegritySecretaryRole,
+            isIntegrityDirectorRole,
         },
     };
 };
 
 export const _updateTable = async (param: CommonListRequestDTO) => {
     const response: CommonResponseDTO =
-        await CourseServices.getCourseExamList(param);
+        await IntegrityProceedingServices.getProceedingChargeRecordList(param);
 
-    await renameExamTypeKeyValue(response);
     return {
         param,
         response,

@@ -21,17 +21,25 @@ export const _proceedingStaffDetailRequestSchema = _proceedingIDSchema.extend({
     employeeId: z.number().readonly(),
 });
 
+export const _proceedingEmployeeListSchema = z.object({
+    id: z.number().readonly(),
+    employeeNumber: z.number().readonly(),
+    name: z.string(),
+    identityCardNumber: z.string(),
+    gradeCode: z.string(),
+    positionCode: z.string(),
+    placementCode: z.string(),
+});
+
 export const _proceedingChargeSchema = z.object({
+    integrityId: z.number().readonly(),
+    employeeId: z.number().readonly(),
     employeeNumber: z.string(),
     employeeName: z.string(),
     identityCardNumber: z.string(),
     disciplinaryType: z.string(),
-    chargeMeetingDate: z.coerce
-        .date()
-        .transform((value) => value.toLocaleString()),
-    proceedingMeetingDate: z.coerce
-        .date()
-        .transform((value) => value.toLocaleString()),
+    chargeMeetingDate: z.coerce.date(),
+    proceedingMeetingDate: z.coerce.date(),
     isAppeal: z.boolean(),
     declarationLetter: z.boolean(),
     status: z.string(),
@@ -50,7 +58,7 @@ export const _proceedingEmployeeResponseSchema = z.object({
     fullName: z.string(),
     alternativeName: z.null(),
     icColour: z.string(),
-    birthDate: z.coerce.date(),
+    birthDate: z.string(),
     birthplace: z.string(),
     nationality: z.string(),
     race: z.string(),
@@ -74,7 +82,7 @@ export const _proceedingServiceResponseSchema = z.object({
     currentPosition: z.string(),
     placement: z.string(),
     serviceType: z.string(),
-    effectiveDate: z.coerce.date(),
+    effectiveDate: z.string(),
     retirementBenefit: z.string(),
     EPFNumber: z.string(),
     SOCSO: z.string(),
@@ -83,25 +91,30 @@ export const _proceedingServiceResponseSchema = z.object({
     accountNumber: z.string(),
     program: z.string(),
     eligibleLeaveCount: z.number(),
-    civilServiceStartDate: z.coerce.date(),
-    confirmServiceDate: z.coerce.date(),
+    civilServiceStartDate: z.string(),
+    confirmServiceDate: z.string(),
     historyList: z.array(z.any()),
-    firstEffectiveDate: z.coerce.date(),
-    pastAttachmentDate: z.coerce.date(),
-    actingDate: z.coerce.date(),
-    interimDate: z.coerce.date(),
+    firstEffectiveDate: z.string(),
+    pastAttachmentDate: z.string(),
+    actingDate: z.string(),
+    interimDate: z.string(),
     pensionScheme: z.string(),
-    lastSalaryRaiseDate: z.coerce.date(),
-    lastPromotionDate: z.coerce.date(),
+    lastSalaryRaiseDate: z.string(),
+    lastPromotionDate: z.string(),
     salaryMovementMonth: z.number(),
-    retirementDate: z.coerce.date(),
-    salaryEffectiveDate: z.coerce.date(),
+    retirementDate: z.string(),
+    salaryEffectiveDate: z.string(),
     maximumSalary: z.number(),
     baseSalary: z.number(),
     ITKA: z.number(),
     ITP: z.number(),
     EPW: z.number(),
     COLA: z.number(),
+});
+
+export const _proceedingStaffDetailResponseSchema = z.object({
+    employeeDetail: _proceedingEmployeeResponseSchema,
+    serviceDetail: _proceedingServiceResponseSchema,
 });
 
 export const _proceedingChargeMeetingRequestSchema = z.object({
