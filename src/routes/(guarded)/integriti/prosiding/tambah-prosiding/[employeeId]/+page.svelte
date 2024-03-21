@@ -8,7 +8,7 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import { Toaster } from 'svelte-french-toast';
-    import { superForm } from 'sveltekit-superforms/client';
+    import { superForm, superValidate } from 'sveltekit-superforms/client';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
@@ -18,10 +18,25 @@
     } from '$lib/schemas/mypsm/employment/new-hire/schema';
     import { goto } from '$app/navigation';
     import type { PageData } from './$types';
+    import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
+    import { Button, Modal } from 'flowbite-svelte';
+    import SvgMinusCircle from '$lib/assets/svg/SvgMinusCircle.svelte';
+    import {
+        _proceedingAccusationSchema,
+        _proceedingChargeMeetingRequestSchema,
+    } from '$lib/schemas/mypsm/integrity/proceeding-charge-scheme';
+    import { getErrorToast } from '$lib/helpers/core/toast.helper';
+    import { error } from '@sveltejs/kit';
+    import { zod } from 'sveltekit-superforms/adapters';
+    import type { ProceedingAccusationDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
+    import { _addStateUnitSecretaryApprovalForm } from './+page';
+    import { writable } from 'svelte/store';
     export let data: PageData;
+    let openAddChargeModal: boolean = false;
+    let charges: ProceedingAccusationDTO[] = [];
 
     // Superforms
-    const { form, enhance } = superForm(data.forms.proceedingStaffInfoForm, {
+    const { form } = superForm(data.forms.proceedingStaffInfoForm, {
         SPA: true,
         dataType: 'json',
         invalidateAll: true,
@@ -31,6 +46,65 @@
         validators: false,
         taintedMessage: false,
     });
+
+    const { form: chargesMeetingForm, enhance: chargesMeetingFormErrors } =
+        superForm(data.forms.proceedingChargesMeetingForm, {
+            SPA: true,
+            dataType: 'json',
+            invalidateAll: true,
+            resetForm: false,
+            multipleSubmits: 'allow',
+            validationMethod: 'oninput',
+            validators: false,
+            taintedMessage: false,
+            async onSubmit() {
+                const tempChargesArr: string[] = charges.map(
+                    (charge) => charge.title,
+                );
+                $chargesMeetingForm.employeeId = Number(data.params.employeeId);
+                $chargesMeetingForm.accusationList = tempChargesArr;
+
+                _addStateUnitSecretaryApprovalForm($chargesMeetingForm);
+            },
+        });
+
+    const { form: addChargesForm, enhance: addChargesFormErrors } = superForm(
+        data.forms.proceedingAccusationModal,
+        {
+            SPA: true,
+            dataType: 'json',
+            invalidateAll: true,
+            resetForm: true,
+            multipleSubmits: 'allow',
+            validationMethod: 'oninput',
+            validators: zod(_proceedingAccusationSchema),
+            taintedMessage: false,
+            async onSubmit(formData) {
+                const result = await superValidate(
+                    formData.formData,
+                    zod(_proceedingAccusationSchema),
+                );
+                result.data.id = result.data.title + Math.random();
+
+                if (!result.valid) {
+                    getErrorToast();
+                    error(
+                        400,
+                        'Validation not passed, please check every fields.',
+                    );
+                }
+
+                charges = [...charges, result.data as ProceedingAccusationDTO];
+                openAddChargeModal = false;
+            },
+        },
+    );
+
+    function removeCharge<T>(id: T) {
+        charges = charges.filter((charge) => {
+            return charge.id !== id;
+        });
+    }
 </script>
 
 <ContentHeader title="Maklumat Prosiding Tatatertib"
@@ -516,24 +590,103 @@
             </div>
         </StepperContentBody>
     </StepperContent>
-    {#if data.roles.isIntegritySecretaryRole}
+    {#if data.roles.isDisciplineSecretaryRole}
         <StepperContent>
             <StepperContentHeader
                 title="Maklumat Keputusan Mesyuarat Prosiding Pertuduhan"
-            />
+            >
+                <TextIconButton
+                    type="primary"
+                    form="chargesMeetingForm"
+                    label="Simpan"
+                ></TextIconButton>
+            </StepperContentHeader>
             <StepperContentBody>
-                <div class="flex w-full flex-col gap-2.5">
+                <form
+                    id="chargesMeetingForm"
+                    method="POST"
+                    use:chargesMeetingFormErrors
+                    class="flex w-full flex-col items-center gap-2"
+                >
                     <CustomTextField
-                        disabled
-                        id="currentGrade"
-                        label="Gred Semasa"
+                        disabled={false}
+                        id="meetingDate"
+                        label="Tarikh Mesyuarat"
+                        type="date"
                         placeholder="-"
-                        bind:val={$form.serviceDetail.currentGrade}
+                        bind:val={$chargesMeetingForm.meetingDate}
                     ></CustomTextField>
-                </div>
+                    <CustomTextField
+                        disabled={false}
+                        id="meetingCount"
+                        label="Bil Mesyuarat"
+                        placeholder="-"
+                        type="number"
+                        bind:val={$chargesMeetingForm.meetingCount}
+                    ></CustomTextField>
+                    <CustomTextField
+                        disabled={false}
+                        id="meetingName"
+                        label="Nama Mesyuarat"
+                        placeholder="-"
+                        bind:val={$chargesMeetingForm.meetingName}
+                    ></CustomTextField>
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
+                    >
+                        <ContentHeader
+                            title="Senarai Pertuduhan"
+                            borderClass="border-none"
+                            ><div class="mr-2">
+                                <TextIconButton
+                                    type="primary"
+                                    onClick={() => {
+                                        openAddChargeModal = true;
+                                    }}
+                                    label="Tambah Tuduhan"
+                                    ><SvgPlus /></TextIconButton
+                                >
+                            </div>
+                        </ContentHeader>
+                        <hr />
+                        {#if charges.length > 0}
+                            {#each charges as charge, index}
+                                <div
+                                    class="flex w-full flex-row items-center gap-x-2.5 text-base"
+                                >
+                                    <span class="w-4">{index + 1}.</span>
+                                    <ContentHeader
+                                        title={charge.title}
+                                        borderClass="border-none"
+                                    >
+                                        <div class="w-12">
+                                            <Button
+                                                outline={false}
+                                                on:click={() =>
+                                                    removeCharge(charge.id)}
+                                                ><span class="text-red-600"
+                                                    ><SvgMinusCircle /></span
+                                                ></Button
+                                            >
+                                        </div>
+                                    </ContentHeader>
+                                </div>
+                            {/each}
+                        {:else}
+                            <div
+                                class="flex w-full flex-row items-center justify-center gap-x-2.5 text-base"
+                            >
+                                <span
+                                    class="w-fit text-sm italic text-system-neutral"
+                                    >Sila tambah tuduhan.</span
+                                >
+                            </div>
+                        {/if}
+                    </div>
+                </form>
             </StepperContentBody>
         </StepperContent>
-    {:else if data.roles.isDisciplineSecretaryRole}
+    {:else if data.roles.isIntegritySecretaryRole}
         <StepperContent>
             <StepperContentHeader
                 title="Maklumat Keputusan Mesyuarat Prosiding Tahan Kerja"
@@ -575,3 +728,26 @@
 </Stepper>
 
 <Toaster />
+
+<!-- Next Of Kin Info Modal -->
+<Modal title={'Tambah Tuduhan'} bind:open={openAddChargeModal}>
+    <form
+        id="addAccusationModal"
+        method="POST"
+        use:addChargesFormErrors
+        class="flex w-full flex-col items-center gap-2"
+    >
+        <CustomTextField
+            disabled={false}
+            id="title"
+            label="Nama Tuduhan"
+            placeholder="Sila nyatakan nama tuduhan.."
+            bind:val={$addChargesForm.title}
+        ></CustomTextField>
+    </form>
+    <div class="w-fit">
+        <TextIconButton type="primary" form="addAccusationModal" label="Tambah"
+            ><SvgPlus />
+        </TextIconButton>
+    </div>
+</Modal>
