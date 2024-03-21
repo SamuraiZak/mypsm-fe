@@ -26,7 +26,7 @@
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Permohonan Menduduki Kuarters">
+    <ContentHeader title="Permohonan Keluar Kuarters">
 
     </ContentHeader>
 </section>

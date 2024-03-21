@@ -6,9 +6,10 @@ import type { DropdownDTO } from "$lib/dto/core/dropdown/dropdown.dto"
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto"
 import { LookupServices } from "$lib/services/implementation/core/lookup/lookup.service"
 
-export const load = async () => {
+export const load = async ({params}) => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
     const lookup = await getLookup();
+    
     return {
         currentRoleCode,
         lookup,
