@@ -137,7 +137,7 @@ export class IntegrityProceedingServices {
 
             // get the promise response
             const promiseRes: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -223,7 +223,7 @@ export class IntegrityProceedingServices {
 
             // get the promise response
             const promiseRes: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -283,7 +283,7 @@ export class IntegrityProceedingServices {
 
             // get the promise response
             const promiseRes: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
