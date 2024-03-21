@@ -21,6 +21,16 @@ export const _proceedingStaffDetailRequestSchema = _proceedingIDSchema.extend({
     employeeId: z.number().readonly(),
 });
 
+export const _proceedingEmployeeListSchema = z.object({
+    id: z.number().readonly(),
+    employeeNumber: z.number().readonly(),
+    name: z.string(),
+    identityCardNumber: z.string(),
+    gradeCode: z.string(),
+    positionCode: z.string(),
+    placementCode: z.string(),
+});
+
 export const _proceedingChargeSchema = z.object({
     integrityId: z.number().readonly(),
     employeeId: z.number().readonly(),
