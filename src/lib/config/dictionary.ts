@@ -463,4 +463,9 @@ const dictionary: { [key: string]: string } = {
     carryForward: 'Baki Bawa Kehadapan',
     used: 'Diambil',
     balance: 'Baki',
+
+    //kontrak
+    candidateName: 'Nama Calon',
+    temporaryId: 'Id Sementara',
+    identityCardNo: 'No. Kad Pengenalan',
 };

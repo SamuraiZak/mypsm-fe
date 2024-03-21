@@ -9,12 +9,49 @@
     import { zod } from 'sveltekit-superforms/adapters';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
+    import CustomTable from '$lib/components/table/CustomTable.svelte';
     import { kgtMonthLookup } from '$lib/constants/core/dropdown.constant';
+    import type { PageData } from './$types';
+    import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
+    import CustomTab from '$lib/components/tab/CustomTab.svelte';
+    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import { goto } from '$app/navigation';
+    import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
+    import { approveOptions } from '$lib/constants/core/radio-option-constants';
+    export let data: PageData;
+
+    let umumTable: TableDTO = {
+        param: data.param,
+        meta: {
+            pageNum: 1,
+            pageSize: 5,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: data.leaveRecord ?? [],
+    };
+    let pemangkuanTable: TableDTO = {
+        param: data.param,
+        meta: {
+            pageNum: 1,
+            pageSize: 5,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: data.actingSchedule ?? [],
+    };
 </script>
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Rekod Gaji Dan Elaun" />
+    <ContentHeader title="Rekod Gaji Dan Elaun">
+        <TextIconButton
+            label="Kembali"
+            type="neutral"
+            icon="previous"
+            onClick={() => goto('./')}
+        />
+    </ContentHeader>
 </section>
 
 <section
@@ -124,7 +161,7 @@
                     errors={[]}
                 />
                 <CustomSelectField
-                    label="Bulan"
+                    label="Bulan Pergerakan Gaji"
                     id=""
                     disabled
                     options={kgtMonthLookup}
@@ -145,26 +182,248 @@
             <StepperContentHeader title="Maklumat Lain-Lain"
             ></StepperContentHeader>
             <StepperContentBody>
-                <CustomTextField
-                    label="refer to figma once endpoints are done"
-                    id=""
-                    disabled
-                    val=""
-                    errors={[]}
-                />
+                {#each data.otherDetail as details}
+                    <div class="w-full">
+                        <span class="text-base text-ios-labelColors-link-light"
+                            >{details.name}</span
+                        >
+                    </div>
+                    <CustomTextField
+                        label="Jumlah (RM)"
+                        id=""
+                        disabled
+                        val={details.jumlah}
+                        errors={[]}
+                    />
+                    <CustomTextField
+                        label="Tarikh Mula"
+                        id=""
+                        disabled
+                        val={details.tarikhMula}
+                        errors={[]}
+                    />
+                    <CustomTextField
+                        label="Tarikh Tamat"
+                        id=""
+                        disabled
+                        val={details.tarikhTamat}
+                        errors={[]}
+                    />
+                {/each}
             </StepperContentBody>
         </StepperContent>
 
         <StepperContent>
-            <StepperContentHeader title="Perubahan Gaji"
-            ></StepperContentHeader>
+            <StepperContentHeader title="Perubahan Gaji"></StepperContentHeader>
+            <StepperContentBody>
+                <CustomTab>
+                    <CustomTabContent title="Umum">
+                        <div class="w-full">
+                            <CustomTable
+                                title="Rekod Cuti Kakitangan"
+                                tableData={umumTable}
+                            />
+                        </div>
+                        <CustomTextField
+                            label="Jumlah Potongan Cuti (RM)"
+                            id=""
+                            type="number"
+                            val={1234}
+                        />
+                        <CustomTextField
+                            label="Tempoh Bayaran (Bulan)"
+                            id=""
+                            type="number"
+                            val={324}
+                        />
+                        <ContentHeader
+                            title="Senarai Potongan"
+                            borderClass="border-none"
+                        />
+                        {#each data.otherDetail as details}
+                            <div class="w-full">
+                                <span
+                                    class="text-base text-ios-labelColors-link-light"
+                                    >{details.name}</span
+                                >
+                            </div>
+                            <CustomTextField
+                                label="Tarikh Mula"
+                                id=""
+                                disabled
+                                val={details.tarikhMula}
+                                errors={[]}
+                            />
+                            <CustomTextField
+                                label="Tarikh Tamat"
+                                id=""
+                                disabled
+                                val={details.tarikhTamat}
+                                errors={[]}
+                            />
+                            <CustomTextField
+                                label="Jenis Bayaran"
+                                id=""
+                                disabled
+                                val={details.jenisBayaran}
+                                errors={[]}
+                            />
+                            <CustomTextField
+                                label="Jumlah Bayaran(RM)"
+                                id=""
+                                disabled
+                                val={details.jumlah}
+                                errors={[]}
+                            />
+                        {/each}
+                    </CustomTabContent>
+                    <CustomTabContent title="Pemangkuan">
+                        <div class="w-full">
+                            <CustomTable
+                                title="Rekod Cuti Kakitangan"
+                                tableData={pemangkuanTable}
+                            />
+                        </div>
+                        <CustomTextField
+                            label="Tarikh Berkuatkuasa"
+                            id=""
+                            disabled
+                            val=""
+                            errors={[]}
+                        />
+                        <CustomTextField
+                            label="Bulan Pelarasan Gaji"
+                            id=""
+                            disabled
+                            val=""
+                            errors={[]}
+                        />
+                        <CustomTextField
+                            label="Gred"
+                            id=""
+                            disabled
+                            val=""
+                            errors={[]}
+                        />
+                        <CustomTextField
+                            label="Penempatan"
+                            id=""
+                            disabled
+                            val=""
+                            errors={[]}
+                        />
+                        <CustomTextField
+                            label="Gaji Pokok"
+                            id=""
+                            disabled
+                            val=""
+                            errors={[]}
+                        />
+                        <CustomTextField
+                            label="ITKA"
+                            id=""
+                            disabled
+                            val=""
+                            errors={[]}
+                        />
+                        <CustomTextField
+                            label="Jenis Elaun Perumahan"
+                            id=""
+                            disabled
+                            val=""
+                            errors={[]}
+                        />
+                        <CustomTextField
+                            label="Jumlah Elaun Perumahan"
+                            id=""
+                            disabled
+                            val=""
+                            errors={[]}
+                        />
+                        <CustomTextField
+                            label="COLA"
+                            id=""
+                            disabled
+                            val=""
+                            errors={[]}
+                        />
+                        <CustomTextField
+                            label="Tarikh Pergerakan Gaji dan Jumlah"
+                            id=""
+                            disabled
+                            val=""
+                            errors={[]}
+                        />
+                        <CustomTextField
+                            label="Jumlah (RM)"
+                            id=""
+                            disabled
+                            val=""
+                            errors={[]}
+                        />
+                    </CustomTabContent>
+                    <CustomTabContent title="Pelarasan">
+                        <div class="w-full">
+                            <span
+                                class="text-base text-ios-labelColors-link-light"
+                                >Penambahan 1</span
+                            >
+                        </div>
+                        <CustomTextField
+                            label="Jenis Penambahan"
+                            id=""
+                            disabled
+                            val=""
+                            errors={[]}
+                        />
+                        <CustomTextField
+                            label="Tarikh Mula"
+                            id=""
+                            disabled
+                            val=""
+                            errors={[]}
+                        />
+                        <CustomTextField
+                            label="Tarikh Tamat"
+                            id=""
+                            disabled
+                            val=""
+                            errors={[]}
+                        />
+                        <CustomTextField
+                            label="Jenis Bayaran"
+                            id=""
+                            disabled
+                            val=""
+                            errors={[]}
+                        />
+                        <CustomTextField
+                            label="Jumlah Bayaran"
+                            id=""
+                            disabled
+                            val=""
+                            errors={[]}
+                        />
+                    </CustomTabContent>
+                </CustomTab>
+            </StepperContentBody>
+        </StepperContent>
+
+        <StepperContent>
+            <StepperContentHeader title="Pengarah Khidmat Pengurusan">
+                <TextIconButton label="Simpan" icon="check" form="" />
+            </StepperContentHeader>
             <StepperContentBody>
                 <CustomTextField
-                    label="refer to figma once endpoints are done"
+                    label="Ulasan/Tindakan"
                     id=""
-                    disabled
-                    val=""
-                    errors={[]}
+                    val="Lulus"
+                />
+                <CustomRadioBoolean
+                    label="Keputusan"
+                    options={approveOptions}
+                    id=""
+                    val={true}
                 />
             </StepperContentBody>
         </StepperContent>
