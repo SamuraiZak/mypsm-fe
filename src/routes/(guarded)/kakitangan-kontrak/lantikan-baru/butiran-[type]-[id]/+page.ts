@@ -211,7 +211,7 @@ export const load = async ({ params }) => {
 
 export const _submitEditNewContractEmployeeDetailForm = async (formData: EditNewContractEmployeeDetailDTO) => {
     const form = await superValidate(formData, zod(_editNewContractEmployeeSchema));
-    console.log(form)
+   console.log(form)
     if (form.valid) {
         const { isReadonly,employeeName,employeePosition, ...tempObj } = form.data
         const response: CommonResponseDTO =
@@ -301,8 +301,9 @@ export const _submitUpdateContractDetailForm = async (formData: EditContractDeta
 
 export const _submitSecretaryContractResultForm = async (formData: GetContracSecretaryResultDTO) => {
     const form = await superValidate(formData, zod(_addContractCommonRoleResult));
+    
     if (form.valid) {
-        const { isReadonly, ...tempObj } = form.data
+        const { isReadonly,name, ...tempObj } = form.data
         const response: CommonResponseDTO =
             await ContractEmployeeServices.addContractSecretaryResult(
                 tempObj as GetContracSecretaryResultDTO
@@ -340,7 +341,7 @@ export const _submitSupporterContractResultForm = async (formData: ContractCommo
 
 export const _submitApproverContractResultForm = async (formData: ContractCommonRoleResultDTO) => {
     const form = await superValidate(formData, zod(_addContractCommonRoleResult));
-
+    console.log(form)
     if (form.valid) {
         const { name, isReadonly, ...tempObj } = form.data
         const response: CommonResponseDTO =

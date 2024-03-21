@@ -1,5 +1,6 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
+    import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
@@ -10,7 +11,7 @@
     export let data: PageData;
 
     let rowData: any;
-    let finalSalaryTable: TableDTO = {
+    let kuartersTable: TableDTO = {
         param: data.param,
         meta: {
             pageSize: 5,
@@ -19,13 +20,15 @@
             totalPage: 1,
         },
         data: data.dataList ?? [],
-        hiddenData: ['id']
-    }
+        hiddenData: ['id'],
+    };
 </script>
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Gaji Akhir" />
+    <ContentHeader title="Permohonan Keluar Kuarters">
+
+    </ContentHeader>
 </section>
 
 <section
@@ -33,17 +36,18 @@
 >
     <div class="flex w-full flex-col justify-start gap-2.5 p-5">
         <FilterCard>
-            <FilterTextField label="Nama" inputValue={''} />
-            <FilterTextField label="No. Kad Pengenalan" inputValue={''} />
+            <FilterTextField label="No. Pemohon" inputValue={''} />
+            <FilterTextField label="Nama Pemohon" inputValue={''} />
+            <FilterTextField label="Jenis Pemohon" inputValue={''} />
             <FilterTextField label="Status" inputValue={''} />
         </FilterCard>
 
         <CustomTable
-            title="Senarai Kakitangan"
-            bind:tableData={finalSalaryTable}
+            title="Rekod Permohonan"
+            bind:tableData={kuartersTable}
             bind:passData={rowData}
             enableDetail
-            detailActions={() => goto('/gaji/gaji-akhir/'+rowData.id)}
-            />
+            detailActions={() => goto('./permohonan-keluar-kuarters/butiran/' + rowData.id)}
+        />
     </div>
 </section>

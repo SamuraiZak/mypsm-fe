@@ -1,18 +1,25 @@
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant'
 import type { CandidateIDRequestBody } from '$lib/dto/core/common/candidate-id-request.view-dto'
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto'
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto'
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto'
 import type { RadioDTO } from '$lib/dto/core/radio/radio.dto'
 import type { GetContractAcademicDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-academic-detail.dto'
-import type { GetContractActivityDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-activity-detail.dto.js'
-import type { GetContractDependencyDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-dependency-detail.dto.js'
+import type { GetContractActivityDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-activity-detail.dto'
+import type { GetContractDependencyDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-dependency-detail.dto'
 import type { GetContractDocumentDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-document.dto'
-import type { GetContractExperienceDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-experience-detail.dto.js'
-import type { GetContractNextOfKinDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-next-of-kin-detail.dto.js'
+import type { GetContractExperienceDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-experience-detail.dto'
+import type { GetContractNextOfKinDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-next-of-kin-detail.dto'
 import type { GetContractPersonalDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-personal-detail.dto'
 import type { GetContractSecretaryUpdateDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-secretary-update.dto'
+import type { RenewContractMeeting } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-meeting.dto.js'
+import type { RenewContractAddPerfomance, RenewContractGetPerfomance } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-performance.dto.js'
+import type { RenewContractSecretaryUpdate } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-secretary-update.dto.js'
+import type { RenewContractSuppAppApproval, RenewContractSupporterApprover } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-supp-app.dto.js'
+import { _addContractCommonRoleResult, _addPerformanceSchema, _contractMeetingSchema, _renewContractSecretaryUpdateSchema, _renewContractSupporterApproverSchema } from '$lib/schemas/mypsm/contract-employee/contract-employee-schemas.js'
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service'
 import { ContractEmployeeServices } from '$lib/services/implementation/mypsm/kakitangan-kontrak/contract-employee.service'
+import { superValidate } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
 
 export const load = async ({ params }) => {
@@ -22,6 +29,14 @@ export const load = async ({ params }) => {
     }
     const inputOption = await getInputOption();
 
+    let getContractPerformanceDetail = {} as RenewContractGetPerfomance;
+    let getContractMeetingDetail = {} as RenewContractMeeting;
+    let getSupporterApprover = {} as RenewContractSupporterApprover;
+    let getSupporterApproval = {} as RenewContractSuppAppApproval;
+    let getApproverApproval = {} as RenewContractSuppAppApproval;
+    let getSecretaryUpdate = {} as RenewContractSecretaryUpdate;
+    let getSecretaryApproval = {} as RenewContractSuppAppApproval;
+
     //get contract personal detail
     const getContractPersonalDetailResponse: CommonResponseDTO =
         await ContractEmployeeServices.getRenewContractPersonalDetail(contractId);
@@ -29,17 +44,17 @@ export const load = async ({ params }) => {
         getContractPersonalDetailResponse.data?.details as GetContractPersonalDetailDTO;
     const getAcademicRecordsResponse: CommonResponseDTO =
         await ContractEmployeeServices.getRenewContractAcademic(contractId)
-    const getAcademicRecords: GetContractAcademicDetailDTO = 
+    const getAcademicRecords: GetContractAcademicDetailDTO =
         getAcademicRecordsResponse.data?.details as GetContractAcademicDetailDTO;
     const getExperienceRecordResponse: CommonResponseDTO =
         await ContractEmployeeServices.getRenewContractExperience(contractId)
     const getExperienceRecord: GetContractExperienceDetailDTO =
         getExperienceRecordResponse.data?.details as GetContractExperienceDetailDTO;
-    const getActivityRecordResponse: CommonResponseDTO = 
+    const getActivityRecordResponse: CommonResponseDTO =
         await ContractEmployeeServices.getRenewContractActivity(contractId);
     const getActivityRecord: GetContractActivityDetailDTO =
         getActivityRecordResponse.data?.details as GetContractActivityDetailDTO;
-    const getFamilyRecordResponse: CommonResponseDTO = 
+    const getFamilyRecordResponse: CommonResponseDTO =
         await ContractEmployeeServices.getRenewContractFamily(contractId)
     const getFamilyRecord: GetContractDependencyDetailDTO =
         getFamilyRecordResponse.data?.details as GetContractDependencyDetailDTO;
@@ -57,11 +72,58 @@ export const load = async ({ params }) => {
         getContractDocumentResponse.data?.details as GetContractDocumentDTO;
     const getContractInfoResponse: CommonResponseDTO =
         await ContractEmployeeServices.getRenewContractInfo(contractId);
-    const getContractInfo: GetContractSecretaryUpdateDTO = 
+    const getContractInfo: GetContractSecretaryUpdateDTO =
         getContractInfoResponse.data?.details;
+
+    //contract performance detail
+    const getContractPerformanceDetailResponse: CommonResponseDTO =
+        await ContractEmployeeServices.getRenewContractPerformance(contractId);
+    getContractPerformanceDetail =
+        getContractPerformanceDetailResponse.data?.details as RenewContractGetPerfomance;
+    //contract meeting detail
+    const getContractMeetingDetailResponse: CommonResponseDTO =
+        await ContractEmployeeServices.getRenewContractMeeting(contractId);
+    getContractMeetingDetail =
+        getContractMeetingDetailResponse.data?.details as RenewContractMeeting;
+    //contract assigned supporter and approver
+    const getSupporterApproverResponse: CommonResponseDTO =
+        await ContractEmployeeServices.getRenewContractSupporterApprover(contractId);
+    getSupporterApprover =
+        getSupporterApproverResponse.data?.details as RenewContractSupporterApprover;
+    //contract assigned supporter result
+    const getSupporterApprovalResponse: CommonResponseDTO =
+        await ContractEmployeeServices.getRenewContractSupporterApproval(contractId);
+    getSupporterApproval =
+        getSupporterApprovalResponse.data?.details as RenewContractSuppAppApproval;
+    //contract assigned approver result
+    const getApproverApprovalResponse: CommonResponseDTO =
+        await ContractEmployeeServices.getRenewContractApproverApproval(contractId);
+    getApproverApproval =
+        getApproverApprovalResponse.data?.details as RenewContractSuppAppApproval;
+    //updated contract detail
+    const getSecretaryUpdateResponse: CommonResponseDTO =
+        await ContractEmployeeServices.getRenewContractSecretaryUpdate(contractId);
+    getSecretaryUpdate =
+        getSecretaryUpdateResponse.data?.details as RenewContractSecretaryUpdate;
+    //get secretary approval
+    const getSecretaryApprovalResponse: CommonResponseDTO =
+        await ContractEmployeeServices.getRenewContractSecretaryApproval(contractId);
+    getSecretaryApproval =
+        getSecretaryApprovalResponse.data?.details as RenewContractSuppAppApproval;
+
+
+
+    const addPerformanceForm = await superValidate(zod(_addPerformanceSchema));
+    const contractMeetingForm = await superValidate(getContractMeetingDetail, zod(_contractMeetingSchema), { errors: false })
+    const contractSupporterApproverForm = await superValidate(getSupporterApprover, zod(_renewContractSupporterApproverSchema), { errors: false })
+    const contractSupporterApprovalForm = await superValidate(getSupporterApproval, zod(_addContractCommonRoleResult), { errors: false })
+    const contractApproverApprovalForm = await superValidate(getApproverApproval, zod(_addContractCommonRoleResult), { errors: false })
+    const contractSecretaryUpdateForm = await superValidate(getSecretaryUpdate, zod(_renewContractSecretaryUpdateSchema), { errors: false });
+    const contractSecretaryApprovalForm = await superValidate(getSecretaryApproval,zod(_addContractCommonRoleResult), { errors: false })
 
     return {
         currentRoleCode,
+        contractId,
         getContractPersonalDetail,
         getAcademicRecords,
         getActivityRecord,
@@ -72,8 +134,105 @@ export const load = async ({ params }) => {
         getNextOfKinRecord,
         getContractDocument,
         getContractInfo,
+        addPerformanceForm,
+        getContractPerformanceDetail,
+        contractMeetingForm,
+        contractSupporterApproverForm,
+        contractSupporterApprovalForm,
+        contractApproverApprovalForm,
+        contractSecretaryUpdateForm,
+        contractSecretaryApprovalForm,
     }
 }
+
+export const _submitAddPerformanceForm = async (formData: RenewContractAddPerfomance) => {
+    const form = await superValidate(formData, zod(_addPerformanceSchema))
+
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await ContractEmployeeServices.addRenewContractPerformance(form.data);
+
+        return { response }
+    }
+}
+
+export const _submitContractMeetingForm = async (formData: RenewContractMeeting) => {
+    const form = await superValidate(formData, zod(_contractMeetingSchema))
+
+    if (form.valid) {
+        const { name, isReadonly, ...tempObj } = form.data
+        const response: CommonResponseDTO =
+            await ContractEmployeeServices.addRenewContractMeeting(tempObj);
+
+        return { response }
+    }
+}
+
+export const _submitContractSupporterApproverForm = async (formData: RenewContractSupporterApprover) => {
+    const form = await superValidate(formData, zod(_renewContractSupporterApproverSchema))
+
+    if (form.valid) {
+        const { id, isReadonly, ...tempObj } = form.data
+
+        const response: CommonResponseDTO =
+            await ContractEmployeeServices.addRenewContractSupporterApprover(tempObj);
+
+        return { response }
+    }
+}
+
+export const _submitContractSupporterApprovalForm = async (formData: RenewContractSuppAppApproval) => {
+    const form = await superValidate(formData, zod(_addContractCommonRoleResult))
+
+    if (form.valid) {
+        const { name, isReadonly, ...tempObj } = form.data
+
+        const response: CommonResponseDTO =
+            await ContractEmployeeServices.addRenewContractSupporterApproval(tempObj);
+
+        return { response }
+    }
+}
+
+export const _submitContractApproverApprovalForm = async (formData: RenewContractSuppAppApproval) => {
+    const form = await superValidate(formData, zod(_addContractCommonRoleResult))
+
+    if (form.valid) {
+        const { name, isReadonly, ...tempObj } = form.data
+
+        const response: CommonResponseDTO =
+            await ContractEmployeeServices.addRenewContractApproverApproval(tempObj);
+
+        return { response }
+    }
+}
+
+export const _submitContractSecretaryUpdateForm = async (formData: RenewContractSecretaryUpdate) => {
+    const form = await superValidate(formData, zod(_renewContractSecretaryUpdateSchema))
+
+    if (form.valid) {
+        const { isReadonly, ...tempObj } = form.data
+
+        const response: CommonResponseDTO =
+            await ContractEmployeeServices.addRenewContractSecretaryUpdate(tempObj);
+
+        return { response }
+    }
+}
+
+export const _submitContractSecretaryApprovalForm = async (formData: RenewContractSuppAppApproval) => {
+    const form = await superValidate(formData, zod(_addContractCommonRoleResult))
+
+    if (form.valid) {
+        const { name, isReadonly, ...tempObj } = form.data
+
+        const response: CommonResponseDTO =
+            await ContractEmployeeServices.addRenewContractSecretaryApproval(tempObj);
+
+        return { response }
+    }
+}
+
 
 const getInputOption = async () => {
 
@@ -208,6 +367,29 @@ const getInputOption = async () => {
     const serviceTypeLookup: DropdownDTO[] = LookupServices.setSelectOptions(
         serviceTypeLookupResponse,
     );
+    // -------------------------------------------------------
+    const suppAppResponse: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 350,
+        orderBy: null,
+        orderType: null,
+        filter: {
+            program: "TETAP",
+            employeeNumber: null,
+            name: null,
+            identityCard: null,
+            scheme: null,
+            grade: null,
+            position: null,
+        },
+    }
+    const supporterApproverResponse: CommonResponseDTO =
+        await LookupServices.getEmployeeList(suppAppResponse);
+
+    const supporterApproverLookup: DropdownDTO[] = LookupServices.setSelectOptionSupporterAndApprover(
+        supporterApproverResponse,
+    );
+    // -------------------------------------------------------
     const verifyOption: RadioDTO[] = [
         { name: "Sah", value: true },
         { name: "Tidak Sah", value: false }
@@ -229,6 +411,14 @@ const getInputOption = async () => {
         { value: 'Mesyuarat 1/12', name: 'Mesyuarat 1/12' },
         { value: 'Mesyuarat 1/102', name: 'Mesyuarat 1/102' },
         { value: 'Mesyuarat 2/101', name: 'Mesyuarat 2/101' },
+    ]
+
+    const scaleLabel = [
+        { name: 'Integriti' },
+        { name: 'Kepimpinan/Penyeliaanm' },
+        { name: 'Kreatif dan Proaktif' },
+        { name: 'Kawalan Diri' },
+        { name: 'Jalinan Hubungan dan Kerjasama' },
     ]
 
     return {
@@ -257,5 +447,7 @@ const getInputOption = async () => {
         positionLookup,
         serviceTypeLookup,
         commonOption,
+        scaleLabel,
+        supporterApproverLookup,
     }
 }

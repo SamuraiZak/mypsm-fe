@@ -48,6 +48,19 @@
         hiddenData: ['contractId'],
     };
 
+    //table for penyokong/pelulus
+    let supporterApproverTable: TableDTO = {
+        param: data.supporterApproverParam,
+        meta: data.supporterApproverTableResponse.data?.meta ?? {
+            pageSize: 5,
+            pageNum: 1,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: data.supporterApproverTable ?? [],
+        hiddenData: ['contractId'],
+    };
+
     $: selectedContract.contractors =
         (nearExpiredContractTable.selectedData as Contractor[]) ?? [];
 </script>
@@ -60,48 +73,66 @@
 <section
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
 >
-    <div class="flex w-full flex-col justify-start gap-2.5 p-5">
-        <FilterCard onSearch={() => {}}>
-            <FilterTextField label="ID Kakitangan Kontrak" inputValue={''} />
-            <FilterTextField label="Nama" inputValue={''} />
-            <FilterTextField label="No. Kad Pengenalan" inputValue={''} />
-        </FilterCard>
-        <div
-            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
-        >
+    {#if data.currentRoleCode === UserRoleConstant.urusSetiaKhidmatSokongan.code}
+        <div class="flex w-full flex-col justify-start gap-2.5 p-5">
+            <FilterCard onSearch={() => {}}>
+                <FilterTextField
+                    label="ID Kakitangan Kontrak"
+                    inputValue={''}
+                />
+                <FilterTextField label="Nama" inputValue={''} />
+                <FilterTextField label="No. Kad Pengenalan" inputValue={''} />
+            </FilterCard>
+            <div
+                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
+            >
+                <CustomTable
+                    title="Senarai Kontrak Dalam Proses Pembaharuan"
+                    bind:tableData={renewContractTable}
+                    bind:passData={rowData}
+                    enableDetail
+                    detailActions={() =>
+                        goto('./pembaharuan/butiran/' + rowData.contractId)}
+                />
+
+                {#if data.currentRoleCode == UserRoleConstant.urusSetiaKhidmatSokongan.code}
+                    <ContentHeader
+                        title="Tindakan: Pilih Kakitangan Untuk Dinilai Dalam Proses Pembaharuan Kontrak"
+                        borderClass="border-none"
+                    >
+                        {#if selectedContract.contractors.length > 0}
+                            <TextIconButton
+                                label="Hantar Untuk Dinilai"
+                                type="primary"
+                                onClick={() => {
+                                    _addSelectedContractForRenew(
+                                        selectedContract,
+                                    );
+                                }}
+                            />
+                        {/if}
+                    </ContentHeader>
+
+                    <CustomTable
+                        title="Senarai Kontrak Yang Hampir Tamat"
+                        bind:tableData={nearExpiredContractTable}
+                        enableAdd
+                    />
+                {/if}
+            </div>
+        </div>
+    {:else if data.currentRoleCode !== UserRoleConstant.urusSetiaKhidmatSokongan.code}
+        <div class="flex w-full flex-col justify-start gap-2.5 p-5">
             <CustomTable
                 title="Senarai Kontrak Dalam Proses Pembaharuan"
-                bind:tableData={renewContractTable}
+                bind:tableData={supporterApproverTable}
                 bind:passData={rowData}
                 enableDetail
                 detailActions={() =>
                     goto('./pembaharuan/butiran/' + rowData.contractId)}
             />
-
-            {#if data.currentRoleCode == UserRoleConstant.urusSetiaKhidmatSokongan.code}
-                <ContentHeader
-                    title="Tindakan: Pilih Kakitangan Untuk Dinilai Dalam Proses Pembaharuan Kontrak"
-                    borderClass="border-none"
-                >
-                    {#if selectedContract.contractors.length > 0}
-                        <TextIconButton
-                            label="Hantar Untuk Dinilai"
-                            type="primary"
-                            onClick={() => {
-                                _addSelectedContractForRenew(selectedContract);
-                            }}
-                        />
-                    {/if}
-                </ContentHeader>
-
-                <CustomTable
-                    title="Senarai Kontrak Yang Hampir Tamat"
-                    bind:tableData={nearExpiredContractTable}
-                    enableAdd
-                />
-            {/if}
         </div>
-    </div>
+    {/if}
 </section>
 
 <Toaster />

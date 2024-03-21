@@ -159,7 +159,7 @@
                 id="username"
                 type={$form.userGroupCode == UserGroupConstant.clinic.code
                     ? 'text'
-                    : 'number'}
+                    : 'text'}
                 placeholder={$form.userGroupCode ==
                 UserGroupConstant.clinic.code
                     ? '(Contoh: ahmad1234)'

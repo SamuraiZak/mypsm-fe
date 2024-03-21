@@ -117,7 +117,7 @@
             <FilterSelectField
                 options={ProgramDropdownConstant.list}
                 label="Program"
-                bind:inputValue={employeeListTable.param.filter.month}
+                bind:inputValue={employeeListTable.param.filter.program}
             />
             <FilterSelectField
                 label="Jawatan"

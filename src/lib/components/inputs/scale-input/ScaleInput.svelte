@@ -22,7 +22,7 @@
         { name: '10', value: 10 },
     ];
 
-    const scaleLabel = [
+    export let scaleLabel = [
         { name: 'Ilmu Pengetahuan Dan Kemahiran Dalam Bidang Kerja' },
         { name: 'Kuantiti Hasil Kerja' },
         { name: 'Kualiti Hasil Kerja' },
