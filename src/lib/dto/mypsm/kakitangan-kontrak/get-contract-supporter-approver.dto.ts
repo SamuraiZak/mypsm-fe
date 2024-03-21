@@ -1,5 +1,6 @@
 export interface GetContractSupporterApproverDTO {
-    isReadonly:  boolean;
+    candidateId?: number;
+    isReadonly?:  boolean;
     supporterId: number;
     approverId:  number;
 }

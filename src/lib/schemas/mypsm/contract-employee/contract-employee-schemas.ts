@@ -33,13 +33,23 @@ const phoneSchema = z.string().refine(x => /^[0-9]+$/.test(x) && (x.length == 11
 const optionalNumberSchema = z.number().refine(x => x > 0, { message: "Sila tetapkan pilihan anda." }).nullable().default(null);
 const optionalTextSchema = z.string().min(4, { message: "Medan hendaklah lebih dari 4 karakter." }).nullable().default(null);
 const maxTextSchema = z
-.string({ required_error: 'Medan ini tidak boleh kosong.', invalid_type_error: 'Medan ini tidak boleh kosong.' })
-.max(32, {
-    message: 'Medan ini tidak boleh melebihi 32 karakter.',
-})
-.trim()
+    .string({ required_error: 'Medan ini tidak boleh kosong.', invalid_type_error: 'Medan ini tidak boleh kosong.' })
+    .max(32, {
+        message: 'Medan ini tidak boleh melebihi 32 karakter.',
+    })
+    .trim()
+
+const yearSchema = z.number({
+    required_error: "Medan ini tidak boleh kosong.",
+    invalid_type_error: "Hanya nombor sahaja dibenarkan.",
+}).gte(2010, { message: "Hanya 4 gte angka sahaja dibenarkan." }).lte(2030, { message: "Hanya 4 lte angka sahaja dibenarkan." })
 
 
+
+
+//==================================================
+// New Contract Schema
+//==================================================
 export const _addNewContractEmployeeSchema = z.object({
     candidateId: numberSchema.optional(),
     name: shortTextSchema,
@@ -89,8 +99,8 @@ export const _editNewContractEmployeeSchema = z.object({
     isExPoliceOrSoldier: booleanSchema.default(false),
     isInternalRelationship: booleanSchema.default(false),
     employeeNumber: optionalTextSchema,
-    employeeName: optionalTextSchema,
-    employeePosition: optionalTextSchema,
+    employeeName: z.string().nullable().default(null),
+    employeePosition: z.string().nullable().default(null),
     relationshipId: optionalNumberSchema,
     isReadonly: booleanSchema.default(false),
 })
@@ -181,7 +191,7 @@ export const _addContractViewSecretaryUpdate = z.object({
 
 export const _addContractCommonRoleResult = z.object({
     id: numberSchema,
-    name: shortTextSchema.optional(),
+    name: z.string().optional(),
     status: booleanSchema,
     remark: shortTextSchema,
     isReadonly: booleanSchema.default(false)
@@ -195,4 +205,56 @@ export const _addContractSupporterApprover = z.object({
 
 export const _getContractEmployeeNumber = z.object({
     employeeNumber: shortTextSchema.nullable().default(null)
+})
+
+//==================================================
+// Renew Contract Schema
+//==================================================
+export const _addPerformanceSchema = z.object({
+    contractId: z.number(),
+    year: yearSchema.default(2024),
+    performanceMark: numberSchema.default(0),
+    result: booleanSchema,
+})
+
+export const _contractMeetingSchema = z.object({
+    id: numberSchema,
+    name: shortTextSchema,
+    remark: shortTextSchema,
+    status: booleanSchema,
+    // meetingName: shortTextSchema,
+    // meetingDate: shortTextSchema,
+    isReadonly: booleanSchema,
+})
+
+export const _renewContractSupporterApproverSchema = z.object({
+    id: numberSchema.optional(),
+    contractId: numberSchema,
+    supporterId: numberSchema,
+    approverId: numberSchema,
+    isReadonly: booleanSchema.default(false),
+})
+
+export const _renewContractSecretaryUpdateSchema = z.object({
+    contractId:                numberSchema,
+    startContract:             stringToMinDate,
+    endContract:               stringToMinDate,
+    wageRate:                  numberSchema,
+    placementId:               numberSchema,
+    designation:               shortTextSchema,
+    reportDutyDate:            stringToMinDate,
+    kwspNo:                    shortTextSchema,
+    socsoNo:                   shortTextSchema,
+    taxNo:                     shortTextSchema,
+    bankName:                  shortTextSchema,
+    bankAccount:               shortTextSchema,
+    serviceTypeId:             numberSchema,
+    leaveEntitlement:          numberSchema,
+    effectiveDate:             stringToMaxDate,
+    civilServiceStartDate:     stringToMaxDate,
+    lkimServiceStartDate:      stringToMaxDate,
+    currentServiceStartDate:   stringToMinDate,
+    firstConfirmServiceDate:   stringToMaxDate,
+    currentConfirmServiceDate: stringToMinDate,
+    isReadonly:                booleanSchema.default(false),
 })

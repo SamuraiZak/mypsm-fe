@@ -10,7 +10,7 @@ import {
     type CommonListRequestDTO,
 } from '$lib/dto/core/common/common-list-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
-import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
+import { commonIdRequestDTOConvert, type commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
 import { AddNewContractEmployeeAcademicDTOConvert, type AddNewContractEmployeeAcademicDTO } from '$lib/dto/mypsm/kakitangan-kontrak/add-contract-academic.dto';
 import { AddNewContractEmployeeActivityDTOConvert, type AddNewContractEmployeeActivityDTO } from '$lib/dto/mypsm/kakitangan-kontrak/add-contract-activity.dto';
 import { AddNewContractEmployeeDependencyDTOConvert, type AddNewContractEmployeeDependencyDTO } from '$lib/dto/mypsm/kakitangan-kontrak/add-contract-dependency.dto';
@@ -19,12 +19,16 @@ import { AddContractNextOfKinDTOConvert, type AddContractNextOfKinDTO } from '$l
 import { AddContractApproverSupporterDTOConvert, type AddContractApproverSupporterDTO } from '$lib/dto/mypsm/kakitangan-kontrak/add-contract-supproter-approver.dto';
 import { AddNewContractEmployeeDTOConvert, type AddNewContractEmployeeDTO } from '$lib/dto/mypsm/kakitangan-kontrak/add-new-contract-employee.dto';
 import { EditNewContractEmployeeDetailDTOConvert, type EditNewContractEmployeeDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/edit-new-contract-employee-detail.dto';
+import { RenewContractAddPerfomanceConvert, type RenewContractAddPerfomance } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-performance.dto';
 import { RenewContractAddDTOConvert, type RenewContractAddDTO } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-add.dto';
 import { EditContractDetailSecretaryDTOConvert, type EditContractDetailSecretaryDTO } from '$lib/dto/mypsm/kakitangan-kontrak/update-contract-detail-secretary.dto';
 import { ContractCommonRoleResultDTOConvert, type ContractCommonRoleResultDTO } from '$lib/dto/mypsm/kakitangan-kontrak/update-contract-secretary-result.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
+import { RenewContractMeetingConvert, type RenewContractMeeting } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-meeting.dto';
+import { RenewContractSupporterApproverConvert, type RenewContractSupporterApprover, type RenewContractSuppAppApproval, RenewContractSuppAppApprovalConvert } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-supp-app.dto';
+import { RenewContractSecretaryUpdateConvert, type RenewContractSecretaryUpdate } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-secretary-update.dto';
 
 export class ContractEmployeeServices {
 
@@ -499,7 +503,7 @@ export class ContractEmployeeServices {
                 .json();
             // await toast for resolved or rejected state
             const response: Response = await getPromiseToast(promiseRes);
-  
+
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
 
@@ -1100,14 +1104,396 @@ export class ContractEmployeeServices {
             return CommonResponseConstant.httpError;
         }
     }
-    //get renew contract information
+    //get renew contract information (old contract details)
     static async getRenewContractInfo(param: CandidateIDRequestBody) {
         try {
             let url: Input = 'contracts/renew/contract_information';
 
             const response: Response = await http
                 .post(url, {
-                    body: CandidateIDRequestBodyConvert.toJson(param),
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //add renew contract performance
+    static async addRenewContractPerformance(param: RenewContractAddPerfomance) {
+        try {
+            let url: Input = 'contracts/renew/performance/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: RenewContractAddPerfomanceConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get renew contract performance
+    static async getRenewContractPerformance(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'contracts/renew/performance';
+
+            const response: Response = await http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //add renew contract meeting details
+    static async addRenewContractMeeting(param: RenewContractMeeting) {
+        try {
+            let url: Input = 'contracts/renew/meeting/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: RenewContractMeetingConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // get renew contract meeting details
+    static async getRenewContractMeeting(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'contracts/renew/meeting';
+
+            const response: Response = await http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //add renew contract supporter and approver
+    static async addRenewContractSupporterApprover(param: RenewContractSupporterApprover) {
+        try {
+            let url: Input = 'contracts/renew/set_supporter_approver/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: RenewContractSupporterApproverConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // get renew contract meeting details
+    static async getRenewContractSupporterApprover(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'contracts/renew/set_supporter_approver';
+
+            const response: Response = await http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // assigned supporter table list
+    static async getRenewContractSupporterTable(param: CommonListRequestConvert) {
+        try {
+            let url: Input = 'contracts/renew/supporter/list';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // add assigned supporter approval
+    static async addRenewContractSupporterApproval(param: RenewContractSuppAppApproval) {
+        try {
+            let url: Input = 'contracts/renew/supporter/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: RenewContractSuppAppApprovalConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // get assigned supporter approval detail
+    static async getRenewContractSupporterApproval(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'contracts/renew/supporter/detail';
+
+            const response: Response = await http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // assigned approver table list
+    static async getRenewContractApproverTable(param: CommonListRequestConvert) {
+        try {
+            let url: Input = 'contracts/renew/approver/list';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // add assigned approver approval
+    static async addRenewContractApproverApproval(param: RenewContractSuppAppApproval) {
+        try {
+            let url: Input = 'contracts/renew/approver/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: RenewContractSuppAppApprovalConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // get assigned approver approval detail
+    static async getRenewContractApproverApproval(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'contracts/renew/approver/detail';
+
+            const response: Response = await http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // add secretary contract update
+    static async addRenewContractSecretaryUpdate(param: RenewContractSecretaryUpdate) {
+        try {
+            let url: Input = 'contracts/renew/new/contract/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: RenewContractSecretaryUpdateConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // get secretary contract update
+    static async getRenewContractSecretaryUpdate(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'contracts/renew/new/contract/detail';
+
+            const response: Response = await http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // add secretary approval
+    static async addRenewContractSecretaryApproval(param: RenewContractSuppAppApproval) {
+        try {
+            let url: Input = 'contracts/renew/secretary/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: RenewContractSuppAppApprovalConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // get secretary approval
+    static async getRenewContractSecretaryApproval(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'contracts/renew/secretary/detail';
+
+            const response: Response = await http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
                 })
                 .json();
 
