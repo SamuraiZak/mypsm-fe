@@ -6,6 +6,7 @@ import {
     booleanSchema,
     codeSchema,
     dateStringSchema,
+    numberSchema,
     shortTextSchema,
 } from '$lib/schemas/common/schema-type';
 import { z } from 'zod';
@@ -117,13 +118,21 @@ export const _proceedingStaffDetailResponseSchema = z.object({
     serviceDetail: _proceedingServiceResponseSchema,
 });
 
-export const _proceedingChargeMeetingRequestSchema = z.object({
-    employeeId: z.number(),
-    meetingDate: dateStringSchema,
-    meetingName: shortTextSchema,
-    meetingCount: z.number(),
-    accusationList: z.array(shortTextSchema),
+export const _proceedingAccusationSchema = z.object({
+    id: z.string().nullable(),
+    title: shortTextSchema,
 });
+export const _proceedingChargeMeetingRequestSchema = z
+    .object({
+        employeeId: z.number(),
+        meetingDate: dateStringSchema,
+        meetingName: shortTextSchema,
+        meetingCount: numberSchema,
+        accusationList: z.array(z.string()),
+    })
+    .refine((data) => data.accusationList.length > 0, {
+        message: 'Tuduhan tidak boleh kosong',
+    });
 
 export const _proceedingApproverSchema = z.object({
     integrityId: z.number().readonly(),
