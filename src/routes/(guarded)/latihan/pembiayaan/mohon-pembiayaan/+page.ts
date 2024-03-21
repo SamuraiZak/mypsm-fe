@@ -106,7 +106,7 @@ export const _submitDocumentForm = async (id: number, files: File[]) => {
     if (response.status === 'success')
         setTimeout(() => {
             goto(`../${id}`);
-        }, 2000);
+        }, 1500);
 
     return { response };
 };
