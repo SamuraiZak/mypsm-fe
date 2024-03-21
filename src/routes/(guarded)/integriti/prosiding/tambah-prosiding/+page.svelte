@@ -4,19 +4,16 @@
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
-    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
-    import type {
-        ProceedingChargeDetailResponseDTO,
-        ProceedingChargeListResponseDTO,
-    } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
+    import type { ProceedingChargeListResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
     import type { PageData } from './$types';
     import { _updateTable } from './+page';
+    import type { ProceedingEmployeeListResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-employee-list-response.dto';
 
     export let data: PageData;
-    let rowData: ProceedingChargeDetailResponseDTO;
+    let rowData: ProceedingEmployeeListResponseDTO;
     let param: CommonListRequestDTO = data.param;
 
     // Table list - new application view for secretary role
@@ -61,7 +58,10 @@
     <div
         class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
     >
-        <ContentHeader title="" borderClass="border-none">
+        <ContentHeader
+            title="Sila pilih kakitangan untuk ditambahkan rekod prosiding"
+            borderClass="border-none"
+        >
             <TextIconButton
                 label="Kembali"
                 type="neutral"
@@ -86,7 +86,7 @@
                 bind:tableData={proceedingTable}
                 bind:passData={rowData}
                 selectActions={() => {
-                    const route = `./prosiding/${rowData.integrityId}-${rowData.employeeId}`;
+                    const route = `./tambah-prosiding/${rowData.id}`;
 
                     goto(route);
                 }}
