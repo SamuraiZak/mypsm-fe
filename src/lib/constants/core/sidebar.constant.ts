@@ -119,11 +119,11 @@ export class SidebarConstant {
                     subItems: [
                         {
                             name: 'Pinjaman',
-                            path: '/pinjaman-kuarters/pinjaman',
+                            path: '/pinjaman-dan-kuarters/pinjaman',
                         },
                         {
                             name: 'Kuarters',
-                            path: '/pinjaman-kuarters/kuarters',
+                            path: '/pinjaman-dan-kuarters/kuarters',
                         },
                     ],
                 },
@@ -505,9 +505,108 @@ export class SidebarConstant {
             ],
         },
 
-        // Pengarah Bahagian Negeri
+        // Pengarah Bahagian Bahagian
         {
             role: RoleConstant.pengarahBahagian.code,
+            navItems: [
+                {
+                    name: 'Halaman Utama',
+                    path: '/halaman-utama',
+                },
+                {
+                    name: 'Perjawatan',
+                    path: '',
+                    subItems: [
+                        {
+                            name: 'Pemangkuan',
+                            path: '/perjawatan/pemangkuan',
+                        },
+                        {
+                            name: 'Pengesahan dalam Perkhidmatan',
+                            path: '/perjawatan/pengesahan-dalam-perkhidmatan',
+                        },
+                        {
+                            name: 'Kenaikan Pangkat',
+                            path: '/perjawatan/kenaikan-pangkat',
+                        },
+                        {
+                            name: 'Pertukaran',
+                            path: '/perjawatan/pertukaran',
+                        },
+                        {
+                            name: 'tanggung Kerja',
+                            path: '/perjawatan/tanggung-kerja',
+                        },
+                    ],
+                },
+                {
+                    name: 'Cuti',
+                    path: '',
+                    subItems: [
+                        {
+                            name: 'Permohonan Cuti',
+                            path: '/cuti/permohonan-cuti',
+                        },
+                        {
+                            name: 'Pengumpulan Gantian Cuti Rehat',
+                            path: '/cuti/pengumpulan-gantian-cuti-rehat',
+                        },
+                        {
+                            name: 'Pengeluaran Gantian Cuti Rehat Awal',
+                            path: '/cuti/pengeluaran-gantian-cuti-rehat-awal',
+                        },
+                    ],
+                },
+                {
+                    name: 'Elaun',
+                    path: '',
+                    subItems: [
+                        {
+                            name: 'Permohonan Elaun',
+                            path: '/elaun/permohonan',
+                        },
+                    ],
+                },
+                {
+                    name: 'Latihan',
+                    path: '',
+                    subItems: [
+                        {
+                            name: 'Permohonan Pembiayaan Pembelajaran',
+                            path: '/latihan/pembiayaan',
+                        },
+                    ],
+                },
+                {
+                    name: 'Pinjaman',
+                    path: '',
+                    subItems: [
+                        {
+                            name: 'Permohonan Kuarters',
+                            path: '/pinjaman/permohonan-kuarters',
+                        },
+                    ],
+                },
+                {
+                    name: 'Kakitangan Kontrak',
+                    path: '',
+                    subItems: [
+                        {
+                            name: 'Pembaharuan Kakitangan Kontrak',
+                            path: '/kakitangan-kontrak/pembaharuan',
+                        },
+                    ],
+                },
+                {
+                    name: 'Tetapan',
+                    path: '/tetapan',
+                },
+            ],
+        },
+
+        // Pengarah Bahagian Negeri
+        {
+            role: RoleConstant.pengarahNegeri.code,
             navItems: [
                 {
                     name: 'Halaman Utama',
@@ -695,7 +794,7 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Gaji & Elaun-elaun Kakitangan',
-                            path: '/gaji/gaji-elaun-kakitangan',
+                            path: '/gaji/gaji-elaun',
                         },
                     ],
                 },
@@ -1714,6 +1813,36 @@ export class SidebarConstant {
             ],
         },
         // urus Seta Tatatertib
+
+
+        //Urus Setia Peringkat Negeri
+        {
+            role: RoleConstant.urusSetiaPeringkatNegeri.code,
+            navItems: [
+                {
+                    name: 'Halaman Utama',
+                    path: '/halaman-utama',
+                },
+                {
+                    name: 'Pinjaman & Kuarters',
+                    path: '',
+                    subItems: [
+                        {
+                            name: 'Pinjaman',
+                            path: '/pinjaman-dan-kuarters/pinjaman',
+                        },
+                        {
+                            name: 'Kuarters (Permohonan Masuk)',
+                            path: '/pinjaman-dan-kuarters/permohonan-masuk-kuarters',
+                        },
+                        {
+                            name: 'Kuarters (Permohonan Keluar)',
+                            path: '/pinjaman-dan-kuarters/permohonan-keluar-kuarters',
+                        },
+                    ],
+                },
+            ],
+        },
 
         // unit negeri
         {
