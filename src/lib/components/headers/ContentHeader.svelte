@@ -1,4 +1,5 @@
 <script lang="ts">
+    export let color: string = '';
     export let title: string = 'Page Title';
     export let borderClass: string = '';
 </script>
@@ -13,7 +14,13 @@
     <div
         class="flex h-full max-h-full min-h-full w-fit flex-row items-center justify-start"
     >
-        <span class="text-base font-medium"> {title} </span>
+        <span
+            class="text-base font-medium {color === 'system-primary'
+                ? 'text-system-primary'
+                : 'text-txt-primary'}"
+        >
+            {title}
+        </span>
     </div>
     <!-- leading ends here -->
 

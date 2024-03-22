@@ -6,6 +6,7 @@ import {
     booleanSchema,
     codeSchema,
     dateStringSchema,
+    numberSchema,
     shortTextSchema,
 } from '$lib/schemas/common/schema-type';
 import { z } from 'zod';
@@ -117,13 +118,22 @@ export const _proceedingStaffDetailResponseSchema = z.object({
     serviceDetail: _proceedingServiceResponseSchema,
 });
 
-export const _proceedingChargeMeetingRequestSchema = z.object({
-    employeeId: z.number(),
-    meetingDate: dateStringSchema,
-    meetingName: shortTextSchema,
-    meetingCount: z.number(),
-    accusationList: z.array(shortTextSchema),
+export const _proceedingAccusationSchema = z.object({
+    id: z.string().nullable(),
+    title: shortTextSchema,
 });
+
+export const _proceedingChargeMeetingRequestSchema = z
+    .object({
+        employeeId: z.number(),
+        meetingDate: dateStringSchema,
+        meetingName: shortTextSchema,
+        meetingCount: numberSchema,
+        accusationList: z.array(z.string()),
+    })
+    .refine((data) => data.accusationList.length > 0, {
+        message: 'Tuduhan tidak boleh kosong',
+    });
 
 export const _proceedingApproverSchema = z.object({
     integrityId: z.number().readonly(),
@@ -131,13 +141,49 @@ export const _proceedingApproverSchema = z.object({
     remark: shortTextSchema,
 });
 
-export const _chargesListSchema = z.object({
+export const _chargesSchema = z.object({
     integrityId: z.number().readonly(),
     accusationId: z.number(),
     accusationListId: z.number(),
     accusationName: z.string(),
 });
 
+export const _chargesListSchema = z.object({
+    accusationList: z.array(_chargesSchema),
+});
+
+// Sentencing Meeting Schemas
+export const _emolumenDateSchema = z.object({
+    startDate: dateStringSchema,
+    endDate: dateStringSchema,
+});
+
+export const _sentenceSchema = z.object({
+    penaltyTypeCode: codeSchema,
+    effectiveDate: dateStringSchema,
+    emolumenRight: numberSchema.nullish(),
+    emolumenDate: z.array(_emolumenDateSchema).nullish(),
+    newGradeCode: codeSchema.nullish(),
+    salaryMovementCount: numberSchema.nullish(),
+    sentencingMonth: codeSchema.nullish(),
+});
+
+export const _sentencingListSchema = z.object({
+    accusationListId: z.number().readonly(),
+    result: booleanSchema,
+    sentencing: z.array(_sentenceSchema),
+});
+
+export const _proceedingSentencingMeetingSchema = z.object({
+    integrityId: z.number().readonly(),
+    meetingDate: shortTextSchema,
+    meetingCount: numberSchema,
+    meetingName: shortTextSchema,
+    meetingCode: codeSchema,
+    meetingResult: z.array(_sentencingListSchema),
+});
+
+// suspension meeting schema
 export const _proceedingSuspensionSchema = z.object({
     employeeId: z.number().readonly(),
     meetingDate: z.string(),
@@ -149,6 +195,7 @@ export const _proceedingSuspensionSchema = z.object({
     endDate: z.string(),
 });
 
+// appeal meeting schema
 export const _proceedingAppealSchema = z.object({
     integrityId: z.number().readonly(),
     meetingDate: z.string(),

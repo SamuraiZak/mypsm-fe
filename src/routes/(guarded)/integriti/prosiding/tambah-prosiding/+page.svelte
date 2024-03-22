@@ -7,10 +7,10 @@
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
-    import type { ProceedingChargeListResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
     import type { PageData } from './$types';
     import { _updateTable } from './+page';
     import type { ProceedingEmployeeListResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-employee-list-response.dto';
+    import type { ProceedingChargeListResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
 
     export let data: PageData;
     let rowData: ProceedingEmployeeListResponseDTO;
