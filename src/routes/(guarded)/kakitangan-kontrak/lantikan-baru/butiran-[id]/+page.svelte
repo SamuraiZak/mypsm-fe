@@ -460,7 +460,7 @@
             <StepperContentHeader title="Maklumat Peribadi">
                 {#if !$editNewContractEmployeeDetailForm.isReadonly && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         form="editNewContractEmployeeDetailForm"
                         type="primary"
                         icon="check"
@@ -755,7 +755,7 @@
                         onClick={() => (academicModal = true)}
                     />
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         type="primary"
                         icon="check"
                         onClick={() => {
@@ -942,7 +942,7 @@
                         onClick={() => (experienceModal = true)}
                     />
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         type="primary"
                         icon="check"
                         onClick={() => {
@@ -1084,7 +1084,7 @@
                         onClick={() => (activityModal = true)}
                     />
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         type="primary"
                         icon="check"
                         onClick={() => {
@@ -1188,7 +1188,7 @@
                         onClick={() => (familyModal = true)}
                     />
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         type="primary"
                         icon="check"
                         onClick={() => {
@@ -1521,7 +1521,7 @@
                         onClick={() => (dependantModal = true)}
                     />
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         type="primary"
                         icon="check"
                         onClick={() => {
@@ -1852,7 +1852,7 @@
                         onClick={() => (nextOfKinModal = true)}
                     />
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         type="primary"
                         icon="check"
                         onClick={() => {
@@ -2177,7 +2177,7 @@
             <StepperContentHeader title="Dokumen Sokongan">
                 {#if data.getContractDocuments.attachmentName == "" && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         form="documentUploadForm"
                         type="primary"
                         icon="check"
