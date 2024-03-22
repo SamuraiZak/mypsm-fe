@@ -9,6 +9,7 @@ import {
     type CommonListRequestDTO,
 } from '$lib/dto/core/common/common-list-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
+import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
 import type { SurcajServiceDetailResponseDTO } from '$lib/dto/mypsm/integrity/surcaj/surcaj--service-detail-response.dto';
 import type { SurcajApplicationDetailResponseDTO } from '$lib/dto/mypsm/integrity/surcaj/surcaj-application-detail-response.dto';
 import type { SurcajEmployeeDetailResponseDTO } from '$lib/dto/mypsm/integrity/surcaj/surcaj-employee-detail-response.dto';
@@ -146,7 +147,7 @@ export class IntegrityServices {
     // ==================================================
 
 
-    static async surcajEmployeeDetailDetails(param: SurcajEmployeeDetailResponseDTO) {
+    static async surcajEmployeeDetails(param: commonIdRequestDTO) {
         try {
             const url: Input = 'integrity/surcharge/view';
 
@@ -161,7 +162,6 @@ export class IntegrityServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;

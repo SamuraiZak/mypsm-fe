@@ -163,10 +163,10 @@ export const _serviceDetailSchema = z.object({
     // revisionMonth: codeSchema,
     maximumSalary: numberSchema,
     baseSalary: numberSchema,
-    ITKA: numberSchema,
-    ITP: numberSchema,
-    EPW: numberSchema,
-    COLA: numberSchema,
+    ITKA: numberSchema.optional(),
+    ITP: numberSchema.optional(),
+    EPW: numberSchema.optional(),
+    COLA: numberSchema.optional(),
     isReadOnly: z.boolean().readonly(),
 });
 
@@ -184,7 +184,8 @@ export const _serviceInfoRequestSchema = _serviceDetailSchema.omit({
 
 export const _academicInfoSchema = z
     .object({
-        educationId: z.number().readonly(),
+        
+        educationId: z.number().readonly().optional(),
         majorId: numberIdSchema,
         minorId: numberIdSchema,
         countryId: numberIdSchema,
@@ -354,9 +355,10 @@ export const _nextOfKinEditRequestSchema = z.object({
 export const _medicalAssessmentInfoSchema = z.object({
     id: numberSchema.optional(),
     diseases: shortTextSchema,
+    disease: shortTextSchema,
     isPersonal: booleanSchema,
     isFamily: booleanSchema,
-    remark: shortTextSchema,
+    remark: shortTextSchema.optional().nullable(),
 });
 
 
@@ -370,12 +372,15 @@ export const _medicalAssessmentListRequestSchema = _medicalAssessmentListRespons
 
 
 export let _diseaseInfoSchema = z.object({
-    id: z.number().readonly(),
+    id: z.number().readonly().nullish(),
     disease: z.string(),
+    diseases: z.string(),
     isPersonal: z.boolean(),
     isFamily: z.boolean(),
     remark: z.string().optional(),
 });
+
+export type DiseaseInfoDTO = z.infer<typeof _diseaseInfoSchema>;
 
 export let _diseaseInfoCollectionSchema = z.object({
     medicalHistory: _diseaseInfoSchema.array(),

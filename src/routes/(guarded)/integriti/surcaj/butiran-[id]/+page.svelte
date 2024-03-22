@@ -9,8 +9,25 @@
     import { Checkbox, Modal } from 'flowbite-svelte';
     import type { PageData } from './$types';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
+    import SuperDebug, { superForm } from 'sveltekit-superforms';
+    import { zod } from 'sveltekit-superforms/adapters';
+    import { _surcajEmployeeResponseSchema } from '$lib/schemas/mypsm/integrity/surcaj-scheme';
 
     export let data: PageData;
+
+    const {
+        form, 
+        enhance,
+    } = superForm(data.personalInfoForm, {
+        SPA: true,
+        id: 'serviceDetail',
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: zod(_surcajEmployeeResponseSchema),
+    });
 
 
     
@@ -51,7 +68,7 @@
                     id="employeeNumber"
                     label={'No. Pekerja'}
                     type="text"
-                    val=""
+                    bind:val={$form.employeeNumber}
                 ></CustomTextField>
                 <CustomTextField
                     disabled
@@ -65,7 +82,7 @@
                     id="fullName"
                     label={'Nama Penuh'}
                     type="text"
-                    val=""
+                    bind:val={$form.fullName}
                 ></CustomTextField>
                 <!--      -->
                 <!-- <CustomSelectField

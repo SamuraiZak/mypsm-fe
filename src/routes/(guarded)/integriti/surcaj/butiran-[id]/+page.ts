@@ -1,8 +1,19 @@
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
+import type { commonIdRequestDTO } from "$lib/dto/core/common/id-request.dto.js";
 import type { DropdownDTO } from "$lib/dto/core/dropdown/dropdown.dto";
+import type { SurcajEmployeeDetailResponseDTO } from "$lib/dto/mypsm/integrity/surcaj/surcaj-employee-detail-response.dto";
+import { _surcajEmployeeResponseSchema } from "$lib/schemas/mypsm/integrity/surcaj-scheme";
 import { LookupServices } from "$lib/services/implementation/core/lookup/lookup.service";
+import { IntegrityServices } from "$lib/services/implementation/mypsm/integriti/integrity.service";
+import { superValidate } from "sveltekit-superforms";
+import { zod } from "sveltekit-superforms/adapters";
 
-export async function load({ }) {
+export async function load({params }) {
+
+let currentID: commonIdRequestDTO = {
+    id: Number(params.id)
+}
+    
 
     // ==========================================================================
     // Get Lookup Functions
@@ -229,7 +240,17 @@ export async function load({ }) {
     ];
 
 
+    const personalDetailResponse: CommonResponseDTO =
+        await IntegrityServices.surcajEmployeeDetails(currentID);
+
+    const personalInfoForm = await superValidate(personalDetailResponse.data?.details as SurcajEmployeeDetailResponseDTO, zod(
+        _surcajEmployeeResponseSchema))
+        ;
+
+
+
     return {
+        personalInfoForm,
         selectionOptions: {
             identityCardColorLookup,
             cityLookup,

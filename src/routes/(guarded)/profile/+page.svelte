@@ -162,7 +162,6 @@
         tempNextOfKin = [...tempNextOfKin, ...tempData] as NextOfKin[];
         _submitNextOfKinInfoForm(tempNextOfKin);
     };
-
     let isReadonlyExamFormStepper: boolean = true;
 
     let isReadonlyPersonalFormStepper: boolean = true;
@@ -699,10 +698,20 @@
             //     toast('Tiada perubahan data dikesan.');
             //     error(400);
             // }
-            
-            const result = await _submitMedicalHistoryForm($medicalHistoryForm);
-            if (result.response.status === 'success')
-                isReadonlyHistoryMedicalFormStepper = true;
+
+            // const result = await _submitMedicalHistoryForm($medicalHistoryForm);
+            // if (result.response.status === 'success')
+            //     isReadonlyHistoryMedicalFormStepper = true;
+            $medicalHistoryForm.medicalHistory.forEach(element => {
+                element.disease = element.diseases;
+            });
+
+            _submitMedicalHistoryForm($medicalHistoryForm).then((result)=>{
+                if(result.response.status == "success"){
+                    data.diseaseCollectionForm.data.medicalHistory = result.tempMedicalHistoryForm.medicalHistory;
+                }
+                
+            })
         },
     });
 
@@ -744,7 +753,7 @@
         data: data.salaryViewTable ?? [],
     };
 
-    console.log(data.diseaseList);
+    console.log($medicalHistoryForm);
 </script>
 
 <section
@@ -2963,6 +2972,8 @@
                                                 id="inSchool"
                                                 label={'Bersekolah'}
                                                 disabled={!isEditableNextOfKin}
+                                                options={data.selectionOptions
+                                                    .generalLookup}
                                                 bind:val={$nextOfKinInfoForm
                                                     .nextOfKins[i].inSchool}
                                             ></CustomSelectField>
@@ -3121,12 +3132,12 @@
             </Stepper>
         </CustomTabContent>
 
-        <CustomTabContent title="GajiElaun">
+        <CustomTabContent title="Gaji Elaun">
             <CustomTable enableDetail bind:tableData={salaryTable}
             ></CustomTable>
         </CustomTabContent>
 
-        <CustomTabContent title="RekodKesihatan">
+        <CustomTabContent title="Rekod Kesihatan">
             <Stepper>
                 <StepperContent>
                     <StepperContentHeader title="Sejarah Penyakit">
@@ -3167,29 +3178,37 @@
                                 <div
                                     class="flex w-full flex-col items-center justify-start gap-2"
                                 >
-                                    {#each $medicalHistoryForm.medicalHistory as item, index}
+                                    {#each data.diseaseCollectionForm.data.medicalHistory as item, index}
                                         <div
                                             class="flex w-full flex-row items-center justify-start gap-2"
                                         >
                                             <div
                                                 class="flex w-full flex-col gap-2"
                                             >
+                                                <input
+                                                    hidden
+                                                    type="text"
+                                                    bind:value={item
+                                                        .id}
+                                                />
+                                                
                                                 <CustomTextField
                                                     disabled
-                                                    id="diseaseName"
+                                                    id="disease"
                                                     label={'Penyakit'}
-                                                    bind:val={$medicalHistoryForm.medicalHistory[index].disease}
+                                                    bind:val={item
+                                                        .disease}
                                                 ></CustomTextField>
                                             </div>
                                             <div
                                                 class="flex w-full flex-col gap-2"
                                             >
-
                                                 <CustomRadioBoolean
                                                     disabled={isReadonlyHistoryMedicalFormStepper}
                                                     options={commonOptions}
                                                     id="isPersonal"
-                                                    bind:val={$medicalHistoryForm.medicalHistory[index].isPersonal}
+                                                    bind:val={item
+                                                        .isPersonal}
                                                     label="Sendiri"
                                                 ></CustomRadioBoolean>
                                             </div>
@@ -3199,8 +3218,9 @@
                                                 <CustomRadioBoolean
                                                     disabled={isReadonlyHistoryMedicalFormStepper}
                                                     options={commonOptions}
-                                                    id="isPesonal"
-                                                    bind:val={$medicalHistoryForm.medicalHistory[index].isFamily}
+                                                    id="isFamily"
+                                                    bind:val={item
+                                                        .isFamily}
                                                     label="Keluarga"
                                                 ></CustomRadioBoolean>
                                             </div>
@@ -3209,17 +3229,16 @@
                                                 class="flex w-full flex-col gap-2"
                                             >
                                                 <CustomTextField
-                                                disabled={isReadonlyHistoryMedicalFormStepper}
+                                                    disabled={isReadonlyHistoryMedicalFormStepper}
                                                     id="remark"
                                                     label={'Ulasan'}
-                                                    bind:val={$medicalHistoryForm.medicalHistory[index].remark}
+                                                    bind:val={item
+                                                        .remark}
                                                 ></CustomTextField>
                                             </div>
                                         </div>
                                     {/each}
                                 </div>
-                               
-                              
                             </form>
                         </div></StepperContentBody
                     >
