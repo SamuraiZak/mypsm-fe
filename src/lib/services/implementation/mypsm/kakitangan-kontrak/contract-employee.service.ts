@@ -29,6 +29,7 @@ import type { Input } from 'ky';
 import { RenewContractMeetingConvert, type RenewContractMeeting } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-meeting.dto';
 import { RenewContractSupporterApproverConvert, type RenewContractSupporterApprover, type RenewContractSuppAppApproval, RenewContractSuppAppApprovalConvert } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-supp-app.dto';
 import { RenewContractSecretaryUpdateConvert, type RenewContractSecretaryUpdate } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-secretary-update.dto';
+import { ContractEmployeeDocumentConvert, type ContractEmployeeDocument } from '$lib/dto/mypsm/kakitangan-kontrak/contract-document.dto';
 
 export class ContractEmployeeServices {
 
@@ -488,17 +489,15 @@ export class ContractEmployeeServices {
     }
 
     // add contract employee documents //multipart form
-    static async addNewContractEmployeeDocument(param: FormData) {
+    static async addNewContractEmployeeDocument(param: string) {
         try {
             const url: Input = 'contracts/document/add';
 
             // param.append('key', 'document');
-            param.append('key', 'document')
             // get the promise response
             const promiseRes: Promise<Response> = http
                 .post(url, {
                     body: param,
-                    headers: undefined
                 })
                 .json();
             // await toast for resolved or rejected state
@@ -922,6 +921,29 @@ export class ContractEmployeeServices {
         }
     }
 
+    //get renew contract employee table
+    static async getRenewContractEmployeeTable(param: CommonListRequestDTO) {
+        try {
+            let url: Input = 'contracts/renew/personal_detail/list';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     //get renew contract personal detail
     static async getRenewContractPersonalDetail(param: CandidateIDRequestBody) {
         try {
@@ -1083,13 +1105,13 @@ export class ContractEmployeeServices {
         }
     }
     //get renew contract document
-    static async getRenewContractDocument(param: CandidateIDRequestBody) {
+    static async getRenewContractDocument(param: commonIdRequestDTO) {
         try {
             let url: Input = 'contracts/renew/document';
 
             const response: Response = await http
                 .post(url, {
-                    body: CandidateIDRequestBodyConvert.toJson(param),
+                    body: commonIdRequestDTOConvert.toJson(param),
                 })
                 .json();
 
@@ -1508,4 +1530,53 @@ export class ContractEmployeeServices {
             return CommonResponseConstant.httpError;
         }
     }
+
+    // add contract document
+    static async addRenewContractDocument(param: string) {
+        try {
+            let url: Input = 'contracts/renew/new/document/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: param,
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // get uploaded document
+    static async getRenewContractUploadedDocument(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'contracts/renew/new/document/detail';
+
+            const response: Response = await http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
 }

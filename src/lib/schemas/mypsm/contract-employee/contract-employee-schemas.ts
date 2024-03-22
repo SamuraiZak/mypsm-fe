@@ -222,8 +222,6 @@ export const _contractMeetingSchema = z.object({
     name: shortTextSchema,
     remark: shortTextSchema,
     status: booleanSchema,
-    // meetingName: shortTextSchema,
-    // meetingDate: shortTextSchema,
     isReadonly: booleanSchema,
 })
 
@@ -257,4 +255,11 @@ export const _renewContractSecretaryUpdateSchema = z.object({
     firstConfirmServiceDate:   stringToMaxDate,
     currentConfirmServiceDate: stringToMinDate,
     isReadonly:                booleanSchema.default(false),
+})
+
+export const _contractDocumentSchema = z.object({
+    document: z.object({
+        base64: z.string(),
+        name: z.string(),
+    })
 })
