@@ -468,4 +468,6 @@ const dictionary: { [key: string]: string } = {
     candidateName: 'Nama Calon',
     temporaryId: 'Id Sementara',
     identityCardNo: 'No. Kad Pengenalan',
+    startContract: 'Tarikh Mula Kontrak',
+    endContract: 'Tarikh Tamat Kontrak',
 };
