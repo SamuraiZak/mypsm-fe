@@ -1,4 +1,9 @@
 <script lang="ts">
+    import CustomRadioField from '$lib/components/inputs/radio-field/CustomRadioField.svelte';
+    import {
+        certifyOptions,
+        proceedingMeetingOptions,
+    } from '$lib/constants/core/radio-option-constants';
     import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
@@ -6,7 +11,10 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import { Toaster } from 'svelte-french-toast';
-    import { superForm } from 'sveltekit-superforms/client';
+    import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
+    import SvgMinusCircle from '$lib/assets/svg/SvgMinusCircle.svelte';
+    import { Button, Modal } from 'flowbite-svelte';
+    import { superForm, superValidate } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
@@ -16,10 +24,25 @@
         _serviceInfoRequestSchema,
     } from '$lib/schemas/mypsm/employment/new-hire/schema';
     import { goto } from '$app/navigation';
+    import StepperFailStatement from '$lib/components/stepper/StepperFailStatement.svelte';
+    import StepperOtherRolesResult from '$lib/components/stepper/StepperOtherRolesResult.svelte';
+    import { writable } from 'svelte/store';
+    import { _sentenceSchema } from '$lib/schemas/mypsm/integrity/proceeding-charge-scheme';
+    import type { ProceedingAccusationDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
+    import { zod } from 'sveltekit-superforms/adapters';
+    import type { ProceedingSentenceRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-create-sentencing-meeting-request.dto';
+    import { getErrorToast } from '$lib/helpers/core/toast.helper';
+    import { error } from '@sveltejs/kit';
     export let data: PageData;
+    let openAddSentenceModal: boolean = false;
+    let isReadonlyProceedingChargeIntegrityDirectorApproval =
+        writable<boolean>(false);
+
+    let proceedingChargeIsCertified = writable<boolean>(false);
+    let sentencing: ProceedingSentenceRequestDTO[] = [];
 
     // Superforms
-    const { form, enhance } = superForm(data.proceedingStaffInfoForm, {
+    const { form } = superForm(data.forms.proceedingStaffInfoForm, {
         SPA: true,
         dataType: 'json',
         invalidateAll: true,
@@ -29,6 +52,98 @@
         validators: false,
         taintedMessage: false,
     });
+
+    const { form: chargesMeetingForm, enhance: chargesMeetingFormErrors } =
+        superForm(data.forms.proceedingChargesMeetingForm, {
+            SPA: true,
+            dataType: 'json',
+            invalidateAll: true,
+            resetForm: false,
+            multipleSubmits: 'allow',
+            validationMethod: 'oninput',
+            validators: false,
+            taintedMessage: false,
+        });
+
+    const {
+        form: disciplineSecretaryForm,
+        errors: disciplineSecretaryFormErrors,
+        enhance: disciplineSecretaryFormEnhance,
+    } = superForm(data.forms.proceedingIntegrityDirectorForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: false,
+        taintedMessage: false,
+        onSubmit() {},
+    });
+
+    const { form: chargesListForm } = superForm(
+        data.forms.proceedingChargesListForm,
+        {
+            SPA: true,
+            dataType: 'json',
+            invalidateAll: true,
+            resetForm: false,
+            multipleSubmits: 'allow',
+            validationMethod: 'oninput',
+            validators: false,
+            taintedMessage: false,
+        },
+    );
+
+    const {
+        form: sentencingMeetingForm,
+        errors: sentencingMeetingFormErrors,
+        enhance: sentencingMeetingFormEnhance,
+    } = superForm(data.forms.proceedingSentencingMeetingForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: false,
+        taintedMessage: false,
+    });
+
+    const { form: addSentenceForm, enhance: addSentenceFormErrors } = superForm(
+        data.forms.addSentenceForm,
+        {
+            SPA: true,
+            dataType: 'json',
+            invalidateAll: true,
+            resetForm: true,
+            multipleSubmits: 'allow',
+            validationMethod: 'oninput',
+            validators: zod(_sentenceSchema),
+            taintedMessage: false,
+            async onSubmit(formData) {
+                const result = await superValidate(
+                    formData.formData,
+                    zod(_sentenceSchema),
+                );
+                // result.data.id = result.data.title + Math.random();
+
+                if (!result.valid) {
+                    getErrorToast();
+                    error(
+                        400,
+                        'Validation not passed, please check every fields.',
+                    );
+                }
+
+                sentencing = [
+                    ...sentencing,
+                    result.data as ProceedingSentenceRequestDTO,
+                ];
+                openAddSentenceModal = false;
+            },
+        },
+    );
 </script>
 
 <ContentHeader title="Maklumat Prosiding Tatatertib"
@@ -514,6 +629,491 @@
             </div>
         </StepperContentBody>
     </StepperContent>
+
+    {#if data.roles.isDisciplineSecretaryRole}
+        <StepperContent>
+            <StepperContentHeader
+                title="Maklumat Keputusan Mesyuarat Prosiding Pertuduhan"
+            />
+            <StepperContentBody>
+                <form
+                    id="chargesMeetingForm"
+                    method="POST"
+                    use:chargesMeetingFormErrors
+                    class="flex w-full flex-col items-center gap-2"
+                >
+                    <CustomTextField
+                        disabled={true}
+                        id="meetingDate"
+                        label="Tarikh Mesyuarat"
+                        type="date"
+                        placeholder="-"
+                        bind:val={$chargesMeetingForm.meetingDate}
+                    ></CustomTextField>
+                    <CustomTextField
+                        disabled={true}
+                        id="meetingCount"
+                        label="Bil Mesyuarat"
+                        placeholder="-"
+                        type="number"
+                        bind:val={$chargesMeetingForm.meetingCount}
+                    ></CustomTextField>
+                    <CustomTextField
+                        disabled={true}
+                        id="meetingName"
+                        label="Nama Mesyuarat"
+                        placeholder="-"
+                        bind:val={$chargesMeetingForm.meetingName}
+                    ></CustomTextField>
+                    <div
+                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
+                    >
+                        <ContentHeader
+                            title="Senarai Pertuduhan"
+                            borderClass="border-none"
+                        />
+                        <hr />
+                        {#each $chargesMeetingForm.accusationList as _, index}
+                            <div
+                                class="flex w-full flex-row items-center gap-x-2.5 text-base"
+                            >
+                                <span class="w-4">{index + 1}.</span>
+                                <ContentHeader
+                                    title={$chargesMeetingForm.accusationList[
+                                        index
+                                    ]}
+                                    borderClass="border-none"
+                                />
+                            </div>
+                        {/each}
+                    </div>
+                </form>
+            </StepperContentBody>
+        </StepperContent>
+        <StepperContent>
+            <StepperContentHeader
+                title="Pengesahan Pengarah Integriti - Pertuduhan"
+            >
+                {#if data.roles.isIntegrityDirectorRole}
+                    <TextIconButton
+                        type="primary"
+                        label="Simpan"
+                        form="disciplineSecretaryForm"
+                    ></TextIconButton>
+                {/if}
+            </StepperContentHeader>
+            <StepperContentBody>
+                <div class="flex w-full flex-col gap-2.5">
+                    {#if data.roles.isIntegrityDirectorRole}
+                        <form
+                            id="disciplineSecretaryForm"
+                            method="POST"
+                            use:disciplineSecretaryFormEnhance
+                            class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                        >
+                            <div class="mb-5">
+                                <b class="text-sm text-system-primary"
+                                    >Pengarah Integriti</b
+                                >
+                            </div>
+                            <CustomTextField
+                                disabled={$isReadonlyProceedingChargeIntegrityDirectorApproval}
+                                errors={$disciplineSecretaryFormErrors.remark}
+                                id="approverRemark"
+                                label="Tindakan/Ulasan"
+                                bind:val={$disciplineSecretaryForm.remark}
+                            ></CustomTextField>
+                            <CustomSelectField
+                                disabled={$isReadonlyProceedingChargeIntegrityDirectorApproval}
+                                errors={$disciplineSecretaryFormErrors.status}
+                                id="approverIsApproved"
+                                options={certifyOptions}
+                                label={'Keputusan'}
+                                bind:val={$disciplineSecretaryForm.status}
+                            ></CustomSelectField>
+                        </form>
+                    {/if}
+
+                    <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                        <div class="mb-5">
+                            <b class="text-sm text-system-primary"
+                                >Pengarah Integriti</b
+                            >
+                        </div>
+                        {#if $isReadonlyProceedingChargeIntegrityDirectorApproval}
+                            <CustomTextField
+                                disabled
+                                id="integrityDirectorRemark"
+                                label="Tindakan/Ulasan"
+                                val={'value'}
+                            ></CustomTextField>
+                            <CustomSelectField
+                                disabled
+                                id="integrityDirectorStatus"
+                                options={certifyOptions}
+                                label={'Keputusan'}
+                                val={'value'}
+                            ></CustomSelectField>
+                        {:else if $proceedingChargeIsCertified}
+                            <StepperFailStatement />
+                        {:else}
+                            <StepperOtherRolesResult />
+                        {/if}
+                    </div>
+                </div>
+            </StepperContentBody>
+        </StepperContent>
+        <StepperContent>
+            <StepperContentHeader
+                title="Maklumat Keputusan Mesyuarat Prosiding Penentuan
+                Hukuman"
+            >
+                <TextIconButton
+                    type="primary"
+                    label="Simpan"
+                    form="sentencingMeetingForm"
+                ></TextIconButton>
+            </StepperContentHeader>
+            <StepperContentBody>
+                <form
+                    id="sentencingMeetingForm"
+                    method="POST"
+                    use:sentencingMeetingFormEnhance
+                    class="flex w-full flex-col items-center gap-2"
+                >
+                    <input
+                        hidden
+                        type="text"
+                        bind:value={$sentencingMeetingForm.integrityId}
+                    />
+                    <CustomTextField
+                        disabled={false}
+                        id="meetingDate"
+                        label="Tarikh Mesyuarat"
+                        type="date"
+                        placeholder="-"
+                        bind:val={$sentencingMeetingForm.meetingDate}
+                    ></CustomTextField>
+                    <CustomTextField
+                        disabled={false}
+                        id="meetingCount"
+                        label="Bil Mesyuarat"
+                        placeholder="-"
+                        type="number"
+                        bind:val={$sentencingMeetingForm.meetingCount}
+                    ></CustomTextField>
+                    <CustomTextField
+                        disabled={false}
+                        id="meetingName"
+                        label="Nama Mesyuarat"
+                        placeholder="-"
+                        bind:val={$sentencingMeetingForm.meetingName}
+                    ></CustomTextField>
+                    <CustomTextField
+                        disabled={false}
+                        id="meetingCode"
+                        label="Kod Mesyuarat"
+                        placeholder="-"
+                        bind:val={$sentencingMeetingForm.meetingCode}
+                    ></CustomTextField>
+                    {#each $sentencingMeetingForm.meetingResult as _, index}
+                        <div
+                            class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
+                        >
+                            <ContentHeader
+                                title="Pertuduhan #{index +
+                                    1}: {$chargesListForm.accusationList[index]
+                                    .accusationName}"
+                                color="system-primary"
+                                borderClass="border-none"
+                            />
+
+                            <input
+                                hidden
+                                type="text"
+                                bind:value={$sentencingMeetingForm
+                                    .meetingResult[index].accusationListId}
+                            />
+                            <hr />
+                            <div
+                                class="flex w-full flex-row items-center gap-x-2.5 border-b text-base"
+                            >
+                                <CustomRadioField
+                                    disabled={false}
+                                    id="currentGrade"
+                                    label="Keputusan Mesyuarat"
+                                    options={proceedingMeetingOptions}
+                                    bind:val={$sentencingMeetingForm
+                                        .meetingResult[index].result}
+                                ></CustomRadioField>
+                            </div>
+                            <ContentHeader
+                                title="Penentuan Hukuman"
+                                borderClass="border-none"
+                            >
+                                <div class="mr-2">
+                                    <TextIconButton
+                                        type="primary"
+                                        onClick={() => {
+                                            openAddSentenceModal = true;
+                                        }}
+                                        label="Tambah Hukuman"
+                                        ><SvgPlus /></TextIconButton
+                                    >
+                                </div>
+                            </ContentHeader>
+                        </div>
+                    {/each}
+                </form>
+            </StepperContentBody>
+        </StepperContent>
+    {:else if data.roles.isIntegritySecretaryRole}
+        <StepperContent>
+            <StepperContentHeader
+                title="Maklumat Keputusan Mesyuarat Prosiding Tahan Kerja"
+            />
+            <StepperContentBody>
+                <div class="flex w-full flex-col gap-2.5">
+                    <CustomTextField
+                        disabled={false}
+                        id="currentGrade"
+                        label="Tarikh Mesyuarat"
+                        placeholder="-"
+                        bind:val={$form.serviceDetail.currentGrade}
+                    ></CustomTextField>
+                    <CustomTextField
+                        disabled={false}
+                        id="currentGrade"
+                        label="Bil Mesyuarat"
+                        placeholder="-"
+                        bind:val={$form.serviceDetail.currentGrade}
+                    ></CustomTextField>
+                    <CustomTextField
+                        disabled={false}
+                        id="currentGrade"
+                        label="Nama Mesyuarat"
+                        placeholder="-"
+                        bind:val={$form.serviceDetail.currentGrade}
+                    ></CustomTextField>
+                    <!-- <CustomRadioField
+                        disabled={false}
+                        id="currentGrade"
+                        label="Keputusan Mesyuarat"
+                        options={proceedingMeetingOptions}
+                        bind:val={$form.serviceDetail.currentGrade}
+                    ></CustomRadioField> -->
+                </div>
+            </StepperContentBody>
+        </StepperContent>
+    {/if}
 </Stepper>
 
 <Toaster />
+
+<!-- Next Of Kin Info Modal -->
+<Modal title={'Tambah Hukuman'} bind:open={openAddSentenceModal}>
+    <form
+        id="addSentencingModal"
+        method="POST"
+        use:addSentenceFormErrors
+        class="flex w-full flex-col items-center gap-2"
+    >
+        <CustomSelectField
+            disabled={false}
+            id="title"
+            label="Jenis Hukuman"
+            options={data.lookups.penaltyTypeLookup}
+            placeholder="-"
+            bind:val={$addSentenceForm.penaltyTypeCode}
+        ></CustomSelectField>
+
+        {#if $addSentenceForm.penaltyTypeCode}
+            {#if $addSentenceForm.penaltyTypeCode === '01'}
+                <CustomTextField
+                    disabled={false}
+                    id="title"
+                    label="Tarikh Berkuatkuasa"
+                    placeholder="-"
+                    type="date"
+                    bind:val={$addSentenceForm.effectiveDate}
+                ></CustomTextField>
+            {:else if $addSentenceForm.penaltyTypeCode === '02'}
+                <CustomTextField
+                    disabled={false}
+                    id="title"
+                    label="Tarikh Berkuatkuasa"
+                    placeholder="-"
+                    type="date"
+                    bind:val={$addSentenceForm.effectiveDate}
+                ></CustomTextField>
+                <CustomTextField
+                    disabled={false}
+                    id="title"
+                    label="Hari Emolumen"
+                    placeholder="1-7 Hari"
+                    type="number"
+                    bind:val={$addSentenceForm.emolumenRight}
+                ></CustomTextField>
+            {:else if $addSentenceForm.penaltyTypeCode === '03'}
+                <CustomTextField
+                    disabled={false}
+                    id="title"
+                    label="Tarikh Berkuatkuasa"
+                    placeholder="-"
+                    type="date"
+                    bind:val={$addSentenceForm.effectiveDate}
+                ></CustomTextField>
+                <CustomTextField
+                    disabled={false}
+                    id="title"
+                    label="Hari Emolumen"
+                    placeholder="Tiada had hari"
+                    type="number"
+                    bind:val={$addSentenceForm.emolumenRight}
+                ></CustomTextField>
+                <div class="w-full border-l-4 border-r-4 px-2.5">
+                    <ContentHeader title="Tarikh Dilucutkan Hak Emolumen"
+                        ><div class="mr-2">
+                            <TextIconButton
+                                type="primary"
+                                onClick={() => {
+                                    // addEmolumentDeprivationDayFormGroup();
+                                }}
+                                label=""><SvgPlus /></TextIconButton
+                            >
+                        </div></ContentHeader
+                    >
+                    {#if $addSentenceForm.emolumenDate}
+                        {#each $addSentenceForm.emolumenDate as _, index}
+                            <div
+                                class="flex w-full flex-row items-center gap-x-2.5 text-base"
+                            >
+                                <span class="w-[220px] text-sm italic"
+                                    >Tarikh #{index + 1}.</span
+                                >
+                                <CustomTextField
+                                    id="startDate"
+                                    disabled={false}
+                                    label={'Tarikh Mula'}
+                                    bind:val={$addSentenceForm.emolumenDate[
+                                        index
+                                    ].startDate}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    id="endDate"
+                                    disabled={false}
+                                    label={'Hingga'}
+                                    bind:val={$addSentenceForm.emolumenDate[
+                                        index
+                                    ].endDate}
+                                ></CustomTextField>
+                                <!-- <div class="w-fit">
+                                    <CustomTextField
+                                        disabled
+                                        bind:value={totalDayDisplay}
+                                    />
+                                </div> -->
+                                <!-- {#if isEditMode} -->
+                                <div class="w-12">
+                                    <Button outline={false} on:click={() => {}}
+                                        ><span class="text-red-600"
+                                            ><SvgMinusCircle /></span
+                                        ></Button
+                                    >
+                                </div>
+                                <!-- {/if} -->
+                            </div>
+                        {/each}
+                    {/if}
+                </div>
+            {:else if $addSentenceForm.penaltyTypeCode === '04'}
+                <CustomTextField
+                    disabled={false}
+                    id="title"
+                    label="Tarikh Berkuatkuasa"
+                    placeholder="-"
+                    type="date"
+                    bind:val={$addSentenceForm.effectiveDate}
+                ></CustomTextField>
+                <CustomSelectField
+                    disabled={false}
+                    id="title"
+                    label="Tempoh Bulan Tangguh Pergerakan Gaji"
+                    bind:val={$addSentenceForm.emolumenRight}
+                ></CustomSelectField>
+                <CustomTextField
+                    disabled={false}
+                    id="title"
+                    label="Tarikh pergerakan KGT baru"
+                    placeholder="-"
+                    type="date"
+                    bind:val={$addSentenceForm.effectiveDate}
+                ></CustomTextField>
+            {:else if $addSentenceForm.penaltyTypeCode === '05'}
+                <CustomTextField
+                    disabled={false}
+                    id="title"
+                    label="Tarikh Berkuatkuasa"
+                    placeholder="-"
+                    type="date"
+                    bind:val={$addSentenceForm.effectiveDate}
+                ></CustomTextField>
+                <CustomSelectField
+                    disabled={false}
+                    id="title"
+                    label="Bilangan Pergerakan Gaji"
+                    bind:val={$addSentenceForm.emolumenRight}
+                ></CustomSelectField>
+                <CustomSelectField
+                    disabled={false}
+                    id="title"
+                    label="Tempoh Hukuman (Bulan)"
+                    bind:val={$addSentenceForm.emolumenRight}
+                ></CustomSelectField>
+                <CustomTextField
+                    disabled={false}
+                    id="title"
+                    label="Tarikh pergerakan KGT baru"
+                    placeholder="-"
+                    type="date"
+                    bind:val={$addSentenceForm.effectiveDate}
+                ></CustomTextField>
+            {:else if $addSentenceForm.penaltyTypeCode === '06'}
+                <CustomTextField
+                    disabled={false}
+                    id="title"
+                    label="Tarikh Berkuatkuasa"
+                    placeholder="-"
+                    type="date"
+                    bind:val={$addSentenceForm.effectiveDate}
+                ></CustomTextField>
+                <CustomSelectField
+                    disabled={true}
+                    id="title"
+                    label="Gred Semasa"
+                    bind:val={$addSentenceForm.emolumenRight}
+                ></CustomSelectField>
+                <CustomSelectField
+                    disabled={false}
+                    id="title"
+                    label="Gred Baru"
+                    bind:val={$addSentenceForm.emolumenRight}
+                ></CustomSelectField>
+            {:else if $addSentenceForm.penaltyTypeCode === '07'}
+                <CustomTextField
+                    disabled={false}
+                    id="title"
+                    label="Tarikh Berkuatkuasa"
+                    placeholder="-"
+                    type="date"
+                    bind:val={$addSentenceForm.effectiveDate}
+                ></CustomTextField>
+            {/if}
+        {/if}
+    </form>
+    <div class="flex w-full flex-col items-end">
+        <TextIconButton type="primary" form="addSentencingModal" label="Tambah"
+            ><SvgPlus />
+        </TextIconButton>
+    </div>
+</Modal>

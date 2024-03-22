@@ -30,7 +30,6 @@
     import { zod } from 'sveltekit-superforms/adapters';
     import type { ProceedingAccusationDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
     import { _addStateUnitSecretaryApprovalForm } from './+page';
-    import { writable } from 'svelte/store';
     export let data: PageData;
     let openAddChargeModal: boolean = false;
     let charges: ProceedingAccusationDTO[] = [];
@@ -745,7 +744,7 @@
             bind:val={$addChargesForm.title}
         ></CustomTextField>
     </form>
-    <div class="w-fit">
+    <div class="flex w-full flex-col items-end">
         <TextIconButton type="primary" form="addAccusationModal" label="Tambah"
             ><SvgPlus />
         </TextIconButton>

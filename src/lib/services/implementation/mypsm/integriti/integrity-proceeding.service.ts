@@ -160,7 +160,7 @@ export class IntegrityProceedingServices {
     }
 
     // get list of charger
-    static async getProceedingListOfCharges(param: CommonListRequestDTO) {
+    static async getProceedingListOfCharges<T>(param: T) {
         try {
             const url: Input =
                 'integrity/proceeding/sentencing/accusation_list';
@@ -168,7 +168,7 @@ export class IntegrityProceedingServices {
             // get the promise response
             const response: Response = await http
                 .post(url, {
-                    body: CommonListRequestConvert.toJson(param),
+                    body: JSON.stringify(param),
                 })
                 .json();
 

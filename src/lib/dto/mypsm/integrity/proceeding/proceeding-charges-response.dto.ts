@@ -1,4 +1,5 @@
 import type {
+    _chargesListSchema,
     _proceedingAccusationSchema,
     _proceedingChargeSchema,
 } from '$lib/schemas/mypsm/integrity/proceeding-charge-scheme';
@@ -15,3 +16,5 @@ export type ProceedingChargeDetailResponseDTO = z.infer<
 export type ProceedingAccusationDTO = z.infer<
     typeof _proceedingAccusationSchema
 >;
+
+export type ProceedingAccusationListDTO = z.infer<typeof _chargesListSchema>;
