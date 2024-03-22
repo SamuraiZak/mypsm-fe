@@ -34,7 +34,7 @@ export type ServiceAllowanceDocument = z.infer<
 >;
 
 export const ServiceAllowanceInfoCeremonyDressSchema = z.object({
-    documents: z.array(ServiceAllowanceDocumentSchema),
+    documents: z.array(ServiceAllowanceDocumentSchema).optional(),
     allowanceTypeCode: z.string(),
     reason: z.string(),
     personal: z.number(),

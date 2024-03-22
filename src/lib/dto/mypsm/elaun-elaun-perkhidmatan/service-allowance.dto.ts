@@ -26,6 +26,11 @@ export interface ServiceAllowanceListFilterDTO {
     status?: string | null;
 }
 
+export interface ServiceAllowanceViewRequestDTO {
+    allowanceId: number;
+    allowanceTypeCode: string;
+}
+
 // TODO 2: Service Allowance Endorsement DTO
 export interface ServiceAllowanceEndorsementDTO {
     allowanceId?: number | null;
@@ -50,6 +55,10 @@ export interface ServiceAllowanceDocumentDTO {
     base64: string;
 }
 
+export interface DocumentList {
+    documents: ServiceAllowanceDocumentDTO[];
+}
+
 // TODO: Service Allowance Family Detail DTO
 export interface ServiceAllowanceFamilyDetailDTO {
     name?: string;
@@ -62,7 +71,7 @@ export interface ServiceAllowanceFamilyDetailDTO {
 // ================================================================
 // Bantuan Pakaian Istiadat
 export interface ServiceAllowanceInfoCeremonyDressDTO {
-    documents?: Document[] | File[];
+    documents?: ServiceAllowanceDocumentDTO[] | null;
     allowanceId?: number | null;
     allowanceTypeCode?: string | null;
     allowanceType?: string | null;

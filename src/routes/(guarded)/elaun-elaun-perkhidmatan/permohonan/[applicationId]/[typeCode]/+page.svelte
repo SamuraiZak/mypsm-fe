@@ -6,6 +6,7 @@
         ServiceAllowanceEndorsementSchema,
         ServiceAllowanceInfoCeremonyDressSchema,
         type ServiceAllowanceDocument,
+        type ServiceAllowanceInfoCeremonyDress,
     } from '$lib/schemas/mypsm/service-allowance/service-allowance.schema';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
@@ -19,7 +20,16 @@
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import { FileHelper } from '$lib/helpers/core/file.helper';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
-    import type { ServiceAllowanceDocumentDTO } from '$lib/dto/mypsm/elaun-elaun-perkhidmatan/service-allowance.dto';
+    import type {
+        DocumentList,
+        ServiceAllowanceDocumentDTO,
+        ServiceAllowanceInfoCeremonyDressDTO,
+    } from '$lib/dto/mypsm/elaun-elaun-perkhidmatan/service-allowance.dto';
+    import { _submitCeremonyDressForm } from './+page';
+    import { z } from 'zod';
+    import { goto } from '$app/navigation';
+    import SvgChevronLeft from '$lib/assets/svg/SvgChevronLeft.svelte';
+    import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
 
     export let data: PageData;
 
@@ -46,10 +56,19 @@
         id: 'ceremonyDressDetailForm',
         SPA: true,
         validators: zodClient(ServiceAllowanceInfoCeremonyDressSchema),
-        onSubmit(input) {
-            let documents: ServiceAllowanceDocumentDTO[] =
-                FileHelper.filesToDocuments(files);
-            console.log(documents);
+        onSubmit() {
+
+            const detailFormCeremonyDressData: ServiceAllowanceInfoCeremonyDressDTO = {
+                documents: [],
+                allowanceId: null,
+                allowanceTypeCode: $ceremonyDressDetailForm.allowanceTypeCode,
+                allowanceType: null,
+                reason: $ceremonyDressDetailForm.reason,
+                personal: $ceremonyDressDetailForm.personal,
+                partner: $ceremonyDressDetailForm.partner,
+            }
+
+            _submitCeremonyDressForm(detailFormCeremonyDressData, files);
         },
     });
 
@@ -151,6 +170,21 @@
         data.props.currentAllowanceTypeCode = currentAllowanceTypeCode;
     }
 </script>
+<!-- content header starts here -->
+<section class="flex w-full flex-col items-start justify-start">
+    <ContentHeader
+        title="Tambah Rekod Sejarah Anugerah Perkhidmatan Cemerlang (APC)"
+        ><TextIconButton
+        type="neutral"
+            label="Kembali"
+            onClick={() => {
+                goto('/elaun-elaun-perkhidmatan/permohonan');
+            }}
+        >
+            <SvgChevronLeft />
+        </TextIconButton></ContentHeader
+    >
+</section>
 
 <section
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
@@ -158,11 +192,14 @@
     <Stepper>
         <StepperContent>
             <StepperContentHeader title="Maklumat Permohonan">
+                {#if data.props.currentApplicationId == 0}
+                    
                 <TextIconButton
                     type="primary"
                     form="ceremonyDressDetailForm"
                     label="Hantar"
                 ></TextIconButton>
+                {/if}
             </StepperContentHeader>
             <StepperContentBody>
                 <div
@@ -192,6 +229,8 @@
                             </div>
                             <div class="flex w-full flex-col gap-2">
                                 <CustomTextField
+                                disabled={data.props
+                                    .currentApplicationId !== 0}
                                     id="reason"
                                     label={'Sebab'}
                                     errors={$ceremonyDressDetailErrors.reason}
@@ -200,6 +239,9 @@
                             </div>
                             <div class="flex w-full flex-col gap-2">
                                 <CustomTextField
+                                disabled={data.props
+                                    .currentApplicationId !== 0}
+                                type="number"
                                     id="personal"
                                     label={'Jumlah Untuk Diri Sendiri (RM)'}
                                     errors={$ceremonyDressDetailErrors.personal}
@@ -208,7 +250,10 @@
                             </div>
                             <div class="flex w-full flex-col gap-2">
                                 <CustomTextField
+                                disabled={data.props
+                                    .currentApplicationId !== 0}
                                     id="partner"
+                                    type="number"
                                     label={'Jumlah Untuk Pasangan (RM)'}
                                     errors={$ceremonyDressDetailErrors.partner}
                                     bind:val={$ceremonyDressDetailForm.partner}
