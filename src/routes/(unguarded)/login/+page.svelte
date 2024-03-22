@@ -106,7 +106,7 @@
                     {#if group.value == '889f7c6d-7373-4edc-a3cb-c7be522ec41c'}
                         <!-- employee -->
                         <SvgEmployee size="30"></SvgEmployee>
-                    {:else if group.value == 'ff063e92-84be-45cb-bb27-7c0f96cfdc0'}
+                    {:else if group.value == 'ff063e92-84be-45cb-bb27-7c0f96cfdc00'}
                         <!-- contractor -->
                         <SvgEmployee size="30"></SvgEmployee>
                     {:else if group.value == 'f82fe23c-d4fd-4d61-9267-b16555c9db12'}

@@ -112,7 +112,7 @@
                             openModal = true;
                         } else {
                             goto(
-                                './lantikan-baru/butiran-calon-' +
+                                './lantikan-baru/butiran-' +
                                     rowData.candidateId,
                             );
                         }
@@ -131,7 +131,7 @@
                     hiddenFooter
                     detailActions={() => {
                         goto(
-                            './lantikan-baru/butiran-calon-' +
+                            './lantikan-baru/butiran-' +
                                 rowData.candidateId,
                         );
                     }}

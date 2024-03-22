@@ -12,6 +12,7 @@
     import { superForm, superValidate } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import {
+        _fileToBase64Object,
         _submitAcademicDetailForm,
         _submitActivityDetailForm,
         _submitApproverContractResultForm,
@@ -61,8 +62,6 @@
         AddNewContractEmployeeDependencyDTO,
         ContractDependency,
     } from '$lib/dto/mypsm/kakitangan-kontrak/add-contract-dependency.dto';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
-    import CustomTable from '$lib/components/table/CustomTable.svelte';
     import type {
         AddContractNextOfKinDTO,
         NextOfKin,
@@ -70,25 +69,7 @@
     import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     import { ContractEmployeeServices } from '$lib/services/implementation/mypsm/kakitangan-kontrak/contract-employee.service';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
-    import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
-    import CustomTab from '$lib/components/tab/CustomTab.svelte';
-
     export let data: PageData;
-
-    //setup authorization
-    let secretaryView: boolean = false;
-    let approverAndSupporterView: boolean = false;
-    if (
-        data.currentRoleCode == UserRoleConstant.penyokong.code ||
-        UserRoleConstant.pelulus.code
-    ) {
-        approverAndSupporterView = true;
-        secretaryView = false;
-    }
-    if (data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code) {
-        secretaryView = true;
-        approverAndSupporterView = false;
-    }
 
     // temporay arrays for list details
     let tempAcademicRecord: AddNewContractEmployeeAcademicDTO = {
@@ -117,6 +98,7 @@
     let familyModal: boolean = false;
     let dependantModal: boolean = false;
     let nextOfKinModal: boolean = false;
+    let files: FileList;
 
     //superform
     const {
@@ -145,7 +127,6 @@
             }
         },
     });
-
     const {
         form: contractUploadDocumentForm,
         errors: contractUploadDocumentError,
@@ -153,11 +134,20 @@
     } = superForm(data.contractUploadDocumentForm, {
         SPA: true,
         taintedMessage: false,
-        id: 'documentUploadForm',
+        dataType: 'json',
         resetForm: false,
+        validationMethod: 'oninput',
         validators: zod(_uploadDocSchema),
         onSubmit() {
-            _submitDocumentForm($contractUploadDocumentForm.document);
+            // _submitDocumentForm($contractUploadDocumentForm.document);
+            _fileToBase64Object(files[0])
+                .then((resultObject) => {
+                    console.log(resultObject);
+                    _submitDocumentForm(resultObject);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
         },
     });
     const {
@@ -440,22 +430,14 @@
             : (data.getContractDocuments.isReadonly = false);
     }
 
-    const handleOnInput = (e: Event) => {
-        $contractUploadDocumentForm.document =
-            ((e.currentTarget as HTMLInputElement)?.files?.item(0) as File) ??
-            null;
-    };
-    function handleDelete() {
-        $contractUploadDocumentForm.document = null;
-    }
-    const handleDownload = async (url: string) => {
-        await ContractEmployeeServices.downloadContractAttachment(url);
-    };
-
     const secretaryOption: RadioDTO[] = [
         { value: true, name: 'SAH' },
         { value: false, name: 'TIDAK SAH' },
     ];
+
+    const handleDownload = async (url: string) => {
+        await ContractEmployeeServices.downloadContractAttachment(url);
+    };
 </script>
 
 <!-- content header starts here -->
@@ -478,7 +460,7 @@
             <StepperContentHeader title="Maklumat Peribadi">
                 {#if !$editNewContractEmployeeDetailForm.isReadonly && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         form="editNewContractEmployeeDetailForm"
                         type="primary"
                         icon="check"
@@ -773,7 +755,7 @@
                         onClick={() => (academicModal = true)}
                     />
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         type="primary"
                         icon="check"
                         onClick={() => {
@@ -960,7 +942,7 @@
                         onClick={() => (experienceModal = true)}
                     />
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         type="primary"
                         icon="check"
                         onClick={() => {
@@ -1102,7 +1084,7 @@
                         onClick={() => (activityModal = true)}
                     />
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         type="primary"
                         icon="check"
                         onClick={() => {
@@ -1206,7 +1188,7 @@
                         onClick={() => (familyModal = true)}
                     />
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         type="primary"
                         icon="check"
                         onClick={() => {
@@ -1539,7 +1521,7 @@
                         onClick={() => (dependantModal = true)}
                     />
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         type="primary"
                         icon="check"
                         onClick={() => {
@@ -1870,7 +1852,7 @@
                         onClick={() => (nextOfKinModal = true)}
                     />
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         type="primary"
                         icon="check"
                         onClick={() => {
@@ -2193,9 +2175,9 @@
 
         <StepperContent>
             <StepperContentHeader title="Dokumen Sokongan">
-                {#if (data.getContractDocuments.isReadonly = false && data.currentRoleCode === UserRoleConstant.calonKontrak.code)}
+                {#if data.getContractDocuments.attachmentName == "" && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         form="documentUploadForm"
                         type="primary"
                         icon="check"
@@ -2203,7 +2185,7 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                {#if (data.getContractDocuments.isReadonly = true)}
+                {#if data.getContractDocuments.attachmentName !== ""}
                     <div class="flex w-full flex-col gap-2">
                         <span
                             class="text-sm text-ios-labelColors-secondaryLabel-light"
@@ -2218,12 +2200,12 @@
                             fileName={data.getContractDocuments.attachmentName}
                         />
                     </div>
-                {:else if (data.getContractDocuments.isReadonly = false && data.currentRoleCode !== UserRoleConstant.calonKontrak.code)}
+                {:else if data.getContractDocuments.attachmentName == "" && data.currentRoleCode !== UserRoleConstant.calonKontrak.code}
                     <span class="text-sm text-ios-labelColors-link-light">
                         Menunggu calon untuk memuat naik dokumen-dokumen yang
                         berkenaan.
                     </span>
-                {:else if (data.getContractDocuments.isReadonly = false && data.currentRoleCode === UserRoleConstant.calonKontrak.code)}
+                {:else if data.getContractDocuments.attachmentName == "" && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
                     <form
                         class="flex w-full flex-col justify-start gap-2.5 pb-10"
                         method="POST"
@@ -2242,89 +2224,22 @@
                                 handleDownload(data.contractDocLink)}
                             fileName="Surat Setuju Terima Tawaran.pdf"
                         />
-                        {#if $contractUploadDocumentError.document}
-                            <span
-                                class="font-sans text-sm italic text-system-danger"
-                                >Sila muat naik dokumen barkaitan.</span
-                            >
-                        {/if}
-                        <ContentHeader
-                            title="Dokumen Sokongan"
-                            borderClass="border-none"
-                        >
-                            <div
-                                hidden={!(
-                                    $contractUploadDocumentForm.document instanceof
-                                    File
-                                )}
-                            >
-                                <FileInputField
-                                    id="document"
-                                    handleOnInput={(e) => handleOnInput(e)}
-                                ></FileInputField>
-                            </div>
-                        </ContentHeader>
                         <div
-                            class="flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border border-bdr-primary p-2.5"
+                            class="flex h-fit w-full flex-col justify-center gap-2"
                         >
-                            <div class="flex flex-wrap gap-3">
-                                <!-- {#each $documentForm.document as item, index} -->
-                                {#if $contractUploadDocumentForm.document instanceof File}
-                                    <FileInputFieldChildren
-                                        childrenType="grid"
-                                        handleDelete={() => handleDelete()}
-                                        fileName={$contractUploadDocumentForm
-                                            .document?.name}
-                                    />
-                                {/if}
-                                <!-- {/each} -->
-                            </div>
-                            <div
-                                class="flex flex-col items-center justify-center gap-2.5"
-                            >
-                                <p
-                                    class=" text-sm text-txt-tertiary"
-                                    hidden={$contractUploadDocumentForm.document instanceof
-                                        File}
-                                >
-                                    Pilih fail dari peranti anda.
-                                </p>
-                                <div
-                                    class="text-txt-tertiary"
-                                    hidden={$contractUploadDocumentForm.document instanceof
-                                        File}
-                                >
-                                    <svg
-                                        width={40}
-                                        height={40}
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke-width="1.5"
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                                        />
-                                    </svg>
-                                </div>
-                                <div
-                                    hidden={$contractUploadDocumentForm.document instanceof
-                                        File}
-                                >
-                                    <FileInputField id="document"
-                                    ></FileInputField>
-                                </div>
-                            </div>
+                            <input
+                                class="rounded-md bg-ios-systemColors-systemFill-light"
+                                accept=".pdf"
+                                type="file"
+                                bind:files
+                            />
                         </div>
                     </form>
                 {/if}
             </StepperContentBody>
         </StepperContent>
 
-        {#if data.currentRoleCode !== UserRoleConstant.calonKontrak.code && data.getContractDocuments.isReadonly}
+        {#if data.currentRoleCode !== UserRoleConstant.calonKontrak.code && data.getContractDocuments.attachmentName !== ""}
             <StepperContent>
                 <StepperContentHeader title="Maklumat Lantikan Baru (Kontrak)">
                     {#if !$updateContractDetailForm.isReadonly}
@@ -2495,7 +2410,7 @@
 
             <StepperContent>
                 <StepperContentHeader title="Keputusan Urus Setia Perjawatan">
-                    {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code && $secretaryContractResultForm.isReadonly == false}
+                    {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code && $secretaryContractResultForm.name == ""}
                         <TextIconButton
                             label="Simpan"
                             form="secretaryContractResultForm"

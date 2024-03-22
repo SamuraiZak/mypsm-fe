@@ -211,9 +211,9 @@ export const load = async ({ params }) => {
 
 export const _submitEditNewContractEmployeeDetailForm = async (formData: EditNewContractEmployeeDetailDTO) => {
     const form = await superValidate(formData, zod(_editNewContractEmployeeSchema));
-   console.log(form)
+    console.log(form)
     if (form.valid) {
-        const { isReadonly,employeeName,employeePosition, ...tempObj } = form.data
+        const { isReadonly, employeeName, employeePosition, ...tempObj } = form.data
         const response: CommonResponseDTO =
             await ContractEmployeeServices.editNewContractEmployeeDetail(
                 tempObj as EditNewContractEmployeeDetailDTO
@@ -267,19 +267,12 @@ export const _submitNextOfKinForm = async (formData: AddContractNextOfKinDTO) =>
         )
     return { response }
 };
-export const _submitDocumentForm = async (file: File | null | undefined) => {
-    const documentData = new FormData();
-    documentData.append('document', file as File);
-    const form = await superValidate(documentData, zod(_uploadDocSchema));
-    console.log(documentData)
-    if (!form.valid) {
-        getErrorToast();
-        error(400, { message: 'Validation Not Passed!' });
-    } else if (form.valid) {
-        const response: CommonResponseDTO =
-            await ContractEmployeeServices.addNewContractEmployeeDocument(documentData);
-        return { response };
-    }
+export const _submitDocumentForm = async (formData: string) => {
+
+    const response: CommonResponseDTO =
+        await ContractEmployeeServices.addNewContractEmployeeDocument(formData);
+    return { response };
+
 
 };
 export const _submitUpdateContractDetailForm = async (formData: EditContractDetailSecretaryDTO) => {
@@ -301,9 +294,9 @@ export const _submitUpdateContractDetailForm = async (formData: EditContractDeta
 
 export const _submitSecretaryContractResultForm = async (formData: GetContracSecretaryResultDTO) => {
     const form = await superValidate(formData, zod(_addContractCommonRoleResult));
-    
+
     if (form.valid) {
-        const { isReadonly,name, ...tempObj } = form.data
+        const { isReadonly, name, ...tempObj } = form.data
         const response: CommonResponseDTO =
             await ContractEmployeeServices.addContractSecretaryResult(
                 tempObj as GetContracSecretaryResultDTO
@@ -558,4 +551,32 @@ const getContractDocumentLink = () => {
     const url = "http://localhost:3333/contracts/document/template"
 
     return url
+}
+
+export function _fileToBase64Object(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+            if (event.target && event.target.result) {
+                const base64String = event.target.result.toString().split(",")[1];
+                const resultObject = {
+                    document: {
+
+                        base64: base64String,
+                        name: file.name
+                    }
+                };
+                resolve(JSON.stringify(resultObject));
+            } else {
+                reject(new Error('Failed to read file.'));
+            }
+        };
+
+        reader.onerror = () => {
+            reject(new Error('Failed to read file.'));
+        };
+
+        reader.readAsDataURL(file);
+    });
 }
