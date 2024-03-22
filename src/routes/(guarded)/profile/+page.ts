@@ -504,7 +504,6 @@ export async function load({ }) {
             let medicalDisease: diseaseInfoDTO = {
                 id: undefined,
                 diseases: item,
-                disease: item,
                 isPersonal: false,
                 isFamily: false,
                 remark: '',
@@ -884,7 +883,7 @@ export const _submitEditNextOfKinForm = async (formData: object) => {
 // ==========  Medical List History================================
 // ================================================================
 export const _submitMedicalHistoryForm = async (formData: object) => {
-    console.log(formData);
+    console.log('SUBMIT FX',formData);
     const historyMedicalform = await superValidate(formData, (zod)(_diseaseInfoCollectionSchema));
     console.log('submitted medical history', historyMedicalform)
 

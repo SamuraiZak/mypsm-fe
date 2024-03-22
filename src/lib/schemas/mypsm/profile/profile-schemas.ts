@@ -207,7 +207,7 @@ export const _academicListRequestSchema = z.object({
 });
 
 export const _academicEditRequestSchema = z.object({
-    academics: z.array(_academicInfoSchema.omit({ educationId: true }).extend({ id: numberIdSchema.optional() })),
+    academics: z.array(_academicInfoSchema),
 });
 
 //==========================================================
@@ -373,7 +373,6 @@ export const _medicalAssessmentListRequestSchema = _medicalAssessmentListRespons
 
 export let _diseaseInfoSchema = z.object({
     id: z.number().readonly().nullish(),
-    disease: z.string(),
     diseases: z.string(),
     isPersonal: z.boolean(),
     isFamily: z.boolean(),

@@ -702,16 +702,16 @@
             // const result = await _submitMedicalHistoryForm($medicalHistoryForm);
             // if (result.response.status === 'success')
             //     isReadonlyHistoryMedicalFormStepper = true;
-            $medicalHistoryForm.medicalHistory.forEach(element => {
-                element.disease = element.diseases;
+            $medicalHistoryForm.medicalHistory.forEach((element) => {
+                element.diseases = element.diseases;
             });
 
-            _submitMedicalHistoryForm($medicalHistoryForm).then((result)=>{
-                if(result.response.status == "success"){
-                    data.diseaseCollectionForm.data.medicalHistory = result.tempMedicalHistoryForm.medicalHistory;
+            _submitMedicalHistoryForm($medicalHistoryForm).then((result) => {
+                if (result.response.status == 'success') {
+                    data.diseaseCollectionForm.data.medicalHistory =
+                        result.tempMedicalHistoryForm.medicalHistory;
                 }
-                
-            })
+            });
         },
     });
 
@@ -2985,150 +2985,10 @@
                     </StepperContentBody>
                 </StepperContent>
 
-                <StepperContent>
-                    <StepperContentHeader
-                        title="Dokumen - Dokumen Sokongan yang Berkaitan"
-                    >
-                        <TextIconButton
-                            type="primary"
-                            label="Simpan"
-                            form="documentUploadForm"
-                        />
-                    </StepperContentHeader>
-                    <StepperContentBody
-                        ><div class="flex w-full flex-col gap-2">
-                            <p class="text-sm">
-                                Sila muat turun, isi dengan lengkap dokumen
-                                berikut, kemudian muat naik dokumen pada ruangan
-                                yang disediakan.
-                            </p>
-
-                            <ul
-                                class="cursor-pointer space-y-1 text-sm italic text-system-primary underline"
-                            >
-                                <li>
-                                    <button class="underline">
-                                        Borang Lantikan Baru</button
-                                    >
-                                </li>
-                            </ul>
-
-                            <span
-                                class="font-sans text-sm italic text-system-danger"
-                                >Sila muat naik dokumen barkaitan.</span
-                            >
-
-                            <!-- <form
-                                    id="documentUploadForm"
-                                    method="POST"
-                                    use:documentFormEnhance
-                                    enctype="multipart/form-data"
-                                > -->
-                            <ContentHeader
-                                title="Dokumen Sokongan"
-                                borderClass="border-none"
-                            >
-                                <div>
-                                    <FileInputField
-                                        id="document"
-                                        handleOnInput={(e) => handleOnInput(e)}
-                                    ></FileInputField>
-                                </div>
-                            </ContentHeader>
-                            <div
-                                class="border-bdr-primaryp-5 flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border p-2.5"
-                            >
-                                <div class="flex flex-wrap gap-3">
-                                    <!-- {#each $documentForm.document as item, index} -->
-                                    <!-- {#if $documentForm.document instanceof File}
-                                                <FileInputFieldChildren
-                                                    childrenType="grid"
-                                                    handleDelete={() => handleDelete()}
-                                                    fileName={$documentForm.document?.name}
-                                                />
-                                            {/if} -->
-                                    <!-- {/each} -->
-                                </div>
-                                <div
-                                    class="flex flex-col items-center justify-center gap-2.5"
-                                >
-                                    <!-- <p
-                                                class=" text-sm text-txt-tertiary"
-                                                hidden={$documentForm.document instanceof
-                                                    File}
-                                            >
-                                                Pilih fail dari peranti anda.
-                                            </p> -->
-                                    <p>Pilih fail dari peranti anda.</p>
-                                    <!-- <div
-                                                class="text-txt-tertiary"
-                                                hidden={$documentForm.document instanceof
-                                                    File}
-                                            > -->
-                                    <svg
-                                        width={40}
-                                        height={40}
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke-width="1.5"
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                                        />
-                                    </svg>
-                                </div>
-                                <!-- <div
-                                                hidden={$documentForm.document instanceof
-                                                    File}
-                                            >
-                                                <FileInputField id="document"
-                                                ></FileInputField>
-                                            </div> -->
-                            </div>
-                        </div>
-                        <!-- </form> -->
-
-                        <div
-                            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
-                        >
-                            <ContentHeader
-                                title="Dokumen - Dokumen Sokongan yang Berkaitan"
-                            ></ContentHeader>
-                            <p
-                                class="mt-2 h-fit w-full bg-bgr-primary text-sm font-medium text-system-primary"
-                            >
-                                Fail-fail yang dimuat naik:
-                            </p>
-
-                            <!-- {#each currentEmployeeUploadedDocuments as item, i} -->
-                            <div
-                                class="flex w-full flex-row items-center justify-between"
-                            >
-                                <label
-                                    for=""
-                                    class="block w-[20px] min-w-[20px] text-[11px] font-medium"
-                                    >1.</label
-                                >
-                                <!-- <DownloadAttachment
-                                            triggerDownload={() =>
-                                                handleDownload(
-                                                    data.documentInfoResponse.data?.details
-                                                        .attachment,
-                                                )}
-                                            fileName={data.documentInfoResponse.data
-                                                ?.details.attachment}
-                                        ></DownloadAttachment> -->
-                            </div>
-                            <!-- {/each} -->
-                        </div>
-
+               
                         <!-- </div> -->
-                    </StepperContentBody>
-                </StepperContent>
+
+                
             </Stepper>
         </CustomTabContent>
 
@@ -3188,16 +3048,18 @@
                                                 <input
                                                     hidden
                                                     type="text"
-                                                    bind:value={item
+                                                    bind:value={$medicalHistoryForm
+                                                        .medicalHistory[index]
                                                         .id}
                                                 />
-                                                
+
                                                 <CustomTextField
                                                     disabled
                                                     id="disease"
                                                     label={'Penyakit'}
-                                                    bind:val={item
-                                                        .disease}
+                                                    bind:val={$medicalHistoryForm
+                                                        .medicalHistory[index]
+                                                        .diseases}
                                                 ></CustomTextField>
                                             </div>
                                             <div
@@ -3207,7 +3069,8 @@
                                                     disabled={isReadonlyHistoryMedicalFormStepper}
                                                     options={commonOptions}
                                                     id="isPersonal"
-                                                    bind:val={item
+                                                    bind:val={$medicalHistoryForm
+                                                        .medicalHistory[index]
                                                         .isPersonal}
                                                     label="Sendiri"
                                                 ></CustomRadioBoolean>
@@ -3219,7 +3082,8 @@
                                                     disabled={isReadonlyHistoryMedicalFormStepper}
                                                     options={commonOptions}
                                                     id="isFamily"
-                                                    bind:val={item
+                                                    bind:val={$medicalHistoryForm
+                                                        .medicalHistory[index]
                                                         .isFamily}
                                                     label="Keluarga"
                                                 ></CustomRadioBoolean>
@@ -3232,7 +3096,8 @@
                                                     disabled={isReadonlyHistoryMedicalFormStepper}
                                                     id="remark"
                                                     label={'Ulasan'}
-                                                    bind:val={item
+                                                    bind:val={$medicalHistoryForm
+                                                        .medicalHistory[index]
                                                         .remark}
                                                 ></CustomTextField>
                                             </div>
