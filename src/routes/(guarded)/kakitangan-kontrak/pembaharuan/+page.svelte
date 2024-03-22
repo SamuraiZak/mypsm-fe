@@ -15,9 +15,11 @@
     import { _addSelectedContractForRenew } from './+page';
     import type { PageData } from './$types';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
+    import type { RenewContractEmployeeTable } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-employee-table.dto';
 
     export let data: PageData;
     let rowData = {} as RenewContractListResponseDTO;
+    let employeeData = {} as RenewContractEmployeeTable;
     let selectedContract: RenewContractAddDTO = {
         contractors: [],
     };
@@ -58,6 +60,19 @@
             totalPage: 1,
         },
         data: data.supporterApproverTable ?? [],
+        hiddenData: ['contractId'],
+    };
+
+    //table for kakitangan kontrak
+    let contractEmployeeTable: TableDTO = {
+        param: data.supporterApproverParam,
+        meta: data.employeeTableResponse.data?.meta ?? {
+            pageSize: 5,
+            pageNum: 1,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: data.employeeTable ?? [],
         hiddenData: ['contractId'],
     };
 
@@ -121,7 +136,7 @@
                 {/if}
             </div>
         </div>
-    {:else if data.currentRoleCode !== UserRoleConstant.urusSetiaKhidmatSokongan.code}
+    {:else if data.currentRoleCode == UserRoleConstant.penyokong.code || data.currentRoleCode == UserRoleConstant.pelulus.code }
         <div class="flex w-full flex-col justify-start gap-2.5 p-5">
             <CustomTable
                 title="Senarai Kontrak Dalam Proses Pembaharuan"
@@ -130,6 +145,17 @@
                 enableDetail
                 detailActions={() =>
                     goto('./pembaharuan/butiran/' + rowData.contractId)}
+            />
+        </div>
+    {:else if data.currentRoleCode == UserRoleConstant.kakitanganKontrak.code}
+        <div class="flex w-full flex-col justify-start gap-2.5 p-5">
+            <CustomTable
+                title="Senarai Tawaran Pembaharuan Kontrak"
+                bind:tableData={contractEmployeeTable}
+                bind:passData={employeeData}
+                enableDetail
+                detailActions={() =>
+                    goto('./pembaharuan/butiran/' + employeeData.contractId)}
             />
         </div>
     {/if}

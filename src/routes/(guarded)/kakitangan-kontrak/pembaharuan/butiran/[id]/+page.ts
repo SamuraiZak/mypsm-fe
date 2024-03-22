@@ -4,6 +4,7 @@ import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-requ
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto'
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto'
 import type { RadioDTO } from '$lib/dto/core/radio/radio.dto'
+import type { ContractEmployeeDocument } from '$lib/dto/mypsm/kakitangan-kontrak/contract-document.dto.js'
 import type { GetContractAcademicDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-academic-detail.dto'
 import type { GetContractActivityDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-activity-detail.dto'
 import type { GetContractDependencyDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-dependency-detail.dto'
@@ -16,7 +17,7 @@ import type { RenewContractMeeting } from '$lib/dto/mypsm/kakitangan-kontrak/ren
 import type { RenewContractAddPerfomance, RenewContractGetPerfomance } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-performance.dto.js'
 import type { RenewContractSecretaryUpdate } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-secretary-update.dto.js'
 import type { RenewContractSuppAppApproval, RenewContractSupporterApprover } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-supp-app.dto.js'
-import { _addContractCommonRoleResult, _addPerformanceSchema, _contractMeetingSchema, _renewContractSecretaryUpdateSchema, _renewContractSupporterApproverSchema } from '$lib/schemas/mypsm/contract-employee/contract-employee-schemas.js'
+import { _addContractCommonRoleResult, _addPerformanceSchema, _contractDocumentSchema, _contractMeetingSchema, _renewContractSecretaryUpdateSchema, _renewContractSupporterApproverSchema } from '$lib/schemas/mypsm/contract-employee/contract-employee-schemas.js'
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service'
 import { ContractEmployeeServices } from '$lib/services/implementation/mypsm/kakitangan-kontrak/contract-employee.service'
 import { superValidate } from 'sveltekit-superforms'
@@ -36,6 +37,7 @@ export const load = async ({ params }) => {
     let getApproverApproval = {} as RenewContractSuppAppApproval;
     let getSecretaryUpdate = {} as RenewContractSecretaryUpdate;
     let getSecretaryApproval = {} as RenewContractSuppAppApproval;
+    let getRenewContractDocument = {} as GetContractDocumentDTO;
 
     //get contract personal detail
     const getContractPersonalDetailResponse: CommonResponseDTO =
@@ -110,6 +112,11 @@ export const load = async ({ params }) => {
         await ContractEmployeeServices.getRenewContractSecretaryApproval(contractId);
     getSecretaryApproval =
         getSecretaryApprovalResponse.data?.details as RenewContractSuppAppApproval;
+    //get renew contract document
+    const getRenewContractDocumentResponse: CommonResponseDTO =
+        await ContractEmployeeServices.getRenewContractUploadedDocument(contractId);
+    getRenewContractDocument =
+        getRenewContractDocumentResponse.data?.details as GetContractDocumentDTO
 
 
 
@@ -119,8 +126,9 @@ export const load = async ({ params }) => {
     const contractSupporterApprovalForm = await superValidate(getSupporterApproval, zod(_addContractCommonRoleResult), { errors: false })
     const contractApproverApprovalForm = await superValidate(getApproverApproval, zod(_addContractCommonRoleResult), { errors: false })
     const contractSecretaryUpdateForm = await superValidate(getSecretaryUpdate, zod(_renewContractSecretaryUpdateSchema), { errors: false });
-    const contractSecretaryApprovalForm = await superValidate(getSecretaryApproval,zod(_addContractCommonRoleResult), { errors: false })
-
+    const contractSecretaryApprovalForm = await superValidate(getSecretaryApproval, zod(_addContractCommonRoleResult), { errors: false })
+    const contractUploadDocument = await superValidate(zod(_contractDocumentSchema))
+   console.log(getRenewContractDocument)
     return {
         currentRoleCode,
         contractId,
@@ -142,6 +150,8 @@ export const load = async ({ params }) => {
         contractApproverApprovalForm,
         contractSecretaryUpdateForm,
         contractSecretaryApprovalForm,
+        contractUploadDocument,
+        getRenewContractDocument,
     }
 }
 
@@ -231,6 +241,14 @@ export const _submitContractSecretaryApprovalForm = async (formData: RenewContra
 
         return { response }
     }
+}
+
+export const _submitContractDocument = async (formData: string) => {
+
+    const response: CommonResponseDTO =
+        await ContractEmployeeServices.addRenewContractDocument(formData);
+
+    return { response }
 }
 
 
@@ -451,3 +469,33 @@ const getInputOption = async () => {
         supporterApproverLookup,
     }
 }
+
+export function _fileToBase64Object(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+            if (event.target && event.target.result) {
+                const base64String = event.target.result.toString().split(",")[1];
+                const resultObject = {
+                    document: {
+
+                        base64: base64String,
+                        name: file.name
+                    }
+                };
+                resolve(JSON.stringify(resultObject));
+            } else {
+                reject(new Error('Failed to read file.'));
+            }
+        };
+
+        reader.onerror = () => {
+            reject(new Error('Failed to read file.'));
+        };
+
+        reader.readAsDataURL(file);
+    });
+}
+
+

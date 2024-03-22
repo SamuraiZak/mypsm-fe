@@ -3,6 +3,7 @@ import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
 import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
 import type { RenewContractAddDTO } from "$lib/dto/mypsm/kakitangan-kontrak/renew-contract-add.dto";
+import type { RenewContractEmployeeTable } from "$lib/dto/mypsm/kakitangan-kontrak/renew-contract-employee-table.dto";
 import type { RenewContractListResponseDTO } from "$lib/dto/mypsm/kakitangan-kontrak/renew-contract-list-response.dto";
 import type { RenewContractListDTO } from "$lib/dto/mypsm/kakitangan-kontrak/renew-contract-list.dto";
 import type { RenewContractSuppAppTable } from "$lib/dto/mypsm/kakitangan-kontrak/renew-contract-supp-app-table.dto";
@@ -17,6 +18,8 @@ export const load = async () => {
     let renewContractList: RenewContractListResponseDTO[] = [];
     let supporterApproverTable: RenewContractSuppAppTable[] = [];
     let supporterApproverTableResponse: CommonResponseDTO = {};
+    let employeeTable: RenewContractEmployeeTable[] = [];
+    let employeeTableResponse: CommonResponseDTO = {};
 
     //near expired contract table
     const nearExpiredContractFilter: RenewContractListDTO = {
@@ -76,6 +79,11 @@ export const load = async () => {
             await ContractEmployeeServices.getRenewContractApproverTable(supporterApproverParam);
         supporterApproverTable =
             supporterApproverTableResponse.data?.dataList as RenewContractSuppAppTable[];
+    } else if (currentRoleCode === UserRoleConstant.kakitanganKontrak.code) {
+        employeeTableResponse =
+            await ContractEmployeeServices.getRenewContractEmployeeTable(supporterApproverParam)
+        employeeTable =
+            employeeTableResponse.data?.dataList as RenewContractEmployeeTable[];
     }
 
     return {
@@ -89,6 +97,8 @@ export const load = async () => {
         supporterApproverTable,
         supporterApproverTableResponse,
         supporterApproverParam,
+        employeeTableResponse,
+        employeeTable,
     }
 }
 
