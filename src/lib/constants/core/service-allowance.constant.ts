@@ -182,6 +182,7 @@ export class ServiceAllowanceStepperConstant {
 // Service Allowance API constant
 export class ServiceAllowanceAPIConstant {
     public static ceremonyDress: ServiceAllowanceURLDTO = {
+        view:'service_allowance/ceremony_clothing/view',
         detail: 'service_allowance/ceremony_clothing/add_base64',
         upload: '',
         directorFeedback:
@@ -196,6 +197,7 @@ export class ServiceAllowanceAPIConstant {
         confirmation: '',
     };
     public static warmClothes: ServiceAllowanceURLDTO = {
+        view:'',
         detail: 'service_allowance/winter_clothing/add',
         upload: '',
         directorFeedback: 'service_allowance/winter_clothing/director_support',
@@ -208,6 +210,7 @@ export class ServiceAllowanceAPIConstant {
         confirmation: '',
     };
     public static hometownVisit: ServiceAllowanceURLDTO = {
+        view:'',
         detail: 'service_allowance/state_visit/add',
         upload: 'service_allowance/state_visit/upload',
         directorFeedback: '',
@@ -219,6 +222,7 @@ export class ServiceAllowanceAPIConstant {
         confirmation: '',
     };
     public static funeral: ServiceAllowanceURLDTO = {
+        view:'',
         detail: 'service_allowance/funeral_arrangement/add',
         upload: '',
         directorFeedback: '',
@@ -232,6 +236,7 @@ export class ServiceAllowanceAPIConstant {
         confirmation: 'service_allowance/funeral_arrangement/confirmation',
     };
     public static welfareFund: ServiceAllowanceURLDTO = {
+        view:'',
         detail: 'service_allowance/welfare_fund/add',
         upload: '',
         directorFeedback: 'service_allowance/welfare_fund/director_support',
@@ -243,6 +248,7 @@ export class ServiceAllowanceAPIConstant {
         confirmation: '',
     };
     public static houseMoving: ServiceAllowanceURLDTO = {
+        view:'',
         detail: 'service_allowance/house_moving/add',
         upload: '',
         directorFeedback: 'service_allowance/house_moving/confirmation',
@@ -254,6 +260,7 @@ export class ServiceAllowanceAPIConstant {
         confirmation: '',
     };
     public static passportClaim: ServiceAllowanceURLDTO = {
+        view:'',
         detail: 'service_allowance/passport_payment/add',
         upload: '',
         directorFeedback: 'service_allowance/passport_payment/director_support',
@@ -266,6 +273,7 @@ export class ServiceAllowanceAPIConstant {
         confirmation: '',
     };
     public static healthInsurance: ServiceAllowanceURLDTO = {
+        view:'',
         detail: 'service_allowance/insurance_payment/add',
         upload: '',
         directorFeedback: '',
@@ -278,6 +286,7 @@ export class ServiceAllowanceAPIConstant {
         confirmation: '',
     };
     public static shippingClaim: ServiceAllowanceURLDTO = {
+        view:'',
         detail: 'service_allowance/cargo_shipping/add',
         upload: '',
         directorFeedback: '',

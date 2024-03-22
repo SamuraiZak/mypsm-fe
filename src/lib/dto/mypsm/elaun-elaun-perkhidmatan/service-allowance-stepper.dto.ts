@@ -15,6 +15,7 @@ export interface ServiceAllowanceStepperDTO {
 }
 
 export interface ServiceAllowanceURLDTO {
+    view: string;
     detail: string;
     upload: string;
     directorFeedback: string;
