@@ -163,7 +163,7 @@ export const _sentenceSchema = z.object({
     effectiveDate: dateStringSchema,
     emolumenRight: numberSchema.nullish(),
     duration: numberSchema.nullish(),
-    emolumenDate: z.array(_emolumenDateSchema).nullish(),
+    emolumenDate: z.array(_emolumenDateSchema),
     newGradeCode: codeSchema.nullish(),
     salaryMovementCount: numberSchema.nullish(),
     sentencingMonth: codeSchema.nullish(),
