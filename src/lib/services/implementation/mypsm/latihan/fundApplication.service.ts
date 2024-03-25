@@ -151,14 +151,16 @@ export class CourseFundApplicationServices {
     }
 
     // create fund application employee documents //multipart form
-    static async uploadFundApplicationEmployeeDocument(param: CourseFundReimbursementUploadDocumentsBase64RequestDTO) {
+    static async uploadFundApplicationEmployeeDocument(
+        param: CourseFundReimbursementUploadDocumentsBase64RequestDTO,
+    ) {
         try {
             const url: Input = 'course/fund_application/document/add';
 
             // get the promise response
             const promiseRes: Promise<Response> = httpFormData
                 .post(url, {
-                    body: param,
+                    body: JSON.stringify(param),
                 })
                 .json();
             // await toast for resolved or rejected state
