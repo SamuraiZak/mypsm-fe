@@ -100,6 +100,12 @@ export async function load({ params }) {
                     {
                         penaltyTypeCode: '',
                         effectiveDate: new Date().toDateString(),
+                        emolumenDate: [
+                            {
+                                startDate: new Date().toDateString(),
+                                endDate: new Date().toDateString(),
+                            },
+                        ],
                     },
                 ],
                 // Add other properties if necessary
