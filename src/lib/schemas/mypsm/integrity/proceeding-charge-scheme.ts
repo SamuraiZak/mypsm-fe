@@ -154,13 +154,13 @@ export const _chargesListSchema = z.object({
 
 // Sentencing Meeting Schemas
 export const _emolumenDateSchema = z.object({
-    startDate: dateStringSchema,
-    endDate: dateStringSchema,
+    startDate: dateStringSchema.nullable(),
+    endDate: dateStringSchema.nullable(),
 });
 
 export const _sentenceSchema = z.object({
-    penaltyTypeCode: codeSchema,
-    effectiveDate: dateStringSchema,
+    penaltyTypeCode: codeSchema.nullish(),
+    effectiveDate: dateStringSchema.nullish(),
     emolumenRight: numberSchema.nullish(),
     duration: numberSchema.nullish(),
     emolumenDate: z.array(_emolumenDateSchema),
@@ -169,11 +169,87 @@ export const _sentenceSchema = z.object({
     sentencingMonth: codeSchema.nullish(),
 });
 
-export const _sentencingListSchema = z.object({
-    accusationListId: z.number().readonly(),
-    result: booleanSchema,
-    sentencing: z.array(_sentenceSchema),
-});
+export const _sentencingListSchema = z
+    .object({
+        accusationListId: z.number().readonly(),
+        result: booleanSchema,
+        sentencing: z.array(_sentenceSchema),
+    })
+    .superRefine(({ result, sentencing }, ctx) => {
+        if (result) {
+            sentencing.forEach((arr) => {
+                ctx.addIssue({
+                    code: 'custom',
+                    message: 'Tarikh kuatkuasa perlu diisi.',
+                    path: ['effectiveDate'],
+                });
+                if (arr.penaltyTypeCode === '02') {
+                    if (arr.emolumenRight === undefined) {
+                        ctx.addIssue({
+                            code: 'custom',
+                            message: 'Hari Emolumen perlu diisi.',
+                            path: ['emolumenRight'],
+                        });
+                    }
+                } else if (arr.penaltyTypeCode === '03') {
+                    if (arr.emolumenRight === undefined) {
+                        ctx.addIssue({
+                            code: 'custom',
+                            message: 'Hari Emolumen perlu diisi.',
+                            path: ['emolumenRight'],
+                        });
+                    }
+                    arr.emolumenDate.forEach((val) => {
+                        if (val.startDate === null) {
+                            ctx.addIssue({
+                                code: 'custom',
+                                message: 'Tarikh mula perlu diisi.',
+                                path: ['startDate'],
+                            });
+                        }
+                        if (val.endDate === null) {
+                            ctx.addIssue({
+                                code: 'custom',
+                                message: 'Tarikh mula perlu diisi.',
+                                path: ['endDate'],
+                            });
+                        }
+                    });
+                } else if (arr.penaltyTypeCode === '04') {
+                    if (arr.duration === undefined) {
+                        ctx.addIssue({
+                            code: 'custom',
+                            message: 'Tempoh bulan perlu diisi.',
+                            path: ['duration'],
+                        });
+                    }
+                } else if (arr.penaltyTypeCode === '05') {
+                    if (arr.duration === undefined) {
+                        ctx.addIssue({
+                            code: 'custom',
+                            message: 'Tempoh perlu diisi.',
+                            path: ['duration'],
+                        });
+                    }
+                    if (arr.sentencingMonth === undefined) {
+                        ctx.addIssue({
+                            code: 'custom',
+                            message: 'Tempoh Hukuman perlu diisi.',
+                            path: ['sentencingMonth'],
+                        });
+                    }
+                } else if (arr.penaltyTypeCode === '06') {
+                    if (arr.newGradeCode === undefined) {
+                        ctx.addIssue({
+                            code: 'custom',
+                            message: 'Gred baru perlu diisi.',
+                            path: ['newGradeCode'],
+                        });
+                    }
+                }
+            });
+        }
+    });
 
 export const _proceedingSentencingMeetingSchema = z.object({
     integrityId: z.number().readonly(),
