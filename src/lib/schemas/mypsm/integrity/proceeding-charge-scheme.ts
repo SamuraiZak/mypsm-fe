@@ -162,6 +162,7 @@ export const _sentenceSchema = z.object({
     penaltyTypeCode: codeSchema,
     effectiveDate: dateStringSchema,
     emolumenRight: numberSchema.nullish(),
+    duration: numberSchema.nullish(),
     emolumenDate: z.array(_emolumenDateSchema).nullish(),
     newGradeCode: codeSchema.nullish(),
     salaryMovementCount: numberSchema.nullish(),
