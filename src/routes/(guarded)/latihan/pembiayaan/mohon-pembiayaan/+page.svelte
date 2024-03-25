@@ -91,7 +91,7 @@
 
 <ContentHeader title="Maklumat Pembiayaan Pelajaran">
     <TextIconButton
-        label={enableUploadDocument ? 'Muat Naik Kemudian' : 'Kembali'}
+        label={enableUploadDocument ? 'Muat naik kemudian' : 'Kembali'}
         type="neutral"
         onClick={() => {
             goto('../pembiayaan');
@@ -101,11 +101,13 @@
 <Stepper>
     <StepperContent>
         <StepperContentHeader title="Maklumat Pelajaran Yang Akan Diikuti">
-            <TextIconButton
-                type="primary"
-                label="Simpan"
-                form="fundReimbursementFormStepper"
-            />
+            {#if !enableUploadDocument}
+                <TextIconButton
+                    type="primary"
+                    label="Simpan"
+                    form="fundReimbursementFormStepper"
+                />
+            {/if}
         </StepperContentHeader>
         <StepperContentBody>
             <form

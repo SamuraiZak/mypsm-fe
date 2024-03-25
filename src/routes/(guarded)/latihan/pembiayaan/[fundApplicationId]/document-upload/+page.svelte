@@ -56,15 +56,14 @@
             ];
         });
     };
-    const handleDelete = () => {
-        // const selectedFileName = (e.currentTarget as HTMLInputElement).files?.item(0)?.name
 
-        // $fundApplicationUploadDocumentForm.documents =
-        //     $fundApplicationUploadDocumentForm.documents.filter((file) => {
-        //         return file.name !== selectedFileName;
-        //     });
-
-        $fundApplicationUploadDocumentForm.documents = [];
+    const handleDelete = (file: File) => {
+        $fundApplicationUploadDocumentForm.documents =
+            $fundApplicationUploadDocumentForm.documents.filter((document) => {
+                return !(
+                    document.name === file.name && document.size === file.size
+                );
+            });
     };
 </script>
 
@@ -122,12 +121,12 @@
                         class="flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border border-bdr-primary p-2.5"
                     >
                         <div class="flex flex-wrap gap-3">
-                            {#each $fundApplicationUploadDocumentForm.documents as _, i}
+                            {#each $fundApplicationUploadDocumentForm.documents as file, i}
                                 <FileInputFieldChildren
                                     childrenType="grid"
-                                    {handleDelete}
-                                    fileName={$fundApplicationUploadDocumentForm
-                                        .documents[i].name}
+                                    handleDelete={() => handleDelete(file)}
+                                    document={$fundApplicationUploadDocumentForm
+                                        .documents[i]}
                                 />
                             {/each}
                         </div>

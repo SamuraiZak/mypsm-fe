@@ -56,15 +56,17 @@
             ];
         });
     };
-    const handleDelete = () => {
-        // const selectedFileName = (e.currentTarget as HTMLInputElement).files?.item(0)?.name
 
-        // $fundReimbursementUploadDocumentForm.documents =
-        //     $fundReimbursementUploadDocumentForm.documents.filter((file) => {
-        //         return file.name !== selectedFileName;
-        //     });
-
-        $fundReimbursementUploadDocumentForm.documents = [];
+    const handleDelete = (file: File) => {
+        $fundReimbursementUploadDocumentForm.documents =
+            $fundReimbursementUploadDocumentForm.documents.filter(
+                (document) => {
+                    return !(
+                        document.name === file.name &&
+                        document.size === file.size
+                    );
+                },
+            );
     };
 </script>
 
@@ -124,12 +126,12 @@
                         class="flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border border-bdr-primary p-2.5"
                     >
                         <div class="flex flex-wrap gap-3">
-                            {#each $fundReimbursementUploadDocumentForm.documents as _, i}
+                            {#each $fundReimbursementUploadDocumentForm.documents as file, i}
                                 <FileInputFieldChildren
                                     childrenType="grid"
-                                    {handleDelete}
-                                    fileName={$fundReimbursementUploadDocumentForm
-                                        .documents[i].name}
+                                    handleDelete={() => handleDelete(file)}
+                                    document={$fundReimbursementUploadDocumentForm
+                                        .documents[i]}
                                 />
                             {/each}
                         </div>
