@@ -11,6 +11,8 @@ import {
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
 import type { ProceedingAppealResultDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-appeal.dto';
 import type { ProceedingApproverResultDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-approver-result.dto';
+import type { ProceedingCreateChargeRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-create-charges-request.dto';
+import type { ProceedingSentencingMeetingRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-create-sentencing-meeting-request.dto';
 import type { ProceedingSuspensionRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-create-suspension-request.dto';
 import type { ProceedingStaffDetailRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-staff-detail-request.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
@@ -96,7 +98,9 @@ export class IntegrityProceedingServices {
     }
 
     // create proceeding - add charge meeting result
-    static async createProceedingChargeMeetingResult<T>(param: T) {
+    static async createProceedingChargeMeetingResult(
+        param: ProceedingCreateChargeRequestDTO,
+    ) {
         try {
             const url: Input = 'integrity/proceeding/accusation/add';
 
@@ -186,7 +190,9 @@ export class IntegrityProceedingServices {
     }
 
     // create proceeding - add sentencing result
-    static async createProceedingSentencing<T>(param: T) {
+    static async createProceedingSentencing(
+        param: ProceedingSentencingMeetingRequestDTO,
+    ) {
         try {
             const url: Input = 'integrity/proceeding/sentencing/add';
 
