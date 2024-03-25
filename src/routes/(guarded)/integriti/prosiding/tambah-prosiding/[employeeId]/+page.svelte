@@ -19,20 +19,15 @@
     import { goto } from '$app/navigation';
     import type { PageData } from './$types';
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
-    import { Button, Modal } from 'flowbite-svelte';
+    import { Button } from 'flowbite-svelte';
     import SvgMinusCircle from '$lib/assets/svg/SvgMinusCircle.svelte';
     import {
         _proceedingAccusationSchema,
         _proceedingChargeMeetingRequestSchema,
     } from '$lib/schemas/mypsm/integrity/proceeding-charge-scheme';
-    import { getErrorToast } from '$lib/helpers/core/toast.helper';
-    import { error } from '@sveltejs/kit';
-    import { zod } from 'sveltekit-superforms/adapters';
     import type { ProceedingAccusationDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
     import { _addStateUnitSecretaryApprovalForm } from './+page';
     export let data: PageData;
-    let openAddChargeModal: boolean = false;
-    let charges: ProceedingAccusationDTO[] = [];
 
     // Superforms
     const { form } = superForm(data.forms.proceedingStaffInfoForm, {
@@ -57,52 +52,28 @@
             validators: false,
             taintedMessage: false,
             async onSubmit() {
-                const tempChargesArr: string[] = charges.map(
-                    (charge) => charge.title,
-                );
                 $chargesMeetingForm.employeeId = Number(data.params.employeeId);
-                $chargesMeetingForm.accusationList = tempChargesArr;
 
                 _addStateUnitSecretaryApprovalForm($chargesMeetingForm);
             },
         });
 
-    const { form: addChargesForm, enhance: addChargesFormErrors } = superForm(
-        data.forms.proceedingAccusationModal,
-        {
-            SPA: true,
-            dataType: 'json',
-            invalidateAll: true,
-            resetForm: true,
-            multipleSubmits: 'allow',
-            validationMethod: 'oninput',
-            validators: zod(_proceedingAccusationSchema),
-            taintedMessage: false,
-            async onSubmit(formData) {
-                const result = await superValidate(
-                    formData.formData,
-                    zod(_proceedingAccusationSchema),
-                );
-                result.data.id = result.data.title + Math.random();
+    const addCharge = () => {
+        const newChargeObject = '';
 
-                if (!result.valid) {
-                    getErrorToast();
-                    error(
-                        400,
-                        'Validation not passed, please check every fields.',
-                    );
-                }
+        $chargesMeetingForm.accusationList = [
+            ...$chargesMeetingForm.accusationList,
+            newChargeObject,
+        ];
 
-                charges = [...charges, result.data as ProceedingAccusationDTO];
-                openAddChargeModal = false;
-            },
-        },
-    );
+        console.log($chargesMeetingForm.accusationList);
+    };
 
-    function removeCharge<T>(id: T) {
-        charges = charges.filter((charge) => {
-            return charge.id !== id;
-        });
+    function removeCharge(index: number) {
+        $chargesMeetingForm.accusationList =
+            $chargesMeetingForm.accusationList.filter((_, i) => {
+                return i !== index;
+            });
     }
 </script>
 
@@ -639,36 +610,35 @@
                             ><div class="mr-2">
                                 <TextIconButton
                                     type="primary"
-                                    onClick={() => {
-                                        openAddChargeModal = true;
-                                    }}
+                                    onClick={addCharge}
                                     label="Tambah Tuduhan"
                                     ><SvgPlus /></TextIconButton
                                 >
                             </div>
                         </ContentHeader>
                         <hr />
-                        {#if charges.length > 0}
-                            {#each charges as charge, index}
+                        {#if $chargesMeetingForm.accusationList.length > 0}
+                            {#each $chargesMeetingForm.accusationList as _, index}
                                 <div
                                     class="flex w-full flex-row items-center gap-x-2.5 text-base"
                                 >
-                                    <span class="w-4">{index + 1}.</span>
-                                    <ContentHeader
-                                        title={charge.title}
-                                        borderClass="border-none"
-                                    >
-                                        <div class="w-12">
-                                            <Button
-                                                outline={false}
-                                                on:click={() =>
-                                                    removeCharge(charge.id)}
-                                                ><span class="text-red-600"
-                                                    ><SvgMinusCircle /></span
-                                                ></Button
-                                            >
-                                        </div>
-                                    </ContentHeader>
+                                    <span class="w-4 pb-3">{index + 1}.</span>
+                                    <CustomTextField
+                                        disabled={false}
+                                        label=""
+                                        id={index + 'charge'}
+                                        bind:val={$chargesMeetingForm
+                                            .accusationList[index]}
+                                    />
+                                    <div class="w-12 pb-3">
+                                        <Button
+                                            outline={false}
+                                            on:click={() => removeCharge(index)}
+                                            ><span class="text-red-600"
+                                                ><SvgMinusCircle /></span
+                                            ></Button
+                                        >
+                                    </div>
                                 </div>
                             {/each}
                         {:else}
@@ -727,26 +697,3 @@
 </Stepper>
 
 <Toaster />
-
-<!-- Next Of Kin Info Modal -->
-<Modal title={'Tambah Tuduhan'} bind:open={openAddChargeModal}>
-    <form
-        id="addAccusationModal"
-        method="POST"
-        use:addChargesFormErrors
-        class="flex w-full flex-col items-center gap-2"
-    >
-        <CustomTextField
-            disabled={false}
-            id="title"
-            label="Nama Tuduhan"
-            placeholder="Sila nyatakan nama tuduhan.."
-            bind:val={$addChargesForm.title}
-        ></CustomTextField>
-    </form>
-    <div class="flex w-full flex-col items-end">
-        <TextIconButton type="primary" form="addAccusationModal" label="Tambah"
-            ><SvgPlus />
-        </TextIconButton>
-    </div>
-</Modal>
