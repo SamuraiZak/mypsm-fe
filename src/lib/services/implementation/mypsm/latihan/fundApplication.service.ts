@@ -11,6 +11,7 @@ import {
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
 import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
 import type { CourseFundApplicationApprovalDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-approval.dto';
+import type { CourseFundReimbursementUploadDocumentsBase64RequestDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement-document.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import httpFormData from '$lib/services/implementation/service-provider-formdata.service';
 import http from '$lib/services/implementation/service-provider.service';
@@ -150,7 +151,7 @@ export class CourseFundApplicationServices {
     }
 
     // create fund application employee documents //multipart form
-    static async uploadFundApplicationEmployeeDocument(param: FormData) {
+    static async uploadFundApplicationEmployeeDocument(param: CourseFundReimbursementUploadDocumentsBase64RequestDTO) {
         try {
             const url: Input = 'course/fund_application/document/add';
 
