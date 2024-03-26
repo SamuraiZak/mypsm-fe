@@ -6,20 +6,37 @@
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type { FinalPayslipList } from '$lib/dto/mypsm/gaji/gaji-akhir/final-payslip-list.dto';
     import type { PageData } from './$types';
+    import { _updateTable } from './+page';
     export let data: PageData;
 
-    let rowData: any;
-    let finalSalaryTable: TableDTO = {
+    let rowData = {} as FinalPayslipList;
+    let finalPayslipTable: TableDTO = {
         param: data.param,
-        meta: {
+        meta: data.finalPayslipListResponse.data?.meta ?? {
             pageSize: 5,
             pageNum: 1,
-            totalData: 4,
+            totalData: 0,
             totalPage: 1,
         },
-        data: data.dataList ?? [],
-        hiddenData: ['id']
+        data: data.finalPayslipList ?? [],
+        hiddenData: ['id'],
+    };
+
+    async function _search() {
+        _updateTable(finalPayslipTable.param).then((value) => {
+            finalPayslipTable.data = value.props.response.data?.dataList ?? [];
+            finalPayslipTable.meta = value.props.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            finalPayslipTable.param.pageSize = value.props.param.pageSize;
+            finalPayslipTable.param.pageNum = value.props.param.pageNum;
+            finalPayslipTable.hiddenData = ['id'];
+        });
     }
 </script>
 
@@ -32,18 +49,36 @@
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
     <div class="flex w-full flex-col justify-start gap-2.5 p-5">
-        <FilterCard>
-            <FilterTextField label="Nama" inputValue={''} />
-            <FilterTextField label="No. Kad Pengenalan" inputValue={''} />
-            <FilterTextField label="Status" inputValue={''} />
+        <FilterCard onSearch={_search}>
+            <FilterTextField
+                label="No. Pekerja"
+                inputValue={finalPayslipTable.param.filter.employeeNumber}
+            />
+            <FilterTextField
+                label="Nama"
+                inputValue={finalPayslipTable.param.filter.name}
+            />
+            <FilterTextField
+                label="No. Kad Pengenalan"
+                inputValue={finalPayslipTable.param.filter.identityCardNumber}
+            />
+            <FilterTextField
+                label="Jenis Persaraan"
+                inputValue={finalPayslipTable.param.filter.retirementType}
+            />
+            <FilterTextField
+                label="status"
+                inputValue={finalPayslipTable.param.filter.status}
+            />
         </FilterCard>
 
         <CustomTable
-            title="Senarai Kakitangan"
-            bind:tableData={finalSalaryTable}
+            title="Rekod Sijil Gaji Akhir"
+            bind:tableData={finalPayslipTable}
             bind:passData={rowData}
+            onUpdate={_search}
             enableDetail
-            detailActions={() => goto('/gaji/gaji-akhir/'+rowData.id)}
-            />
+            detailActions={() => goto('./gaji-akhir/'+rowData.id)}
+        />
     </div>
 </section>
