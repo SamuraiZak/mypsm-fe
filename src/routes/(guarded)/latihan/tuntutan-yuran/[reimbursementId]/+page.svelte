@@ -794,7 +794,7 @@
                                                 .document[i].document,
                                         )}
                                     fileName={$reimbursementDocumentsForm
-                                        .document[i].document}
+                                        .document[i].name}
                                 ></DownloadAttachment>
                             </div>
                         {/each}
