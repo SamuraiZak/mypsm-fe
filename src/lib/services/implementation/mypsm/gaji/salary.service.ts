@@ -16,6 +16,9 @@ import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
 
 export class SalaryServices {
+    //=========================================
+    // pergerakan gaji services
+    //=========================================
     //get salary movement list
     static async getSalaryMovementList(param: CommonListRequestDTO) {
         try {
@@ -95,6 +98,41 @@ export class SalaryServices {
             const response: Response = await http
                 .post(url, {
                     body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //=========================================
+    // gaji elaun services
+    //=========================================
+
+
+    //=========================================
+    // gaji akhir
+    //=========================================
+
+
+    //=========================================
+    // sijil gaji akhir
+    //=========================================
+    static async getFinalPayslipList(param: CommonListRequestDTO) {
+        try {
+            let url: Input = 'salary/final_payslip/list';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
                 })
                 .json();
 
