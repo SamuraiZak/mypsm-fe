@@ -147,8 +147,7 @@ export const _fundApplicationApprovalSchema = z.object({
 // fund application document upload schema
 // ==================================================
 export const _fundApplicationDocumentSchema = z.object({
-    id: numberIdSchema,
-    document: z.array(z.object({ document: z.string() })),
+    document: z.array(z.object({ name: z.string(), document: z.string() })),
 });
 export const _fundApplicationUploadDocSchema = z.object({
     // id: numberIdSchema,

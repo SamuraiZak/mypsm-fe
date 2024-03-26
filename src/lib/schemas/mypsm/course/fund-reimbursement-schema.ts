@@ -169,8 +169,7 @@ export const _fundReimbursementApprovalSchema = z.object({
 // fund reimbursement document upload schema
 // ==================================================
 export const _fundReimbursementDocumentSchema = z.object({
-    id: numberIdSchema,
-    document: z.array(z.object({ document: z.string() })),
+    document: z.array(z.object({ name: z.string(), document: z.string() })),
 });
 export const _fundReimbursementUploadDocSchema = z.object({
     // id: numberIdSchema,
