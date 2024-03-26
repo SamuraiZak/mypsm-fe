@@ -79,12 +79,10 @@
             ];
         });
     };
-    const handleDelete = (file: File) => {
+    const handleDelete = (i: number) => {
         $fundApplicationUploadDocumentForm.documents =
-            $fundApplicationUploadDocumentForm.documents.filter((document) => {
-                return !(
-                    document.name === file.name && document.size === file.size
-                );
+            $fundApplicationUploadDocumentForm.documents.filter((_, index) => {
+                return index !== i;
             });
     };
 </script>
@@ -242,11 +240,10 @@
                         >
                             <div class="flex flex-wrap gap-3">
                                 {#if $fundApplicationUploadDocumentForm.documents.length > 0}
-                                    {#each $fundApplicationUploadDocumentForm.documents as file, i}
+                                    {#each $fundApplicationUploadDocumentForm.documents as _, i}
                                         <FileInputFieldChildren
                                             childrenType="grid"
-                                            handleDelete={() =>
-                                                handleDelete(file)}
+                                            handleDelete={() => handleDelete(i)}
                                             document={$fundApplicationUploadDocumentForm
                                                 .documents[i]}
                                         />

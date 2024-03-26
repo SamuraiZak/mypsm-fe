@@ -32,8 +32,8 @@
     const { form, errors, enhance } = superForm(data.reimbursementInfoForm, {
         SPA: true,
         dataType: 'json',
-        invalidateAll: true,
-        resetForm: true,
+        invalidateAll: false,
+        resetForm: false,
         multipleSubmits: 'prevent',
         validationMethod: 'oninput',
         validators: zod(_fundReimbursementDetailResponseSchema),
@@ -81,14 +81,11 @@
         });
     };
 
-    const handleDelete = (file: File) => {
+    const handleDelete = (i: number) => {
         $fundReimbursementUploadDocumentForm.documents =
             $fundReimbursementUploadDocumentForm.documents.filter(
-                (document) => {
-                    return !(
-                        document.name === file.name &&
-                        document.size === file.size
-                    );
+                (_, index) => {
+                    return index !== i;
                 },
             );
     };
@@ -106,11 +103,13 @@
 <Stepper>
     <StepperContent>
         <StepperContentHeader title="Maklumat Pengajian Diikuti">
-            <TextIconButton
-                type="primary"
-                label="Simpan"
-                form="fundReimbursementFormStepper"
-            />
+            {#if !enableUploadDocument}
+                <TextIconButton
+                    type="primary"
+                    label="Simpan"
+                    form="fundReimbursementFormStepper"
+                />
+            {/if}
         </StepperContentHeader>
         <StepperContentBody
             ><!-- Maklumat Peperiksaan -->
@@ -121,7 +120,7 @@
                 class="flex w-full flex-col gap-2"
             >
                 <CustomSelectField
-                    disabled={false}
+                    disabled={enableUploadDocument}
                     errors={$errors.academicLevel}
                     id="academicLevel"
                     label="Peringkat Kursus Pengajian"
@@ -130,7 +129,7 @@
                 ></CustomSelectField>
 
                 <CustomTextField
-                    disabled={false}
+                    disabled={enableUploadDocument}
                     errors={$errors.courseName}
                     id="courseName"
                     label="Nama Kursus Pengajian"
@@ -139,7 +138,7 @@
                 ></CustomTextField>
 
                 <CustomSelectField
-                    disabled={false}
+                    disabled={enableUploadDocument}
                     errors={$errors.institution}
                     id="institution"
                     label="Tempat Pengajian"
@@ -148,7 +147,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={false}
+                    disabled={enableUploadDocument}
                     errors={$errors.learningInstitution}
                     id="learningInstitution"
                     label="Institusi/Pusat Pembelajaran"
@@ -157,7 +156,7 @@
                 ></CustomSelectField>
 
                 <CustomTextField
-                    disabled={false}
+                    disabled={enableUploadDocument}
                     errors={$errors.studyDuration}
                     id="studyDuration"
                     label="Tempoh Pengajian (Tahun)"
@@ -166,7 +165,7 @@
                 ></CustomTextField>
 
                 <CustomTextField
-                    disabled={false}
+                    disabled={enableUploadDocument}
                     errors={$errors.entryDateToInstituition}
                     id="entryDateToInstituition"
                     label="Tarikh Kemasukan Ke IPTA"
@@ -175,7 +174,7 @@
                 ></CustomTextField>
 
                 <CustomTextField
-                    disabled={false}
+                    disabled={enableUploadDocument}
                     errors={$errors.finishedStudyDate}
                     id="finishedStudyDate"
                     label="Tamat Pada"
@@ -184,7 +183,7 @@
                 ></CustomTextField>
 
                 <CustomSelectField
-                    disabled={false}
+                    disabled={enableUploadDocument}
                     errors={$errors.semester}
                     id="semester"
                     label="Tuntutan Untuk Semester"
@@ -206,7 +205,7 @@
                 ></CustomSelectField>
 
                 <CustomTextField
-                    disabled={false}
+                    disabled={enableUploadDocument}
                     errors={$errors.finalResult}
                     id="finalResult"
                     label="Keputusan Akhir (CGPA)"
@@ -215,7 +214,7 @@
                 ></CustomTextField>
 
                 <CustomTextField
-                    disabled={false}
+                    disabled={enableUploadDocument}
                     errors={$errors.totalClaim}
                     id="totalClaim"
                     label="Jumlah Tuntutan (RM)"
@@ -268,10 +267,10 @@
                             class="flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border border-bdr-primary p-2.5"
                         >
                             <div class="flex flex-wrap gap-3">
-                                {#each $fundReimbursementUploadDocumentForm.documents as file, i}
+                                {#each $fundReimbursementUploadDocumentForm.documents as _, i}
                                     <FileInputFieldChildren
                                         childrenType="grid"
-                                        handleDelete={() => handleDelete(file)}
+                                        handleDelete={() => handleDelete(i)}
                                         document={$fundReimbursementUploadDocumentForm
                                             .documents[i]}
                                     />

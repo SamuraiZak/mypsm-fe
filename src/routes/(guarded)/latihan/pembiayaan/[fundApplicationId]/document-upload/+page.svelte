@@ -57,12 +57,10 @@
         });
     };
 
-    const handleDelete = (file: File) => {
+    const handleDelete = (i: number) => {
         $fundApplicationUploadDocumentForm.documents =
-            $fundApplicationUploadDocumentForm.documents.filter((document) => {
-                return !(
-                    document.name === file.name && document.size === file.size
-                );
+            $fundApplicationUploadDocumentForm.documents.filter((_, index) => {
+                return index !== i;
             });
     };
 </script>
@@ -121,10 +119,10 @@
                         class="flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border border-bdr-primary p-2.5"
                     >
                         <div class="flex flex-wrap gap-3">
-                            {#each $fundApplicationUploadDocumentForm.documents as file, i}
+                            {#each $fundApplicationUploadDocumentForm.documents as _, i}
                                 <FileInputFieldChildren
                                     childrenType="grid"
-                                    handleDelete={() => handleDelete(file)}
+                                    handleDelete={() => handleDelete(i)}
                                     document={$fundApplicationUploadDocumentForm
                                         .documents[i]}
                                 />
