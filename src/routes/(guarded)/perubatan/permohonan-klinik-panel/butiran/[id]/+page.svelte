@@ -12,8 +12,30 @@
     import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
+    import { _addClinicApplicationSchema } from '$lib/schemas/mypsm/medical/medical-schema';
+    import { zod } from 'sveltekit-superforms/adapters';
+    import { _submitClinicApplicationForm } from './+page';
+    import { superForm } from 'sveltekit-superforms/client';
+    import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 
     export let data: PageData;
+
+    let notEditing: boolean = false;
+
+    const { form:clinicApplicationForm, errors:clinicApplicationError, enhance:clinicApplicationEnhance } = superForm(data.clinicApplicationForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: "clinicDetailForm",
+        validators: zod(_addClinicApplicationSchema),
+        resetForm: false,
+        async onSubmit() {
+          const editMode = await _submitClinicApplicationForm($clinicApplicationForm)
+
+          if(editMode?.response.status == "success"){
+            notEditing = true;
+          }
+        },
+    });
 </script>
 
 <!-- content header starts here -->
@@ -48,48 +70,141 @@
                     class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
                     id="clinicDetailForm"
                     method="POST"
+                    use:clinicApplicationEnhance
                 >
                     <CustomTextField
                         label="Nama Klinik"
-                        id=""
-                        disabled={data.isViewOnly}
-                        val=""
-                        errors={[]}
+                        id="name"
+                        disabled={notEditing}
+                        bind:val={$clinicApplicationForm.name}
+                        errors={$clinicApplicationError.name}
                     />
                     <CustomTextField
                         label="Emel Klinik"
-                        id=""
-                        disabled={data.isViewOnly}
-                        val=""
-                        errors={[]}
+                        id="email"
+                        disabled={notEditing}
+                        bind:val={$clinicApplicationForm.email}
+                        errors={$clinicApplicationError.email}
                     />
                     <CustomTextField
                         label="Alamat"
-                        id=""
-                        disabled={data.isViewOnly}
-                        val=""
-                        errors={[]}
+                        id="address"
+                        disabled={notEditing}
+                        bind:val={$clinicApplicationForm.address}
+                        errors={$clinicApplicationError.address}
                     />
                     <CustomTextField
                         label="Poskod"
                         id=""
-                        disabled={data.isViewOnly}
-                        val=""
-                        errors={[]}
+                        disabled={notEditing}
+                        val="missing"
                     />
                     <CustomTextField
                         label="Bandar"
                         id=""
-                        disabled={data.isViewOnly}
-                        val=""
-                        errors={[]}
+                        disabled={notEditing}
+                        val="missing"
                     />
                     <CustomTextField
                         label="Negeri"
-                        id=""
-                        disabled={data.isViewOnly}
-                        val=""
-                        errors={[]}
+                        id="district"
+                        disabled={notEditing}
+                        bind:val={$clinicApplicationForm.district}
+                        errors={$clinicApplicationError.district}
+                    />
+                    <CustomTextField
+                        label="Tarikh Lantikan Klinik Panel"
+                        id="panelAppointedDate"
+                        type="date"
+                        disabled={notEditing}
+                        bind:val={$clinicApplicationForm.panelAppointedDate}
+                        errors={$clinicApplicationError.panelAppointedDate}
+                    />
+                    <CustomTextField
+                        label="Tarikh Tamat Kontrak Klinik Panel"
+                        id="panelContractEndDate"
+                        type="date"
+                        disabled={notEditing}
+                        bind:val={$clinicApplicationForm.panelContractEndDate}
+                        errors={$clinicApplicationError.panelContractEndDate}
+                    />
+                    <CustomTextField
+                        label="No. Telefon"
+                        id="contactNumber"
+                        disabled={notEditing}
+                        bind:val={$clinicApplicationForm.contactNumber}
+                        errors={$clinicApplicationError.contactNumber}
+                    />
+                    <CustomTextField
+                        label="Nama Bank"
+                        id="bankName"
+                        disabled={notEditing}
+                        bind:val={$clinicApplicationForm.bankName}
+                        errors={$clinicApplicationError.bankName}
+                    />
+                    <CustomTextField
+                        label="No. Akaun Bank"
+                        id="bankAccount"
+                        disabled={notEditing}
+                        bind:val={$clinicApplicationForm.bankAccount}
+                        errors={$clinicApplicationError.bankAccount}
+                    />
+                    <CustomTextField
+                        label="Tarikh Pendaftaran Klinik"
+                        id="foundationDate"
+                        type="date"
+                        disabled={notEditing}
+                        bind:val={$clinicApplicationForm.foundationDate}
+                        errors={$clinicApplicationError.foundationDate}
+                    />
+                    <CustomTextField
+                        label="Jenis Klinik"
+                        id="clinicType"
+                        disabled={notEditing}
+                        bind:val={$clinicApplicationForm.clinicType}
+                        errors={$clinicApplicationError.clinicType}
+                    />
+                    <CustomTextField
+                        label="Status Pemilikan"
+                        id="ownershipStatus"
+                        disabled={notEditing}
+                        bind:val={$clinicApplicationForm.ownershipStatus}
+                        errors={$clinicApplicationError.ownershipStatus}
+                    />
+                    <CustomTextField
+                        label="Doktor Berdaftar"
+                        id="registeredMedicalPractitioner"
+                        disabled={notEditing}
+                        bind:val={$clinicApplicationForm.registeredMedicalPractitioner}
+                        errors={$clinicApplicationError.registeredMedicalPractitioner}
+                    />
+                    <CustomTextField
+                        label="Bilangan Cawangan"
+                        id="branchCount"
+                        disabled={notEditing}
+                        bind:val={$clinicApplicationForm.branchCount}
+                        errors={$clinicApplicationError.branchCount}
+                    />
+                    <CustomTextField
+                        label="Jarak Klinik Dari Pejabat"
+                        id="clinicOfficeDistance"
+                        disabled={notEditing}
+                        bind:val={$clinicApplicationForm.clinicOfficeDistance}
+                        errors={$clinicApplicationError.clinicOfficeDistance}
+                    />
+                    <CustomTextField
+                        label="Jarak Klinik Terdekat Dari Pejabat"
+                        id="nearestClinicDistance"
+                        disabled={notEditing}
+                        bind:val={$clinicApplicationForm.nearestClinicDistance}
+                        errors={$clinicApplicationError.nearestClinicDistance}
+                    />
+                    <CustomTextField
+                        label="Jam Operasi"
+                        id="operationHours"
+                        disabled={notEditing}
+                        bind:val={$clinicApplicationForm.operationHours}
+                        errors={$clinicApplicationError.operationHours}
                     />
                 </form>
             </StepperContentBody>

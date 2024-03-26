@@ -32,12 +32,6 @@ const phoneSchema = z.string().refine(x => /^[0-9]+$/.test(x) && (x.length == 9 
     });
 const optionalNumberSchema = z.number().refine(x => x > 0, { message: "Sila tetapkan pilihan anda." }).nullable().default(null);
 const optionalTextSchema = z.string().min(4, { message: "Medan hendaklah lebih dari 4 karakter." }).nullable().default(null);
-const maxTextSchema = z
-.string({ required_error: 'Medan ini tidak boleh kosong.', invalid_type_error: 'Medan ini tidak boleh kosong.' })
-.max(32, {
-    message: 'Medan ini tidak boleh melebihi 32 karakter.',
-})
-.trim()
 
 export const _editClinicProfileSchema = z.object({
     clinicCode:           shortTextSchema,
@@ -49,4 +43,24 @@ export const _editClinicProfileSchema = z.object({
     bankAccount:          shortTextSchema,
     panelAppointedDate:   shortTextSchema,
     panelContractEndDate: shortTextSchema,
+})
+
+export const _addClinicApplicationSchema = z.object({
+    district:                      shortTextSchema,
+    name:                          shortTextSchema,
+    panelAppointedDate:            stringToMinDate,
+    panelContractEndDate:          stringToMinDate,
+    address:                       shortTextSchema,
+    email:                         emailSchema,
+    contactNumber:                 phoneSchema,
+    bankName:                      shortTextSchema,
+    bankAccount:                   shortTextSchema,
+    foundationDate:                stringToMaxDate,
+    clinicType:                    shortTextSchema,
+    ownershipStatus:               shortTextSchema,
+    registeredMedicalPractitioner: shortTextSchema,
+    branchCount:                   numberSchema,
+    clinicOfficeDistance:          numberSchema,
+    nearestClinicDistance:         numberSchema,
+    operationHours:                shortTextSchema,
 })
