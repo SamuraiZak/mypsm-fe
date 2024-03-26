@@ -13,7 +13,6 @@ import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
 import type { CourseFundApplicationApprovalDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-approval.dto';
 import type { CourseFundReimbursementUploadDocumentsBase64RequestDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement-document.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
-import httpFormData from '$lib/services/implementation/service-provider-formdata.service';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
 
@@ -156,9 +155,8 @@ export class CourseFundApplicationServices {
     ) {
         try {
             const url: Input = 'course/fund_application/document/add';
-
             // get the promise response
-            const promiseRes: Promise<Response> = httpFormData
+            const promiseRes: Promise<Response> = http
                 .post(url, {
                     body: JSON.stringify(param),
                 })
