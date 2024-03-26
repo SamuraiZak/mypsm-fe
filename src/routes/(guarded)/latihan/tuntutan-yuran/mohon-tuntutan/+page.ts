@@ -71,11 +71,6 @@ export const _createFundReimbursementForm = async (formData: FormData) => {
             form.data as CourseAddFundReimbursementRequestDTO,
         );
 
-    if (response.status === 'success')
-        setTimeout(() => {
-            goto('../tuntutan-yuran');
-        }, 2000);
-
     return { response };
 };
 
@@ -119,7 +114,7 @@ export const _submitDocumentForm = async (id: number, files: File[]) => {
 
     if (response.status === 'success')
         setTimeout(() => {
-            goto(`../${id}`);
+            goto(`../tuntutan-yuran/${id}`);
         }, 1000);
 
     return { response };

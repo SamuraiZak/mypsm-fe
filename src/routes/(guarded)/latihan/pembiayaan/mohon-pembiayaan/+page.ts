@@ -61,8 +61,6 @@ export const _createFundApplicationForm = async (formData: FormData) => {
         zod(_createFundApplicationRequestSchema),
     );
 
-    console.log(form);
-
     if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
@@ -117,7 +115,7 @@ export const _submitDocumentForm = async (id: number, files: File[]) => {
 
     if (response.status === 'success')
         setTimeout(() => {
-            goto(`../${id}`);
+            goto(`../pembiayaan/${id}`);
         }, 1000);
 
     return { response };
