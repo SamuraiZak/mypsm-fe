@@ -188,6 +188,9 @@ export async function load({ params }) {
             proceedingStaffDetailResponse,
             proceedingTypeChargeDetailViewResponse,
         },
+        view: {
+            proceedingTypeChargeDetailView,
+        },
         lists: {
             accusationList,
         },

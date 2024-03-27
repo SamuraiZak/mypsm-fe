@@ -39,6 +39,31 @@
         writable<boolean>(true);
 
     let proceedingChargeIsCertified = writable<boolean>(false);
+    let isReadOnlyProceedingChargeMeeting = writable<boolean>(false);
+    let isReadOnlyProceedingChargeConfirmation = writable<boolean>(false);
+    let isReadOnlyProceedingSentencingMeeting = writable<boolean>(false);
+    let isReadOnlyProceedingSentencingConfirmation = writable<boolean>(false);
+
+    $: {
+        data.view.proceedingTypeChargeDetailView.accusationList.accusationList
+            .length > 0
+            ? isReadOnlyProceedingChargeMeeting.set(true)
+            : isReadOnlyProceedingChargeMeeting.set(false);
+
+        data.view.proceedingTypeChargeDetailView.confirmation.status !== null
+            ? isReadOnlyProceedingChargeConfirmation.set(true)
+            : isReadOnlyProceedingChargeConfirmation.set(false);
+
+        data.view.proceedingTypeChargeDetailView.sentencingDetails
+            .meetingName !== ''
+            ? isReadOnlyProceedingSentencingMeeting.set(true)
+            : isReadOnlyProceedingSentencingMeeting.set(false);
+
+        data.view.proceedingTypeChargeDetailView.sentencingConfirmation
+            .status !== null
+            ? isReadOnlyProceedingSentencingConfirmation.set(true)
+            : isReadOnlyProceedingSentencingConfirmation.set(false);
+    }
 
     // Superforms
     const { form } = superForm(data.forms.proceedingStaffInfoForm, {
