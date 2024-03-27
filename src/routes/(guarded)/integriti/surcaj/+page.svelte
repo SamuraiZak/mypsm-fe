@@ -54,8 +54,19 @@
         },
         data: data.surcajViewTable ?? [],
     };
-</script>
 
+    let employeeSurcajtable: TableDTO = {
+        param: param,
+        meta: {
+            pageSize: 5,
+            pageNum: 1,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: data.employeeSurcajViewTable ?? [],
+    };
+</script>
+{#if currentRoleCode === urusetia}
 <section class="flex w-full flex-col items-start justify-start">
     <CustomTabContent title="Senarai Tindakan/Ulasan Tatatertib">
         <FilterCard></FilterCard>
@@ -65,12 +76,13 @@
                 enableDetail
                 bind:passData={rowData}
                 bind:tableData={surcajtable}
-                detailActions= {()=>goto ("/integriti/surcaj/butiran-"+ rowData.id)}
+                detailActions= {()=>goto ("/integriti/surcaj/butiran-"+ rowData.surchargeId)}
             ></CustomTable>
 
         </div>
     </CustomTabContent>
 </section>
+{/if}
 
 {#if currentRoleCode === pengarah}
 <section class="flex w-full flex-col items-start justify-start">
@@ -88,3 +100,20 @@
     </CustomTabContent>
 </section>
 {/if}
+
+{#if currentRoleCode === kakitangan}
+<section class="flex w-full flex-col items-start justify-start">
+    <CustomTabContent title="Senarai Tindakan/Ulasan Tatatertib">
+        <FilterCard></FilterCard>
+        <div class="flex max-h-full w-full flex-col items-start justify-start">
+            
+            <CustomTable
+                bind:passData={rowData}
+                bind:tableData={employeeSurcajtable}
+            ></CustomTable>
+
+        </div>
+    </CustomTabContent>
+</section>
+{/if}
+
