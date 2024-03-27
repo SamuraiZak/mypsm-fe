@@ -9,29 +9,31 @@ import { z } from 'zod';
 // ==================================================
 // Surcaj Charge Schema
 // ==================================================
-export const _surcajIDSchema = z.object({
-    integrityId: z.number().readonly(),
-});
 
-export const _surcajStaffDetailRequestSchema = _surcajIDSchema.extend({
-    employeeId: z.number().readonly(),
-});
 
-export const _surcajChargeSchema = z.object({
-    employeeNumber: z.string(),
-    employeeName: z.string(),
-    identityCardNumber: z.string(),
-    disciplinaryType: z.string(),
-    chargeMeetingDate: z.coerce
-        .date()
-        .transform((value) => value.toLocaleString()),
-    surcajMeetingDate: z.coerce
-        .date()
-        .transform((value) => value.toLocaleString()),
-    isAppeal: z.boolean(),
-    declarationLetter: z.boolean(),
-    status: z.string(),
-});
+// export const _surcajIDSchema = z.object({
+//     surchargeId: z.number().readonly(),
+// });
+
+// export const _surcajStaffDetailRequestSchema = _surcajIDSchema.extend({
+//     employeeId: z.number().readonly(),
+// });
+
+// export const _surcajChargeSchema = z.object({
+//     employeeNumber: z.string(),
+//     employeeName: z.string(),
+//     identityCardNumber: z.string(),
+//     disciplinaryType: z.string(),
+//     chargeMeetingDate: z.coerce
+//         .date()
+//         .transform((value) => value.toLocaleString()),
+//     surcajMeetingDate: z.coerce
+//         .date()
+//         .transform((value) => value.toLocaleString()),
+//     isAppeal: z.boolean(),
+//     declarationLetter: z.boolean(),
+//     status: z.string(),
+// });
 
 export const _relationDetailSchema = z.object({
     employeeNumber: z.string(),
@@ -41,6 +43,7 @@ export const _relationDetailSchema = z.object({
 });
 
 export const _surcajEmployeeResponseSchema = z.object({
+    
     employeeNumber: z.string(),
     identityCardNumber: z.string(),
     fullName: z.string(),

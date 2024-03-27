@@ -29,6 +29,9 @@ export const load = async () => {
 
     let surcajViewResponse: CommonResponseDTO;
     let surcajViewTable = [];
+
+    let employeeSurcajViewResponse: CommonResponseDTO;
+    let employeeSurcajViewTable = [];
     
 
     directorSurcajViewResponse = await IntegrityServices.getSurcajListDetails(param);
@@ -37,5 +40,8 @@ export const load = async () => {
     surcajViewResponse = await IntegrityServices.getDirectorSurcajListDetails(param);
     surcajViewTable = surcajViewResponse.data?.dataList ?? [];
 
-    return { param,surcajViewTable,directorSurcajViewTable };
+    employeeSurcajViewResponse = await IntegrityServices.getEmployeeSurcajListDetails(param);
+    employeeSurcajViewTable = employeeSurcajViewResponse.data?.dataList ?? [];
+
+    return { param,surcajViewTable,directorSurcajViewTable,employeeSurcajViewTable };
 };

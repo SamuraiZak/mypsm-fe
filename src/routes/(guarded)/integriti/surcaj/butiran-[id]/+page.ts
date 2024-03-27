@@ -1,17 +1,22 @@
+
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
 import type { commonIdRequestDTO } from "$lib/dto/core/common/id-request.dto.js";
 import type { DropdownDTO } from "$lib/dto/core/dropdown/dropdown.dto";
-import type { SurcajEmployeeDetailResponseDTO } from "$lib/dto/mypsm/integrity/surcaj/surcaj-employee-detail-response.dto";
-import { _surcajEmployeeResponseSchema } from "$lib/schemas/mypsm/integrity/surcaj-scheme";
+import type { surchargeaIdRequestDTO } from "$lib/dto/mypsm/integrity/surcaj/surcaj-ID-.dto";
+import type { ApplicationDetail, SurcajEmployeeDetailResponseDTO } from "$lib/dto/mypsm/integrity/surcaj/surcaj-employee-detail-response.dto";
+import { getErrorToast } from "$lib/helpers/core/toast.helper";
+import { _applicationDetail, _surcajEmployeeResponseSchema } from "$lib/schemas/mypsm/integrity/surcaj-scheme";
 import { LookupServices } from "$lib/services/implementation/core/lookup/lookup.service";
 import { IntegrityServices } from "$lib/services/implementation/mypsm/integriti/integrity.service";
 import { superValidate } from "sveltekit-superforms";
+import { error } from '@sveltejs/kit';
 import { zod } from "sveltekit-superforms/adapters";
+
 
 export async function load({params }) {
 
-let currentID: commonIdRequestDTO = {
-    id: Number(params.id)
+let currentID: surchargeaIdRequestDTO = {
+    surchargeId: Number(params.id)
 }
     
 
@@ -243,14 +248,22 @@ let currentID: commonIdRequestDTO = {
     const personalDetailResponse: CommonResponseDTO =
         await IntegrityServices.surcajEmployeeDetails(currentID);
 
-    const personalInfoForm = await superValidate(personalDetailResponse.data?.details as SurcajEmployeeDetailResponseDTO, zod(
-        _surcajEmployeeResponseSchema))
-        ;
+     const personalInfoForm: SurcajEmployeeDetailResponseDTO = personalDetailResponse.data?.details as  SurcajEmployeeDetailResponseDTO
+
+    //  =======================================================
+    //  add
+    // ========================================================
 
 
+    const applicationDetail = await superValidate (personalInfoForm.applicationDetail as ApplicationDetail, zod (_applicationDetail),
+    {
+        errors: false
+    })
 
     return {
         personalInfoForm,
+        applicationDetail,
+        
         selectionOptions: {
             identityCardColorLookup,
             cityLookup,
@@ -281,3 +294,20 @@ let currentID: commonIdRequestDTO = {
         },
     }
 }
+
+// ================================================================
+// ========== add Application Detail ==============================
+// ================================================================
+
+export const _applicationDetailSubmit = async (formData: object) => {
+    const applicationDetailForm = await superValidate(formData, (zod)(_applicationDetail));
+
+    if (applicationDetailForm.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await IntegrityServices.addApplicationDetail(applicationDetailForm.data as ApplicationDetail);
+    return { response };
+};

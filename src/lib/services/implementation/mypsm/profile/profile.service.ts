@@ -318,7 +318,7 @@ export class ProfileServices {
         }
     }
 
-      //============================================
+    //============================================
     //========= Edit experience Detail ==============
     //============================================
 
@@ -440,7 +440,7 @@ export class ProfileServices {
         }
     }
 
-    
+
 
     //============================================
     //========= Get Family Detail  ===========
@@ -501,7 +501,7 @@ export class ProfileServices {
         }
     }
 
-      //============================================
+    //============================================
     //========= Edit Family Detail ==============
     //============================================
 
@@ -522,7 +522,7 @@ export class ProfileServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                invalidateAll()
+                invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -590,14 +590,14 @@ export class ProfileServices {
         }
     }
 
-     //============================================
+    //============================================
     //========= Edit Dependent Detail ==============
     //============================================
 
     static async editProfileDependentDetails(param: dependencyRequestDTO) {
         try {
             const url: Input = 'profile/dependent/edit';
-
+            console.log(param)
             // get the promise response
             const promiseRes: Promise<Response> = http.put(url, {
                 body: JSON.stringify(param),
@@ -611,7 +611,7 @@ export class ProfileServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                invalidateAll()
+                invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -670,7 +670,7 @@ export class ProfileServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                invalidateAll()
+                invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -680,7 +680,7 @@ export class ProfileServices {
         }
     }
 
-       //============================================
+    //============================================
     //========= Edit ext of Kin Detail ==============
     //============================================
 

@@ -101,3 +101,10 @@ export const dateStringSchema = z.coerce
 export const requiredDateStringSchema = z.coerce.string({
     required_error: 'Pastikan tarikh adalah betul.',
 });
+
+export const numberSchem0 = z.coerce
+    .number({
+        required_error: 'Medan ini hendaklah diisi.',
+        invalid_type_error: 'Sila pastikan medan ini ditaip dengan angka',
+    })
+    
