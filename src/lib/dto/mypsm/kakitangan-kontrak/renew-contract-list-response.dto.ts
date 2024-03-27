@@ -3,6 +3,7 @@ export interface RenewContractListResponseDTO {
     candidateName:  string;
     temporaryId:    string;
     identityCardNo: string;
+    contractEndDate: string;
     email:          string;
 }
 

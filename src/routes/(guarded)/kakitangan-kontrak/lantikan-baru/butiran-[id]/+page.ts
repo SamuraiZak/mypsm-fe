@@ -1,33 +1,30 @@
-import { invalidateAll } from "$app/navigation";
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant";
-import type { CandidateIDRequestBody } from "$lib/dto/core/common/candidate-id-request.view-dto.js";
-import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto.js";
+import type { CandidateIDRequestBody } from "$lib/dto/core/common/candidate-id-request.view-dto";
+import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
-import type { CommonEmployeeDTO } from "$lib/dto/core/common/employee/employee.dto.js";
 import type { DropdownDTO } from "$lib/dto/core/dropdown/dropdown.dto";
-import type { RadioDTO } from "$lib/dto/core/radio/radio.dto.js";
-import type { AddNewContractEmployeeAcademicDTO, ContractAcademic } from "$lib/dto/mypsm/kakitangan-kontrak/add-contract-academic.dto.js";
-import type { AddNewContractEmployeeActivityDTO } from "$lib/dto/mypsm/kakitangan-kontrak/add-contract-activity.dto.js";
-import type { AddNewContractEmployeeDependencyDTO } from "$lib/dto/mypsm/kakitangan-kontrak/add-contract-dependency.dto.js";
-import type { AddNewContractEmployeeExperienceDTO } from "$lib/dto/mypsm/kakitangan-kontrak/add-contract-experience.dto.js";
-import type { AddContractNextOfKinDTO } from "$lib/dto/mypsm/kakitangan-kontrak/add-contract-next-of-kin.dto.js";
-import type { AddContractApproverSupporterDTO } from "$lib/dto/mypsm/kakitangan-kontrak/add-contract-supproter-approver.dto.js";
-import type { EditNewContractEmployeeDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/edit-new-contract-employee-detail.dto.js";
-import type { GetContractAcademicDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-academic-detail.dto.js";
-import type { GetContractActivityDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-activity-detail.dto.js";
-import type { GetContractDependencyDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-dependency-detail.dto.js";
-import type { GetContractDocumentDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-document.dto.js";
-import type { GetContractEmployeeNumberDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-employee-number.dto.js";
-import type { GetContractExperienceDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-experience-detail.dto.js";
-import type { GetContractNextOfKinDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-next-of-kin-detail.dto.js";
-import type { GetContractPersonalDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-personal-detail.dto.js";
+import type { RadioDTO } from "$lib/dto/core/radio/radio.dto";
+import type { AddNewContractEmployeeAcademicDTO } from "$lib/dto/mypsm/kakitangan-kontrak/add-contract-academic.dto";
+import type { AddNewContractEmployeeActivityDTO } from "$lib/dto/mypsm/kakitangan-kontrak/add-contract-activity.dto";
+import type { AddNewContractEmployeeDependencyDTO } from "$lib/dto/mypsm/kakitangan-kontrak/add-contract-dependency.dto";
+import type { AddNewContractEmployeeExperienceDTO } from "$lib/dto/mypsm/kakitangan-kontrak/add-contract-experience.dto";
+import type { AddContractNextOfKinDTO } from "$lib/dto/mypsm/kakitangan-kontrak/add-contract-next-of-kin.dto";
+import type { AddContractApproverSupporterDTO } from "$lib/dto/mypsm/kakitangan-kontrak/add-contract-supproter-approver.dto";
+import type { EditNewContractEmployeeDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/edit-new-contract-employee-detail.dto";
+import type { GetContractAcademicDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-academic-detail.dto";
+import type { GetContractActivityDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-activity-detail.dto";
+import type { GetContractDependencyDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-dependency-detail.dto";
+import type { GetContractDocumentDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-document.dto";
+import type { GetContractEmployeeNumberDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-employee-number.dto";
+import type { GetContractExperienceDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-experience-detail.dto";
+import type { GetContractNextOfKinDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-next-of-kin-detail.dto";
+import type { GetContractPersonalDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-personal-detail.dto";
 import type { GetContracSecretaryResultDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-secretary-result.dto";
 import type { GetContractSecretaryUpdateDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-secretary-update.dto";
-import type { GetContractSupporterApproverResultDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-supporter-approver-result.dto.js";
+import type { GetContractSupporterApproverResultDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-supporter-approver-result.dto";
 import type { GetContractSupporterApproverDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-supporter-approver.dto";
-import type { EditContractDetailSecretaryDTO } from "$lib/dto/mypsm/kakitangan-kontrak/update-contract-detail-secretary.dto.js";
-import type { ContractCommonRoleResultDTO } from "$lib/dto/mypsm/kakitangan-kontrak/update-contract-secretary-result.dto.js";
-import { getErrorToast } from "$lib/helpers/core/toast.helper";
+import type { EditContractDetailSecretaryDTO } from "$lib/dto/mypsm/kakitangan-kontrak/update-contract-detail-secretary.dto";
+import type { ContractCommonRoleResultDTO } from "$lib/dto/mypsm/kakitangan-kontrak/update-contract-secretary-result.dto";
 import {
     _addContractAcademicSchema,
     _addContractActivitySchema,
@@ -42,12 +39,11 @@ import {
 } from '$lib/schemas/mypsm/contract-employee/contract-employee-schemas';
 import { LookupServices } from "$lib/services/implementation/core/lookup/lookup.service";
 import { ContractEmployeeServices } from "$lib/services/implementation/mypsm/kakitangan-kontrak/contract-employee.service";
-import { error } from "@sveltejs/kit";
 import { zod } from "sveltekit-superforms/adapters";
 import { superValidate } from "sveltekit-superforms/client";
 
 export const load = async ({ params }) => {
-    const currentRoleCode: string | null = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode);
+    const currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode);
     const contractId: CandidateIDRequestBody = {
         id: Number(params.id)
     };
@@ -206,6 +202,7 @@ export const load = async ({ params }) => {
         lookup,
         contractDocLink,
         getContractEmployeeNumberForm,
+        getSecretaryResult,
     }
 }
 
@@ -420,6 +417,39 @@ const getLookup = async () => {
     const relationshipLookup: DropdownDTO[] = LookupServices.setSelectOptions(
         relationshipLookupResponse,
     );
+
+    const relationshipIsFamilyRequest: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 350,
+        orderBy: null,
+        orderType: 0,
+        filter: {
+            code: "",
+            description: "",
+            isFamily: true
+        },
+    }
+    const relationshipIsFamilyResponse: CommonResponseDTO =
+        await LookupServices.getRelationshipFamily(relationshipIsFamilyRequest);
+    const relationshipIsFamily: DropdownDTO[] = LookupServices.setSelectOptions(
+        relationshipIsFamilyResponse,
+    )
+    const relationshipIsNonFamilyRequest: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 350,
+        orderBy: null,
+        orderType: 0,
+        filter: {
+            code: "",
+            description: "",
+            isFamily: false
+        },
+    }
+    const relationshipIsNonFamilyResponse: CommonResponseDTO =
+        await LookupServices.getRelationshipFamily(relationshipIsNonFamilyRequest);
+    const relationshipIsNonFamily: DropdownDTO[] = LookupServices.setSelectOptions(
+        relationshipIsNonFamilyResponse,
+    )
     // -------------------------------------------------------
     const cityLookupResponse: CommonResponseDTO =
         await LookupServices.getCityEnums();
@@ -519,7 +549,6 @@ const getLookup = async () => {
         { name: "Lulus", value: true },
         { name: "Tidak Lulus", value: false }
     ]
-
     return {
         genderLookup,
         identityCardTypeLookup,
@@ -544,6 +573,8 @@ const getLookup = async () => {
         supportOption,
         approveOption,
         supporterApproverLookup,
+        relationshipIsFamily,
+        relationshipIsNonFamily,
     }
 }
 

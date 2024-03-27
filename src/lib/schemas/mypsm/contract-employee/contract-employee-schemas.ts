@@ -42,7 +42,7 @@ const maxTextSchema = z
 const yearSchema = z.number({
     required_error: "Medan ini tidak boleh kosong.",
     invalid_type_error: "Hanya nombor sahaja dibenarkan.",
-}).gte(2010, { message: "Hanya 4 gte angka sahaja dibenarkan." }).lte(2030, { message: "Hanya 4 lte angka sahaja dibenarkan." })
+}).gte(2010, { message: "Hanya 4 angka sahaja dibenarkan." }).lte(2100, { message: "Hanya 4 angka sahaja dibenarkan." })
 
 
 
@@ -122,7 +122,7 @@ export const _addContractExperienceSchema = z.object({
     company: shortTextSchema,
     address: shortTextSchema,
     position: shortTextSchema,
-    positionCode: shortTextSchema,
+    positionCode: optionalTextSchema,
     startDate: stringToMaxDate,
     endDate: stringToMaxDate,
     salary: numberSchema,

@@ -44,31 +44,32 @@ export const load = async () => {
     const renewContractParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
-        orderType: null,
+        orderBy: "contractId",
+        orderType: 1,
         filter: renewContractFilter,
     };
 
     const supporterApproverParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
-        orderType: null,
+        orderBy: "contractId",
+        orderType: 1,
         filter: {},
     }
 
-    if (currentRoleCode === UserRoleConstant.urusSetiaKhidmatSokongan.code) {
-        //get list of near expired contract
-        nearExpiredContractListResponse =
-            await ContractEmployeeServices.getRenewContractList(nearExpiredContractParam)
-        nearExpiredContractList =
-            nearExpiredContractListResponse.data?.dataList as RenewContractListResponseDTO[]
-
+    if (currentRoleCode === UserRoleConstant.urusSetiaKhidmatSokongan.code || currentRoleCode === UserRoleConstant.pengarahBahagian.code || currentRoleCode === UserRoleConstant.pengarahNegeri.code) {
         //get list of renew contract process 
         renewContractListResponse =
             await ContractEmployeeServices.getRenewContractList(renewContractParam)
         renewContractList =
             renewContractListResponse.data?.dataList as RenewContractListResponseDTO[]
+        if (currentRoleCode === UserRoleConstant.urusSetiaKhidmatSokongan.code) {
+            //get list of near expired contract
+            nearExpiredContractListResponse =
+                await ContractEmployeeServices.getRenewContractList(nearExpiredContractParam)
+            nearExpiredContractList =
+                nearExpiredContractListResponse.data?.dataList as RenewContractListResponseDTO[]
+        }
     } else if (currentRoleCode === UserRoleConstant.penyokong.code) {
         supporterApproverTableResponse =
             await ContractEmployeeServices.getRenewContractSupporterTable(supporterApproverParam);
