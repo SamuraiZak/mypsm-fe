@@ -95,6 +95,8 @@ export async function load({ params }) {
         { errors: false },
     );
 
+    console.log(proceedingSentencingMeetingForm.data)
+
     const proceedingSentencingConfirmationForm = await superValidate(
         proceedingTypeChargeDetailView.sentencingConfirmation,
         zod(_proceedingApproverSchema),
