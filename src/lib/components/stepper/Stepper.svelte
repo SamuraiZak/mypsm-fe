@@ -73,7 +73,7 @@
 
         <!-- steppers -->
         <div
-            class="flex h-full max-h-full w-full flex-col items-center justify-start gap-2.5 overflow-y-auto p-2.5"
+            class="flex h-full max-h-full w-full pb-16 flex-col items-center justify-start gap-2.5 overflow-y-auto p-2.5"
         >
             {#each stepperList as item, index}
                 <StepperButton
