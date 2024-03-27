@@ -1020,6 +1020,30 @@ export class LookupServices {
         }
     }
 
+    // Family relationship lookup
+    static async getRelationshipFamily(param: CommonListRequestDTO) {
+        try {
+            const url: Input = 'lookup/relationships/filter';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param)
+                })
+                .json();
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     // employee list dropdown for supporter & approver
     static async getEmployeeList(param: CommonListRequestDTO) {
         try {
