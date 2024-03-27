@@ -46,7 +46,7 @@
 </section>
 
 <section
-    class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
+    class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
 
     <form class="w-full flex flex-col justify-start p-5 gap-2.5"
