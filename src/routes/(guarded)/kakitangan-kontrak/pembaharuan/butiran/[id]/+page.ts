@@ -38,6 +38,7 @@ export const load = async ({ params }) => {
     let getSecretaryUpdate = {} as RenewContractSecretaryUpdate;
     let getSecretaryApproval = {} as RenewContractSuppAppApproval;
     let getRenewContractDocument = {} as GetContractDocumentDTO;
+    let contractDocLink: string = getContractDocumentLink()
 
     //get contract personal detail
     const getContractPersonalDetailResponse: CommonResponseDTO =
@@ -128,7 +129,7 @@ export const load = async ({ params }) => {
     const contractSecretaryUpdateForm = await superValidate(getSecretaryUpdate, zod(_renewContractSecretaryUpdateSchema), { errors: false });
     const contractSecretaryApprovalForm = await superValidate(getSecretaryApproval, zod(_addContractCommonRoleResult), { errors: false })
     const contractUploadDocument = await superValidate(zod(_contractDocumentSchema))
-   console.log(getRenewContractDocument)
+
     return {
         currentRoleCode,
         contractId,
@@ -152,6 +153,8 @@ export const load = async ({ params }) => {
         contractSecretaryApprovalForm,
         contractUploadDocument,
         getRenewContractDocument,
+        getApproverApproval,
+        contractDocLink,
     }
 }
 
@@ -498,4 +501,9 @@ export function _fileToBase64Object(file: File): Promise<string> {
     });
 }
 
+const getContractDocumentLink = () => {
+    const url = "http://localhost:3333/contracts/document/template"
+
+    return url
+}
 

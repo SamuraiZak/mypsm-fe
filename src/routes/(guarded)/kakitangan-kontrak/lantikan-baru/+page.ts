@@ -15,8 +15,8 @@ export const load = async () => {
     const contractEmployeeListParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
-        orderType: null,
+        orderBy: "candidateId",
+        orderType: 1,
         filter: {},
     }
     // table 

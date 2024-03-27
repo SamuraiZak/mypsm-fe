@@ -11,6 +11,7 @@ import {
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
 import { commonIdRequestDTOConvert, type commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
 import { ClinicPanelProfileConvert, type ClinicPanelProfile } from '$lib/dto/mypsm/perubatan/clinic-panel-profile.dto';
+import { MedicalClinicApplicationConvert, type MedicalClinicApplication } from '$lib/dto/mypsm/perubatan/medical-clinic-application.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
@@ -91,6 +92,36 @@ export class MedicalServices {
             return CommonResponseConstant.httpError;
         }
     }
+    //==============================================================
+    // Urus Setia    
+    //==============================================================
+    // Permohonan Klinik Panel
+    //==============================================================
+    //edit clinic panel profile
+    static async addClinicApplication(param: MedicalClinicApplication) {
+        try {
+            let url: Input = 'medical/clinic/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: MedicalClinicApplicationConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
 
 
     //==============================================================

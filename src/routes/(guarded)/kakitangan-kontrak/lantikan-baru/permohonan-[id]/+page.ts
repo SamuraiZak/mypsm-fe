@@ -20,7 +20,7 @@ export const load = async ({ params }) => {
         email: "",
         startContract: "",
         endContract: "",
-        wageRate: 1,
+        wageRate: 0,
         identityDocumentNumber: "",
         designation: "",
         reportDutyDate: "",
@@ -33,7 +33,7 @@ export const load = async ({ params }) => {
             editContractResponse.data?.details as AddNewContractEmployeeDTO;
     }
 
-    const form = await superValidate(params.id !== "baru" ? currentContractDetail : undefined, zod(_addNewContractEmployeeSchema));
+    const form = await superValidate(currentContractDetail, zod(_addNewContractEmployeeSchema), {errors: false});
 
     return {
         form,

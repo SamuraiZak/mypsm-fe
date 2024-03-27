@@ -16,15 +16,18 @@
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import { goto } from '$app/navigation';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
-    import { approveOptions, certifyOptions } from '$lib/constants/core/radio-option-constants';
+    import {
+        approveOptions,
+        certifyOptions,
+    } from '$lib/constants/core/radio-option-constants';
     import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     import { Checkbox, Helper, Radio } from 'flowbite-svelte';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
 
     export let data: PageData;
     let isMarried: boolean = false;
-    let isCheck: boolean = false;
-    let paymentRates: number = 2;
+    let isCheck: boolean = true;
+    let paymentRates: number = 3;
 </script>
 
 <!-- content header starts here -->
@@ -54,7 +57,7 @@
                     id=""
                     method="POST"
                 >
-                    <CustomSelectField
+                    <CustomRadioBoolean
                         label="Jenis Pemohon"
                         id=""
                         options={data.lookup.applicantType}
@@ -75,38 +78,44 @@
                     method="POST"
                 >
                     <CustomTextField
-                        label="Jenis Pemohon"
+                        label="Nama"
                         id=""
-                        val=""
+                        disabled
+                        val="Ahmad Irfan"
                         errors={[]}
                     />
                     <CustomTextField
                         label="No. Kad Pengenalan"
                         id=""
-                        val=""
+                        disabled
+                        val="990113-13-5663"
                         errors={[]}
                     />
                     <CustomTextField
                         label="No. Pekerja"
                         id=""
-                        val=""
+                        disabled
+                        val="N2024"
                         errors={[]}
                     />
                     <CustomTextField
                         label="No. Telefon"
                         id=""
-                        val=""
+                        disabled
+                        val="0198763452"
                         errors={[]}
                     />
                     <CustomTextField
                         label="Alamat Surat Menyurat"
                         id=""
-                        val=""
+                        disabled
+                        val="Lot 43-A Lorong 5, Kuching 3"
                         errors={[]}
                     />
                     <CustomSelectField
                         label="Status"
                         id=""
+                        disabled
                         options={data.lookup.maritalLookup}
                         val={2}
                         errors={[]}
@@ -128,19 +137,22 @@
                     <CustomTextField
                         label="Emel Pemohon"
                         id=""
-                        val=""
+                        disabled
+                        val="ahmad@gmail.com"
                         errors={[]}
                     />
                     <CustomTextField
                         label="Tarikh Masuk Kuarters"
                         id=""
-                        val=""
+                        disabled
+                        val="2022-10-21"
                         errors={[]}
                     />
                     <CustomTextField
                         label="Unit dan Kuarters"
                         id=""
-                        val=""
+                        disabled
+                        val="Unit 5 Kuarter 3"
                         errors={[]}
                     />
                     <ContentHeader
@@ -204,9 +216,7 @@
         </StepperContent>
 
         <StepperContent>
-            <StepperContentHeader
-                title="Maklumat Keluar Kuarters"
-            >
+            <StepperContentHeader title="Maklumat Keluar Kuarters">
                 <TextIconButton label="Simpan" icon="check" form="" />
             </StepperContentHeader>
             <StepperContentBody>
@@ -218,11 +228,24 @@
                     <CustomTextField
                         label="Tarikh Keluar Kuarter"
                         id=""
-                        val=""
+                        disabled={data.currentRoleCode !==
+                        UserRoleConstant.kakitangan.code
+                            ? true
+                            : false}
+                        val={data.currentRoleCode !==
+                        UserRoleConstant.kakitangan.code
+                            ? '2024-06-21'
+                            : ''}
                         type="date"
                         errors={[]}
                     />
-                    <CustomTextField label="Unit dan Kuarter" id="" val="" errors={[]} />
+                    <CustomTextField
+                        label="Unit dan Kuarter"
+                        id=""
+                        disabled
+                        val="Unit 5 Kuarter 3"
+                        errors={[]}
+                    />
                 </form>
             </StepperContentBody>
         </StepperContent>
@@ -236,14 +259,33 @@
                     title="Dokumen Keluar Kuarters"
                     borderClass="border-none"
                 />
+                {#if data.currentRoleCode !== UserRoleConstant.kakitangan.code}
                 <form
                     class="flex w-full flex-col justify-start gap-2.5"
                     id=""
                     method="POST"
                 >
-                    <DownloadAttachment fileName="Borang Akuan Keluar Kuarters" />
-                    <DownloadAttachment fileName="Borang Pemeriksaan Keluar Kuarters" />
+                    <DownloadAttachment
+                        fileName="Borang Akuan Keluar Kuarters"
+                    />
+                    <DownloadAttachment
+                        fileName="Borang Pemeriksaan Keluar Kuarters"
+                    />
                 </form>
+                {:else}
+                <div
+                    class="flex h-fit w-full flex-col justify-start gap-2 text-sm text-ios-labelColors-secondaryLabel-light"
+                >
+                    <span>Muat naik salinan</span>
+                    <span>1. Borang Akuan Keluar Kuarters</span>
+                    <span>2. Borang Pemeriksaan Keluar Kuarters</span>
+                </div>
+                <input
+                    class="rounded-md bg-ios-systemColors-systemFill-light w-full"
+                    accept=".pdf"
+                    type="file"
+                />
+                {/if}
             </StepperContentBody>
         </StepperContent>
 
@@ -266,6 +308,7 @@
             </StepperContentBody>
         </StepperContent>
 
+        {#if data.currentRoleCode !== UserRoleConstant.kakitangan.code}
         <StepperContent>
             <StepperContentHeader title="Ulasan Kelulusan daripada Urus Setia">
                 <TextIconButton label="Simpan" icon="check" form="" />
@@ -289,7 +332,8 @@
                     <CustomRadioBoolean
                         label="Keputusan"
                         id=""
-                        disabled={data.currentRoleCode !== UserRoleConstant.urusSetiaPeringkatNegeri.code}
+                        disabled={data.currentRoleCode !==
+                            UserRoleConstant.urusSetiaPeringkatNegeri.code}
                         options={certifyOptions}
                         val={true}
                     />
@@ -305,85 +349,91 @@
                 <CustomTab>
                     <CustomTabContent title="Maklumat Penempatan">
                         <form
-                        class="flex w-full flex-col justify-start gap-2.5"
-                        id=""
-                        method="POST"
-                    >
-                        <CustomTextField
-                            label="Emel Pemohon"
+                            class="flex w-full flex-col justify-start gap-2.5"
                             id=""
-                            val=""
-                            errors={[]}
-                        />
-                        <CustomTextField
-                            label="Tarikh Masuk Kuarters"
-                            id=""
-                            val=""
-                            errors={[]}
-                        />
-                        <CustomTextField
-                            label="Unit dan Kuarters"
-                            id=""
-                            val=""
-                            errors={[]}
-                        />
-                        <ContentHeader
-                            title="Kadar Bayaran Sewa Kuarters (Unit Pengurusan Fasiliti)"
-                            borderClass="border-none"
-                        />
-                        <ul class="flex w-full flex-col gap-2.5">
-                            <li>
-                                <Radio
-                                    aria-describedby="in25Km"
-                                    class="p-3"
-                                    disabled
-                                    bind:group={paymentRates}
-                                    value={1}>Dalam Jarak 25KM</Radio
-                                >
-                                <Helper id="in25Km" class="ps-9"
-                                    >Potongan ITP 75% dan Potongan COLA 50%</Helper
-                                >
-                            </li>
-    
-                            <li>
-                                <Radio
-                                    aria-describedby="moreThan25Km"
-                                    class="p-3"
-                                    disabled
-                                    bind:group={paymentRates}
-                                    value={2}>Jarak Melebihi 25KM</Radio
-                                >
-                                <Helper id="moreThan25Km" class="ps-9"
-                                    >Potongan COLA 50%</Helper
-                                >
-                            </li>
-    
-                            <li>
-                                <Radio
-                                    aria-describedby="betterGradeForKuarters"
-                                    class="p-3"
-                                    disabled
-                                    bind:group={paymentRates}
-                                    value={3}
-                                    >Gred Jawatan Melebihi Kategori Kuarters</Radio
-                                >
-                                <Helper id="betterGradeForKuarters" class="ps-9"
-                                    >Potongan ITP mengikut nilai sewaan gred
-                                    tertinggi kuarters yang diperuntukkan (RM):</Helper
-                                >
-    
-                                <div class="w-[220px] ps-9">
-                                    <CustomTextField
-                                        label=""
-                                        id=""
-                                        type="number"
+                            method="POST"
+                        >
+                            <CustomTextField
+                                label="Emel Pemohon"
+                                id=""
+                                disabled
+                                val="ali@gmail.com"
+                                errors={[]}
+                            />
+                            <CustomTextField
+                                label="Tarikh Masuk Kuarters"
+                                id=""
+                                disabled
+                                val="2023-11-13"
+                                errors={[]}
+                            />
+                            <CustomTextField
+                                label="Unit dan Kuarters"
+                                id=""
+                                disabled
+                                val="Unit 3A Kaurter 5"
+                                errors={[]}
+                            />
+                            <ContentHeader
+                                title="Kadar Bayaran Sewa Kuarters (Unit Pengurusan Fasiliti)"
+                                borderClass="border-none"
+                            />
+                            <ul class="flex w-full flex-col gap-2.5">
+                                <li>
+                                    <Radio
+                                        aria-describedby="in25Km"
+                                        class="p-3"
                                         disabled
-                                        val={350}
-                                    />
-                                </div>
-                            </li>
-                        </ul>
-                    </form>
+                                        bind:group={paymentRates}
+                                        value={1}>Dalam Jarak 25KM</Radio
+                                    >
+                                    <Helper id="in25Km" class="ps-9"
+                                        >Potongan ITP 75% dan Potongan COLA 50%</Helper
+                                    >
+                                </li>
+
+                                <li>
+                                    <Radio
+                                        aria-describedby="moreThan25Km"
+                                        class="p-3"
+                                        disabled
+                                        bind:group={paymentRates}
+                                        value={2}>Jarak Melebihi 25KM</Radio
+                                    >
+                                    <Helper id="moreThan25Km" class="ps-9"
+                                        >Potongan COLA 50%</Helper
+                                    >
+                                </li>
+
+                                <li>
+                                    <Radio
+                                        aria-describedby="betterGradeForKuarters"
+                                        class="p-3"
+                                        disabled
+                                        bind:group={paymentRates}
+                                        value={3}
+                                        >Gred Jawatan Melebihi Kategori Kuarters</Radio
+                                    >
+                                    <Helper
+                                        id="betterGradeForKuarters"
+                                        class="ps-9"
+                                        >Potongan ITP mengikut nilai sewaan gred
+                                        tertinggi kuarters yang diperuntukkan
+                                        (RM):</Helper
+                                    >
+
+                                    <div class="w-[220px] ps-9">
+                                        <CustomTextField
+                                            label=""
+                                            id=""
+                                            type="number"
+                                            disabled
+                                            val={350}
+                                        />
+                                    </div>
+                                </li>
+                            </ul>
+                        </form>
                     </CustomTabContent>
                     <CustomTabContent title="Maklumat Pengeluaran">
                         <form
@@ -395,7 +445,7 @@
                                 title="Butiran Keluar Kuarter"
                                 borderClass="border-none"
                             />
-                            
+
                             <CustomTextField
                                 label="Tarikh Keluar Kuarter"
                                 id=""
@@ -406,7 +456,6 @@
                             <CustomTextField
                                 label="Unit dan Kuarter"
                                 id=""
-                                type="date"
                                 val=""
                                 errors={[]}
                             />
@@ -415,6 +464,6 @@
                 </CustomTab>
             </StepperContentBody>
         </StepperContent>
-
+        {/if}
     </Stepper>
 </section>

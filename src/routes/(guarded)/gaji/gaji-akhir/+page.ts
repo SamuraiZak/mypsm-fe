@@ -1,23 +1,54 @@
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant"
-import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto"
+import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
+import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
+import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
+import type { FinalPayslipList, FinalPayslipListFilter } from "$lib/dto/mypsm/gaji/gaji-akhir/final-payslip-list.dto"
+import { SalaryServices } from "$lib/services/implementation/mypsm/gaji/salary.service";
 
 export const load = async () => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
+    let finalPayslipList: FinalPayslipList[] = [];
+    let finalPayslipListResponse: CommonResponseDTO = {};
 
-    let param: CommonListRequestDTO = {
+    const finalPayslipListFilter: FinalPayslipListFilter = {
+        employeeNumber: "",
+        name: "",
+        identityCardNumber: "",
+        retirementType: "",
+        status: "",
+    }
+
+    const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
         orderBy: null,
         orderType: null,
-        filter: {}
+        filter: finalPayslipListFilter,
+
     }
-    let dataList = [
-        { id: 1, noPekerja: "0122", namaPegawai: "Ali bin Ahmad", kadPengenalan: "951122135223", gajiPokok: 5234, elaun: 155, penolakanGaji: 35, jenisPersaraan: "Paksa", status: "Baru" },
-        { id: 2, noPekerja: "0123", namaPegawai: "Ali bin Abu", kadPengenalan: "951122135223", gajiPokok: 5234, elaun: 155, penolakanGaji: 35, jenisPersaraan: "Terbitan", status: "Selesai" }
-    ]
+
+    if (currentRoleCode == UserRoleConstant.urusSetiaGaji.code) {
+        finalPayslipListResponse =
+            await SalaryServices.getFinalPayslipList(param);
+        finalPayslipList =
+            finalPayslipListResponse.data?.dataList as FinalPayslipList[];
+    }
+
     return {
         currentRoleCode,
+        finalPayslipList,
+        finalPayslipListResponse,
         param,
-        dataList,
     }
+}
+
+//update employee list table
+export async function _updateTable(param: CommonListRequestDTO) {
+    const response: CommonResponseDTO = await SalaryServices.getFinalPayslipList(param);
+    return {
+        props: {
+            param,
+            response,
+        },
+    };
 }

@@ -6,6 +6,7 @@
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
+    import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import type { PageData } from './$types';
     export let data: PageData;
@@ -27,11 +28,13 @@
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader title="Permohonan Menduduki Kuarters">
+        {#if data.currentRoleCode == UserRoleConstant.kakitangan.code || data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code}
         <TextIconButton
-            label="Permohonan Luar"
+            label="Permohonan {data.currentRoleCode == UserRoleConstant.kakitangan.code ? "Baru" : "Luar"}"
             icon="add"
             onClick={() => goto('./permohonan-masuk-kuarters/butiran/baru')}
         />
+        {/if}
     </ContentHeader>
 </section>
 

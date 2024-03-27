@@ -24,7 +24,7 @@ const getLookup = async () => {
     const maritalLookup: DropdownDTO[] =
         LookupServices.setSelectOptions(maritalLookupResponse)
     // -------------------------------------------------------
-    const applicantType: DropdownDTO[] = [
+    const applicantType: RadioDTO[] = [
         {name: "Kakitangan LKIM", value: 1},
         {name: "Agensi/Jabatan Luar", value: 2},
     ]

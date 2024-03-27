@@ -88,16 +88,16 @@
 <section
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
 >
-    {#if data.currentRoleCode === UserRoleConstant.urusSetiaKhidmatSokongan.code}
+    {#if data.currentRoleCode === UserRoleConstant.urusSetiaKhidmatSokongan.code || data.currentRoleCode === UserRoleConstant.pengarahBahagian.code || data.currentRoleCode === UserRoleConstant.pengarahNegeri.code}
         <div class="flex w-full flex-col justify-start gap-2.5 p-5">
-            <FilterCard onSearch={() => {}}>
+            <!-- <FilterCard onSearch={() => {}}>
                 <FilterTextField
                     label="ID Kakitangan Kontrak"
                     inputValue={''}
                 />
                 <FilterTextField label="Nama" inputValue={''} />
                 <FilterTextField label="No. Kad Pengenalan" inputValue={''} />
-            </FilterCard>
+            </FilterCard> -->
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
             >

@@ -46,9 +46,9 @@
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader title="Rekod Gaji Dan Elaun">
         <TextIconButton
-            label="Kembali"
+            label="Tutup"
             type="neutral"
-            icon="previous"
+            icon="cancel"
             onClick={() => goto('./')}
         />
     </ContentHeader>
@@ -183,32 +183,37 @@
             ></StepperContentHeader>
             <StepperContentBody>
                 {#each data.otherDetail as details}
-                    <div class="w-full">
-                        <span class="text-base text-ios-labelColors-link-light"
-                            >{details.name}</span
-                        >
+                    <div class="w-full flex flex-col  border-b pb-2.5">
+                        <div class="w-full">
+                            <span
+                                class="text-base text-ios-labelColors-link-light"
+                                >{details.name}</span
+                            >
+                        </div>
+                        <CustomTextField
+                            label="Jumlah (RM)"
+                            id=""
+                            disabled
+                            val={details.jumlah}
+                            errors={[]}
+                        />
+                        <CustomTextField
+                            label="Tarikh Mula"
+                            id=""
+                            disabled
+                            type="date"
+                            val={details.tarikhMula}
+                            errors={[]}
+                        />
+                        <CustomTextField
+                            label="Tarikh Tamat"
+                            id=""
+                            disabled
+                            type="date"
+                            val={details.tarikhTamat}
+                            errors={[]}
+                        />
                     </div>
-                    <CustomTextField
-                        label="Jumlah (RM)"
-                        id=""
-                        disabled
-                        val={details.jumlah}
-                        errors={[]}
-                    />
-                    <CustomTextField
-                        label="Tarikh Mula"
-                        id=""
-                        disabled
-                        val={details.tarikhMula}
-                        errors={[]}
-                    />
-                    <CustomTextField
-                        label="Tarikh Tamat"
-                        id=""
-                        disabled
-                        val={details.tarikhTamat}
-                        errors={[]}
-                    />
                 {/each}
             </StepperContentBody>
         </StepperContent>
@@ -414,11 +419,7 @@
                 <TextIconButton label="Simpan" icon="check" form="" />
             </StepperContentHeader>
             <StepperContentBody>
-                <CustomTextField
-                    label="Ulasan/Tindakan"
-                    id=""
-                    val="Lulus"
-                />
+                <CustomTextField label="Ulasan/Tindakan" id="" val="Lulus" />
                 <CustomRadioBoolean
                     label="Keputusan"
                     options={approveOptions}

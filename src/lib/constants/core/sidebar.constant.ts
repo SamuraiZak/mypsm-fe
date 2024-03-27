@@ -126,8 +126,12 @@ export class SidebarConstant {
                             path: '/pinjaman-dan-kuarters/pinjaman',
                         },
                         {
-                            name: 'Kuarters',
-                            path: '/pinjaman-dan-kuarters/kuarters',
+                            name: 'Kuarters (Permohonan Masuk)',
+                            path: '/pinjaman-dan-kuarters/permohonan-masuk-kuarters',
+                        },
+                        {
+                            name: 'Kuarters (Permohonan Keluar)',
+                            path: '/pinjaman-dan-kuarters/permohonan-keluar-kuarters',
                         },
                     ],
                 },
@@ -256,10 +260,6 @@ export class SidebarConstant {
                             path: '/kakitangan-kontrak/lantikan-baru',
                         },
                     ],
-                },
-                {
-                    name: 'Tetapan',
-                    path: '/tetapan',
                 },
             ],
         },
