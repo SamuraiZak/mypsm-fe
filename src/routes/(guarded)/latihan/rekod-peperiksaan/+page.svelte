@@ -26,6 +26,7 @@
             totalPage: 1,
         },
         data: data.list.examApplicationList ?? [],
+        hiddenData: ['applicationId'],
     };
 
     async function _updateExamTable() {

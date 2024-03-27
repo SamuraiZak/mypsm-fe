@@ -45,12 +45,12 @@
     let isReadonlyIntegritySecretaryApprovalResult = writable<boolean>(false);
     let isReadonlyCourseSecretaryApprovalResult = writable<boolean>(false);
     let fundApplicationIsFail = writable<boolean>(false);
-    let fundApplicationNotUploaded = writable<boolean>(false);
+    let fundApplicationFileUploadPass = writable<boolean>(false);
 
     $: {
-        data.responses.fundApplicationDocumentInfoResponse.status === 'error'
-            ? fundApplicationNotUploaded.set(true)
-            : fundApplicationNotUploaded.set(false);
+        data.responses.fundApplicationDocumentInfoResponse.status === 'success'
+            ? fundApplicationFileUploadPass.set(true)
+            : fundApplicationFileUploadPass.set(false);
 
         data.responses.fundApplicationCourseSecretaryApprovalResponse.data
             ?.details.status === false ||
@@ -114,7 +114,7 @@
         },
     );
 
-    const { form: documentsForm, enhance: documentsEnhance } = superForm(
+    const { form: documentsForm } = superForm(
         data.forms.fundApplicationDocumentForm,
         {
             SPA: true,
@@ -160,6 +160,7 @@
         enhance: integritySecretaryApprovalInfoEnhance,
         isTainted: integritySecretaryApprovalInfoIsTainted,
     } = superForm(data.forms.fundApplicationIntegritySecretaryApprovalForm, {
+        id: 'fundApplicationIntegritySecretaryApprovalCourseSubmodule',
         SPA: true,
         dataType: 'json',
         invalidateAll: true,
@@ -188,7 +189,8 @@
         errors: stateUnitDirectorApprovalInfoErrors,
         enhance: stateUnitDirectorApprovalInfoEnhance,
         isTainted: stateUnitDirectorApprovalInfoIsTainted,
-    } = superForm(data.forms.fundApplicationIntegritySecretaryApprovalForm, {
+    } = superForm(data.forms.fundApplicationStateUnitDirectorApprovalForm, {
+        id: 'fundApplicationStateUnitDirectorApprovalCourseSubmodule',
         SPA: true,
         dataType: 'json',
         invalidateAll: true,
@@ -830,22 +832,18 @@
         <StepperContentHeader title="Dokumen - Dokumen Sokongan yang Berkaitan"
         ></StepperContentHeader>
         <StepperContentBody>
-            {#if $fundApplicationNotUploaded}
+            {#if !$fundApplicationFileUploadPass}
                 <StepperFileNotUploaded />
             {:else}
                 <div class="flex w-full flex-col gap-2">
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
                     >
-                        <ContentHeader
-                            title="Dokumen - Dokumen Sokongan yang Berkaitan"
-                        ></ContentHeader>
                         <p
                             class="mt-2 h-fit w-full bg-bgr-primary text-sm font-medium text-system-primary"
                         >
                             Fail-fail yang dimuat naik:
                         </p>
-
                         {#each $documentsForm.document as _, i}
                             <div
                                 class="flex w-full flex-row items-center justify-between"
@@ -860,8 +858,7 @@
                                         handleDownload(
                                             $documentsForm.document[i].document,
                                         )}
-                                    fileName={$documentsForm.document[i]
-                                        .document}
+                                    fileName={$documentsForm.document[i].name}
                                 ></DownloadAttachment>
                             </div>
                         {/each}
@@ -870,7 +867,7 @@
             {/if}
         </StepperContentBody>
     </StepperContent>
-    {#if !$fundApplicationNotUploaded}
+    {#if $fundApplicationFileUploadPass}
         <StepperContent>
             <StepperContentHeader
                 title="Keputusan daripada Peranan - Peranan Lain"

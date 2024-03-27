@@ -169,11 +169,10 @@ export const _fundReimbursementApprovalSchema = z.object({
 // fund reimbursement document upload schema
 // ==================================================
 export const _fundReimbursementDocumentSchema = z.object({
-    id: numberIdSchema,
-    document: z.array(z.object({ document: z.string() })),
+    document: z.array(z.object({ name: z.string(), document: z.string() })),
 });
 export const _fundReimbursementUploadDocSchema = z.object({
-    id: numberIdSchema,
+    // id: numberIdSchema,
     documents: z
         .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
         .refine((f) => f.size < 4_000_000, 'Maximum 4 MB saiz muat naik.')

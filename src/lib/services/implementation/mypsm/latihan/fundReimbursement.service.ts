@@ -10,9 +10,9 @@ import {
 } from '$lib/dto/core/common/common-list-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
 import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
+import type { CourseFundApplicationUploadDocumentsBase64RequestDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-document.dto';
 import type { CourseFundReimbursementApprovalDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement-approval.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
-import httpFormData from '$lib/services/implementation/service-provider-formdata.service';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
 
@@ -86,7 +86,7 @@ export class CourseFundReimbursementServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                await invalidateAll();
+                // await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -150,14 +150,16 @@ export class CourseFundReimbursementServices {
     }
 
     // create fund reimbursements employee documents //multipart form
-    static async uploadFundReimbursementEmployeeDocument(param: FormData) {
+    static async uploadFundReimbursementEmployeeDocument(
+        param: CourseFundApplicationUploadDocumentsBase64RequestDTO,
+    ) {
         try {
             const url: Input = 'course/fund_reimbursement/document/add';
 
             // get the promise response
-            const promiseRes: Promise<Response> = httpFormData
+            const promiseRes: Promise<Response> = http
                 .post(url, {
-                    body: param,
+                    body: JSON.stringify(param),
                 })
                 .json();
             // await toast for resolved or rejected state

@@ -1,11 +1,11 @@
 import { goto } from '$app/navigation';
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
+import type { DocumentBase64RequestDTO } from '$lib/dto/core/common/base-64-document-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
-import {
-    getErrorToast,
-    getInsufficientFileToast,
-} from '$lib/helpers/core/toast.helper';
+import type { CourseFundApplicationUploadDocumentsBase64RequestDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-document.dto';
+import { _fileToBase64String } from '$lib/helpers/core/fileToBase64String.helper';
+import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import { _fundReimbursementUploadDocSchema } from '$lib/schemas/mypsm/course/fund-reimbursement-schema';
 import { CourseFundReimbursementServices } from '$lib/services/implementation/mypsm/latihan/fundReimbursement.service';
 import { error } from '@sveltejs/kit';
@@ -51,27 +51,39 @@ export async function load({ params }) {
 export const _submitDocumentForm = async (id: number, files: File[]) => {
     const documentData = new FormData();
 
-    if (files.length < 2) {
-        getInsufficientFileToast();
-        error(400, { message: 'Validation Not Passed!' });
-    }
+    // check file size validation
     files.forEach((file) => {
         documentData.append('documents', file, file.name);
     });
-    documentData.append('id', id.toString());
 
     const form = await superValidate(
         documentData,
         zod(_fundReimbursementUploadDocSchema),
     );
 
-    if (!form.valid || form.data.id === undefined) {
+    if (!form.valid || id === undefined) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
     }
+
+    // turns file into base 64 format
+    const requestBody: CourseFundApplicationUploadDocumentsBase64RequestDTO = {
+        documents: [],
+        id: id,
+    };
+
+    for (let i = 0; i < files.length; i++) {
+        const base64String = await _fileToBase64String(files[i]);
+        const documentObject: DocumentBase64RequestDTO = {
+            base64: base64String,
+            name: files[i].name,
+        };
+        requestBody.documents?.push(documentObject);
+    }
+
     const response: CommonResponseDTO =
         await CourseFundReimbursementServices.uploadFundReimbursementEmployeeDocument(
-            documentData,
+            requestBody,
         );
 
     if (response.status === 'success')

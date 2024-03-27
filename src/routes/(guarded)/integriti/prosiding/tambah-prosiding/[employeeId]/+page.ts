@@ -20,13 +20,12 @@ import { superValidate } from 'sveltekit-superforms/client';
 //==================================================
 //=============== Load Function ====================
 //==================================================
-export async function load({ params }) {
-    // const currentRoleCode = localStorage.getItem(
-    //     LocalStorageKeyConstant.currentRoleCode,
-    // );
+export async function load({ params, parent }) {
+    const { roles } = await parent();
 
-    // const isCourseSecretaryRole =
-    //     currentRoleCode === RoleConstant.urusSetiaLatihan.code;
+    if (!roles.isDisciplineSecretaryRole) {
+        error(401, { message: 'Akses ditolak' });
+    }
 
     const idRequestBody: ProceedingStaffDetailRequestDTO = {
         integrityId: 0,
@@ -110,8 +109,6 @@ export const _addStateUnitSecretaryApprovalForm = async (formData: object) => {
         formData,
         zod(_proceedingChargeMeetingRequestSchema),
     );
-
-    console.log(form);
 
     if (!form.valid) {
         getErrorToast();

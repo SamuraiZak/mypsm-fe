@@ -1,21 +1,25 @@
+import { goto } from '$app/navigation';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { ProceedingAccusationListDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
+import type { ProceedingSentencingMeetingRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-create-sentencing-meeting-request.dto';
 import type { ProceedingEmployeeDetailResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-employee-detail-response.dto';
 import type {
     ProceedingIntegrityIdRequestDTO,
     ProceedingStaffDetailRequestDTO,
 } from '$lib/dto/mypsm/integrity/proceeding/proceeding-staff-detail-request.dto';
+import type { ProceedingTypeChargeDetailViewResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-type-charge-detail-view-response.dto';
+import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
     _chargesListSchema,
     _proceedingApproverSchema,
     _proceedingChargeMeetingRequestSchema,
     _proceedingSentencingMeetingSchema,
     _proceedingStaffDetailResponseSchema,
-    _sentenceSchema,
 } from '$lib/schemas/mypsm/integrity/proceeding-charge-scheme';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { IntegrityProceedingServices } from '$lib/services/implementation/mypsm/integriti/integrity-proceeding.service';
+import { error } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms/client';
 
@@ -49,6 +53,13 @@ export async function load({ params }) {
             integrityId,
         );
 
+    const proceedingTypeChargeDetailViewResponse: CommonResponseDTO =
+        await IntegrityProceedingServices.getProceedingTypeChargesnDetailsView(
+            integrityId,
+        );
+
+    const proceedingTypeChargeDetailView: ProceedingTypeChargeDetailViewResponseDTO =
+        proceedingTypeChargeDetailViewResponse.data?.details;
     // ============================================================
     // Supervalidated form initialization
     // ============================================================
@@ -60,11 +71,13 @@ export async function load({ params }) {
     );
 
     const proceedingChargesMeetingForm = await superValidate(
+        proceedingTypeChargeDetailView.accusationList,
         zod(_proceedingChargeMeetingRequestSchema),
         { errors: false },
     );
 
     const proceedingIntegrityDirectorForm = await superValidate(
+        proceedingTypeChargeDetailView.confirmation,
         zod(_proceedingApproverSchema),
         { errors: false },
     );
@@ -77,13 +90,16 @@ export async function load({ params }) {
     );
 
     const proceedingSentencingMeetingForm = await superValidate(
+        proceedingTypeChargeDetailView.sentencingDetails,
         zod(_proceedingSentencingMeetingSchema),
         { errors: false },
     );
 
-    const addSentenceForm = await superValidate(zod(_sentenceSchema), {
-        errors: false,
-    });
+    const proceedingSentencingConfirmationForm = await superValidate(
+        proceedingTypeChargeDetailView.sentencingConfirmation,
+        zod(_proceedingApproverSchema),
+        { errors: false },
+    );
 
     // preset sentencing number of charges
     const accusationList = (
@@ -98,11 +114,14 @@ export async function load({ params }) {
                 result: false,
                 sentencing: [
                     {
-                        penaltyTypeCode: '',
-                        effectiveDate: new Date().toDateString(),
+                        emolumenDate: [
+                            {
+                                startDate: null,
+                                endDate: null,
+                            },
+                        ],
                     },
                 ],
-                // Add other properties if necessary
             };
         });
     }
@@ -167,6 +186,13 @@ export async function load({ params }) {
     return {
         responses: {
             proceedingStaffDetailResponse,
+            proceedingTypeChargeDetailViewResponse,
+        },
+        view: {
+            proceedingTypeChargeDetailView,
+        },
+        lists: {
+            accusationList,
         },
         forms: {
             proceedingStaffInfoForm,
@@ -174,7 +200,7 @@ export async function load({ params }) {
             proceedingIntegrityDirectorForm,
             proceedingChargesListForm,
             proceedingSentencingMeetingForm,
-            addSentenceForm,
+            proceedingSentencingConfirmationForm,
         },
         lookups: {
             identityCardColorLookup,
@@ -183,3 +209,29 @@ export async function load({ params }) {
         },
     };
 }
+
+export const _addSentencingMeeting = async (formData: object) => {
+    const form = await superValidate(
+        formData,
+        zod(_proceedingSentencingMeetingSchema),
+    );
+
+    console.log(form);
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await IntegrityProceedingServices.createProceedingSentencing(
+            form.data as ProceedingSentencingMeetingRequestDTO,
+        );
+
+    if (response.status === 'success')
+        setTimeout(() => {
+            goto(`../../prosiding`);
+        }, 1500);
+
+    return { response };
+};

@@ -34,8 +34,8 @@ export async function load() {
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: 'examTitle',
-        orderType: 0,
+        orderBy: 'id',
+        orderType: 1,
         filter: {
             examTypeId: null, // 0 or Null: All | 1: Perkhidmatan | 2: PSL
             identityCard: null, //string | null | undefined;

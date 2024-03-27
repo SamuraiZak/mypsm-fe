@@ -69,16 +69,18 @@
     <div
         class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
     >
-        <ContentHeader
-            title="Tekan butang disebelah untuk menambah rekod prosiding"
-            borderClass="border-none"
-        >
-            <TextIconButton
-                label="Tambah Prosiding"
-                type="primary"
-                onClick={() => goto('./prosiding/tambah-prosiding')}
-            ></TextIconButton>
-        </ContentHeader>
+        {#if data.roles.isDisciplineSecretaryRole}
+            <ContentHeader
+                title="Tekan butang disebelah untuk menambah rekod prosiding"
+                borderClass="border-none"
+            >
+                <TextIconButton
+                    label="Tambah Prosiding"
+                    type="primary"
+                    onClick={() => goto('./prosiding/tambah-prosiding')}
+                ></TextIconButton>
+            </ContentHeader>
+        {/if}
         <!-- Table filter placeholder -->
         <FilterCard onSearch={_updateProceedingTable}>
             <FilterSelectField

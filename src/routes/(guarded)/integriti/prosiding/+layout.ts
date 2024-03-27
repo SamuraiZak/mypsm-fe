@@ -12,6 +12,8 @@ export const load = async () => {
         LocalStorageKeyConstant.currentRoleCode,
     );
 
+    const isStaffRole = currentRoleCode === RoleConstant.kakitangan.code;
+
     const isDisciplineSecretaryRole =
         currentRoleCode === RoleConstant.urusSetiaTatatertib.code;
 
@@ -69,6 +71,7 @@ export const load = async () => {
             statusLookup,
         },
         roles: {
+            isStaffRole,
             isDisciplineSecretaryRole,
             isIntegritySecretaryRole,
             isIntegrityDirectorRole,

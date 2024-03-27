@@ -1,16 +1,18 @@
 import { goto } from '$app/navigation';
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
+import type { DocumentBase64RequestDTO } from '$lib/dto/core/common/base-64-document-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { CourseFundReimbursementUploadDocumentsBase64RequestDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement-document.dto';
 import {
     getErrorToast,
-    getInsufficientFileToast,
 } from '$lib/helpers/core/toast.helper';
 import { _fundApplicationUploadDocSchema } from '$lib/schemas/mypsm/course/fund-application-schema';
 import { CourseFundApplicationServices } from '$lib/services/implementation/mypsm/latihan/fundApplication.service';
 import { error } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms/client';
+import { _fileToBase64String } from '../../../../elaun-elaun-perkhidmatan/permohonan/[applicationId]/[typeCode]/+page';
 
 //==================================================
 //=============== Load Function ====================
@@ -51,34 +53,46 @@ export async function load({ params }) {
 export const _submitDocumentForm = async (id: number, files: File[]) => {
     const documentData = new FormData();
 
-    if (files.length < 2) {
-        getInsufficientFileToast();
-        error(400, { message: 'Validation Not Passed!' });
-    }
+    // check file size validation
     files.forEach((file) => {
         documentData.append('documents', file, file.name);
     });
-    documentData.append('id', id.toString());
 
     const form = await superValidate(
         documentData,
         zod(_fundApplicationUploadDocSchema),
     );
 
-    if (!form.valid || form.data.id === undefined) {
+    if (!form.valid || id === undefined) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
     }
 
+    // turns file into base 64 format
+    const requestBody: CourseFundReimbursementUploadDocumentsBase64RequestDTO =
+        {
+            documents: [],
+            id: id,
+        };
+
+    for (let i = 0; i < files.length; i++) {
+        const base64String = await _fileToBase64String(files[i]);
+        const documentObject: DocumentBase64RequestDTO = {
+            base64: base64String,
+            name: files[i].name,
+        };
+        requestBody.documents?.push(documentObject);
+    }
+
     const response: CommonResponseDTO =
         await CourseFundApplicationServices.uploadFundApplicationEmployeeDocument(
-            documentData,
+            requestBody,
         );
 
     if (response.status === 'success')
         setTimeout(() => {
             goto(`../${id}`);
-        }, 2000);
+        }, 1000);
 
     return { response };
 };

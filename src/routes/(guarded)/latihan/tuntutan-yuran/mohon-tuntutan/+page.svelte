@@ -32,8 +32,8 @@
     const { form, errors, enhance } = superForm(data.reimbursementInfoForm, {
         SPA: true,
         dataType: 'json',
-        invalidateAll: true,
-        resetForm: true,
+        invalidateAll: false,
+        resetForm: false,
         multipleSubmits: 'prevent',
         validationMethod: 'oninput',
         validators: zod(_fundReimbursementDetailResponseSchema),
@@ -80,21 +80,20 @@
             ];
         });
     };
-    const handleDelete = () => {
-        // const selectedFileName = (e.currentTarget as HTMLInputElement).files?.item(0)?.name
 
-        // $fundReimbursementUploadDocumentForm.documents =
-        //     $fundReimbursementUploadDocumentForm.documents.filter((file) => {
-        //         return file.name !== selectedFileName;
-        //     });
-
-        $fundReimbursementUploadDocumentForm.documents = [];
+    const handleDelete = (i: number) => {
+        $fundReimbursementUploadDocumentForm.documents =
+            $fundReimbursementUploadDocumentForm.documents.filter(
+                (_, index) => {
+                    return index !== i;
+                },
+            );
     };
 </script>
 
 <ContentHeader title="Maklumat Pembiayaan Pelajaran"
     ><TextIconButton
-        label={enableUploadDocument ? 'Muat Naik Kemudian' : 'Kembali'}
+        label={enableUploadDocument ? 'Muat naik kemudian' : 'Kembali'}
         type="neutral"
         onClick={() => {
             goto('../tuntutan-yuran');
@@ -104,11 +103,13 @@
 <Stepper>
     <StepperContent>
         <StepperContentHeader title="Maklumat Pengajian Diikuti">
-            <TextIconButton
-                type="primary"
-                label="Simpan"
-                form="fundReimbursementFormStepper"
-            />
+            {#if !enableUploadDocument}
+                <TextIconButton
+                    type="primary"
+                    label="Simpan"
+                    form="fundReimbursementFormStepper"
+                />
+            {/if}
         </StepperContentHeader>
         <StepperContentBody
             ><!-- Maklumat Peperiksaan -->
@@ -119,7 +120,7 @@
                 class="flex w-full flex-col gap-2"
             >
                 <CustomSelectField
-                    disabled={false}
+                    disabled={enableUploadDocument}
                     errors={$errors.academicLevel}
                     id="academicLevel"
                     label="Peringkat Kursus Pengajian"
@@ -128,7 +129,7 @@
                 ></CustomSelectField>
 
                 <CustomTextField
-                    disabled={false}
+                    disabled={enableUploadDocument}
                     errors={$errors.courseName}
                     id="courseName"
                     label="Nama Kursus Pengajian"
@@ -137,7 +138,7 @@
                 ></CustomTextField>
 
                 <CustomSelectField
-                    disabled={false}
+                    disabled={enableUploadDocument}
                     errors={$errors.institution}
                     id="institution"
                     label="Tempat Pengajian"
@@ -146,7 +147,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={false}
+                    disabled={enableUploadDocument}
                     errors={$errors.learningInstitution}
                     id="learningInstitution"
                     label="Institusi/Pusat Pembelajaran"
@@ -155,7 +156,7 @@
                 ></CustomSelectField>
 
                 <CustomTextField
-                    disabled={false}
+                    disabled={enableUploadDocument}
                     errors={$errors.studyDuration}
                     id="studyDuration"
                     label="Tempoh Pengajian (Tahun)"
@@ -164,7 +165,7 @@
                 ></CustomTextField>
 
                 <CustomTextField
-                    disabled={false}
+                    disabled={enableUploadDocument}
                     errors={$errors.entryDateToInstituition}
                     id="entryDateToInstituition"
                     label="Tarikh Kemasukan Ke IPTA"
@@ -173,7 +174,7 @@
                 ></CustomTextField>
 
                 <CustomTextField
-                    disabled={false}
+                    disabled={enableUploadDocument}
                     errors={$errors.finishedStudyDate}
                     id="finishedStudyDate"
                     label="Tamat Pada"
@@ -182,7 +183,7 @@
                 ></CustomTextField>
 
                 <CustomSelectField
-                    disabled={false}
+                    disabled={enableUploadDocument}
                     errors={$errors.semester}
                     id="semester"
                     label="Tuntutan Untuk Semester"
@@ -204,7 +205,7 @@
                 ></CustomSelectField>
 
                 <CustomTextField
-                    disabled={false}
+                    disabled={enableUploadDocument}
                     errors={$errors.finalResult}
                     id="finalResult"
                     label="Keputusan Akhir (CGPA)"
@@ -213,7 +214,7 @@
                 ></CustomTextField>
 
                 <CustomTextField
-                    disabled={false}
+                    disabled={enableUploadDocument}
                     errors={$errors.totalClaim}
                     id="totalClaim"
                     label="Jumlah Tuntutan (RM)"
@@ -269,9 +270,9 @@
                                 {#each $fundReimbursementUploadDocumentForm.documents as _, i}
                                     <FileInputFieldChildren
                                         childrenType="grid"
-                                        {handleDelete}
-                                        fileName={$fundReimbursementUploadDocumentForm
-                                            .documents[i].name}
+                                        handleDelete={() => handleDelete(i)}
+                                        document={$fundReimbursementUploadDocumentForm
+                                            .documents[i]}
                                     />
                                 {/each}
                             </div>

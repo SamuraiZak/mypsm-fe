@@ -11,8 +11,13 @@ import {
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
 import type { ProceedingAppealResultDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-appeal.dto';
 import type { ProceedingApproverResultDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-approver-result.dto';
+import type { ProceedingCreateChargeRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-create-charges-request.dto';
+import type { ProceedingSentencingMeetingRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-create-sentencing-meeting-request.dto';
 import type { ProceedingSuspensionRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-create-suspension-request.dto';
-import type { ProceedingStaffDetailRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-staff-detail-request.dto';
+import type {
+    ProceedingIntegrityIdRequestDTO,
+    ProceedingStaffDetailRequestDTO,
+} from '$lib/dto/mypsm/integrity/proceeding/proceeding-staff-detail-request.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
@@ -95,8 +100,37 @@ export class IntegrityProceedingServices {
         }
     }
 
+    // get course proceeding - type charges details view
+    static async getProceedingTypeChargesnDetailsView(
+        param: ProceedingIntegrityIdRequestDTO,
+    ) {
+        try {
+            const url: Input = 'integrity/proceeding/accusation/view';
+
+            // get the promise response
+            const response: Response = await http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     // create proceeding - add charge meeting result
-    static async createProceedingChargeMeetingResult<T>(param: T) {
+    static async createProceedingChargeMeetingResult(
+        param: ProceedingCreateChargeRequestDTO,
+    ) {
         try {
             const url: Input = 'integrity/proceeding/accusation/add';
 
@@ -186,7 +220,9 @@ export class IntegrityProceedingServices {
     }
 
     // create proceeding - add sentencing result
-    static async createProceedingSentencing<T>(param: T) {
+    static async createProceedingSentencing(
+        param: ProceedingSentencingMeetingRequestDTO,
+    ) {
         try {
             const url: Input = 'integrity/proceeding/sentencing/add';
 

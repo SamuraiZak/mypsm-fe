@@ -1,5 +1,7 @@
 <script lang="ts">
     export let color: string = '';
+    export let fontSize: string = '';
+    export let fontWeight: string = '';
     export let title: string = 'Page Title';
     export let borderClass: string = '';
 </script>
@@ -15,7 +17,10 @@
         class="flex h-full max-h-full min-h-full w-fit flex-row items-center justify-start"
     >
         <span
-            class="text-base font-medium {color === 'system-primary'
+            class="
+            {fontSize === 'small' ? 'text-sm' : 'text-base'}
+            {fontWeight === 'bold' ? 'font-bold' : 'font-medium'}
+                {color === 'system-primary'
                 ? 'text-system-primary'
                 : 'text-txt-primary'}"
         >

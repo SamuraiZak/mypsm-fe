@@ -1,12 +1,12 @@
 import { goto } from '$app/navigation';
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
+import type { DocumentBase64RequestDTO } from '$lib/dto/core/common/base-64-document-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { CourseAddFundApplicationRequestDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
-import {
-    getErrorToast,
-    getInsufficientFileToast,
-} from '$lib/helpers/core/toast.helper';
+import type { CourseFundReimbursementUploadDocumentsBase64RequestDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement-document.dto';
+import { _fileToBase64String } from '$lib/helpers/core/fileToBase64String.helper';
+import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
     _createFundApplicationRequestSchema,
     _fundApplicationDetailResponseSchema,
@@ -61,8 +61,6 @@ export const _createFundApplicationForm = async (formData: FormData) => {
         zod(_createFundApplicationRequestSchema),
     );
 
-    console.log(form);
-
     if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
@@ -79,34 +77,46 @@ export const _createFundApplicationForm = async (formData: FormData) => {
 export const _submitDocumentForm = async (id: number, files: File[]) => {
     const documentData = new FormData();
 
-    if (files.length < 2) {
-        getInsufficientFileToast();
-        error(400, { message: 'Validation Not Passed!' });
-    }
+    // check file size validation
     files.forEach((file) => {
         documentData.append('documents', file, file.name);
     });
-    documentData.append('id', id.toString());
 
     const form = await superValidate(
         documentData,
         zod(_fundApplicationUploadDocSchema),
     );
 
-    if (!form.valid || form.data.id === undefined) {
+    if (!form.valid || id === undefined) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
     }
 
+    // turns file into base 64 format
+    const requestBody: CourseFundReimbursementUploadDocumentsBase64RequestDTO =
+        {
+            documents: [],
+            id: id,
+        };
+
+    for (let i = 0; i < files.length; i++) {
+        const base64String = await _fileToBase64String(files[i]);
+        const documentObject: DocumentBase64RequestDTO = {
+            base64: base64String,
+            name: files[i].name,
+        };
+        requestBody.documents?.push(documentObject);
+    }
+
     const response: CommonResponseDTO =
         await CourseFundApplicationServices.uploadFundApplicationEmployeeDocument(
-            documentData,
+            requestBody,
         );
 
     if (response.status === 'success')
         setTimeout(() => {
-            goto(`../${id}`);
-        }, 1500);
+            goto(`../pembiayaan/${id}`);
+        }, 1000);
 
     return { response };
 };

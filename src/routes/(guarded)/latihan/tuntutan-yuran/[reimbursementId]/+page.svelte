@@ -769,9 +769,6 @@
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
                     >
-                        <ContentHeader
-                            title="Dokumen - Dokumen Sokongan yang Berkaitan"
-                        ></ContentHeader>
                         <p
                             class="mt-2 h-fit w-full bg-bgr-primary text-sm font-medium text-system-primary"
                         >
@@ -794,7 +791,7 @@
                                                 .document[i].document,
                                         )}
                                     fileName={$reimbursementDocumentsForm
-                                        .document[i].document}
+                                        .document[i].name}
                                 ></DownloadAttachment>
                             </div>
                         {/each}

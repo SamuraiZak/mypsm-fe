@@ -79,35 +79,33 @@
             ];
         });
     };
-    const handleDelete = () => {
-        // const selectedFileName = (e.currentTarget as HTMLInputElement).files?.item(0)?.name
-
-        // $fundApplicationUploadDocumentForm.documents =
-        //     $fundApplicationUploadDocumentForm.documents.filter((file) => {
-        //         return file.name !== selectedFileName;
-        //     });
-
-        $fundApplicationUploadDocumentForm.documents = [];
+    const handleDelete = (i: number) => {
+        $fundApplicationUploadDocumentForm.documents =
+            $fundApplicationUploadDocumentForm.documents.filter((_, index) => {
+                return index !== i;
+            });
     };
 </script>
 
 <ContentHeader title="Maklumat Pembiayaan Pelajaran">
     <TextIconButton
-        label={enableUploadDocument ? 'Muat Naik Kemudian' : 'Kembali'}
+        label={enableUploadDocument ? 'Muat naik kemudian' : 'Kembali'}
         type="neutral"
         onClick={() => {
             goto('../pembiayaan');
         }}
     />
-</ContentHeader>D
+</ContentHeader>
 <Stepper>
     <StepperContent>
         <StepperContentHeader title="Maklumat Pelajaran Yang Akan Diikuti">
-            <TextIconButton
-                type="primary"
-                label="Simpan"
-                form="fundReimbursementFormStepper"
-            />
+            {#if !enableUploadDocument}
+                <TextIconButton
+                    type="primary"
+                    label="Simpan"
+                    form="fundReimbursementFormStepper"
+                />
+            {/if}
         </StepperContentHeader>
         <StepperContentBody>
             <form
@@ -241,14 +239,16 @@
                             class="flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border border-bdr-primary p-2.5"
                         >
                             <div class="flex flex-wrap gap-3">
-                                {#each $fundApplicationUploadDocumentForm.documents as _, i}
-                                    <FileInputFieldChildren
-                                        childrenType="grid"
-                                        {handleDelete}
-                                        fileName={$fundApplicationUploadDocumentForm
-                                            .documents[i].name}
-                                    />
-                                {/each}
+                                {#if $fundApplicationUploadDocumentForm.documents.length > 0}
+                                    {#each $fundApplicationUploadDocumentForm.documents as _, i}
+                                        <FileInputFieldChildren
+                                            childrenType="grid"
+                                            handleDelete={() => handleDelete(i)}
+                                            document={$fundApplicationUploadDocumentForm
+                                                .documents[i]}
+                                        />
+                                    {/each}
+                                {/if}
                             </div>
                             {#if $fundApplicationUploadDocumentForm.documents.length < 1}
                                 <div
