@@ -36,7 +36,7 @@
     import { zod } from 'sveltekit-superforms/adapters';
     export let data: PageData;
     let isReadonlyProceedingChargeIntegrityDirectorApproval =
-        writable<boolean>(false);
+        writable<boolean>(true);
 
     let proceedingChargeIsCertified = writable<boolean>(false);
 
@@ -1187,6 +1187,79 @@
                         </div>
                     {/each}
                 </form>
+            </StepperContentBody>
+        </StepperContent>
+        <StepperContent>
+            <StepperContentHeader
+                title="Pengesahan Pengarah Integriti - Penentuan Hukuman"
+            >
+                {#if data.roles.isIntegrityDirectorRole}
+                    <TextIconButton
+                        type="primary"
+                        label="Simpan"
+                        form="sentencingConfirmationForm"
+                    ></TextIconButton>
+                {/if}
+            </StepperContentHeader>
+            <StepperContentBody>
+                <div class="flex w-full flex-col gap-2.5">
+                    {#if data.roles.isIntegrityDirectorRole}
+                        <form
+                            id="sentencingConfirmationForm"
+                            method="POST"
+                            use:disciplineSecretaryFormEnhance
+                            class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                        >
+                            <div class="mb-5">
+                                <b class="text-sm text-system-primary"
+                                    >Pengarah Integriti</b
+                                >
+                            </div>
+                            <CustomTextField
+                                disabled={$isReadonlyProceedingChargeIntegrityDirectorApproval}
+                                errors={$disciplineSecretaryFormErrors.remark}
+                                id="approverRemark"
+                                label="Tindakan/Ulasan"
+                                bind:val={$disciplineSecretaryForm.remark}
+                            ></CustomTextField>
+                            <CustomSelectField
+                                disabled={$isReadonlyProceedingChargeIntegrityDirectorApproval}
+                                errors={$disciplineSecretaryFormErrors.status}
+                                id="approverIsApproved"
+                                options={certifyOptions}
+                                label={'Keputusan'}
+                                bind:val={$disciplineSecretaryForm.status}
+                            ></CustomSelectField>
+                        </form>
+                    {/if}
+
+                    <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                        <div class="mb-5">
+                            <b class="text-sm text-system-primary"
+                                >Pengarah Integriti</b
+                            >
+                        </div>
+                        {#if $isReadonlyProceedingChargeIntegrityDirectorApproval}
+                            <CustomTextField
+                                disabled
+                                id="integrityDirectorRemark"
+                                label="Tindakan/Ulasan"
+                                val={'value'}
+                            ></CustomTextField>
+                            <CustomSelectField
+                                disabled
+                                id="integrityDirectorStatus"
+                                options={certifyOptions}
+                                label={'Keputusan'}
+                                val={'value'}
+                            ></CustomSelectField>
+                        {:else if $proceedingChargeIsCertified}
+                            <StepperFailStatement />
+                        {:else}
+                            <StepperOtherRolesResult />
+                        {/if}
+                    </div>
+                </div>
             </StepperContentBody>
         </StepperContent>
     {:else if data.roles.isIntegritySecretaryRole || data.roles.isStaffRole}

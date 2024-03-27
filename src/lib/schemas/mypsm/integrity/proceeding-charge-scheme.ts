@@ -280,3 +280,10 @@ export const _proceedingAppealSchema = z.object({
     meetingName: z.string(),
     meetingCode: codeSchema,
 });
+
+export const _proceedingTypeChargeDetailsSchema = z.object({
+    accusationList: _proceedingChargeMeetingRequestSchema,
+    confirmation: _proceedingApproverSchema,
+    sentencingDetails: _proceedingSentencingMeetingSchema,
+    sentencingConfirmation: _proceedingApproverSchema,
+});

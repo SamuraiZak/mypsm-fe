@@ -8,6 +8,7 @@ import type {
     ProceedingIntegrityIdRequestDTO,
     ProceedingStaffDetailRequestDTO,
 } from '$lib/dto/mypsm/integrity/proceeding/proceeding-staff-detail-request.dto';
+import type { ProceedingTypeChargeDetailViewResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-type-charge-detail-view-response.dto';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
     _chargesListSchema,
@@ -52,6 +53,13 @@ export async function load({ params }) {
             integrityId,
         );
 
+    const proceedingTypeChargeDetailViewResponse: CommonResponseDTO =
+        await IntegrityProceedingServices.getProceedingTypeChargesnDetailsView(
+            integrityId,
+        );
+
+    const proceedingTypeChargeDetailView: ProceedingTypeChargeDetailViewResponseDTO =
+        proceedingTypeChargeDetailViewResponse.data?.details;
     // ============================================================
     // Supervalidated form initialization
     // ============================================================
@@ -63,11 +71,13 @@ export async function load({ params }) {
     );
 
     const proceedingChargesMeetingForm = await superValidate(
+        proceedingTypeChargeDetailView.accusationList,
         zod(_proceedingChargeMeetingRequestSchema),
         { errors: false },
     );
 
     const proceedingIntegrityDirectorForm = await superValidate(
+        proceedingTypeChargeDetailView.confirmation,
         zod(_proceedingApproverSchema),
         { errors: false },
     );
@@ -80,7 +90,14 @@ export async function load({ params }) {
     );
 
     const proceedingSentencingMeetingForm = await superValidate(
+        proceedingTypeChargeDetailView.sentencingDetails,
         zod(_proceedingSentencingMeetingSchema),
+        { errors: false },
+    );
+
+    const proceedingSentencingConfirmationForm = await superValidate(
+        proceedingTypeChargeDetailView.sentencingConfirmation,
+        zod(_proceedingApproverSchema),
         { errors: false },
     );
 
@@ -169,6 +186,7 @@ export async function load({ params }) {
     return {
         responses: {
             proceedingStaffDetailResponse,
+            proceedingTypeChargeDetailViewResponse,
         },
         lists: {
             accusationList,
@@ -179,6 +197,7 @@ export async function load({ params }) {
             proceedingIntegrityDirectorForm,
             proceedingChargesListForm,
             proceedingSentencingMeetingForm,
+            proceedingSentencingConfirmationForm,
         },
         lookups: {
             identityCardColorLookup,
