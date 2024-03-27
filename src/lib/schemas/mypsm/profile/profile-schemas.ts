@@ -7,6 +7,7 @@ import {
     maxDateSchema,
     minDateSchema,
     numberIdSchema,
+    numberSchem0,
     numberSchema,
     shortTextSchema,
 } from '$lib/schemas/common/schema-type';
@@ -21,10 +22,10 @@ export const _relationDetailSchema = z.object({
 export const _personalInfoResponseSchema = z
     .object({
         id: z.number().readonly(),
-        name: shortTextSchema,
+        name: z.string(),
         alternativeName: shortTextSchema.nullable(),
-        identityCardNumber: shortTextSchema,
-        identityDocumentColor: shortTextSchema,
+        identityCardNumber: z.string(),
+        identityDocumentColor: z.string(),
         email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
         assetDeclarationStatusId: numberIdSchema,
         propertyDeclarationDate: dateStringSchema.nullable(),
@@ -44,15 +45,18 @@ export const _personalInfoResponseSchema = z
         homeCountryId: numberIdSchema,
         homeStateId: numberIdSchema,
         homeCityId: numberIdSchema,
-        homePostcode: codeSchema,
+        homePostcode: shortTextSchema.nullish(),
         mailAddress: shortTextSchema,
         mailCountryId: numberIdSchema,
         mailStateId: numberIdSchema,
         mailCityId: numberIdSchema,
-        mailPostcode: codeSchema,
+        mailPostcode: shortTextSchema.nullish(),
         isExPoliceOrSoldier: booleanSchema,
         isInternalRelationship: booleanSchema,
         relationDetail: _relationDetailSchema,
+        houseLoanType:z.string(),
+        houseLoan:z.number(),
+        vehicleLoan:z.number(),
     })
 
 export const _personalInfoRequestSchema = _personalInfoResponseSchema
@@ -118,42 +122,40 @@ export const _personalInfoRequestSchema = _personalInfoResponseSchema
 
 export const _serviceDetailSchema = z.object({
     candidateId: numberIdSchema,
-    gradeId: numberIdSchema,
-    positionId: numberIdSchema,
-    placementId: numberIdSchema,
-    serviceTypeId: numberIdSchema,
+    gradeId: z.number(),
+    positionId: z.number(),
+    placementId: z.number(),
+    serviceTypeId: z.number(),
     // maxGradeId: numberIdSchema,  
     // serviceTypeId: numberIdSchema,
     // serviceGroupId: numberIdSchema,
     // unitId: numberIdSchema,
     // programId: numberIdSchema,
     // employmentStatusId: numberIdSchema,
-    effectiveDate: dateStringSchema,
-    retirementBenefit: shortTextSchema,
+    effectiveDate: z.string(),
+    retirementBenefit: z.string(),
     EPFNumber: shortTextSchema,
     SOCSO: shortTextSchema,
     taxIncome: shortTextSchema,
     bankName: shortTextSchema,
     accountNumber: shortTextSchema,
-    program: shortTextSchema,
-    eligibleLeaveCount: numberSchema,
-    civilServiceStartDate: dateStringSchema,
-    confirmServiceDate: dateStringSchema,
+    program: z.string(),
+    eligibleLeaveCount: z.number(),
+    civilServiceStartDate: z.string(),
+    confirmServiceDate: z.string(),
     historyList: shortTextSchema,
-    newRecruitEffectiveDate: dateStringSchema,
+    newRecruitEffectiveDate: z.string(),
     // serviceDate: dateStringSchema,
-    firstServiceDate: dateStringSchema,
+    firstServiceDate: z.string(),
     // firstConfirmServiceDate: dateStringSchema,
-    firstEffectiveDate: dateStringSchema,
-    pastAttachmentDate: dateStringSchema,
-
-
-    actingDate: dateStringSchema,
-    interimDate: dateStringSchema,
-    pensionScheme: shortTextSchema,
-    lastSalaryRaiseDate: dateStringSchema,
-    lastPromotionDate: dateStringSchema,
-    salaryMovementMonth: numberIdSchema,
+    firstEffectiveDate: z.string(),
+    pastAttachmentDate: z.string(),
+    actingDate: z.string(),
+    interimDate: z.string(),
+    pensionScheme: z.string(),
+    lastSalaryRaiseDate: z.string(),
+    lastPromotionDate: z.string(),
+    salaryMovementMonth: z.number(),
 
     // confirmDate: dateStringSchema,
     // pensionNumber: shortTextSchema,
@@ -161,12 +163,12 @@ export const _serviceDetailSchema = z.object({
     retirementDate: dateStringSchema,
     salaryEffectiveDate: dateStringSchema,
     // revisionMonth: codeSchema,
-    maximumSalary: numberSchema,
-    baseSalary: numberSchema,
-    ITKA: numberSchema.optional(),
-    ITP: numberSchema.optional(),
-    EPW: numberSchema.optional(),
-    COLA: numberSchema.optional(),
+    maximumSalary: z.number(),
+    baseSalary: z.number(),
+    ITKA: z.number(),
+    ITP: z.number(),
+    EPW: z.number(),
+    COLA: z.number(),
     isReadOnly: z.boolean().readonly(),
 });
 
@@ -279,37 +281,36 @@ export const _relationsSchema = z
         educationLevelId: numberIdSchema,
         raceId: numberIdSchema,
         nationalityId: numberIdSchema,
-        maritalId: numberIdSchema,
+        maritalId: numberIdSchema.nullish(),
         genderId: numberIdSchema,
-
         name: shortTextSchema,
-        alternativeName: z.string(),
+        alternativeName: z.string().nullish(),
         identityDocumentColor: shortTextSchema,
         identityDocumentNumber: shortTextSchema,
         address: shortTextSchema,
         postcode: shortTextSchema,
         birthDate: dateStringSchema,
-        workAddress: shortTextSchema,
-        workPostcode: shortTextSchema,
-        phoneNumber: shortTextSchema,
-        marriageDate: dateStringSchema.nullable(),
+        workAddress: shortTextSchema.nullish(),
+        workPostcode: shortTextSchema.nullish(),
+        phoneNumber: shortTextSchema.nullish(),
+        marriageDate: dateStringSchema.nullish(),
         inSchool: booleanSchema,
     })
-    .partial({
-        marriageDate: true,
-        alternativeName: true,
-    })
-    .superRefine(({ maritalId, marriageDate }, ctx) => {
-        if (maritalId === 3) {
-            if (marriageDate === null) {
-                ctx.addIssue({
-                    code: 'custom',
-                    message: 'Tarikh tidak boleh kosong.',
-                    path: ['marriageDate'],
-                });
-            }
-        }
-    });
+    // .partial({
+    //     marriageDate: true,
+    //     alternativeName: true,
+    // })
+    // .superRefine(({ maritalId, marriageDate }, ctx) => {
+    //     if (maritalId === 3) {
+    //         if (marriageDate === null) {
+    //             ctx.addIssue({
+    //                 code: 'custom',
+    //                 message: 'Tarikh tidak boleh kosong.',
+    //                 path: ['marriageDate'],
+    //             });
+    //         }
+    //     }
+    // });
 
 export const _familyListResponseSchema = z.object({
     families: z.array(_relationsSchema),

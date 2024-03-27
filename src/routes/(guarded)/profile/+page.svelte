@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
+    import { goto, invalidateAll } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
 
@@ -58,6 +58,7 @@
         _submitDependencyInfoForm,
         _submitEditAcademicForm,
         _submitEditActivityForm,
+        _submitEditDependencyForm,
         _submitEditExperienceForm,
         _submitEditFamilyForm,
         _submitEditNextOfKinForm,
@@ -95,6 +96,8 @@
     export let openExperienceInfoModal: boolean = false;
     export let data: PageData;
     let param: CommonListRequestDTO = data.salaryListParam;
+
+    console.log(data.diseaseCollectionForm.data.medicalHistory);
 
     const handleOnInput = (e: Event) => {
         // $documentForm.document =
@@ -353,33 +356,29 @@
         errors: familyInfoError,
         enhance: familyInfoEnhance,
         isTainted: familyInfoTainted,
-    } = superForm(
-        data.familyInfoForm,
-
-        {
-            SPA: true,
-            id: 'familyDetail',
-            dataType: 'json',
-            invalidateAll: true,
-            resetForm: false,
-            multipleSubmits: 'allow',
-            validationMethod: 'oninput',
-            validators: zod(_familyListResponseSchema),
-            onUpdate() {
-                isEditableFamily = false;
-            },
-            async onSubmit() {
-                if (!familyInfoTainted()) {
-                    toast('Tiada perubahan data dikesan.');
-                    error(400);
-                }
-                const editResultFamily =
-                    await _submitEditFamilyForm($familyInfoForm);
-                if (editResultFamily.response.status === 'success')
-                    isReadonlyFamilyFormStepper = true;
-            },
+    } = superForm(data.familyInfoForm, {
+        SPA: true,
+        id: 'familyDetail',
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: zod(_familyListResponseSchema),
+        onUpdate() {
+            isEditableFamily = false;
         },
-    );
+        async onSubmit() {
+            if (!familyInfoTainted()) {
+                toast('Tiada perubahan data dikesan.');
+                error(400);
+            }
+            const editResultFamily =
+                await _submitEditFamilyForm($familyInfoForm);
+            if (editResultFamily.response.status === 'success')
+                isReadonlyFamilyFormStepper = true;
+        },
+    });
 
     const {
         form: dependencyInfoForm,
@@ -406,7 +405,8 @@
                     toast('Tiada perubahan data dikesan.');
                     error(400);
                 }
-                const result = await _submitDependencyForm($dependencyInfoForm);
+                const result =
+                    await _submitEditDependencyForm($dependencyInfoForm);
                 if (result.response.status === 'success')
                     isReadonlyDependencyFormStepper = true;
             },
@@ -430,19 +430,20 @@
             multipleSubmits: 'allow',
             validationMethod: 'oninput',
             validators: zod(_nextOfKinListResponseSchema),
-            onUpdate() {
-                isEditableNextOfKin = false;
-            },
             async onSubmit() {
                 if (!nextOFKInInfoTainted()) {
                     toast('Tiada perubahan data dikesan.');
                     error(400);
                 }
 
+                
+
                 const editResulNextOfKin =
                     await _submitEditNextOfKinForm($nextOfKinInfoForm);
-                if (editResulNextOfKin.response.status === 'success')
+                if (editResulNextOfKin.response.status === 'success') {
+                    isEditableNextOfKin = false;
                     isReadonlyNextOfKinFormStepper = true;
+                }
             },
         },
     );
@@ -673,9 +674,12 @@
         },
     });
 
-    const submitCreateNextOfKin = () => {
-        _submitNextOfKinInfoForm(tempNextOfKin);
-    };
+    function submitCreateNextOfKin() {
+        _submitNextOfKinInfoForm(tempNextOfKin).then((result) => {
+                    data.nextOFKInInfoForm.data = result.nextOFKInInfoForm.data;
+                    // invalidateAll();
+                });
+    }
 
     let isReadonlyHistoryMedicalFormStepper: boolean = true;
 
@@ -684,7 +688,7 @@
         errors: medicalHistoryErrors,
         enhance: medicalHistoryEnhance,
         isTainted: medicalHistoryTainted,
-    } = superForm(data.diseaseCollectionForm, {
+    } = superForm(data.diseaseCollectionForm.data, {
         SPA: true,
         dataType: 'json',
         invalidateAll: true,
@@ -760,7 +764,7 @@
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
     <CustomTab>
-        <CustomTabContent title="MaklumatPeribadi">
+        <CustomTabContent title="MaklumatPeribadi" paddingClass="">
             <Stepper>
                 <!------------------------------------------------------>
                 <!---------------Maklumat Peribadi---------------------->
@@ -815,7 +819,7 @@
                                     bind:val={editMode ? data.personalDetails.employeeNo : $personalInfoForm.employeeNumber}
                                 ></CustomTextField> -->
                                 <CustomTextField
-                                    disabled={isReadonlyPersonalFormStepper}
+                                    disabled
                                     errors={$personalInfoError.identityCardNumber}
                                     id="identityCardNumber"
                                     label={'No. Kad Pengenalan'}
@@ -823,7 +827,7 @@
                                     bind:val={$personalInfoForm.identityCardNumber}
                                 ></CustomTextField>
                                 <CustomTextField
-                                    disabled={isReadonlyPersonalFormStepper}
+                                    disabled
                                     errors={$personalInfoError.name}
                                     id="name"
                                     label={'Nama Penuh'}
@@ -832,7 +836,7 @@
                                 ></CustomTextField>
 
                                 <CustomSelectField
-                                    disabled={isReadonlyPersonalFormStepper}
+                                    disabled
                                     errors={$personalInfoError.titleId}
                                     id="titleId"
                                     label="Gelaran"
@@ -858,7 +862,7 @@
                                 ></CustomTextField>
 
                                 <CustomSelectField
-                                    disabled={isReadonlyPersonalFormStepper}
+                                    disabled
                                     errors={$personalInfoError.identityDocumentColor}
                                     id="identityDocumentColor"
                                     label="Jenis Kad Pengenalan"
@@ -1000,6 +1004,7 @@
                                 <CustomTextField
                                     errors={$personalInfoError.homePostcode}
                                     disabled={isReadonlyPersonalFormStepper}
+                                    type="text"
                                     id="homePostcode"
                                     label="Poskod Rumah"
                                     bind:val={$personalInfoForm.homePostcode}
@@ -1044,6 +1049,7 @@
                                 <CustomTextField
                                     errors={$personalInfoError.mailPostcode}
                                     disabled={isReadonlyPersonalFormStepper}
+                                    type="text"
                                     id="mailPostcode"
                                     label="Poskod Surat Menyurat"
                                     bind:val={$personalInfoForm.mailPostcode}
@@ -1090,6 +1096,26 @@
                                     options={data.selectionOptions
                                         .generalLookup}
                                 ></CustomSelectField>
+                                <CustomTextField
+                                    disabled
+                                    id="houseLoanType"
+                                    label="Jenis Pinjaman Rumah"
+                                    bind:val={$personalInfoForm.houseLoanType}
+                                />
+                                <CustomTextField
+                                    type="number"
+                                    disabled
+                                    id="houseLoan"
+                                    label="Pinjaman Rumah"
+                                    bind:val={$personalInfoForm.houseLoan}
+                                />
+                                <CustomTextField
+                                    type="number"
+                                    disabled
+                                    id="vehicleLoan"
+                                    label="Pinjaman Kenderaan"
+                                    bind:val={$personalInfoForm.vehicleLoan}
+                                />
 
                                 <p class={stepperFormTitleClass}>
                                     Maklumat Pertalian Dengan Kakitangan LKIM
@@ -1201,16 +1227,14 @@
                                 >Maklumat Perkhidmatan</b
                             >
                             <CustomSelectField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.gradeId}
+                                disabled
                                 id="gradeId"
                                 label={'Gred Semasa'}
                                 options={data.selectionOptions.gradeLookup}
                                 bind:val={$serviceInfoForm.gradeId}
                             ></CustomSelectField>
                             <CustomSelectField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.positionId}
+                                disabled
                                 id="positionId"
                                 label={'Jawatan'}
                                 options={data.selectionOptions.positionLookup}
@@ -1218,8 +1242,7 @@
                             ></CustomSelectField>
 
                             <CustomSelectField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.placementId}
+                                disabled
                                 id="placementId"
                                 label={'Penempatan'}
                                 options={data.selectionOptions.placementLookup}
@@ -1227,8 +1250,7 @@
                             ></CustomSelectField>
 
                             <CustomSelectField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.serviceTypeId}
+                                disabled
                                 id="serviceTypeId"
                                 label={'Taraf Perkhidmatan'}
                                 options={data.selectionOptions
@@ -1243,8 +1265,7 @@
                             bind:userSelected={isFaedahKWSP}
                         ></RadioButton>  -->
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.effectiveDate}
+                                disabled
                                 id="effectiveDate"
                                 label={'Tarikh Berkuatkuasa'}
                                 type="text"
@@ -1252,8 +1273,7 @@
                             ></CustomTextField>
 
                             <CustomSelectField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.retirementBenefit}
+                                disabled
                                 id="retirementBenefit"
                                 label="Faedah Persaraan"
                                 options={data.selectionOptions
@@ -1302,24 +1322,21 @@
                                 bind:val={$serviceInfoForm.accountNumber}
                             ></CustomTextField>
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.accountNumber}
+                                disabled
                                 id="program"
                                 label={'Program'}
                                 type="text"
                                 bind:val={$serviceInfoForm.program}
                             ></CustomTextField>
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.eligibleLeaveCount}
+                                disabled
                                 id="eligibleLeaveCount"
                                 label={'Kelayakan Cuti'}
                                 type="text"
                                 bind:val={$serviceInfoForm.eligibleLeaveCount}
                             ></CustomTextField>
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.civilServiceStartDate}
+                                disabled
                                 id="civilServiceStartDate"
                                 label={'Mula Dilantik Perkhidmatan Kerajaan'}
                                 type="date"
@@ -1327,35 +1344,29 @@
                             ></CustomTextField>
 
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.confirmServiceDate}
+                                disabled
                                 id="confirmServiceDate"
                                 label={'Tarikh Disahkan Jawatan'}
                                 type="date"
                                 bind:val={$serviceInfoForm.confirmServiceDate}
                             ></CustomTextField>
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.newRecruitEffectiveDate}
+                                disabled
                                 id="newRecruitEffectiveDate"
                                 label={'Mula Dilantik Perkhidmatan LKIM'}
-                                type="date"
                                 bind:val={$serviceInfoForm.newRecruitEffectiveDate}
                             ></CustomTextField>
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.firstServiceDate}
+                                disabled
                                 id="firstServiceDate"
                                 label={'Mula Dilantik Perkhidmatan Sekarang'}
-                                type="date"
                                 bind:val={$serviceInfoForm.firstServiceDate}
                             ></CustomTextField>
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.firstEffectiveDate}
+                                disabled
                                 id="firstEffectiveDate"
                                 label={'Disahkan Dalam Jawatan Pertama LKIM'}
-                                type="date"
+                                type="text"
                                 bind:val={$serviceInfoForm.firstEffectiveDate}
                             ></CustomTextField>
                             <!-- <CustomTextField
@@ -1387,16 +1398,14 @@
                             <!-- </AccordianField>
                                  -->
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.pastAttachmentDate}
+                                disabled
                                 id="pastAttachmentDate"
                                 label={'Tarikh Kelulusan Percantuman Perkhidmatan Lepas'}
                                 type="date"
                                 bind:val={$serviceInfoForm.pastAttachmentDate}
                             ></CustomTextField>
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.actingDate}
+                                disabled
                                 id="actingDate"
                                 label={'Pemangkuan Sekarang'}
                                 type="text"
@@ -1404,63 +1413,36 @@
                                 placeholder=""
                             ></CustomTextField>
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.interimDate}
+                                disabled
                                 id="interimDate"
                                 label={'Tanggung Kerja Sekarang'}
                                 type="text"
                                 bind:val={$serviceInfoForm.interimDate}
                             ></CustomTextField>
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.pensionScheme}
+                                disabled
                                 id="pensionScheme"
                                 label={'Skim Pencen'}
                                 type="text"
                                 bind:val={$serviceInfoForm.pensionScheme}
                             ></CustomTextField>
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.lastSalaryRaiseDate}
+                                disabled
                                 id="lastSalaryRaiseDate"
                                 label={'Kenaikan Gaji Akhir'}
                                 type="text"
                                 bind:val={$serviceInfoForm.lastSalaryRaiseDate}
                             ></CustomTextField>
 
-                            <CustomSelectField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.salaryMovementMonth}
+                            <CustomTextField
+                                disabled
                                 id="salaryMovementMonth"
-                                label={'Bulan KGT'}
-                                options={[
-                                    {
-                                        value: 'undefined',
-                                        name: 'Tiada Maklumat',
-                                    },
-                                    {
-                                        value: 1,
-                                        name: 'January',
-                                    },
-                                    {
-                                        value: 4,
-                                        name: 'April',
-                                    },
-                                    {
-                                        value: 7,
-                                        name: 'Julai',
-                                    },
-                                    {
-                                        value: 10,
-                                        name: 'Oktober',
-                                    },
-                                ]}
+                                label={'Pergerakan Gaji'}
                                 bind:val={$serviceInfoForm.salaryMovementMonth}
-                            ></CustomSelectField>
+                            ></CustomTextField>
 
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.lastPromotionDate}
+                                disabled
                                 id="lastPromotionDate"
                                 label={'Kenaikan Pangkat Akhir'}
                                 type="text"
@@ -1468,8 +1450,7 @@
                             ></CustomTextField>
 
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.retirementDate}
+                                disabled
                                 id="retirementDate"
                                 label={'Tarikh Bersara'}
                                 type="text"
@@ -1477,8 +1458,7 @@
                             ></CustomTextField>
 
                             <CustomTextField
-                                disabled={isReadonlyServiceFormStepper}
-                                errors={$serviceInfoError.salaryEffectiveDate}
+                                disabled
                                 id="salaryEffectiveDate"
                                 label={'Tarikh Kuatkuasa Gaji'}
                                 type="text"
@@ -1497,16 +1477,14 @@
                                         placeholder=""
                                     ></CustomTextField> -->
                                     <CustomTextField
-                                        disabled={isReadonlyServiceFormStepper}
-                                        errors={$serviceInfoError.maximumSalary}
+                                        disabled
                                         id="maximumSalary"
                                         label={'Tangga Gaji'}
                                         type="text"
                                         bind:val={$serviceInfoForm.maximumSalary}
                                     ></CustomTextField>
                                     <CustomTextField
-                                        disabled={isReadonlyServiceFormStepper}
-                                        errors={$serviceInfoError.baseSalary}
+                                        disabled
                                         id="baseSalary"
                                         label={'Gaji Pokok'}
                                         type="text"
@@ -1517,35 +1495,31 @@
                                     toolTipID="type-itka" -->
                                 <div class="space-y-2.5">
                                     <CustomTextField
-                                        disabled={isReadonlyServiceFormStepper}
-                                        errors={$serviceInfoError.ITKA}
+                                        disabled
                                         id="ITKA"
                                         label={'ITKA'}
-                                        type="text"
+                                        type="number"
                                         bind:val={$serviceInfoForm.ITKA}
                                     ></CustomTextField>
                                     <CustomTextField
-                                        disabled={isReadonlyServiceFormStepper}
-                                        errors={$serviceInfoError.ITP}
+                                        disabled
                                         id="ITP"
                                         label={'ITP'}
-                                        type="text"
+                                        type="number"
                                         bind:val={$serviceInfoForm.ITP}
                                     ></CustomTextField>
                                     <CustomTextField
-                                        disabled={isReadonlyServiceFormStepper}
-                                        errors={$serviceInfoError.EPW}
+                                        disabled
                                         id="EPW"
                                         label={'EPW'}
-                                        type="text"
+                                        type="number"
                                         bind:val={$serviceInfoForm.EPW}
                                     ></CustomTextField>
                                     <CustomTextField
-                                        disabled={isReadonlyServiceFormStepper}
-                                        errors={$serviceInfoError.COLA}
+                                        disabled
                                         id="COLA"
                                         label={'COLA'}
-                                        type="text"
+                                        type="number"
                                         bind:val={$serviceInfoForm.COLA}
                                     ></CustomTextField>
                                     <!-- Tooltip body -->
@@ -2208,16 +2182,18 @@
                                                 disabled={!isEditableFamily}
                                                 options={data.selectionOptions
                                                     .identityCardColorLookup}
-                                                val=""
+                                                bind:val={$familyInfoForm
+                                                    .families[i]
+                                                    .identityDocumentColor}
                                             ></CustomSelectField>
                                             <CustomTextField
                                                 id="identityDocumentNumber"
-                                                type="number"
+                                                type="text"
                                                 label={'Nombor Kad Pengenalan'}
                                                 disabled={!isEditableFamily}
                                                 bind:val={$familyInfoForm
                                                     .families[i]
-                                                    .identityDocumentColor}
+                                                    .identityDocumentNumber}
                                             ></CustomTextField>
 
                                             <CustomTextField
@@ -2225,8 +2201,7 @@
                                                 label={'Alamat'}
                                                 disabled={!isEditableFamily}
                                                 bind:val={$familyInfoForm
-                                                    .families[i]
-                                                    .identityDocumentNumber}
+                                                    .families[i].address}
                                             ></CustomTextField>
 
                                             <CustomTextField
@@ -2272,7 +2247,7 @@
                                                 label={'Hubungan'}
                                                 disabled={!isEditableFamily}
                                                 options={data.selectionOptions
-                                                    .relationshipLookup}
+                                                    .relationshipIsFamily}
                                                 bind:val={$familyInfoForm
                                                     .families[i].relationshipId}
                                             ></CustomSelectField>
@@ -2507,9 +2482,10 @@
                                                 id="identityDocumentColor"
                                                 label={'Jenis Kad Pengenalan'}
                                                 disabled={!isEditableDependency}
-                                                options={data.selectionOptions
-                                                    .identityCardColorLookup}
-                                                val=""
+                                                options={data.selectionOptions.identityCardColorLookup}
+                                                bind:val={$dependencyInfoForm
+                                                    .dependents[i]
+                                                    .identityDocumentColor}
                                             ></CustomSelectField>
                                             <CustomTextField
                                                 id="identityDocumentNumber"
@@ -2518,7 +2494,7 @@
                                                 disabled={!isEditableDependency}
                                                 bind:val={$dependencyInfoForm
                                                     .dependents[i]
-                                                    .identityDocumentColor}
+                                                    .identityDocumentNumber}
                                             ></CustomTextField>
 
                                             <CustomTextField
@@ -2526,8 +2502,7 @@
                                                 label={'Alamat'}
                                                 disabled={!isEditableDependency}
                                                 bind:val={$dependencyInfoForm
-                                                    .dependents[i]
-                                                    .identityDocumentNumber}
+                                                    .dependents[i].address}
                                             ></CustomTextField>
 
                                             <CustomTextField
@@ -2574,7 +2549,7 @@
                                                 label={'Hubungan'}
                                                 disabled={!isEditableDependency}
                                                 options={data.selectionOptions
-                                                    .relationshipLookup}
+                                                    .relationshipIsNonFamily}
                                                 bind:val={$dependencyInfoForm
                                                     .dependents[i]
                                                     .relationshipId}
@@ -2777,7 +2752,7 @@
                                 </div>
                             {:else}
                                 <CustomTab id="nextOfKins">
-                                    {#each Object.entries($nextOfKinInfoForm.nextOfKins) as [key, _], i}
+                                    {#each $nextOfKinInfoForm.nextOfKins as _, i}
                                         <CustomTabContent
                                             title={i +
                                                 1 +
@@ -2798,7 +2773,7 @@
                                                 id="alternativeName"
                                                 label={'Nama Lain'}
                                                 type="text"
-                                                disabled
+                                                disabled={!isEditableNextOfKin}
                                                 bind:val={$nextOfKinInfoForm
                                                     .nextOfKins[i]
                                                     .alternativeName}
@@ -2809,7 +2784,9 @@
                                                 disabled={!isEditableNextOfKin}
                                                 options={data.selectionOptions
                                                     .identityCardColorLookup}
-                                                val=""
+                                                bind:val={$nextOfKinInfoForm
+                                                    .nextOfKins[i]
+                                                    .identityDocumentColor}
                                             ></CustomSelectField>
                                             <CustomTextField
                                                 id="identityDocumentNumber"
@@ -2818,7 +2795,7 @@
                                                 disabled={!isEditableNextOfKin}
                                                 bind:val={$nextOfKinInfoForm
                                                     .nextOfKins[i]
-                                                    .identityDocumentColor}
+                                                    .identityDocumentNumber}
                                             ></CustomTextField>
 
                                             <CustomTextField
@@ -2826,8 +2803,7 @@
                                                 label={'Alamat'}
                                                 disabled={!isEditableNextOfKin}
                                                 bind:val={$nextOfKinInfoForm
-                                                    .nextOfKins[i]
-                                                    .identityDocumentNumber}
+                                                    .nextOfKins[i].address}
                                             ></CustomTextField>
 
                                             <CustomTextField
@@ -2985,10 +2961,7 @@
                     </StepperContentBody>
                 </StepperContent>
 
-               
-                        <!-- </div> -->
-
-                
+                <!-- </div> -->
             </Stepper>
         </CustomTabContent>
 
@@ -4103,7 +4076,7 @@
             id="relationshipId"
             label={'Hubungan'}
             bind:val={$addFamilyModal.relationshipId}
-            options={data.selectionOptions.relationshipLookup}
+            options={data.selectionOptions.relationshipIsFamily}
         ></CustomSelectField>
 
         <CustomSelectField
@@ -4279,7 +4252,7 @@
             id="relationshipId"
             label={'Hubungan'}
             bind:val={$addNonFamilyModal.relationshipId}
-            options={data.selectionOptions.relationshipLookup}
+            options={data.selectionOptions.relationshipIsNonFamily}
         ></CustomSelectField>
 
         <CustomSelectField

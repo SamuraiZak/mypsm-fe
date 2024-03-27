@@ -73,271 +73,307 @@ import { invalidateAll } from '$app/navigation';
 export async function load({ }) {
 
 
-       // fetch apc history
-       const response: CommonResponseDTO =
-       await ProfileServices.getProfilePersonalDetails();
+    // fetch apc history
+    const response: CommonResponseDTO =
+        await ProfileServices.getProfilePersonalDetails();
 
-   const relationFilter: CommonFilterDTO = {
-       program: 'SEMUA',
-       identityCard: null,
-       employeeNumber: null,
-       name: null,
-       position: null,
-       status: null,
-       grade: null,
-   }
+    const relationFilter: CommonFilterDTO = {
+        program: 'SEMUA',
+        identityCard: null,
+        employeeNumber: null,
+        name: null,
+        position: null,
+        status: null,
+        grade: null,
+    }
 
-   // get employee list for hubungan with user
-   const relationParam: CommonListRequestDTO = {
-       pageNum: 1,
-       pageSize: 5,
-       orderBy: null,
-       orderType: null,
-       filter: relationFilter,
-   };
+    // get employee list for hubungan with user
+    const relationParam: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: null,
+        orderType: null,
+        filter: relationFilter,
+    };
 
-   // const employeeRelationResponse: CommonResponseDTO =
-   //     await EmployeeServices.getEmployeeList(relationParam);
+    // const employeeRelationResponse: CommonResponseDTO =
+    //     await EmployeeServices.getEmployeeList(relationParam);
 
-   // const employeeLookup: DropdownDTO[] = (
-   //     employeeRelationResponse.data?.dataList as CommonEmployeeDTO[]
-   // ).map((data) => ({
-   //     value: data.employeeId,
-   //     name: data.name,
-   // }));
+    // const employeeLookup: DropdownDTO[] = (
+    //     employeeRelationResponse.data?.dataList as CommonEmployeeDTO[]
+    // ).map((data) => ({
+    //     value: data.employeeId,
+    //     name: data.name,
+    // }));
 
 
-   // ==========================================================================
-   // Get Lookup Functions
-   // ==========================================================================
-   const identityCardColorLookupResponse: CommonResponseDTO =
-       await LookupServices.getICTypeEnums();
+    // ==========================================================================
+    // Get Lookup Functions
+    // ==========================================================================
+    const identityCardColorLookupResponse: CommonResponseDTO =
+        await LookupServices.getICTypeEnums();
 
-   const identityCardColorLookup: DropdownDTO[] =
-       LookupServices.setSelectOptionsInString(
-           identityCardColorLookupResponse,
-       );
+    const identityCardColorLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsInString(
+            identityCardColorLookupResponse,
+        );
 
-   // ===========================================================================
+    // ===========================================================================
 
-   const stateLookupResponse: CommonResponseDTO =
-       await LookupServices.getStateEnums();
+    const stateLookupResponse: CommonResponseDTO =
+        await LookupServices.getStateEnums();
 
-   const stateLookup: DropdownDTO[] =
-       LookupServices.setSelectOptions(stateLookupResponse);
+    const stateLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(stateLookupResponse);
 
-   // ===========================================================================
+    // ===========================================================================
 
-   const cityLookupResponse: CommonResponseDTO =
-       await LookupServices.getCityEnums();
+    const cityLookupResponse: CommonResponseDTO =
+        await LookupServices.getCityEnums();
 
-   const cityLookup: DropdownDTO[] =
-       LookupServices.setSelectOptions(cityLookupResponse);
+    const cityLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(cityLookupResponse);
 
-   // ===========================================================================
+    // ===========================================================================
 
-   const countryLookupResponse: CommonResponseDTO =
-       await LookupServices.getCountryEnums();
+    const countryLookupResponse: CommonResponseDTO =
+        await LookupServices.getCountryEnums();
+
+    const countryLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        countryLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const nationalityLookupResponse: CommonResponseDTO =
+        await LookupServices.getNationalityEnums();
+
+    const nationalityLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        nationalityLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const raceLookupResponse: CommonResponseDTO =
+        await LookupServices.getRaceEnums();
+
+    const raceLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(raceLookupResponse);
+
+    // ===========================================================================
 
-   const countryLookup: DropdownDTO[] = LookupServices.setSelectOptions(
-       countryLookupResponse,
-   );
+    const ethnicityLookupResponse: CommonResponseDTO =
+        await LookupServices.getEthnicEnums();
 
-   // ===========================================================================
+    const ethnicityLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        ethnicityLookupResponse,
+    );
 
-   const nationalityLookupResponse: CommonResponseDTO =
-       await LookupServices.getNationalityEnums();
+    // ===========================================================================
 
-   const nationalityLookup: DropdownDTO[] = LookupServices.setSelectOptions(
-       nationalityLookupResponse,
-   );
+    const religionLookupResponse: CommonResponseDTO =
+        await LookupServices.getReligionEnums();
 
-   // ===========================================================================
+    const religionLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        religionLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const genderLookupResponse: CommonResponseDTO =
+        await LookupServices.getGenderEnums();
+
+    const genderLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(genderLookupResponse);
 
-   const raceLookupResponse: CommonResponseDTO =
-       await LookupServices.getRaceEnums();
+    // ===========================================================================
 
-   const raceLookup: DropdownDTO[] =
-       LookupServices.setSelectOptions(raceLookupResponse);
+    const maritalLookupResponse: CommonResponseDTO =
+        await LookupServices.getMaritalEnums();
 
-   // ===========================================================================
+    const maritalLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        maritalLookupResponse,
+    );
 
-   const ethnicityLookupResponse: CommonResponseDTO =
-       await LookupServices.getEthnicEnums();
+    // ===========================================================================
 
-   const ethnicityLookup: DropdownDTO[] = LookupServices.setSelectOptions(
-       ethnicityLookupResponse,
-   );
+    const positionLookupResponse: CommonResponseDTO =
+        await LookupServices.getPositionEnums();
 
-   // ===========================================================================
+    const positionLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        positionLookupResponse,
+    );
 
-   const religionLookupResponse: CommonResponseDTO =
-       await LookupServices.getReligionEnums();
+    // ===========================================================================
 
-   const religionLookup: DropdownDTO[] = LookupServices.setSelectOptions(
-       religionLookupResponse,
-   );
+    const relationshipLookupResponse: CommonResponseDTO =
+        await LookupServices.getRelationshipEnums();
 
-   // ===========================================================================
+    const relationshipLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        relationshipLookupResponse,
+    );
+// ===================================================================================================================
 
-   const genderLookupResponse: CommonResponseDTO =
-       await LookupServices.getGenderEnums();
+const relationshipIsFamilyRequest: CommonListRequestDTO = {
+    pageNum: 1,
+    pageSize: 350,
+    orderBy: null,
+    orderType: 0,
+    filter: {
+        code: "",
+        description: "",
+        isFamily: true
+    },
+}
+const relationshipIsFamilyResponse: CommonResponseDTO =
+    await LookupServices.getRelationshipFamily(relationshipIsFamilyRequest);
+const relationshipIsFamily: DropdownDTO[] = LookupServices.setSelectOptions(
+    relationshipIsFamilyResponse,
+)
+const relationshipIsNonFamilyRequest: CommonListRequestDTO = {
+    pageNum: 1,
+    pageSize: 350,
+    orderBy: null,
+    orderType: 0,
+    filter: {
+        code: "",
+        description: "",
+        isFamily: false
+    },
+}
+const relationshipIsNonFamilyResponse: CommonResponseDTO =
+    await
+    LookupServices.getRelationshipFamily(relationshipIsNonFamilyRequest);
+    const relationshipIsNonFamily: DropdownDTO[] = LookupServices.setSelectOptions(
+        relationshipIsNonFamilyResponse,
+    );
 
-   const genderLookup: DropdownDTO[] =
-       LookupServices.setSelectOptions(genderLookupResponse);
 
-   // ===========================================================================
+    // ===========================================================================
 
-   const maritalLookupResponse: CommonResponseDTO =
-       await LookupServices.getMaritalEnums();
+    const institutionLookupResponse: CommonResponseDTO =
+        await LookupServices.getInstitutionEnums();
 
-   const maritalLookup: DropdownDTO[] = LookupServices.setSelectOptions(
-       maritalLookupResponse,
-   );
+    const institutionLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        institutionLookupResponse,
+    );
 
-   // ===========================================================================
+    // ===========================================================================
 
-   const positionLookupResponse: CommonResponseDTO =
-       await LookupServices.getPositionEnums();
+    const educationLookupResponse: CommonResponseDTO =
+        await LookupServices.getHighestEducationEnums();
 
-   const positionLookup: DropdownDTO[] = LookupServices.setSelectOptionsNameIsCode(
-       positionLookupResponse,
-   );
+    const educationLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        educationLookupResponse,
+    );
 
-   // ===========================================================================
+    // ===========================================================================
 
-   const relationshipLookupResponse: CommonResponseDTO =
-       await LookupServices.getRelationshipEnums();
+    const sponsorshipLookupResponse: CommonResponseDTO =
+        await LookupServices.getSponsorshipEnums();
 
-   const relationshipLookup: DropdownDTO[] = LookupServices.setSelectOptions(
-       relationshipLookupResponse,
-   );
+    const sponsorshipLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        sponsorshipLookupResponse,
+    );
 
-   // ===========================================================================
+    // ===========================================================================
 
-   const institutionLookupResponse: CommonResponseDTO =
-       await LookupServices.getInstitutionEnums();
+    const majorMinorLookupResponse: CommonResponseDTO =
+        await LookupServices.getMajorMinorEnums();
 
-   const institutionLookup: DropdownDTO[] = LookupServices.setSelectOptions(
-       institutionLookupResponse,
-   );
+    const majorMinorLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        majorMinorLookupResponse,
+    );
 
-   // ===========================================================================
+    // ===========================================================================
 
-   const educationLookupResponse: CommonResponseDTO =
-       await LookupServices.getHighestEducationEnums();
+    const titleLookupResponse: CommonResponseDTO =
+        await LookupServices.getTitleEnums();
 
-   const educationLookup: DropdownDTO[] = LookupServices.setSelectOptions(
-       educationLookupResponse,
-   );
+    const titleLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(titleLookupResponse);
 
-   // ===========================================================================
+    // ===========================================================================
 
-   const sponsorshipLookupResponse: CommonResponseDTO =
-       await LookupServices.getSponsorshipEnums();
+    const assetDeclarationLookupResponse: CommonResponseDTO =
+        await LookupServices.getPropertyDeclarationEnums();
 
-   const sponsorshipLookup: DropdownDTO[] = LookupServices.setSelectOptions(
-       sponsorshipLookupResponse,
-   );
+    const assetDeclarationLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsValueIsDescription(assetDeclarationLookupResponse);
 
-   // ===========================================================================
+    // ===========================================================================
 
-   const majorMinorLookupResponse: CommonResponseDTO =
-       await LookupServices.getMajorMinorEnums();
+    const gradeLookupResponse: CommonResponseDTO =
+        await LookupServices.getServiceGradeEnums();
 
-   const majorMinorLookup: DropdownDTO[] = LookupServices.setSelectOptions(
-       majorMinorLookupResponse,
-   );
+    const gradeLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(gradeLookupResponse);
 
-   // ===========================================================================
+    // ===========================================================================
 
-   const titleLookupResponse: CommonResponseDTO =
-       await LookupServices.getTitleEnums();
+    const placementLookupResponse: CommonResponseDTO =
+        await LookupServices.getPlacementEnums();
 
-   const titleLookup: DropdownDTO[] =
-       LookupServices.setSelectOptions(titleLookupResponse);
+    const placementLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        placementLookupResponse,
+    );
 
-   // ===========================================================================
+    // ===========================================================================
 
-   const assetDeclarationLookupResponse: CommonResponseDTO =
-       await LookupServices.getPropertyDeclarationEnums();
+    const serviceGroupLookupResponse: CommonResponseDTO =
+        await LookupServices.getServiceGroupEnums();
 
-   const assetDeclarationLookup: DropdownDTO[] =
-       LookupServices.setSelectOptionsValueIsDescription(assetDeclarationLookupResponse);
+    const serviceGroupLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        serviceGroupLookupResponse,
+    );
 
-   // ===========================================================================
+    // ===========================================================================
 
-   const gradeLookupResponse: CommonResponseDTO =
-       await LookupServices.getServiceGradeEnums();
+    const unitLookupResponse: CommonResponseDTO =
+        await LookupServices.getUnitEnums();
 
-   const gradeLookup: DropdownDTO[] =
-       LookupServices.setSelectOptionsNameIsCode(gradeLookupResponse);
+    const unitLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(unitLookupResponse);
 
-   // ===========================================================================
+    // ===========================================================================
 
-   const placementLookupResponse: CommonResponseDTO =
-       await LookupServices.getPlacementEnums();
+    const serviceTypeLookupResponse: CommonResponseDTO =
+        await LookupServices.getServiceTypeEnums();
 
-   const placementLookup: DropdownDTO[] = LookupServices.setSelectOptions(
-       placementLookupResponse,
-   );
+    const serviceTypeLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        serviceTypeLookupResponse,
+    );
 
-   // ===========================================================================
+    // ===========================================================================
 
-   const serviceGroupLookupResponse: CommonResponseDTO =
-       await LookupServices.getServiceGroupEnums();
+    const retirementBenefitLookupResponse: CommonResponseDTO =
+        await LookupServices.getRetirementTypeEnums();
 
-   const serviceGroupLookup: DropdownDTO[] = LookupServices.setSelectOptions(
-       serviceGroupLookupResponse,
-   );
+    const retirementBenefitLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsValueIsDescription(
+            retirementBenefitLookupResponse,
+        );
 
-   // ===========================================================================
+    // ===========================================================================
 
-   const unitLookupResponse: CommonResponseDTO =
-       await LookupServices.getUnitEnums();
+    const generalLookup: DropdownDTO[] = [
+        {
+            value: true,
+            name: 'Ya',
+        },
+        {
+            value: false,
+            name: 'Tidak',
+        },
+    ];
 
-   const unitLookup: DropdownDTO[] =
-       LookupServices.setSelectOptions(unitLookupResponse);
+    // ==========================================================================
+    // End Lookup Functions
 
-   // ===========================================================================
 
-   const serviceTypeLookupResponse: CommonResponseDTO =
-       await LookupServices.getServiceTypeEnums();
-
-   const serviceTypeLookup: DropdownDTO[] = LookupServices.setSelectOptions(
-       serviceTypeLookupResponse,
-   );
-
-   // ===========================================================================
-
-   const retirementBenefitLookupResponse: CommonResponseDTO =
-       await LookupServices.getRetirementTypeEnums();
-
-   const retirementBenefitLookup: DropdownDTO[] =
-       LookupServices.setSelectOptionsValueIsDescription(
-           retirementBenefitLookupResponse,
-       );
-
-   // ===========================================================================
-
-   const generalLookup: DropdownDTO[] = [
-       {
-           value: true,
-           name: 'Ya',
-       },
-       {
-           value: false,
-           name: 'Tidak',
-       },
-   ];
-
-   // ==========================================================================
-   // End Lookup Functions
-
-
-   // ==========================================================================
-   // ========================== Salary Tab Table ==============================
-   // ==========================================================================
+    // ==========================================================================
+    // ========================== Salary Tab Table ==============================
+    // ==========================================================================
     const salaryListParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
@@ -387,7 +423,7 @@ export async function load({ }) {
 
     const medicalDiseaseList: CommonResponseDTO =
         await ProfileServices.getProfileMedicalDiseases();
-        
+
     const diseaseList: MedicalDiseaseListDTO =
         await medicalDiseaseList.data?.details as MedicalDiseaseListDTO;
 
@@ -430,7 +466,7 @@ export async function load({ }) {
         _generalAssessmentListResponseSchema))
         ;
 
-     // ========Modal===========
+    // ========Modal===========
     const addAcademicModal = await superValidate(zod(_academicInfoSchema));
     const addExperienceModal = await superValidate((zod)(_experienceInfoSchema));
     const addActivityModal = await superValidate((zod)(_activityInfoSchema));
@@ -438,10 +474,10 @@ export async function load({ }) {
     const addNonFamilyModal = await superValidate((zod)(_relationsSchema));
     const addNextOfKinModal = await superValidate((zod)(_relationsSchema));
 
- 
-   // ==========================================================================
-   // ========================= Disease History ================================
-   // ==========================================================================
+
+    // ==========================================================================
+    // ========================= Disease History ================================
+    // ==========================================================================
     const diseaseCollectionForm = await superValidate(medicalHistoryResponse.data?.details as medicalAssessmentResponseDTO, zod(_diseaseInfoCollectionSchema));
 
     // diseaseList.disease.forEach(element => {
@@ -452,14 +488,12 @@ export async function load({ }) {
     //         remark: "",
     //     })
     // });
-    console.log('diseaseCollectionForm', diseaseCollectionForm)
     const medicalHistoryDetailForm = await superValidate(zod(_diseaseInfoCollectionSchema));
 
     let medicalHistoryFormRequest: medicalAssessmentRequestDTO = {
         medicalHistory: [],
     }
 
-    // console.log("hello:" + medicalHistoryResponse);
 
     // if (medicalHistoryResponse.data?.details.medicalHistory.length < 1) {
 
@@ -479,20 +513,20 @@ export async function load({ }) {
     // medicalHistoryForm.data.medicalHistory = medicalHistoryFormRequest.medicalHistory;
 
     // Correction
-    let newMedicalHistoryResponse: GetMedicalHistoryResponseDTO= {
+    let newMedicalHistoryResponse: GetMedicalHistoryResponseDTO = {
         medicalHistory: [],
     };
 
     if (medicalHistoryResponse.status == "success") {
-        let tempData : GetMedicalHistoryResponseDTO = medicalHistoryResponse.data?.details as GetMedicalHistoryResponseDTO;
+        let tempData: GetMedicalHistoryResponseDTO = medicalHistoryResponse.data?.details as GetMedicalHistoryResponseDTO;
 
         tempData.medicalHistory.forEach(element => {
             const tempNewData: MedicalHistoryItem = {
-                disease:element.diseases,
-                diseases:    element.diseases,
+                disease: element.diseases,
+                diseases: element.diseases,
                 isPersonal: element.isPersonal,
-                isFamily:   element.isFamily,
-                remark:     element.remark,
+                isFamily: element.isFamily,
+                remark: element.remark,
             }
 
             newMedicalHistoryResponse.medicalHistory.push(tempNewData);
@@ -510,16 +544,20 @@ export async function load({ }) {
             }
 
             medicalHistoryForm.data.medicalHistory.push(medicalDisease);
+
+
         });
+
+        diseaseCollectionForm.data.medicalHistory = medicalHistoryForm.data.medicalHistory as DiseaseInfoDTO[];
     } else {
         medicalHistoryForm.data.medicalHistory = newMedicalHistoryResponse.medicalHistory as DiseaseInfoDTO[];
 
         diseaseCollectionForm.data.medicalHistory = newMedicalHistoryResponse.medicalHistory as DiseaseInfoDTO[]
 
-        console.log(diseaseCollectionForm.data.medicalHistory.length);
+
     }
 
-   // =============================================================
+    // =============================================================
     // ==== new get medical history ===============================
     // ============================================================
     // TODO
@@ -530,7 +568,7 @@ export async function load({ }) {
 
 
     const personalMedicalHistoryResponse: CommonResponseDTO =
-    await ProfileServices.getProfileHistoryMedicalDetails();
+        await ProfileServices.getProfileHistoryMedicalDetails();
 
 
     const personalMedicalHistoryForm = await superValidate(personalMedicalHistoryResponse.data?.details as medicalAssessmentResponseDTO, zod(
@@ -564,7 +602,9 @@ export async function load({ }) {
         diseaseCollectionForm,
         personalMedicalHistoryForm,
         selectionOptions: {
+            relationshipIsFamily,
             identityCardColorLookup,
+            relationshipIsNonFamily,
             cityLookup,
             stateLookup,
             countryLookup,
@@ -637,6 +677,7 @@ export const _personalInfoSubmit = async (formData: object) => {
 // ================================================================
 export const _serviceInfoSubmit = async (formData: object) => {
     const serviceInfoForm = await superValidate(formData, (zod)(_serviceInfoRequestSchema));
+
 
     if (serviceInfoForm.valid) {
         getErrorToast();
@@ -796,8 +837,6 @@ export const _submitFamilyForm = async (formData: object) => {
 // ===============================================================
 
 export const _submitEditFamilyForm = async (formData: object) => {
-
-
     const familyInfoform = await superValidate(formData, (zod)(_familyEditRequestSchema));
     if (!familyInfoform.valid) {
         getErrorToast();
@@ -833,7 +872,10 @@ export const _submitDependencyForm = async (formData: object) => {
 // ===============================================================
 
 export const _submitEditDependencyForm = async (formData: object) => {
-    const dependencyInfoform = await superValidate(formData, (zod)(_dependencyEditRequestSchema));
+    const modifiedBody: object = {
+        families: (formData as dependencResponseDTO).dependents
+    }
+    const dependencyInfoform = await superValidate(modifiedBody, (zod)(_dependencyEditRequestSchema));
 
     if (!dependencyInfoform.valid) {
         getErrorToast();
@@ -867,7 +909,12 @@ export const _submitNextOfKinForm = async (formData: object) => {
 // ========== Edit Next Of Kin ====================================
 // ================================================================
 export const _submitEditNextOfKinForm = async (formData: object) => {
-    const nextOfKinform = await superValidate(formData, (zod)(_nextOfKinEditRequestSchema));
+
+    const modifiedBody: object = {
+        families: (formData as nextOfKinResponseDTO).nextOfKins
+    }
+    const nextOfKinform = await superValidate(modifiedBody, (zod)(_nextOfKinEditRequestSchema));
+    console.log(nextOfKinform)
     if (!nextOfKinform.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
@@ -883,21 +930,19 @@ export const _submitEditNextOfKinForm = async (formData: object) => {
 // ==========  Medical List History================================
 // ================================================================
 export const _submitMedicalHistoryForm = async (formData: object) => {
-    console.log('SUBMIT FX',formData);
     const historyMedicalform = await superValidate(formData, (zod)(_diseaseInfoCollectionSchema));
-    console.log('submitted medical history', historyMedicalform)
 
-    let tempMedicalHistoryForm : medicalAssessmentRequestDTO = {
+    let tempMedicalHistoryForm: medicalAssessmentRequestDTO = {
         medicalHistory: []
     }
 
-    let tempDiseaseInfoList : diseaseInfoDTO[] = [];
+    let tempDiseaseInfoList: diseaseInfoDTO[] = [];
 
     if (historyMedicalform.valid) {
         const response: CommonResponseDTO =
             await ProfileServices.addProfileMedicalAssessmentDetails(historyMedicalform.data as medicalAssessmentRequestDTO);
 
-        if(response.status == "success"){            
+        if (response.status == "success") {
 
             const newMedicalHistoryResponse: CommonResponseDTO = await ProfileServices.getProfileHistoryMedicalDetails();
 
@@ -908,7 +953,7 @@ export const _submitMedicalHistoryForm = async (formData: object) => {
             invalidateAll();
         }
 
-        
+
 
         return { response, tempMedicalHistoryForm };
     } else {
@@ -1033,10 +1078,10 @@ export const _submitDependencyInfoForm = async (formData: Dependency[]) => {
     return { response };
 };
 
-export const _submitNextOfKinInfoForm = async (formData: NextOfKin[]) => {
+export async function _submitNextOfKinInfoForm(formData: NextOfKin[]) {
     if (formData.length < 1) {
         getErrorToast();
-        return fail(400);
+        // return fail(400);
     }
     const requestData: nextOfKinRequestDTO = {
         families: formData,
@@ -1047,7 +1092,26 @@ export const _submitNextOfKinInfoForm = async (formData: NextOfKin[]) => {
             requestData as nextOfKinRequestDTO,
         );
 
-    return { response };
+        // if response status == success
+        // get new nextOfKinInfoResponse.data
+        const nextOfKinInfoResponse: CommonResponseDTO =
+        await ProfileServices.getProfileNextOfKinDetails();
+
+        // if success fit nextOfKinInfoResponse.data into nextOFKInInfoForm
+        const nextOFKInInfoForm = await superValidate(nextOfKinInfoResponse.data?.details as nextOfKinResponseDTO, zod(
+            _nextOfKinListResponseSchema))
+            ;
+
+        console.log("Holifield di sini");
+
+        // return nextOFKInInfoForm
+        return {
+                response,
+                nextOFKInInfoForm,
+        }
+        
+
+    // return { response };
 };
 // ==================== end Modal==================================
 
@@ -1058,19 +1122,18 @@ export const _submitNextOfKinInfoForm = async (formData: NextOfKin[]) => {
 // ================================================================
 export const _submitPersonalMedicalHistoryForm = async (formData: object) => {
     const perosnalHistoryMedicalform = await superValidate(formData, (zod)(_diseaseInfoCollectionSchema));
-    console.log('submitted medical history', perosnalHistoryMedicalform)
 
-    let tempMedicalHistoryForm : medicalAssessmentRequestDTO = {
+    let tempMedicalHistoryForm: medicalAssessmentRequestDTO = {
         medicalHistory: []
     }
 
-    let tempDiseaseInfoList : diseaseInfoDTO[] = [];
+    let tempDiseaseInfoList: diseaseInfoDTO[] = [];
 
     if (perosnalHistoryMedicalform.valid) {
         const response: CommonResponseDTO =
             await ProfileServices.addProfileMedicalAssessmentDetails(perosnalHistoryMedicalform.data as medicalAssessmentRequestDTO);
 
-        if(response.status == "success"){            
+        if (response.status == "success") {
 
             const newMedicalHistoryResponse: CommonResponseDTO = await ProfileServices.getProfileHistoryMedicalDetails();
 

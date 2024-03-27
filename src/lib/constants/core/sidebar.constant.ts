@@ -16,6 +16,10 @@ export class SidebarConstant {
                     path: '/halaman-utama',
                 },
                 {
+                    name: 'Profil',
+                    path: '/profile',
+                },
+                {
                     name: 'Perjawatan',
                     path: '',
                     subItems: [
