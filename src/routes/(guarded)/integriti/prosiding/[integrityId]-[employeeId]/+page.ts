@@ -1,6 +1,8 @@
 import { goto } from '$app/navigation';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
+import type { RadioDTO } from '$lib/dto/core/radio/radio.dto.js';
+import type { ProceedingApproverResultDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-approver-result.dto.js';
 import type { ProceedingAccusationListDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
 import type { ProceedingSentencingMeetingRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-create-sentencing-meeting-request.dto';
 import type { ProceedingEmployeeDetailResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-employee-detail-response.dto';
@@ -95,8 +97,6 @@ export async function load({ params }) {
         { errors: false },
     );
 
-    console.log(proceedingSentencingMeetingForm.data)
-
     const proceedingSentencingConfirmationForm = await superValidate(
         proceedingTypeChargeDetailView.sentencingConfirmation,
         zod(_proceedingApproverSchema),
@@ -113,17 +113,27 @@ export async function load({ params }) {
         accusationList.forEach((charge, index) => {
             proceedingSentencingMeetingForm.data.meetingResult[index] = {
                 accusationListId: charge.accusationListId,
-                result: false,
-                sentencing: [
-                    {
-                        emolumenDate: [
-                            {
-                                startDate: null,
-                                endDate: null,
-                            },
-                        ],
-                    },
-                ],
+                result: proceedingSentencingMeetingForm.data.meetingResult[
+                    index
+                ].result
+                    ? proceedingSentencingMeetingForm.data.meetingResult[index]
+                          .result
+                    : false,
+                sentencing: proceedingSentencingMeetingForm.data.meetingResult[
+                    index
+                ].sentencing
+                    ? proceedingSentencingMeetingForm.data.meetingResult[index]
+                          .sentencing
+                    : [
+                          {
+                              emolumenDate: [
+                                  {
+                                      startDate: null,
+                                      endDate: null,
+                                  },
+                              ],
+                          },
+                      ],
             };
         });
     }
@@ -140,6 +150,13 @@ export async function load({ params }) {
         );
 
     // ===========================================================================
+    const gradeLookupResponse: CommonResponseDTO =
+        await LookupServices.getServiceGradeEnums();
+
+    const gradeLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsBothAreCode(gradeLookupResponse);
+
+    // ===========================================================================
 
     const generalLookup: DropdownDTO[] = [
         {
@@ -152,7 +169,56 @@ export async function load({ params }) {
         },
     ];
 
-    const penaltyTypeLookup: DropdownDTO[] = [
+    const appealMeetingResultLookup: RadioDTO[] = [
+        {
+            value: 1,
+            name: 'Hantar Balik Kes kepada JKTT untuk Dipertimbangkan Semula',
+        },
+        {
+            value: 2,
+            name: 'Mengesahkan Keputusan JKTT',
+        },
+        {
+            value: 3,
+            name: 'Mengesahkan Keputusan JKTT tetapi Mengubah kepada Hukuman yang Lebih Ringan',
+        },
+    ];
+
+    const salaryMovementCountLookup: DropdownDTO[] = [
+        {
+            value: 1,
+            name: '1',
+        },
+        {
+            value: 2,
+            name: '2',
+        },
+        {
+            value: 3,
+            name: '3',
+        },
+    ];
+
+    const salaryMovementDelayMonthCountLookup: DropdownDTO[] = [
+        {
+            value: 3,
+            name: '3',
+        },
+        {
+            value: 6,
+            name: '6',
+        },
+        {
+            value: 9,
+            name: '9',
+        },
+        {
+            value: 12,
+            name: '12',
+        },
+    ];
+
+    const penaltyCodeLookup: DropdownDTO[] = [
         {
             value: '01',
             name: 'Amaran',
@@ -183,6 +249,18 @@ export async function load({ params }) {
         },
     ];
 
+    const sentencingMonthLookup: DropdownDTO[] = [];
+
+    for (let month = 12; month <= 36; month++) {
+        const option: DropdownDTO = {
+            value: month, // Convert month to string if necessary
+            name: `${month} bulan`,
+        };
+
+        // Add the option to the sentencingMonthLookup array
+        sentencingMonthLookup.push(option);
+    }
+
     // ===========================================================================
 
     return {
@@ -207,10 +285,40 @@ export async function load({ params }) {
         lookups: {
             identityCardColorLookup,
             generalLookup,
-            penaltyTypeLookup,
+            penaltyCodeLookup,
+            gradeLookup,
+            sentencingMonthLookup,
+            salaryMovementCountLookup,
+            salaryMovementDelayMonthCountLookup,
+            appealMeetingResultLookup,
         },
     };
 }
+
+export const _addChargeDisciplineSecretaryApproval = async (
+    formData: object,
+) => {
+    const form = await superValidate(formData, zod(_proceedingApproverSchema));
+
+    console.log(form);
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await IntegrityProceedingServices.createProceedingChargesIntegrityDirectorResult(
+            form.data as ProceedingApproverResultDTO,
+        );
+
+    if (response.status === 'success')
+        setTimeout(() => {
+            goto(`../../prosiding`);
+        }, 1500);
+
+    return { response };
+};
 
 export const _addSentencingMeeting = async (formData: object) => {
     const form = await superValidate(
@@ -228,6 +336,31 @@ export const _addSentencingMeeting = async (formData: object) => {
     const response: CommonResponseDTO =
         await IntegrityProceedingServices.createProceedingSentencing(
             form.data as ProceedingSentencingMeetingRequestDTO,
+        );
+
+    if (response.status === 'success')
+        setTimeout(() => {
+            goto(`../../prosiding`);
+        }, 1500);
+
+    return { response };
+};
+
+export const _addSentencingIntegrityDirectorApproval = async (
+    formData: object,
+) => {
+    const form = await superValidate(formData, zod(_proceedingApproverSchema));
+
+    console.log(form);
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await IntegrityProceedingServices.createProceedingSentencingIntegrityDirectorResult(
+            form.data as ProceedingApproverResultDTO,
         );
 
     if (response.status === 'success')
