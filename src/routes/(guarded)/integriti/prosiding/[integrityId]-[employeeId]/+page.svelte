@@ -31,6 +31,7 @@
     import StepperOtherRolesResult from '$lib/components/stepper/StepperOtherRolesResult.svelte';
     import { writable } from 'svelte/store';
     import {
+        _proceedingAppealSchema,
         _proceedingSentencingMeetingSchema,
         _sentenceSchema,
     } from '$lib/schemas/mypsm/integrity/proceeding-charge-scheme';
@@ -46,13 +47,15 @@
     let isReadonlyProceedingChargeIntegrityDirectorApproval =
         writable<boolean>(true);
 
-    let isApplealed: boolean = false;
+    let isAppealed: boolean = false;
     let proceedingChargeIsCertified = writable<boolean>(false);
     let proceedingSentencingIsCertified = writable<boolean>(false);
     let isReadOnlyProceedingChargeMeeting = writable<boolean>(false);
     let isReadOnlyProceedingChargeConfirmation = writable<boolean>(false);
     let isReadOnlyProceedingSentencingMeeting = writable<boolean>(false);
     let isReadOnlyProceedingSentencingConfirmation = writable<boolean>(false);
+    let isReadOnlyProceedingAppealMeeting = writable<boolean>(false);
+    let isReadOnlyProceedingAppealConfirmation = writable<boolean>(false);
 
     $: {
         data.view.proceedingTypeChargeDetailView.accusationList.accusationList
@@ -74,6 +77,18 @@
             ? isReadOnlyProceedingSentencingConfirmation.set(true)
             : isReadOnlyProceedingSentencingConfirmation.set(false);
 
+        if (data.view.proceedingTypeChargeDetailView.appealDetails) {
+            isReadOnlyProceedingAppealMeeting.set(true);
+            isAppealed = true;
+        } else {
+            isReadOnlyProceedingAppealMeeting.set(false);
+            isAppealed = false;
+        }
+
+        data.view.proceedingTypeChargeDetailView.appealConfirmation
+            ? isReadOnlyProceedingAppealConfirmation.set(true)
+            : isReadOnlyProceedingAppealConfirmation.set(false);
+
         data.view.proceedingTypeChargeDetailView.confirmation.status === true
             ? proceedingChargeIsCertified.set(true)
             : proceedingChargeIsCertified.set(false);
@@ -88,12 +103,14 @@
     const { form } = superForm(data.forms.proceedingStaffInfoForm, {
         SPA: true,
         dataType: 'json',
+        validators: false,
     });
 
     const { form: chargesMeetingForm, enhance: chargesMeetingFormErrors } =
         superForm(data.forms.proceedingChargesMeetingForm, {
             SPA: true,
             dataType: 'json',
+            validators: false,
         });
 
     const {
@@ -119,6 +136,7 @@
         {
             SPA: true,
             dataType: 'json',
+            validators: false,
         },
     );
 
@@ -158,6 +176,38 @@
                 $sentencingConfirmationForm,
             );
         },
+    });
+
+    const {
+        form: appealMeetingForm,
+        errors: appealMeetingFormErrors,
+        enhance: appealMeetingFormEnhance,
+    } = superForm(data.forms.proceedingAppealMeetingForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: zod(_proceedingAppealSchema),
+        taintedMessage: false,
+        onSubmit() {},
+    });
+
+    const {
+        form: appealConfirmationForm,
+        errors: appealConfirmationFormErrors,
+        enhance: appealConfirmationFormEnhance,
+    } = superForm(data.forms.proceedingAppealConfirmationForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: false,
+        taintedMessage: false,
+        onSubmit() {},
     });
 
     // Function to create or remove sentencings
@@ -1332,14 +1382,14 @@
                                     disabled
                                     id="integrityDirectorRemark"
                                     label="Tindakan/Ulasan"
-                                    bind:val={$disciplineSecretaryForm.remark}
+                                    bind:val={$sentencingConfirmationForm.remark}
                                 ></CustomTextField>
                                 <CustomSelectField
                                     disabled
                                     id="integrityDirectorStatus"
                                     options={certifyOptions}
                                     label={'Keputusan'}
-                                    bind:val={$disciplineSecretaryForm.status}
+                                    bind:val={$sentencingConfirmationForm.status}
                                 ></CustomSelectField>
                             {:else if $proceedingChargeIsCertified}
                                 <StepperFailStatement />
@@ -1354,465 +1404,576 @@
                 <StepperContentHeader
                     title="Mesyuarat Keputusan Jawatankuasa Rayuan Tatatertib"
                 >
-                    {#if !$isReadOnlyProceedingSentencingConfirmation && data.roles.isIntegrityDirectorRole}
+                    {#if !$isReadOnlyProceedingAppealMeeting && data.roles.isIntegrityDirectorRole}
                         <TextIconButton
                             type="primary"
                             label="Simpan"
-                            form="sentencingConfirmationForm"
+                            form="appealMeetingForm"
                         ></TextIconButton>
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
                     <div class="flex w-full flex-col gap-2.5">
                         <CustomSelectField
-                            disabled={false}
-                            id="isApplealed"
+                            disabled={$isReadOnlyProceedingAppealMeeting}
+                            id="isAppealed"
                             options={commonOptions}
                             label={'Rayuan dibuat'}
-                            bind:val={isApplealed}
+                            bind:val={isAppealed}
                         ></CustomSelectField>
-                        {#if isApplealed}
+                        <hr />
+                        {#if isAppealed}
                             <form
-                                id="sentencingConfirmationForm"
+                                id="appealMeetingForm"
                                 method="POST"
-                                use:sentencingConfirmationFormEnhance
-                                class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                                use:appealMeetingFormEnhance
                             >
                                 <ContentHeader
                                     color={'system-primary'}
                                     fontWeight="bold"
                                     fontSize="small"
+                                    titlePadding={false}
+                                    borderClass="border-none"
                                     title={'Maklumat Mesyuarat'}
                                 />
                                 <CustomTextField
-                                    disabled={false}
+                                    disabled={$isReadOnlyProceedingAppealMeeting}
                                     id="meetingDate"
                                     label="Tarikh Mesyuarat"
                                     type="date"
                                     placeholder="-"
-                                    bind:val={$chargesMeetingForm.meetingDate}
+                                    bind:val={$appealMeetingForm.meetingDate}
                                 ></CustomTextField>
                                 <CustomTextField
-                                    disabled={false}
+                                    disabled={$isReadOnlyProceedingAppealMeeting}
                                     id="meetingCount"
                                     label="Bil Mesyuarat"
                                     placeholder="-"
                                     type="number"
-                                    bind:val={$chargesMeetingForm.meetingCount}
+                                    bind:val={$appealMeetingForm.meetingCount}
                                 ></CustomTextField>
                                 <CustomTextField
-                                    disabled={false}
+                                    disabled={$isReadOnlyProceedingAppealMeeting}
                                     id="meetingName"
                                     label="Nama Mesyuarat"
                                     placeholder="-"
-                                    bind:val={$chargesMeetingForm.meetingName}
+                                    bind:val={$appealMeetingForm.meetingName}
                                 ></CustomTextField>
                                 <CustomRadioField
-                                    disabled={false}
+                                    disabled={$isReadOnlyProceedingAppealMeeting}
                                     id="appealMeetingResult"
                                     options={approveOptions}
                                     label={'Keputusan'}
-                                    bind:val={$chargesMeetingForm.meetingName}
+                                    bind:val={$appealMeetingForm.meetingResult}
                                 ></CustomRadioField>
-                                <ContentHeader
-                                    color={'system-primary'}
-                                    fontWeight="bold"
-                                    fontSize="small"
-                                    title={'Susulan Rayuan'}
-                                />
-                                <CustomSelectField
-                                    disabled={false}
-                                    id="appealMeetingResult"
-                                    options={data.lookups
-                                        .appealMeetingResultLookup}
-                                    label={'Keputusan Rayuan'}
-                                    bind:val={$chargesMeetingForm.meetingName}
-                                ></CustomSelectField>
-                                {#each $sentencingMeetingForm.meetingResult as _, index}
+                                {#if $appealMeetingForm.meetingResult}
+                                    <ContentHeader
+                                        color={'system-primary'}
+                                        fontWeight="bold"
+                                        fontSize="small"
+                                        titlePadding={false}
+                                        borderClass="border-none"
+                                        title={'Susulan Rayuan'}
+                                    />
+                                    <CustomSelectField
+                                        disabled={$isReadOnlyProceedingAppealMeeting}
+                                        id="appealMeetingResult"
+                                        options={data.lookups
+                                            .appealMeetingResultLookup}
+                                        label={'Keputusan Rayuan'}
+                                        bind:val={$appealMeetingForm.appealResult}
+                                    ></CustomSelectField>
                                     <div
-                                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
+                                        class="space-y-2.5"
+                                        hidden={$appealMeetingForm.appealResult !==
+                                            'Mengesahkan Keputusan JKTT tetapi Mengubah kepada Hukuman yang Lebih Ringan'}
                                     >
-                                        <ContentHeader
-                                            title="Pertuduhan #{index +
-                                                1}: {$chargesListForm
-                                                .accusationList[index]
-                                                .accusationName}"
-                                            color="system-primary"
-                                            fontWeight="bold"
-                                            borderClass="border-none"
-                                        />
-
-                                        <input
-                                            hidden
-                                            type="text"
-                                            bind:value={$sentencingMeetingForm
-                                                .meetingResult[index]
-                                                .accusationListId}
-                                        />
                                         <hr />
-                                        <div
-                                            class="flex w-full flex-row items-center gap-x-2.5 border-b text-base"
-                                        >
-                                            <CustomRadioField
-                                                disabled={$isReadOnlyProceedingSentencingMeeting}
-                                                id="currentGrade"
-                                                label="Keputusan Mesyuarat"
-                                                options={proceedingMeetingOptions}
-                                                bind:val={$sentencingMeetingForm
-                                                    .meetingResult[index]
-                                                    .result}
-                                            ></CustomRadioField>
-                                        </div>
-                                        {#if $sentencingMeetingForm.meetingResult[index].result}
-                                            <ContentHeader
-                                                title="Penentuan Hukuman"
-                                                borderClass="border-none"
+                                        <ContentHeader
+                                            fontSize="small"
+                                            titlePadding={false}
+                                            borderClass="border-none"
+                                            title={'Sila Pilih Hukuman - Hukuman Yang Dikenakan'}
+                                        />
+                                        {#each $appealMeetingForm.result as _, index}
+                                            <div
+                                                class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
                                             >
-                                                {#if !$isReadOnlyProceedingSentencingMeeting && data.roles.isDisciplineSecretaryRole}
-                                                    <div class="mr-2">
-                                                        <TextIconButton
-                                                            type="primary"
-                                                            onClick={() => {
-                                                                addSentencing(
-                                                                    index,
-                                                                );
-                                                            }}
-                                                            label="Tambah Hukuman"
-                                                            ><SvgPlus
-                                                            /></TextIconButton
-                                                        >
-                                                    </div>
-                                                {/if}
-                                            </ContentHeader>
-                                            <hr />
-                                            <!-- List of sentencings, can be multiple -->
-                                            {#each $sentencingMeetingForm.meetingResult[index].sentencing as _, i}
+                                                <ContentHeader
+                                                    title="Pertuduhan #{index +
+                                                        1}: {$chargesListForm
+                                                        .accusationList[index]
+                                                        .accusationName}"
+                                                    color="system-primary"
+                                                    fontWeight="bold"
+                                                    borderClass="border-none"
+                                                />
+
+                                                <input
+                                                    hidden
+                                                    type="text"
+                                                    bind:value={$appealMeetingForm
+                                                        .result[index]
+                                                        .accusationListId}
+                                                />
+                                                <hr />
                                                 <div
-                                                    class="w-full border-l-4 border-r-4 px-2.5"
+                                                    class="flex w-full flex-row items-center gap-x-2.5 border-b text-base"
                                                 >
+                                                    <CustomRadioField
+                                                        disabled={$isReadOnlyProceedingAppealMeeting}
+                                                        id="currentGrade"
+                                                        label="Keputusan Mesyuarat"
+                                                        options={proceedingMeetingOptions}
+                                                        bind:val={$appealMeetingForm
+                                                            .result[index]
+                                                            .result}
+                                                    ></CustomRadioField>
+                                                </div>
+                                                {#if $appealMeetingForm.result[index].result}
                                                     <ContentHeader
-                                                        title="Hukuman #{i + 1}"
-                                                        fontSize="small"
-                                                        fontWeight="bold"
+                                                        title="Penentuan Hukuman"
                                                         borderClass="border-none"
-                                                        color="system-primary"
-                                                    >
-                                                        {#if !$isReadOnlyProceedingSentencingMeeting && data.roles.isDisciplineSecretaryRole}
-                                                            <div class="w-12">
-                                                                <Button
-                                                                    outline={false}
-                                                                    on:click={() => {
-                                                                        removeSentencing(
-                                                                            index,
-                                                                            i,
-                                                                        );
-                                                                    }}
-                                                                    ><span
-                                                                        class="text-red-600"
-                                                                        ><SvgMinusCircle
-                                                                        /></span
-                                                                    ></Button
-                                                                >
-                                                            </div>
-                                                        {/if}
-                                                    </ContentHeader>
+                                                    />
+                                                    <hr />
+                                                    <!-- List of sentencings, can be multiple -->
+                                                    {#each $appealMeetingForm.result[index].sentencing as _, i}
+                                                        <div
+                                                            class="w-full border-l-4 border-r-4 px-2.5"
+                                                        >
+                                                            <ContentHeader
+                                                                title="Hukuman #{i +
+                                                                    1}"
+                                                                fontSize="small"
+                                                                fontWeight="bold"
+                                                                borderClass="border-none"
+                                                                color="system-primary"
+                                                            />
 
-                                                    <CustomSelectField
-                                                        disabled={$isReadOnlyProceedingSentencingMeeting}
-                                                        id="title"
-                                                        label="Jenis Hukuman"
-                                                        options={data.lookups
-                                                            .penaltyCodeLookup}
-                                                        placeholder="-"
-                                                        bind:val={$sentencingMeetingForm
-                                                            .meetingResult[
-                                                            index
-                                                        ].sentencing[i]
-                                                            .penaltyCode}
-                                                    ></CustomSelectField>
+                                                            <CustomSelectField
+                                                                disabled={$isReadOnlyProceedingAppealMeeting}
+                                                                id="title"
+                                                                label="Jenis Hukuman"
+                                                                options={data
+                                                                    .lookups
+                                                                    .penaltyCodeLookup}
+                                                                placeholder="-"
+                                                                bind:val={$appealMeetingForm
+                                                                    .result[
+                                                                    index
+                                                                ].sentencing[i]
+                                                                    .penaltyCode}
 
-                                                    {#if $sentencingMeetingForm.meetingResult[index].sentencing[i].penaltyCode}
-                                                        {#if $sentencingMeetingForm.meetingResult[index].sentencing[i].penaltyCode === '01'}
-                                                            <CustomTextField
-                                                                disabled={$isReadOnlyProceedingSentencingMeeting}
-                                                                id="title"
-                                                                label="Tarikh Berkuatkuasa"
-                                                                placeholder="-"
-                                                                type="date"
-                                                                bind:val={$sentencingMeetingForm
-                                                                    .meetingResult[
-                                                                    index
-                                                                ].sentencing[i]
-                                                                    .effectiveDate}
-                                                            ></CustomTextField>
-                                                        {:else if $sentencingMeetingForm.meetingResult[index].sentencing[i].penaltyCode === '02'}
-                                                            <CustomTextField
-                                                                disabled={$isReadOnlyProceedingSentencingMeeting}
-                                                                id="title"
-                                                                label="Tarikh Berkuatkuasa"
-                                                                placeholder="-"
-                                                                type="date"
-                                                                bind:val={$sentencingMeetingForm
-                                                                    .meetingResult[
-                                                                    index
-                                                                ].sentencing[i]
-                                                                    .effectiveDate}
-                                                            ></CustomTextField>
-                                                            <CustomTextField
-                                                                disabled={$isReadOnlyProceedingSentencingMeeting}
-                                                                id="title"
-                                                                label="Hari Emolumen"
-                                                                placeholder="-"
-                                                                type="number"
-                                                                bind:val={$sentencingMeetingForm
-                                                                    .meetingResult[
-                                                                    index
-                                                                ].sentencing[i]
-                                                                    .emolumenRight}
-                                                            ></CustomTextField>
-                                                        {:else if $sentencingMeetingForm.meetingResult[index].sentencing[i].penaltyCode === '03'}
-                                                            <CustomTextField
-                                                                disabled={$isReadOnlyProceedingSentencingMeeting}
-                                                                id="title"
-                                                                label="Tarikh Berkuatkuasa"
-                                                                placeholder="-"
-                                                                type="date"
-                                                                bind:val={$sentencingMeetingForm
-                                                                    .meetingResult[
-                                                                    index
-                                                                ].sentencing[i]
-                                                                    .effectiveDate}
-                                                            ></CustomTextField>
-                                                            <CustomTextField
-                                                                disabled={$isReadOnlyProceedingSentencingMeeting}
-                                                                id="title"
-                                                                label="Hari Emolumen"
-                                                                placeholder="-"
-                                                                type="number"
-                                                                bind:val={$sentencingMeetingForm
-                                                                    .meetingResult[
-                                                                    index
-                                                                ].sentencing[i]
-                                                                    .emolumenRight}
-                                                            ></CustomTextField>
-                                                            <div
-                                                                class="w-full space-y-2 border-l-4 border-r-4 px-2.5"
-                                                            >
-                                                                <ContentHeader
-                                                                    title="Tarikh Dilucutkan Hak Emolumen"
-                                                                >
-                                                                    {#if !$isReadOnlyProceedingSentencingMeeting}
-                                                                        <div
-                                                                            class="mr-2"
+                                                            ></CustomSelectField>
+
+                                                            {#if $appealMeetingForm.result[index].sentencing[i].penaltyCode}
+                                                                {#if $appealMeetingForm.result[index].sentencing[i].penaltyCode === '01'}
+                                                                    <CustomTextField
+                                                                        disabled={$isReadOnlyProceedingAppealMeeting}
+                                                                        id="title"
+                                                                        label="Tarikh Berkuatkuasa"
+                                                                        placeholder="-"
+                                                                        type="date"
+                                                                        bind:val={$appealMeetingForm
+                                                                            .result[
+                                                                            index
+                                                                        ]
+                                                                            .sentencing[
+                                                                            i
+                                                                        ]
+                                                                            .effectiveDate}
+
+                                                                    ></CustomTextField>
+                                                                {:else if $appealMeetingForm.result[index].sentencing[i].penaltyCode === '02'}
+                                                                    <CustomTextField
+                                                                        disabled={$isReadOnlyProceedingAppealMeeting}
+                                                                        id="title"
+                                                                        label="Tarikh Berkuatkuasa"
+                                                                        placeholder="-"
+                                                                        type="date"
+                                                                        bind:val={$appealMeetingForm
+                                                                            .result[
+                                                                            index
+                                                                        ]
+                                                                            .sentencing[
+                                                                            i
+                                                                        ]
+                                                                            .effectiveDate}
+
+                                                                    ></CustomTextField>
+                                                                    <CustomTextField
+                                                                        disabled={$isReadOnlyProceedingAppealMeeting}
+                                                                        id="title"
+                                                                        label="Hari Emolumen"
+                                                                        placeholder="-"
+                                                                        type="number"
+                                                                        bind:val={$appealMeetingForm
+                                                                            .result[
+                                                                            index
+                                                                        ]
+                                                                            .sentencing[
+                                                                            i
+                                                                        ]
+                                                                            .emolumenRight}
+
+                                                                    ></CustomTextField>
+                                                                {:else if $appealMeetingForm.result[index].sentencing[i].penaltyCode === '03'}
+                                                                    <CustomTextField
+                                                                        disabled={$isReadOnlyProceedingAppealMeeting}
+                                                                        id="title"
+                                                                        label="Tarikh Berkuatkuasa"
+                                                                        placeholder="-"
+                                                                        type="date"
+                                                                        bind:val={$appealMeetingForm
+                                                                            .result[
+                                                                            index
+                                                                        ]
+                                                                            .sentencing[
+                                                                            i
+                                                                        ]
+                                                                            .effectiveDate}
+
+                                                                    ></CustomTextField>
+                                                                    <CustomTextField
+                                                                        disabled={$isReadOnlyProceedingAppealMeeting}
+                                                                        id="title"
+                                                                        label="Hari Emolumen"
+                                                                        placeholder="-"
+                                                                        type="number"
+                                                                        bind:val={$appealMeetingForm
+                                                                            .result[
+                                                                            index
+                                                                        ]
+                                                                            .sentencing[
+                                                                            i
+                                                                        ]
+                                                                            .emolumenRight}
+
+                                                                    ></CustomTextField>
+                                                                    <div
+                                                                        class="w-full space-y-2 border-l-4 border-r-4 px-2.5"
+                                                                    >
+                                                                        <ContentHeader
+                                                                            title="Tarikh Dilucutkan Hak Emolumen"
                                                                         >
-                                                                            <TextIconButton
-                                                                                type="primary"
-                                                                                onClick={() => {
-                                                                                    addSentencingEmolumenDate(
-                                                                                        index,
-                                                                                        i,
-                                                                                    );
-                                                                                }}
-                                                                                label=""
-                                                                                ><SvgPlus
-                                                                                /></TextIconButton
-                                                                            >
-                                                                        </div>
-                                                                    {/if}
-                                                                </ContentHeader>
-                                                                {#if $sentencingMeetingForm.meetingResult[index].sentencing[i].emolumenDate}
-                                                                    {#each $sentencingMeetingForm.meetingResult[index].sentencing[i].emolumenDate as _, j}
-                                                                        <div
-                                                                            class="flex w-full flex-row items-center gap-x-2.5 text-base"
-                                                                        >
-                                                                            <span
-                                                                                class="w-[220px] text-sm italic"
-                                                                                >Tarikh
-                                                                                #{j +
-                                                                                    1}.</span
-                                                                            >
-                                                                            <CustomTextField
-                                                                                id="startDate"
-                                                                                disabled={$isReadOnlyProceedingSentencingMeeting}
-                                                                                type="date"
-                                                                                label={'Tarikh Mula'}
-                                                                                bind:val={$sentencingMeetingForm
-                                                                                    .meetingResult[
-                                                                                    index
-                                                                                ]
-                                                                                    .sentencing[
-                                                                                    i
-                                                                                ]
-                                                                                    .emolumenDate[
-                                                                                    j
-                                                                                ]
-                                                                                    .startDate}
-
-                                                                            ></CustomTextField>
-                                                                            <CustomTextField
-                                                                                id="endDate"
-                                                                                disabled={$isReadOnlyProceedingSentencingMeeting}
-                                                                                type="date"
-                                                                                label={'Hingga'}
-                                                                                bind:val={$sentencingMeetingForm
-                                                                                    .meetingResult[
-                                                                                    index
-                                                                                ]
-                                                                                    .sentencing[
-                                                                                    i
-                                                                                ]
-                                                                                    .emolumenDate[
-                                                                                    j
-                                                                                ]
-                                                                                    .endDate}
-
-                                                                            ></CustomTextField>
-                                                                            {#if !$isReadOnlyProceedingSentencingMeeting}
+                                                                            {#if !$isReadOnlyProceedingAppealMeeting}
                                                                                 <div
-                                                                                    class="w-12"
+                                                                                    class="mr-2"
                                                                                 >
-                                                                                    <Button
-                                                                                        outline={false}
-                                                                                        on:click={() => {
-                                                                                            removeSentencingEmolumenDate(
+                                                                                    <TextIconButton
+                                                                                        type="primary"
+                                                                                        onClick={() => {
+                                                                                            addSentencingEmolumenDate(
                                                                                                 index,
                                                                                                 i,
-                                                                                                j,
                                                                                             );
                                                                                         }}
-                                                                                        ><span
-                                                                                            class="text-red-600"
-                                                                                            ><SvgMinusCircle
-                                                                                            /></span
-                                                                                        ></Button
+                                                                                        label=""
+                                                                                        ><SvgPlus
+                                                                                        /></TextIconButton
                                                                                     >
                                                                                 </div>
                                                                             {/if}
-                                                                        </div>
-                                                                    {/each}
+                                                                        </ContentHeader>
+                                                                        {#if $appealMeetingForm.result[index].sentencing[i].emolumenDate}
+                                                                            {#each $appealMeetingForm.result[index].sentencing[i].emolumenDate as _, j}
+                                                                                <div
+                                                                                    class="flex w-full flex-row items-center gap-x-2.5 text-base"
+                                                                                >
+                                                                                    <span
+                                                                                        class="w-[220px] text-sm italic"
+                                                                                        >Tarikh
+                                                                                        #{j +
+                                                                                            1}.</span
+                                                                                    >
+                                                                                    <CustomTextField
+                                                                                        id="startDate"
+                                                                                        disabled={$isReadOnlyProceedingAppealMeeting}
+                                                                                        type="date"
+                                                                                        label={'Tarikh Mula'}
+                                                                                        bind:val={$appealMeetingForm
+                                                                                            .result[
+                                                                                            index
+                                                                                        ]
+                                                                                            .sentencing[
+                                                                                            i
+                                                                                        ]
+                                                                                            .emolumenDate[
+                                                                                            j
+                                                                                        ]
+                                                                                            .startDate}
+
+                                                                                    ></CustomTextField>
+                                                                                    <CustomTextField
+                                                                                        id="endDate"
+                                                                                        disabled={$isReadOnlyProceedingAppealMeeting}
+                                                                                        type="date"
+                                                                                        label={'Hingga'}
+                                                                                        bind:val={$appealMeetingForm
+                                                                                            .result[
+                                                                                            index
+                                                                                        ]
+                                                                                            .sentencing[
+                                                                                            i
+                                                                                        ]
+                                                                                            .emolumenDate[
+                                                                                            j
+                                                                                        ]
+                                                                                            .endDate}
+
+                                                                                    ></CustomTextField>
+                                                                                    {#if !$isReadOnlyProceedingAppealMeeting}
+                                                                                        <div
+                                                                                            class="w-12"
+                                                                                        >
+                                                                                            <Button
+                                                                                                outline={false}
+                                                                                                on:click={() => {
+                                                                                                    removeSentencingEmolumenDate(
+                                                                                                        index,
+                                                                                                        i,
+                                                                                                        j,
+                                                                                                    );
+                                                                                                }}
+                                                                                                ><span
+                                                                                                    class="text-red-600"
+                                                                                                    ><SvgMinusCircle
+                                                                                                    /></span
+                                                                                                ></Button
+                                                                                            >
+                                                                                        </div>
+                                                                                    {/if}
+                                                                                </div>
+                                                                            {/each}
+                                                                        {/if}
+                                                                    </div>
+                                                                {:else if $appealMeetingForm.result[index].sentencing[i].penaltyCode === '04'}
+                                                                    <CustomTextField
+                                                                        disabled={$isReadOnlyProceedingAppealMeeting}
+                                                                        id="title"
+                                                                        label="Tarikh Berkuatkuasa"
+                                                                        placeholder="-"
+                                                                        type="date"
+                                                                        bind:val={$appealMeetingForm
+                                                                            .result[
+                                                                            index
+                                                                        ]
+                                                                            .sentencing[
+                                                                            i
+                                                                        ]
+                                                                            .effectiveDate}
+
+                                                                    ></CustomTextField>
+                                                                    <CustomSelectField
+                                                                        disabled={$isReadOnlyProceedingAppealMeeting}
+                                                                        id="title"
+                                                                        label="Tempoh Bulan Tangguh Pergerakan Gaji"
+                                                                        options={data
+                                                                            .lookups
+                                                                            .salaryMovementDelayMonthCountLookup}
+                                                                        bind:val={$appealMeetingForm
+                                                                            .result[
+                                                                            index
+                                                                        ]
+                                                                            .sentencing[
+                                                                            i
+                                                                        ]
+                                                                            .duration}
+
+                                                                    ></CustomSelectField>
+                                                                {:else if $appealMeetingForm.result[index].sentencing[i].penaltyCode === '05'}
+                                                                    <CustomTextField
+                                                                        disabled={$isReadOnlyProceedingAppealMeeting}
+                                                                        id="title"
+                                                                        label="Tarikh Berkuatkuasa"
+                                                                        placeholder="-"
+                                                                        type="date"
+                                                                        bind:val={$appealMeetingForm
+                                                                            .result[
+                                                                            index
+                                                                        ]
+                                                                            .sentencing[
+                                                                            i
+                                                                        ]
+                                                                            .effectiveDate}
+
+                                                                    ></CustomTextField>
+                                                                    <CustomSelectField
+                                                                        disabled={$isReadOnlyProceedingAppealMeeting}
+                                                                        id="title"
+                                                                        label="Bilangan Pergerakan Gaji"
+                                                                        options={data
+                                                                            .lookups
+                                                                            .salaryMovementCountLookup}
+                                                                        bind:val={$appealMeetingForm
+                                                                            .result[
+                                                                            index
+                                                                        ]
+                                                                            .sentencing[
+                                                                            i
+                                                                        ]
+                                                                            .salaryMovementCount}
+
+                                                                    ></CustomSelectField>
+                                                                    <CustomSelectField
+                                                                        disabled={$isReadOnlyProceedingAppealMeeting}
+                                                                        id="title"
+                                                                        label="Tempoh Hukuman (Bulan)"
+                                                                        options={data
+                                                                            .lookups
+                                                                            .sentencingMonthLookup}
+                                                                        bind:val={$appealMeetingForm
+                                                                            .result[
+                                                                            index
+                                                                        ]
+                                                                            .sentencing[
+                                                                            i
+                                                                        ]
+                                                                            .sentencingMonth}
+
+                                                                    ></CustomSelectField>
+                                                                {:else if $appealMeetingForm.result[index].sentencing[i].penaltyCode === '06'}
+                                                                    <CustomTextField
+                                                                        disabled={$isReadOnlyProceedingAppealMeeting}
+                                                                        id="title"
+                                                                        label="Tarikh Berkuatkuasa"
+                                                                        placeholder="-"
+                                                                        type="date"
+                                                                        bind:val={$appealMeetingForm
+                                                                            .result[
+                                                                            index
+                                                                        ]
+                                                                            .sentencing[
+                                                                            i
+                                                                        ]
+                                                                            .effectiveDate}
+
+                                                                    ></CustomTextField>
+                                                                    <CustomSelectField
+                                                                        disabled={$isReadOnlyProceedingAppealMeeting}
+                                                                        id="title"
+                                                                        options={data
+                                                                            .lookups
+                                                                            .gradeLookup}
+                                                                        label="Gred Baru"
+                                                                        bind:val={$appealMeetingForm
+                                                                            .result[
+                                                                            index
+                                                                        ]
+                                                                            .sentencing[
+                                                                            i
+                                                                        ]
+                                                                            .newGradeCode}
+
+                                                                    ></CustomSelectField>
+                                                                {:else if $appealMeetingForm.result[index].sentencing[i].penaltyCode === '07'}
+                                                                    <CustomTextField
+                                                                        disabled={$isReadOnlyProceedingAppealMeeting}
+                                                                        id="title"
+                                                                        label="Tarikh Berkuatkuasa"
+                                                                        placeholder="-"
+                                                                        type="date"
+                                                                        bind:val={$appealMeetingForm
+                                                                            .result[
+                                                                            index
+                                                                        ]
+                                                                            .sentencing[
+                                                                            i
+                                                                        ]
+                                                                            .effectiveDate}
+
+                                                                    ></CustomTextField>
                                                                 {/if}
-                                                            </div>
-                                                        {:else if $sentencingMeetingForm.meetingResult[index].sentencing[i].penaltyCode === '04'}
-                                                            <CustomTextField
-                                                                disabled={$isReadOnlyProceedingSentencingMeeting}
-                                                                id="title"
-                                                                label="Tarikh Berkuatkuasa"
-                                                                placeholder="-"
-                                                                type="date"
-                                                                bind:val={$sentencingMeetingForm
-                                                                    .meetingResult[
-                                                                    index
-                                                                ].sentencing[i]
-                                                                    .effectiveDate}
-                                                            ></CustomTextField>
-                                                            <CustomSelectField
-                                                                disabled={$isReadOnlyProceedingSentencingMeeting}
-                                                                id="title"
-                                                                label="Tempoh Bulan Tangguh Pergerakan Gaji"
-                                                                options={data
-                                                                    .lookups
-                                                                    .salaryMovementDelayMonthCountLookup}
-                                                                bind:val={$sentencingMeetingForm
-                                                                    .meetingResult[
-                                                                    index
-                                                                ].sentencing[i]
-                                                                    .duration}
-
-                                                            ></CustomSelectField>
-                                                        {:else if $sentencingMeetingForm.meetingResult[index].sentencing[i].penaltyCode === '05'}
-                                                            <CustomTextField
-                                                                disabled={$isReadOnlyProceedingSentencingMeeting}
-                                                                id="title"
-                                                                label="Tarikh Berkuatkuasa"
-                                                                placeholder="-"
-                                                                type="date"
-                                                                bind:val={$sentencingMeetingForm
-                                                                    .meetingResult[
-                                                                    index
-                                                                ].sentencing[i]
-                                                                    .effectiveDate}
-                                                            ></CustomTextField>
-                                                            <CustomSelectField
-                                                                disabled={$isReadOnlyProceedingSentencingMeeting}
-                                                                id="title"
-                                                                label="Bilangan Pergerakan Gaji"
-                                                                options={data
-                                                                    .lookups
-                                                                    .salaryMovementCountLookup}
-                                                                bind:val={$sentencingMeetingForm
-                                                                    .meetingResult[
-                                                                    index
-                                                                ].sentencing[i]
-                                                                    .salaryMovementCount}
-
-                                                            ></CustomSelectField>
-                                                            <CustomSelectField
-                                                                disabled={$isReadOnlyProceedingSentencingMeeting}
-                                                                id="title"
-                                                                label="Tempoh Hukuman (Bulan)"
-                                                                options={data
-                                                                    .lookups
-                                                                    .sentencingMonthLookup}
-                                                                bind:val={$sentencingMeetingForm
-                                                                    .meetingResult[
-                                                                    index
-                                                                ].sentencing[i]
-                                                                    .sentencingMonth}
-
-                                                            ></CustomSelectField>
-                                                        {:else if $sentencingMeetingForm.meetingResult[index].sentencing[i].penaltyCode === '06'}
-                                                            <CustomTextField
-                                                                disabled={$isReadOnlyProceedingSentencingMeeting}
-                                                                id="title"
-                                                                label="Tarikh Berkuatkuasa"
-                                                                placeholder="-"
-                                                                type="date"
-                                                                bind:val={$sentencingMeetingForm
-                                                                    .meetingResult[
-                                                                    index
-                                                                ].sentencing[i]
-                                                                    .effectiveDate}
-                                                            ></CustomTextField>
-                                                            <CustomSelectField
-                                                                disabled={$isReadOnlyProceedingSentencingMeeting}
-                                                                id="title"
-                                                                options={data
-                                                                    .lookups
-                                                                    .gradeLookup}
-                                                                label="Gred Baru"
-                                                                bind:val={$sentencingMeetingForm
-                                                                    .meetingResult[
-                                                                    index
-                                                                ].sentencing[i]
-                                                                    .newGradeCode}
-
-                                                            ></CustomSelectField>
-                                                        {:else if $sentencingMeetingForm.meetingResult[index].sentencing[i].penaltyCode === '07'}
-                                                            <CustomTextField
-                                                                disabled={$isReadOnlyProceedingSentencingMeeting}
-                                                                id="title"
-                                                                label="Tarikh Berkuatkuasa"
-                                                                placeholder="-"
-                                                                type="date"
-                                                                bind:val={$sentencingMeetingForm
-                                                                    .meetingResult[
-                                                                    index
-                                                                ].sentencing[i]
-                                                                    .effectiveDate}
-                                                            ></CustomTextField>
-                                                        {/if}
-                                                    {/if}
-                                                </div>
-                                                <hr />
-                                            {/each}
-                                        {/if}
+                                                            {/if}
+                                                        </div>
+                                                        <hr />
+                                                    {/each}
+                                                {/if}
+                                            </div>
+                                        {/each}
+                                        <div />
                                     </div>
-                                {/each}
+                                {/if}
                             </form>
                         {/if}
                     </div>
                 </StepperContentBody>
             </StepperContent>
+            {#if $isReadOnlyProceedingAppealMeeting}
+                <StepperContent>
+                    <StepperContentHeader
+                        title="Pengesahan Pengarah Integriti - Rayuan"
+                    >
+                        {#if !$isReadOnlyProceedingAppealConfirmation && data.roles.isIntegrityDirectorRole}
+                            <TextIconButton
+                                type="primary"
+                                label="Simpan"
+                                form="appealConfirmationForm"
+                            ></TextIconButton>
+                        {/if}
+                    </StepperContentHeader>
+                    <StepperContentBody>
+                        <div class="flex w-full flex-col gap-2.5">
+                            {#if !$isReadOnlyProceedingAppealConfirmation && data.roles.isIntegrityDirectorRole}
+                                <form
+                                    id="appealConfirmationForm"
+                                    method="POST"
+                                    use:appealConfirmationFormEnhance
+                                    class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                                >
+                                    <div class="mb-5">
+                                        <b class="text-sm text-system-primary"
+                                            >Pengarah Integriti</b
+                                        >
+                                    </div>
+                                    <CustomTextField
+                                        disabled={$isReadOnlyProceedingAppealConfirmation}
+                                        errors={$appealConfirmationFormErrors.remark}
+                                        id="approverRemark"
+                                        label="Tindakan/Ulasan"
+                                        bind:val={$appealConfirmationForm.remark}
+                                    ></CustomTextField>
+                                    <CustomSelectField
+                                        disabled={$isReadOnlyProceedingAppealConfirmation}
+                                        errors={$appealConfirmationFormErrors.status}
+                                        id="approverIsApproved"
+                                        options={certifyOptions}
+                                        label={'Keputusan'}
+                                        bind:val={$appealConfirmationForm.status}
+                                    ></CustomSelectField>
+                                </form>
+                            {/if}
+
+                            <div
+                                class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                            >
+                                <div class="mb-5">
+                                    <b class="text-sm text-system-primary"
+                                        >Pengarah Integriti</b
+                                    >
+                                </div>
+                                {#if $isReadOnlyProceedingAppealConfirmation}
+                                    <CustomTextField
+                                        disabled
+                                        id="integrityDirectorRemark"
+                                        label="Tindakan/Ulasan"
+                                        bind:val={$appealConfirmationForm.remark}
+                                    ></CustomTextField>
+                                    <CustomSelectField
+                                        disabled
+                                        id="integrityDirectorStatus"
+                                        options={certifyOptions}
+                                        label={'Keputusan'}
+                                        bind:val={$appealConfirmationForm.status}
+                                    ></CustomSelectField>
+                                {:else}
+                                    <StepperOtherRolesResult />
+                                {/if}
+                            </div>
+                        </div>
+                    </StepperContentBody>
+                </StepperContent>
+            {/if}
         {/if}
     {:else if data.roles.isIntegritySecretaryRole || data.roles.isStaffRole}
         <StepperContent>

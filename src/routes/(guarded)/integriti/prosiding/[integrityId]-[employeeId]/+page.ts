@@ -14,6 +14,7 @@ import type { ProceedingTypeChargeDetailViewResponseDTO } from '$lib/dto/mypsm/i
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
     _chargesListSchema,
+    _proceedingAppealSchema,
     _proceedingApproverSchema,
     _proceedingChargeMeetingRequestSchema,
     _proceedingSentencingMeetingSchema,
@@ -100,7 +101,7 @@ export async function load({ params }) {
     const proceedingSentencingConfirmationForm = await superValidate(
         proceedingTypeChargeDetailView.sentencingConfirmation,
         zod(_proceedingApproverSchema),
-        { errors: false },
+        { errors: false, id: 'proceedingSentencingConfirmationFormId' },
     );
 
     // preset sentencing number of charges
@@ -138,6 +139,24 @@ export async function load({ params }) {
         });
     }
 
+    const proceedingAppealMeetingForm = await superValidate(
+        proceedingTypeChargeDetailView.appealDetails,
+        zod(_proceedingAppealSchema),
+        { errors: false, id: 'proceedingAppealMeetingFormId' },
+    );
+
+    // initializes appeal info with sentencing data
+    if (!proceedingTypeChargeDetailView.appealDetails) {
+        proceedingAppealMeetingForm.data.result =
+            proceedingSentencingMeetingForm.data.meetingResult;
+    }
+
+    const proceedingAppealConfirmationForm = await superValidate(
+        proceedingTypeChargeDetailView.appealConfirmation,
+        zod(_proceedingApproverSchema),
+        { errors: false, id: 'proceedingAppealConfirmationFormId' },
+    );
+
     // ==========================================================================
     // Get Lookup Functions
     // ==========================================================================
@@ -171,15 +190,15 @@ export async function load({ params }) {
 
     const appealMeetingResultLookup: RadioDTO[] = [
         {
-            value: 1,
+            value: 'Hantar Balik Kes kepada JKTT untuk Dipertimbangkan Semula',
             name: 'Hantar Balik Kes kepada JKTT untuk Dipertimbangkan Semula',
         },
         {
-            value: 2,
+            value: 'Mengesahkan Keputusan JKTT',
             name: 'Mengesahkan Keputusan JKTT',
         },
         {
-            value: 3,
+            value: 'Mengesahkan Keputusan JKTT tetapi Mengubah kepada Hukuman yang Lebih Ringan',
             name: 'Mengesahkan Keputusan JKTT tetapi Mengubah kepada Hukuman yang Lebih Ringan',
         },
     ];
@@ -281,6 +300,8 @@ export async function load({ params }) {
             proceedingChargesListForm,
             proceedingSentencingMeetingForm,
             proceedingSentencingConfirmationForm,
+            proceedingAppealMeetingForm,
+            proceedingAppealConfirmationForm,
         },
         lookups: {
             identityCardColorLookup,
