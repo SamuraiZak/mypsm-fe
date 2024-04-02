@@ -1,6 +1,7 @@
 <script lang="ts">
     export let color: string = '';
     export let fontSize: string = '';
+    export let titlePadding: boolean = true;
     export let fontWeight: string = '';
     export let title: string = 'Page Title';
     export let borderClass: string = '';
@@ -10,7 +11,8 @@
     class="flex h-10 min-h-10 w-full flex-row items-center justify-between {borderClass !==
     ''
         ? borderClass
-        : 'border-b'} px-2"
+        : 'border-b'} 
+        {titlePadding ? 'px-2' : ''}"
 >
     <!-- leading starts here -->
     <div
