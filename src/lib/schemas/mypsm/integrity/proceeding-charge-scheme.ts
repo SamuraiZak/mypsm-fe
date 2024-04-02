@@ -267,9 +267,12 @@ export const _proceedingSuspensionSchema = z.object({
     meetingName: z.string(),
     meetingCount: z.number(),
     meetingCode: z.string(),
+    meetingResult: booleanSchema,
+    suspensionType: codeSchema, // two types
+    startDate: dateStringSchema,
+    endDate: dateStringSchema.nullish(),
     eligibleEmolumen: z.number(),
-    startDate: z.string(),
-    endDate: z.string(),
+    suspensionResult: codeSchema.nullish(), //three types - only on suspensionType Prosiding Jenayah
 });
 
 // appeal meeting schema
@@ -279,6 +282,9 @@ export const _proceedingAppealSchema = z.object({
     meetingCount: z.number(),
     meetingName: z.string(),
     meetingCode: codeSchema,
+    meetingResult: booleanSchema,
+    appealResult: shortTextSchema,
+    result: z.array(_sentencingListSchema),
 });
 
 export const _proceedingTypeChargeDetailsSchema = z.object({
@@ -286,4 +292,6 @@ export const _proceedingTypeChargeDetailsSchema = z.object({
     confirmation: _proceedingApproverSchema,
     sentencingDetails: _proceedingSentencingMeetingSchema,
     sentencingConfirmation: _proceedingApproverSchema,
+    appealDetails: _proceedingAppealSchema,
+    appealConfirmation: _proceedingApproverSchema,
 });
