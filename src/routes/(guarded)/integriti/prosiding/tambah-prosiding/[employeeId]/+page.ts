@@ -2,6 +2,7 @@ import { goto } from '$app/navigation';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { ProceedingCreateChargeRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-create-charges-request.dto';
+import type { ProceedingSuspensionRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-create-suspension-request.dto';
 import type { ProceedingEmployeeDetailResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-employee-detail-response.dto';
 import type { ProceedingStaffDetailRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-staff-detail-request.dto';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
@@ -118,6 +119,30 @@ export const _addStateUnitSecretaryApprovalForm = async (formData: object) => {
     const response: CommonResponseDTO =
         await IntegrityProceedingServices.createProceedingChargeMeetingResult(
             form.data as ProceedingCreateChargeRequestDTO,
+        );
+
+    if (response.status === 'success')
+        setTimeout(() => {
+            goto(`../../prosiding`);
+        }, 1500);
+
+    return { response };
+};
+
+export const _addSuspensionDetailForm = async (formData: object) => {
+    const form = await superValidate(
+        formData,
+        zod(_proceedingSuspensionSchema),
+    );
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await IntegrityProceedingServices.createProceedingSuspension(
+            form.data as ProceedingSuspensionRequestDTO,
         );
 
     if (response.status === 'success')
