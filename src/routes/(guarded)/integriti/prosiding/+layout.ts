@@ -79,7 +79,7 @@ export const load = async () => {
     };
 };
 
-export const _updateTable = async (param: CommonListRequestDTO) => {
+export const _updateChargeTable = async (param: CommonListRequestDTO) => {
     const response: CommonResponseDTO =
         await IntegrityProceedingServices.getProceedingChargeRecordList(param);
 
