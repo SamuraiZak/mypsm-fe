@@ -10,9 +10,43 @@
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import type { PageData } from './$types';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
-    import { confirmOptions } from '$lib/constants/core/radio-option-constants';
+    import { certifyOptions, confirmOptions } from '$lib/constants/core/radio-option-constants';
+    import { _directorApprovalSchema } from '$lib/schemas/mypsm/gaji/salary-schema';
+    import { superForm } from 'sveltekit-superforms/client';
+    import { zod } from 'sveltekit-superforms/adapters';
+    import { _submit } from './+page';
+    import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
+    import { Toaster } from 'svelte-french-toast';
+    import Alert from 'flowbite-svelte/Alert.svelte';
 
     export let data: PageData;
+
+    let isReadOnly: boolean = false;
+    let isWaitingApproval: boolean = true;
+
+    if (data.directorApprovalForm.data.remark !== null) {
+        isReadOnly = true;
+        isWaitingApproval = false;
+    }
+
+    const { form, errors, enhance } = superForm(data.directorApprovalForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'directorApprovalForm',
+        invalidateAll: true,
+        resetForm: false,
+        validationMethod: 'onsubmit',
+        validators: zod(_directorApprovalSchema),
+        async onSubmit() {
+            $form.id = data.meetingId.id;
+
+            const readOnly = await _submit($form);
+            if (readOnly?.response.status == 'success') {
+                isReadOnly = true;
+            }
+        },
+    });
+    console.log(data.directorApprovalForm.data)
 </script>
 
 <!-- content header starts here -->
@@ -35,60 +69,6 @@
             <StepperContentHeader title="Keputusan Mesyuarat"
             ></StepperContentHeader>
             <StepperContentBody>
-                <ContentHeader
-                    title="Maklumat Pergerakan Gaji"
-                    borderClass="border-none"
-                />
-                <CustomTextField
-                    label="Tarikh Pergerakan Gaji (TPG)"
-                    disabled
-                    id="meetingDate"
-                    type="date"
-                    bind:val={data.salaryMovementDetail.meetingDate}
-                />
-                <CustomTextField
-                    label="Gaji Bulan Berkenaan"
-                    disabled
-                    id="salary1"
-                    val=""
-                />
-                <CustomTextField
-                    label="Kenaikan Gaji Tahun (KGT)"
-                    disabled
-                    id="salary1"
-                    val=""
-                />
-                <CustomTextField
-                    label="Elaun Wilayah (EW)"
-                    disabled
-                    id="salary1"
-                    val=""
-                />
-                <CustomTextField
-                    label="Elaun Kritikal (5%)"
-                    disabled
-                    id="salary1"
-                    val=""
-                />
-                <CustomTextField
-                    label="KGT Khas"
-                    disabled
-                    id="salary1"
-                    val=""
-                />
-                <CustomTextField
-                    label="Gaji Khas"
-                    disabled
-                    id="salary1"
-                    val=""
-                />
-                <CustomTextField label="EW Khas" disabled id="salary1" val="" />
-                <CustomTextField
-                    label="Elaun Kritikal (5%)"
-                    disabled
-                    id="salary1"
-                    val=""
-                />
                 <ContentHeader
                     title="Pergerakan Gaji Baru"
                     borderClass="border-none"
@@ -138,36 +118,74 @@
         </StepperContent>
 
         <StepperContent>
-            <StepperContentHeader title="Semakan Jadual Pergerakan Gaji"
-            ></StepperContentHeader>
+            <StepperContentHeader title="Semakan Jadual Pergerakan Gaji">
+            </StepperContentHeader>
             <StepperContentBody>
                 <DynamicTable tableItems={data.salaryMovementSchedule} />
-                <div class="w-full flex flex-col justify-start gap-2.5 border-t">
+            </StepperContentBody>
+        </StepperContent>
+
+        <StepperContent>
+            <StepperContentHeader title="Keputusan Pengarah Khidmat Pengurusan">
+                {#if data.currentRoleCode == UserRoleConstant.pengarahKhidmatPengurusan.code && $form.remark == ''}
+                    <TextIconButton
+                        label="Simpan"
+                        icon="check"
+                        form="directorApprovalForm"
+                    />
+                {/if}
+            </StepperContentHeader>
+            <StepperContentBody>
+                {#if isWaitingApproval && data.currentRoleCode !== UserRoleConstant.pengarahKhidmatPengurusan.code}
+                <div class="flex w-full flex-col gap-10 px-3 pb-10">
+                    <Alert color="blue">
+                        <p>
+                            <span class="font-medium"
+                                >Tiada Maklumat!</span
+                            >
+                            Menunggu keputusan daripada Pengarah Khidmat Pengurusan.
+                        </p>
+                    </Alert>
+                </div>
+            {:else}
+                <form
+                    class="flex w-full flex-col justify-start gap-2.5 px-2"
+                    id="directorApprovalForm"
+                    use:enhance
+                    method="POST"
+                >
                     <ContentHeader
                         title="Pengarah Khidmat Pengurusan"
                         borderClass="border-none"
                     />
-                    <CustomTextField
-                        label="Nama"
-                        disabled
-                        id="salary1"
-                        val=""
-                    />
+
+                    {#if data.directorApprovalForm.data.remark !== null}
+                        <CustomTextField
+                            label="Nama"
+                            disabled
+                            id="name"
+                            bind:val={$form.name}
+                        />
+                    {/if}
                     <CustomTextField
                         label="Ulasan/Tindakan"
-                        disabled
-                        id="salary1"
-                        val=""
+                        disabled={isReadOnly}
+                        id="remark"
+                        bind:val={$form.remark}
+                        errors={$errors.remark}
                     />
                     <CustomSelectField
                         label="Keputusan"
-                        disabled
-                        options={confirmOptions}
-                        id="salary1"
-                        val={true}
+                        disabled={isReadOnly}
+                        options={certifyOptions}
+                        id="status"
+                        bind:val={$form.status}
+                        errors={$errors.status}
                     />
-                </div>
+                </form>
+                {/if}
             </StepperContentBody>
         </StepperContent>
     </Stepper>
 </section>
+<Toaster/>

@@ -1,4 +1,5 @@
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant"
+import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
 import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
 import type { CommonEmployeeDTO } from "$lib/dto/core/common/employee/employee.dto";
@@ -49,15 +50,23 @@ export const load = async () => {
         filter: salaryMovementListFilter,
     }
 
-    employeeListResponse =
-        await EmployeeServices.getEmployeeList(employeeListParam);
-    employeeList =
-        employeeListResponse.data?.dataList as CommonEmployeeDTO[];
+    if (currentRoleCode == UserRoleConstant.urusSetiaGaji.code) {
+        employeeListResponse =
+            await EmployeeServices.getEmployeeList(employeeListParam);
+        employeeList =
+            employeeListResponse.data?.dataList as CommonEmployeeDTO[];
 
-    salaryMovementListResponse =
-        await SalaryServices.getSalaryMovementList(salaryMovementParam);
-    salaryMovementList =
-        salaryMovementListResponse.data?.dataList as SalaryMovementList[];
+        salaryMovementListResponse =
+            await SalaryServices.getSalaryMovementList(salaryMovementParam);
+        salaryMovementList =
+            salaryMovementListResponse.data?.dataList as SalaryMovementList[];
+    } else if (currentRoleCode == UserRoleConstant.pengarahKhidmatPengurusan.code) {
+        salaryMovementListResponse =
+            await SalaryServices.getDirectorSalaryMovementList(salaryMovementParam);
+        salaryMovementList =
+            salaryMovementListResponse.data?.dataList as SalaryMovementList[];
+    }
+
 
 
     const addNewSalaryMovementForm = await superValidate(zod(_addNewSalaryMovementSchema))
@@ -78,8 +87,8 @@ export const load = async () => {
 
 export const _submitAddNewSalaryMovement = async (formData: AddNewSalaryMovement) => {
     const form = await superValidate(formData, zod(_addNewSalaryMovementSchema))
-   
-    if(form.valid){
+
+    if (form.valid) {
         const response: CommonResponseDTO =
             await SalaryServices.addNewSalaryMovement(form.data as AddNewSalaryMovement)
     }
@@ -88,6 +97,26 @@ export const _submitAddNewSalaryMovement = async (formData: AddNewSalaryMovement
 //update employee list table
 export async function _updateTable(param: CommonListRequestDTO) {
     const response: CommonResponseDTO = await EmployeeServices.getEmployeeList(param);
+    return {
+        props: {
+            param,
+            response,
+        },
+    };
+}
+//update salary movement in process table
+export async function _updateSalaryMovementTable(param: CommonListRequestDTO) {
+    const response: CommonResponseDTO = await SalaryServices.getSalaryMovementList(param);
+    return {
+        props: {
+            param,
+            response,
+        },
+    };
+}
+//update salary movement in process table
+export async function _updateDirectorSalaryMovementTable(param: CommonListRequestDTO) {
+    const response: CommonResponseDTO = await SalaryServices.getDirectorSalaryMovementList(param);
     return {
         props: {
             param,
