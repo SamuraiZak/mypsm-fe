@@ -159,7 +159,7 @@ export const _emolumenDateSchema = z.object({
 });
 
 export const _sentenceSchema = z.object({
-    penaltyTypeCode: codeSchema.nullish(),
+    penaltyCode: codeSchema.nullish(),
     effectiveDate: dateStringSchema.nullish(),
     emolumenRight: numberSchema.nullish(),
     duration: numberSchema.nullish(),
@@ -172,7 +172,7 @@ export const _sentenceSchema = z.object({
 export const _sentencingListSchema = z
     .object({
         accusationListId: z.number().readonly(),
-        result: booleanSchema,
+        result: z.boolean(),
         sentencing: z.array(_sentenceSchema),
     })
     .superRefine(({ result, sentencing }, ctx) => {
@@ -183,7 +183,7 @@ export const _sentencingListSchema = z
                     message: 'Tarikh kuatkuasa perlu diisi.',
                     path: ['effectiveDate'],
                 });
-                if (arr.penaltyTypeCode === '02') {
+                if (arr.penaltyCode === '02') {
                     if (arr.emolumenRight === undefined) {
                         ctx.addIssue({
                             code: 'custom',
@@ -191,7 +191,7 @@ export const _sentencingListSchema = z
                             path: ['emolumenRight'],
                         });
                     }
-                } else if (arr.penaltyTypeCode === '03') {
+                } else if (arr.penaltyCode === '03') {
                     if (arr.emolumenRight === undefined) {
                         ctx.addIssue({
                             code: 'custom',
@@ -215,7 +215,7 @@ export const _sentencingListSchema = z
                             });
                         }
                     });
-                } else if (arr.penaltyTypeCode === '04') {
+                } else if (arr.penaltyCode === '04') {
                     if (arr.duration === undefined) {
                         ctx.addIssue({
                             code: 'custom',
@@ -223,7 +223,7 @@ export const _sentencingListSchema = z
                             path: ['duration'],
                         });
                     }
-                } else if (arr.penaltyTypeCode === '05') {
+                } else if (arr.penaltyCode === '05') {
                     if (arr.duration === undefined) {
                         ctx.addIssue({
                             code: 'custom',
@@ -238,7 +238,7 @@ export const _sentencingListSchema = z
                             path: ['sentencingMonth'],
                         });
                     }
-                } else if (arr.penaltyTypeCode === '06') {
+                } else if (arr.penaltyCode === '06') {
                     if (arr.newGradeCode === undefined) {
                         ctx.addIssue({
                             code: 'custom',
@@ -260,18 +260,6 @@ export const _proceedingSentencingMeetingSchema = z.object({
     meetingResult: z.array(_sentencingListSchema),
 });
 
-// suspension meeting schema
-export const _proceedingSuspensionSchema = z.object({
-    employeeId: z.number().readonly(),
-    meetingDate: z.string(),
-    meetingName: z.string(),
-    meetingCount: z.number(),
-    meetingCode: z.string(),
-    eligibleEmolumen: z.number(),
-    startDate: z.string(),
-    endDate: z.string(),
-});
-
 // appeal meeting schema
 export const _proceedingAppealSchema = z.object({
     integrityId: z.number().readonly(),
@@ -279,6 +267,9 @@ export const _proceedingAppealSchema = z.object({
     meetingCount: z.number(),
     meetingName: z.string(),
     meetingCode: codeSchema,
+    meetingResult: booleanSchema,
+    appealResult: shortTextSchema,
+    result: z.array(_sentencingListSchema),
 });
 
 export const _proceedingTypeChargeDetailsSchema = z.object({
@@ -286,4 +277,35 @@ export const _proceedingTypeChargeDetailsSchema = z.object({
     confirmation: _proceedingApproverSchema,
     sentencingDetails: _proceedingSentencingMeetingSchema,
     sentencingConfirmation: _proceedingApproverSchema,
+    appealDetails: _proceedingAppealSchema,
+    appealConfirmation: _proceedingApproverSchema,
+});
+
+// suspension meeting schema
+export const _proceedingSuspensionSchema = z.object({
+    employeeId: z.number().readonly(),
+    meetingDate: z.string(),
+    meetingName: z.string(),
+    meetingCount: z.number(),
+    meetingCode: z.string(),
+    meetingResult: booleanSchema,
+    suspensionType: codeSchema, // two types
+    startDate: dateStringSchema,
+    endDate: dateStringSchema.nullish(),
+    eligibleEmolumen: z.number(),
+    suspensionResult: codeSchema.nullish(), //three types - only on suspensionType Prosiding Jenayah
+});
+
+export const _proceedingSuspensionListSchema = z.object({
+    integrityId: z.number(),
+    employeeId: z.number(),
+    employeeNumber: z.string(),
+    employeeName: z.string(),
+    identityCardNumber: z.string(),
+    disciplinaryType: z.string(),
+    chargeMeetingDate: z.string(),
+    proceedingMeetingDate: z.string(),
+    isAppeal: z.boolean(),
+    declarationLetter: z.boolean(),
+    status: z.string(),
 });

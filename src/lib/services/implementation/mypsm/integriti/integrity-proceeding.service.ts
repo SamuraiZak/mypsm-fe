@@ -402,4 +402,31 @@ export class IntegrityProceedingServices {
             return CommonResponseConstant.httpError;
         }
     }
+
+    // get list of proceeding - suspension
+    static async getProceedingSuspensionRecordList(
+        param: CommonListRequestDTO,
+    ) {
+        try {
+            const url: Input = 'integrity/proceeding/suspension/list';
+
+            // get the promise response
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 }

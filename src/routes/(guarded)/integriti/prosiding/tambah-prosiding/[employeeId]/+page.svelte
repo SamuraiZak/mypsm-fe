@@ -58,6 +58,25 @@
             },
         });
 
+    const {
+        form: suspensionMeetingForm,
+        enhance: suspensionMeetingFormErrors,
+    } = superForm(data.forms.proceedingSuspensionMeetingForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: false,
+        taintedMessage: false,
+        async onSubmit() {
+            $suspensionMeetingForm.employeeId = Number(data.params.employeeId);
+
+            _addStateUnitSecretaryApprovalForm($suspensionMeetingForm);
+        },
+    });
+
     const addCharge = () => {
         const newChargeObject = '';
 
@@ -659,38 +678,56 @@
         <StepperContent>
             <StepperContentHeader
                 title="Maklumat Keputusan Mesyuarat Prosiding Tahan Kerja"
-            />
+            >
+                <TextIconButton
+                    type="primary"
+                    form="suspensionMeetingForm"
+                    label="Simpan"
+                ></TextIconButton>
+            </StepperContentHeader>
             <StepperContentBody>
-                <div class="flex w-full flex-col gap-2.5">
+                <form
+                    id="suspensionMeetingForm"
+                    method="POST"
+                    use:suspensionMeetingFormErrors
+                    class="flex w-full flex-col items-center gap-2"
+                >
                     <CustomTextField
                         disabled={false}
-                        id="currentGrade"
+                        id="meetingDate"
                         label="Tarikh Mesyuarat"
                         placeholder="-"
-                        bind:val={$form.serviceDetail.currentGrade}
+                        bind:val={$suspensionMeetingForm.meetingDate}
                     ></CustomTextField>
                     <CustomTextField
                         disabled={false}
-                        id="currentGrade"
+                        id="meetingCount"
                         label="Bil Mesyuarat"
                         placeholder="-"
-                        bind:val={$form.serviceDetail.currentGrade}
+                        bind:val={$suspensionMeetingForm.meetingCount}
                     ></CustomTextField>
                     <CustomTextField
                         disabled={false}
-                        id="currentGrade"
+                        id="meetingName"
                         label="Nama Mesyuarat"
                         placeholder="-"
-                        bind:val={$form.serviceDetail.currentGrade}
+                        bind:val={$suspensionMeetingForm.meetingName}
                     ></CustomTextField>
+                    <CustomRadioField
+                        disabled={false}
+                        id="meetingCode"
+                        label="Kod Mesyuarat"
+                        options={proceedingMeetingOptions}
+                        bind:val={$suspensionMeetingForm.meetingCode}
+                    ></CustomRadioField>
                     <CustomRadioField
                         disabled={false}
                         id="currentGrade"
                         label="Keputusan Mesyuarat"
                         options={proceedingMeetingOptions}
-                        bind:val={$form.serviceDetail.currentGrade}
+                        bind:val={$suspensionMeetingForm.meetingResult}
                     ></CustomRadioField>
-                </div>
+                </form>
             </StepperContentBody>
         </StepperContent>
     {/if}
