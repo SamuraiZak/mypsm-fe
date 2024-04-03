@@ -1,7 +1,6 @@
 <script lang="ts">
-    export let label: string = 'Label';
     export let disabled: boolean = false;
-    export const color: string =
+    export let color: string =
         'default' ||
         'alternative' ||
         'dark' ||
@@ -40,8 +39,5 @@
         <span class="w-fit leading-tight">
             <slot name="icon" />
         </span>
-        <p class="w-fit px-1 text-sm font-normal leading-loose">
-            {label}
-        </p>
     </div>
 </button>

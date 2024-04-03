@@ -19,6 +19,8 @@
     import TextIconButton from '../button/TextIconButton.svelte';
     import TableCellButton from '../button/TableCellButton.svelte';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
+    import TableIconButton from '../button/TableIconButton.svelte';
+    import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
     // import { generatePDF } from '$lib/helpers/core/puppeteer-pdf-generator.helper';
 
     // =====================================================================
@@ -43,11 +45,15 @@
 
     export let selectActions = () => {};
 
+    export let editActions = () => {};
+
     export let enableAdd = false;
 
     export let enableDetail = false;
 
     export let enableSelect = false;
+
+    export let enableEdit = false;
 
     export let hiddenFooter = false;
 
@@ -191,7 +197,7 @@
     <!-- table info -->
 
     <div
-        class="flex min-h-10 w-full flex-row items-center justify-between border-b p-2"
+        class="flex min-h-10 w-full flex-row items-center justify-between rounded-tl-md rounded-tr-md border-b bg-ios-basic-white p-2"
     >
         <!-- leading -->
         <div class="flex flex-row items-center gap-2">
@@ -207,6 +213,7 @@
                     {tableData.selectedData?.length} item dipilih
                 </span>
             {/if}
+            <slot name="buttons" />
             <button
                 on:click={() => {
                     printDiv(prefix);
@@ -218,7 +225,6 @@
                     <span class="leading-loose">
                         <!-- icon slot -->
                         <SvgDownload></SvgDownload>
-                        <slot />
                     </span>
                 </div>
 
@@ -336,6 +342,20 @@
                             </th>
                         {/if}
                         {#if enableSelect}
+                            <th
+                                class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
+                            >
+                                <div
+                                    class="flex h-full flex-row items-center justify-center"
+                                >
+                                    <span
+                                        class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                                    >
+                                    </span>
+                                </div>
+                            </th>
+                        {/if}
+                        {#if enableEdit}
                             <th
                                 class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
                             >
@@ -497,6 +517,26 @@
                                 </div>
                             </td>
                         {/if}
+                        {#if enableEdit}
+                            <td
+                                class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
+                            >
+                                <div
+                                    class="flex h-full flex-row items-center justify-center"
+                                >
+                                    <TableIconButton
+                                        color="light"
+                                        onClick={() => {
+                                            passData = row;
+                                            editActions();
+                                        }}
+                                    >
+                                        <SvgEdit slot="icon" size="15"
+                                        ></SvgEdit>
+                                    </TableIconButton>
+                                </div>
+                            </td>
+                        {/if}
 
                         <!-- action columns ends -->
                     </tr>
@@ -509,7 +549,7 @@
     <!-- table control -->
 
     <div
-        class="flex min-h-10 w-full flex-row items-center justify-between border-ios-labelColors-separator-light p-2"
+        class="flex min-h-10 w-full flex-row items-center justify-between rounded-bl-md rounded-br-md border-ios-labelColors-separator-light bg-ios-basic-white p-2"
     >
         {#if !hiddenFooter}
             <!-- leading -->
