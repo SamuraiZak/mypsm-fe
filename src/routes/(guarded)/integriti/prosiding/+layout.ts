@@ -45,18 +45,24 @@ export const load = async () => {
     };
 
     // proceeding - charge list
-    proceedingListResponse =
-        await IntegrityProceedingServices.getProceedingChargeRecordList(param);
+    if (isDisciplineSecretaryRole) {
+        proceedingListResponse =
+            await IntegrityProceedingServices.getProceedingChargeRecordList(
+                param,
+            );
+    }
 
     proceedingList =
         (proceedingListResponse.data
             ?.dataList as ProceedingChargeListResponseDTO) ?? [];
 
     // proceeding - suspension list
-    proceedingSuspensionListResponse =
-        await IntegrityProceedingServices.getProceedingSuspensionRecordList(
-            param,
-        );
+    if (isIntegritySecretaryRole) {
+        proceedingSuspensionListResponse =
+            await IntegrityProceedingServices.getProceedingSuspensionRecordList(
+                param,
+            );
+    }
 
     proceedingSuspensionList =
         (proceedingSuspensionListResponse.data
