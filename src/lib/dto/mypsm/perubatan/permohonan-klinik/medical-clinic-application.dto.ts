@@ -1,5 +1,7 @@
 export interface MedicalClinicApplication {
-    district:                      string;
+    districtId:                    number;
+    cityId:                        number;
+    postcode:                      string;
     name:                          string;
     panelAppointedDate:            string;
     panelContractEndDate:          string;
