@@ -362,7 +362,7 @@ export class IntegrityProceedingServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                await invalidateAll();
+                // await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -393,7 +393,7 @@ export class IntegrityProceedingServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                await invalidateAll();
+                // await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
