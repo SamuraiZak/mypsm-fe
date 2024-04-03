@@ -1628,9 +1628,9 @@
                                 </div>
                             {:else}
                                 <CustomTab id="academics">
-                                    {#each $academicInfoForm.academics as key, i}
+                                    {#each $academicInfoForm.academics as _, i}
                                         <CustomTabContent
-                                            title={`Akademik #${key.educationId}`}
+                                            title={`Akademik #${i + 1}`}
                                         >
                                             <input
                                                 type="text"
@@ -2323,7 +2323,7 @@
 
                                             <CustomTextField
                                                 id="phoneNumber"
-                                                label={'Nombor Mobil'}
+                                                label={'Nombor Telefon Bimbit'}
                                                 type="text"
                                                 disabled={!isEditableFamily}
                                                 bind:val={$familyInfoForm
@@ -2627,7 +2627,7 @@
 
                                             <CustomTextField
                                                 id="phoneNumber"
-                                                label={'Nombor Mobil'}
+                                                label={'Nombor Telefon Bimbit'}
                                                 type="text"
                                                 disabled={!isEditableDependency}
                                                 bind:val={$dependencyInfoForm
@@ -2928,7 +2928,7 @@
 
                                             <CustomTextField
                                                 id="phoneNumber"
-                                                label={'Nombor Mobil'}
+                                                label={'Nombor Telefon Bimbit'}
                                                 type="text"
                                                 disabled={!isEditableNextOfKin}
                                                 bind:val={$nextOfKinInfoForm
@@ -4130,7 +4130,7 @@
         <CustomTextField
             errors={$addFamilyErrors.phoneNumber}
             id="phoneNumber"
-            label={'Nombor Mobil'}
+            label={'Nombor Telefon Bimbit'}
             type="text"
             bind:val={$addFamilyModal.phoneNumber}
         ></CustomTextField>
@@ -4306,7 +4306,7 @@
         <CustomTextField
             errors={$addNonFamilyErrors.phoneNumber}
             id="phoneNumber"
-            label={'Nombor Mobil'}
+            label={'Nombor Telefon Bimbit'}
             type="text"
             bind:val={$addNonFamilyModal.phoneNumber}
         ></CustomTextField>
@@ -4481,7 +4481,7 @@
         <CustomTextField
             errors={$addNextOfKinErrors.phoneNumber}
             id="phoneNumber"
-            label={'Nombor Mobil'}
+            label={'Nombor Telefon Bimbit'}
             type="text"
             bind:val={$addNextOfKinModal.phoneNumber}
         ></CustomTextField>

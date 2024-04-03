@@ -22,7 +22,7 @@ export interface ConfirmationDetails {
     surchargeId:       number;
     name:              string;
     remark:            string;
-    status:            boolean;
+    status:            string;
     statusDescription: string;
 }
 
@@ -57,13 +57,14 @@ export interface MeetingDetail {
     meetingId:     number;
     meetingType:   string;
     meetingCount:  number;
-    meetingDate:   Date;
+    meetingDate:   string;
     amount:        number;
     paymentType:   string;
     duration:      number;
-    effectiveDate: Date;
+    effectiveDate: string;
     meetingResult: string;
     remark:        string;
+    meetingName?: string;
 }
 
 export interface ServiceDetail {

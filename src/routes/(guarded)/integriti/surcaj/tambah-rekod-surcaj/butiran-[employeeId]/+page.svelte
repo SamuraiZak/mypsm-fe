@@ -7,39 +7,120 @@
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import { Checkbox, Modal } from 'flowbite-svelte';
-    import type { PageData } from './$types';
+
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import SuperDebug, { superForm } from 'sveltekit-superforms';
     import { zod } from 'sveltekit-superforms/adapters';
-    import { _applicationDetail, _surcajEmployeeResponseSchema } from '$lib/schemas/mypsm/integrity/surcaj-scheme';
+    import {
+        _applicationDetail,
+        _confirmationDetail,
+        _meetingDetail,
+        _surcajEmployeeResponseSchema,
+    } from '$lib/schemas/mypsm/integrity/surcaj-scheme';
     import toast from 'svelte-french-toast';
     import { error } from '@sveltejs/kit';
-    import { _applicationDetailSubmit } from './+page';
+    import {
+        _applicationDetailSubmit,
+        _confirmationDetailSubmit,
+        _meetingDetailSubmit,
+    } from './+page';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import { Toaster } from 'svelte-french-toast';
+    import type { PageData } from './$types';
     export let data: PageData;
 
     let isReadonlyActionFormStepper: boolean = true;
+    let isReadonlyMeetingFormStepper: boolean = true;
+    let isReadonlyConfirmFormStepper: boolean = true;
 
-    const { form, errors, enhance ,isTainted,
-    } = superForm(data.applicationDetail, {
+    const { form: personalForm, enhance: personalEnhance } = superForm(
+        data.personalInfoForm,
+        {
+            SPA: true,
+            id: 'serviceDetail',
+            dataType: 'json',
+            validators: false,
+        },
+    );
+
+    const { form, errors, enhance, isTainted } = superForm(
+        data.applicationDetail,
+        {
+            SPA: true,
+            id: 'serviceDetail',
+            dataType: 'json',
+            invalidateAll: true,
+            resetForm: false,
+            multipleSubmits: 'allow',
+            validationMethod: 'oninput',
+            validators: zod(_applicationDetail),
+
+            async onSubmit() {
+                if (!isTainted()) {
+                    toast('Tiada perubahan data dikesan.');
+                    error(400);
+                }
+                $form.employeeId = data.employeeID.employeeId;
+                const result = await _applicationDetailSubmit($form);
+                if (result.response.status === 'success')
+                    isReadonlyActionFormStepper = true;
+            },
+            taintedMessage: false,
+        },
+    );
+
+    const {
+        form: meetingForm,
+        errors: meetingError,
+        enhance: meetingEnhance,
+        isTainted: meetingtanted,
+    } = superForm(data.meetingDetail, {
         SPA: true,
-        id: 'serviceDetail',
+        id: 'meetingForm',
         dataType: 'json',
         invalidateAll: true,
         resetForm: false,
         multipleSubmits: 'allow',
         validationMethod: 'oninput',
-        validators: zod(_applicationDetail),
+        validators: zod(_meetingDetail),
 
         async onSubmit() {
-            if (!isTainted()) {
+            // console.log($meetingForm)
+            if (!meetingtanted()) {
                 toast('Tiada perubahan data dikesan.');
                 error(400);
             }
-            const result = await _applicationDetailSubmit($form);
+            const result = await _meetingDetailSubmit($meetingForm);
+            console.log(result);
             if (result.response.status === 'success')
-            isReadonlyActionFormStepper = true;
+                isReadonlyMeetingFormStepper = true;
+        },
+        taintedMessage: false,
+    });
+
+    const {
+        form: confirmationForm,
+        errors: confirmationError,
+        enhance: confirmationEnhance,
+        isTainted: confirmationtanted,
+    } = superForm(data.confirmationDetail, {
+        SPA: true,
+        id: 'confirmationForm',
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: zod(_confirmationDetail),
+
+        async onSubmit() {
+            if (!confirmationtanted()) {
+                toast('Tiada perubahan data dikesan.');
+                error(400);
+            }
+            const result = await _confirmationDetailSubmit($confirmationForm);
+            if (result.response.status === 'success')
+                isReadonlyConfirmFormStepper = true;
         },
         taintedMessage: false,
     });
@@ -71,7 +152,7 @@
                     id="employeeNumber"
                     label={'No. Pekerja'}
                     type="text"
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm.employeeDetail
                         .employeeNumber}
                 ></CustomTextField>
                 <CustomTextField
@@ -79,7 +160,7 @@
                     id="identityCardNumber"
                     label={'No. Kad Pengenalan'}
                     type="text"
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm.employeeDetail
                         .identityCardNumber}
                 ></CustomTextField>
                 <CustomTextField
@@ -87,7 +168,7 @@
                     id="fullName"
                     label={'Nama Penuh'}
                     type="text"
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm.employeeDetail
                         .fullName}
                 ></CustomTextField>
                 <CustomTextField
@@ -95,7 +176,7 @@
                     id="alternativeName"
                     label={'Nama Lain'}
                     type="text"
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm.employeeDetail
                         .alternativeName}
                 ></CustomTextField>
 
@@ -103,7 +184,7 @@
                     disabled
                     id="email"
                     label="Emel Pekerja"
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm.employeeDetail
                         .email}
                 ></CustomTextField>
                 <CustomSelectField
@@ -111,7 +192,7 @@
                     id="icColour"
                     label="Jenis Kad Pengenalan"
                     options={data.selectionOptions.identityCardColorLookup}
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm.employeeDetail
                         .icColour}
                 ></CustomSelectField>
 
@@ -120,7 +201,7 @@
                     type="date"
                     id="birthDate"
                     label="Tarikh Lahir"
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm.employeeDetail
                         .birthDate}
                 ></CustomTextField>
                 <CustomSelectField
@@ -128,7 +209,7 @@
                     id="birthplace"
                     label="Tempat Lahir"
                     options={data.selectionOptions.stateLookup}
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm.employeeDetail
                         .birthplace}
                 ></CustomSelectField>
                 <CustomSelectField
@@ -136,7 +217,7 @@
                     id="nationality"
                     label="Warganegara"
                     options={data.selectionOptions.nationalityLookup}
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm.employeeDetail
                         .nationality}
                 ></CustomSelectField>
                 <!--  -->
@@ -145,8 +226,7 @@
                     id="race"
                     label="Bangsa"
                     options={data.selectionOptions.raceLookup}
-                    bind:val={data.personalInfoForm.employeeDetail.details
-                        .race}
+                    bind:val={$personalForm.employeeDetail.race}
                 ></CustomSelectField>
                 <!--  -->
                 <CustomSelectField
@@ -154,7 +234,7 @@
                     id="ethnic"
                     label="Etnik"
                     options={data.selectionOptions.ethnicityLookup}
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm.employeeDetail
                         .ethnic}
                 ></CustomSelectField>
                 <!--  -->
@@ -163,7 +243,7 @@
                     id="religion"
                     label="Agama"
                     options={data.selectionOptions.religionLookup}
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm.employeeDetail
                         .religion}
                 ></CustomSelectField>
                 <!--   -->
@@ -172,7 +252,7 @@
                     id="gender"
                     label="Jantina"
                     options={data.selectionOptions.genderLookup}
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm.employeeDetail
                         .gender}
                 ></CustomSelectField>
                 <!--  -->
@@ -181,16 +261,15 @@
                     id="marital"
                     label="Status Perkahwinan"
                     options={data.selectionOptions.maritalLookup}
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm.employeeDetail
                         .marital}
                 ></CustomSelectField>
-
 
                 <CustomTextField
                     disabled
                     id="homeAddress"
                     label="Alamat Rumah"
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm.employeeDetail
                         .homeAddress}
                 />
 
@@ -198,16 +277,16 @@
                     disabled
                     id="mailAddress"
                     label="Alamat Surat Menyurat"
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm.employeeDetail
                         .mailAddress}
                 />
                 <!--  -->
-               
+
                 <!-- <CustomSelectField
                     disabled
                     id="isExPoliceOrSoldier"
                     label="Bekas Polis / Tentera"
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm
                         .isExPoliceOrSoldier}
                 ></CustomSelectField> -->
 
@@ -220,7 +299,7 @@
                     disabled
                     id="isInternalRelationship"
                     label="Perhubungan Dengan Kakitangan LKIM"
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm
                         .isInternalRelationship}
                 ></CustomSelectField> -->
 
@@ -238,7 +317,7 @@
                     disabled
                     id="employeeNumber"
                     label="ID Kakitangan LKIM"
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm
                         .employeeNumber}
                 ></CustomTextField>
 
@@ -246,7 +325,7 @@
                     disabled
                     id="employeeName"
                     label="Nama Kakitangan LKIM"
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm
                         .employeeName}
                 ></CustomTextField>
 
@@ -254,7 +333,7 @@
                     disabled
                     id="employeePosition"
                     label="Jawatan Kakitangan LKIM"
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm
                         .employeePosition}
                 ></CustomTextField> -->
                 <!--  -->
@@ -263,7 +342,7 @@
                     id="relationshipId"
                     label="Hubungan"
                     options={data.selectionOptions.relationshipLookup}
-                    bind:val={data.personalInfoForm.employeeDetail.details
+                    bind:val={$personalForm
                         .relationshipId}
                 ></CustomSelectField> -->
             </div>
@@ -283,7 +362,7 @@
                 disabled
                 id="currentGrade"
                 label={'Gred Semasa'}
-                bind:val={data.personalInfoForm.serviceDetail.details
+                bind:val={$personalForm.serviceDetail
                     .currentGrade}
             ></CustomSelectField>
             <!--  -->
@@ -292,7 +371,7 @@
                 id="currentPosition"
                 label={'Jawatan'}
                 options={data.selectionOptions.positionLookup}
-                bind:val={data.personalInfoForm.serviceDetail.details
+                bind:val={$personalForm.serviceDetail
                     .currentPosition}
             ></CustomSelectField>
             <!-- -->
@@ -301,8 +380,7 @@
                 id="placement"
                 label={'Penempatan'}
                 options={data.selectionOptions.placementLookup}
-                bind:val={data.personalInfoForm.serviceDetail.details
-                    .placement}
+                bind:val={$personalForm.serviceDetail.placement}
             ></CustomSelectField>
             <!--  -->
             <CustomSelectField
@@ -310,7 +388,7 @@
                 id="serviceType"
                 label={'Taraf Perkhidmatan'}
                 options={data.selectionOptions.serviceTypeLookup}
-                bind:val={data.personalInfoForm.serviceDetail.details
+                bind:val={$personalForm.serviceDetail
                     .serviceType}
             ></CustomSelectField>
 
@@ -325,7 +403,7 @@
                 id="effectiveDate"
                 label={'Tarikh Berkuatkuasa'}
                 type="text"
-                bind:val={data.personalInfoForm.serviceDetail.details
+                bind:val={$personalForm.serviceDetail
                     .effectiveDate}
             ></CustomTextField>
             <!--   -->
@@ -335,7 +413,7 @@
                 id="retirementBenefit"
                 label="Faedah Persaraan"
                 options={data.selectionOptions.retirementBenefitLookup}
-                bind:val={data.personalInfoForm.serviceDetail.details
+                bind:val={$personalForm.serviceDetail
                     .retirementBenefit}
             />
 
@@ -344,39 +422,35 @@
                 id="EPFNumber"
                 label={'No. KWSP'}
                 type="text"
-                bind:val={data.personalInfoForm.serviceDetail.details
-                    .EPFNumber}
+                bind:val={$personalForm.serviceDetail.EPFNumber}
             ></CustomTextField>
             <CustomTextField
                 disabled
                 id="SOCSO"
                 label={'No. SOCSO'}
                 type="text"
-                bind:val={data.personalInfoForm.serviceDetail.details
-                    .SOCSO}
+                bind:val={$personalForm.serviceDetail.SOCSO}
             ></CustomTextField>
             <CustomTextField
                 disabled
                 id="taxIncome"
                 label={'No. Cukai (LHDN)'}
                 type="text"
-                bind:val={data.personalInfoForm.serviceDetail.details
-                    .taxIncome}
+                bind:val={$personalForm.serviceDetail.taxIncome}
             ></CustomTextField>
             <CustomTextField
                 disabled
                 id="bankName"
                 label={'Bank'}
                 type="text"
-                bind:val={data.personalInfoForm.serviceDetail.details
-                    .bankName}
+                bind:val={$personalForm.serviceDetail.bankName}
             ></CustomTextField>
             <CustomTextField
                 disabled
                 id="accountNumber"
                 label={'No. Akaun'}
                 type="text"
-                bind:val={data.personalInfoForm.serviceDetail.details
+                bind:val={$personalForm.serviceDetail
                     .accountNumber}
             ></CustomTextField>
             <CustomTextField
@@ -384,15 +458,14 @@
                 id="program"
                 label={'Program'}
                 type="text"
-                bind:val={data.personalInfoForm.serviceDetail.details
-                    .program}
+                bind:val={$personalForm.serviceDetail.program}
             ></CustomTextField>
             <CustomTextField
                 disabled
                 id="eligibleLeaveCount"
                 label={'Kelayakan Cuti'}
                 type="text"
-                bind:val={data.personalInfoForm.serviceDetail.details
+                bind:val={$personalForm.serviceDetail
                     .eligibleLeaveCount}
             ></CustomTextField>
             <CustomTextField
@@ -400,7 +473,7 @@
                 id="civilServiceStartDate"
                 label={'Mula Dilantik Perkhidmatan Kerajaan'}
                 type="date"
-                bind:val={data.personalInfoForm.serviceDetail.details
+                bind:val={$personalForm.serviceDetail
                     .civilServiceStartDate}
             ></CustomTextField>
 
@@ -430,7 +503,7 @@
                 id="firstEffectiveDate"
                 label={'Disahkan Dalam Jawatan Pertama LKIM'}
                 type="date"
-                bind:val={data.personalInfoForm.serviceDetail.details
+                bind:val={$personalForm.serviceDetail
                     .firstEffectiveDate}
             ></CustomTextField>
             <!-- <CustomTextField
@@ -466,7 +539,7 @@
                 id="pastAttachmentDate"
                 label={'Tarikh Kelulusan Percantuman Perkhidmatan Lepas'}
                 type="date"
-                bind:val={data.personalInfoForm.serviceDetail.details
+                bind:val={$personalForm.serviceDetail
                     .pastAttachmentDate}
             ></CustomTextField>
             <!-- <CustomTextField
@@ -489,7 +562,7 @@
                 id="pensionScheme"
                 label={'Skim Pencen'}
                 type="text"
-                bind:val={data.personalInfoForm.serviceDetail.details
+                bind:val={$personalForm.serviceDetail
                     .pensionScheme}
             ></CustomTextField>
             <!-- <CustomTextField
@@ -542,7 +615,7 @@
                 id="retirementDate"
                 label={'Tarikh Bersara'}
                 type="text"
-                bind:val={data.personalInfoForm.serviceDetail.details
+                bind:val={$personalForm.serviceDetail
                     .retirementDate}
             ></CustomTextField>
 
@@ -551,7 +624,7 @@
                 id="salaryEffectiveDate"
                 label={'Tarikh Kuatkuasa Gaji'}
                 type="text"
-                bind:val={data.personalInfoForm.serviceDetail.details
+                bind:val={$personalForm.serviceDetail
                     .salaryEffectiveDate}
             ></CustomTextField>
             <b class="text-sm text-system-primary"
@@ -571,7 +644,7 @@
                         id="maximumSalary"
                         label={'Tangga Gaji'}
                         type="text"
-                        bind:val={data.personalInfoForm.serviceDetail.details
+                        bind:val={$personalForm.serviceDetail
                             .maximumSalary}
                     ></CustomTextField>
                     <CustomTextField
@@ -579,7 +652,7 @@
                         id="baseSalary"
                         label={'Gaji Pokok'}
                         type="text"
-                        bind:val={data.personalInfoForm.serviceDetail.details
+                        bind:val={$personalForm.serviceDetail
                             .baseSalary}
                     ></CustomTextField>
                 </div>
@@ -591,7 +664,7 @@
                         id="ITKA"
                         label={'ITKA'}
                         type="text"
-                        bind:val={data.personalInfoForm.serviceDetail.details
+                        bind:val={$personalForm.serviceDetail
                             .ITKA}
                     ></CustomTextField>
                     <CustomTextField
@@ -599,7 +672,7 @@
                         id="ITP"
                         label={'ITP'}
                         type="text"
-                        bind:val={data.personalInfoForm.serviceDetail.details
+                        bind:val={$personalForm.serviceDetail
                             .ITP}
                     ></CustomTextField>
                     <CustomTextField
@@ -607,7 +680,7 @@
                         id="EPW"
                         label={'EPW'}
                         type="text"
-                        bind:val={data.personalInfoForm.serviceDetail.details
+                        bind:val={$personalForm.serviceDetail
                             .EPW}
                     ></CustomTextField>
                     <CustomTextField
@@ -615,7 +688,7 @@
                         id="COLA"
                         label={'COLA'}
                         type="text"
-                        bind:val={data.personalInfoForm.serviceDetail.details
+                        bind:val={$personalForm.serviceDetail
                             .COLA}
                     ></CustomTextField>
                     <!-- Tooltip body -->
@@ -633,146 +706,185 @@
 
     <StepperContent>
         <StepperContentHeader title="Butiran Surcaj">
-        {#if isReadonlyActionFormStepper}
-        <TextIconButton
-            type="neutral"
-            label="Kemaskini"
-            onClick={() =>
-                (isReadonlyActionFormStepper = false)}
-        />
-    {:else}
-        <TextIconButton
-            type="primary"
-            label="Simpan"
-            onClick={() =>
-                (isReadonlyActionFormStepper = false)}
-            form="personalFormStepper"
-        />
-        <TextIconButton
-            type="neutral"
-            label="Kembali"
-            onClick={() =>
-                (isReadonlyActionFormStepper = true)}
-        />
-    {/if}
-        
+            {#if isReadonlyActionFormStepper}
+                <TextIconButton
+                    type="neutral"
+                    label="Kemaskini"
+                    onClick={() => (isReadonlyActionFormStepper = false)}
+                />
+            {:else}
+                <TextIconButton
+                    type="primary"
+                    label="Simpan"
+                    onClick={() => (isReadonlyActionFormStepper = false)}
+                    form="form"
+                />
+                <TextIconButton
+                    type="neutral"
+                    label="Kembali"
+                    onClick={() => (isReadonlyActionFormStepper = true)}
+                />
+            {/if}
         </StepperContentHeader>
         <StepperContentBody>
-
             <form
-            id="form"
-            method="POST"
-            use:enhance
-            class="flex w-full flex-col gap-2"
-        >
-
-            <div class="flex w-full flex-col gap-2.5">
-                <CustomTextField
-                    type="reportDate"
-                    id=""
-                    disabled={isReadonlyActionFormStepper}
-                    label={'Tarikh Dilaporkan'}
-                    bind:val={$form
-                        .reportDate}
-                ></CustomTextField>
-                <CustomTextField
-                    disabled={isReadonlyActionFormStepper}
-                    id="surchargeAction"
-                    label={'Tindakan Surcaj'}
-                    bind:val={$form
-                        .surchargeAction}
-                ></CustomTextField>
-                <CustomTextField
-                    disabled={isReadonlyActionFormStepper}
-                    id="remark"
-                    label={'Ulasan'}
-                    bind:val={$form
-                        .remark}
-                ></CustomTextField>
-            </div>
+                id="form"
+                method="POST"
+                use:enhance
+                class="flex w-full flex-col gap-2"
+            >
+                <div class="flex w-full flex-col gap-2.5">
+                    <CustomTextField
+                        type="date"
+                        id="reportDate"
+                        disabled={isReadonlyActionFormStepper}
+                        label={'Tarikh Dilaporkan'}
+                        bind:val={$form.reportDate}
+                    ></CustomTextField>
+                    <CustomTextField
+                        disabled={isReadonlyActionFormStepper}
+                        id="surchargeAction"
+                        label={'Tindakan Surcaj'}
+                        bind:val={$form.surchargeAction}
+                    ></CustomTextField>
+                    <CustomTextField
+                        disabled={isReadonlyActionFormStepper}
+                        id="remark"
+                        label={'Ulasan'}
+                        bind:val={$form.remark}
+                    ></CustomTextField>
+                </div>
             </form>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Butiran Mesyuarat"></StepperContentHeader>
+        <StepperContentHeader title="Butiran Mesyuarat">
+            {#if isReadonlyMeetingFormStepper}
+                <TextIconButton
+                    type="neutral"
+                    label="Kemaskini"
+                    onClick={() => (isReadonlyMeetingFormStepper = false)}
+                />
+            {:else}
+                <TextIconButton
+                    type="primary"
+                    label="Simpan"
+                    onClick={() => (isReadonlyMeetingFormStepper = false)}
+                    form="meetingForm"
+                />
+                <TextIconButton
+                    type="neutral"
+                    label="Kembali"
+                    onClick={() => (isReadonlyMeetingFormStepper = true)}
+                />
+            {/if}
+        </StepperContentHeader>
         <StepperContentBody>
-            <CustomSelectField
-                disabled={true}
-                id="meetingType"
-                label="Nama dan Bil Mesyuarat"
-                bind:val={data.personalInfoForm.meetingDetail
-                    .meetingType}
-            ></CustomSelectField>
-            <CustomSelectField
-                disabled={true}
-                id="meetingCount"
-                label="Bilangan Mesyuarat"
-                bind:val={data.personalInfoForm.meetingDetail
-                    .meetingCount}
-            ></CustomSelectField>
-            <CustomTextField
-                type="date"
-                disabled={true}
-                id="meetingDate"
-                label="Tarikh Mesyuarat"
-                bind:val={data.personalInfoForm.meetingDetail
-                    .meetingDate}
-            />
-            <CustomTextField
-                disabled={true}
-                id="amount"
-                type="number"
-                label={'Jumlah Bayaran (RM)'}
-                bind:val={data.personalInfoForm.meetingDetail
-                    .amount}
-            ></CustomTextField>
-            <CustomSelectField
-                disabled={true}
-                id="paymentType"
-                label="Cara Bayaran Balik"
-                options={[
-                    { value: '1', name: 'Potongan Gaji' },
-                    { value: '2', name: 'Bayaran Atas Talian' },
-                ]}
-                bind:val={data.personalInfoForm.meetingDetail
-                    .paymentType}
-               
-            ></CustomSelectField>
-            <CustomSelectField
-                disabled
-                id="duration"
-                label="Tempoh Bayaran Balik (bulan)"
-                options={[
-                    { value: '1', name: '1 Bulan' },
-                    { value: '2', name: '2 Bulan' },
-                    { value: '3', name: '3 Bulan' },
-                    { value: '4', name: '4 Bulan' },
-                    { value: '5', name: '5 Bulan' },
-                    { value: '6', name: '6 Bulan' },
-                ]}
-                bind:val={data.personalInfoForm.meetingDetail
-                    .duration}
-               
-            ></CustomSelectField>
-            <CustomTextField
-                id="effectiveDate"
-                label="Tarikh Berkuatkuasa"
-                bind:val={data.personalInfoForm.meetingDetail
-                    .effectiveDate}
-            />
-            <CustomTextField
-                id="meetingResult"
-                label="Keputusan Mesyuarat"
-                bind:val={data.personalInfoForm.meetingDetail
-                    .meetingResult}
-            />
-            <CustomTextField id="remark" label="Ulasan" bind:val={data.personalInfoForm.meetingDetail
-                    .remark} />
-        </StepperContentBody>
+            <form
+                id="meetingForm"
+                method="POST"
+                use:meetingEnhance
+                class="flex w-full flex-col gap-2"
+            >
+                <CustomTextField
+                    disabled={isReadonlyMeetingFormStepper}
+                    id="meetingType"
+                    label="Jenis Mesyuarat"
+                    bind:val={$meetingForm.meetingType}
+                ></CustomTextField>
+                <CustomTextField
+                    disabled={isReadonlyMeetingFormStepper}
+                    id="meetingName"
+                    label="Nama dan Bil Mesyuarat"
+                    bind:val={$meetingForm.meetingName}
+                ></CustomTextField>
+                <CustomTextField
+                    disabled={isReadonlyMeetingFormStepper}
+                    id="meetingCount"
+                    label="Bilangan Mesyuarat"
+                    bind:val={$meetingForm.meetingCount}
+                ></CustomTextField>
+                <CustomTextField
+                    type="date"
+                    disabled={isReadonlyMeetingFormStepper}
+                    id="meetingDate"
+                    label="Tarikh Mesyuarat"
+                    bind:val={$meetingForm.meetingDate}
+                />
+                <CustomTextField
+                    disabled={isReadonlyMeetingFormStepper}
+                    id="amount"
+                    type="number"
+                    label={'Jumlah Bayaran (RM)'}
+                    bind:val={$meetingForm.amount}
+                ></CustomTextField>
+                <CustomSelectField
+                    disabled={isReadonlyMeetingFormStepper}
+                    id="paymentType"
+                    label="Cara Bayaran Balik"
+                    options={[
+                        { value: '1', name: 'Potongan Gaji' },
+                        { value: '2', name: 'Bayaran Atas Talian' },
+                    ]}
+                    bind:val={$meetingForm.paymentType}
+                ></CustomSelectField>
+                <CustomSelectField
+                    disabled={isReadonlyMeetingFormStepper}
+                    id="duration"
+                    label="Tempoh Bayaran Balik (bulan)"
+                    options={[
+                        { value: '1', name: '1 Bulan' },
+                        { value: '2', name: '2 Bulan' },
+                        { value: '3', name: '3 Bulan' },
+                        { value: '4', name: '4 Bulan' },
+                        { value: '5', name: '5 Bulan' },
+                        { value: '6', name: '6 Bulan' },
+                    ]}
+                    bind:val={$meetingForm.duration}
+                ></CustomSelectField>
+                <CustomTextField
+                    disabled={isReadonlyMeetingFormStepper}
+                    id="effectiveDate"
+                    label="Tarikh Berkuatkuasa"
+                    bind:val={$meetingForm.effectiveDate}
+                />
+                <CustomTextField
+                    disabled={isReadonlyMeetingFormStepper}
+                    id="meetingResult"
+                    label="Keputusan Mesyuarat"
+                    bind:val={$meetingForm.meetingResult}
+                />
+                <CustomTextField
+                    disabled={isReadonlyMeetingFormStepper}
+                    id="remark"
+                    label="Ulasan"
+                    bind:val={$meetingForm.remark}
+                />
+            </form></StepperContentBody
+        >
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Pengesahan Pengarah Integriti"
-        ></StepperContentHeader>
+        <StepperContentHeader title="Pengesahan Pengarah Integriti">
+            {#if isReadonlyConfirmFormStepper}
+                <TextIconButton
+                    type="neutral"
+                    label="Kemaskini"
+                    onClick={() => (isReadonlyConfirmFormStepper = false)}
+                />
+            {:else}
+                <TextIconButton
+                    type="primary"
+                    label="Simpan"
+                    onClick={() => (isReadonlyConfirmFormStepper = false)}
+                    form="confirmationForm"
+                />
+                <TextIconButton
+                    type="neutral"
+                    label="Kembali"
+                    onClick={() => (isReadonlyConfirmFormStepper = true)}
+                />
+            {/if}
+        </StepperContentHeader>
         <StepperContentBody>
             <div class="h-fit w-full space-y-2.5 rounded-[3px] border p-2.5">
                 <div class="mb-5">
@@ -780,52 +892,56 @@
                     >
                 </div>
 
-                <CustomTextField
-                    disabled
-                    type="text"
-                    id="name"
-                    label="Nama"
-                    bind:val={data.personalInfoForm.confirmation.details
-                        .name}
-                ></CustomTextField>
-                <CustomTextField
-                    disabled
-                    id="remark"
-                    label="Tindakan/Ulasan"
-                    bind:val={data.personalInfoForm.confirmation.details
-                        .remark}
-                ></CustomTextField>
-                <div class="flex w-full flex-row text-sm">
-                    <label for="integrity-director-result" class="w-[220px]"
-                        >Keputusan</label
-                    >
-                    <!-- <Badge
+                <form
+                    id="confirmationForm"
+                    method="POST"
+                    use:confirmationEnhance
+                    class="flex w-full flex-col gap-2"
+                >
+                    <CustomTextField
+                        disabled={isReadonlyConfirmFormStepper}
+                        type="text"
+                        id="name"
+                        label="Nama"
+                        bind:val={$confirmationForm.name}
+                    ></CustomTextField>
+                    <CustomTextField
+                        disabled={isReadonlyConfirmFormStepper}
+                        id="remark"
+                        label="Tindakan/Ulasan"
+                        bind:val={$confirmationForm.remark}
+                    ></CustomTextField>
+                    <div class="flex w-full flex-row text-sm">
+                        <label for="integrity-director-result" class="w-[220px]"
+                            >Keputusan</label
+                        >
+                        <!-- <Badge
                                 border
                                 color={integrityDirectorResult == 'free'
                                     ? 'green'
                                     : 'red'}
                                 >{integrityDirectorOptions[0].label}</Badge
                             > -->
-                </div>
+                    </div>
 
-                <CustomSelectField
-                    disabled
-                    id="status"
-                    label="status"
-                    bind:val={data.personalInfoForm.confirmation.details
-                        .status}
-                ></CustomSelectField>
+                    <CustomTextField
+                        disabled={isReadonlyConfirmFormStepper}
+                        id="status"
+                        label="status"
+                        bind:val={$confirmationForm.status}
+                    ></CustomTextField>
 
-                <CustomTextField
-                    disabled
+                    <!-- <CustomTextField
+                disabled={isReadonlyConfirmFormStepper}
                     id="statusDescription"
                     label="Ulasan status"
                     bind:val={data.personalInfoForm.confirmation.details
                         .statusDescription}
-                ></CustomTextField>
-                <div class="text-sm text-system-primary">
-                    <i class=""><li>● Menunggu keputusan...</li></i>
-                </div>
+                ></CustomTextField> -->
+                    <div class="text-sm text-system-primary">
+                        <i class=""><li>● Menunggu keputusan...</li></i>
+                    </div>
+                </form>
             </div>
         </StepperContentBody>
     </StepperContent>

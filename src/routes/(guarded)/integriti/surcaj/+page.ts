@@ -1,10 +1,28 @@
+import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant";
+import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
 import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
 import { IntegrityServices } from "$lib/services/implementation/mypsm/integriti/integrity.service";
 
 
 
+
+
 export const load = async () => {
+
+
+    let currentRoleCode = localStorage.getItem(
+        LocalStorageKeyConstant.currentRoleCode,
+    );
+
+     // urusetia
+     let urusetia = UserRoleConstant.urusSetiaIntegriti.code;
+
+      // kakitangan
+    let kakitangan = UserRoleConstant.kakitangan.code;
+    
+    // pengarah Integriti
+    let pengarah = UserRoleConstant.pengarahIntegriti.code;
 
     const param: CommonListRequestDTO = {
         pageNum: 1,
@@ -33,15 +51,21 @@ export const load = async () => {
     let employeeSurcajViewResponse: CommonResponseDTO;
     let employeeSurcajViewTable = [];
     
+    if (currentRoleCode === pengarah){
+        directorSurcajViewResponse = await IntegrityServices.getSurcajListDetails(param);
+        directorSurcajViewTable = directorSurcajViewResponse.data?.dataList ?? [];
+    }
 
-    directorSurcajViewResponse = await IntegrityServices.getSurcajListDetails(param);
-    directorSurcajViewTable = directorSurcajViewResponse.data?.dataList ?? [];
+    else if (currentRoleCode === urusetia){
 
-    surcajViewResponse = await IntegrityServices.getDirectorSurcajListDetails(param);
-    surcajViewTable = surcajViewResponse.data?.dataList ?? [];
+        surcajViewResponse = await IntegrityServices.getDirectorSurcajListDetails(param);
+        surcajViewTable = surcajViewResponse.data?.dataList ?? [];
+    }
+
+    else if (currentRoleCode === kakitangan) {
 
     employeeSurcajViewResponse = await IntegrityServices.getEmployeeSurcajListDetails(param);
     employeeSurcajViewTable = employeeSurcajViewResponse.data?.dataList ?? [];
-
+    }
     return { param,surcajViewTable,directorSurcajViewTable,employeeSurcajViewTable };
 };

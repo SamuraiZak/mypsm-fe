@@ -68,6 +68,15 @@
 </script>
 {#if currentRoleCode === urusetia}
 <section class="flex w-full flex-col items-start justify-start">
+    <ContentHeader title="Tekan butang disebelah untuk tambah Surcaj">
+        <TextIconButton
+                    type="primary"
+                    label="Tambah Surcaj"
+                    onClick={() => (goto ("/integriti/surcaj/tambah-rekod-surcaj"))}
+                    form="form"
+                /> 
+        
+    </ContentHeader>
     <CustomTabContent title="Senarai Tindakan/Ulasan Tatatertib">
         <FilterCard></FilterCard>
         <div class="flex max-h-full w-full flex-col items-start justify-start">
@@ -76,7 +85,7 @@
                 enableDetail
                 bind:passData={rowData}
                 bind:tableData={surcajtable}
-                detailActions= {()=>goto ("/integriti/surcaj/butiran-"+ rowData.surchargeId)}
+                detailActions= {()=>goto ("/integriti/surcaj/butiran-"+ rowData.surchargeId + "-" + rowData.employeeId)}
             ></CustomTable>
 
         </div>

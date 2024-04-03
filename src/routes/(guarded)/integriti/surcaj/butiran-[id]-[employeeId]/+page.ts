@@ -3,20 +3,25 @@ import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto
 import type { commonIdRequestDTO } from "$lib/dto/core/common/id-request.dto.js";
 import type { DropdownDTO } from "$lib/dto/core/dropdown/dropdown.dto";
 import type { surchargeaIdRequestDTO } from "$lib/dto/mypsm/integrity/surcaj/surcaj-ID-.dto";
-import type { ApplicationDetail, SurcajEmployeeDetailResponseDTO } from "$lib/dto/mypsm/integrity/surcaj/surcaj-employee-detail-response.dto";
+import type { ApplicationDetail, Confirmation, ConfirmationDetails, MeetingDetail, SurcajEmployeeDetailResponseDTO } from "$lib/dto/mypsm/integrity/surcaj/surcaj-employee-detail-response.dto";
 import { getErrorToast } from "$lib/helpers/core/toast.helper";
-import { _applicationDetail, _surcajEmployeeResponseSchema } from "$lib/schemas/mypsm/integrity/surcaj-scheme";
+import { _applicationDetail, _confirmationDetail, _meetingDetail, _surcajEmployeeResponseSchema } from "$lib/schemas/mypsm/integrity/surcaj-scheme";
 import { LookupServices } from "$lib/services/implementation/core/lookup/lookup.service";
 import { IntegrityServices } from "$lib/services/implementation/mypsm/integriti/integrity.service";
 import { superValidate } from "sveltekit-superforms";
 import { error } from '@sveltejs/kit';
 import { zod } from "sveltekit-superforms/adapters";
+import type { employeeIdRequestDTO } from "$lib/dto/mypsm/integrity/surcaj/employee-ID.dto";
 
 
 export async function load({params }) {
 
 let currentID: surchargeaIdRequestDTO = {
     surchargeId: Number(params.id)
+}
+
+let employeeID: employeeIdRequestDTO = {
+    employeeId: Number(params.employeeId)
 }
     
 
@@ -249,21 +254,33 @@ let currentID: surchargeaIdRequestDTO = {
         await IntegrityServices.surcajEmployeeDetails(currentID);
 
      const personalInfoForm: SurcajEmployeeDetailResponseDTO = personalDetailResponse.data?.details as  SurcajEmployeeDetailResponseDTO
-
-    //  =======================================================
-    //  add
-    // ========================================================
-
-
-    const applicationDetail = await superValidate (personalInfoForm.applicationDetail as ApplicationDetail, zod (_applicationDetail),
-    {
-        errors: false
-    })
-
+     //  =======================================================
+     //  add
+     // ========================================================
+     
+     
+     const applicationDetail = await superValidate (personalInfoForm.applicationDetail as ApplicationDetail, zod (_applicationDetail),
+     {
+         errors: false
+        })
+        
+        const meetingDetail = await superValidate (personalInfoForm.meetingDetail as MeetingDetail, zod (_meetingDetail),
+        {
+            errors: false
+        })
+        
+        const confirmationDetail = await superValidate (personalInfoForm.confirmation.details as ConfirmationDetails, zod (_confirmationDetail),
+        {
+            errors: false
+        })
+        
+        
     return {
+        employeeID,
         personalInfoForm,
         applicationDetail,
-        
+        meetingDetail,
+        confirmationDetail,
         selectionOptions: {
             identityCardColorLookup,
             cityLookup,
@@ -296,18 +313,56 @@ let currentID: surchargeaIdRequestDTO = {
 }
 
 // ================================================================
-// ========== add Application Detail ==============================
+// ========== add meeting Detail ==============================
 // ================================================================
 
 export const _applicationDetailSubmit = async (formData: object) => {
     const applicationDetailForm = await superValidate(formData, (zod)(_applicationDetail));
 
-    if (applicationDetailForm.valid) {
+    if (!applicationDetailForm.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
     }
 
     const response: CommonResponseDTO =
         await IntegrityServices.addApplicationDetail(applicationDetailForm.data as ApplicationDetail);
+    return { response };
+};
+
+
+// ================================================================
+// ========== add Meeting Detail ==============================
+// ================================================================
+
+export const _meetingDetailSubmit = async (formData: object) => {
+
+    const meetingDetailForm = await superValidate(formData, (zod)(_meetingDetail));
+    console.log(meetingDetailForm)
+
+    if (!meetingDetailForm.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await IntegrityServices.addMeetingDetail(meetingDetailForm.data as MeetingDetail);
+    return { response };
+};
+
+// ================================================================
+// ========== add Cinfirmation Detail ==============================
+// ================================================================
+
+
+export const _confirmationDetailSubmit = async (formData: object) => {
+    const confirmationDetailForm = await superValidate(formData, (zod)(_confirmationDetail));
+
+    if (!confirmationDetailForm.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await IntegrityServices.addConfirmationDetail(confirmationDetailForm.data as ConfirmationDetails);
     return { response };
 };

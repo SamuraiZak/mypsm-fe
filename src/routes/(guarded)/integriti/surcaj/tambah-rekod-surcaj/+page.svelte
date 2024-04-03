@@ -45,6 +45,7 @@
                 enableDetail
                 bind:passData={rowData}
                 bind:tableData={addSurcajtable}
+                detailActions= {()=>goto ("/integriti/surcaj/tambah-rekod-surcaj/butiran-" + rowData.id)}
             ></CustomTable>
 
         </div>

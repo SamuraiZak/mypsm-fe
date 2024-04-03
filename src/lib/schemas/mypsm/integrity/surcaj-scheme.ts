@@ -43,7 +43,7 @@ export const _relationDetailSchema = z.object({
 });
 
 export const _surcajEmployeeResponseSchema = z.object({
-    
+
     employeeNumber: z.string(),
     identityCardNumber: z.string(),
     fullName: z.string(),
@@ -102,6 +102,14 @@ export const _surcajServiceResponseSchema = z.object({
     EPW: z.number(),
     COLA: z.number(),
 });
+
+export const _surcajEmployeeDetailViewSchema = z.object(
+    {
+        employeeDetail: _surcajEmployeeResponseSchema,
+        serviceDetail: _surcajServiceResponseSchema,
+    }
+);
+
 // urusetia can edit
 export const _applicationDetail = z.object({
 
@@ -113,18 +121,28 @@ export const _applicationDetail = z.object({
 
 })
 
+
+
 export const _meetingDetail = z.object({
-    surchargeId:z.number().readonly(),
-    meetingId : z.number().readonly(),
+    surchargeId: z.number().readonly(),
+    meetingId: z.number().readonly(),
     meetingType: z.string(),
     meetingCount: z.number(),
-    meetingDate: z.string (),
+    meetingDate: z.string(),
     amount: z.number(),
     paymentType: z.string(),
-    duration : z.number(),
+    duration: z.number(),
     effectiveDate: z.string(),
-    meetingResult:z.string(),
+    meetingResult: z.string(),
     remark: z.string(),
+    meetingName: z.string().optional(),
+})
 
 
+export const _confirmationDetail = z.object({
+    surchargeId: z.number().readonly(),
+    name: z.string(),
+    remark: z.string(),
+    status: z.string(),
+    statusDescription: z.string(),
 })
