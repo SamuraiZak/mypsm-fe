@@ -470,4 +470,8 @@ const dictionary: { [key: string]: string } = {
     identityCardNo: 'No. Kad Pengenalan',
     startContract: 'Tarikh Mula Kontrak',
     endContract: 'Tarikh Tamat Kontrak',
+
+    // lookup
+    ssmCode: 'Kod SSM',
+    annualIncrementRate: 'Kenaikan Gaji Tahunan',
 };
