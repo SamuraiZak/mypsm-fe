@@ -14,6 +14,7 @@
         crumbs = tokens.map((t) => {
             tokenPath += '/' + t;
             t = t.charAt(0).toUpperCase() + t.slice(1);
+            t = t.replaceAll('_', ' ')
             return { label: t, href: tokenPath };
         });
     }
