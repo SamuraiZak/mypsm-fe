@@ -46,6 +46,7 @@
         Accordion,
         AccordionItem,
         Alert,
+        Badge,
         Checkbox,
         Modal,
     } from 'flowbite-svelte';
@@ -334,6 +335,7 @@
 
             if (readOnly?.response.status == 'success') {
                 $updateContractDetailForm.isReadonly = true;
+                $secretaryContractResultForm.isReadonly = false;
             }
         },
     });
@@ -459,11 +461,33 @@
     const handleDownload = async (url: string) => {
         await ContractEmployeeServices.downloadContractAttachment(url);
     };
+    let isProcessEnded: number = 0;
+    $: if (
+        ($secretaryContractResultForm.status == false &&
+            $secretaryContractResultForm.remark !== '') ||
+        ($supporterContractResultForm.status == false &&
+            $supporterContractResultForm.remark !== '') ||
+        ($approverContractResultForm.status == false &&
+            $approverContractResultForm.remark !== '')
+    ) {
+        isProcessEnded = 1;
+    } else if (
+        $secretaryContractResultForm.status == true &&
+        $supporterContractResultForm.status == true &&
+        $approverContractResultForm.status == true
+    ) {
+        isProcessEnded = 2;
+    }
 </script>
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader title="Maklumat Kakitangan dan Kontrak">
+        {#if isProcessEnded !== 0}
+            <Badge color={isProcessEnded == 1 ? 'red' : 'dark'}
+                >Proses Telah Tamat</Badge
+            >
+        {/if}
         <TextIconButton
             icon="cancel"
             type="neutral"
@@ -2239,88 +2263,82 @@
             </StepperContentBody>
         </StepperContent>
 
-        <StepperContent>
-            <StepperContentHeader title="Dokumen Sokongan">
-                {#if (data.getContractDocuments.attachmentName == '' || data.getContractDocuments.attachmentName == null) && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
-                    <TextIconButton
-                        label="Hantar"
-                        form="documentUploadForm"
-                        type="primary"
-                        icon="check"
-                    />
-                {/if}
-            </StepperContentHeader>
-            <StepperContentBody>
-                {#if data.getContractDocuments.attachmentName !== undefined}
-                    <div class="flex w-full flex-col gap-2">
-                        <span
-                            class="text-sm text-ios-labelColors-secondaryLabel-light"
-                        >
-                            Fail-fail yang telah dimuat naik:
-                        </span>
+        {#if tempNextOfKinRecord.nextOfKins.length > 0 || data.getContractNextOfKinDetails.nextOfKinList.length > 0}
+            <StepperContent>
+                <StepperContentHeader title="Dokumen Sokongan">
+                    {#if (data.getContractDocuments.attachmentName == '' || data.getContractDocuments.attachmentName == null) && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
+                        <TextIconButton
+                            label="Hantar"
+                            form="documentUploadForm"
+                            type="primary"
+                            icon="check"
+                        />
+                    {/if}
+                </StepperContentHeader>
+                <StepperContentBody>
+                    {#if data.getContractDocuments.attachmentName !== undefined}
+                        <div class="flex w-full flex-col gap-2">
+                            <span
+                                class="text-sm text-ios-labelColors-secondaryLabel-light"
+                            >
+                                Fail-fail yang telah dimuat naik:
+                            </span>
 
-                        <p>
-                            1.
                             <a
                                 href={data.getContractDocuments.attachment}
                                 target="_blank"
                                 download={data.getContractDocuments
                                     .attachmentName}
-                                class="text-md text-ios-labelColors-link-light"
+                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
                                 >{data.getContractDocuments.attachmentName}</a
                             >
-                        </p>
-                        <!-- <DownloadAttachment
-                            triggerDownload={() =>
-                                handleDownload(
-                                    data.getContractDocuments.attachment,
-                                )}
-                            fileName={data.getContractDocuments.attachmentName}
-                        /> -->
-                    </div>
-                {:else if data.getContractDocuments.attachmentName == undefined && data.currentRoleCode !== UserRoleConstant.calonKontrak.code}
-                    <div class="flex w-full flex-col gap-10 px-3 pb-10">
-                        <Alert color="blue">
-                            <p>
-                                <span class="font-medium">Tiada Maklumat!</span>
-                                Menunggu calon kakitangan untuk muat naik dokumen
-                                yang berkaitan.
-                            </p>
-                        </Alert>
-                    </div>
-                {:else if data.getContractDocuments.attachmentName == undefined && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
-                    <form
-                        class="flex w-full flex-col justify-start gap-2.5 pb-10"
-                        method="POST"
-                        id="documentUploadForm"
-                        enctype="multipart/form-data"
-                        use:contractUploadDocumentEnhance
-                    >
-                        <span
-                            class="text-sm text-ios-labelColors-secondaryLabel-light"
-                        >
-                            Sila muat turun dan isi dokumen berkaitan dan muat
-                            naik ke ruangan yang disediakan.
-                        </span>
-                        <DownloadAttachment
-                            triggerDownload={() =>
-                                handleDownload(data.contractDocLink)}
-                            fileName="Surat Setuju Terima Tawaran.pdf"
-                        />
-                        <div
-                            class="flex h-fit w-full flex-col justify-center gap-2"
-                        >
-                            <input
-                                class="rounded-md bg-ios-systemColors-systemFill-light"
-                                accept=".pdf"
-                                type="file"
-                                bind:files
-                            />
                         </div>
-                    </form>
-                {/if}
-            </StepperContentBody>
-        </StepperContent>
+                    {:else if data.getContractDocuments.attachmentName == undefined && data.currentRoleCode !== UserRoleConstant.calonKontrak.code}
+                        <div class="flex w-full flex-col gap-10 px-3 pb-10">
+                            <Alert color="blue">
+                                <p>
+                                    <span class="font-medium"
+                                        >Tiada Maklumat!</span
+                                    >
+                                    Menunggu calon kakitangan untuk muat naik dokumen
+                                    yang berkaitan.
+                                </p>
+                            </Alert>
+                        </div>
+                    {:else if data.getContractDocuments.attachmentName == undefined && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
+                        <form
+                            class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                            method="POST"
+                            id="documentUploadForm"
+                            enctype="multipart/form-data"
+                            use:contractUploadDocumentEnhance
+                        >
+                            <span
+                                class="text-sm text-ios-labelColors-secondaryLabel-light"
+                            >
+                                Sila muat turun dan isi dokumen berkaitan dan
+                                muat naik ke ruangan yang disediakan.
+                            </span>
+                            <DownloadAttachment
+                                triggerDownload={() =>
+                                    handleDownload(data.contractDocLink)}
+                                fileName="Surat Setuju Terima Tawaran.pdf"
+                            />
+                            <div
+                                class="flex h-fit w-full flex-col justify-center gap-2"
+                            >
+                                <input
+                                    class="rounded-md bg-ios-systemColors-systemFill-light"
+                                    accept=".pdf"
+                                    type="file"
+                                    bind:files
+                                />
+                            </div>
+                        </form>
+                    {/if}
+                </StepperContentBody>
+            </StepperContent>
+        {/if}
 
         {#if data.currentRoleCode !== UserRoleConstant.calonKontrak.code && data.getContractDocuments.attachmentName !== ''}
             <StepperContent>

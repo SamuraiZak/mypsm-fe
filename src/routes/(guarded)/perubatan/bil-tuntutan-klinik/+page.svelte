@@ -21,7 +21,7 @@
             totalPage: 1,
         },
         data: data.clinicPanelMedicalClaimList ?? [],
-        hiddenData: ['id'],
+        hiddenData: ['clinicId'],
     };
 </script>
 
@@ -49,7 +49,7 @@
                 bind:passData={rowData}
                 enableDetail
                 detailActions={() =>
-                    goto('./bil-tuntutan-klinik/butiran/' + rowData.id)}
+                    goto('./bil-tuntutan-klinik/butiran/' + rowData.clinicId + '-' + rowData.month)}
             />
         </div>
     </div>

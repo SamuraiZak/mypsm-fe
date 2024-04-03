@@ -39,6 +39,9 @@ const maxTextSchema = z
 })
 .trim()
 
+// ==================================
+// salary movement schema
+// ==================================
 const employeesListSchema = z.object({
     employeeId: numberSchema,
 })
@@ -50,4 +53,18 @@ export const _addNewSalaryMovementSchema = z.object({
     specialRaiseType:    z.string(),
     specialRaise:        numberSchema,
     employees:           employeesListSchema.array(),
+})
+
+export const _directorApprovalSchema = z.object({
+    id: numberSchema,
+    name: shortTextSchema.optional(),
+    remark: shortTextSchema,
+    status: booleanSchema,
+})
+
+// ==================================
+// final payslip schema
+// ==================================
+export const _finalPayslipSchema = z.object({
+    id: z.number(),
 })

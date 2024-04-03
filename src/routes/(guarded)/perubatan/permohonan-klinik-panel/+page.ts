@@ -1,23 +1,39 @@
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant";
+import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
+import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
+import type { ClinicApplicationList } from "$lib/dto/mypsm/perubatan/permohonan-klinik/medical-clinic-application-list.dto";
+import { MedicalServices } from "$lib/services/implementation/mypsm/perubatan/medical.service";
 
 export const load = async () => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
+    let clinicApplicationList: ClinicApplicationList[] = [];
     const param = {
         pageNum: 1,
         pageSize: 5,
         orderBy: null,
         orderType: null,
+        filter: {},
     };
 
-    const dataList = [
-        { id: 1, kodKlinik: 28341, namaKlinik: 'Klinik Wee', negeri: 'Selangor', tarikhDimohon: '2023-10-26', tarikhDilantik: '2023-11-01', tarikhTamat: '2024-06-30', tempoh: 1, status: 'Baru', tindakan: 'Tiada'},
-        { id: 2, kodKlinik: 28342, namaKlinik: 'Klinik Loh', negeri: 'Sarawak', tarikhDimohon: '2023-10-26', tarikhDilantik: '2023-11-01', tarikhTamat: '2024-06-30', tempoh: 2, status: 'Disokong', tindakan: 'Tiada'},
-        { id: 2, kodKlinik: 28342, namaKlinik: 'Klinik Haiwan', negeri: 'Kelantan', tarikhDimohon: '2023-10-26', tarikhDilantik: '2023-11-01', tarikhTamat: '2024-06-30', tempoh: 4, status: 'Disokong', tindakan: 'Tiada'},
-    ];
+    const clinicApplicationListResponse: CommonResponseDTO =
+        await MedicalServices.getClinicApplication(param);
+    clinicApplicationList = 
+        clinicApplicationListResponse.data?.dataList as ClinicApplicationList [];
 
     return {
         currentRoleCode,
         param,
-        dataList,
+        clinicApplicationListResponse,
+        clinicApplicationList,
     }
+}
+//update employee list table
+export async function _updateTable(param: CommonListRequestDTO) {
+    const response: CommonResponseDTO = await MedicalServices.getClinicApplication(param);
+    return {
+        props: {
+            param,
+            response,
+        },
+    };
 }

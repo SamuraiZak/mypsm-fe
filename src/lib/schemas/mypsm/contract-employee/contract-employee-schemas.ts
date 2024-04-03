@@ -26,6 +26,9 @@ const emailSchema = z.string({
 const identificationCardSchema = z.string().refine(x => /^[0-9]+$/.test(x) && x.length == 12, {
     message: "Sila nyatakan No. Kad Pengenalan dalam format yang dikehendaki."
 });
+const postcodeSchema = z.string().refine(x => /^[0-9]+$/.test(x) && x.length == 5, {
+    message: "Sila nyatakan poskod yang betul."
+});
 const phoneSchema = z.string().refine(x => /^[0-9]+$/.test(x) && (x.length == 11 || x.length == 10),
     {
         message: "Sila nyatakan No. Telefon Bimbit yang betul."
@@ -149,10 +152,10 @@ export const _commonContractDependencySchema = z.object({
     identityDocumentColor: shortTextSchema,
     identityDocumentNumber: identificationCardSchema,
     address: shortTextSchema,
-    postcode: shortTextSchema,
+    postcode: postcodeSchema,
     birthDate: stringToMaxDate,
     workAddress: shortTextSchema,
-    workPostcode: shortTextSchema,
+    workPostcode: postcodeSchema,
     phoneNumber: phoneSchema,
     marriageDate: stringToMaxDate.nullable().default(null),
     inSchool: booleanSchema,

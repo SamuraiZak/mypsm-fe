@@ -7,22 +7,39 @@
     import FilterDateField from '$lib/components/table/filter/FilterDateField.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type { ClinicApplicationList } from '$lib/dto/mypsm/perubatan/permohonan-klinik/medical-clinic-application-list.dto';
     import type { PageData } from './$types';
+    import { _updateTable } from './+page';
 
     export let data: PageData;
-    let rowData: any;
+    let rowData = {} as ClinicApplicationList;
 
     let klinikPanelTable: TableDTO = {
         param: data.param,
-        meta: {
-            pageSize: data.dataList.length,
+        meta: data.clinicApplicationListResponse.data?.meta ?? {
+            pageSize: 5,
             pageNum: 1,
-            totalData: data.dataList.length,
+            totalData: 4,
             totalPage: 1,
         },
-        data: data.dataList ?? [],
+        data: data.clinicApplicationList ?? [],
         hiddenData: ['id'],
     };
+
+    async function _search() {
+        _updateTable(klinikPanelTable.param).then((value) => {
+            klinikPanelTable.data = value.props.response.data?.dataList ?? [];
+            klinikPanelTable.meta = value.props.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            klinikPanelTable.param.pageSize = value.props.param.pageSize;
+            klinikPanelTable.param.pageNum = value.props.param.pageNum;
+            klinikPanelTable.hiddenData = ['id'];
+        });
+    }
 </script>
 
 <!-- content header starts here -->
@@ -51,6 +68,7 @@
         <div class="flex max-h-full w-full flex-col items-start justify-start">
             <CustomTable
                 title="Rekod Permohonan Klinik Panel"
+                onUpdate={_search}
                 bind:tableData={klinikPanelTable}
                 bind:passData={rowData}
                 enableDetail

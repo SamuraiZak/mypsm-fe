@@ -44,9 +44,9 @@ export const kgtMonthLookup: DropdownDTO[] = [
 ];
 
 export const mesyuaratNameLookup: DropdownDTO[] = [
-    { value: "1/12", name: 'Mesyuarat 1/12' },
-    { value: "1/102", name: 'Mesyuarat 1/102' },
-    { value: "2/101", name: 'Mesyuarat 2/101' },
+    { value: "Mesyuarat 1/12", name: 'Mesyuarat 1/12' },
+    { value: "Mesyuarat 1/102", name: 'Mesyuarat 1/102' },
+    { value: "Mesyuarat 2/101", name: 'Mesyuarat 2/101' },
 ]
 
 export const kgtSpecialRaiseType: DropdownDTO [] = [

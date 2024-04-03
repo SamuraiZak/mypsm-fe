@@ -10,6 +10,7 @@ export interface LookupDTO {
     url?: string;
     countryCode?: string;
 
+    //for approver and supporter
     employeeId?: number;
     employeeNumber?: string;
     name?: string;
@@ -19,6 +20,10 @@ export interface LookupDTO {
     grade?: string;
     position?: string;
     placement?: string;
+
+    //for employment status
+    occSectorCode?: string;
+    occSectorName?: string;
 }
 
 // Converts JSON strings to/from your types

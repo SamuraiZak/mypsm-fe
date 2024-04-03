@@ -22,16 +22,15 @@ export class MedicalClaimListConvert {
 
 //urus setia - rekod tuntutan klinik panel
 export interface MedicalClinicPanelClaimList {
-    id:                   number;
+    clinicId:             number;
     clinicCode:           string;
     clinicName:           string;
     state:                string | null;
-    month:                Date;
-    panelAppointedDate:   Date;
-    panelContractEndDate: Date;
+    month:                string;
+    panelAppointedDate:   string;
+    panelContractEndDate: string;
     totalClaim:           number;
     currentTotalClaim:    number;
-    status:               string;
 }
 
 export interface MedicalClinicPanelClaimListFilter {
