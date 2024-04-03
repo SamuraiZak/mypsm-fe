@@ -11,7 +11,7 @@ import {
     _proceedingChargeMeetingRequestSchema,
     _proceedingStaffDetailResponseSchema,
     _proceedingSuspensionSchema,
-} from '$lib/schemas/mypsm/integrity/proceeding-charge-scheme';
+} from '$lib/schemas/mypsm/integrity/proceeding-scheme';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { IntegrityProceedingServices } from '$lib/services/implementation/mypsm/integriti/integrity-proceeding.service';
 import { error } from '@sveltejs/kit';
@@ -24,7 +24,7 @@ import { superValidate } from 'sveltekit-superforms/client';
 export async function load({ params, parent }) {
     const { roles } = await parent();
 
-    if (!roles.isDisciplineSecretaryRole) {
+    if (roles.isStaffRole) {
         error(401, { message: 'Akses ditolak' });
     }
 
@@ -87,6 +87,17 @@ export async function load({ params, parent }) {
         },
     ];
 
+    const suspensionTypeLookup: DropdownDTO[] = [
+        {
+            value: 'Tahan Kerja - Penyiasatan',
+            name: 'Tahan Kerja - Penyiasatan',
+        },
+        {
+            value: 'Tahan Kerja - Prosiding Jenayah',
+            name: 'Tahan Kerja - Prosiding Jenayah',
+        },
+    ];
+
     // ===========================================================================
 
     return {
@@ -101,6 +112,7 @@ export async function load({ params, parent }) {
         lookups: {
             identityCardColorLookup,
             generalLookup,
+            suspensionTypeLookup,
         },
     };
 }
@@ -135,15 +147,21 @@ export const _addSuspensionDetailForm = async (formData: object) => {
         zod(_proceedingSuspensionSchema),
     );
 
+    console.log(form);
+
     if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
     }
 
     const response: CommonResponseDTO =
-        await IntegrityProceedingServices.createProceedingSuspension(
-            form.data as ProceedingSuspensionRequestDTO,
-        );
+        form.data.suspensionType === 'penyiasatan'
+            ? await IntegrityProceedingServices.createProceedingSuspension(
+                  form.data as ProceedingSuspensionRequestDTO,
+              )
+            : await IntegrityProceedingServices.createProceedingCriminal(
+                  form.data as ProceedingSuspensionRequestDTO,
+              );
 
     if (response.status === 'success')
         setTimeout(() => {
