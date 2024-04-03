@@ -160,6 +160,10 @@ export class SidebarConstant {
                     path: '/halaman-utama',
                 },
                 {
+                    name: 'Pengurusan Carian',
+                    path: '/pengurusan-carian',
+                },
+                {
                     name: 'Log Audit Sistem',
                     path: '/log-audit-sistem',
                 },
@@ -1844,7 +1848,6 @@ export class SidebarConstant {
                 },
             ],
         },
-
 
         //Urus Setia Peringkat Negeri
         {
