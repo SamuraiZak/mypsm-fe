@@ -1111,5 +1111,19 @@ export class LookupServices {
         return LookupHelper.toDropdownSuppporterAndApprover(lookupItems);
     }
 
+    static setSelectOptionSupporterAndApproverBothAreName = (
+        param: CommonResponseDTO
+    ): DropdownDTO[] => {
+        const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
+        return LookupHelper.toDropdownSuppporterAndApproverValueIsName(lookupItems);
+    }
+
+    static setSelectOptionEmploymentStatus = (
+        param: CommonResponseDTO
+    ): DropdownDTO[] => {
+        const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
+        return LookupHelper.toDropdownEmploymentStatus(lookupItems);
+    }
+
     
 }
