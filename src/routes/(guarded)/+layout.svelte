@@ -166,7 +166,7 @@
 
                 <!-- content body wrapper starts here -->
                 <div
-                    class="flex h-full w-full flex-col items-start justify-start overflow-y-hidden"
+                    class="flex max-h-[calc(100% - 80px)] h-full w-full flex-col items-start justify-start overflow-y-hidden bg-red-500"
                 >
                     <slot />
                 </div>
