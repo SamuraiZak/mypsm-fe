@@ -4,6 +4,7 @@ import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-requ
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { ProceedingChargeListResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
+import type { ProceedingsuspensionListResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-suspension-list-response.dto';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { IntegrityProceedingServices } from '$lib/services/implementation/mypsm/integriti/integrity-proceeding.service';
 
@@ -25,6 +26,8 @@ export const load = async () => {
 
     let proceedingListResponse: CommonResponseDTO = {};
     let proceedingList = [];
+    let proceedingSuspensionListResponse: CommonResponseDTO = {};
+    let proceedingSuspensionList = [];
 
     const param: CommonListRequestDTO = {
         pageNum: 1,
@@ -32,20 +35,32 @@ export const load = async () => {
         orderBy: 'integrityId',
         orderType: 1,
         filter: {
-            proceedingTypeId: null, // 0 or Null: All | 1: Perkhidmatan | 2: PSL
             identityCard: null, //string | null | undefined;
-            temporaryId: null, //string | null | undefined;
+            grade: null,
+            position: null,
+            year: null,
+            name: null,
             status: null, // status code from lookup | null | undefined;
         },
     };
 
-    // proceeding list
+    // proceeding - charge list
     proceedingListResponse =
         await IntegrityProceedingServices.getProceedingChargeRecordList(param);
 
     proceedingList =
         (proceedingListResponse.data
             ?.dataList as ProceedingChargeListResponseDTO) ?? [];
+
+    // proceeding - suspension list
+    proceedingSuspensionListResponse =
+        await IntegrityProceedingServices.getProceedingSuspensionRecordList(
+            param,
+        );
+
+    proceedingSuspensionList =
+        (proceedingSuspensionListResponse.data
+            ?.dataList as ProceedingsuspensionListResponseDTO) ?? [];
 
     // ==========================================================================
     // Get Lookup Functions
@@ -63,6 +78,7 @@ export const load = async () => {
         currentRoleCode,
         list: {
             proceedingList,
+            proceedingSuspensionList,
         },
         responses: {
             proceedingListResponse,
@@ -82,6 +98,18 @@ export const load = async () => {
 export const _updateChargeTable = async (param: CommonListRequestDTO) => {
     const response: CommonResponseDTO =
         await IntegrityProceedingServices.getProceedingChargeRecordList(param);
+
+    return {
+        param,
+        response,
+    };
+};
+
+export const _updateSuspensionTable = async (param: CommonListRequestDTO) => {
+    const response: CommonResponseDTO =
+        await IntegrityProceedingServices.getProceedingSuspensionRecordList(
+            param,
+        );
 
     return {
         param,

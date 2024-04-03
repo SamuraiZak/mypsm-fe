@@ -4,7 +4,7 @@
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
-    import { _updateChargeTable } from './+layout';
+    import { _updateChargeTable, _updateSuspensionTable } from './+layout';
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
@@ -16,12 +16,13 @@
         ProceedingChargeDetailResponseDTO,
         ProceedingChargeListResponseDTO,
     } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
+    import type { ProceedingsuspensionListResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-suspension-list-response.dto';
 
     export let data: LayoutData;
     let rowData: ProceedingChargeDetailResponseDTO;
     let param: CommonListRequestDTO = data.param;
 
-    // Table list - Charge lists
+    // Table list - Charge Table
     let proceedingChargeTable: TableDTO = {
         param: param,
         meta: data.responses.proceedingListResponse.data?.meta ?? {
@@ -31,11 +32,7 @@
             totalPage: 1,
         },
         data:
-            (
-                data.list.proceedingList as ProceedingChargeListResponseDTO
-            ).filter((type) => {
-                return type.disciplinaryType === 'Pertuduhan';
-            }) ?? [],
+            (data.list.proceedingList as ProceedingChargeListResponseDTO) ?? [],
         hiddenData: ['integrityId', 'employeeId'],
     };
 
@@ -55,7 +52,7 @@
         });
     }
 
-    // Suspension Lists
+    // Suspension Table
     let proceedingSuspensionTable: TableDTO = {
         param: param,
         meta: data.responses.proceedingListResponse.data?.meta ?? {
@@ -65,29 +62,29 @@
             totalPage: 1,
         },
         data:
-            (
-                data.list.proceedingList as ProceedingChargeListResponseDTO
-            ).filter((type) => {
-                return type.disciplinaryType === 'Tahan Kerja';
-            }) ?? [],
+            (data.list
+                .proceedingSuspensionList as ProceedingsuspensionListResponseDTO) ??
+            [],
         hiddenData: ['integrityId', 'employeeId'],
     };
 
     async function _updateProceedingSuspensionTable() {
-        _updateChargeTable(proceedingSuspensionTable.param).then((value) => {
-            proceedingSuspensionTable.data =
-                value.response.data?.dataList ?? [];
-            proceedingSuspensionTable.meta = value.response.data?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            proceedingSuspensionTable.param.pageSize =
-                proceedingSuspensionTable.meta.pageSize;
-            proceedingSuspensionTable.param.pageNum =
-                proceedingSuspensionTable.meta.pageNum;
-        });
+        _updateSuspensionTable(proceedingSuspensionTable.param).then(
+            (value) => {
+                proceedingSuspensionTable.data =
+                    value.response.data?.dataList ?? [];
+                proceedingSuspensionTable.meta = value.response.data?.meta ?? {
+                    pageSize: 1,
+                    pageNum: 1,
+                    totalData: 1,
+                    totalPage: 1,
+                };
+                proceedingSuspensionTable.param.pageSize =
+                    proceedingSuspensionTable.meta.pageSize;
+                proceedingSuspensionTable.param.pageNum =
+                    proceedingSuspensionTable.meta.pageNum;
+            },
+        );
     }
 </script>
 
@@ -105,13 +102,13 @@
         <div
             class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
         >
-            {#if data.roles.isDisciplineSecretaryRole}
+            {#if !data.roles.isStaffRole}
                 <ContentHeader
                     title="Tekan butang disebelah untuk menambah rekod prosiding"
                     borderClass="border-none"
                 >
                     <TextIconButton
-                        label="Tambah Prosiding"
+                        label="Tambah Prosiding - Pertuduhan"
                         type="primary"
                         onClick={() => goto('./prosiding/tambah-prosiding')}
                     ></TextIconButton>
@@ -128,18 +125,33 @@
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
-                <CustomTable
-                    title="Senarai Rekod Prosiding"
-                    onUpdate={_updateProceedingChargeTable}
-                    enableDetail
-                    bind:tableData={proceedingChargeTable}
-                    bind:passData={rowData}
-                    detailActions={() => {
-                        const route = `./prosiding/${rowData.integrityId}-${rowData.employeeId}`;
+                {#if data.roles.isDisciplineSecretaryRole}
+                    <CustomTable
+                        title="Senarai Rekod Prosiding - Tahan Kerja/Gantung Kerja"
+                        onUpdate={_updateProceedingChargeTable}
+                        enableDetail
+                        bind:tableData={proceedingChargeTable}
+                        bind:passData={rowData}
+                        detailActions={() => {
+                            const route = `./prosiding/${rowData.integrityId}-${rowData.employeeId}`;
 
-                        goto(route);
-                    }}
-                ></CustomTable>
+                            goto(route);
+                        }}
+                    ></CustomTable>
+                {:else if data.roles.isIntegritySecretaryRole}
+                    <CustomTable
+                        title="Senarai Rekod Prosiding"
+                        onUpdate={_updateProceedingSuspensionTable}
+                        enableDetail
+                        bind:tableData={proceedingSuspensionTable}
+                        bind:passData={rowData}
+                        detailActions={() => {
+                            const route = `./prosiding/${rowData.integrityId}-${rowData.employeeId}`;
+
+                            goto(route);
+                        }}
+                    ></CustomTable>
+                {/if}
             </div>
         </div>
     {:else if data.roles.isStaffRole}
@@ -179,7 +191,7 @@
                 <div
                     class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
                 >
-                    <FilterCard onSearch={_updateProceedingChargeTable}>
+                    <FilterCard onSearch={_updateProceedingSuspensionTable}>
                         <FilterSelectField
                             label="Status"
                             options={data.selectionOptions.statusLookup}
@@ -192,9 +204,9 @@
                     >
                         <CustomTable
                             title="Senarai Rekod Prosiding"
-                            onUpdate={_updateProceedingChargeTable}
+                            onUpdate={_updateProceedingSuspensionTable}
                             enableDetail
-                            bind:tableData={proceedingChargeTable}
+                            bind:tableData={proceedingSuspensionTable}
                             bind:passData={rowData}
                             detailActions={() => {
                                 const route = `./prosiding/${rowData.integrityId}-${rowData.employeeId}`;
