@@ -6,7 +6,7 @@
 
 <button
     on:click={onClick}
-    class="flex h-fit min-w-48 flex-row items-center justify-start gap-1.5 col-span-1 rounded-md border p-1.5 hover:shadow"
+    class="flex h-fit min-w-48 w-full flex-row items-center justify-start gap-1.5 col-span-1 rounded-md border p-1.5 hover:shadow"
 >
     <!-- icon starts here -->
     <div
