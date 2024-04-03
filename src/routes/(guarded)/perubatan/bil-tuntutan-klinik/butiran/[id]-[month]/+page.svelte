@@ -15,6 +15,7 @@
     import { Accordion, AccordionItem, Modal } from 'flowbite-svelte';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
+    import { certifyOptions } from '$lib/constants/core/radio-option-constants';
 
     export let data: PageData;
     let tuntutanModal: boolean = false;
@@ -49,12 +50,6 @@
     <Stepper>
         <StepperContent>
             <StepperContentHeader title="Maklumat Klinik">
-                <TextIconButton
-                    icon="check"
-                    type="primary"
-                    label="Simpan"
-                    form="clinicDetailForm"
-                />
             </StepperContentHeader>
             <StepperContentBody>
                 <form
@@ -68,52 +63,45 @@
                     />
                     <CustomTextField
                         label="Nama Klinik"
-                        id=""
-                        disabled={false}
-                        val=""
-                        errors={[]}
+                        id="name"
+                        disabled
+                        bind:val={data.clinicDetail.name}
                     />
                     <CustomTextField
                         label="Emel Klinik"
-                        id=""
-                        disabled={false}
-                        val=""
-                        errors={[]}
+                        id="email"
+                        disabled
+                        bind:val={data.clinicDetail.email}
                     />
                     <CustomTextField
                         label="Alamat"
-                        id=""
-                        disabled={false}
-                        val=""
-                        errors={[]}
+                        id="address"
+                        disabled
+                        bind:val={data.clinicDetail.address}
                     />
                     <CustomTextField
                         label="Poskod"
-                        id=""
-                        disabled={false}
-                        val=""
-                        errors={[]}
+                        id="postcode"
+                        disabled
+                        bind:val={data.clinicDetail.postcode}
                     />
                     <CustomTextField
                         label="Bandar"
-                        id=""
-                        disabled={false}
-                        val=""
-                        errors={[]}
+                        id="city"
+                        disabled
+                        bind:val={data.clinicDetail.city}
                     />
                     <CustomTextField
                         label="Negeri"
-                        id=""
-                        disabled={false}
-                        val=""
-                        errors={[]}
+                        id="state"
+                        disabled
+                        bind:val={data.clinicDetail.state}
                     />
                     <CustomTextField
                         label="No. Telefon"
-                        id=""
-                        disabled={false}
-                        val=""
-                        errors={[]}
+                        id="contactNumber"
+                        disabled
+                        bind:val={data.clinicDetail.contactNumber}
                     />
                     <ContentHeader
                         title="Maklumat Tuntutan"
@@ -121,24 +109,21 @@
                     />
                     <CustomTextField
                         label="Bulan"
-                        id=""
-                        disabled={false}
-                        val=""
-                        errors={[]}
+                        id="months"
+                        disabled
+                        bind:val={data.calculationDetail.months}
                     />
                     <CustomTextField
                         label="Jumlah Tuntutan (RM)"
-                        id=""
-                        disabled={false}
-                        val=""
-                        errors={[]}
+                        id="totalClaims"
+                        disabled
+                        bind:val={data.calculationDetail.totalClaims}
                     />
                     <CustomTextField
                         label="Bilangan Tuntutan"
-                        id=""
-                        disabled={false}
-                        val=""
-                        errors={[]}
+                        id="numberOfClaims"
+                        disabled
+                        bind:val={data.calculationDetail.numberOfClaims}
                     />
                 </form>
             </StepperContentBody>
@@ -303,7 +288,7 @@
         </StepperContent>
 
         <StepperContent>
-            <StepperContentHeader title="Pengesahan Permohonan Klinik Panel">
+            <StepperContentHeader title="Pengesahan Tuntutan Klinik Panel">
                 <TextIconButton
                     icon="check"
                     type="primary"
@@ -313,7 +298,7 @@
             </StepperContentHeader>
             <StepperContentBody>
                 <ContentHeader
-                    title="Ulasan Penyemakan Daripada Urus Setia"
+                    title="Ulasan Penyemakkan Daripada Urus Setia"
                     borderClass="border-none"
                 />
                 <form
@@ -330,7 +315,7 @@
                     />
                     <CustomRadioBoolean
                         label="Keputusan"
-                        options={data.lookup.verifyOption}
+                        options={certifyOptions}
                         val={true}
                     />
                 </form>
@@ -356,7 +341,7 @@
                         label="Nama Penyokong"
                         id=""
                         disabled={false}
-                        options={data.lookup.verifyOption}
+                        options={data.lookup.supporterApproverLookup}
                         val=""
                         errors={[]}
                     />
@@ -364,7 +349,7 @@
                         label="Nama Pelulus"
                         id=""
                         disabled={false}
-                        options={data.lookup.verifyOption}
+                        options={data.lookup.supporterApproverLookup}
                         val=""
                         errors={[]}
                     />
