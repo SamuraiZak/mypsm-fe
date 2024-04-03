@@ -145,7 +145,7 @@ export class SidebarConstant {
                     path: '/rekod-perkhidmatan',
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -160,15 +160,15 @@ export class SidebarConstant {
                     path: '/halaman-utama',
                 },
                 {
-                    name: 'Pengurusan Carian',
-                    path: '/pengurusan-carian',
+                    name: 'Tetapan Sistem',
+                    path: '/tetapan_sistem',
                 },
                 {
                     name: 'Log Audit Sistem',
                     path: '/log-audit-sistem',
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -187,7 +187,7 @@ export class SidebarConstant {
                     path: '/log-audit-sistem',
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -220,7 +220,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -291,7 +291,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -336,7 +336,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -371,7 +371,7 @@ export class SidebarConstant {
                     path: '/klinik-panel/profil',
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -482,7 +482,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -507,7 +507,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -606,7 +606,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -705,7 +705,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -758,7 +758,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -807,7 +807,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -908,7 +908,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -927,7 +927,7 @@ export class SidebarConstant {
                     path: '/log-audit-sistem',
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -952,7 +952,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -977,7 +977,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -1196,7 +1196,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -1228,7 +1228,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -1269,7 +1269,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -1293,7 +1293,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -1329,7 +1329,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -1353,7 +1353,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -1571,7 +1571,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -1608,7 +1608,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -1640,7 +1640,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -1706,7 +1706,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -1762,7 +1762,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -1794,7 +1794,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
@@ -2091,7 +2091,7 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Tetapan',
+                    name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
             ],
