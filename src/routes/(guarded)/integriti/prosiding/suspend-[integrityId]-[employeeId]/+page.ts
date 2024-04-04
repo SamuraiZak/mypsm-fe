@@ -4,12 +4,13 @@ import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { RadioDTO } from '$lib/dto/core/radio/radio.dto.js';
 import type { ProceedingApproverResultDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-approver-result.dto.js';
 import type { ProceedingAccusationListDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
-import type { ProceedingSentencingMeetingRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-create-sentencing-meeting-request.dto';
 import type { ProceedingEmployeeDetailResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-employee-detail-response.dto';
 import type {
     ProceedingIntegrityIdRequestDTO,
     ProceedingStaffDetailRequestDTO,
 } from '$lib/dto/mypsm/integrity/proceeding/proceeding-staff-detail-request.dto';
+import type { ProceedingSuspensionCriminalViewResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-suspension-criminal.dto';
+import type { ProceedingSuspensionViewResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-suspension.dto';
 import type { ProceedingTypeChargeDetailViewResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-type-charge-detail-view-response.dto';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
@@ -58,6 +59,22 @@ export async function load({ params }) {
 
     const proceedingTypeChargeDetailView: ProceedingTypeChargeDetailViewResponseDTO =
         proceedingTypeChargeDetailViewResponse.data?.details;
+
+    const proceedingTypeSuspensionDetailViewResponse: CommonResponseDTO =
+        await IntegrityProceedingServices.getProceedingTypeSuspensionDetailsView(
+            integrityId,
+        );
+
+    const proceedingTypeSuspensionView: ProceedingSuspensionViewResponseDTO =
+        proceedingTypeSuspensionDetailViewResponse.data?.details;
+
+    const proceedingTypeSuspensionCriminalDetailViewResponse: CommonResponseDTO =
+        await IntegrityProceedingServices.getProceedingTypeSuspensionCrimeDetailsView(
+            integrityId,
+        );
+
+    const proceedingTypeSuspensionCriminalView: ProceedingSuspensionCriminalViewResponseDTO =
+        proceedingTypeSuspensionCriminalDetailViewResponse.data?.details;
     // ============================================================
     // Supervalidated form initialization
     // ============================================================
@@ -153,11 +170,13 @@ export async function load({ params }) {
     );
 
     const proceedingSuspensionMeetingForm = await superValidate(
+        proceedingTypeSuspensionView,
         zod(_proceedingSuspensionSchema),
         { errors: false },
     );
 
     const proceedingSuspensionCriminalDetailForm = await superValidate(
+        proceedingTypeSuspensionCriminalView,
         zod(_proceedingSuspensionCriminalDetailSchema),
         { errors: false },
     );
@@ -309,6 +328,8 @@ export async function load({ params }) {
         },
         view: {
             proceedingTypeChargeDetailView,
+            proceedingTypeSuspensionView,
+            proceedingTypeSuspensionCriminalView,
         },
         lists: {
             accusationList,
@@ -339,35 +360,10 @@ export async function load({ params }) {
     };
 }
 
-export const _addChargeDisciplineSecretaryApproval = async (
-    formData: object,
-) => {
-    const form = await superValidate(formData, zod(_proceedingApproverSchema));
-
-    console.log(form);
-
-    if (!form.valid) {
-        getErrorToast();
-        error(400, { message: 'Validation Not Passed!' });
-    }
-
-    const response: CommonResponseDTO =
-        await IntegrityProceedingServices.createProceedingChargesIntegrityDirectorResult(
-            form.data as ProceedingApproverResultDTO,
-        );
-
-    if (response.status === 'success')
-        setTimeout(() => {
-            goto(`../../prosiding`);
-        }, 1500);
-
-    return { response };
-};
-
-export const _addSentencingMeeting = async (formData: object) => {
+export const _updateSuspensionCriminalDetail = async (formData: object) => {
     const form = await superValidate(
         formData,
-        zod(_proceedingSentencingMeetingSchema),
+        zod(_proceedingSuspensionCriminalDetailSchema),
     );
 
     console.log(form);
@@ -377,17 +373,17 @@ export const _addSentencingMeeting = async (formData: object) => {
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    const response: CommonResponseDTO =
-        await IntegrityProceedingServices.createProceedingSentencing(
-            form.data as ProceedingSentencingMeetingRequestDTO,
-        );
+    // const response: CommonResponseDTO =
+    //     await IntegrityProceedingServices.updateProceedingCriminalDetail(
+    //         form.data as ProceedingSuspensionCriminalRequestDTO,
+    //     );
 
-    if (response.status === 'success')
-        setTimeout(() => {
-            goto(`../../prosiding`);
-        }, 1500);
+    // if (response.status === 'success')
+    //     setTimeout(() => {
+    //         goto(`../../prosiding`);
+    //     }, 1500);
 
-    return { response };
+    // return { response };
 };
 
 export const _addSentencingIntegrityDirectorApproval = async (

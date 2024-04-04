@@ -7,7 +7,7 @@
     import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
-    import { Badge, Checkbox } from 'flowbite-svelte';
+    import { Badge, Button, Checkbox } from 'flowbite-svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
@@ -27,106 +27,47 @@
     import {
         _proceedingAppealSchema,
         _proceedingSentencingMeetingSchema,
+        _proceedingSuspensionCriminalDetailSchema,
         _proceedingSuspensionSchema,
         _sentenceSchema,
     } from '$lib/schemas/mypsm/integrity/proceeding-scheme';
     import {
-        _addChargeDisciplineSecretaryApproval,
         _addSentencingIntegrityDirectorApproval,
-        _addSentencingMeeting,
+        _updateSuspensionCriminalDetail,
     } from './+page';
     import { zod } from 'sveltekit-superforms/adapters';
     import { _addSuspensionDetailForm } from '../tambah-prosiding/[employeeId]/+page';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
     import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
+    import SvgMinusCircle from '$lib/assets/svg/SvgMinusCircle.svelte';
+    import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     export let data: PageData;
 
     let proceedingChargeIsCertified = writable<boolean>(false);
-    let proceedingSentencingIsCertified = writable<boolean>(false);
-    let isReadOnlyProceedingSuspensionMeeting = writable<boolean>(false); //not yet initialised
-    let isReadOnlyProceedingSuspensionConfirmation = writable<boolean>(false); //not yet initialised
+    let proceedingSuspensionIsCertified = writable<boolean>(false);
+    let isReadOnlyProceedingSuspensionMeeting = writable<boolean>(false);
+    let isReadOnlyProceedingSuspensionConfirmation = writable<boolean>(false);
     let updateSuspendCrimeDetail = writable<boolean>(false);
     let updateCrimeOffenceAppealSuspendedInfo = writable<boolean>(false);
     let updateSuspendCrimePenaltyDetails = writable<boolean>(false);
+    let isReadOnlyProceedingSuspensionCriminal = writable<boolean>(false);
+    let isReadOnlyProceedingSuspensionCriminalAppeal = writable<boolean>(false);
 
+    $: {
+        data.view.proceedingTypeSuspensionCriminalView.proceedingAction
+            ? isReadOnlyProceedingSuspensionCriminal.set(true)
+            : isReadOnlyProceedingSuspensionCriminal.set(false);
+
+        data.view.proceedingTypeSuspensionCriminalView
+            ? isReadOnlyProceedingSuspensionCriminalAppeal.set(true)
+            : isReadOnlyProceedingSuspensionCriminalAppeal.set(false);
+    }
     // Superforms
     const { form } = superForm(data.forms.proceedingStaffInfoForm, {
         SPA: true,
         dataType: 'json',
         validators: false,
-    });
-
-    const {
-        form: disciplineSecretaryForm,
-        errors: disciplineSecretaryFormErrors,
-        enhance: disciplineSecretaryFormEnhance,
-    } = superForm(data.forms.proceedingIntegrityDirectorForm, {
-        SPA: true,
-        dataType: 'json',
-        invalidateAll: true,
-        resetForm: false,
-        multipleSubmits: 'allow',
-        validationMethod: 'oninput',
-        validators: false,
-        taintedMessage: false,
-        onSubmit() {
-            _addChargeDisciplineSecretaryApproval($disciplineSecretaryForm);
-        },
-    });
-
-    const {
-        form: sentencingMeetingForm,
-        errors: sentencingMeetingFormErrors,
-        enhance: sentencingMeetingFormEnhance,
-    } = superForm(data.forms.proceedingSentencingMeetingForm, {
-        SPA: true,
-        dataType: 'json',
-        invalidateAll: true,
-        resetForm: false,
-        multipleSubmits: 'allow',
-        validationMethod: 'oninput',
-        validators: zod(_proceedingSentencingMeetingSchema),
-        taintedMessage: false,
-        onSubmit() {
-            _addSentencingMeeting($sentencingMeetingForm);
-        },
-    });
-
-    const {
-        form: sentencingConfirmationForm,
-        errors: sentencingConfirmationFormErrors,
-        enhance: sentencingConfirmationFormEnhance,
-    } = superForm(data.forms.proceedingSentencingConfirmationForm, {
-        SPA: true,
-        dataType: 'json',
-        invalidateAll: true,
-        resetForm: false,
-        multipleSubmits: 'allow',
-        validationMethod: 'oninput',
-        validators: false,
-        taintedMessage: false,
-        onSubmit() {
-            _addSentencingIntegrityDirectorApproval(
-                $sentencingConfirmationForm,
-            );
-        },
-    });
-
-    const {
-        form: appealConfirmationForm,
-        errors: appealConfirmationFormErrors,
-        enhance: appealConfirmationFormEnhance,
-    } = superForm(data.forms.proceedingAppealConfirmationForm, {
-        SPA: true,
-        dataType: 'json',
-        invalidateAll: true,
-        resetForm: false,
-        multipleSubmits: 'allow',
-        validationMethod: 'oninput',
-        validators: false,
-        taintedMessage: false,
-        onSubmit() {},
     });
 
     const { form: suspensionMeetingForm } = superForm(
@@ -149,18 +90,89 @@
         resetForm: false,
         multipleSubmits: 'allow',
         validationMethod: 'oninput',
+        validators: zod(_proceedingSuspensionCriminalDetailSchema),
+        taintedMessage: false,
+        onChange() {
+            $suspensionCriminalDetailForm.proceedingAction ===
+            'Rayuan dikemukakan'
+                ? ($suspensionCriminalDetailForm.eligibleEmolumen = 0)
+                : ($suspensionCriminalDetailForm.eligibleEmolumen = null);
+        },
+        onSubmit() {
+            _updateSuspensionCriminalDetail($suspensionCriminalDetailForm);
+        },
+    });
+
+    const {
+        form: appealConfirmationForm,
+        errors: appealConfirmationFormErrors,
+        enhance: appealConfirmationFormEnhance,
+    } = superForm(data.forms.proceedingAppealConfirmationForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
         validators: false,
         taintedMessage: false,
         onSubmit() {},
     });
 
-    $suspensionCriminalDetailForm.proceedingAction === 'Rayuan dikemukakan'
-        ? ($suspensionMeetingForm.eligibleEmolumen = 0)
-        : ($suspensionMeetingForm.eligibleEmolumen = null);
+    // Function to create or remove sentencings
+    const addSentencing = () => {
+        const newSentencingObject = {
+            emolumenDate: [
+                {
+                    startDate: null,
+                    endDate: null,
+                },
+            ],
+        };
+
+        $suspensionCriminalDetailForm.meetingResult.sentencing = [
+            ...$suspensionCriminalDetailForm.meetingResult.sentencing,
+            newSentencingObject,
+        ];
+    };
+
+    const removeSentencing = (indexToDelete: number) => {
+        $suspensionCriminalDetailForm.meetingResult.sentencing =
+            $suspensionCriminalDetailForm.meetingResult.sentencing.filter(
+                (_, i) => i !== indexToDelete,
+            );
+    };
+
+    const addSentencingEmolumenDate = (firstIndex: number) => {
+        const emolumenDateObject = {
+            startDate: null,
+            endDate: null,
+        };
+
+        $suspensionCriminalDetailForm.meetingResult.sentencing[
+            firstIndex
+        ].emolumenDate = [
+            ...$suspensionCriminalDetailForm.meetingResult.sentencing[
+                firstIndex
+            ].emolumenDate,
+            emolumenDateObject,
+        ];
+    };
+
+    const removeSentencingEmolumenDate = (
+        firstIndex: number,
+        indexToDelete: number,
+    ) => {
+        $suspensionCriminalDetailForm.meetingResult.sentencing[
+            firstIndex
+        ].emolumenDate = $suspensionCriminalDetailForm.meetingResult.sentencing[
+            firstIndex
+        ].emolumenDate.filter((_, i) => i !== indexToDelete);
+    };
 </script>
 
 <ContentHeader title="Maklumat Prosiding Tatatertib">
-    {#if $proceedingSentencingIsCertified}
+    {#if $proceedingSuspensionIsCertified}
         <Badge color="dark">Proses Prosiding Tamat</Badge>
     {:else if !$proceedingChargeIsCertified}
         <Badge color="red">Proses Prosiding DIBERHENTIKAN</Badge>
@@ -656,7 +668,7 @@
             >
                 <TextIconButton
                     type="primary"
-                    form="suspensionMeetingForm"
+                    form="suspensionCriminalUpdateForm"
                     label="Simpan"
                 ></TextIconButton>
             </StepperContentHeader>
@@ -697,125 +709,32 @@
                         id="currentGrade"
                         label="Keputusan Mesyuarat"
                         options={proceedingMeetingOptions}
-                        bind:val={$suspensionMeetingForm.meetingResult}
+                        bind:val={$suspensionMeetingForm.suspendMeetingResult}
                     ></CustomRadioField>
-
-                    <div
-                        class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
-                    >
-                        <ContentHeader
-                            title="Maklumat Keputusan Mesyuarat Prosiding - Tahan Kerja"
-                            borderClass="border-none"
-                            titlePadding={false}
-                        >
-                            {#if !$updateSuspendCrimeDetail}
-                                <TextIconButton
-                                    type="primary"
-                                    label="Kemaskini"
-                                    onClick={() => {
-                                        $updateSuspendCrimeDetail = true;
-                                    }}><SvgEdit /></TextIconButton
-                                >
-                            {:else if $updateSuspendCrimeDetail}
-                                <TextIconButton
-                                    type="neutral"
-                                    label="Batal"
-                                    onClick={() => {
-                                        $updateSuspendCrimeDetail = false;
-                                    }}><SvgXMark /></TextIconButton
-                                >
-                                <TextIconButton
-                                    type="primary"
-                                    label="Simpan"
-                                    onClick={() => {}}
-                                    ><SvgCheck /></TextIconButton
-                                >
-                            {/if}
-                        </ContentHeader>
-                        <hr />
-                        <CustomTextField
-                            disabled={true}
-                            id="suspensionType"
-                            label="Jenis Prosiding Tahan Kerja"
-                            placeholder="-"
-                            bind:val={$suspensionMeetingForm.suspensionType}
-                        ></CustomTextField>
-                        <ContentHeader
-                            title="Butiran Tahan Kerja - {$suspensionMeetingForm.suspensionType ===
-                            'Tahan Kerja - Penyiasatan'
-                                ? 'Tujuan Penyiasatan'
-                                : 'Prosiding Jenayah'}"
-                            borderClass="border-none"
-                            fontWeight="bold"
-                            fontSize="small"
-                            color="system-primary"
-                            titlePadding={false}
-                        ></ContentHeader>
-                        <CustomTextField
-                            disabled={true}
-                            id="startDate"
-                            type="date"
-                            label="Tarikh Mula"
-                            placeholder="-"
-                            bind:val={$suspensionMeetingForm.startDate}
-                        ></CustomTextField>
-                        {#if $suspensionMeetingForm.suspensionType === 'Tahan Kerja - Penyiasatan'}
-                            <CustomTextField
-                                disabled={true}
-                                id="endDate"
-                                type="date"
-                                label="Tarikh Akhir - 2 Bulan Dari Tarikh Mula"
-                                placeholder="-"
-                                bind:val={$suspensionMeetingForm.endDate}
-                            ></CustomTextField>
-                        {/if}
-                        <CustomTextField
-                            disabled={true}
-                            id="eligibleEmolumen"
-                            label="Emolumen Yang Layak Diterima"
-                            placeholder="-"
-                            bind:val={$suspensionMeetingForm.eligibleEmolumen}
-                        ></CustomTextField>
-
-                        {#if $updateSuspendCrimeDetail || $suspensionCriminalDetailForm.proceedingAction !== ''}
-                            <CustomRadioField
-                                disabled={!$updateSuspendCrimeDetail}
-                                errors={$suspensionCriminalDetailFormErrors.proceedingAction}
-                                id="proceedingAction"
-                                label="Keputusan Mesyuarat"
-                                options={data.lookups.proceedingActionOptions}
-                                bind:val={$suspensionCriminalDetailForm.proceedingAction}
-                            ></CustomRadioField>
-                        {/if}
-                    </div>
-                    {#if $suspensionCriminalDetailForm.proceedingAction === 'Rayuan dikemukakan'}
+                    {#if $suspensionMeetingForm.suspendMeetingResult}
                         <div
                             class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
                         >
-                            <form
-                                id="suspensionCriminalDetailForm"
-                                method="POST"
-                                use:suspensionCriminalDetailFormEnhance
+                            <ContentHeader
+                                title="Maklumat Keputusan Mesyuarat Prosiding - Tahan Kerja"
+                                borderClass="border-none"
+                                titlePadding={false}
                             >
-                                <!-- Gantung Kerja Section -->
-                                <ContentHeader
-                                    title="Butiran Gantung Kerja"
-                                    borderClass="border-none"
-                                    titlePadding={false}
-                                    >{#if !$updateCrimeOffenceAppealSuspendedInfo}
+                                {#if !$suspensionCriminalDetailForm.proceedingAction && $suspensionMeetingForm.suspensionType === 'Tahan Kerja - Prosiding Jenayah'}
+                                    {#if !$updateSuspendCrimeDetail}
                                         <TextIconButton
                                             type="primary"
                                             label="Kemaskini"
                                             onClick={() => {
-                                                $updateCrimeOffenceAppealSuspendedInfo = true;
+                                                $updateSuspendCrimeDetail = true;
                                             }}><SvgEdit /></TextIconButton
                                         >
-                                    {:else if $updateCrimeOffenceAppealSuspendedInfo}
+                                    {:else if $updateSuspendCrimeDetail}
                                         <TextIconButton
                                             type="neutral"
                                             label="Batal"
                                             onClick={() => {
-                                                $updateCrimeOffenceAppealSuspendedInfo = false;
+                                                $updateSuspendCrimeDetail = false;
                                             }}><SvgXMark /></TextIconButton
                                         >
                                         <TextIconButton
@@ -825,46 +744,589 @@
                                             ><SvgCheck /></TextIconButton
                                         >
                                     {/if}
-                                </ContentHeader>
-
-                                <CustomTextField
-                                    disabled={!$updateCrimeOffenceAppealSuspendedInfo}
-                                    errors={$suspensionCriminalDetailFormErrors.startDate}
-                                    id="startDate"
-                                    type="date"
-                                    label="Tarikh Mula"
-                                    placeholder="-"
-                                    bind:val={$suspensionMeetingForm.startDate}
-                                ></CustomTextField>
+                                {/if}
+                            </ContentHeader>
+                            <hr />
+                            <CustomTextField
+                                disabled={true}
+                                id="suspensionType"
+                                label="Jenis Prosiding Tahan Kerja"
+                                placeholder="-"
+                                bind:val={$suspensionMeetingForm.suspensionType}
+                            ></CustomTextField>
+                            <ContentHeader
+                                title="Butiran Tahan Kerja - {$suspensionMeetingForm.suspensionType ===
+                                'Tahan Kerja - Penyiasatan'
+                                    ? 'Tujuan Penyiasatan'
+                                    : 'Prosiding Jenayah'}"
+                                borderClass="border-none"
+                                fontWeight="bold"
+                                fontSize="small"
+                                color="system-primary"
+                                titlePadding={false}
+                            ></ContentHeader>
+                            <CustomTextField
+                                disabled={true}
+                                id="startDate"
+                                type="date"
+                                label="Tarikh Mula"
+                                placeholder="-"
+                                bind:val={$suspensionMeetingForm.startDate}
+                            ></CustomTextField>
+                            {#if $suspensionMeetingForm.suspensionType === 'Tahan Kerja - Penyiasatan'}
                                 <CustomTextField
                                     disabled={true}
-                                    id="eligibleEmolumen"
-                                    label="Emolumen Yang Layak Diterima"
+                                    id="endDate"
+                                    type="date"
+                                    label="Tarikh Akhir - 2 Bulan Dari Tarikh Mula"
                                     placeholder="-"
-                                    bind:val={$suspensionMeetingForm.eligibleEmolumen}
+                                    bind:val={$suspensionMeetingForm.endDate}
                                 ></CustomTextField>
+                            {/if}
+                            <CustomTextField
+                                disabled={true}
+                                id="eligibleEmolumen"
+                                label="Emolumen Yang Layak Diterima"
+                                placeholder="-"
+                                bind:val={$suspensionMeetingForm.eligibleEmolumen}
+                            ></CustomTextField>
+                            {#if ($updateSuspendCrimeDetail || $suspensionCriminalDetailForm.proceedingAction) && $suspensionMeetingForm.suspensionType === 'Tahan Kerja - Prosiding Jenayah'}
+                                <CustomRadioField
+                                    disabled={!$updateSuspendCrimeDetail}
+                                    errors={$suspensionCriminalDetailFormErrors.proceedingAction}
+                                    id="proceedingAction"
+                                    label="Keputusan Mesyuarat"
+                                    options={data.lookups
+                                        .proceedingActionOptions}
+                                    bind:val={$suspensionCriminalDetailForm.proceedingAction}
+                                ></CustomRadioField>
+                            {/if}
+                        </div>
+                        {#if $suspensionMeetingForm.suspensionType === 'Tahan Kerja - Prosiding Jenayah'}
+                            {#if $suspensionCriminalDetailForm.proceedingAction === 'Rayuan dikemukakan'}
+                                <div
+                                    class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
+                                >
+                                    <form
+                                        id="suspensionCriminalUpdateForm"
+                                        method="POST"
+                                        use:suspensionCriminalDetailFormEnhance
+                                    >
+                                        <!-- Gantung Kerja Section -->
+                                        <ContentHeader
+                                            title="Butiran Gantung Kerja"
+                                            borderClass="border-none"
+                                            titlePadding={false}
+                                        >
+                                            {#if $isReadOnlyProceedingSuspensionCriminal}
+                                                {#if !$updateCrimeOffenceAppealSuspendedInfo}
+                                                    <TextIconButton
+                                                        type="primary"
+                                                        label="Kemaskini"
+                                                        onClick={() => {
+                                                            $updateCrimeOffenceAppealSuspendedInfo = true;
+                                                        }}
+                                                        ><SvgEdit
+                                                        /></TextIconButton
+                                                    >
+                                                {:else if $updateCrimeOffenceAppealSuspendedInfo}
+                                                    <TextIconButton
+                                                        type="neutral"
+                                                        label="Batal"
+                                                        onClick={() => {
+                                                            $updateCrimeOffenceAppealSuspendedInfo = false;
+                                                        }}
+                                                        ><SvgXMark
+                                                        /></TextIconButton
+                                                    >
+                                                    <TextIconButton
+                                                        type="primary"
+                                                        label="Simpan"
+                                                        onClick={() => {}}
+                                                        ><SvgCheck
+                                                        /></TextIconButton
+                                                    >
+                                                {/if}
+                                            {/if}
+                                        </ContentHeader>
 
-                                <div class="flex w-full flex-row items-center">
-                                    <label
-                                        for="appeal"
-                                        class="mr-2.5 flex w-fit flex-row text-sm font-medium italic text-system-primary"
-                                    >
-                                        Batal Gantung Kerja</label
-                                    >
-                                    <Checkbox
-                                        disabled={!$updateCrimeOffenceAppealSuspendedInfo}
-                                        value="suspended-appeal-follow-through"
-                                        bind:checked={$suspensionMeetingForm.meetingResult}
-                                    />
+                                        <CustomTextField
+                                            disabled={!$updateCrimeOffenceAppealSuspendedInfo}
+                                            errors={$suspensionCriminalDetailFormErrors.startDate}
+                                            id="startDate"
+                                            type="date"
+                                            label="Tarikh Mula"
+                                            placeholder="-"
+                                            bind:val={$suspensionCriminalDetailForm.startDate}
+                                        ></CustomTextField>
+                                        <CustomTextField
+                                            disabled={true}
+                                            id="eligibleEmolumen"
+                                            label="Emolumen Yang Layak Diterima"
+                                            placeholder="-"
+                                            bind:val={$suspensionCriminalDetailForm.eligibleEmolumen}
+                                        ></CustomTextField>
+
+                                        <div
+                                            class="flex w-full flex-row items-center"
+                                        >
+                                            <label
+                                                for="appeal"
+                                                class="mr-2.5 flex w-fit flex-row text-sm font-medium italic text-system-primary"
+                                            >
+                                                Batal Gantung Kerja</label
+                                            >
+                                            <Checkbox
+                                                disabled={!$updateCrimeOffenceAppealSuspendedInfo}
+                                                value="suspended-appeal-follow-through"
+                                                checked={false}
+                                            />
+                                        </div>
+                                    </form>
                                 </div>
-                            </form>
-                        </div>
-                    {:else if $suspensionCriminalDetailForm.proceedingAction === 'Prosiding Penentu Hukuman'}
-                        <div
-                            class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
-                        >
-                            Hukuman..
-                        </div>
+                            {:else if $suspensionCriminalDetailForm.proceedingAction === 'Prosiding Penentu Hukuman'}
+                                <div
+                                    class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
+                                >
+                                    <form
+                                        id="suspensionCriminalUpdateForm"
+                                        method="POST"
+                                        use:suspensionCriminalDetailFormEnhance
+                                        class="flex w-full flex-col items-center gap-2"
+                                    >
+                                        <input
+                                            hidden
+                                            type="text"
+                                            bind:value={$suspensionCriminalDetailForm.integrityId}
+                                        />
+                                        <CustomTextField
+                                            disabled={$updateSuspendCrimePenaltyDetails}
+                                            errors={$suspensionCriminalDetailFormErrors.meetingDate}
+                                            id="meetingDate"
+                                            label="Tarikh Mesyuarat"
+                                            type="date"
+                                            placeholder="-"
+                                            bind:val={$suspensionCriminalDetailForm.meetingDate}
+                                        ></CustomTextField>
+                                        <CustomTextField
+                                            disabled={$updateSuspendCrimePenaltyDetails}
+                                            errors={$suspensionCriminalDetailFormErrors.meetingCount}
+                                            id="meetingCount"
+                                            label="Bil Mesyuarat"
+                                            placeholder="-"
+                                            type="number"
+                                            bind:val={$suspensionCriminalDetailForm.meetingCount}
+                                        ></CustomTextField>
+                                        <CustomTextField
+                                            disabled={$updateSuspendCrimePenaltyDetails}
+                                            errors={$suspensionCriminalDetailFormErrors.meetingName}
+                                            id="meetingName"
+                                            label="Nama Mesyuarat"
+                                            placeholder="-"
+                                            bind:val={$suspensionCriminalDetailForm.meetingName}
+                                        ></CustomTextField>
+                                        <CustomTextField
+                                            disabled={$updateSuspendCrimePenaltyDetails}
+                                            errors={$suspensionCriminalDetailFormErrors.meetingCode}
+                                            id="meetingCode"
+                                            label="Kod Mesyuarat"
+                                            placeholder="-"
+                                            bind:val={$suspensionCriminalDetailForm.meetingCode}
+                                        ></CustomTextField>
+                                        <div
+                                            class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
+                                        >
+                                            <ContentHeader
+                                                title="Pertuduhan"
+                                                color="system-primary"
+                                                fontWeight="bold"
+                                                borderClass="border-none"
+                                            />
+
+                                            <hr />
+                                            <div
+                                                class="flex w-full flex-row items-center gap-x-2.5 border-b text-base"
+                                            >
+                                                <CustomRadioField
+                                                    disabled={$updateSuspendCrimePenaltyDetails}
+                                                    id="currentGrade"
+                                                    label="Keputusan Mesyuarat"
+                                                    options={proceedingMeetingOptions}
+                                                    bind:val={$suspensionCriminalDetailForm
+                                                        .meetingResult.result}
+                                                ></CustomRadioField>
+                                            </div>
+                                            {#if $suspensionCriminalDetailForm.meetingResult.result}
+                                                <ContentHeader
+                                                    title="Penentuan Hukuman"
+                                                    borderClass="border-none"
+                                                >
+                                                    {#if data.roles.isIntegritySecretaryRole}
+                                                        <div class="mr-2">
+                                                            <TextIconButton
+                                                                type="primary"
+                                                                onClick={() => {
+                                                                    addSentencing();
+                                                                }}
+                                                                label="Tambah Hukuman"
+                                                                ><SvgPlus
+                                                                /></TextIconButton
+                                                            >
+                                                        </div>
+                                                    {/if}
+                                                </ContentHeader>
+                                                <hr />
+                                                <!-- List of sentencings, can be multiple -->
+                                                {#each $suspensionCriminalDetailForm.meetingResult.sentencing as _, i}
+                                                    <div
+                                                        class="w-full border-l-4 border-r-4 px-2.5"
+                                                    >
+                                                        <ContentHeader
+                                                            title="Hukuman #{i +
+                                                                1}"
+                                                            fontSize="small"
+                                                            fontWeight="bold"
+                                                            borderClass="border-none"
+                                                            color="system-primary"
+                                                        >
+                                                            {#if data.roles.isIntegritySecretaryRole}
+                                                                <div
+                                                                    class="w-12"
+                                                                >
+                                                                    <Button
+                                                                        outline={false}
+                                                                        on:click={() => {
+                                                                            removeSentencing(
+                                                                                i,
+                                                                            );
+                                                                        }}
+                                                                        ><span
+                                                                            class="text-red-600"
+                                                                            ><SvgMinusCircle
+                                                                            /></span
+                                                                        ></Button
+                                                                    >
+                                                                </div>
+                                                            {/if}
+                                                        </ContentHeader>
+                                                        <CustomSelectField
+                                                            disabled={$updateSuspendCrimePenaltyDetails}
+                                                            id="title"
+                                                            label="Jenis Hukuman"
+                                                            options={data
+                                                                .lookups
+                                                                .penaltyCodeLookup}
+                                                            placeholder="-"
+                                                            bind:val={$suspensionCriminalDetailForm
+                                                                .meetingResult
+                                                                .sentencing[i]
+                                                                .penaltyCode}
+                                                        ></CustomSelectField>
+
+                                                        {#if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyCode}
+                                                            {#if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyCode === '01'}
+                                                                <CustomTextField
+                                                                    disabled={$updateSuspendCrimePenaltyDetails}
+                                                                    id="title"
+                                                                    label="Tarikh Berkuatkuasa"
+                                                                    placeholder="-"
+                                                                    type="date"
+                                                                    bind:val={$suspensionCriminalDetailForm
+                                                                        .meetingResult
+                                                                        .sentencing[
+                                                                        i
+                                                                    ]
+                                                                        .effectiveDate}
+
+                                                                ></CustomTextField>
+                                                            {:else if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyCode === '02'}
+                                                                <CustomTextField
+                                                                    disabled={$updateSuspendCrimePenaltyDetails}
+                                                                    id="title"
+                                                                    label="Tarikh Berkuatkuasa"
+                                                                    placeholder="-"
+                                                                    type="date"
+                                                                    bind:val={$suspensionCriminalDetailForm
+                                                                        .meetingResult
+                                                                        .sentencing[
+                                                                        i
+                                                                    ]
+                                                                        .effectiveDate}
+
+                                                                ></CustomTextField>
+                                                                <CustomTextField
+                                                                    disabled={$updateSuspendCrimePenaltyDetails}
+                                                                    id="title"
+                                                                    label="Hari Emolumen"
+                                                                    placeholder="-"
+                                                                    type="number"
+                                                                    bind:val={$suspensionCriminalDetailForm
+                                                                        .meetingResult
+                                                                        .sentencing[
+                                                                        i
+                                                                    ]
+                                                                        .emolumenRight}
+
+                                                                ></CustomTextField>
+                                                            {:else if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyCode === '03'}
+                                                                <CustomTextField
+                                                                    disabled={$updateSuspendCrimePenaltyDetails}
+                                                                    id="title"
+                                                                    label="Tarikh Berkuatkuasa"
+                                                                    placeholder="-"
+                                                                    type="date"
+                                                                    bind:val={$suspensionCriminalDetailForm
+                                                                        .meetingResult
+                                                                        .sentencing[
+                                                                        i
+                                                                    ]
+                                                                        .effectiveDate}
+
+                                                                ></CustomTextField>
+                                                                <CustomTextField
+                                                                    disabled={$updateSuspendCrimePenaltyDetails}
+                                                                    id="title"
+                                                                    label="Hari Emolumen"
+                                                                    placeholder="-"
+                                                                    type="number"
+                                                                    bind:val={$suspensionCriminalDetailForm
+                                                                        .meetingResult
+                                                                        .sentencing[
+                                                                        i
+                                                                    ]
+                                                                        .emolumenRight}
+
+                                                                ></CustomTextField>
+                                                                <div
+                                                                    class="w-full space-y-2 border-l-4 border-r-4 px-2.5"
+                                                                >
+                                                                    <ContentHeader
+                                                                        title="Tarikh Dilucutkan Hak Emolumen"
+                                                                    >
+                                                                        {#if !$updateSuspendCrimePenaltyDetails}
+                                                                            <div
+                                                                                class="mr-2"
+                                                                            >
+                                                                                <TextIconButton
+                                                                                    type="primary"
+                                                                                    onClick={() => {
+                                                                                        addSentencingEmolumenDate(
+                                                                                            i,
+                                                                                        );
+                                                                                    }}
+                                                                                    label=""
+                                                                                    ><SvgPlus
+                                                                                    /></TextIconButton
+                                                                                >
+                                                                            </div>
+                                                                        {/if}
+                                                                    </ContentHeader>
+                                                                    {#if $suspensionCriminalDetailForm.meetingResult.sentencing[i].emolumenDate}
+                                                                        {#each $suspensionCriminalDetailForm.meetingResult.sentencing[i].emolumenDate as _, j}
+                                                                            <div
+                                                                                class="flex w-full flex-row items-center gap-x-2.5 text-base"
+                                                                            >
+                                                                                <span
+                                                                                    class="w-[220px] text-sm italic"
+                                                                                    >Tarikh
+                                                                                    #{j +
+                                                                                        1}.</span
+                                                                                >
+                                                                                <CustomTextField
+                                                                                    id="startDate"
+                                                                                    disabled={$updateSuspendCrimePenaltyDetails}
+                                                                                    type="date"
+                                                                                    label={'Tarikh Mula'}
+                                                                                    bind:val={$suspensionCriminalDetailForm
+                                                                                        .meetingResult
+                                                                                        .sentencing[
+                                                                                        i
+                                                                                    ]
+                                                                                        .emolumenDate[
+                                                                                        j
+                                                                                    ]
+                                                                                        .startDate}
+
+                                                                                ></CustomTextField>
+                                                                                <CustomTextField
+                                                                                    id="endDate"
+                                                                                    disabled={$updateSuspendCrimePenaltyDetails}
+                                                                                    type="date"
+                                                                                    label={'Hingga'}
+                                                                                    bind:val={$suspensionCriminalDetailForm
+                                                                                        .meetingResult
+                                                                                        .sentencing[
+                                                                                        i
+                                                                                    ]
+                                                                                        .emolumenDate[
+                                                                                        j
+                                                                                    ]
+                                                                                        .endDate}
+
+                                                                                ></CustomTextField>
+                                                                                {#if !$updateSuspendCrimePenaltyDetails}
+                                                                                    <div
+                                                                                        class="w-12"
+                                                                                    >
+                                                                                        <Button
+                                                                                            outline={false}
+                                                                                            on:click={() => {
+                                                                                                removeSentencingEmolumenDate(
+                                                                                                    i,
+                                                                                                    j,
+                                                                                                );
+                                                                                            }}
+                                                                                            ><span
+                                                                                                class="text-red-600"
+                                                                                                ><SvgMinusCircle
+                                                                                                /></span
+                                                                                            ></Button
+                                                                                        >
+                                                                                    </div>
+                                                                                {/if}
+                                                                            </div>
+                                                                        {/each}
+                                                                    {/if}
+                                                                </div>
+                                                            {:else if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyCode === '04'}
+                                                                <CustomTextField
+                                                                    disabled={$updateSuspendCrimePenaltyDetails}
+                                                                    id="title"
+                                                                    label="Tarikh Berkuatkuasa"
+                                                                    placeholder="-"
+                                                                    type="date"
+                                                                    bind:val={$suspensionCriminalDetailForm
+                                                                        .meetingResult
+                                                                        .sentencing[
+                                                                        i
+                                                                    ]
+                                                                        .effectiveDate}
+
+                                                                ></CustomTextField>
+                                                                <CustomSelectField
+                                                                    disabled={$updateSuspendCrimePenaltyDetails}
+                                                                    id="title"
+                                                                    label="Tempoh Bulan Tangguh Pergerakan Gaji"
+                                                                    options={data
+                                                                        .lookups
+                                                                        .salaryMovementDelayMonthCountLookup}
+                                                                    bind:val={$suspensionCriminalDetailForm
+                                                                        .meetingResult
+                                                                        .sentencing[
+                                                                        i
+                                                                    ].duration}
+
+                                                                ></CustomSelectField>
+                                                            {:else if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyCode === '05'}
+                                                                <CustomTextField
+                                                                    disabled={$updateSuspendCrimePenaltyDetails}
+                                                                    id="title"
+                                                                    label="Tarikh Berkuatkuasa"
+                                                                    placeholder="-"
+                                                                    type="date"
+                                                                    bind:val={$suspensionCriminalDetailForm
+                                                                        .meetingResult
+                                                                        .sentencing[
+                                                                        i
+                                                                    ]
+                                                                        .effectiveDate}
+
+                                                                ></CustomTextField>
+                                                                <CustomSelectField
+                                                                    disabled={$updateSuspendCrimePenaltyDetails}
+                                                                    id="title"
+                                                                    label="Bilangan Pergerakan Gaji"
+                                                                    options={data
+                                                                        .lookups
+                                                                        .salaryMovementCountLookup}
+                                                                    bind:val={$suspensionCriminalDetailForm
+                                                                        .meetingResult
+                                                                        .sentencing[
+                                                                        i
+                                                                    ]
+                                                                        .salaryMovementCount}
+
+                                                                ></CustomSelectField>
+                                                                <CustomSelectField
+                                                                    disabled={$updateSuspendCrimePenaltyDetails}
+                                                                    id="title"
+                                                                    label="Tempoh Hukuman (Bulan)"
+                                                                    options={data
+                                                                        .lookups
+                                                                        .sentencingMonthLookup}
+                                                                    bind:val={$suspensionCriminalDetailForm
+                                                                        .meetingResult
+                                                                        .sentencing[
+                                                                        i
+                                                                    ]
+                                                                        .sentencingMonth}
+
+                                                                ></CustomSelectField>
+                                                            {:else if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyCode === '06'}
+                                                                <CustomTextField
+                                                                    disabled={$updateSuspendCrimePenaltyDetails}
+                                                                    id="title"
+                                                                    label="Tarikh Berkuatkuasa"
+                                                                    placeholder="-"
+                                                                    type="date"
+                                                                    bind:val={$suspensionCriminalDetailForm
+                                                                        .meetingResult
+                                                                        .sentencing[
+                                                                        i
+                                                                    ]
+                                                                        .effectiveDate}
+
+                                                                ></CustomTextField>
+                                                                <!-- <CustomSelectField
+                                                    disabled={true}
+                                                    id="title"
+                                                    label="Gred Semasa"
+                                                    bind:val={$suspensionCriminalDetailForm
+                                                        .meetingResult
+                                                        .sentencing[i]
+                                                        .emolumenRight}
+                                                ></CustomSelectField> -->
+                                                                <CustomSelectField
+                                                                    disabled={$updateSuspendCrimePenaltyDetails}
+                                                                    id="title"
+                                                                    options={data
+                                                                        .lookups
+                                                                        .gradeLookup}
+                                                                    label="Gred Baru"
+                                                                    bind:val={$suspensionCriminalDetailForm
+                                                                        .meetingResult
+                                                                        .sentencing[
+                                                                        i
+                                                                    ]
+                                                                        .newGradeCode}
+
+                                                                ></CustomSelectField>
+                                                            {:else if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyCode === '07'}
+                                                                <CustomTextField
+                                                                    disabled={$updateSuspendCrimePenaltyDetails}
+                                                                    id="title"
+                                                                    label="Tarikh Berkuatkuasa"
+                                                                    placeholder="-"
+                                                                    type="date"
+                                                                    bind:val={$suspensionCriminalDetailForm
+                                                                        .meetingResult
+                                                                        .sentencing[
+                                                                        i
+                                                                    ]
+                                                                        .effectiveDate}
+
+                                                                ></CustomTextField>
+                                                            {/if}
+                                                        {/if}
+                                                    </div>
+                                                    <hr />
+                                                {/each}
+                                            {/if}
+                                        </div>
+                                    </form>
+                                </div>
+                            {/if}
+                        {/if}
                     {/if}
                 </div>
             </StepperContentBody>
