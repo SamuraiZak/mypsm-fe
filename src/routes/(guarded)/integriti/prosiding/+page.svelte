@@ -125,7 +125,7 @@
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
-                {#if data.roles.isDisciplineSecretaryRole}
+                {#if data.roles.isDisciplineSecretaryRole || data.roles.isIntegrityDirectorRole}
                     <CustomTable
                         title="Senarai Rekod Prosiding - Pertuduhan/Hukuman"
                         onUpdate={_updateProceedingChargeTable}
@@ -138,7 +138,7 @@
                             goto(route);
                         }}
                     ></CustomTable>
-                {:else if data.roles.isIntegritySecretaryRole}
+                {:else if data.roles.isIntegritySecretaryRole || data.roles.isIntegrityDirectorRole}
                     <CustomTable
                         title="Senarai Rekod Prosiding - Tahan Kerja/Gantung Kerja"
                         onUpdate={_updateProceedingSuspensionTable}

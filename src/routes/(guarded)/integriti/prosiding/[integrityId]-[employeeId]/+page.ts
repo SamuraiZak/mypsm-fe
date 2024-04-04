@@ -109,15 +109,11 @@ export async function load({ params }) {
         accusationList.forEach((charge, index) => {
             proceedingSentencingMeetingForm.data.meetingResult[index] = {
                 accusationListId: charge.accusationListId,
-                result: proceedingSentencingMeetingForm.data.meetingResult[
-                    index
-                ].result
+                result: proceedingTypeChargeDetailView.sentencingDetails
                     ? proceedingSentencingMeetingForm.data.meetingResult[index]
                           .result
                     : false,
-                sentencing: proceedingSentencingMeetingForm.data.meetingResult[
-                    index
-                ].sentencing
+                sentencing: proceedingTypeChargeDetailView.sentencingDetails
                     ? proceedingSentencingMeetingForm.data.meetingResult[index]
                           .sentencing
                     : [
@@ -303,6 +299,7 @@ export async function load({ params }) {
     // ===========================================================================
 
     return {
+        params,
         responses: {
             proceedingStaffDetailResponse,
             proceedingTypeChargeDetailViewResponse,
@@ -358,7 +355,7 @@ export const _addChargeDisciplineSecretaryApproval = async (
 
     if (response.status === 'success')
         setTimeout(() => {
-            goto(`../../prosiding`);
+            goto(`../prosiding`);
         }, 1500);
 
     return { response };
