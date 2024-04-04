@@ -45,7 +45,7 @@ export const load = async () => {
     };
 
     // proceeding - charge list
-    if (isDisciplineSecretaryRole) {
+    if (!isIntegritySecretaryRole) {
         proceedingListResponse =
             await IntegrityProceedingServices.getProceedingChargeRecordList(
                 param,
@@ -57,7 +57,7 @@ export const load = async () => {
             ?.dataList as ProceedingChargeListResponseDTO) ?? [];
 
     // proceeding - suspension list
-    if (isIntegritySecretaryRole) {
+    if (!isDisciplineSecretaryRole) {
         proceedingSuspensionListResponse =
             await IntegrityProceedingServices.getProceedingSuspensionRecordList(
                 param,
