@@ -10,7 +10,7 @@
         class="flex h-20 max-h-20 min-h-20 w-full flex-col items-start justify-center bg-ios-basic-white px-10"
     >
         <div class="flex w-full flex-row items-center justify-start">
-            <p class="text-xl font-semibold">Tetapan Sistem</p>
+            <p class="text-xl font-semibold">Pengurusan Sistem</p>
         </div>
     </div>
 
@@ -21,15 +21,15 @@
             class="grid h-fit max-h-full w-full grid-cols-1 gap-2.5 overflow-y-auto md:grid-cols-2 lg:grid-cols-4"
         >
             <ImpactCard
-                title="Carian"
+                title="Menu Lungsur Turun"
                 handleClick={() => {
-                    goto('/tetapan_sistem/carian');
+                    goto('/pengurusan_sistem/menu_lungsur_turun');
                 }}
             ></ImpactCard>
             <ImpactCard
                 title="Peranan Pengguna"
                 handleClick={() => {
-                    goto('/tetapan_sistem/carian');
+                    goto('/pengurusan_sistem/carian');
                 }}
             ></ImpactCard>
         </div>
