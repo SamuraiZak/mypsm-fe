@@ -21,6 +21,28 @@ import type { Input } from 'ky';
 import http from '../../service-provider.service';
 
 export class LookupManagementServices {
+    static async getCategoryList(param: CommonListRequestDTO) {
+        try {
+            let url: Input = 'lookup/editable';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     static async getTypeList(param: CommonListRequestDTO) {
         try {
             let list: LookupTypeDTO[] = LookupItemConstant.list;
