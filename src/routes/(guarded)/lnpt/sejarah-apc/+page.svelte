@@ -4,7 +4,10 @@
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
+    import ImpactTable from '$lib/components/table/ImpactTable.svelte';
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
+    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
+    import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import type { PageData } from './$types';
@@ -23,7 +26,9 @@
             totalPage: 1,
         },
         data: data.props.response.data?.dataList ?? [],
-        hiddenData: ['employeeId'],
+        selectedData: [],
+        printData: data.props.printResponse.data?.dataList ?? [],
+        hiddenData: ['employeeId', 'awardId', 'employeeNumber'],
     };
 
     async function _search() {
@@ -37,6 +42,18 @@
             };
             table.param.pageSize = table.meta.pageSize;
             table.param.pageNum = table.meta.pageNum;
+
+            let printParam: CommonListRequestDTO = {
+                pageNum: 1,
+                pageSize: table.meta.totalData,
+                orderBy: table.param.orderBy,
+                orderType: table.param.orderType,
+                filter: table.param.filter,
+            };
+
+            _updateTable(printParam).then((result) => {
+                table.printData = result.props.response.data?.dataList;
+            });
         });
     }
 </script>
@@ -61,7 +78,7 @@
     <div
         class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
     >
-        <div
+        <!-- <div
             class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
         >
             <FilterCard></FilterCard>
@@ -72,6 +89,32 @@
                     onUpdate={_search}
                 ></CustomTable>
             </div>
+        </div> -->
+
+        <div class="h h-fit min-h-[300px] w-full">
+            <ImpactTable
+                title="Senarai Sejarah APC"
+                bind:tableData={table}
+                onUpdate={() => {
+                    _search();
+                }}
+            >
+                <FilterWrapper
+                    slot="filter"
+                    handleSearch={() => {
+                        _search();
+                    }}
+                >
+                    <FilterTextField
+                        label="Nama Pekerja"
+                        bind:inputValue={table.param.filter.name}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="No. Kad Pengenalan"
+                        bind:inputValue={table.param.filter.identityCard}
+                    ></FilterTextField>
+                </FilterWrapper>
+            </ImpactTable>
         </div>
     </div>
 </section>

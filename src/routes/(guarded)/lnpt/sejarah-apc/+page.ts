@@ -43,11 +43,25 @@ export async function load() {
         // convert to apcdto
         const apcHistories: ApcDTO[] = response.data?.dataList as ApcDTO[];
 
+        // request body - print
+        const printParam: CommonListRequestDTO = {
+            pageNum: 1,
+            pageSize: response.data?.meta?.totalData,
+            orderBy: null,
+            orderType: null,
+            filter: filter,
+        };
+
+        // fetch apc history - print
+        const printResponse: CommonResponseDTO =
+            await LNPTServices.getApcHistory(printParam);
+
         return {
             props: {
                 param,
                 response,
                 apcHistories,
+                printResponse,
             },
         };
     } else {
