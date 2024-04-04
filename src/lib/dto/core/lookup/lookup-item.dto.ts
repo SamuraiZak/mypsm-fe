@@ -20,6 +20,41 @@ export interface LookupItemDTO {
     departmentCode?: string | null;
     // units
     sectionCode?: string | null;
+
+}
+
+export interface LookupDetailsDTO{
+    // common
+    id?: number;
+    code?: string;
+    description: string;
+
+    // district
+    divisionCode?: string;
+
+    // meeting
+    module?: string;
+    subModule?: string;
+
+    // relationship
+    isFamily?: boolean;
+
+    // country
+    countryId?: string;
+
+    // employment status
+    occSectorCode?: string;
+    occSectorName?: string;
+
+    // grade
+    ssmCode?: string;
+    minimumSalary?: number;
+    maximumSalary?: number;
+    annualIncrementRate?: number;
+
+    // section
+    departmentCode?: string;
+    
 }
 
 export interface LookupTypeDTO {
@@ -29,4 +64,9 @@ export interface LookupTypeDTO {
     filterUrl: string;
     add: string;
     edit: string;
+}
+
+export interface LookupCategoryDTO {
+    name: string;
+    url: string;
 }
