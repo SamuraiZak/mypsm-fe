@@ -24,10 +24,7 @@
         _proceedingChargeMeetingRequestSchema,
         _proceedingSuspensionSchema,
     } from '$lib/schemas/mypsm/integrity/proceeding-scheme';
-    import {
-        _addStateUnitSecretaryApprovalForm,
-        _addSuspensionDetailForm,
-    } from './+page';
+    import { _addChargeDetailForm, _addSuspensionDetailForm } from './+page';
     import { zod } from 'sveltekit-superforms/adapters';
     import CustomRadioField from '$lib/components/inputs/radio-field/CustomRadioField.svelte';
     import { proceedingMeetingOptions } from '$lib/constants/core/radio-option-constants';
@@ -58,7 +55,7 @@
             async onSubmit() {
                 $chargesMeetingForm.employeeId = Number(data.params.employeeId);
 
-                _addStateUnitSecretaryApprovalForm($chargesMeetingForm);
+                _addChargeDetailForm($chargesMeetingForm);
             },
         });
 
@@ -89,7 +86,13 @@
         },
         async onSubmit() {
             $suspensionMeetingForm.employeeId = Number(data.params.employeeId);
-            $suspensionMeetingForm.meetingResult = true;
+            $suspensionMeetingForm.meetingCode = '20';
+            //meeting code for suspend
+            // 17 - charge
+            // 18 - penalty
+            // 19 - appeal
+            // 20 - suspend
+            // 21 - criminal
 
             _addSuspensionDetailForm($suspensionMeetingForm);
         },
@@ -751,25 +754,16 @@
                         placeholder="-"
                         bind:val={$suspensionMeetingForm.meetingName}
                     ></CustomTextField>
-                    <CustomTextField
-                        disabled={false}
-                        errors={$suspensionMeetingFormErrors.meetingCode}
-                        id="meetingCode"
-                        label="Kod Mesyuarat"
-                        placeholder="-"
-                        bind:val={$suspensionMeetingForm.meetingCode}
-                    ></CustomTextField>
-                    <!-- Hidden for the time being!!!! -->
                     <CustomRadioField
                         disabled={false}
-                        errors={$suspensionMeetingFormErrors.meetingResult}
+                        errors={$suspensionMeetingFormErrors.suspendMeetingResult}
                         id="currentGrade"
                         label="Keputusan Mesyuarat"
                         options={proceedingMeetingOptions}
-                        bind:val={$suspensionMeetingForm.meetingResult}
+                        bind:val={$suspensionMeetingForm.suspendMeetingResult}
                     ></CustomRadioField>
 
-                    {#if $suspensionMeetingForm.meetingResult}
+                    {#if $suspensionMeetingForm.suspendMeetingResult}
                         <div
                             class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
                         >
@@ -778,6 +772,7 @@
                                 borderClass="border-none"
                                 titlePadding={false}
                             ></ContentHeader>
+
                             <hr />
                             <CustomSelectField
                                 disabled={false}
@@ -788,6 +783,7 @@
                                 placeholder="-"
                                 bind:val={$suspensionMeetingForm.suspensionType}
                             ></CustomSelectField>
+
                             <ContentHeader
                                 title="Butiran Tahan Kerja - {$suspensionMeetingForm.suspensionType ===
                                 'Tahan Kerja - Penyiasatan'
@@ -799,6 +795,7 @@
                                 color="system-primary"
                                 titlePadding={false}
                             ></ContentHeader>
+
                             <CustomTextField
                                 disabled={false}
                                 errors={$suspensionMeetingFormErrors.startDate}
