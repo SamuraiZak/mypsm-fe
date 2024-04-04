@@ -28,8 +28,8 @@ export const _proceedingEmployeeListSchema = z.object({
     name: z.string(),
     identityCardNumber: z.string(),
     gradeCode: z.string(),
-    positionCode: z.string(),
-    placementCode: z.string(),
+    position: z.string(),
+    placement: z.string(),
 });
 
 export const _proceedingChargeSchema = z.object({
@@ -178,11 +178,13 @@ export const _sentencingListSchema = z
     .superRefine(({ result, sentencing }, ctx) => {
         if (result) {
             sentencing.forEach((arr) => {
-                ctx.addIssue({
-                    code: 'custom',
-                    message: 'Tarikh kuatkuasa perlu diisi.',
-                    path: ['effectiveDate'],
-                });
+                if (arr.effectiveDate === undefined) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        message: 'Tarikh kuatkuasa perlu diisi.',
+                        path: ['effectiveDate'],
+                    });
+                }
                 if (arr.penaltyCode === '02') {
                     if (arr.emolumenRight === undefined) {
                         ctx.addIssue({
@@ -253,6 +255,7 @@ export const _sentencingListSchema = z
 
 export const _proceedingSentencingMeetingSchema = z.object({
     integrityId: z.number().readonly(),
+    employeeId: z.number().readonly(),
     meetingDate: shortTextSchema,
     meetingCount: numberSchema,
     meetingName: shortTextSchema,
@@ -289,15 +292,21 @@ export const _proceedingSuspensionSchema = z
         meetingName: shortTextSchema,
         meetingCount: numberSchema,
         meetingCode: codeSchema,
-        meetingResult: booleanSchema,
-        suspensionType: codeSchema, // two types
+        suspendMeetingResult: booleanSchema,
+        suspensionType: codeSchema.nullable(), // two types
         startDate: dateStringSchema.nullish(),
         endDate: dateStringSchema.nullish(),
         eligibleEmolumen: numberSchema.nullish(),
     })
     .superRefine(
         (
-            { meetingResult, meetingDate, suspensionType, endDate, startDate },
+            {
+                suspendMeetingResult,
+                meetingDate,
+                suspensionType,
+                endDate,
+                startDate,
+            },
             ctx,
         ) => {
             if (meetingDate === null) {
@@ -307,12 +316,12 @@ export const _proceedingSuspensionSchema = z
                     path: ['meetingDate'],
                 });
             }
-            if (meetingResult) {
-                if (suspensionType === '') {
+            if (suspendMeetingResult) {
+                if (suspensionType === null) {
                     ctx.addIssue({
                         code: 'custom',
-                        message: 'Medan ini perlu diisi.',
-                        path: ['endDate'],
+                        message: 'Sila pilih satu pilihan.',
+                        path: ['suspensionType'],
                     });
                 }
                 if (startDate === null || startDate === undefined) {
@@ -356,11 +365,11 @@ export const _proceedingSuspensionCriminalDetailSchema = z
         proceedingAction: codeSchema,
         eligibleEmolumen: numberSchema.nullish(),
         startDate: dateStringSchema.nullish(),
-        meetingDate: dateStringSchema.nullable(),
-        meetingName: shortTextSchema.nullable(),
-        meetingCount: numberSchema.nullable(),
-        meetingCode: codeSchema.nullable(),
-        meetingResult: z.array(_sentencingListSchema).nullish(),
+        meetingDate: dateStringSchema.nullish(),
+        meetingName: shortTextSchema.nullish(),
+        meetingCount: numberSchema.nullish(),
+        meetingCode: codeSchema.nullish(),
+        meetingResult: _sentencingListSchema,
     })
     .superRefine(
         (
