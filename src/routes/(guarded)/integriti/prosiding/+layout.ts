@@ -2,10 +2,10 @@ import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.c
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
-import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
+// import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { ProceedingChargeListResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
 import type { ProceedingsuspensionListResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-suspension-list-response.dto';
-import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
+// import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { IntegrityProceedingServices } from '$lib/services/implementation/mypsm/integriti/integrity-proceeding.service';
 
 export const load = async () => {
@@ -34,14 +34,7 @@ export const load = async () => {
         pageSize: 5,
         orderBy: 'integrityId',
         orderType: 1,
-        filter: {
-            identityCard: null, //string | null | undefined;
-            grade: null,
-            position: null,
-            year: null,
-            name: null,
-            status: null, // status code from lookup | null | undefined;
-        },
+        filter: {},
     };
 
     // proceeding - charge list
@@ -71,11 +64,11 @@ export const load = async () => {
     // ==========================================================================
     // Get Lookup Functions
     // ==========================================================================
-    const statusLookupResponse: CommonResponseDTO =
-        await LookupServices.getStatusEnums();
+    // const statusLookupResponse: CommonResponseDTO =
+    //     await LookupServices.getStatusEnums();
 
-    const statusLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsInString(statusLookupResponse);
+    // const statusLookup: DropdownDTO[] =
+    //     LookupServices.setSelectOptionsInString(statusLookupResponse);
 
     // ===========================================================================
 
@@ -90,7 +83,7 @@ export const load = async () => {
             proceedingListResponse,
         },
         selectionOptions: {
-            statusLookup,
+            // statusLookup,
         },
         roles: {
             isStaffRole,

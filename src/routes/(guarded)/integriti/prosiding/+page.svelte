@@ -116,11 +116,11 @@
             {/if}
             <!-- Table filter placeholder -->
             <FilterCard onSearch={_updateProceedingChargeTable}>
-                <FilterSelectField
+                <!-- <FilterSelectField
                     label="Status"
                     options={data.selectionOptions.statusLookup}
                     bind:inputValue={proceedingChargeTable.param.filter.status}
-                ></FilterSelectField>
+                ></FilterSelectField> -->
             </FilterCard>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
@@ -162,12 +162,12 @@
                 >
                     <!-- Table filter placeholder -->
                     <FilterCard onSearch={_updateProceedingChargeTable}>
-                        <FilterSelectField
+                        <!-- <FilterSelectField
                             label="Status"
                             options={data.selectionOptions.statusLookup}
                             bind:inputValue={proceedingChargeTable.param.filter
                                 .status}
-                        ></FilterSelectField>
+                        ></FilterSelectField> -->
                     </FilterCard>
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start"
@@ -192,12 +192,12 @@
                     class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
                 >
                     <FilterCard onSearch={_updateProceedingSuspensionTable}>
-                        <FilterSelectField
+                        <!-- <FilterSelectField
                             label="Status"
                             options={data.selectionOptions.statusLookup}
                             bind:inputValue={proceedingChargeTable.param.filter
                                 .status}
-                        ></FilterSelectField>
+                        ></FilterSelectField> -->
                     </FilterCard>
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start"
