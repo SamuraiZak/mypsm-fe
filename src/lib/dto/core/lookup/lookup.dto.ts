@@ -24,6 +24,13 @@ export interface LookupDTO {
     //for employment status
     occSectorCode?: string;
     occSectorName?: string;
+
+}
+
+export interface LookupClinic {
+     //for clinic panel
+     clinicId?: number;
+     clinicName?: string;
 }
 
 // Converts JSON strings to/from your types
