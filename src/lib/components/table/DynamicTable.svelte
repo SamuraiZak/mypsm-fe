@@ -70,7 +70,7 @@
 
         return filteredData;
     }
-    console.table(tableItems);
+    // console.table(tableItems);
     afterUpdate(() => {
         if (columnKeys.length > 0)
             selectedTableData = filterColumns(tableItems, columnKeys);
