@@ -2,7 +2,9 @@ export interface ClinicPanelProfile {
     clinicCode:           string;
     clinicName:           string;
     address:              string;
-    district:             string;
+    districtId:           number;
+    cityId:               number;
+    postcode:             string;  
     contactNumber:        string;
     bankName:             string;
     bankAccount:          string;
