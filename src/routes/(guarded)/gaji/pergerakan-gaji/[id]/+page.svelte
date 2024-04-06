@@ -10,7 +10,7 @@
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import type { PageData } from './$types';
     import DynamicTable from '$lib/components/table/DynamicTable.svelte';
-    import { certifyOptions, confirmOptions } from '$lib/constants/core/radio-option-constants';
+    import { certifyOptions } from '$lib/constants/core/radio-option-constants';
     import { _directorApprovalSchema } from '$lib/schemas/mypsm/gaji/salary-schema';
     import { superForm } from 'sveltekit-superforms/client';
     import { zod } from 'sveltekit-superforms/adapters';
@@ -18,17 +18,18 @@
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import { Toaster } from 'svelte-french-toast';
     import Alert from 'flowbite-svelte/Alert.svelte';
+    import { Badge } from 'flowbite-svelte';
 
     export let data: PageData;
 
     let isReadOnly: boolean = false;
     let isWaitingApproval: boolean = true;
-
+    let isProcessEnded: number = 0;
     if (data.directorApprovalForm.data.remark !== null) {
         isReadOnly = true;
         isWaitingApproval = false;
     }
-
+    let endedMessage: string = '';
     const { form, errors, enhance } = superForm(data.directorApprovalForm, {
         SPA: true,
         taintedMessage: false,
@@ -43,15 +44,38 @@
             const readOnly = await _submit($form);
             if (readOnly?.response.status == 'success') {
                 isReadOnly = true;
+                _processEnd();
             }
         },
     });
-    console.log(data.directorApprovalForm.data)
+    if ($form.remark !== null) {
+        _processEnd();
+    }
+
+    async function _processEnd() {
+        switch ($form.status) {
+            case true: {
+                isProcessEnded = 1;
+                endedMessage = 'Proses Tamat: SAH';
+                break;
+            }
+            case false: {
+                isProcessEnded = 2;
+                endedMessage = 'Proses Tamat: TIDAK SAH';
+                break;
+            }
+        }
+    }
 </script>
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader title="Maklumat Pergerakan Gaji">
+        {#if isProcessEnded !== 0}
+            <Badge color={isProcessEnded == 2 ? 'red' : 'green'}
+                >{endedMessage}</Badge
+            >
+        {/if}
         <TextIconButton
             label="Tutup"
             type="neutral"
@@ -66,11 +90,11 @@
 >
     <Stepper>
         <StepperContent>
-            <StepperContentHeader title="Keputusan Mesyuarat"
+            <StepperContentHeader title="Maklumat Mesyuarat"
             ></StepperContentHeader>
             <StepperContentBody>
                 <ContentHeader
-                    title="Pergerakan Gaji Baru"
+                    title="Butiran Pergerakan Gaji"
                     borderClass="border-none"
                 />
                 <CustomTextField
@@ -95,10 +119,6 @@
                 <div
                     class="flex w-full flex-row items-center justify-start gap-10"
                 >
-                    <!-- <ContentHeader
-                        title="Keputusan Mesyuarat"
-                        borderClass="border-none"
-                    /> -->
                     <CustomTextField
                         label="Bantuan Khas Kewangan (RM)"
                         disabled
@@ -118,16 +138,18 @@
         </StepperContent>
 
         <StepperContent>
-            <StepperContentHeader title="Semakan Jadual Pergerakan Gaji">
-            </StepperContentHeader>
+            <StepperContentHeader title="Semakan Jadual Pergerakan Gaji"
+            ></StepperContentHeader>
             <StepperContentBody>
-                <DynamicTable tableItems={data.salaryMovementSchedule} />
+                <div class="flex h-fit w-full overflow-y-auto px-2 pt-2">
+                    <DynamicTable tableItems={data.salaryMovementSchedule} />
+                </div>
             </StepperContentBody>
         </StepperContent>
 
         <StepperContent>
             <StepperContentHeader title="Keputusan Pengarah Khidmat Pengurusan">
-                {#if data.currentRoleCode == UserRoleConstant.pengarahKhidmatPengurusan.code && $form.remark == ''}
+                {#if data.currentRoleCode == UserRoleConstant.pengarahKhidmatPengurusan.code && data.directorApprovalForm.data.remark == null}
                     <TextIconButton
                         label="Simpan"
                         icon="check"
@@ -137,55 +159,53 @@
             </StepperContentHeader>
             <StepperContentBody>
                 {#if isWaitingApproval && data.currentRoleCode !== UserRoleConstant.pengarahKhidmatPengurusan.code}
-                <div class="flex w-full flex-col gap-10 px-3 pb-10">
-                    <Alert color="blue">
-                        <p>
-                            <span class="font-medium"
-                                >Tiada Maklumat!</span
-                            >
-                            Menunggu keputusan daripada Pengarah Khidmat Pengurusan.
-                        </p>
-                    </Alert>
-                </div>
-            {:else}
-                <form
-                    class="flex w-full flex-col justify-start gap-2.5 px-2"
-                    id="directorApprovalForm"
-                    use:enhance
-                    method="POST"
-                >
-                    <ContentHeader
-                        title="Pengarah Khidmat Pengurusan"
-                        borderClass="border-none"
-                    />
-
-                    {#if data.directorApprovalForm.data.remark !== null}
-                        <CustomTextField
-                            label="Nama"
-                            disabled
-                            id="name"
-                            bind:val={$form.name}
+                    <div class="flex w-full flex-col gap-10 px-3 pb-10">
+                        <Alert color="blue">
+                            <p>
+                                <span class="font-medium">Tiada Maklumat!</span>
+                                Menunggu keputusan daripada Pengarah Khidmat Pengurusan.
+                            </p>
+                        </Alert>
+                    </div>
+                {:else}
+                    <form
+                        class="flex w-full flex-col justify-start gap-2.5 px-2"
+                        id="directorApprovalForm"
+                        use:enhance
+                        method="POST"
+                    >
+                        <ContentHeader
+                            title="Pengarah Khidmat Pengurusan"
+                            borderClass="border-none"
                         />
-                    {/if}
-                    <CustomTextField
-                        label="Ulasan/Tindakan"
-                        disabled={isReadOnly}
-                        id="remark"
-                        bind:val={$form.remark}
-                        errors={$errors.remark}
-                    />
-                    <CustomSelectField
-                        label="Keputusan"
-                        disabled={isReadOnly}
-                        options={certifyOptions}
-                        id="status"
-                        bind:val={$form.status}
-                        errors={$errors.status}
-                    />
-                </form>
+
+                        {#if data.directorApprovalForm.data.remark !== null}
+                            <CustomTextField
+                                label="Nama"
+                                disabled
+                                id="name"
+                                bind:val={data.directorApprovalForm.data.name}
+                            />
+                        {/if}
+                        <CustomTextField
+                            label="Ulasan/Tindakan"
+                            disabled={isReadOnly}
+                            id="remark"
+                            bind:val={$form.remark}
+                            errors={$errors.remark}
+                        />
+                        <CustomSelectField
+                            label="Keputusan"
+                            disabled={isReadOnly}
+                            options={certifyOptions}
+                            id="status"
+                            bind:val={$form.status}
+                            errors={$errors.status}
+                        />
+                    </form>
                 {/if}
             </StepperContentBody>
         </StepperContent>
     </Stepper>
 </section>
-<Toaster/>
+<Toaster />

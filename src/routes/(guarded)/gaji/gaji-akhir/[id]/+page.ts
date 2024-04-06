@@ -3,6 +3,7 @@ import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto
 import type { commonIdRequestDTO } from "$lib/dto/core/common/id-request.dto"
 import type { DropdownDTO } from "$lib/dto/core/dropdown/dropdown.dto"
 import type { RadioDTO } from "$lib/dto/core/radio/radio.dto"
+import type { FinalSalaryDetail } from "$lib/dto/mypsm/gaji/gaji-akhir/final-salary-detail.dto.js"
 import type { FinalSalaryServiceDetail } from "$lib/dto/mypsm/gaji/gaji-akhir/final-salary-service-detail.dto.js"
 import type { Finalpayslip } from "$lib/dto/mypsm/gaji/gaji-akhir/finalpayslip.dto.js"
 import type { GetContractPersonalDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-personal-detail.dto"
@@ -21,6 +22,7 @@ export const load = async ({ params }) => {
     let employeePersonalDetail = {} as GetContractPersonalDetailDTO;
     let employeeServiceDetail = {} as FinalSalaryServiceDetail;
     let employeeFinalpayslip = {} as Finalpayslip;
+    let employeeFinalSalaryDetail = {} as FinalSalaryDetail;
 
     const employeePersonalDetailResponse: CommonResponseDTO =
         await SalaryServices.getEmployeePersonalDetail(currentId)
@@ -32,62 +34,33 @@ export const load = async ({ params }) => {
         employeeServiceDetailResponse.data?.details as FinalSalaryServiceDetail;
     const employeeFinalpayslipResponse: CommonResponseDTO =
         await SalaryServices.getFinalpayslip(currentId);
-    employeeFinalpayslip =
-        employeeFinalpayslipResponse.data?.details as Finalpayslip;
+
+
+    if (employeeFinalpayslipResponse.status == "success") {
+        employeeFinalpayslip =
+            employeeFinalpayslipResponse.data?.details as Finalpayslip;
+    } else {
+        employeeFinalpayslip = {
+            id: 0,
+            document: "",
+        }
+    }
+
+    const employeeFinalSalaryDetailResponse: CommonResponseDTO =
+        await SalaryServices.getEmployeeSalaryDetail(currentId);
+    employeeFinalSalaryDetail =
+        employeeFinalSalaryDetailResponse.data?.details as FinalSalaryDetail;
 
     const form = await superValidate(currentId, zod(_finalPayslipSchema))
-    let rowData = [
-        {
-            label: 'Elaun Kasih Sayang',
-            yearOfServices: 10,
-            currentAmount: 110,
-            dayOnPension: 30,
-            total: 550,
-        },
-        {
-            label: 'Elaun Cinta Kasih',
-            yearOfServices: 5,
-            currentAmount: 350,
-            dayOnPension: 31,
-            total: 550,
-        },
-        {
-            label: 'Elaun Kuarters Kasih',
-            yearOfServices: 8,
-            currentAmount: 850,
-            dayOnPension: 29,
-            total: 1100,
-        },
-    ]
 
-    let specialDeductionHeading = [
-        { name: "Nama Tolakan" },
-        { name: "Jumlah Tolakan (RM)" }
-    ]
-    let specialDeduction = [
-        {
-            label: 'Koop Kerajaan Sarawak',
-            totalDeduct: 30,
-        },
-        {
-            label: 'Takafaul Sarawak',
-            totalDeduct: 150,
-        },
-        {
-            label: 'Baitumal Sarawak',
-            totalDeduct: 80,
-        },
-    ]
     return {
         currentRoleCode,
         form,
         lookup,
-        rowData,
-        specialDeduction,
-        specialDeductionHeading,
         employeePersonalDetail,
         employeeServiceDetail,
         employeeFinalpayslip,
+        employeeFinalSalaryDetail,
     }
 }
 

@@ -12,36 +12,33 @@
     import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import type { PageData } from './$types';
-    import SalaryAllowanceField from '$lib/components/inputs/salary-allowance-field/SalaryAllowanceField.svelte';
     import { goto } from '$app/navigation';
     import { _finalPayslipSchema } from '$lib/schemas/mypsm/gaji/salary-schema';
     import { _submitAddEmployeePayslip } from './+page';
     import { Toaster } from 'svelte-french-toast';
+    import { Accordion, AccordionItem, Alert } from 'flowbite-svelte';
+    import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
+    import CustomTab from '$lib/components/tab/CustomTab.svelte';
 
     export let data: PageData;
 
-    let total: number = data.rowData.reduce((acc, curr) => acc + curr.total, 0);
-    let deductTotal: number = data.specialDeduction.reduce(
-        (acc, curr) => acc + curr.totalDeduct,
-        0,
-    );
-    let totalRates: number = total - deductTotal;
     let submitSuccess: boolean = false;
-    const {
-        form,
-        enhance,
-    } = superForm(data.form,{
+
+    // if(data.employeeFinalpayslip.document !== ""){
+    //     submitSuccess = true;
+    // }
+    const { form, enhance } = superForm(data.form, {
         SPA: true,
         taintedMessage: false,
         resetForm: false,
         id: 'finalpayslipForm',
         validators: zod(_finalPayslipSchema),
         async onSubmit() {
-           const result = await _submitAddEmployeePayslip($form)
+            const result = await _submitAddEmployeePayslip($form);
 
-           if(result?.response.status == "success"){
-            submitSuccess = true;
-           }
+            if (result?.response.status == 'success') {
+                submitSuccess = true;
+            }
         },
     });
 </script>
@@ -67,208 +64,218 @@
             ></StepperContentHeader>
             <StepperContentBody>
                 <div
-                    class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
+                    class="flex w-full flex-col items-start justify-start gap-2.5 px-2 pb-10"
                 >
-                    <CustomTextField
-                        label="Nama Penuh"
-                        id="name"
-                        disabled
-                        val={data.employeePersonalDetail.name}
-                    />
-                    {#if data.employeePersonalDetail.alternativeName !== ''}
+                    <div
+                        class="flex w-full flex-col justify-start gap-2.5 px-2 md:w-1/2"
+                    >
                         <CustomTextField
-                            label="Nama Lain"
-                            id="alternativeName"
+                            label="Nama Penuh"
+                            id="name"
                             disabled
-                            val={data.employeePersonalDetail.alternativeName}
+                            val={data.employeePersonalDetail.name}
                         />
-                    {/if}
-                    <CustomSelectField
-                        label="Gelaran"
-                        id="titleId"
-                        options={data.lookup.titleLookup}
-                        disabled
-                        val={data.employeePersonalDetail.titleId}
-                    />
-                    <CustomTextField
-                        label="No. Kad Pengenalan"
-                        id="identityDocumentNumber"
-                        disabled
-                        val={data.employeePersonalDetail.identityDocumentNumber}
-                    />
-                    <CustomSelectField
-                        label="Jenis Kad Pengenalan"
-                        id="identityDocumentColor"
-                        options={data.lookup.identityCardTypeLookup}
-                        disabled
-                        val={data.employeePersonalDetail.identityDocumentColor}
-                    />
-                    <CustomTextField
-                        label="Tarikh Lahir"
-                        id="birthDate"
-                        disabled
-                        type="date"
-                        val={data.employeePersonalDetail.birthDate}
-                    />
-                    <CustomSelectField
-                        label="Negeri Kelahiran"
-                        id="birthStateId"
-                        options={data.lookup.stateLookup}
-                        disabled
-                        val={data.employeePersonalDetail.birthStateId}
-                    />
-                    <CustomSelectField
-                        label="Warganegara"
-                        id="nationalityId"
-                        options={data.lookup.nationalityLookup}
-                        disabled
-                        val={data.employeePersonalDetail.nationalityId}
-                    />
-                    <CustomSelectField
-                        label="Bangsa"
-                        id="raceId"
-                        options={data.lookup.raceLookup}
-                        disabled
-                        val={data.employeePersonalDetail.raceId}
-                    />
-                    <CustomSelectField
-                        label="Etnik"
-                        id="ethnicId"
-                        options={data.lookup.ethnicLookup}
-                        disabled
-                        val={data.employeePersonalDetail.ethnicId}
-                    />
-                    <CustomSelectField
-                        label="Agama"
-                        id="religionId"
-                        options={data.lookup.religionLookup}
-                        disabled
-                        val={data.employeePersonalDetail.religionId}
-                    />
-                    <CustomSelectField
-                        label="Jantina"
-                        id="genderId"
-                        options={data.lookup.genderLookup}
-                        disabled
-                        val={data.employeePersonalDetail.genderId}
-                    />
-                    <CustomSelectField
-                        label="Status"
-                        id="maritalId"
-                        options={data.lookup.maritalLookup}
-                        disabled
-                        val={data.employeePersonalDetail.maritalId}
-                    />
-                    <CustomTextField
-                        label="Emel"
-                        id="email"
-                        disabled
-                        val={data.employeePersonalDetail.email}
-                    />
-                    <CustomTextField
-                        label="Alamat Rumah"
-                        id="homeAddress"
-                        disabled
-                        val={data.employeePersonalDetail.homeAddress}
-                    />
-                    <CustomSelectField
-                        label="Negara Alamat Rumah"
-                        id="homeCountryId"
-                        options={data.lookup.countryLookup}
-                        disabled
-                        val={data.employeePersonalDetail.homeCountryId}
-                    />
-                    <CustomSelectField
-                        label="Negeri Alamat Rumah"
-                        id="homeStateId"
-                        options={data.lookup.stateLookup}
-                        disabled
-                        val={data.employeePersonalDetail.homeStateId}
-                    />
-                    <CustomSelectField
-                        label="Bandar Alamat Rumah"
-                        id="homeCityId"
-                        options={data.lookup.cityLookup}
-                        disabled
-                        val={data.employeePersonalDetail.homeCityId}
-                    />
-                    <CustomTextField
-                        label="Poskod Alamat Rumah"
-                        id="homePostcode"
-                        disabled
-                        val={data.employeePersonalDetail.homePostcode}
-                    />
-                    <CustomTextField
-                        label="Alamat Surat Menyurat"
-                        id="mailAdress"
-                        disabled
-                        val={data.employeePersonalDetail.mailAddress}
-                    />
-                    <CustomSelectField
-                        label="Negara Alamat Surat Menyurat"
-                        id="mailCountryId"
-                        options={data.lookup.countryLookup}
-                        disabled
-                        val={data.employeePersonalDetail.mailCountryId}
-                    />
-                    <CustomSelectField
-                        label="Negeri Alamat Surat Menyurat"
-                        id="mailStateId"
-                        options={data.lookup.stateLookup}
-                        disabled
-                        val={data.employeePersonalDetail.mailStateId}
-                    />
-                    <CustomSelectField
-                        label="Bandar Alamat Surat Menyurat"
-                        id="mailCityId"
-                        options={data.lookup.cityLookup}
-                        disabled
-                        val={data.employeePersonalDetail.mailCityId}
-                    />
-                    <CustomTextField
-                        label="Poskod Alamat Surat Menyurat"
-                        id="mailPostcode"
-                        disabled
-                        val={data.employeePersonalDetail.mailPostcode}
-                    />
-                    <CustomRadioBoolean
-                        label="Bekas Polis / Tentera"
-                        id="isExPoliceOrSoldier"
-                        val={data.employeePersonalDetail.isExPoliceOrSoldier}
-                    />
-                    <CustomRadioBoolean
-                        label="Pertalian dengan Kakitangan LKIM"
-                        id="isInternalRelationship"
-                        disabled
-                        val={data.employeePersonalDetail.isInternalRelationship}
-                    />
-                    {#if data.employeePersonalDetail.isInternalRelationship}
-                        <CustomTextField
-                            label="Nama Kakitangan"
-                            id="employeeName"
+                        {#if data.employeePersonalDetail.alternativeName !== ''}
+                            <CustomTextField
+                                label="Nama Lain"
+                                id="alternativeName"
+                                disabled
+                                val={data.employeePersonalDetail
+                                    .alternativeName}
+                            />
+                        {/if}
+                        <CustomSelectField
+                            label="Gelaran"
+                            id="titleId"
+                            options={data.lookup.titleLookup}
                             disabled
-                            val={data.employeePersonalDetail.employeeName}
+                            val={data.employeePersonalDetail.titleId}
                         />
                         <CustomTextField
-                            label="No. Pekerja Kakitangan"
-                            id="employeeNumber"
+                            label="No. Kad Pengenalan"
+                            id="identityDocumentNumber"
                             disabled
-                            val={data.employeePersonalDetail.employeeNumber}
-                        />
-                        <CustomTextField
-                            label="Jawatan Kakitangan"
-                            id="employeePosition"
-                            disabled
-                            val={data.employeePersonalDetail.employeePosition}
+                            val={data.employeePersonalDetail
+                                .identityDocumentNumber}
                         />
                         <CustomSelectField
-                            label="Hubungan"
-                            id="relationshipId"
-                            options={data.lookup.relationshipLookup}
+                            label="Jenis Kad Pengenalan"
+                            id="identityDocumentColor"
+                            options={data.lookup.identityCardTypeLookup}
                             disabled
-                            val={data.employeePersonalDetail.relationshipId}
+                            val={data.employeePersonalDetail
+                                .identityDocumentColor}
                         />
-                    {/if}
+                        <CustomTextField
+                            label="Tarikh Lahir"
+                            id="birthDate"
+                            disabled
+                            type="date"
+                            val={data.employeePersonalDetail.birthDate}
+                        />
+                        <CustomSelectField
+                            label="Negeri Kelahiran"
+                            id="birthStateId"
+                            options={data.lookup.stateLookup}
+                            disabled
+                            val={data.employeePersonalDetail.birthStateId}
+                        />
+                        <CustomSelectField
+                            label="Warganegara"
+                            id="nationalityId"
+                            options={data.lookup.nationalityLookup}
+                            disabled
+                            val={data.employeePersonalDetail.nationalityId}
+                        />
+                        <CustomSelectField
+                            label="Bangsa"
+                            id="raceId"
+                            options={data.lookup.raceLookup}
+                            disabled
+                            val={data.employeePersonalDetail.raceId}
+                        />
+                        <CustomSelectField
+                            label="Etnik"
+                            id="ethnicId"
+                            options={data.lookup.ethnicLookup}
+                            disabled
+                            val={data.employeePersonalDetail.ethnicId}
+                        />
+                        <CustomSelectField
+                            label="Agama"
+                            id="religionId"
+                            options={data.lookup.religionLookup}
+                            disabled
+                            val={data.employeePersonalDetail.religionId}
+                        />
+                        <CustomSelectField
+                            label="Jantina"
+                            id="genderId"
+                            options={data.lookup.genderLookup}
+                            disabled
+                            val={data.employeePersonalDetail.genderId}
+                        />
+                        <CustomSelectField
+                            label="Status"
+                            id="maritalId"
+                            options={data.lookup.maritalLookup}
+                            disabled
+                            val={data.employeePersonalDetail.maritalId}
+                        />
+                        <CustomTextField
+                            label="Emel"
+                            id="email"
+                            disabled
+                            val={data.employeePersonalDetail.email}
+                        />
+                        <CustomTextField
+                            label="Alamat Rumah"
+                            id="homeAddress"
+                            disabled
+                            val={data.employeePersonalDetail.homeAddress}
+                        />
+                        <CustomSelectField
+                            label="Negara Alamat Rumah"
+                            id="homeCountryId"
+                            options={data.lookup.countryLookup}
+                            disabled
+                            val={data.employeePersonalDetail.homeCountryId}
+                        />
+                        <CustomSelectField
+                            label="Negeri Alamat Rumah"
+                            id="homeStateId"
+                            options={data.lookup.stateLookup}
+                            disabled
+                            val={data.employeePersonalDetail.homeStateId}
+                        />
+                        <CustomSelectField
+                            label="Bandar Alamat Rumah"
+                            id="homeCityId"
+                            options={data.lookup.cityLookup}
+                            disabled
+                            val={data.employeePersonalDetail.homeCityId}
+                        />
+                        <CustomTextField
+                            label="Poskod Alamat Rumah"
+                            id="homePostcode"
+                            disabled
+                            val={data.employeePersonalDetail.homePostcode}
+                        />
+                        <CustomTextField
+                            label="Alamat Surat Menyurat"
+                            id="mailAdress"
+                            disabled
+                            val={data.employeePersonalDetail.mailAddress}
+                        />
+                        <CustomSelectField
+                            label="Negara Alamat Surat Menyurat"
+                            id="mailCountryId"
+                            options={data.lookup.countryLookup}
+                            disabled
+                            val={data.employeePersonalDetail.mailCountryId}
+                        />
+                        <CustomSelectField
+                            label="Negeri Alamat Surat Menyurat"
+                            id="mailStateId"
+                            options={data.lookup.stateLookup}
+                            disabled
+                            val={data.employeePersonalDetail.mailStateId}
+                        />
+                        <CustomSelectField
+                            label="Bandar Alamat Surat Menyurat"
+                            id="mailCityId"
+                            options={data.lookup.cityLookup}
+                            disabled
+                            val={data.employeePersonalDetail.mailCityId}
+                        />
+                        <CustomTextField
+                            label="Poskod Alamat Surat Menyurat"
+                            id="mailPostcode"
+                            disabled
+                            val={data.employeePersonalDetail.mailPostcode}
+                        />
+                        <CustomRadioBoolean
+                            label="Bekas Polis / Tentera"
+                            id="isExPoliceOrSoldier"
+                            val={data.employeePersonalDetail
+                                .isExPoliceOrSoldier}
+                        />
+                        <CustomRadioBoolean
+                            label="Pertalian dengan Kakitangan LKIM"
+                            id="isInternalRelationship"
+                            disabled
+                            val={data.employeePersonalDetail
+                                .isInternalRelationship}
+                        />
+                        {#if data.employeePersonalDetail.isInternalRelationship}
+                            <CustomTextField
+                                label="Nama Kakitangan"
+                                id="employeeName"
+                                disabled
+                                val={data.employeePersonalDetail.employeeName}
+                            />
+                            <CustomTextField
+                                label="No. Pekerja Kakitangan"
+                                id="employeeNumber"
+                                disabled
+                                val={data.employeePersonalDetail.employeeNumber}
+                            />
+                            <CustomTextField
+                                label="Jawatan Kakitangan"
+                                id="employeePosition"
+                                disabled
+                                val={data.employeePersonalDetail
+                                    .employeePosition}
+                            />
+                            <CustomSelectField
+                                label="Hubungan"
+                                id="relationshipId"
+                                options={data.lookup.relationshipLookup}
+                                disabled
+                                val={data.employeePersonalDetail.relationshipId}
+                            />
+                        {/if}
+                    </div>
                 </div>
             </StepperContentBody>
         </StepperContent>
@@ -346,11 +353,10 @@
                             disabled
                             val={data.employeeServiceDetail.effectiveDate}
                         />
-                        <CustomRadioBoolean
+                        <CustomTextField
                             label="Faedah Persaraan"
                             id="retirementBenefit"
                             disabled
-                            options={data.lookup.retirementBenefit}
                             val={data.employeeServiceDetail.retirementBenefit}
                         />
                         <CustomTextField
@@ -502,12 +508,14 @@
                         />
                         <CustomTextField
                             label="Nama Bank"
+                            placeholder=""
                             disabled
                             id="bankName"
                             val={data.employeeServiceDetail.bankName}
                         />
                         <CustomTextField
                             label="No. Akaun Bank"
+                            placeholder=""
                             disabled
                             id="bankAccount"
                             val={data.employeeServiceDetail.bankAccount}
@@ -520,77 +528,207 @@
         <StepperContent>
             <StepperContentHeader title="Maklumat Gaji dan Potongan">
                 {#if !submitSuccess}
-                <TextIconButton label="Hantar" icon="check" form="finalpayslipForm" />
+                    <TextIconButton
+                        label="Hantar"
+                        icon="check"
+                        form="finalpayslipForm"
+                    />
                 {/if}
             </StepperContentHeader>
-            <StepperContentBody>
-                <form
-                    class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
-                    id="finalpayslipForm"
-                    use:enhance
-                    method="POST"
-                >
-                    <ContentHeader
-                        title="Kemaskini Maklumat Gaji dan Potongan"
-                        borderClass="border-none"
-                    />
-                    <CustomTextField
-                        label="Nama Kakitangan"
-                        id="name"
-                        disabled
-                        val={data.employeePersonalDetail.name}
-                    />
-                    <CustomSelectField
-                        label="Gred"
-                        id="gradeId"
-                        options={data.lookup.gradeLookup}
-                        disabled
-                        val={data.employeeServiceDetail.gradeId}
-                    />
-                    <CustomSelectField
-                        label="Jawatan"
-                        id="positionId"
-                        options={data.lookup.positionLookup}
-                        disabled
-                        val={data.employeeServiceDetail.positionId}
-                    />
-                    <CustomTextField
-                        label="Gaji Pokok (RM)"
-                        id="baseSalary"
-                        disabled
-                        type="number"
-                        val={data.employeeServiceDetail.baseSalary}
-                    />
+            <StepperContentBody paddingClass="p-0">
+                <div class="flex w-full flex-col justify-start pb-10">
+                    <CustomTab>
+                        <CustomTabContent title="Maklumat Gaji">
+                            <div
+                                class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
+                            >
+                                <form
+                                    class="flex w-full flex-col justify-start gap-2.5 px-2 md:w-1/2"
+                                    id="finalpayslipForm"
+                                    use:enhance
+                                    method="POST"
+                                >
+                                    <ContentHeader
+                                        title="Maklumat Gaji dan Potongan"
+                                        borderClass="border-none"
+                                    />
+                                    <CustomTextField
+                                        label="Nama Kakitangan"
+                                        id="name"
+                                        disabled
+                                        val={data.employeePersonalDetail.name}
+                                    />
+                                    <CustomSelectField
+                                        label="Gred"
+                                        id="gradeId"
+                                        options={data.lookup.gradeLookup}
+                                        disabled
+                                        val={data.employeeServiceDetail.gradeId}
+                                    />
+                                    <CustomSelectField
+                                        label="Jawatan"
+                                        id="positionId"
+                                        options={data.lookup.positionLookup}
+                                        disabled
+                                        val={data.employeeServiceDetail
+                                            .positionId}
+                                    />
+                                    <CustomTextField
+                                        label="Gaji Pokok (RM)"
+                                        id="baseSalary"
+                                        disabled
+                                        type="number"
+                                        val={data.employeeServiceDetail
+                                            .baseSalary}
+                                    />
+                                </form>
+                            </div>
+                        </CustomTabContent>
 
-                    <div class="w-full rounded-md border">
-                        <ContentHeader
-                            title="Maklumat Gaji dan Kadar Elaun-elaun"
-                            borderClass="border-none"
-                        />
-                        <SalaryAllowanceField rowData={data.rowData} {total} />
-                    </div>
+                        <CustomTabContent title="Maklumat Elaun">
+                            <Accordion class="w-full">
+                                {#if data.employeeFinalSalaryDetail.adjustment.length < 1}
+                                    <div
+                                        class="flex w-full flex-col gap-10 px-3"
+                                    >
+                                        <Alert color="blue">
+                                            <p>
+                                                <span class="font-medium"
+                                                    >Tiada Maklumat.</span
+                                                >
+                                                Kakitangan tidak mempunyai elaun.
+                                            </p>
+                                        </Alert>
+                                    </div>
+                                {:else}
+                                    {#each data.employeeFinalSalaryDetail.adjustment as obj, i}
+                                        <AccordionItem>
+                                            <span
+                                                slot="header"
+                                                class="text-sm text-ios-labelColors-link-light"
+                                                >Elaun {i + 1}</span
+                                            >
+                                            <CustomTextField
+                                                id="name"
+                                                disabled
+                                                placeholder="Tiada"
+                                                label="Nama Elaun"
+                                                val={obj.name}
+                                            />
+                                            <CustomTextField
+                                                id="monthYear"
+                                                disabled
+                                                placeholder="Tiada"
+                                                label="Bulan & Tahun"
+                                                val={obj.monthYear}
+                                            />
+                                            <CustomTextField
+                                                id="description"
+                                                disabled
+                                                placeholder="Tiada"
+                                                label="Butiran"
+                                                val={obj.description}
+                                            />
+                                            <CustomTextField
+                                                id="price"
+                                                disabled
+                                                placeholder="Tiada"
+                                                label="Jumlah (RM)"
+                                                val={obj.price}
+                                            />
+                                            <CustomTextField
+                                                id="total"
+                                                disabled
+                                                placeholder="Tiada"
+                                                label="Jumlah Keseluruhan (RM)"
+                                                val={obj.total}
+                                            />
+                                            <CustomTextField
+                                                id="remark"
+                                                disabled
+                                                placeholder="Tiada"
+                                                label="Ulasan"
+                                                val={obj.remark}
+                                            />
+                                        </AccordionItem>
+                                    {/each}
+                                {/if}
+                            </Accordion>
+                        </CustomTabContent>
 
-                    <div class="w-full rounded-md border">
-                        <ContentHeader
-                            title="Tolakan Khas"
-                            borderClass="border-none"
-                        />
-                        <SalaryAllowanceField
-                            columnLabel={data.specialDeductionHeading}
-                            rowData={data.specialDeduction}
-                            totalLabel="Jumlah Tolakan (RM)"
-                            total={deductTotal}
-                        />
-                    </div>
-                    <div class="flex w-full items-end justify-end">
-                        <ContentHeader title="" borderClass="border-none"
-                            ><span
-                                class="text-md text-ios-labelColors-secondaryLabel-light"
-                                >Jumlah Keseluruhan (RM): {totalRates}</span
-                            ></ContentHeader
-                        >
-                    </div>
-                </form>
+                        <CustomTabContent title="Maklumat Potongan">
+                            <Accordion class="w-full">
+                                {#if data.employeeFinalSalaryDetail.deduction.length < 1}
+                                    <div
+                                        class="flex w-full flex-col gap-10 px-3"
+                                    >
+                                        <Alert color="blue">
+                                            <p>
+                                                <span class="font-medium"
+                                                    >Tiada Maklumat.</span
+                                                >
+                                                Kakitangan tidak mempunyai tolakan
+                                                khas.
+                                            </p>
+                                        </Alert>
+                                    </div>
+                                {:else}
+                                    {#each data.employeeFinalSalaryDetail.deduction as obj, i}
+                                        <AccordionItem>
+                                            <span
+                                                slot="header"
+                                                class="text-sm text-ios-labelColors-link-light"
+                                                >Tolakan Khas {i + 1}</span
+                                            >
+                                            <CustomTextField
+                                                id="name"
+                                                disabled
+                                                placeholder="Tiada"
+                                                label="Nama Tolakan"
+                                                val={obj.name}
+                                            />
+                                            <CustomTextField
+                                                id="monthYear"
+                                                disabled
+                                                placeholder="Tiada"
+                                                label="Bulan & Tahun"
+                                                val={obj.monthYear}
+                                            />
+                                            <CustomTextField
+                                                id="description"
+                                                disabled
+                                                placeholder="Tiada"
+                                                label="Butiran"
+                                                val={obj.description}
+                                            />
+                                            <CustomTextField
+                                                id="price"
+                                                disabled
+                                                placeholder="Tiada"
+                                                label="Jumlah (RM)"
+                                                val={obj.price}
+                                            />
+                                            <CustomTextField
+                                                id="total"
+                                                disabled
+                                                placeholder="Tiada"
+                                                label="Jumlah Keseluruhan (RM)"
+                                                val={obj.total}
+                                            />
+                                            <CustomTextField
+                                                id="remark"
+                                                disabled
+                                                placeholder="Tiada"
+                                                label="Ulasan"
+                                                val={obj.remark}
+                                            />
+                                        </AccordionItem>
+                                    {/each}
+                                {/if}
+                            </Accordion>
+                        </CustomTabContent>
+                    </CustomTab>
+                </div>
             </StepperContentBody>
         </StepperContent>
 
@@ -598,14 +736,32 @@
             <StepperContentHeader title="Sijil Gaji Akhir Kakitangan"
             ></StepperContentHeader>
             <StepperContentBody>
-                <div
-                    class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
-                >
-                    <DownloadAttachment fileName="Gaji Akhir.pdf" />
-                </div>
+                {#if !submitSuccess}
+                    <div class="flex w-full flex-col gap-10 px-3">
+                        <Alert color="blue">
+                            <p>
+                                <span class="font-medium">Tiada Maklumat!</span>
+                                Sila hantar maklumat gaji dan potongan ke pangkalan
+                                data terlebih dahulu.
+                            </p>
+                        </Alert>
+                    </div>
+                {:else}
+                    <div
+                        class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
+                    >
+                        <a
+                            href={data.employeeFinalpayslip.document}
+                            target="_blank"
+                            download={"Slip Gaji Akhir - "+data.employeePersonalDetail.name}
+                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                            >Slip Gaji Akhir - {data.employeePersonalDetail.name}</a
+                        >
+                    </div>
+                {/if}
             </StepperContentBody>
         </StepperContent>
     </Stepper>
 </section>
 
-<Toaster/>
+<Toaster />

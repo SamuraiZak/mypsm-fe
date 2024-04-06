@@ -22,6 +22,9 @@ export const load = async () => {
 
     const lookup = await getLookup();
 
+    let currentDate: Date = new Date();
+
+    
     const employeeListParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
@@ -39,14 +42,17 @@ export const load = async () => {
     }
 
     const salaryMovementListFilter: SalaryMovementFilter = {
-        month: 1,
-        year: 2024,
+        month: Number(currentDate.getMonth() + 1),
+        year: Number(currentDate.getFullYear()),
+    }
+    if (salaryMovementListFilter.month !== 1 && salaryMovementListFilter.month !== 4 && salaryMovementListFilter.month !== 7 && salaryMovementListFilter.month !== 10) {
+        salaryMovementListFilter.month = 1;
     }
     const salaryMovementParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
-        orderType: null,
+        orderBy: "meetingId",
+        orderType: 1,
         filter: salaryMovementListFilter,
     }
 
@@ -66,8 +72,6 @@ export const load = async () => {
         salaryMovementList =
             salaryMovementListResponse.data?.dataList as SalaryMovementList[];
     }
-
-
 
     const addNewSalaryMovementForm = await superValidate(zod(_addNewSalaryMovementSchema))
 

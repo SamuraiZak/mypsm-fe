@@ -11,6 +11,7 @@ export const load = async () => {
     let finalPayslipListResponse: CommonResponseDTO = {};
 
     const finalPayslipListFilter: FinalPayslipListFilter = {
+        type: 0,
         employeeNumber: "",
         name: "",
         identityCardNumber: "",
@@ -21,8 +22,8 @@ export const load = async () => {
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
-        orderType: null,
+        orderBy: 'id',
+        orderType: 1,
         filter: finalPayslipListFilter,
 
     }
