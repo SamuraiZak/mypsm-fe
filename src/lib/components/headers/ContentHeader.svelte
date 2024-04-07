@@ -12,7 +12,7 @@
     ''
         ? borderClass
         : 'border-b'} 
-        {titlePadding ? 'px-2' : ''}"
+        {titlePadding ? 'px-2' : ''} bg-ios-basic-white"
 >
     <!-- leading starts here -->
     <div

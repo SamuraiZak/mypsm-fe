@@ -1,64 +1,64 @@
 <script lang="ts">
+    import SvgAddCircle from '$lib/assets/svg/SvgAddCircle.svelte';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import SvgChevronLeft from '$lib/assets/svg/SvgChevronLeft.svelte';
     import SvgChevronRight from '$lib/assets/svg/SvgChevronRight.svelte';
-    import SvgAddCircle from '$lib/assets/svg/SvgAddCircle.svelte';
-    import SvgMinusCircle from '$lib/assets/svg/SvgMinusCircle.svelte';
+    import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
     import SvgEllipsisCircle from '$lib/assets/svg/SvgEllipsisCircle.svelte';
+    import SvgMinusCircle from '$lib/assets/svg/SvgMinusCircle.svelte';
     import SvgSortDown from '$lib/assets/svg/SvgSortDown.svelte';
     import SvgSortUp from '$lib/assets/svg/SvgSortUp.svelte';
-    import IconButton from '$lib/components/button/IconButton.svelte';
     import { translate } from '$lib/config/dictionary';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
-    import { onMount } from 'svelte';
-    import generatePDF from '$lib/services/implementation/core/pdf-generator/puppeteer-pdf-generator.helper';
-    import { TableHelper } from '$lib/helpers/table-helper/table-helper';
+    import {
+        CommonListRequestConvert,
+        type CommonListRequestDTO,
+    } from '$lib/dto/core/common/common-list-request.dto';
+    import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
+    import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import { TextAppearanceHelper } from '$lib/helpers/core/text-appearance.helper';
-    import TableCellButton from '../button/TableCellButton.svelte';
-    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
-    import TableIconButton from '../button/TableIconButton.svelte';
-    import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
+    import { TableHelper } from '$lib/helpers/table-helper/table-helper';
+    import http from '$lib/services/implementation/service-provider.service';
+    import { onMount } from 'svelte';
+    import IconButton from '../button/IconButton.svelte';
     import ImpactButton from '../button/ImpactButton.svelte';
-    import type { DictionaryDTO } from '$lib/dto/core/dictionary/dictionary.dto';
+    import TableCellButton from '../button/TableCellButton.svelte';
+    import TableIconButton from '../button/TableIconButton.svelte';
     import { ExportHelper } from '$lib/helpers/core/export-excel.helper';
-    // import { generatePDF } from '$lib/helpers/core/puppeteer-pdf-generator.helper';
+    import LoadingOverlay from '../loading-overlay/LoadingOverlay.svelte';
+    import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
+    import TextIconButton from '../button/TextIconButton.svelte';
 
     // =====================================================================
     // Variables
     // =====================================================================
 
+    // title
+    export let title: string = 'Table Title';
+
     // table id
-    export let tableId = 'tableId';
+    let loading: boolean = false;
 
-    export let title = 'Table title';
+    // main table settings
+    export let tableData: TableSettingDTO;
 
-    // props: data for the table
-    export let tableData: TableDTO;
-
-    // props: dictionary
-    export let dictionary: DictionaryDTO[] = [];
-
+    // data to be passed between pages
     export let passData: any = {};
 
-    // props: callback functions to handle sort and pagination actions
-    export let onUpdate = () => {};
+    export let maxheight: string = 'max-h-[400px]';
 
-    // props: callback functions to handle view details
+    // action when detail button is clicked
     export let detailActions = () => {};
 
-    export let selectActions = () => {};
-
+    // action when edit button is clicked
     export let editActions = () => {};
 
-    export let enableAdd = false;
+    // action when select button is clicked
+    export let selectActions = () => {};
 
-    export let enableDetail = false;
+    // action when add button is clicked
+    export let addActions = () => {};
 
-    export let enableSelect = false;
-
-    export let enableEdit = false;
-
-    export let hiddenFooter = false;
-
+    // page size options
     const pageSizeOption = [
         {
             key: 5,
@@ -86,12 +86,42 @@
     // Functions
     // =====================================================================
 
+    // handle data fetch
+    async function fetchData() {
+        try {
+            const response: Response = await http
+                .post(tableData.url, {
+                    body: CommonListRequestConvert.toJson(tableData.param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                tableData.data = result.data?.dataList as object[];
+
+                tableData.meta = result.data?.meta ?? {
+                    pageSize: 1,
+                    pageNum: 1,
+                    totalData: 1,
+                    totalPage: 1,
+                };
+
+                tableData.param.pageSize = tableData.meta.pageSize;
+
+                tableData.param.pageNum = tableData.meta.pageNum;
+            }
+        } catch (error) {
+            throw new Error('Something went wrong');
+        }
+    }
+
     // handle translation
     function translator(keyword: string | number) {
         let result: string | number;
 
         if (typeof keyword == 'string') {
-            let tempResult = dictionary.find(
+            let tempResult = tableData.dictionary.find(
                 (item) => item.english == keyword,
             )?.malay;
 
@@ -107,7 +137,7 @@
         return result;
     }
 
-    // handle action when user clisck on the table header
+    // handle sorting action
     function handleSort(columnName: string) {
         if (tableData.param.orderBy == columnName) {
             switch (tableData.param.orderType) {
@@ -128,31 +158,7 @@
             tableData.param.orderType = 0;
         }
 
-        onUpdate();
-    }
-
-    // handle actions when user click on pagination button
-    function handlePagination(direction: string) {
-        switch (direction) {
-            case 'next':
-                tableData.param.pageNum! += 1;
-                onUpdate();
-                break;
-
-            case 'previous':
-                tableData.param.pageNum! -= 1;
-                onUpdate();
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    // handle actions when user choose new page size
-    function handlePageSize() {
-        tableData.param.pageNum = 1;
-        onUpdate();
+        fetchData();
     }
 
     function compareObject(objectRef: any) {
@@ -167,6 +173,29 @@
             return true;
         } else {
             return false;
+        }
+    }
+
+    function handlePageSize() {
+        tableData.param.pageNum = 1;
+        fetchData();
+    }
+
+    // handle actions when user click on pagination button
+    function handlePagination(direction: string) {
+        switch (direction) {
+            case 'next':
+                tableData.param.pageNum! += 1;
+                fetchData();
+                break;
+
+            case 'previous':
+                tableData.param.pageNum! -= 1;
+                fetchData();
+                break;
+
+            default:
+                break;
         }
     }
 
@@ -189,45 +218,99 @@
         }
     }
 
-    let prefix = '#' + tableId;
-    let tableElement: any;
+    async function handleExportPDF(elementId: any) {
+        try {
+            loading = true;
+            let printParam: CommonListRequestDTO = {
+                pageNum: 1,
+                pageSize: tableData.meta.totalData,
+                orderBy: tableData.param.orderBy,
+                orderType: tableData.param.orderType,
+                filter: tableData.param.filter,
+            };
 
-    let targetTable: any;
+            const response: Response = await http
+                .post(tableData.url, {
+                    body: CommonListRequestConvert.toJson(printParam),
+                })
+                .json();
 
-    onMount(async () => {
-        tableElement = document.querySelector(prefix);
+            const result = CommonResponseConvert.fromResponse(response);
 
-        targetTable = document.getElementsByTagName('table');
-    });
+            if (result.status == 'success') {
+                let tempData: object[] = result.data?.dataList as object[];
 
-    function printDiv(elementId: any) {
-        let printElement = document.getElementById(elementId);
-        generatePDF<HTMLElement | null>('Title Example', printElement);
+                tableData.exportData = tempData;
+
+                let printElement = document.getElementById(elementId);
+
+                let printWindow = window.open('', 'PRINT');
+                printWindow?.document.write(document.documentElement.innerHTML);
+                setTimeout(() => {
+                    // Needed for large documents
+                    printWindow!.document.body.style.margin = '0 0';
+                    printWindow!.document.body.innerHTML =
+                        printElement!.outerHTML;
+                    printWindow!.document.close(); // necessary for IE >= 10
+                    printWindow!.focus(); // necessary for IE >= 10*/
+                    printWindow!.print();
+                    printWindow!.close();
+                }, 1000);
+            }
+
+            loading = false;
+        } catch (error) {
+            loading = false;
+            throw new Error('Something went wrong');
+        }
     }
 
-    function exportPDF(elementId: any) {
-        let printElement = document.getElementById(elementId);
+    async function handleExportExcel() {
+        try {
+            loading = true;
 
-        let printWindow = window.open('', 'PRINT');
-        printWindow?.document.write(document.documentElement.innerHTML);
-        setTimeout(() => {
-            // Needed for large documents
-            printWindow!.document.body.style.margin = '0 0';
-            printWindow!.document.body.innerHTML = printElement!.outerHTML;
-            printWindow!.document.close(); // necessary for IE >= 10
-            printWindow!.focus(); // necessary for IE >= 10*/
-            printWindow!.print();
-            printWindow!.close();
-        }, 1000);
-    }
+            setTimeout(async () => {
+                let printParam: CommonListRequestDTO = {
+                    pageNum: 1,
+                    pageSize: tableData.meta.totalData,
+                    orderBy: tableData.param.orderBy,
+                    orderType: tableData.param.orderType,
+                    filter: tableData.param.filter,
+                };
 
-    function exportToExcel() {
-        ExportHelper.toExcel(title, tableData, dictionary);
+                const response: Response = await http
+                    .post(tableData.url, {
+                        body: CommonListRequestConvert.toJson(printParam),
+                    })
+                    .json();
+
+                const result = CommonResponseConvert.fromResponse(response);
+
+                if (result.status == 'success') {
+                    let tempData: object[] = result.data?.dataList as object[];
+
+                    tableData.exportData = tempData;
+
+                    ExportHelper.excel(title, tableData, tableData.dictionary);
+                }
+
+                loading = false;
+            }, 1000);
+        } catch (error) {
+            loading = false;
+            throw new Error('Something went wrong');
+        }
     }
 </script>
 
-<div class="flex h-full max-h-full w-full flex-col items-center justify-start">
-    <!-- header -->
+{#if loading}
+    <LoadingOverlay></LoadingOverlay>
+{/if}
+
+<div
+    class="just-start flex h-fit w-full flex-col items-center overflow-x-hidden overflow-y-hidden"
+>
+    <!-- component header -->
     <div
         class="flex h-10 max-h-10 min-h-10 w-full flex-row items-center justify-between"
     >
@@ -237,40 +320,78 @@
         </div>
         <!-- trailing -->
         <div class="flex h-fit w-fit flex-row items-center justify-start gap-1">
+            {#if tableData.controls.add}
+                <TextIconButton
+                    label="Tambah"
+                    icon="add"
+                    onClick={() => {
+                        addActions();
+                    }}
+                ></TextIconButton>
+            {/if}
             <ImpactButton
                 label="PDF"
                 onClick={() => {
-                    exportPDF(prefix);
+                    handleExportPDF(tableData.id);
                 }}
             ></ImpactButton>
             <ImpactButton
                 label="Excel"
                 onClick={() => {
-                    exportToExcel();
+                    handleExportExcel();
                 }}
             ></ImpactButton>
         </div>
     </div>
 
+    <!-- table wrapper -->
     <div
-        class="flex h-full max-h-full w-full flex-col rounded-md border border-ios-labelColors-separator-light"
+        class="flex h-fit max-h-full w-full flex-col items-center justify-start rounded border"
     >
-        <!-- table filter area -->
-        <div class="">
-            <slot name="filter" />
-        </div>
-
-        <div class="h-fit max-h-full min-h-[250px] w-full overflow-x-auto">
-            <table class="table max-h-full w-full table-auto border-collapse">
-                <!-- table head starts -->
-
+        <!-- filter area -->
+        {#if tableData.option.filter}
+            <div
+                class="flex h-fit min-h-10 w-full flex-col items-center justify-center"
+            >
+                <div
+                    class="flex h-fit min-h-14 w-full flex-row items-start justify-between overflow-hidden rounded-tl rounded-tr border-b bg-ios-basic-white p-2"
+                >
+                    <div
+                        class=" flex min-h-10 w-full flex-row flex-wrap items-end justify-start gap-2 py-1"
+                    >
+                        <slot name="filter" />
+                    </div>
+                    <div
+                        class="flex w-fit flex-col items-center justify-start gap-2 py-1"
+                    >
+                        <div
+                            class="flex h-[44.5px] w-fit flex-col justify-end
+         px-2"
+                        >
+                            <TextIconButton
+                                label="Cari"
+                                icon="search"
+                                type="primary"
+                                onClick={() => {
+                                    fetchData();
+                                }}
+                            ></TextIconButton>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {/if}
+        <div
+            class="flex h-fit {maxheight} w-full flex-col items-center justify-start overflow-auto"
+        >
+            <table class="table h-fit w-full table-auto">
                 <thead class="sticky top-0 z-[1]">
                     <!-- table head row starts -->
 
                     <tr
-                        class="h-10 min-h-10 bg-ios-basic-extraLightBackgroundGray"
+                        class="h-10 min-h-10 w-full bg-ios-basic-extraLightBackgroundGray"
                     >
-                        {#if enableAdd}
+                        {#if tableData.option.checkbox}
                             <th class="h-full w-10 border-r px-2.5">
                                 <div
                                     class="flex h-full flex-row items-center justify-center"
@@ -297,7 +418,7 @@
                         </th>
                         {#if tableData.data.length > 0}
                             {#each Object.keys(tableData.data[0]) as columnHeading}
-                                {#if !tableData.hiddenData?.includes(columnHeading)}
+                                {#if !tableData.hiddenColumn?.includes(columnHeading)}
                                     <!-- return column header -->
                                     <th
                                         on:click={() => {
@@ -346,7 +467,7 @@
 
                             <!-- actions -->
 
-                            {#if enableDetail}
+                            {#if tableData.option.detail}
                                 <th
                                     class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
                                 >
@@ -360,7 +481,7 @@
                                     </div>
                                 </th>
                             {/if}
-                            {#if enableSelect}
+                            {#if tableData.option.select}
                                 <th
                                     class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
                                 >
@@ -374,7 +495,7 @@
                                     </div>
                                 </th>
                             {/if}
-                            {#if enableEdit}
+                            {#if tableData.option.edit}
                                 <th
                                     class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
                                 >
@@ -409,11 +530,6 @@
 
                     <!-- table head row ends -->
                 </thead>
-
-                <!-- table head ends -->
-
-                <!-- table body starts -->
-
                 <tbody>
                     <!-- loop trough all entries -->
                     {#each Object.values(tableData.data) as row, index}
@@ -424,7 +540,7 @@
                                 ? ''
                                 : 'border-b'}"
                         >
-                            {#if enableAdd}
+                            {#if tableData.option.checkbox}
                                 <td class="h-full border-r px-2.5 text-center">
                                     <div
                                         class="flex h-full flex-row items-center justify-center"
@@ -475,14 +591,16 @@
                             </td>
                             <!-- loop through each property -->
                             {#each Object.keys(row) as key}
-                                {#if !TableHelper.isHidden(tableData.hiddenData ?? [], key)}
+                                {#if !TableHelper.isHidden(tableData.hiddenColumn ?? [], key)}
                                     <td
                                         class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-start"
                                     >
                                         <span
                                             class="relative text-start align-middle text-sm font-normal text-ios-labelColors-label-light"
                                         >
-                                            {#if TableHelper.getKey(row, key) !== '' || TableHelper.getKey(row, key) !== null || TableHelper.getKey(row, key) !== null}
+                                            {#if TableHelper.getKey(row, key) == null}
+                                                Tiada Maklumat
+                                            {:else if TableHelper.getKey(row, key) !== ''}
                                                 {#if typeof TableHelper.getKey(row, key) == 'string'}
                                                     {TextAppearanceHelper.toProper(
                                                         TableHelper.getKey(
@@ -496,8 +614,6 @@
                                                         key,
                                                     )}
                                                 {/if}
-                                            {:else}
-                                                Tiada data
                                             {/if}
                                         </span>
                                     </td>
@@ -505,7 +621,7 @@
                             {/each}
 
                             <!-- actions column starts -->
-                            {#if enableDetail}
+                            {#if tableData.option.detail}
                                 <td
                                     class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
                                 >
@@ -524,7 +640,7 @@
                                     </div>
                                 </td>
                             {/if}
-                            {#if enableSelect}
+                            {#if tableData.option.select}
                                 <td
                                     class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
                                 >
@@ -543,7 +659,7 @@
                                     </div>
                                 </td>
                             {/if}
-                            {#if enableEdit}
+                            {#if tableData.option.edit}
                                 <td
                                     class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
                                 >
@@ -568,78 +684,73 @@
                         </tr>
                     {/each}
                 </tbody>
-
-                <!-- table body ends -->
             </table>
         </div>
-        <!-- table control -->
-
+        <!-- footer area -->
         <div
-            class="flex min-h-10 w-full flex-row items-center justify-between rounded-bl-md rounded-br-md border-t bg-ios-basic-white p-2"
+            class="flex h-10 min-h-10 w-full flex-row items-center justify-between rounded-bl rounded-br border-t bg-white px-2"
         >
-            {#if !hiddenFooter}
-                <!-- leading -->
-                <div class="flex flex-row items-center gap-2">
-                    <label
-                        for="idType"
-                        class=" w-full text-sm font-medium text-ios-labelColors-secondaryLabel-light"
-                    >
-                        Saiz Data
-                    </label>
-                    <select
-                        name="idType"
-                        bind:value={tableData.param.pageSize}
-                        on:change={handlePageSize}
-                        class=" block h-7 appearance-none rounded border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
-                    >
-                        {#each pageSizeOption as option}
-                            <option value={option.value}>{option.key}</option>
-                        {/each}
-                    </select>
-                </div>
-                <div class="flex flex-row items-center gap-2">
-                    <label
-                        for="idType"
-                        class=" w-full text-nowrap text-sm font-medium text-ios-labelColors-secondaryLabel-light"
-                    >
-                        {tableData.meta.totalData} hasil carian
-                    </label>
-                </div>
+            <!-- leading -->
+            <div class="flex flex-row items-center gap-2">
+                <label
+                    for="idType"
+                    class=" w-full text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                >
+                    Saiz Data
+                </label>
+                <select
+                    name="idType"
+                    bind:value={tableData.param.pageSize}
+                    on:change={handlePageSize}
+                    class=" block h-7 appearance-none rounded border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
+                >
+                    {#each pageSizeOption as option}
+                        <option value={option.value}>{option.key}</option>
+                    {/each}
+                </select>
+            </div>
+            <div class="flex flex-row items-center gap-2">
+                <label
+                    for="idType"
+                    class=" w-full text-nowrap text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                >
+                    {tableData.meta.totalData} hasil carian
+                </label>
+            </div>
 
-                <!-- trailing -->
-                <div class="flex flex-row items-center gap-2">
-                    <button
-                        disabled={tableData.param.pageNum == 1}
-                        on:click={() => {
-                            handlePagination('previous');
-                        }}
-                        type="button"
-                        class=" block h-7 w-7 rounded border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light disabled:text-ios-basic-inactiveGray"
+            <!-- trailing -->
+            <div class="flex flex-row items-center gap-2">
+                <button
+                    disabled={tableData.param.pageNum == 1}
+                    on:click={() => {
+                        handlePagination('previous');
+                    }}
+                    type="button"
+                    class=" block h-7 w-7 rounded border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light disabled:text-ios-basic-inactiveGray"
+                >
+                    <span
+                        class="flex flex-col items-center justify-center text-center"
                     >
-                        <span
-                            class="flex flex-col items-center justify-center text-center"
-                        >
-                            <SvgChevronLeft></SvgChevronLeft>
-                        </span>
-                    </button>
+                        <SvgChevronLeft></SvgChevronLeft>
+                    </span>
+                </button>
 
-                    <button
-                        disabled={tableData.param.pageNum ==
-                            tableData.meta.totalPage}
-                        on:click={() => {
-                            handlePagination('next');
-                        }}
-                        type="button"
-                        class=" block h-7 w-7 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light disabled:text-ios-basic-inactiveGray"
+                <button
+                    disabled={tableData.param.pageNum ==
+                        tableData.meta.totalPage}
+                    on:click={() => {
+                        handlePagination('next');
+                    }}
+                    type="button"
+                    class=" block h-7 w-7 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light disabled:text-ios-basic-inactiveGray"
+                >
+                    <span
+                        class="flex flex-col items-center justify-center text-center"
                     >
-                        <span
-                            class="flex flex-col items-center justify-center text-center"
-                        >
-                            <SvgChevronRight></SvgChevronRight>
-                        </span>
-                    </button>
-                </div>
-            {/if}
+                        <SvgChevronRight></SvgChevronRight>
+                    </span>
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -650,7 +761,7 @@
 
 <div class="hidden">
     <div
-        id={prefix}
+        id={tableData.id}
         class="flex h-fit w-full flex-col items-center justify-start bg-white"
     >
         <!-- table title -->
@@ -663,7 +774,7 @@
             <table
                 class="table w-full max-w-full table-auto border-collapse border"
             >
-                {#if tableData.printData != undefined && tableData.printData.length > 0}
+                {#if tableData.exportData.length > 0}
                     <thead>
                         <tr class="h-10 min-h-10">
                             <th
@@ -679,9 +790,9 @@
                                     </span>
                                 </div>
                             </th>
-                            {#if tableData.printData != undefined && tableData.printData.length > 0}
-                                {#each Object.keys(tableData.printData[0]) as columnHeading}
-                                    {#if !tableData.hiddenData?.includes(columnHeading)}
+                            {#if tableData.exportData.length > 0}
+                                {#each Object.keys(tableData.exportData[0]) as columnHeading}
+                                    {#if !tableData.hiddenColumn?.includes(columnHeading)}
                                         <!-- return column header -->
                                         <th
                                             class="h-full border border-r px-2.5"
@@ -702,8 +813,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {#if tableData.printData != undefined}
-                            {#each Object.values(tableData.printData) as row, index}
+                        {#if tableData.exportData != undefined}
+                            {#each Object.values(tableData.exportData) as row, index}
                                 <tr class="h-10 border bg-ios-basic-white">
                                     <td
                                         class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
@@ -718,7 +829,7 @@
                                         </span>
                                     </td>
                                     {#each Object.keys(row) as key}
-                                        {#if !TableHelper.isHidden(tableData.hiddenData ?? [], key)}
+                                        {#if !TableHelper.isHidden(tableData.hiddenColumn ?? [], key)}
                                             <td
                                                 class="h-full border-r px-2.5 text-start"
                                             >

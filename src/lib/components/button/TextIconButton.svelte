@@ -14,6 +14,7 @@
 
     export let form: string = '';
     export let type: string = 'primary' || 'danger' || 'neutral';
+    export let operation: string = 'submit';
     export let disabled: boolean = false;
     export let icon: string = '';
     export let label: string = 'Label';
@@ -22,6 +23,7 @@
 </script>
 
 <button
+    type="submit"
     {form}
     {disabled}
     on:click={onClick}
