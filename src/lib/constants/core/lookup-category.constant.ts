@@ -88,7 +88,7 @@ export class LookupCategoryConstant {
     
     public static meetingType: LookupCategoryDTO = {
         name: 'Jenis Mesyuarat',
-        url: 'simismismis',
+        url: 'lookup/meeting_types',
     };
     
     public static nationality: LookupCategoryDTO = {
