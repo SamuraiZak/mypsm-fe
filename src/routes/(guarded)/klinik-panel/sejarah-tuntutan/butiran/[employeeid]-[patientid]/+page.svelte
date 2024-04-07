@@ -13,9 +13,9 @@
     import type { PageData } from './$types';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
+    import Alert from 'flowbite-svelte/Alert.svelte';
 
     export let data: PageData;
-
 </script>
 
 <!-- content header starts here -->
@@ -35,55 +35,51 @@
 >
     <Stepper>
         <StepperContent>
-            <StepperContentHeader title="Maklumat Kakitangan"
-            ></StepperContentHeader>
+            <StepperContentHeader title="Maklumat Kakitangan" />
             <StepperContentBody>
-                <CustomTextField
-                    label="Nama"
-                    id="fullName"
-                    disabled
-                    bind:val={data.employeeDetail.fullName}
-                />
-                <CustomTextField
-                    label="No. Pekerja"
-                    id="employeeNumber"
-                    placeholder=""
-                    disabled
-                    bind:val={data.employeeDetail.employeeNumber}
-                    errors={[]}
-                />
-                <CustomTextField
-                    label="No. Kad Pengenalan"
-                    id="identityCardNumber"
-                    placeholder=""
-                    disabled
-                    bind:val={data.employeeDetail.identityCardNumber}
-                    errors={[]}
-                />
-                <CustomTextField
-                    label="Gred"
-                    id="grade"
-                    placeholder=""
-                    disabled
-                    bind:val={data.employeeDetail.grade}
-                    errors={[]}
-                />
-                <CustomTextField
-                    label="Penempatan"
-                    id="placement"
-                    placeholder=""
-                    disabled
-                    bind:val={data.employeeDetail.placement}
-                    errors={[]}
-                />
-                <CustomTextField
-                    label="Kumpulan"
-                    id="serviceGroup"
-                    placeholder=""
-                    disabled
-                    bind:val={data.employeeDetail.serviceGroup}
-                    errors={[]}
-                />
+                <div class="flex w-full flex-col justify-start gap-2.5 p-3">
+                    <CustomTextField
+                        label="Nama"
+                        id="fullName"
+                        disabled
+                        bind:val={data.employeeDetail.fullName}
+                    />
+                    <CustomTextField
+                        label="No. Pekerja"
+                        id="employeeNumber"
+                        placeholder=""
+                        disabled
+                        bind:val={data.employeeDetail.employeeNumber}
+                    />
+                    <CustomTextField
+                        label="No. Kad Pengenalan"
+                        id="identityCardNumber"
+                        placeholder=""
+                        disabled
+                        bind:val={data.employeeDetail.identityCardNumber}
+                    />
+                    <CustomTextField
+                        label="Gred"
+                        id="grade"
+                        placeholder=""
+                        disabled
+                        bind:val={data.employeeDetail.grade}
+                    />
+                    <CustomTextField
+                        label="Penempatan"
+                        id="placement"
+                        placeholder=""
+                        disabled
+                        bind:val={data.employeeDetail.placement}
+                    />
+                    <CustomTextField
+                        label="Kumpulan"
+                        id="serviceGroup"
+                        placeholder=""
+                        disabled
+                        bind:val={data.employeeDetail.serviceGroup}
+                    />
+                </div>
             </StepperContentBody>
         </StepperContent>
 
@@ -91,44 +87,59 @@
             <StepperContentHeader title="Maklumat Pesakit"
             ></StepperContentHeader>
             <StepperContentBody>
-                <CustomTab id="patientTab">
-                    {#each data.patientDetail as patients, i}
-                        <CustomTabContent title="Pesakit {i + 1}">
-                            <CustomTextField
-                                label="Nama Pesakit"
-                                id="name"
-                                disabled
-                                bind:val={patients.name}
-                            />
-                            <CustomTextField
-                                label="No. Kad Pengenalan"
-                                id="identityDocumentCard"
-                                disabled
-                                bind:val={patients.identityDocumentCard}
-                            />
-                            <CustomSelectField
-                                label="Hubungan"
-                                id="relationshipId"
-                                disabled
-                                options={data.lookup.relationshipLookup}
-                                bind:val={patients.relationshipId}
-                            />
-                            <CustomSelectField
-                                label="Pejabat LKIM"
-                                id="placementId"
-                                disabled
-                                options={data.lookup.placementLookup}
-                                bind:val={patients.placementId}
-                            />
-                            <CustomTextField
-                                label="Tarikh"
-                                id="date"
-                                disabled
-                                bind:val={patients.date}
-                            />
-                        </CustomTabContent>
-                    {/each}
-                </CustomTab>
+                {#if data.patientDetail.length < 1}
+                    <div class="flex w-full flex-col gap-10 px-3">
+                        <Alert color="blue">
+                            <p>
+                                <span class="font-medium">Tiada Maklumat!</span>
+                                Kakitangan tidak mempunyai maklumat pesakit.
+                            </p>
+                        </Alert>
+                    </div>
+                {:else}
+                    <CustomTab id="patientTab">
+                        {#each data.patientDetail as patients, i}
+                            <CustomTabContent title="Pesakit {i + 1}">
+                                <div
+                                    class="flex w-full flex-col justify-start gap-2.5 px-2 py-3"
+                                >
+                                    <CustomTextField
+                                        label="Nama Pesakit"
+                                        id="name"
+                                        disabled
+                                        bind:val={patients.name}
+                                    />
+                                    <CustomTextField
+                                        label="No. Kad Pengenalan"
+                                        id="identityDocumentCard"
+                                        disabled
+                                        bind:val={patients.identityDocumentCard}
+                                    />
+                                    <CustomSelectField
+                                        label="Hubungan"
+                                        id="relationshipId"
+                                        disabled
+                                        options={data.lookup.relationshipLookup}
+                                        bind:val={patients.relationshipId}
+                                    />
+                                    <CustomSelectField
+                                        label="Pejabat LKIM"
+                                        id="placementId"
+                                        disabled
+                                        options={data.lookup.placementLookup}
+                                        bind:val={patients.placementId}
+                                    />
+                                    <CustomTextField
+                                        label="Tarikh"
+                                        id="date"
+                                        disabled
+                                        bind:val={patients.date}
+                                    />
+                                </div>
+                            </CustomTabContent>
+                        {/each}
+                    </CustomTab>
+                {/if}
             </StepperContentBody>
         </StepperContent>
 
@@ -136,33 +147,46 @@
             <StepperContentHeader title="Maklumat Rawatan"
             ></StepperContentHeader>
             <StepperContentBody>
-                <CustomTab id="treatmentTab">
-                    <!-- {#each data.treatmentDetail as treatments, i}
-                        <CustomTabContent title="Rawatan {i + 1}">
-                            <CustomTextField
-                                label="Nama Pesakit"
-                                id="name"
-                                disabled
-                                bind:val={treatments.patientName}
-                            />
-                            {#each treatments.treatmentList as treatmentList, i}
-                                <CustomTextField
-                                    label="Jenis Rawatan"
-                                    id="name"
-                                    disabled
-                                    bind:val={treatmentList.description}
-                                />
-                                <CustomTextField
-                                    label="Jumlah (RM)"
-                                    id="name"
-                                    type="number"
-                                    disabled
-                                    bind:val={treatmentList.amount}
-                                />
-                            {/each}
-                        </CustomTabContent>
-                    {/each} -->
-                </CustomTab>
+                {#if data.treatmentDetail.length < 1}
+                    <div class="flex w-full flex-col gap-10 px-3">
+                        <Alert color="blue">
+                            <p>
+                                <span class="font-medium">Tiada Maklumat!</span>
+                                Kakitangan tidak mempunyai maklumat rawatan.
+                            </p>
+                        </Alert>
+                    </div>
+                {:else}
+                    <CustomTab id="treatmentTab">
+                        {#each data.treatmentDetail as treatments, i}
+                            <CustomTabContent title={treatments.patientName}>
+                                <div
+                                    class="flex w-full flex-col justify-start gap-2.5 py-2"
+                                >
+                                    {#each treatments.treatmentList as treatmentList, x}
+                                        <div
+                                            class="flex w-full flex-col justify-start gap-2.5 rounded-md border border-ios-activeColors-activeBlue-light p-3 md:w-1/2"
+                                        >
+                                            <CustomTextField
+                                                label="Rawatan {x + 1}"
+                                                id="description{x}"
+                                                disabled
+                                                bind:val={treatmentList.description}
+                                            />
+                                            <CustomTextField
+                                                label="Jumlah (RM)"
+                                                id="amount{x}"
+                                                type="number"
+                                                disabled
+                                                bind:val={treatmentList.amount}
+                                            />
+                                        </div>
+                                    {/each}
+                                </div>
+                            </CustomTabContent>
+                        {/each}
+                    </CustomTab>
+                {/if}
             </StepperContentBody>
         </StepperContent>
     </Stepper>

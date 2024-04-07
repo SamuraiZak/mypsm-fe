@@ -1,4 +1,5 @@
 import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
+import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
 import type { ClinicPanelClaimHistory } from "$lib/dto/mypsm/perubatan/clinic-panel-claim-history.dto";
 import { MedicalServices } from "$lib/services/implementation/mypsm/perubatan/medical.service";
 
@@ -13,7 +14,7 @@ export const load = async () => {
         filter: {}
     };
 
-    const claimHistoryListResponse =
+    const claimHistoryListResponse: CommonResponseDTO =
         await MedicalServices.getClinicPanelClaimHistory(param);
     claimHistoryList =
         claimHistoryListResponse.data?.dataList as ClinicPanelClaimHistory[];
@@ -23,4 +24,15 @@ export const load = async () => {
         param,
         claimHistoryListResponse,
     }
+}
+
+//update employee list table
+export async function _updateTable(param: CommonListRequestDTO) {
+    const response: CommonResponseDTO = await MedicalServices.getClinicPanelClaimHistory(param);
+    return {
+        props: {
+            param,
+            response,
+        },
+    };
 }
