@@ -4,13 +4,17 @@
     import ImpactCard from '$lib/components/button/ImpactCard.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
+    import DataTable from '$lib/components/table/DataTable.svelte';
     import ImpactTable from '$lib/components/table/ImpactTable.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { DictionaryDTO } from '$lib/dto/core/dictionary/dictionary.dto';
     import type { LookupCategoryDTO } from '$lib/dto/core/lookup/lookup-item.dto';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type {
+        TableDTO,
+        TableSettingDTO,
+    } from '$lib/dto/core/table/table.dto';
     import type { PageData } from './$types';
     import { _updateTable } from './+page';
     export let data: PageData;
@@ -59,6 +63,40 @@
 
         goto(url);
     }
+
+    // POC
+    let newTable: TableSettingDTO = {
+        param: data.props.listParam,
+        meta: data.props.response.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: data.props.response.data?.dataList ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['url'],
+        dictionary: [
+            {
+                english: 'name',
+                malay: 'Kategori',
+            },
+        ],
+        url: 'lookup/editable',
+        id: 'lookupCategoryTable',
+        option: {
+            checkbox: false,
+            detail: false,
+            edit: true,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
+    };
+    // POC END
 </script>
 
 <div
@@ -70,33 +108,22 @@
     <div
         class="flex h-full max-h-full w-full flex-col justify-start gap-2 overflow-y-auto bg-ios-basic-white px-10 py-4"
     >
-        <div class="h h-fit min-h-[300px] w-full">
-            <ImpactTable
+        <div class="h h-fit w-full">
+            <DataTable
                 title="Senarai Kategori Menu Lungsur Turun"
-                bind:tableData={table}
+                tableData={newTable}
                 bind:passData={selectedData}
-                enableEdit={true}
                 editActions={() => {
                     handleEdit(selectedData);
                 }}
-                onUpdate={() => {
-                    _search();
-                }}
-                dictionary={tableDictionary}
-                translateRow={true}
             >
-                <FilterWrapper
-                    slot="filter"
-                    handleSearch={() => {
-                        _search();
-                    }}
-                >
+                <FilterWrapper slot="filter">
                     <FilterTextField
                         label="Kategori"
-                        bind:inputValue={table.param.filter.name}
+                        bind:inputValue={newTable.param.filter.name}
                     ></FilterTextField>
                 </FilterWrapper>
-            </ImpactTable>
+            </DataTable>
         </div>
     </div>
 </div>
