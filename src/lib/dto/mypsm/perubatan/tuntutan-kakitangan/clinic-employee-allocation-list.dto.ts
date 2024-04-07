@@ -1,5 +1,6 @@
 export interface MedicalClinicEmployeeAllocationClaimList {
     claimId:           number;
+    employeeId:        number;
     employeeNumber:    string;
     employeeName:      string;
     identityCard:      string;
