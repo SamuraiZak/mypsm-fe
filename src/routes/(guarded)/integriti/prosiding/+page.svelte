@@ -108,7 +108,7 @@
                     borderClass="border-none"
                 >
                     <TextIconButton
-                        label="Tambah Prosiding - Pertuduhan"
+                        label="Tambah Prosiding"
                         type="primary"
                         onClick={() => goto('./prosiding/tambah-prosiding')}
                     ></TextIconButton>
@@ -116,18 +116,18 @@
             {/if}
             <!-- Table filter placeholder -->
             <FilterCard onSearch={_updateProceedingChargeTable}>
-                <FilterSelectField
+                <!-- <FilterSelectField
                     label="Status"
                     options={data.selectionOptions.statusLookup}
                     bind:inputValue={proceedingChargeTable.param.filter.status}
-                ></FilterSelectField>
+                ></FilterSelectField> -->
             </FilterCard>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
-                {#if data.roles.isDisciplineSecretaryRole}
+                {#if data.roles.isDisciplineSecretaryRole || data.roles.isIntegrityDirectorRole}
                     <CustomTable
-                        title="Senarai Rekod Prosiding - Tahan Kerja/Gantung Kerja"
+                        title="Senarai Rekod Prosiding - Pertuduhan/Hukuman"
                         onUpdate={_updateProceedingChargeTable}
                         enableDetail
                         bind:tableData={proceedingChargeTable}
@@ -138,15 +138,15 @@
                             goto(route);
                         }}
                     ></CustomTable>
-                {:else if data.roles.isIntegritySecretaryRole}
+                {:else if data.roles.isIntegritySecretaryRole || data.roles.isIntegrityDirectorRole}
                     <CustomTable
-                        title="Senarai Rekod Prosiding"
+                        title="Senarai Rekod Prosiding - Tahan Kerja/Gantung Kerja"
                         onUpdate={_updateProceedingSuspensionTable}
                         enableDetail
                         bind:tableData={proceedingSuspensionTable}
                         bind:passData={rowData}
                         detailActions={() => {
-                            const route = `./prosiding/${rowData.integrityId}-${rowData.employeeId}`;
+                            const route = `./prosiding/suspend-${rowData.integrityId}-${rowData.employeeId}`;
 
                             goto(route);
                         }}
@@ -162,12 +162,12 @@
                 >
                     <!-- Table filter placeholder -->
                     <FilterCard onSearch={_updateProceedingChargeTable}>
-                        <FilterSelectField
+                        <!-- <FilterSelectField
                             label="Status"
                             options={data.selectionOptions.statusLookup}
                             bind:inputValue={proceedingChargeTable.param.filter
                                 .status}
-                        ></FilterSelectField>
+                        ></FilterSelectField> -->
                     </FilterCard>
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start"
@@ -192,12 +192,12 @@
                     class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
                 >
                     <FilterCard onSearch={_updateProceedingSuspensionTable}>
-                        <FilterSelectField
+                        <!-- <FilterSelectField
                             label="Status"
                             options={data.selectionOptions.statusLookup}
                             bind:inputValue={proceedingChargeTable.param.filter
                                 .status}
-                        ></FilterSelectField>
+                        ></FilterSelectField> -->
                     </FilterCard>
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start"

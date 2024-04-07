@@ -2,7 +2,6 @@ import { goto } from '$app/navigation';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { ProceedingCreateChargeRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-create-charges-request.dto';
-import type { ProceedingSuspensionRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-create-suspension-request.dto';
 import type { ProceedingEmployeeDetailResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-employee-detail-response.dto';
 import type { ProceedingStaffDetailRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-staff-detail-request.dto';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
@@ -11,7 +10,7 @@ import {
     _proceedingChargeMeetingRequestSchema,
     _proceedingStaffDetailResponseSchema,
     _proceedingSuspensionSchema,
-} from '$lib/schemas/mypsm/integrity/proceeding-charge-scheme';
+} from '$lib/schemas/mypsm/integrity/proceeding-scheme';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { IntegrityProceedingServices } from '$lib/services/implementation/mypsm/integriti/integrity-proceeding.service';
 import { error } from '@sveltejs/kit';
@@ -24,7 +23,7 @@ import { superValidate } from 'sveltekit-superforms/client';
 export async function load({ params, parent }) {
     const { roles } = await parent();
 
-    if (!roles.isDisciplineSecretaryRole) {
+    if (roles.isStaffRole) {
         error(401, { message: 'Akses ditolak' });
     }
 
@@ -87,6 +86,17 @@ export async function load({ params, parent }) {
         },
     ];
 
+    const suspensionTypeLookup: DropdownDTO[] = [
+        {
+            value: 'Tahan Kerja - Penyiasatan',
+            name: 'Tahan Kerja - Penyiasatan',
+        },
+        {
+            value: 'Tahan Kerja - Prosiding Jenayah',
+            name: 'Tahan Kerja - Prosiding Jenayah',
+        },
+    ];
+
     // ===========================================================================
 
     return {
@@ -101,11 +111,12 @@ export async function load({ params, parent }) {
         lookups: {
             identityCardColorLookup,
             generalLookup,
+            suspensionTypeLookup,
         },
     };
 }
 
-export const _addStateUnitSecretaryApprovalForm = async (formData: object) => {
+export const _addChargeDetailForm = async (formData: object) => {
     const form = await superValidate(
         formData,
         zod(_proceedingChargeMeetingRequestSchema),
@@ -140,10 +151,51 @@ export const _addSuspensionDetailForm = async (formData: object) => {
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    const response: CommonResponseDTO =
-        await IntegrityProceedingServices.createProceedingSuspension(
-            form.data as ProceedingSuspensionRequestDTO,
-        );
+    const notGuiltyMeetingDTO = {
+        employeeId: form.data.employeeId,
+        meetingDate: form.data.meetingDate,
+        meetingName: form.data.meetingName,
+        meetingCount: form.data.meetingCount,
+        meetingCode: form.data.meetingCode,
+        suspendMeetingResult: form.data.suspendMeetingResult,
+    };
+
+    const suspendedMeetingDTO = {
+        employeeId: form.data.employeeId,
+        meetingDate: form.data.meetingDate,
+        meetingName: form.data.meetingName,
+        meetingCount: form.data.meetingCount,
+        meetingCode: form.data.meetingCode,
+        suspendMeetingResult: form.data.suspendMeetingResult,
+        suspensionType: form.data.suspensionType,
+        startDate: form.data.startDate,
+        endDate: form.data.endDate,
+        eligibleEmolumen: form.data.eligibleEmolumen,
+    };
+
+    const criminalMeetingDTO = {
+        employeeId: form.data.employeeId,
+        meetingDate: form.data.meetingDate,
+        meetingName: form.data.meetingName,
+        meetingCount: form.data.meetingCount,
+        meetingCode: form.data.meetingCode,
+        suspendMeetingResult: form.data.suspendMeetingResult,
+        suspensionType: form.data.suspensionType,
+        startDate: form.data.startDate,
+        eligibleEmolumen: form.data.eligibleEmolumen,
+    };
+
+    const response: CommonResponseDTO = !form.data.suspendMeetingResult
+        ? await IntegrityProceedingServices.createProceedingSuspensionNotGuilty(
+              notGuiltyMeetingDTO,
+          )
+        : form.data.suspensionType === 'Tahan Kerja - Penyiasatan'
+          ? await IntegrityProceedingServices.createProceedingSuspension(
+                suspendedMeetingDTO,
+            )
+          : await IntegrityProceedingServices.createProceedingCriminal(
+                criminalMeetingDTO,
+            );
 
     if (response.status === 'success')
         setTimeout(() => {

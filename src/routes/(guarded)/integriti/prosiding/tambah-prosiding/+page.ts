@@ -16,7 +16,7 @@ export const load = async ({ parent }) => {
 
     const { roles } = await parent();
 
-    if (!roles.isDisciplineSecretaryRole) {
+    if (roles.isStaffRole) {
         error(401, { message: 'Akses ditolak' });
     }
 

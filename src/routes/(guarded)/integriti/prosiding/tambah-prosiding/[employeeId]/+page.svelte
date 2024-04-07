@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { proceedingMeetingOptions } from '$lib/constants/core/radio-option-constants';
-    import CustomRadioField from '$lib/components/inputs/radio-field/CustomRadioField.svelte';
     import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
@@ -24,9 +22,12 @@
     import {
         _proceedingAccusationSchema,
         _proceedingChargeMeetingRequestSchema,
-    } from '$lib/schemas/mypsm/integrity/proceeding-charge-scheme';
-    import type { ProceedingAccusationDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
-    import { _addStateUnitSecretaryApprovalForm } from './+page';
+        _proceedingSuspensionSchema,
+    } from '$lib/schemas/mypsm/integrity/proceeding-scheme';
+    import { _addChargeDetailForm, _addSuspensionDetailForm } from './+page';
+    import { zod } from 'sveltekit-superforms/adapters';
+    import CustomRadioField from '$lib/components/inputs/radio-field/CustomRadioField.svelte';
+    import { proceedingMeetingOptions } from '$lib/constants/core/radio-option-constants';
     export let data: PageData;
 
     // Superforms
@@ -49,18 +50,19 @@
             resetForm: false,
             multipleSubmits: 'allow',
             validationMethod: 'oninput',
-            validators: false,
+            validators: zod(_proceedingChargeMeetingRequestSchema),
             taintedMessage: false,
             async onSubmit() {
                 $chargesMeetingForm.employeeId = Number(data.params.employeeId);
 
-                _addStateUnitSecretaryApprovalForm($chargesMeetingForm);
+                _addChargeDetailForm($chargesMeetingForm);
             },
         });
 
     const {
         form: suspensionMeetingForm,
-        enhance: suspensionMeetingFormErrors,
+        errors: suspensionMeetingFormErrors,
+        enhance: suspensionMeetingFormEnhance,
     } = superForm(data.forms.proceedingSuspensionMeetingForm, {
         SPA: true,
         dataType: 'json',
@@ -68,12 +70,31 @@
         resetForm: false,
         multipleSubmits: 'allow',
         validationMethod: 'oninput',
-        validators: false,
+        validators: zod(_proceedingSuspensionSchema),
         taintedMessage: false,
+        onChange() {
+            if (
+                $suspensionMeetingForm.suspensionType ===
+                'Tahan Kerja - Penyiasatan'
+            ) {
+                $suspensionMeetingForm.eligibleEmolumen = 100;
+                $suspensionMeetingForm.endDate = addTwoMonths();
+            } else {
+                $suspensionMeetingForm.eligibleEmolumen = 50;
+                $suspensionMeetingForm.endDate = null;
+            }
+        },
         async onSubmit() {
             $suspensionMeetingForm.employeeId = Number(data.params.employeeId);
+            $suspensionMeetingForm.meetingCode = '20';
+            //meeting code for suspend
+            // 17 - charge
+            // 18 - penalty
+            // 19 - appeal
+            // 20 - suspend
+            // 21 - criminal
 
-            _addStateUnitSecretaryApprovalForm($suspensionMeetingForm);
+            _addSuspensionDetailForm($suspensionMeetingForm);
         },
     });
 
@@ -84,16 +105,32 @@
             ...$chargesMeetingForm.accusationList,
             newChargeObject,
         ];
-
-        console.log($chargesMeetingForm.accusationList);
     };
 
-    function removeCharge(index: number) {
+    const removeCharge = (index: number) => {
         $chargesMeetingForm.accusationList =
             $chargesMeetingForm.accusationList.filter((_, i) => {
                 return i !== index;
             });
-    }
+    };
+
+    // method to add 2 months to the date
+    const addTwoMonths = (): string => {
+        const inputDate = new Date($suspensionMeetingForm.startDate ?? '');
+        let outputDate = new Date(inputDate);
+
+        // Adds 2 months
+        new Date(outputDate.setMonth(inputDate.getMonth() + 2));
+
+        // Set the new Date string
+        let day = ('0' + outputDate.getDate()).slice(-2);
+        let month = ('0' + (outputDate.getMonth() + 1)).slice(-2);
+        let year = String(outputDate.getFullYear());
+
+        const endDate: string = `${year}-${month}-${day}`;
+
+        return endDate;
+    };
 </script>
 
 <ContentHeader title="Maklumat Prosiding Tatatertib"
@@ -689,11 +726,13 @@
                 <form
                     id="suspensionMeetingForm"
                     method="POST"
-                    use:suspensionMeetingFormErrors
+                    use:suspensionMeetingFormEnhance
                     class="flex w-full flex-col items-center gap-2"
                 >
                     <CustomTextField
                         disabled={false}
+                        errors={$suspensionMeetingFormErrors.meetingDate}
+                        type="date"
                         id="meetingDate"
                         label="Tarikh Mesyuarat"
                         placeholder="-"
@@ -701,6 +740,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled={false}
+                        errors={$suspensionMeetingFormErrors.meetingCount}
                         id="meetingCount"
                         label="Bil Mesyuarat"
                         placeholder="-"
@@ -708,6 +748,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled={false}
+                        errors={$suspensionMeetingFormErrors.meetingName}
                         id="meetingName"
                         label="Nama Mesyuarat"
                         placeholder="-"
@@ -715,18 +756,74 @@
                     ></CustomTextField>
                     <CustomRadioField
                         disabled={false}
-                        id="meetingCode"
-                        label="Kod Mesyuarat"
-                        options={proceedingMeetingOptions}
-                        bind:val={$suspensionMeetingForm.meetingCode}
-                    ></CustomRadioField>
-                    <CustomRadioField
-                        disabled={false}
+                        errors={$suspensionMeetingFormErrors.suspendMeetingResult}
                         id="currentGrade"
                         label="Keputusan Mesyuarat"
                         options={proceedingMeetingOptions}
-                        bind:val={$suspensionMeetingForm.meetingResult}
+                        bind:val={$suspensionMeetingForm.suspendMeetingResult}
                     ></CustomRadioField>
+
+                    {#if $suspensionMeetingForm.suspendMeetingResult}
+                        <div
+                            class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
+                        >
+                            <ContentHeader
+                                title="Maklumat Keputusan Mesyuarat Prosiding - Tahan Kerja"
+                                borderClass="border-none"
+                                titlePadding={false}
+                            ></ContentHeader>
+
+                            <hr />
+                            <CustomSelectField
+                                disabled={false}
+                                errors={$suspensionMeetingFormErrors.suspensionType}
+                                id="suspensionType"
+                                label="Jenis Prosiding Tahan Kerja"
+                                options={data.lookups.suspensionTypeLookup}
+                                placeholder="-"
+                                bind:val={$suspensionMeetingForm.suspensionType}
+                            ></CustomSelectField>
+
+                            <ContentHeader
+                                title="Butiran Tahan Kerja - {$suspensionMeetingForm.suspensionType ===
+                                'Tahan Kerja - Penyiasatan'
+                                    ? 'Tujuan Penyiasatan'
+                                    : 'Prosiding Jenayah'}"
+                                borderClass="border-none"
+                                fontWeight="bold"
+                                fontSize="small"
+                                color="system-primary"
+                                titlePadding={false}
+                            ></ContentHeader>
+
+                            <CustomTextField
+                                disabled={false}
+                                errors={$suspensionMeetingFormErrors.startDate}
+                                id="startDate"
+                                type="date"
+                                label="Tarikh Mula"
+                                placeholder="-"
+                                bind:val={$suspensionMeetingForm.startDate}
+                            ></CustomTextField>
+                            {#if $suspensionMeetingForm.suspensionType === 'Tahan Kerja - Penyiasatan'}
+                                <CustomTextField
+                                    disabled={true}
+                                    id="endDate"
+                                    type="date"
+                                    label="Tarikh Akhir - 2 Bulan Dari Tarikh Mula"
+                                    placeholder="-"
+                                    bind:val={$suspensionMeetingForm.endDate}
+                                ></CustomTextField>
+                            {/if}
+                            <CustomTextField
+                                disabled={true}
+                                id="eligibleEmolumen"
+                                label="Emolumen Yang Layak Diterima"
+                                placeholder="-"
+                                bind:val={$suspensionMeetingForm.eligibleEmolumen}
+                            ></CustomTextField>
+                        </div>
+                    {/if}
                 </form>
             </StepperContentBody>
         </StepperContent>
