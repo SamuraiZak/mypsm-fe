@@ -77,7 +77,7 @@ export class SidebarConstant {
                     subItems: [
                         {
                             name: 'Permohonan',
-                            path: '/elaun-elaun-perkhidmatan/permohonan',
+                            path: '/elaun-elaun_perkhidmatan/permohonan',
                         },
                     ],
                 },
@@ -467,7 +467,7 @@ export class SidebarConstant {
                     subItems: [
                         {
                             name: 'Permohonan',
-                            path: '/elaun-elaun-perkhidmatan/permohonan',
+                            path: '/elaun-elaun_perkhidmatan/permohonan',
                         },
                     ],
                 },
@@ -871,7 +871,7 @@ export class SidebarConstant {
                     subItems: [
                         {
                             name: 'Permohonan',
-                            path: '/elaun-elaun-perkhidmatan/permohonan',
+                            path: '/elaun-elaun_perkhidmatan/permohonan',
                         },
                     ],
                 },
@@ -1191,7 +1191,7 @@ export class SidebarConstant {
                     subItems: [
                         {
                             name: 'Permohonan',
-                            path: '/elaun-elaun-perkhidmatan/permohonan',
+                            path: '/elaun-elaun_perkhidmatan/permohonan',
                         },
                     ],
                 },
@@ -1288,7 +1288,7 @@ export class SidebarConstant {
                     subItems: [
                         {
                             name: 'Permohonan',
-                            path: '/elaun-elaun-perkhidmatan/permohonan',
+                            path: '/elaun-elaun_perkhidmatan/permohonan',
                         },
                     ],
                 },
@@ -1566,7 +1566,7 @@ export class SidebarConstant {
                     subItems: [
                         {
                             name: 'Permohonan',
-                            path: '/elaun-elaun-perkhidmatan/permohonan',
+                            path: '/elaun-elaun_perkhidmatan/permohonan',
                         },
                     ],
                 },
@@ -2086,7 +2086,7 @@ export class SidebarConstant {
                     subItems: [
                         {
                             name: 'Permohonan',
-                            path: '/elaun-elaun-perkhidmatan/permohonan',
+                            path: '/elaun-elaun_perkhidmatan/permohonan',
                         },
                     ],
                 },
