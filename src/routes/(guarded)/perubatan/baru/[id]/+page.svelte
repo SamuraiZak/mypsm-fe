@@ -8,16 +8,53 @@
     import { goto } from '$app/navigation';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
+    import { Toaster } from 'svelte-french-toast';
+    import { Accordion, AccordionItem, Alert, Modal } from 'flowbite-svelte';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import { superForm, superValidate } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
-    export let data: PageData
+    import { zod } from 'sveltekit-superforms/adapters';
+    import { _addEmployeeClaimsSchema } from '$lib/schemas/mypsm/medical/medical-schema';
+    import { _submitAddClaimsForm } from './+page';
+    export let data: PageData;
 
+    let openModal: boolean = false;
+    let tempClaims: number = 0;
+    let submitSuccess: boolean = false;
+
+    const {
+        form: addClaimsForm,
+        errors: addClaimsError,
+        enhance: addClaimsEnhance,
+    } = superForm(data.addClaimsForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'addClaimsForm',
+        validators: zod(_addEmployeeClaimsSchema),
+        resetForm: false,
+        async onSubmit() {
+            const res = await _submitAddClaimsForm($addClaimsForm);
+
+            if (res?.response.status == 'success') {
+                submitSuccess = true;
+            }
+        },
+    });
+
+    function addClaims() {
+        $addClaimsForm.claims = [...$addClaimsForm.claims, tempClaims];
+        tempClaims = 0;
+    }
+    function removeClaims(index: number) {
+        $addClaimsForm.claims.splice(index, 1);
+
+        $addClaimsForm.claims = [...$addClaimsForm.claims];
+    }
 </script>
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Maklumat Kakitangan dan Kontrak">
+    <ContentHeader title="Tambah Tuntutan Baru">
         <TextIconButton
             icon="cancel"
             type="neutral"
@@ -35,43 +72,171 @@
             <StepperContentHeader title="Maklumat Kakitangan"
             ></StepperContentHeader>
             <StepperContentBody>
-                <CustomTextField
-                    label="No. Pekerja"
-                    disabled
-                    id="employeeNumber"
-                    bind:val={data.employeeDetail.employeeNumber}
-                />
-                <CustomTextField
-                    label="Nama"
-                    disabled
-                    id="fullName"
-                    bind:val={data.employeeDetail.fullName}
-                />
-                <CustomTextField
-                    label="No. Kad Pengenalan"
-                    disabled
-                    id="identityCardNumber"
-                    bind:val={data.employeeDetail.identityCardNumber}
-                />
-                <CustomTextField
-                    label="Gred"
-                    disabled
-                    id="grade"
-                    bind:val={data.employeeDetail.grade}
-                />
-                <CustomTextField
-                    label="Penempatan"
-                    disabled
-                    id="placement"
-                    bind:val={data.employeeDetail.placement}
-                />
-                <CustomTextField
-                    label="Kumpulan"
-                    disabled
-                    id="serviceGroup"
-                    bind:val={data.employeeDetail.serviceGroup}
-                />
+                <div
+                    class="flex w-full flex-col justify-start gap-2.5 px-3 py-5"
+                >
+                    <CustomTextField
+                        label="No. Pekerja"
+                        disabled
+                        id="employeeNumber"
+                        bind:val={data.employeeDetail.employeeNumber}
+                    />
+                    <CustomTextField
+                        label="Nama"
+                        disabled
+                        id="fullName"
+                        bind:val={data.employeeDetail.fullName}
+                    />
+                    <CustomTextField
+                        label="No. Kad Pengenalan"
+                        disabled
+                        id="identityCardNumber"
+                        bind:val={data.employeeDetail.identityCardNumber}
+                    />
+                    <CustomTextField
+                        label="Gred"
+                        disabled
+                        id="grade"
+                        bind:val={data.employeeDetail.grade}
+                    />
+                    <CustomTextField
+                        label="Penempatan"
+                        disabled
+                        id="placement"
+                        bind:val={data.employeeDetail.placement}
+                    />
+                    <CustomTextField
+                        label="Kumpulan"
+                        disabled
+                        id="serviceGroup"
+                        bind:val={data.employeeDetail.serviceGroup}
+                    />
+                </div>
+            </StepperContentBody>
+        </StepperContent>
+
+        <StepperContent>
+            <StepperContentHeader title="Maklumat Tuntutan">
+                {#if $addClaimsError.claims?._errors}
+                    <span class="text-sm text-ios-basic-destructiveRed"
+                        >{$addClaimsError.claims._errors}</span
+                    >
+                {/if}
+                {#if !submitSuccess}
+                    <TextIconButton
+                        label="Hantar"
+                        icon="check"
+                        form="addClaimsForm"
+                    />
+                {/if}
+            </StepperContentHeader>
+            <StepperContentBody>
+                <form
+                    class="flex w-full flex-col justify-start gap-2.5 px-3 pb-10 pt-5"
+                    method="POST"
+                    id="addClaimsForm"
+                    use:addClaimsEnhance
+                >
+                    <CustomTextField
+                        label="Tarikh Rawatan"
+                        id="treatmentDate"
+                        disabled={submitSuccess}
+                        type="date"
+                        bind:val={$addClaimsForm.treatmentDate}
+                        errors={$addClaimsError.treatmentDate}
+                    />
+                    <CustomSelectField
+                        label="Klinik"
+                        id="clinicId"
+                        disabled={submitSuccess}
+                        options={data.lookup.clinicLookup}
+                        bind:val={$addClaimsForm.clinicId}
+                        errors={$addClaimsError.clinicId}
+                    />
+                    <CustomTextField
+                        label="Bilangan Hari Cuti Sakit"
+                        id="medicalLeave"
+                        disabled={submitSuccess}
+                        type="number"
+                        bind:val={$addClaimsForm.medicalLeave}
+                        errors={$addClaimsError.medicalLeave}
+                    />
+                    <ContentHeader
+                        title="Senarai Tuntutan"
+                        borderClass="border-none"
+                    >
+                        {#if !submitSuccess}
+                            <TextIconButton
+                                label="Tambah"
+                                icon="add"
+                                type="neutral"
+                                onClick={() => (openModal = true)}
+                            />
+                        {/if}
+                    </ContentHeader>
+                    {#if $addClaimsForm.claims.length < 1}
+                        <div class="flex w-full flex-col gap-10 px-3">
+                            <Alert color="blue">
+                                <p>
+                                    <span class="font-medium"
+                                        >Tiada Maklumat!</span
+                                    >
+                                    Sila tambah tuntutan terlebih dahulu.
+                                </p>
+                            </Alert>
+                        </div>
+                    {:else}
+                        {#each $addClaimsForm.claims as claim, i}
+                            <div
+                                class="flex w-full flex-col justify-start gap-2.5 rounded-md border border-ios-activeColors-activeBlue-light p-3"
+                            >
+                                <div
+                                    class="flex w-full items-center justify-start gap-2.5 pb-1 text-sm font-semibold text-ios-labelColors-link-light"
+                                >
+                                    <span>
+                                        Tuntutan {i + 1}
+                                    </span>
+                                    {#if !submitSuccess}
+                                        <TextIconButton
+                                            label=""
+                                            icon="delete"
+                                            type="danger"
+                                            onClick={() => removeClaims(i)}
+                                        />
+                                    {/if}
+                                </div>
+                                <CustomTextField
+                                    label="Jumlah Rawatan (RM)"
+                                    id="claims{i}"
+                                    disabled
+                                    type="number"
+                                    val={claim}
+                                />
+                            </div>
+                        {/each}
+                    {/if}
+                </form>
             </StepperContentBody>
         </StepperContent>
     </Stepper>
 </section>
+<Toaster />
+
+<Modal title="Tambah Tuntutan" bind:open={openModal}>
+    <div class="flex w-full flex-col justify-start gap-2.5 pb-3">
+        <CustomTextField
+            label="Jumlah Rawatan (RM)"
+            id="claims"
+            type="number"
+            bind:val={tempClaims}
+        />
+        <TextIconButton
+            label="Simpan"
+            icon="check"
+            onClick={() => {
+                addClaims();
+                openModal = false;
+            }}
+        />
+    </div>
+</Modal>
