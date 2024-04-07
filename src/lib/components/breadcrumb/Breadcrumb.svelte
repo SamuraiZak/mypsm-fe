@@ -14,7 +14,8 @@
         crumbs = tokens.map((t) => {
             tokenPath += '/' + t;
             t = t.charAt(0).toUpperCase() + t.slice(1);
-            t = t.replaceAll('_', ' ')
+            t = t.replaceAll('_', ' ');
+            t = t.replaceAll('%20', ' ');
             return { label: t, href: tokenPath };
         });
     }
@@ -22,11 +23,13 @@
 
 <div class="flex flex-row items-center justify-start gap-2">
     {#each crumbs as c, i}
-        <span class="text-base text-ios-labelColors-secondaryLabel-light select-none">
+        <span
+            class="select-none text-base text-ios-labelColors-secondaryLabel-light"
+        >
             {c.label}
         </span>
         {#if i !== crumbs.length - 1}
-            <span class="text-ios-labelColors-secondaryLabel-light select-none">
+            <span class="select-none text-ios-labelColors-secondaryLabel-light">
                 <SvgChevronRight size="14"></SvgChevronRight>
             </span>
         {/if}
