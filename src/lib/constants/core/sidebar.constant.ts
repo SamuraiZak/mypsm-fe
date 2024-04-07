@@ -363,8 +363,8 @@ export class SidebarConstant {
                     path: '/klinik-panel/sejarah-tuntutan',
                 },
                 {
-                    name: 'Bil Tuntutan Panel Klinik',
-                    path: '/klinik-panel/bil-tuntutan-panel-klinik',
+                    name: 'Bil Tuntutan Klinik',
+                    path: '/klinik-panel/bil-tuntutan-klinik',
                 },
                 {
                     name: 'Profil',
@@ -439,7 +439,7 @@ export class SidebarConstant {
                     subItems: [
                         {
                             name: 'Perkhidmatan (Permohonan Panel Klinik)',
-                            path: '/perubatan/permohonan-panel-klinik',
+                            path: '/perubatan/permohonan-klinik-panel',
                         },
                         {
                             name: 'Perkhidmatan (Bil Tuntutan Klinik)',
@@ -895,14 +895,14 @@ export class SidebarConstant {
                     subItems: [
                         {
                             name: 'Perkhidmatan (Permohonan Panel Klinik)',
-                            path: '/perubatan/permohonan-panel-klinik',
+                            path: '/perubatan/permohonan-klinik-panel',
                         },
                         {
-                            name: 'Perkhidmatan ( Bil Tuntutan Klinik)',
+                            name: 'Perkhidmatan (Bil Tuntutan Klinik)',
                             path: '/perubatan/bil-tuntutan-klinik',
                         },
                         {
-                            name: 'Perkhidmatan ( Bil Tuntutan Kakitangan)',
+                            name: 'Perkhidmatan (Bil Tuntutan Kakitangan)',
                             path: '/perubatan/bil-tuntutan-kakitangan',
                         },
                     ],
