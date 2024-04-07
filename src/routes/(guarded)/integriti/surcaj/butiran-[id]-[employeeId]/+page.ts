@@ -269,10 +269,22 @@ let employeeID: employeeIdRequestDTO = {
             errors: false
         })
         
-        const confirmationDetail = await superValidate (personalInfoForm.confirmation.details as ConfirmationDetails, zod (_confirmationDetail),
-        {
-            errors: false
-        })
+        // const confirmationDetail = await superValidate(zod(_confirmationDetail));
+
+        // if (personalInfoForm.confirmation.details != null) {
+        //     confirmationDetail.data = {...personalInfoForm.confirmation.details}
+        // }
+        const confirmationDetail = await superValidate(zod(_confirmationDetail));
+
+        if (personalInfoForm.confirmation != null) {
+            confirmationDetail.data = {
+                surchargeId: personalInfoForm.confirmation.details?.surchargeId ?? 0,
+                name: personalInfoForm.confirmation.details?.name ?? "",
+                status: personalInfoForm.confirmation.details?.status ?? false,
+                remark: personalInfoForm.confirmation.details?.remark ?? "",
+            }
+        }
+        
         
         
     return {

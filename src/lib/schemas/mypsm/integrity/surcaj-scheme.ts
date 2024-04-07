@@ -1,7 +1,9 @@
 import {
     booleanSchema,
     codeSchema,
+    dateSchema,
     dateStringSchema,
+    numberSchem0,
     shortTextSchema,
 } from '$lib/schemas/common/schema-type';
 import { z } from 'zod';
@@ -114,28 +116,26 @@ export const _surcajEmployeeDetailViewSchema = z.object(
 export const _applicationDetail = z.object({
 
     surchargeId: z.number().readonly(),
-    reportDate: dateStringSchema,
+    reportDate: shortTextSchema,
     employeeId: z.number(),
-    surchargeAction: z.string(),
-    remark: z.string(),
+    surchargeAction:shortTextSchema,
+    remark: shortTextSchema,
 
 })
-
-
 
 export const _meetingDetail = z.object({
     surchargeId: z.number().readonly(),
     meetingId: z.number().readonly(),
-    meetingType: z.string(),
-    meetingCount: z.number(),
-    meetingDate: z.string(),
-    amount: z.number(),
-    paymentType: z.string(),
-    duration: z.number(),
-    effectiveDate: z.string(),
-    meetingResult: z.string(),
-    remark: z.string(),
-    meetingName: z.string().optional(),
+    meetingType: shortTextSchema,
+    meetingCount: numberSchem0,
+    meetingDate: shortTextSchema,
+    amount:numberSchem0,
+    paymentType: shortTextSchema,
+    duration:numberSchem0,
+    effectiveDate: shortTextSchema,
+    meetingResult: shortTextSchema,
+    remark: shortTextSchema,
+    meetingName: shortTextSchema.optional(),
 })
 
 
@@ -143,6 +143,6 @@ export const _confirmationDetail = z.object({
     surchargeId: z.number().readonly(),
     name: z.string(),
     remark: z.string(),
-    status: z.string(),
-    statusDescription: z.string(),
+    status: z.boolean(),
+    // statusDescription: z.string(),
 })

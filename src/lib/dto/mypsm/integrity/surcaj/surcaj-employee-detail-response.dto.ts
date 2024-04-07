@@ -15,14 +15,14 @@ export interface ApplicationDetail {
 }
 
 export interface Confirmation {
-    details: ConfirmationDetails;
+    details: ConfirmationDetails |null;
 }
 
 export interface ConfirmationDetails {
     surchargeId:       number;
     name:              string;
     remark:            string;
-    status:            string;
+    status:            boolean;
     statusDescription: string;
 }
 

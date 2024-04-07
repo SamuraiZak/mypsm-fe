@@ -5,28 +5,25 @@ import type { DropdownDTO } from "$lib/dto/core/dropdown/dropdown.dto";
 import type { surchargeaIdRequestDTO } from "$lib/dto/mypsm/integrity/surcaj/surcaj-ID-.dto";
 import type { ApplicationDetail, Confirmation, ConfirmationDetails, MeetingDetail, SurcajEmployeeDetailResponseDTO } from "$lib/dto/mypsm/integrity/surcaj/surcaj-employee-detail-response.dto";
 import { getErrorToast } from "$lib/helpers/core/toast.helper";
-import { _applicationDetail, _confirmationDetail, _meetingDetail, _surcajEmployeeDetailViewSchema, _surcajEmployeeResponseSchema } from "$lib/schemas/mypsm/integrity/surcaj-scheme";
+import { _applicationDetail, _confirmationDetail, _meetingDetail, _surcajEmployeeResponseSchema } from "$lib/schemas/mypsm/integrity/surcaj-scheme";
 import { LookupServices } from "$lib/services/implementation/core/lookup/lookup.service";
 import { IntegrityServices } from "$lib/services/implementation/mypsm/integriti/integrity.service";
 import { superValidate } from "sveltekit-superforms";
 import { error } from '@sveltejs/kit';
 import { zod } from "sveltekit-superforms/adapters";
 import type { employeeIdRequestDTO } from "$lib/dto/mypsm/integrity/surcaj/employee-ID.dto";
-import type { SurcajPersonalDetailResponseDTO } from "$lib/dto/mypsm/integrity/surcaj/surcaj-view-personal-response.dto";
 
 
-export async function load({ params }) {
+export async function load({params }) {
 
+let currentID: surchargeaIdRequestDTO = {
+    surchargeId: Number(params.id)
+}
 
-    let employeeID: employeeIdRequestDTO = {
-        employeeId: Number(params.employeeId)
-    }
-
-    const detailRequest = {
-        integrityId: 0,
-        employeeId: Number(params.employeeId),
-    }
-
+let employeeID: employeeIdRequestDTO = {
+    employeeId: Number(params.employeeId)
+}
+    
 
     // ==========================================================================
     // Get Lookup Functions
@@ -254,37 +251,45 @@ export async function load({ params }) {
 
 
     const personalDetailResponse: CommonResponseDTO =
-        await IntegrityServices.viewPersonalDetail(detailRequest);
+        await IntegrityServices.surcajEmployeeDetails(currentID);
 
-    const personalInfoForm = await superValidate(personalDetailResponse.data?.details as SurcajPersonalDetailResponseDTO, zod(_surcajEmployeeDetailViewSchema),
+     const personalInfoForm: SurcajEmployeeDetailResponseDTO = personalDetailResponse.data?.details as  SurcajEmployeeDetailResponseDTO
+     //  =======================================================
+     //  add
+     // ========================================================
+     
+     
+     const applicationDetail = await superValidate (personalInfoForm.applicationDetail as ApplicationDetail, zod (_applicationDetail),
+     {
+         errors: false
+        })
+        
+        const meetingDetail = await superValidate (personalInfoForm.meetingDetail as MeetingDetail, zod (_meetingDetail),
         {
             errors: false
+        })
+        
+        // const confirmationDetail = await superValidate (personalInfoForm.confirmation.details as ConfirmationDetails, zod (_confirmationDetail),
+        // {
+        //     errors: false
+        // })
+
+        const confirmationDetail = await superValidate(zod(_confirmationDetail));
+
+        if (personalInfoForm.confirmation != null) {
+            confirmationDetail.data = {
+                surchargeId: personalInfoForm.confirmation.details?.surchargeId ?? 0,
+                name: personalInfoForm.confirmation.details?.name ?? "",
+                status: personalInfoForm.confirmation.details?.status ?? false,
+                remark: personalInfoForm.confirmation.details?.remark ?? "",
+            }
         }
-    );
-    //  =======================================================
-    //  add
-    // ========================================================
-
-
-    const applicationDetail = await superValidate(zod(_applicationDetail),
-        {
-            errors: false
-        })
-
-    const meetingDetail = await superValidate(zod(_meetingDetail),
-        {
-            errors: false
-        })
-
-    const confirmationDetail = await superValidate(zod(_confirmationDetail),
-        {
-            errors: false
-        })
-
-
+        
+        
     return {
         employeeID,
         personalInfoForm,
+        currentID,
         applicationDetail,
         meetingDetail,
         confirmationDetail,
@@ -325,7 +330,7 @@ export async function load({ params }) {
 
 export const _applicationDetailSubmit = async (formData: object) => {
     const applicationDetailForm = await superValidate(formData, (zod)(_applicationDetail));
-    console.log(applicationDetailForm)
+
     if (!applicationDetailForm.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });

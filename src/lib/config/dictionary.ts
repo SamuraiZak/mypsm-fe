@@ -474,4 +474,17 @@ const dictionary: { [key: string]: string } = {
     // lookup
     ssmCode: 'Kod SSM',
     annualIncrementRate: 'Kenaikan Gaji Tahunan',
+
+    // surcaj
+    surchargeId: "Surcaj ID",
+    employeeNo:  "No Pekerja",
+    meetingDate: "Tarikh Mesyuarat",
+    surchargeAmount: "Jumlah Surcaj (RM)",
+    paymentPeriod: "Tempoh Bayaran Balik (Bulan)",
+    identityCardNumber: "No IC",
+    gradeCode: "Gred",
+
+
+
+
 };

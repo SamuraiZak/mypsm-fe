@@ -14,6 +14,8 @@
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
+    import { _updateTable } from './+page';
+    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
 
     export let data: PageData;
     let param: CommonListRequestDTO = data.param;
@@ -33,13 +35,46 @@
         },
         data: data.addSurcajViewTable ?? [],
     };
+
+    async function _search() {
+        _updateTable(addSurcajtable.param).then((value) => {
+            addSurcajtable.data =
+                value.props.response.data?.dataList ?? [];
+            addSurcajtable.meta = value.props.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            addSurcajtable.param.pageSize = value.props.param.pageSize;
+            addSurcajtable.param.pageNum = value.props.param.pageNum;
+        });
+    }
    
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
     <CustomTabContent title="Senarai Tindakan/Ulasan Tatatertib">
-        <FilterCard></FilterCard>
         <div class="flex max-h-full w-full flex-col items-start justify-start">
+
+            <FilterCard onSearch={_search}>
+                <FilterTextField
+                    label="Gred"
+                    inputValue={addSurcajtable.param.filter.grade}
+                />
+                <FilterTextField
+                    label="Jawatan"
+                    inputValue={addSurcajtable.param.filter.position}
+                />
+                <FilterTextField
+                    label="Tahun"
+                    inputValue={addSurcajtable.param.filter.year}
+                />
+                <FilterTextField
+                    label="Nama"
+                    inputValue={addSurcajtable.param.filter.name}
+                />
+            </FilterCard>
             
             <CustomTable
                 enableDetail

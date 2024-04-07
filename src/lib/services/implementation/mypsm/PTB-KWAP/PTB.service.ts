@@ -6,6 +6,7 @@ import {
     type CommonListRequestDTO,
 } from '$lib/dto/core/common/common-list-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
+import { commonIdRequestDTOConvert, type commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
 import type { ptbPensionRequestDTO } from '$lib/dto/mypsm/employment/PTB-KWAP/add-ptb-kwap-service-detail.dto';
 import type { PTBIDRequestBody } from '$lib/dto/mypsm/employment/PTB-KWAP/ptb-kwap-employeeid-request.view-dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
@@ -50,23 +51,16 @@ export class PTBKWAPServices {
     // ============ Personal Detail ==============
     // ===========================================
 
-    static async getPTBKWAPPersonalDetails(
-        param: PTBIDRequestBody,
-    ) {
+    static async getPTBKWAPPersonalDetails(param: commonIdRequestDTO) {
         try {
-            const url: Input = 'employment/pension_detail/personal_details/get';
+            let url: Input = 'employment/pension_detail/personal_details/get';
 
-            // get the promise response
-            const promiseRes: Promise<Response> = http
+            const response: Response = await http
                 .post(url, {
-                    body: JSON.stringify(param),
+                    body: commonIdRequestDTOConvert.toJson(param),
                 })
                 .json();
 
-            // await toast for resolved or rejected state
-            const response: Response = await promiseRes;
-
-            // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {

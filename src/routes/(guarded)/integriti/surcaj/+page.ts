@@ -40,12 +40,24 @@ export const load = async () => {
             status: "" // status code from lookup | null | undefined;
         },
     };
+    const paramUrusSetia: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: null,
+        orderType: null,
+        filter: {
+            employeeNumber: null,
+            name: null,
+            identityCardNumber: null,
+            applicationDate: null,
+        },
+    };
 
     
     let directorSurcajViewResponse: CommonResponseDTO;
     let directorSurcajViewTable = [];
 
-    let surcajViewResponse: CommonResponseDTO;
+    let surcajViewResponse: CommonResponseDTO = {};
     let surcajViewTable = [];
 
     let employeeSurcajViewResponse: CommonResponseDTO;
@@ -58,7 +70,7 @@ export const load = async () => {
 
     else if (currentRoleCode === urusetia){
 
-        surcajViewResponse = await IntegrityServices.getDirectorSurcajListDetails(param);
+        surcajViewResponse = await IntegrityServices.getSurcajListDetails(paramUrusSetia);
         surcajViewTable = surcajViewResponse.data?.dataList ?? [];
     }
 
@@ -67,5 +79,33 @@ export const load = async () => {
     employeeSurcajViewResponse = await IntegrityServices.getEmployeeSurcajListDetails(param);
     employeeSurcajViewTable = employeeSurcajViewResponse.data?.dataList ?? [];
     }
-    return { param,surcajViewTable,directorSurcajViewTable,employeeSurcajViewTable };
+    return { param,paramUrusSetia,surcajViewResponse,surcajViewTable,directorSurcajViewTable,employeeSurcajViewTable };
 };
+
+export async function _updateTable(param: CommonListRequestDTO) {
+    const response: CommonResponseDTO = await IntegrityServices.getSurcajListDetails(param);
+    return {
+        props: {
+            param,
+            response,
+        },
+    };
+}
+export async function _updateDirectorTable(param: CommonListRequestDTO) {
+    const response: CommonResponseDTO = await IntegrityServices.getSurcajListDetails(param);
+    return {
+        props: {
+            param,
+            response,
+        },
+    };
+}
+export async function _updateEmployeeTable(param: CommonListRequestDTO) {
+    const response: CommonResponseDTO = await IntegrityServices.getEmployeeSurcajListDetails(param);
+    return {
+        props: {
+            param,
+            response,
+        },
+    };
+}

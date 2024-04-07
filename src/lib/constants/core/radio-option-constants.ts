@@ -75,3 +75,14 @@ export const proceedingMeetingOptions: RadioDTO[] = [
         name: 'TIDAK BERSALAH',
     },
 ];
+
+export const certifySurcajOptions: RadioDTO[] = [
+    {
+        value: false,
+        name: 'SAH',
+    },
+    {
+        value: true,
+        name: 'TIDAK SAH',
+    },
+];

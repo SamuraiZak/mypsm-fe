@@ -11,13 +11,14 @@
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
 
     import type { PageData } from './$types';
-    import { _updateTable } from './+page';
+    import { _updateTable, _updateTableNo } from './+page';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
 
     export let data: PageData;
     let param: CommonListRequestDTO = data.param;
+    let paramNo: CommonListRequestDTO = data.paramNo;
     let currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
     );
@@ -43,37 +44,41 @@
         data: data.ptbViewTable ?? [],
     };
 
-    let table: TableDTO = {
-        param: param,
+    let PTBtableNo: TableDTO = {
+        param: paramNo,
         meta: {
             pageSize: 5,
             pageNum: 1,
             totalData: 4,
             totalPage: 1,
         },
-        data: data.dataList ?? [],
+        data: data.ptbNoViewTable ?? [],
     };
-    let table2: TableDTO = {
-        param: param,
-        meta: {
-            pageSize: 5,
-            pageNum: 1,
-            totalData: 4,
-            totalPage: 1,
-        },
-        data: data.dataList2 ?? [],
-    };
+
     async function _search() {
-        _updateTable(table.param).then((value) => {
-            table.data = value.response?.dataList ?? [];
-            table.meta = value.response?.meta ?? {
+        _updateTable(PTBtable.param).then((value) => {
+            PTBtable.data = value.props.response.data?.dataList ?? [];
+            PTBtable.meta = value.props.response.data?.meta ?? {
                 pageSize: 1,
                 pageNum: 1,
                 totalData: 1,
                 totalPage: 1,
             };
-            table.param.pageSize = table.meta.pageSize;
-            table.param.pageNum = table.meta.pageNum;
+            PTBtable.param.pageSize = PTBtable.meta.pageSize;
+            PTBtable.param.pageNum = PTBtable.meta.pageNum;
+        });
+    }
+    async function _searchNo() {
+        _updateTableNo(PTBtableNo.param).then((value) => {
+            PTBtableNo.data = value.props.response.data?.dataList ?? [];
+            PTBtableNo.meta = value.props.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            PTBtableNo.param.pageSize = PTBtableNo.meta.pageSize;
+            PTBtableNo.param.pageNum = PTBtableNo.meta.pageNum;
         });
     }
 </script>
@@ -83,7 +88,15 @@
     <ContentHeader
         title="Pemberian Taraf Berpencen (PTB) dan Kumpulan Wang Persaraan
         (KWAP)"
-    ></ContentHeader>
+    >
+    <TextIconButton
+    label="Tambah Rekod"
+    onClick={() => {
+        goto('./perjawatan/tambah-rekod');
+    }}
+>
+    <SvgPlus />
+</TextIconButton></ContentHeader>
 </section>
 
 <!-- content body starts here -->
@@ -103,24 +116,14 @@
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
-                <TextIconButton
-            label="Tambah Rekod"
-            onClick={() => {
-                goto('./perjawatan/tambah-rekod');
-            }}
-        >
-            <SvgPlus />
-        </TextIconButton>
+             
                     <CustomTable
                         onUpdate={_search}
                         enableDetail
-
-
                         bind:passData={rowData}
                     detailActions={() => {
-                          const route = `./PTB-dan-KWAP/butiran-${rowData.employeeId}`;
- 
-                        goto(route);
+                        goto( `./PTB-dan-KWAP/urus-setia/butiran-` +
+                                    rowData.employeeId);
                     }}
                
                         bind:tableData={PTBtable}
@@ -132,51 +135,19 @@
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
-                    <CustomTable enableDetail bind:tableData={table2}
-                    ></CustomTable>
+                <CustomTable
+                onUpdate={_searchNo}
+                enableDetail
+                bind:passData={rowData}
+            detailActions={() => {
+                goto( `./PTB-dan-KWAP/urus-setia/butiran`);
+            }}
+       
+                bind:tableData={PTBtableNo}
+            ></CustomTable>
                 </div>
             </CustomTabContent>
         </CustomTab>
-    {:else if currentRoleCode === kakitangan || currentRoleCode === penyokong}
-        <div
-            class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
-        >
-            <ContentHeader title="Senarai Kakitangan Baharu diberi PTB dan KWAP"
-            >
-            
-        </ContentHeader>
-        
-            <div
-                class="flex max-h-full w-full flex-col items-start justify-start"
-            >
-            <FilterCard></FilterCard>
-                <CustomTable
-                    onUpdate={_search}
-                    enableDetail
-                    detailActions={() =>
-                        goto('/perjawatan/PTB-dan-KWAP/butiran')}
-                    bind:tableData={table}
-                ></CustomTable>
-            </div>
-        </div>
-    {:else if currentRoleCode === pelulus}
-        <div
-            class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
-        >
-            <ContentHeader title="Senarai Kakitangan Baharu diberi PTB dan KWAP"
-            ></ContentHeader>
-            <FilterCard></FilterCard>
-            <div
-                class="flex max-h-full w-full flex-col items-start justify-start"
-            >
-                <CustomTable
-                    onUpdate={_search}
-                    enableDetail
-                    detailActions={() =>
-                        goto('/perjawatan/PTB-dan-KWAP/butiran')}
-                    bind:tableData={table}
-                ></CustomTable>
-            </div>
-        </div>
+   
     {/if}
 </section>

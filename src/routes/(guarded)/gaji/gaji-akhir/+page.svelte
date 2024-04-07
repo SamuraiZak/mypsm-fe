@@ -70,7 +70,7 @@
                 label="status"
                 inputValue={finalPayslipTable.param.filter.status}
             />
-        </FilterCard>
+       
 
         <CustomTable
             title="Rekod Sijil Gaji Akhir"

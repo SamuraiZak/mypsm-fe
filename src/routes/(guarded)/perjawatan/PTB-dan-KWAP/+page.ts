@@ -1,15 +1,18 @@
+import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant";
+import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
 import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
 import { PTBKWAPServices } from "$lib/services/implementation/mypsm/PTB-KWAP/PTB.service";
 
 export const load = async () => {
-    // const param = {
-    //     pageNum: 1,
-    //     pageSize: 5,
-    //     orderBy: null,
-    //     orderType: null,
-    // };
+  
+    
+    let currentRoleCode = localStorage.getItem(
+        LocalStorageKeyConstant.currentRoleCode,
+    );
 
+    // urusetia
+     let urusetia = UserRoleConstant.urusSetiaPerjawatan.code;
 
     const param: CommonListRequestDTO = {
         pageNum: 1,
@@ -28,53 +31,94 @@ export const load = async () => {
         },
     };
 
+    const paramNo: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: null,
+        orderType: null,
+        filter: {
+            dataType: 2,
+            staffName: "",
+            staffNo: "",
+            identityCard: "",
+           applicationDate: null,
+            grade: "",
+            position: "",
+            status: "" // status code from lookup | null | undefined;
+        },
+    };
+
+    // ada pencen
+    const paramUrusSetia: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: null,
+        orderType: null,
+        filter: {
+            employeeNumber: null,
+            name: null,
+            identityCardNumber: null,
+            applicationDate: null,
+        },
+    };
+
+    // tiada no pencen
+    const paramNoUrusSetia: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: null,
+        orderType: null,
+        filter: {
+            employeeNumber: null,
+            name: null,
+            identityCardNumber: null,
+            applicationDate: null,
+        },
+    };
+
+
+    // ada pencen
     let ptbViewResponse: CommonResponseDTO;
     let ptbViewTable = [];
-    
 
+    // tiada pencen
+    let ptbNoViewResponse: CommonResponseDTO;
+    let ptbNoViewTable = [];
+
+
+    
+    // ada pencen
     ptbViewResponse = await PTBKWAPServices.getPTBKWAPListDetails(param);
     ptbViewTable = ptbViewResponse.data?.dataList ?? [];
 
-
-
-    const dataList = [
-        { id:'0001', name: 'Calvin', noKadPengenalan:'999999999999', Kategori:'Tetap', tarikhMemohon:'30/2/2024', status: 'baru', Tindakan:'-'},
-        { id:'0002', name: 'Fidi', noKadPengenalan:'888888888888', Kategori:'Tetap', tarikhMemohon:'30/2/2024', status: 'baru', Tindakan:'-'},
-        { id:'0003', name: 'Zulhaimie', noKadPengenalan:'777777777777', Kategori:'Tetap', tarikhMemohon:'30/2/2024', status: 'baru', Tindakan:'-'},
-        { id:'0004', name: 'Edwin', noKadPengenalan:'666666666666', Kategori:'Tetap', tarikhMemohon:'30/2/2024', status: 'baru', Tindakan:'-'},
-    ];
-    const dataList2 = [
-        { id:'0004', name: 'Edwin', noKadPengenalan:'666666666666', Kategori:'Tetap', tarikhMemohon:'30/2/2024', status: 'baru', Tindakan:'-'},
-       
-    ];
-
-    return { param, dataList,dataList2,ptbViewTable };
+    // tiada 
+    ptbNoViewResponse = await PTBKWAPServices.getPTBKWAPListDetails(paramNo);
+    ptbNoViewTable = ptbNoViewResponse.data?.dataList ?? [];
+   
+return {
+    param, paramUrusSetia,ptbViewResponse,ptbViewTable,ptbNoViewResponse,ptbNoViewTable,paramNo,
+};
+    
 };
 
-export const _updateTable = async (param: unknown) => {
-    const response = {
-        status: 'success',
-        meta: {
-            pageSize: 5,
-            pageNum: 1,
-            totalData: 4,
-            totalPage: 1,
-        },
-        dataList: [
-            { id:'0001', name: 'holi', noKadPengenalan:'999999999999', Kategori:'Tetap', tarikhMemohon:'30/2/2024', status: 'baru', Tindakan:'-'},
-            { id:'0002', name: 'hamiz', noKadPengenalan:'888888888888', Kategori:'Tetap', tarikhMemohon:'30/2/2024', status: 'baru', Tindakan:'-'},
-            { id:'0003', name: 'naz' , noKadPengenalan:'777777777777', Kategori:'Tetap', tarikhMemohon:'30/2/2024', status: 'baru', Tindakan:'-'},
-            { id:'0004', name: 'azmina', noKadPengenalan:'666666666666', Kategori:'Tetap', tarikhMemohon:'30/2/2024', status: 'baru', Tindakan:'-'},
-      
-        ],
-        dataList2: [
-            { id:'0004', name: 'Edwin', noKadPengenalan:'666666666666', Kategori:'Tetap', tarikhMemohon:'30/2/2024', status: 'baru', Tindakan:'-'},
-      
-        ],
-    };
-
+export async function _updateTable(param: CommonListRequestDTO) {
+    const response: CommonResponseDTO = await PTBKWAPServices.getPTBKWAPListDetails(param);
     return {
-        param,
-        response,
+        props: {
+            param,
+            response,
+        },
     };
-};
+}
+
+export async function _updateTableNo(paramNo: CommonListRequestDTO) {
+    const response: CommonResponseDTO = await PTBKWAPServices.getPTBKWAPListDetails(paramNo);
+    return {
+        props: {
+            paramNo,
+            response,
+        },
+    };
+}
+
+

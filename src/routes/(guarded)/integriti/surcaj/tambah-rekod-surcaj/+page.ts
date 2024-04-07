@@ -36,3 +36,13 @@ export const load = async () => {
 
     return { param,addSurcajViewTable };
 };
+
+export async function _updateTable(param: CommonListRequestDTO) {
+    const response: CommonResponseDTO = await IntegrityServices.getSurcajListAddDetails(param);
+    return {
+        props: {
+            param,
+            response,
+        },
+    };
+}
