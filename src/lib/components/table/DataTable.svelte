@@ -598,7 +598,9 @@
                                         <span
                                             class="relative text-start align-middle text-sm font-normal text-ios-labelColors-label-light"
                                         >
-                                            {#if TableHelper.getKey(row, key) !== '' || TableHelper.getKey(row, key) !== null || TableHelper.getKey(row, key) !== null}
+                                            {#if TableHelper.getKey(row, key) == null}
+                                                Tiada Maklumat
+                                            {:else if TableHelper.getKey(row, key) !== ''}
                                                 {#if typeof TableHelper.getKey(row, key) == 'string'}
                                                     {TextAppearanceHelper.toProper(
                                                         TableHelper.getKey(
@@ -612,8 +614,6 @@
                                                         key,
                                                     )}
                                                 {/if}
-                                            {:else}
-                                                Tiada data
                                             {/if}
                                         </span>
                                     </td>
