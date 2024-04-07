@@ -2,7 +2,7 @@ import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-requ
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto"
 import type { commonIdRequestDTO } from "$lib/dto/core/common/id-request.dto"
 import type { DropdownDTO } from "$lib/dto/core/dropdown/dropdown.dto"
-import type { ClinicPanelTreatmentPatientDetail } from "$lib/dto/mypsm/perubatan/clinic-panel-treatment-patient-detail.dto"
+import type { ClinicPanelTreatmentDetailList, ClinicPanelTreatmentPatientDetail } from "$lib/dto/mypsm/perubatan/clinic-panel-treatment-patient-detail.dto"
 import type { MedicalEmployeeDetail } from "$lib/dto/mypsm/perubatan/medical-employee-detail.dto"
 import { LookupServices } from "$lib/services/implementation/core/lookup/lookup.service"
 import { MedicalServices } from "$lib/services/implementation/mypsm/perubatan/medical.service"
@@ -16,6 +16,7 @@ export const load = async ({ params }) => {
     }
     let employeeDetail = {} as MedicalEmployeeDetail;
     let patientDetail: ClinicPanelTreatmentPatientDetail[] = [];
+    let treatmentDetail: ClinicPanelTreatmentDetailList[] = [];
     const lookup = await getLookup()
 
     const employeeDetailResponse: CommonResponseDTO =
@@ -28,10 +29,17 @@ export const load = async ({ params }) => {
     patientDetail =
         patientDetailResponse.data?.details as ClinicPanelTreatmentPatientDetail[];
 
+    const treatmentDetailResponse: CommonResponseDTO =
+        await MedicalServices.getClinicPanelClaimPatientTreatment(patientId)
+    treatmentDetail =
+        treatmentDetailResponse.data?.dataList as ClinicPanelTreatmentDetailList[];
+
+    console.log(treatmentDetailResponse)
     return {
         employeeDetail,
         patientDetail,
         lookup,
+        treatmentDetail,
     }
 }
 

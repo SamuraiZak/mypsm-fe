@@ -11,6 +11,7 @@
     import type { PageData } from './$types';
     import type { MedicalClaimList } from '$lib/dto/mypsm/perubatan/medical-claim-list.dto';
     import { goto } from '$app/navigation';
+    import { _updateAllocationTable, _updateClaimTable } from './+page';
 
     export let data: PageData;
 
@@ -25,6 +26,52 @@
         data: data.medicalClaimList ?? [],
         hiddenData: ['medicalClaimId'],
     };
+    async function _searchClaimTable() {
+        _updateClaimTable(medicalClaimTable.param).then((value) => {
+            medicalClaimTable.data = value.props.response.data?.dataList ?? [];
+            medicalClaimTable.meta = value.props.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            medicalClaimTable.param.pageSize = value.props.param.pageSize;
+            medicalClaimTable.param.pageNum = value.props.param.pageNum;
+            medicalClaimTable.hiddenData = ['medicalClaimId'];
+        });
+    }
+
+    let medicalClaimAllocationTable: TableDTO = {
+        param: data.param,
+        meta: data.allocationListResponse.data?.meta ?? {
+            pageSize: 5,
+            pageNum: 1,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: data.allocationList ?? [],
+        hiddenData: ['id'],
+    };
+    async function _searchAllocationTable() {
+        _updateAllocationTable(medicalClaimAllocationTable.param).then(
+            (value) => {
+                medicalClaimAllocationTable.data =
+                    value.props.response.data?.dataList ?? [];
+                medicalClaimAllocationTable.meta = value.props.response.data
+                    ?.meta ?? {
+                    pageSize: 1,
+                    pageNum: 1,
+                    totalData: 1,
+                    totalPage: 1,
+                };
+                medicalClaimAllocationTable.param.pageSize =
+                    value.props.param.pageSize;
+                medicalClaimAllocationTable.param.pageNum =
+                    value.props.param.pageNum;
+                medicalClaimAllocationTable.hiddenData = ['id'];
+            },
+        );
+    }
 </script>
 
 <!-- content header starts here -->
@@ -41,17 +88,22 @@
                 <FilterCard>
                     <FilterTextField label="Nama" inputValue={''} />
                 </FilterCard>
-                <div class="flex w-full justify-end items-end">
+                <div class="flex w-full items-end justify-end">
                     <TextIconButton
                         label="Tuntutan Baru"
                         icon="add"
                         onClick={() => {
-                            goto('/perubatan/baru/'+data.currentEmployeeDetail.employeeId)
+                            goto(
+                                '/perubatan/baru/' +
+                                    data.currentEmployeeDetail.employeeId,
+                            );
                         }}
                     />
                 </div>
                 <CustomTable
+                    tableId="claimTable"
                     title="Senarai Rekod Tuntutan"
+                    onUpdate={_searchClaimTable}
                     bind:tableData={medicalClaimTable}
                 />
             </div>
@@ -59,7 +111,12 @@
 
         <CustomTabContent title="Perkhidmatan">
             <div class="flex w-full flex-col justify-start gap-5 p-5">
-                
+                <CustomTable
+                    tableId="claimAllocationTable"
+                    title="Senarai Baki Peruntukan Perubatan"
+                    bind:tableData={medicalClaimAllocationTable}
+                    onUpdate={_searchAllocationTable}
+                />
             </div>
         </CustomTabContent>
     </CustomTab>

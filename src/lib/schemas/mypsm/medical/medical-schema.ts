@@ -25,10 +25,6 @@ const emailSchema = z.string({
     invalid_type_error: "Medan ini tidak boleh dibiar kosong."
 }).email("Sila nyatakan format emel yang sah. ");
 
-const identificationCardSchema = z.string().refine(x => /^[0-9]+$/.test(x) && x.length == 12, {
-    message: "Sila nyatakan No. Kad Pengenalan dalam format yang dikehendaki."
-});
-
 const phoneSchema = z.string().refine(x => /^[0-9]+$/.test(x) && (x.length == 9 || x.length == 11 || x.length == 10),
     {
         message: "Sila nyatakan No. Telefon yang betul."
@@ -38,14 +34,14 @@ const postcodeSchema = z.string().refine(x => /^[0-9]+$/.test(x) && x.length == 
     message: "Sila nyatakan poskod yang betul."
 });
 
-const optionalNumberSchema = z.number().refine(x => x > 0, { message: "Sila tetapkan pilihan anda." }).nullable().default(null);
-const optionalTextSchema = z.string().min(4, { message: "Medan hendaklah lebih dari 4 karakter." }).nullable().default(null);
-
+//profile
 export const _editClinicProfileSchema = z.object({
     clinicCode: shortTextSchema,
     clinicName: shortTextSchema,
     address: shortTextSchema,
-    district: shortTextSchema,
+    districtId: numberSchema,
+    postcode: postcodeSchema,
+    cityId: numberSchema,
     contactNumber: phoneSchema,
     bankName: shortTextSchema,
     bankAccount: shortTextSchema,
@@ -62,8 +58,6 @@ export const _addClinicApplicationSchema = z.object({
     cityId: numberSchema,
     postcode: postcodeSchema,
     name: shortTextSchema,
-    panelAppointedDate: stringToMinDate,
-    panelContractEndDate: stringToMinDate,
     address: shortTextSchema,
     email: emailSchema,
     contactNumber: phoneSchema,
@@ -87,6 +81,8 @@ export const _addClinicContractSchema = z.object({
 
 export const _clinicCommonResultSchema = z.object({
     id: numberSchema,
+    supporterName: z.string().optional(),
+    approverName: z.string().optional(),
     status: booleanSchema,
     remark: shortTextSchema,
 })
@@ -95,4 +91,26 @@ export const _clinicSupporterApproverSchema = z.object({
     id: numberSchema,
     supporterName: shortTextSchema.default(""),
     approverName: shortTextSchema.default(""),
+})
+
+// =================================================
+// Bil Tuntutan Klinik Schema
+// =================================================
+export const _clinicClaimDetailSchema = z.object({
+    clinicName: shortTextSchema,
+    invoiceDate: stringToMaxDate,
+    invoiceNumber: shortTextSchema,
+    treatmentMonth: numberSchema.default(1),
+    treatmentYear: numberSchema,
+    total: numberSchema,
+})
+
+// =================================================
+// Tuntutan Kakitangan Schema
+// =================================================
+export const _addEmployeeClaimsSchema = z.object({
+    treatmentDate: stringToMaxDate,
+    clinicId: numberSchema,
+    medicalLeave: numberSchema,
+    claims: numberSchema.array().min(1, {message: "Tuntutan tidak boleh kosong."}),
 })

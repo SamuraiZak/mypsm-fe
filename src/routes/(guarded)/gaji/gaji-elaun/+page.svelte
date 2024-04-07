@@ -5,21 +5,39 @@
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
+    import { kgtMonthLookup } from '$lib/constants/core/dropdown.constant';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type { SalaryAllowanceList } from '$lib/dto/mypsm/gaji/gaji-elaun/salary-allowance-list.dto';
     import type { PageData } from './$types';
+    import { _updateTable } from './+page';
     export let data: PageData;
 
-    let rowData: any;
+    let rowData: SalaryAllowanceList;
     let salaryAllowanceTable: TableDTO = {
         param: data.param,
-        meta: {
+        meta: data.salaryAllowanceListResponse.data?.meta ?? {
             pageSize: 5,
             pageNum: 1,
             totalData: 4,
             totalPage: 1,
         },
-        data: data.dataList ?? [],
-        hiddenData: ['id']
+        data: data.salaryAllowanceList ?? [],
+        hiddenData: ['employeeId'],
+    };
+    async function _search() {
+        _updateTable(salaryAllowanceTable.param).then((value) => {
+            salaryAllowanceTable.data =
+                value.props.response.data?.dataList ?? [];
+            salaryAllowanceTable.meta = value.props.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            salaryAllowanceTable.param.pageSize = value.props.param.pageSize;
+            salaryAllowanceTable.param.pageNum = value.props.param.pageNum;
+            salaryAllowanceTable.hiddenData = ['employeeId'];
+        });
     }
 </script>
 
@@ -32,18 +50,21 @@
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
     <div class="flex w-full flex-col justify-start gap-2.5 p-5">
-        <FilterCard>
-            <FilterTextField label="Nama" inputValue={''} />
-            <FilterTextField label="No. Pekerja" inputValue={''} />
-            <FilterTextField label="Status" inputValue={''} />
+        <FilterCard onSearch={_search}>
+            <FilterSelectField label="Bulan" options={kgtMonthLookup} bind:inputValue={salaryAllowanceTable.param.filter.month} />
+            <FilterTextField
+                label="Tahun"
+                bind:inputValue={salaryAllowanceTable.param.filter.year}
+            />
         </FilterCard>
 
         <CustomTable
             title="Senarai Kakitangan"
             bind:tableData={salaryAllowanceTable}
             bind:passData={rowData}
+            onUpdate={_search}
             enableDetail
-            detailActions={() => goto('/gaji/gaji-elaun/'+rowData.id)}
-            />
+            detailActions={() => goto('/gaji/gaji-elaun/' + rowData.employeeId + '-' + salaryAllowanceTable.param.filter.month + '-' + salaryAllowanceTable.param.filter.year)}
+        />
     </div>
 </section>

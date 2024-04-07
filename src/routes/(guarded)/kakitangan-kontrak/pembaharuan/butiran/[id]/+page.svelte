@@ -391,13 +391,6 @@
                         val={data.getContractPersonalDetail.homePostcode}
                     />
                     <div class="flex w-full flex-col justify-items-start gap-2">
-                        <!-- {#if !data.viewOnly}
-                            <Checkbox
-                                bind:checked={sameAddress}
-                                class="text-ios-labelColors-secondaryLabel-light"
-                                >Sama dengan Alamat Rumah</Checkbox
-                            >
-                        {/if} -->
                         <CustomTextField
                             label="Alamat Surat Menyurat"
                             disabled

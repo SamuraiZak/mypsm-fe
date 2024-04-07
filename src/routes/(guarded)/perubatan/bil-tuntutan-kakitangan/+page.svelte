@@ -27,7 +27,7 @@
             totalPage: 1,
         },
         data: data.employeeAllocationList ?? [],
-        hiddenData: ['claimId'],
+        hiddenData: ['claimId', 'employeeId'],
     };
 
     //table peruntukan kakitangan
@@ -70,7 +70,7 @@
                 value.props.param.pageSize;
             employeeAllocationClaimsTable.param.pageNum =
                 value.props.param.pageNum;
-            employeeAllocationClaimsTable.hiddenData = ['claimId'];
+            employeeAllocationClaimsTable.hiddenData = ['claimId', 'employeeId'];
         });
     }
     async function _searchAllocation() {
@@ -114,7 +114,7 @@
 >
     <CustomTab>
         <CustomTabContent title="Senarai Tuntutan Kakitangan">
-            <div class="flex w-full flex-col justify-start gap-2.5 p-5">
+            <div class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10">
                 <FilterCard onSearch={() => {}}>
                     <FilterTextField label="Kod Klinik" inputValue={''} />
                     <FilterTextField label="Nama Klinik" inputValue={''} />
@@ -134,14 +134,14 @@
                         detailActions={() =>
                             goto(
                                 './bil-tuntutan-kakitangan/butiran/' +
-                                    rowData.claimId,
+                                    rowData.employeeId+'-'+rowData.claimId,
                             )}
                     />
                 </div>
             </div>
         </CustomTabContent>
         <CustomTabContent title="Senarai Kakitangan - Peruntukan">
-            <div class="flex w-full flex-col justify-start gap-2.5 p-5">
+            <div class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10">
                 <FilterCard onSearch={() => {}}>
                     <FilterTextField label="Kod Klinik" inputValue={''} />
                     <FilterTextField label="Nama Klinik" inputValue={''} />
@@ -163,7 +163,7 @@
         <CustomTabContent
             title="Senarai Pembayaran Untuk Tuntutan Melebihi Peruntukan"
         >
-            <div class="flex w-full flex-col justify-start gap-2.5 p-5">
+            <div class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10">
                 <FilterCard onSearch={() => {}}>
                     <FilterTextField label="Kod Klinik" inputValue={''} />
                     <FilterTextField label="Nama Klinik" inputValue={''} />

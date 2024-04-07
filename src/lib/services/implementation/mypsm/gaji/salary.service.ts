@@ -10,6 +10,9 @@ import {
 } from '$lib/dto/core/common/common-list-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
 import { commonIdRequestDTOConvert, type commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
+import { SalaryAllowanceApprovalConvert, type SalaryAllowanceApproval } from '$lib/dto/mypsm/gaji/gaji-elaun/salary-allowance-approval.dto';
+import { SalaryAllowanceIDRequestConvert, type SalaryAllowanceIDRequest } from '$lib/dto/mypsm/gaji/gaji-elaun/salary-allowance-id-request.dto';
+import { SalaryAllowanceDeductionConvert, type SalaryAllowanceDeduction } from '$lib/dto/mypsm/gaji/gaji-elaun/salary-allowance-public-detail.dto';
 import { AddNewSalaryMovementConvert, type AddNewSalaryMovement } from '$lib/dto/mypsm/gaji/pergerakan-gaji/add-new-salary-movement.dto';
 import { SalaryMovementDirectorApprovalConvert, type SalaryMovementDirectorApproval } from '$lib/dto/mypsm/gaji/pergerakan-gaji/add-salary-movement-director-approval.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
@@ -186,15 +189,326 @@ export class SalaryServices {
     //=========================================
     // gaji elaun services
     //=========================================
+    //get gaji elaun urus setia table 
+    static async getSalaryAllowanceList(param: CommonListRequestDTO) {
+        try {
+            let url: Input = 'salary/allowance/list';
 
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
 
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //get gaji elaun pengarah table 
+    static async getDirectorSalaryAllowanceList(param: CommonListRequestDTO) {
+        try {
+            let url: Input = 'salary/allowance/list';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //get employee personal detail
+    static async getSalaryAllowancePersonalDetail(param: SalaryAllowanceIDRequest) {
+        try {
+            let url: Input = 'salary/allowance/employee';
+
+            const response: Response = await http
+                .post(url, {
+                    body: SalaryAllowanceIDRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //get employee salary detail
+    static async getSalaryAllowanceSalaryDetail(param: SalaryAllowanceIDRequest) {
+        try {
+            let url: Input = 'salary/allowance/salary';
+
+            const response: Response = await http
+                .post(url, {
+                    body: SalaryAllowanceIDRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //get employee other detail
+    static async getSalaryAllowanceOtherDetail(param: SalaryAllowanceIDRequest) {
+        try {
+            let url: Input = 'salary/allowance/other';
+
+            const response: Response = await http
+                .post(url, {
+                    body: SalaryAllowanceIDRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //get employee public detail
+    static async getSalaryAllowancePublicDetail(param: SalaryAllowanceIDRequest) {
+        try {
+            let url: Input = 'salary/allowance/public';
+
+            const response: Response = await http
+                .post(url, {
+                    body: SalaryAllowanceIDRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //edit employee public detail
+    static async editSalaryAllowancePublicDetail(param: SalaryAllowanceDeduction) {
+        try {
+            let url: Input = 'salary/allowance/public';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: SalaryAllowanceDeductionConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //get employee acting detail
+    static async getSalaryAllowanceActingDetail(param: SalaryAllowanceIDRequest) {
+        try {
+            let url: Input = 'salary/allowance/acting';
+
+            const response: Response = await http
+                .post(url, {
+                    body: SalaryAllowanceIDRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //edit employee acting detail
+    static async editSalaryAllowanceActingDetail(param: SalaryAllowanceDeduction) {
+        try {
+            let url: Input = 'salary/allowance/acting';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: SalaryAllowanceDeductionConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //get employee adjustment detail
+    static async getSalaryAllowanceAdjustmentDetail(param: SalaryAllowanceIDRequest) {
+        try {
+            let url: Input = 'salary/allowance/adjustment';
+
+            const response: Response = await http
+                .post(url, {
+                    body: SalaryAllowanceIDRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //edit employee adjustment detail
+    static async editSalaryAllowanceAdjustmentDetail(param: SalaryAllowanceDeduction) {
+        try {
+            let url: Input = 'salary/allowance/adjustment';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: SalaryAllowanceDeductionConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //submit salary allowance
+    static async addSalaryAllowance(param: SalaryAllowanceIDRequest) {
+        try {
+            let url: Input = 'salary/allowance/submit';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: SalaryAllowanceIDRequestConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //get salary allowance approval
+    static async getSalaryAllowanceApproval(param: SalaryAllowanceIDRequest) {
+        try {
+            let url: Input = 'salary/allowance/approval/detail';
+
+            const response: Response = await http
+                .post(url, {
+                    body: SalaryAllowanceIDRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //add salary allowance approval
+    static async addSalaryAllowanceApproval(param: SalaryAllowanceApproval) {
+        try {
+            let url: Input = 'salary/allowance/approval/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: SalaryAllowanceApprovalConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
     //=========================================
     // gaji akhir
-    //=========================================
-
-
-    //=========================================
-    // sijil gaji akhir
     //=========================================
     static async getFinalPayslipList(param: CommonListRequestDTO) {
         try {
@@ -308,8 +622,8 @@ export class SalaryServices {
             return CommonResponseConstant.httpError;
         }
     }
-     //get payslip
-     static async getFinalpayslip(param: commonIdRequestDTO) {
+    //get payslip
+    static async getFinalpayslip(param: commonIdRequestDTO) {
         try {
             let url: Input = 'salary/final_payslip/slip';
 
@@ -330,4 +644,9 @@ export class SalaryServices {
             return CommonResponseConstant.httpError;
         }
     }
+
+
+    //=========================================
+    // sijil gaji akhir
+    //=========================================
 }

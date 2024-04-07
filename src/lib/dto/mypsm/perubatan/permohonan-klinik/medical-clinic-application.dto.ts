@@ -3,8 +3,6 @@ export interface MedicalClinicApplication {
     cityId:                        number;
     postcode:                      string;
     name:                          string;
-    panelAppointedDate:            string;
-    panelContractEndDate:          string;
     address:                       string;
     email:                         string;
     contactNumber:                 string;

@@ -3,9 +3,9 @@
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import { superForm } from 'sveltekit-superforms/client';
     import { zod } from 'sveltekit-superforms/adapters';
-    import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
-    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import type { PageData } from './$types';
+    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
+    import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import { _editClinicProfileSchema } from '$lib/schemas/mypsm/medical/medical-schema';
     import { _submit } from './+page';
     import { Toaster } from 'svelte-french-toast';
@@ -16,15 +16,15 @@
     const { form, errors, enhance } = superForm(data.clinicPanelProfile, {
         SPA: true,
         taintedMessage: false,
-        id: "editClinicPanelProfileForm",
+        id: 'editClinicPanelProfileForm',
         validators: zod(_editClinicProfileSchema),
         resetForm: false,
         async onSubmit() {
-          const editMode = await _submit($form)
+            const editMode = await _submit($form);
 
-          if(editMode?.status == "success"){
-            notEditing = true;
-          }
+            if (editMode?.status == 'success') {
+                notEditing = true;
+            }
         },
     });
 </script>
@@ -58,7 +58,8 @@
 <section
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
-    <form class="flex w-full flex-col justify-items-start gap-2.5 p-3"
+    <form
+        class="flex w-full flex-col justify-items-start gap-2.5 p-3"
         method="POST"
         id="editClinicPanelProfileForm"
         use:enhance
@@ -70,9 +71,8 @@
         <CustomTextField
             label="Kod Klinik"
             id="clinicCode"
-            bind:disabled={notEditing}
+            disabled
             bind:val={$form.clinicCode}
-            errors={$errors.clinicCode}
         />
         <CustomTextField
             label="Nama Klinik"
@@ -88,25 +88,29 @@
             bind:val={$form.address}
             errors={$errors.address}
         />
-        <!-- missing data -->
-        <!-- <CustomTextField
-            label="Poskod"
-            id="district"
+        <CustomSelectField
+            label="Daerah"
+            id="districtId"
+            options={data.lookup.districtLookup}
             bind:disabled={notEditing}
-            bind:val={$form.district}
+            bind:val={$form.districtId}
+            errors={$errors.address}
         />
-        <CustomTextField
+        <CustomSelectField
             label="Bandar"
-            id="contactNumber"
+            id="cityId"
+            options={data.lookup.cityLookup}
             bind:disabled={notEditing}
-            bind:val={$form.contactNumber}
+            bind:val={$form.cityId}
+            errors={$errors.cityId}
         />
         <CustomTextField
-            label="Negeri"
-            id="name"
+            label="Poskod"
+            id="postcode"
             bind:disabled={notEditing}
-            bind:val={$form.}
-        /> -->
+            bind:val={$form.postcode}
+            errors={$errors.postcode}
+        />
         <CustomTextField
             label="No. Telefon"
             id="contactNumber"
@@ -133,17 +137,15 @@
         <CustomTextField
             label="Tarikh Mula Lantikan"
             id="panelAppointedDate"
-            bind:disabled={notEditing}
+            disabled
             bind:val={$form.panelAppointedDate}
-            errors={$errors.panelAppointedDate}
         />
         <CustomTextField
             label="Tarikh Tamat"
             id="panelContractEndDate"
-            bind:disabled={notEditing}
+            disabled
             bind:val={$form.panelContractEndDate}
-            errors={$errors.panelContractEndDate}
         />
     </form>
 </section>
-<Toaster/>
+<Toaster />

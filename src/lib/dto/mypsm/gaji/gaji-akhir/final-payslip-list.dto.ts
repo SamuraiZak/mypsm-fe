@@ -23,6 +23,7 @@ export class FinalPayslipListConvert {
 }
 
 export interface FinalPayslipListFilter {
+    type:               number;
     employeeNumber:     string;
     name:               string;
     identityCardNumber: string;

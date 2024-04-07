@@ -1,5 +1,7 @@
 export interface ClinicCommonResult {
     id:     number;
+    supporterName?: string;
+    approverName?: string;
     status: boolean;
     remark: string;
 }

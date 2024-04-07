@@ -17,7 +17,7 @@
         meta: data.finalPayslipListResponse.data?.meta ?? {
             pageSize: 5,
             pageNum: 1,
-            totalData: 0,
+            totalData: 4,
             totalPage: 1,
         },
         data: data.finalPayslipList ?? [],
@@ -52,23 +52,23 @@
         <FilterCard onSearch={_search}>
             <FilterTextField
                 label="No. Pekerja"
-                inputValue={finalPayslipTable.param.filter.employeeNumber}
+                bind:inputValue={finalPayslipTable.param.filter.employeeNumber}
             />
             <FilterTextField
                 label="Nama"
-                inputValue={finalPayslipTable.param.filter.name}
+                bind:inputValue={finalPayslipTable.param.filter.name}
             />
             <FilterTextField
                 label="No. Kad Pengenalan"
-                inputValue={finalPayslipTable.param.filter.identityCardNumber}
+                bind:inputValue={finalPayslipTable.param.filter.identityCardNumber}
             />
-            <FilterTextField
+            <!-- <FilterTextField
                 label="Jenis Persaraan"
-                inputValue={finalPayslipTable.param.filter.retirementType}
-            />
+                bind:inputValue={finalPayslipTable.param.filter.retirementType}
+            /> -->
             <FilterTextField
-                label="status"
-                inputValue={finalPayslipTable.param.filter.status}
+                label="Status"
+                bind:inputValue={finalPayslipTable.param.filter.status}
             />
        
 

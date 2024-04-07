@@ -10,7 +10,40 @@
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import type { PageData } from './$types';
-    
+    import type { ClinicPanelEmployeeList } from '$lib/dto/mypsm/perubatan/clinic-panel-employee-list.dto';
+    import { _updateTable } from './+page';
+    import { goto } from '$app/navigation';
+
+    export let data: PageData;
+
+    let rowData = {} as ClinicPanelEmployeeList;
+
+    let employeeListTable: TableDTO = {
+        param: data.param,
+        meta: data.clinicPanelEmployeeResponse.data?.meta ?? {
+            pageSize: 5,
+            pageNum: 1,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: data.clinicPanelEmployeeList ?? [],
+        hiddenData: ['id'],
+    };
+
+    async function _searchTable() {
+        _updateTable(employeeListTable.param).then((value) => {
+            employeeListTable.data = value.props.response.data?.dataList ?? [];
+            employeeListTable.meta = value.props.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            employeeListTable.param.pageSize = value.props.param.pageSize;
+            employeeListTable.param.pageNum = value.props.param.pageNum;
+            employeeListTable.hiddenData = ['id'];
+        });
+    }
 </script>
 
 <!-- content header starts here -->
@@ -28,6 +61,15 @@
             <FilterTextField label="Kad Pengenalan" inputValue={''} />
         </FilterCard>
 
-
+        <CustomTable
+            title="Senarai Kakitangan"
+            bind:tableData={employeeListTable}
+            bind:passData={rowData}
+            enableDetail
+            detailActions={() =>
+                goto('/klinik-panel/maklumat-kakitangan/'+rowData.id)
+            }
+            onUpdate={_searchTable}
+        />
     </div>
 </section>

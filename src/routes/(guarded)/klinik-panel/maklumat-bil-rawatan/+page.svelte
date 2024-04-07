@@ -8,6 +8,7 @@
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import type { ClinicPanelTreatmentBillList } from '$lib/dto/mypsm/perubatan/clinic-panel-treatment-bill-list.dto';
     import type { PageData } from './$types';
+    import { _updateTable } from './+page';
 
     export let data: PageData;
     let rowData: ClinicPanelTreatmentBillList;
@@ -23,6 +24,20 @@
         hiddenData: ['patientId', 'claimId', 'employeeId'],
     };
 
+    async function _searchTable() {
+        _updateTable(treatmentBillTable.param).then((value) => {
+            treatmentBillTable.data = value.props.response.data?.dataList ?? [];
+            treatmentBillTable.meta = value.props.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            treatmentBillTable.param.pageSize = value.props.param.pageSize;
+            treatmentBillTable.param.pageNum = value.props.param.pageNum;
+            treatmentBillTable.hiddenData = ['patientId', 'claimId', 'employeeId'];
+        });
+    }
 </script>
 
 <!-- content header starts here -->
@@ -31,7 +46,7 @@
         <TextIconButton
             label="Tambah Tuntutan"
             icon="add"
-            onClick={() => goto('/klinik-panel/maklumat-bil-rawatan/butiran/baru')}
+            onClick={() => goto('/klinik-panel/maklumat-bil-rawatan/baru')}
         />
     </ContentHeader>
 </section>
@@ -43,8 +58,7 @@
         <FilterCard onSearch={() => {}}>
             <FilterTextField label="Nama Pekerja" inputValue={''} />
             <FilterTextField label="Nama Pesakit" inputValue={''} />
-            <FilterTextField label="Kod Klinik" inputValue={''} />
-            <FilterTextField label="Nama Klinik" inputValue={''} />
+            <FilterTextField label="No. Kad Pengenalan" inputValue={''} />
             <FilterTextField label="Status" inputValue={''} />
         </FilterCard>
 
@@ -56,6 +70,7 @@
             detailActions={() =>
                 goto('./maklumat-bil-rawatan/butiran/'+rowData.employeeId+'-'+rowData.claimId)
             }
+            onUpdate={_searchTable}
         />
     </div>
 </section>

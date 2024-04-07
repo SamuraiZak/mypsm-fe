@@ -4,7 +4,7 @@ import {
     type CommonResponseDTO,
 } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
-import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
+import type { LookupClinic, LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
 import { LookupHelper } from '$lib/helpers/core/lookup.helper';
 import type { Input } from 'ky';
 import http from '../../service-provider.service';
@@ -1044,7 +1044,27 @@ export class LookupServices {
         }
     }
 
-    // employee list dropdown for supporter & approver
+    // Clinic Panel List
+    static async getClinicPanelList() {
+        try {
+            const url: Input = 'lookup/clinics';
+
+            const response: Response = await http.get(url, {}).json();
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // Clinic Panel List
     static async getEmployeeList(param: CommonListRequestDTO) {
         try {
             const url: Input = 'employee/list';
@@ -1125,5 +1145,8 @@ export class LookupServices {
         return LookupHelper.toDropdownEmploymentStatus(lookupItems);
     }
 
-    
+    static setClinicOptions = (param: CommonResponseDTO): DropdownDTO[] => {
+        const lookupItems: LookupClinic[] = param.data?.dataList as LookupClinic[];
+        return LookupHelper.toDropdownClinicList(lookupItems);
+    };
 }

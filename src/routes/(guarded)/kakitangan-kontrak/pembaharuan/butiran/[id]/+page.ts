@@ -4,7 +4,6 @@ import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-requ
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto'
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto'
 import type { RadioDTO } from '$lib/dto/core/radio/radio.dto'
-import type { ContractEmployeeDocument } from '$lib/dto/mypsm/kakitangan-kontrak/contract-document.dto.js'
 import type { GetContractAcademicDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-academic-detail.dto'
 import type { GetContractActivityDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-activity-detail.dto'
 import type { GetContractDependencyDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-dependency-detail.dto'

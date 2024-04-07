@@ -21,7 +21,7 @@
             label="Kembali"
             icon="previous"
             type="neutral"
-            onClick={() => goto('/klinik-panel/bil-tuntutan-panel-klinik')}
+            onClick={() => goto('/klinik-panel/bil-tuntutan-klinik')}
         />
     </ContentHeader>
 </section>

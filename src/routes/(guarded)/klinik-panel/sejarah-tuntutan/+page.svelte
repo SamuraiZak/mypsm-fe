@@ -8,6 +8,7 @@
     import type { PageData } from './$types';
     import type { ClinicPanelClaimHistory } from '$lib/dto/mypsm/perubatan/clinic-panel-claim-history.dto';
     import { goto } from '$app/navigation';
+    import { _updateTable } from './+page';
     export let data: PageData;
 
     let rowData = {} as ClinicPanelClaimHistory;
@@ -22,6 +23,21 @@
         data: data.claimHistoryList ?? [],
 
         hiddenData: ['patientId', 'employeeId']
+    }
+
+    async function _searchTable() {
+        _updateTable(claimHistoryTable.param).then((value) => {
+            claimHistoryTable.data = value.props.response.data?.dataList ?? [];
+            claimHistoryTable.meta = value.props.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            claimHistoryTable.param.pageSize = value.props.param.pageSize;
+            claimHistoryTable.param.pageNum = value.props.param.pageNum;
+            claimHistoryTable.hiddenData = ['patientId', 'employeeId'];
+        });
     }
 </script>
 
@@ -42,6 +58,7 @@
 
         <CustomTable
             title="Senarai Rekod"
+            onUpdate={_searchTable}
             bind:tableData={claimHistoryTable}
             bind:passData={rowData}
             enableDetail

@@ -31,7 +31,7 @@
         <TextIconButton
             label="Tambah Bil Tuntutan"
             icon="add"
-            onClick={() => goto('/klinik-panel/bil-tuntutan-panel-klinik/baru')}
+            onClick={() => goto('/klinik-panel/bil-tuntutan-klinik/baru')}
         />
     </ContentHeader>
 </section>
@@ -52,7 +52,7 @@
             bind:passData={rowData}
             enableDetail
             detailActions={() =>
-                goto('./bil-tuntutan-panel-klinik/butiran/'+rowData.clinicId)
+                goto('./bil-tuntutan-klinik/butiran/'+rowData.clinicId)
             }
         />
     </div>

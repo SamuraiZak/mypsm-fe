@@ -20,44 +20,73 @@ export const load = async ({ params }) => {
         id: Number(params.id)
     }
     const lookup = await getLookup();
+    let clinicDetail = {} as MedicalClinicApplication;
     let clinicContract = {} as ClinicContract;
     let clinicSecretaryApproval = {} as ClinicCommonResult;
     let clinicSupporterAndApprover = {} as ClinicSetSupporterApprover;
+    let clinicSupporterApproval = {} as ClinicCommonResult;
+    let clinicApproverApproval = {} as ClinicCommonResult;
 
-    const clinicContractResponse: CommonResponseDTO = 
+    const clinicDetailResponse: CommonResponseDTO =
+        await MedicalServices.getClinicApplicationDetail(clinicId);
+    clinicDetail =
+        clinicDetailResponse.data?.details as MedicalClinicApplication;
+
+    const clinicContractResponse: CommonResponseDTO =
         await MedicalServices.getClinicContractDetail(clinicId)
-    clinicContract = 
+    clinicContract =
         clinicContractResponse.data?.details as ClinicContract;
-    // TODO: Get clinicSecretaryApproval
-    // TODO: Get clinicApplicationDetail
+
+    const clinicSecretaryApprovalResponse: CommonResponseDTO =
+        await MedicalServices.getClinicSecretaryApproval(clinicId)
+    clinicSecretaryApproval =
+        clinicSecretaryApprovalResponse.data?.details as ClinicCommonResult;
+
     const clinicSupporterAndApproverResponse: CommonResponseDTO =
         await MedicalServices.getClinicSupporterApprover(clinicId)
     clinicSupporterAndApprover =
         clinicSupporterAndApproverResponse.data?.details as ClinicSetSupporterApprover;
 
+    const clinicSupporterApprovalResponse: CommonResponseDTO =
+        await MedicalServices.getClinicSupporterApproval(clinicId);
+    clinicSupporterApproval =
+        clinicSupporterApprovalResponse.data?.details as ClinicCommonResult;
+
+    const clinicApproverApprovalResponse: CommonResponseDTO =
+        await MedicalServices.getClinicApproverApproval(clinicId);
+    clinicApproverApproval =
+        clinicApproverApprovalResponse.data?.details as ClinicCommonResult;
+
     //supervalidate
-    const clinicApplicationForm = await superValidate(zod(_addClinicApplicationSchema));
-    const clinicContractForm = await superValidate(clinicContract,zod(_addClinicContractSchema), {errors: false});
-    const secretaryApprovalForm = await superValidate(zod(_clinicCommonResultSchema));
-    const supporterApproverForm = await superValidate(clinicSupporterAndApprover, zod(_clinicSupporterApproverSchema), {errors: false});
+    const clinicContractForm = await superValidate(clinicContract, zod(_addClinicContractSchema), { errors: false });
+    const secretaryApprovalForm = await superValidate(clinicSecretaryApproval, zod(_clinicCommonResultSchema), { errors: false });
+    const supporterApproverForm = await superValidate(clinicSupporterAndApprover, zod(_clinicSupporterApproverSchema), { errors: false });
+    const supporterApprovalForm = await superValidate(clinicSupporterApproval, zod(_clinicCommonResultSchema), { errors: false });
+    const approverApprovalForm = await superValidate(clinicApproverApproval, zod(_clinicCommonResultSchema), { errors: false });
+
     return {
         currentRoleCode,
         clinicId,
         lookup,
         isViewOnly,
-        clinicApplicationForm,
+        clinicDetail,
         clinicContractForm,
         secretaryApprovalForm,
         supporterApproverForm,
+        supporterApprovalForm,
+        approverApprovalForm,
+        clinicSupporterApproval,
+        clinicApproverApproval,
+        clinicSecretaryApproval,
     }
 }
 
-export const _submitClinicApplicationForm = async (formData: MedicalClinicApplication) => {
-    const form = await superValidate(formData, zod(_addClinicApplicationSchema))
+export const _submitClinicContractForm = async (formData: ClinicContract) => {
+    const form = await superValidate(formData, zod(_addClinicContractSchema))
 
     if (form.valid) {
         const response: CommonResponseDTO =
-            await MedicalServices.addClinicApplication(form.data as MedicalClinicApplication)
+            await MedicalServices.addClinicContract(form.data as ClinicContract)
 
         if (response.status == "success") {
             return { response }
@@ -65,41 +94,55 @@ export const _submitClinicApplicationForm = async (formData: MedicalClinicApplic
     }
 }
 
-export const _submitClinicContractForm = async (formData: ClinicContract) => {
-    const form = await superValidate(formData, zod(_addClinicContractSchema))
-
-    if(form.valid){
-        const response: CommonResponseDTO =
-            await MedicalServices.addClinicContract(form.data as ClinicContract)
-
-            if(response.status == "success"){
-                return { response }
-            }
-    }
-}
-
 export const _submitSecretaryApprovalForm = async (formData: ClinicCommonResult) => {
     const form = await superValidate(formData, zod(_clinicCommonResultSchema))
 
-    if(form.valid){
+    if (form.valid) {
         const response: CommonResponseDTO =
             await MedicalServices.addClinicSecretaryApproval(form.data as ClinicCommonResult)
 
-            if(response.status == "success"){
-                return { response }
-            }
+        if (response.status == "success") {
+            return { response }
+        }
     }
 }
+
 export const _submitSupporterApproverForm = async (formData: ClinicSetSupporterApprover) => {
     const form = await superValidate(formData, zod(_clinicSupporterApproverSchema))
 
-    if(form.valid){
+    if (form.valid) {
         const response: CommonResponseDTO =
             await MedicalServices.addClinicSupporterApprover(form.data as ClinicSetSupporterApprover)
 
-            if(response.status == "success"){
-                return { response }
-            }
+        if (response.status == "success") {
+            return { response }
+        }
+    }
+}
+
+export const _submitSupporterApprovalForm = async (formData: ClinicCommonResult) => {
+    const form = await superValidate(formData, zod(_clinicCommonResultSchema))
+
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await MedicalServices.addClinicSupporterApproval(form.data as ClinicCommonResult)
+
+        if (response.status == "success") {
+            return { response }
+        }
+    }
+}
+
+export const _submitApproverApprovalForm = async (formData: ClinicCommonResult) => {
+    const form = await superValidate(formData, zod(_clinicCommonResultSchema))
+
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await MedicalServices.addClinicApproverApproval(form.data as ClinicCommonResult)
+
+        if (response.status == "success") {
+            return { response }
+        }
     }
 }
 
@@ -108,23 +151,17 @@ export const _submitSupporterApproverForm = async (formData: ClinicSetSupporterA
 // =======================================================
 const getLookup = async () => {
     // -------------------------------------------------------
-    const stateLookupResponse: CommonResponseDTO =
-        await LookupServices.getStateEnums();
-    const stateLookup: DropdownDTO[] =
-        LookupServices.setSelectOptions(stateLookupResponse)
-    // -------------------------------------------------------
     const cityLookupResponse: CommonResponseDTO =
         await LookupServices.getCityEnums();
 
     const cityLookup: DropdownDTO[] =
         LookupServices.setSelectOptions(cityLookupResponse);
     // -------------------------------------------------------
-    const countryLookupResponse: CommonResponseDTO =
-        await LookupServices.getCountryEnums();
+    const districtLookupResponse: CommonResponseDTO =
+        await LookupServices.getDistrictEnums();
 
-    const countryLookup: DropdownDTO[] = LookupServices.setSelectOptions(
-        countryLookupResponse,
-    );
+    const districtLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(districtLookupResponse);
     // -------------------------------------------------------
     const suppAppResponse: CommonListRequestDTO = {
         pageNum: 1,
@@ -148,9 +185,8 @@ const getLookup = async () => {
         supporterApproverResponse,
     );
     return {
-        stateLookup,
+        districtLookup,
         cityLookup,
-        countryLookup,
         supporterApproverLookup,
     }
 

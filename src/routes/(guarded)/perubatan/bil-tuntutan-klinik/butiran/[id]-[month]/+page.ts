@@ -23,16 +23,13 @@ export const load = async ({ params }) => {
     let clinicDetail = {} as MedicalClinicClaimDetail;
     let calculationDetail = {} as MedicalClinicCalculation;
     let claimList: MedicalClinicClaimsList[] = [];
-
+    
     const param = {
         pageNum: 1,
         pageSize: 5,
         orderBy: null,
         orderType: null,
     };
-    const dataList = [
-        { namaPesakit: "Siti Aminah", noKadPengenalan: "910822032872", rawatan: ["Batuk", "Selesema"], hubungan: "Isteri", jumlah: "10000" }
-    ]
 
     const clinicDetailResponse: CommonResponseDTO =
         await MedicalServices.getMedicalClinicClaimDetail(clinicId);
@@ -46,15 +43,15 @@ export const load = async ({ params }) => {
         await MedicalServices.getMedicalClinicClaimList(claimIdRequest)
     claimList =
         claimListResponse.data?.dataList as MedicalClinicClaimsList[];
-
+    console.log(claimList)
     return {
         currentRoleCode,
         lookup,
         param,
-        dataList,
         clinicDetail,
         calculationDetail,
         claimList,
+        claimListResponse,
     }
 }
 

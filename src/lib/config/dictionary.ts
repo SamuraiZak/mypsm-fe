@@ -328,7 +328,7 @@ const dictionary: { [key: string]: string } = {
     districtOrStateDirectorCertification: 'Perakuan Pengarah Bahagian / Negeri',
     enforcedDate: 'Tarikh Kuatkuasa',
     currentSalary: 'Gaji Semasa',
-    newSalary: 'Gaji Baru',
+    newSalary: 'Gaji Baru (RM)',
     remarks: 'Catatan',
     secretariatConfirmation: 'Pengesahan Urus Setia',
     supporterSupport: 'Sokongan Penyokong',
@@ -414,6 +414,14 @@ const dictionary: { [key: string]: string } = {
     claimTotal: 'Jumlah (RM)',
     patientName: 'Nama Pesakit',
     treatment: 'Rawatan',
+    totalClaimed: 'Jumlah Kesuluruhan Tuntutan (RM)',
+    dependentCount: "Bilangan Tanggungan",
+    identityCardNumber: "No. Kad Pengenalan",
+    ICNumber: "No. Kad Pengenalan",
+    identityCard: "No. Kad Pengenalan",
+    claimAmount: "Jumlah Tuntutan (RM)",
+    allocationBalance: "Baki Tuntutan (RM)",
+    
 
     // PDP
     disciplinaryReview: 'Tapisan Tatatertib',
@@ -481,9 +489,27 @@ const dictionary: { [key: string]: string } = {
     meetingDate: "Tarikh Mesyuarat",
     surchargeAmount: "Jumlah Surcaj (RM)",
     paymentPeriod: "Tempoh Bayaran Balik (Bulan)",
-    identityCardNumber: "No IC",
     gradeCode: "Gred",
 
+    // salary
+    salaryMovementMonth: "Bulan Pergerakan Gaji",
+    specialRaiseType: "Jenis Kenaikan Khas",
+    specialRaise: "Kenaikan Khas (RM)",
+    employeeGrade: "Gred",
+    wilayahAllowance1: "Elaun Wilayah 1",
+    wilayahAllowance2: "Elaun Wilayah 2",
+    criticalAllowance1: "Elaun Kritikal 1",
+    criticalAllowance2: "Elaun Kritikal 2",
+    specialWilayahAllowance: "EW Khas",
+    specialkgt: "KGT Khas",
+    salary1: "Gaji Lama",
+    salary2: "Gaji Baru",
+    salaryMovementDate: "Tarikh Pergerakan Gaji",
+    salaryDeduction: "Tolakan Gaji (RM)",
+    code: "Kod",
+    totalLeave: "Jumlah Cuti (Hari)",
+    fromDate: "Dari",
+    toDate: "Hingga",
 
 
 

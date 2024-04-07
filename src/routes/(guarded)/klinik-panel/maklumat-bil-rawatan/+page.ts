@@ -25,3 +25,14 @@ export const load = async () => {
         treatmentBills
     }
 }
+
+//update allocation list table
+export async function _updateTable(param: CommonListRequestDTO) {
+    const response: CommonResponseDTO = await MedicalServices.getTreatmentBill(param);
+    return {
+        props: {
+            param,
+            response,
+        },
+    };
+}

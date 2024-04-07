@@ -10,12 +10,10 @@
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import { _updateContractEmployeeListTable } from './+page';
-    import type { GetContractEmployeeOffer } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-employee-offer.dto';
     import { Modal } from 'flowbite-svelte';
     import type { ContractEmployeeListDTO } from '$lib/dto/mypsm/kakitangan-kontrak/contract-employee-list.dto';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     export let data: PageData;
-    let rowData: GetContractEmployeeOffer;
     let selectedRow = {} as ContractEmployeeListDTO;
     let openModal: boolean = false;
     //table for urus setia/penyokong/pelulus
@@ -33,7 +31,7 @@
     };
 
     async function _searchFilterContractEmployeeList() {
-        _updateContractEmployeeListTable(contractEmployeeListTable.param).then(
+        _updateContractEmployeeListTable(contractEmployeeListTable.param, data.currentRoleCode).then(
             (value) => {
                 contractEmployeeListTable.data =
                     value.response.data?.dataList ?? [];

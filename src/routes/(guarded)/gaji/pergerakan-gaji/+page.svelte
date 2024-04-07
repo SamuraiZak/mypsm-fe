@@ -140,7 +140,6 @@
         taintedMessage: false,
         id: 'addContractPersonalDetailForm',
         invalidateAll: true,
-        validationMethod: 'onsubmit',
         validators: zod(_addNewSalaryMovementSchema),
         onSubmit() {
             const tempChosenEmployee: CommonEmployeeDTO[] =
@@ -148,8 +147,11 @@
             $addNewSalaryMovementForm.employees = tempChosenEmployee.map(
                 (employee) => ({ employeeId: employee.employeeId }),
             );
-
-            _submitAddNewSalaryMovement($addNewSalaryMovementForm);
+            if($addNewSalaryMovementForm.employees.length > 0){
+                _submitAddNewSalaryMovement($addNewSalaryMovementForm);
+            } else {
+                alert("Senarai Kakitangan Yang Dipilih Tidak Boleh Kosong.")
+            }
         },
     });
 </script>
@@ -273,22 +275,22 @@
                             </div>
                         </div>
                         <CustomTable
-                            title="Senarai Kakitangan Yang Dipilih"
-                            bind:tableData={selectedEmployeeTable}
-                            hiddenFooter
-                        />
-                        <CustomTable
                             title="Senarai Kakitangan Yang Layak Mengikut Proses Pergerakan Gaji"
                             onUpdate={_search}
                             bind:tableData={employeeListTable}
                             enableAdd
+                        />
+                        <CustomTable
+                            title="Senarai Kakitangan Yang Dipilih"
+                            bind:tableData={selectedEmployeeTable}
+                            hiddenFooter
                         />
                     </div>
                 </div>
             </CustomTabContent>
         {/if}
 
-        <CustomTabContent title="Pergerakan Gaji Dalam Proses">
+        <CustomTabContent title="Rekod Pergerakan Gaji">
             <div class="flex w-full flex-col justify-start gap-2.5 p-5">
                 <FilterCard onSearch={_searchSalaryMovement}>
                     <FilterSelectField
