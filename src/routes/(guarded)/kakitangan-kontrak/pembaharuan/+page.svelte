@@ -12,7 +12,7 @@
     } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-add.dto';
     import type { RenewContractListResponseDTO } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-list-response.dto';
     import { Toaster } from 'svelte-french-toast';
-    import { _addSelectedContractForRenew } from './+page';
+    import { _addSelectedContractForRenew, _updateApproverTable, _updateSupporterTable, _updateTable } from './+page';
     import type { PageData } from './$types';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import type { RenewContractEmployeeTable } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-employee-table.dto';
@@ -69,7 +69,7 @@
         meta: data.employeeTableResponse.data?.meta ?? {
             pageSize: 5,
             pageNum: 1,
-            totalData: 4,
+            totalData: 0,
             totalPage: 1,
         },
         data: data.employeeTable ?? [],
@@ -78,6 +78,65 @@
 
     $: selectedContract.contractors =
         (nearExpiredContractTable.selectedData as Contractor[]) ?? [];
+
+    async function _search() {
+        _updateTable(nearExpiredContractTable.param).then((value) => {
+            nearExpiredContractTable.data =
+                value.props.response.data?.dataList ?? [];
+            nearExpiredContractTable.meta = value.props.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            nearExpiredContractTable.param.pageSize =
+                value.props.param.pageSize;
+            nearExpiredContractTable.param.pageNum = value.props.param.pageNum;
+        });
+    }
+
+    async function _searchRenewTable() {
+        _updateTable(renewContractTable.param).then((value) => {
+            renewContractTable.data = value.props.response.data?.dataList ?? [];
+            renewContractTable.meta = value.props.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            renewContractTable.param.pageSize = value.props.param.pageSize;
+            renewContractTable.param.pageNum = value.props.param.pageNum;
+        });
+    }
+    async function _searchSuppAppTable() {
+        if (data.currentRoleCode == UserRoleConstant.penyokong.code) {
+            _updateSupporterTable(supporterApproverTable.param).then((value) => {
+                supporterApproverTable.data =
+                    value.props.response.data?.dataList ?? [];
+                supporterApproverTable.meta = value.props.response.data?.meta ?? {
+                    pageSize: 1,
+                    pageNum: 1,
+                    totalData: 1,
+                    totalPage: 1,
+                };
+                supporterApproverTable.param.pageSize = value.props.param.pageSize;
+                supporterApproverTable.param.pageNum = value.props.param.pageNum;
+            });
+        } else if (data.currentRoleCode == UserRoleConstant.pelulus.code){
+            _updateApproverTable(supporterApproverTable.param).then((value) => {
+                supporterApproverTable.data =
+                    value.props.response.data?.dataList ?? [];
+                supporterApproverTable.meta = value.props.response.data?.meta ?? {
+                    pageSize: 1,
+                    pageNum: 1,
+                    totalData: 1,
+                    totalPage: 1,
+                };
+                supporterApproverTable.param.pageSize = value.props.param.pageSize;
+                supporterApproverTable.param.pageNum = value.props.param.pageNum;
+            });
+        }
+    }
 </script>
 
 <!-- content header starts here -->
@@ -103,6 +162,7 @@
             >
                 <CustomTable
                     title="Senarai Kontrak Dalam Proses Pembaharuan"
+                    onUpdate={_searchRenewTable}
                     bind:tableData={renewContractTable}
                     bind:passData={rowData}
                     enableDetail
@@ -123,6 +183,7 @@
                                     _addSelectedContractForRenew(
                                         selectedContract,
                                     );
+                                    _search;
                                 }}
                             />
                         {/if}
@@ -130,16 +191,18 @@
 
                     <CustomTable
                         title="Senarai Kontrak Yang Hampir Tamat"
+                        onUpdate={_search}
                         bind:tableData={nearExpiredContractTable}
                         enableAdd
                     />
                 {/if}
             </div>
         </div>
-    {:else if data.currentRoleCode == UserRoleConstant.penyokong.code || data.currentRoleCode == UserRoleConstant.pelulus.code }
+    {:else if data.currentRoleCode == UserRoleConstant.penyokong.code || data.currentRoleCode == UserRoleConstant.pelulus.code}
         <div class="flex w-full flex-col justify-start gap-2.5 p-5">
             <CustomTable
                 title="Senarai Kontrak Dalam Proses Pembaharuan"
+                onUpdate={_searchSuppAppTable}
                 bind:tableData={supporterApproverTable}
                 bind:passData={rowData}
                 enableDetail

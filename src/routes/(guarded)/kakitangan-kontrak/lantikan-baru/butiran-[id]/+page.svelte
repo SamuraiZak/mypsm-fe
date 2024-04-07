@@ -50,9 +50,6 @@
         Checkbox,
         Modal,
     } from 'flowbite-svelte';
-    import FileInputField from '$lib/components/inputs/file-input-field/FileInputField.svelte';
-    import FileInputFieldChildren from '$lib/components/inputs/file-input-field/FileInputFieldChildren.svelte';
-    import type { RadioDTO } from '$lib/dto/core/radio/radio.dto';
     import type {
         AddNewContractEmployeeAcademicDTO,
         ContractAcademic,
@@ -76,6 +73,7 @@
     import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     import { ContractEmployeeServices } from '$lib/services/implementation/mypsm/kakitangan-kontrak/contract-employee.service';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
+    import { certifyOptions } from '$lib/constants/core/radio-option-constants';
     export let data: PageData;
 
     // temporay arrays for list details
@@ -106,6 +104,7 @@
     let dependantModal: boolean = false;
     let nextOfKinModal: boolean = false;
     let files: FileList;
+    let isProcessEnded: number = 0;
 
     //superform
     const {
@@ -356,6 +355,7 @@
             );
             if (readOnly?.response.status == 'success') {
                 $secretaryContractResultForm.isReadonly = true;
+                processResult($secretaryContractResultForm.status);
             }
         },
     });
@@ -376,6 +376,7 @@
             );
             if (readOnly?.response.status == 'success') {
                 $supporterContractResultForm.isReadonly = true;
+                processResult($supporterContractResultForm.status);
             }
         },
     });
@@ -417,6 +418,7 @@
             if (readOnly?.response.status == 'success') {
                 $approverContractResultForm.isReadonly = true;
                 _submitGetContractEmployeeNumberForm(data.contractId);
+                processResult($approverContractResultForm.status);
             }
         },
     });
@@ -453,16 +455,11 @@
             : (data.getContractDocuments.isReadonly = false);
     }
 
-    const secretaryOption: RadioDTO[] = [
-        { value: true, name: 'SAH' },
-        { value: false, name: 'TIDAK SAH' },
-    ];
-
     const handleDownload = async (url: string) => {
         await ContractEmployeeServices.downloadContractAttachment(url);
     };
-    let isProcessEnded: number = 0;
-    $: if (
+
+    if (
         ($secretaryContractResultForm.status == false &&
             $secretaryContractResultForm.remark !== '') ||
         ($supporterContractResultForm.status == false &&
@@ -477,6 +474,11 @@
         $approverContractResultForm.status == true
     ) {
         isProcessEnded = 2;
+    }
+    function processResult(result: boolean) {
+        if (!result) {
+            isProcessEnded = 1;
+        }
     }
 </script>
 
@@ -804,7 +806,11 @@
                         type="primary"
                         icon="check"
                         onClick={() => {
-                            _submitAcademicDetailForm(tempAcademicRecord);
+                            if (tempAcademicRecord.academics.length < 1) {
+                                alert('Maklumat Akademik tidak boleh kosong.');
+                            } else {
+                                _submitAcademicDetailForm(tempAcademicRecord);
+                            }
                         }}
                     />
                 {/if}
@@ -823,7 +829,7 @@
                             </Alert>
                         </div>
                     {:else}
-                        <Accordion class="w-full">
+                        <Accordion class="w-full pb-10">
                             {#each tempAcademicRecord.academics as obj, i}
                                 <AccordionItem>
                                     <span
@@ -903,7 +909,7 @@
                         </Accordion>
                     {/if}
                 {:else if data.getContractAcademicDetails.academicList.length > 0}
-                    <Accordion class="w-full">
+                    <Accordion class="w-full pb-10">
                         {#each data.getContractAcademicDetails.academicList as obj, i}
                             <AccordionItem>
                                 <CustomSelectField
@@ -998,7 +1004,15 @@
                         type="primary"
                         icon="check"
                         onClick={() => {
-                            _submitExperienceDetailForm(tempExperienceRecord);
+                            if (tempExperienceRecord.experiences.length < 1) {
+                                alert(
+                                    'Maklumat Pengalaman tidak boleh kosong.',
+                                );
+                            } else {
+                                _submitExperienceDetailForm(
+                                    tempExperienceRecord,
+                                );
+                            }
                         }}
                     />
                 {/if}
@@ -1017,7 +1031,7 @@
                             </Alert>
                         </div>
                     {:else}
-                        <Accordion class="w-full">
+                        <Accordion class="w-full pb-10">
                             {#each tempExperienceRecord.experiences as obj, i}
                                 <AccordionItem>
                                     <span
@@ -1102,6 +1116,7 @@
                                 />
                                 <CustomTextField
                                     label="Kod Jawatan (Jika Ada)"
+                                    placeholder=""
                                     disabled
                                     id="positionCode{i}"
                                     val={obj.positionCode}
@@ -1147,7 +1162,13 @@
                         type="primary"
                         icon="check"
                         onClick={() => {
-                            _submitActivityDetailForm(tempActivityRecord);
+                            if (tempActivityRecord.activities.length < 1) {
+                                alert(
+                                    'Maklumat Kegiatan/Keahlian tidak boleh kosong.',
+                                );
+                            } else {
+                                _submitActivityDetailForm(tempActivityRecord);
+                            }
                         }}
                     />
                 {/if}
@@ -1204,7 +1225,7 @@
                         </Accordion>
                     {/if}
                 {:else if data.getContractActivityDetails.activityList.length > 0}
-                    <Accordion class="w-full">
+                    <Accordion class="w-full pb-10">
                         {#each data.getContractActivityDetails.activityList as obj, i}
                             <AccordionItem>
                                 <span
@@ -1258,7 +1279,11 @@
                         type="primary"
                         icon="check"
                         onClick={() => {
-                            _submitFamilyDetailForm(tempFamilyRecord);
+                            if (tempFamilyRecord.dependencies.length < 1) {
+                                alert('Maklumat Keluarga tidak boleh kosong.');
+                            } else {
+                                _submitFamilyDetailForm(tempFamilyRecord);
+                            }
                         }}
                     />
                 {/if}
@@ -1277,7 +1302,7 @@
                             </Alert>
                         </div>
                     {:else}
-                        <Accordion class="w-full">
+                        <Accordion class="w-full pb-10">
                             {#each tempFamilyRecord.dependencies as obj, i}
                                 <AccordionItem>
                                     <span
@@ -1430,7 +1455,7 @@
                         </Accordion>
                     {/if}
                 {:else if data.getContractFamilyDetails.dependenciesList.length > 0}
-                    <Accordion class="w-full">
+                    <Accordion class="w-full pb-10">
                         {#each data.getContractFamilyDetails.dependenciesList as obj, i}
                             <AccordionItem>
                                 <span
@@ -1599,7 +1624,13 @@
                         type="primary"
                         icon="check"
                         onClick={() => {
-                            _submitDependantDetailForm(tempNonFamilyRecord);
+                            if (tempNonFamilyRecord.dependencies.length < 1) {
+                                alert(
+                                    'Maklumat Tanggungan tidak boleh kosong.',
+                                );
+                            } else {
+                                _submitDependantDetailForm(tempNonFamilyRecord);
+                            }
                         }}
                     />
                 {/if}
@@ -1618,7 +1649,7 @@
                             </Alert>
                         </div>
                     {:else}
-                        <Accordion class="w-full">
+                        <Accordion class="w-full pb-10">
                             {#each tempNonFamilyRecord.dependencies as obj, i}
                                 <AccordionItem>
                                     <span
@@ -1771,7 +1802,7 @@
                         </Accordion>
                     {/if}
                 {:else if data.getContractNonFamilyDetails.dependenciesList.length > 0}
-                    <Accordion class="w-full">
+                    <Accordion class="w-full pb-10">
                         {#each data.getContractNonFamilyDetails.dependenciesList as obj, i}
                             <AccordionItem>
                                 <span
@@ -1939,7 +1970,11 @@
                         type="primary"
                         icon="check"
                         onClick={() => {
-                            _submitNextOfKinForm(tempNextOfKinRecord);
+                            if (tempNextOfKinRecord.nextOfKins.length < 1) {
+                                alert('Maklumat Waris tidak boleh kosong.');
+                            } else {
+                                _submitNextOfKinForm(tempNextOfKinRecord);
+                            }
                         }}
                     />
                 {/if}
@@ -1958,7 +1993,7 @@
                             </Alert>
                         </div>
                     {:else}
-                        <Accordion class="w-full">
+                        <Accordion class="w-full pb-10">
                             {#each tempNextOfKinRecord.nextOfKins as obj, i}
                                 <AccordionItem>
                                     <span
@@ -2110,7 +2145,7 @@
                         </Accordion>
                     {/if}
                 {:else if data.getContractNextOfKinDetails.nextOfKinList.length > 0}
-                    <Accordion class="w-full">
+                    <Accordion class="w-full pb-10">
                         {#each data.getContractNextOfKinDetails.nextOfKinList as obj, i}
                             <AccordionItem>
                                 <span
@@ -2340,226 +2375,16 @@
             </StepperContent>
         {/if}
 
-        {#if data.currentRoleCode !== UserRoleConstant.calonKontrak.code && data.getContractDocuments.attachmentName !== ''}
-            <StepperContent>
-                <StepperContentHeader title="Maklumat Lantikan Baru (Kontrak)">
-                    {#if !$updateContractDetailForm.isReadonly}
-                        <TextIconButton
-                            label="Simpan"
-                            form="updateContractDetailForm"
-                            type="primary"
-                            icon="check"
-                        />
-                    {/if}
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <form
-                        class="flex w-full flex-col justify-start gap-2.5 pb-10"
-                        method="POST"
-                        id="updateContractDetailForm"
-                        use:updateContractDetailEnhance
-                    >
-                        <CustomTextField
-                            label="Tarikh Mula Kontrak"
-                            bind:disabled={$updateContractDetailForm.isReadonly}
-                            id="startContract"
-                            type="date"
-                            bind:val={$updateContractDetailForm.startContract}
-                            errors={$updateContractDetailError.startContract}
-                        />
-                        <CustomTextField
-                            label="Tarikh Tamat Kontrak"
-                            bind:disabled={$updateContractDetailForm.isReadonly}
-                            id="endContract"
-                            type="date"
-                            bind:val={$updateContractDetailForm.endContract}
-                            errors={$updateContractDetailError.endContract}
-                        />
-                        <CustomTextField
-                            label="Kadar Upah (RM)"
-                            bind:disabled={$updateContractDetailForm.isReadonly}
-                            id="wageRate"
-                            type="number"
-                            bind:val={$updateContractDetailForm.wageRate}
-                            errors={$updateContractDetailError.wageRate}
-                        />
-                        <CustomSelectField
-                            label="Penempatan"
-                            bind:disabled={$updateContractDetailForm.isReadonly}
-                            id="placementId"
-                            options={data.lookup.placementLookup}
-                            bind:val={$updateContractDetailForm.placementId}
-                            errors={$updateContractDetailError.placementId}
-                        />
-                        <CustomTextField
-                            label="Gelaran Tugas"
-                            bind:disabled={$updateContractDetailForm.isReadonly}
-                            id="designation"
-                            bind:val={$updateContractDetailForm.designation}
-                            errors={$updateContractDetailError.designation}
-                        />
-                        <CustomTextField
-                            label="Tarikh Lapor Diri"
-                            bind:disabled={$updateContractDetailForm.isReadonly}
-                            id="reportDutyDate"
-                            type="date"
-                            bind:val={$updateContractDetailForm.reportDutyDate}
-                            errors={$updateContractDetailError.reportDutyDate}
-                        />
-                        <CustomTextField
-                            label="No. KWSP"
-                            bind:disabled={$updateContractDetailForm.isReadonly}
-                            id="kwspNo"
-                            bind:val={$updateContractDetailForm.kwspNo}
-                            errors={$updateContractDetailError.kwspNo}
-                        />
-                        <CustomTextField
-                            label="No. SOCSO"
-                            bind:disabled={$updateContractDetailForm.isReadonly}
-                            id="socsoNo"
-                            bind:val={$updateContractDetailForm.socsoNo}
-                            errors={$updateContractDetailError.socsoNo}
-                        />
-                        <CustomTextField
-                            label="No. Cukai"
-                            bind:disabled={$updateContractDetailForm.isReadonly}
-                            id="taxNo"
-                            bind:val={$updateContractDetailForm.taxNo}
-                            errors={$updateContractDetailError.taxNo}
-                        />
-                        <CustomTextField
-                            label="Nama Bank"
-                            bind:disabled={$updateContractDetailForm.isReadonly}
-                            id="bankName"
-                            bind:val={$updateContractDetailForm.bankName}
-                            errors={$updateContractDetailError.bankName}
-                        />
-                        <CustomTextField
-                            label="No. Akaun Bank"
-                            bind:disabled={$updateContractDetailForm.isReadonly}
-                            id="bankAccount"
-                            bind:val={$updateContractDetailForm.bankAccount}
-                            errors={$updateContractDetailError.bankAccount}
-                        />
-                        <CustomSelectField
-                            label="Jenis Perkhidmatan"
-                            bind:disabled={$updateContractDetailForm.isReadonly}
-                            id="serviceTypeId"
-                            options={data.lookup.serviceTypeLookup}
-                            bind:val={$updateContractDetailForm.serviceTypeId}
-                            errors={$updateContractDetailError.serviceTypeId}
-                        />
-                        <CustomTextField
-                            label="Kelayakan Cuti (Hari)"
-                            bind:disabled={$updateContractDetailForm.isReadonly}
-                            id="leaveEntitlement"
-                            type="number"
-                            bind:val={$updateContractDetailForm.leaveEntitlement}
-                            errors={$updateContractDetailError.leaveEntitlement}
-                        />
-                        <CustomTextField
-                            label="Tarikh Kuatkuasa Lantikan Semasa"
-                            bind:disabled={$updateContractDetailForm.isReadonly}
-                            id="effectiveDate"
-                            type="date"
-                            bind:val={$updateContractDetailForm.effectiveDate}
-                            errors={$updateContractDetailError.effectiveDate}
-                        />
-                        <CustomTextField
-                            label="Mula Dilantik Perkhidmatan Kerajaan"
-                            bind:disabled={$updateContractDetailForm.isReadonly}
-                            id="civilServiceStartDate"
-                            type="date"
-                            bind:val={$updateContractDetailForm.civilServiceStartDate}
-                            errors={$updateContractDetailError.civilServiceStartDate}
-                        />
-                        <CustomTextField
-                            label="Mula Dilantik Perkhidmatan LKIM"
-                            bind:disabled={$updateContractDetailForm.isReadonly}
-                            id="lkimServiceStartDate"
-                            type="date"
-                            bind:val={$updateContractDetailForm.lkimServiceStartDate}
-                            errors={$updateContractDetailError.lkimServiceStartDate}
-                        />
-                        <CustomTextField
-                            label="Mula Dilantik Perkhidmatan Sekarang"
-                            bind:disabled={$updateContractDetailForm.isReadonly}
-                            id="currentServiceStartDate"
-                            type="date"
-                            bind:val={$updateContractDetailForm.currentServiceStartDate}
-                            errors={$updateContractDetailError.currentServiceStartDate}
-                        />
-                        <CustomTextField
-                            label="Disahkan Dalam Jawatan Pertama LKIM"
-                            bind:disabled={$updateContractDetailForm.isReadonly}
-                            id="firstConfirmServiceDate"
-                            type="date"
-                            bind:val={$updateContractDetailForm.firstConfirmServiceDate}
-                            errors={$updateContractDetailError.firstConfirmServiceDate}
-                        />
-                        <CustomTextField
-                            label="Tarikh Perkhidmatan Pengesahan Semasa"
-                            bind:disabled={$updateContractDetailForm.isReadonly}
-                            id="currentConfirmServiceDate"
-                            type="date"
-                            bind:val={$updateContractDetailForm.currentConfirmServiceDate}
-                            errors={$updateContractDetailError.currentConfirmServiceDate}
-                        />
-                    </form>
-                </StepperContentBody>
-            </StepperContent>
-
-            <StepperContent>
-                <StepperContentHeader title="Keputusan Urus Setia Perjawatan">
-                    {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code && !$secretaryContractResultForm.isReadonly}
-                        <TextIconButton
-                            label="Simpan"
-                            form="secretaryContractResultForm"
-                            type="primary"
-                            icon="check"
-                        />
-                    {/if}
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <form
-                        class="flex w-full flex-col justify-start gap-2.5 pb-10"
-                        method="POST"
-                        id="secretaryContractResultForm"
-                        use:secretaryContractResultEnhance
-                    >
-                        {#if data.getSecretaryResult.name !== ''}
-                            <CustomTextField
-                                label="Nama"
-                                disabled
-                                id="name"
-                                val={$secretaryContractResultForm.name}
-                            />
-                        {/if}
-                        <CustomTextField
-                            label="Tindakan/Ulasan Urus Setia Perjawatan"
-                            disabled={$secretaryContractResultForm.isReadonly}
-                            id="remark"
-                            bind:val={$secretaryContractResultForm.remark}
-                            errors={$secretaryContractResultError.remark}
-                        />
-                        <CustomRadioBoolean
-                            label="Keputusan"
-                            disabled={$secretaryContractResultForm.isReadonly}
-                            id="status"
-                            options={secretaryOption}
-                            bind:val={$secretaryContractResultForm.status}
-                        />
-                    </form>
-                </StepperContentBody>
-            </StepperContent>
-
-            {#if $secretaryContractResultForm.isReadonly && $secretaryContractResultForm.status !== false}
+        {#if isProcessEnded !== 1}
+            {#if data.currentRoleCode !== UserRoleConstant.calonKontrak.code && data.getContractDocuments.attachmentName !== ''}
                 <StepperContent>
-                    <StepperContentHeader title="Tetapkan Penyokong & Pelulus">
-                        {#if !$setSupporterApproverForm.isReadonly && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
+                    <StepperContentHeader
+                        title="Maklumat Lantikan Baru (Kontrak)"
+                    >
+                        {#if !$updateContractDetailForm.isReadonly}
                             <TextIconButton
                                 label="Simpan"
-                                form="setSupporterApproverForm"
+                                form="updateContractDetailForm"
                                 type="primary"
                                 icon="check"
                             />
@@ -2569,176 +2394,400 @@
                         <form
                             class="flex w-full flex-col justify-start gap-2.5 pb-10"
                             method="POST"
-                            id="setSupporterApproverForm"
-                            use:setSupporterApproverEnhance
+                            id="updateContractDetailForm"
+                            use:updateContractDetailEnhance
                         >
-                            <CustomSelectField
-                                label="Penyokong"
-                                disabled={$setSupporterApproverForm.isReadonly}
-                                id="supporterId"
-                                options={data.lookup.supporterApproverLookup}
-                                bind:val={$setSupporterApproverForm.supporterId}
-                                errors={$setSupporterApproverError.supporterId}
+                            <CustomTextField
+                                label="Tarikh Mula Kontrak"
+                                bind:disabled={$updateContractDetailForm.isReadonly}
+                                id="startContract"
+                                type="date"
+                                bind:val={$updateContractDetailForm.startContract}
+                                errors={$updateContractDetailError.startContract}
+                            />
+                            <CustomTextField
+                                label="Tarikh Tamat Kontrak"
+                                bind:disabled={$updateContractDetailForm.isReadonly}
+                                id="endContract"
+                                type="date"
+                                bind:val={$updateContractDetailForm.endContract}
+                                errors={$updateContractDetailError.endContract}
+                            />
+                            <CustomTextField
+                                label="Kadar Upah (RM)"
+                                bind:disabled={$updateContractDetailForm.isReadonly}
+                                id="wageRate"
+                                type="number"
+                                bind:val={$updateContractDetailForm.wageRate}
+                                errors={$updateContractDetailError.wageRate}
                             />
                             <CustomSelectField
-                                label="Pelulus"
-                                disabled={$setSupporterApproverForm.isReadonly}
-                                id="approverId"
-                                options={data.lookup.supporterApproverLookup}
-                                bind:val={$setSupporterApproverForm.approverId}
-                                errors={$setSupporterApproverError.approverId}
+                                label="Penempatan"
+                                bind:disabled={$updateContractDetailForm.isReadonly}
+                                id="placementId"
+                                options={data.lookup.placementLookup}
+                                bind:val={$updateContractDetailForm.placementId}
+                                errors={$updateContractDetailError.placementId}
+                            />
+                            <CustomTextField
+                                label="Gelaran Tugas"
+                                bind:disabled={$updateContractDetailForm.isReadonly}
+                                id="designation"
+                                bind:val={$updateContractDetailForm.designation}
+                                errors={$updateContractDetailError.designation}
+                            />
+                            <CustomTextField
+                                label="Tarikh Lapor Diri"
+                                bind:disabled={$updateContractDetailForm.isReadonly}
+                                id="reportDutyDate"
+                                type="date"
+                                bind:val={$updateContractDetailForm.reportDutyDate}
+                                errors={$updateContractDetailError.reportDutyDate}
+                            />
+                            <CustomTextField
+                                label="No. KWSP"
+                                bind:disabled={$updateContractDetailForm.isReadonly}
+                                id="kwspNo"
+                                bind:val={$updateContractDetailForm.kwspNo}
+                                errors={$updateContractDetailError.kwspNo}
+                            />
+                            <CustomTextField
+                                label="No. SOCSO"
+                                bind:disabled={$updateContractDetailForm.isReadonly}
+                                id="socsoNo"
+                                bind:val={$updateContractDetailForm.socsoNo}
+                                errors={$updateContractDetailError.socsoNo}
+                            />
+                            <CustomTextField
+                                label="No. Cukai"
+                                bind:disabled={$updateContractDetailForm.isReadonly}
+                                id="taxNo"
+                                bind:val={$updateContractDetailForm.taxNo}
+                                errors={$updateContractDetailError.taxNo}
+                            />
+                            <CustomTextField
+                                label="Nama Bank"
+                                bind:disabled={$updateContractDetailForm.isReadonly}
+                                id="bankName"
+                                bind:val={$updateContractDetailForm.bankName}
+                                errors={$updateContractDetailError.bankName}
+                            />
+                            <CustomTextField
+                                label="No. Akaun Bank"
+                                bind:disabled={$updateContractDetailForm.isReadonly}
+                                id="bankAccount"
+                                bind:val={$updateContractDetailForm.bankAccount}
+                                errors={$updateContractDetailError.bankAccount}
+                            />
+                            <CustomSelectField
+                                label="Jenis Perkhidmatan"
+                                bind:disabled={$updateContractDetailForm.isReadonly}
+                                id="serviceTypeId"
+                                options={data.lookup.serviceTypeLookup}
+                                bind:val={$updateContractDetailForm.serviceTypeId}
+                                errors={$updateContractDetailError.serviceTypeId}
+                            />
+                            <CustomTextField
+                                label="Kelayakan Cuti (Hari)"
+                                bind:disabled={$updateContractDetailForm.isReadonly}
+                                id="leaveEntitlement"
+                                type="number"
+                                bind:val={$updateContractDetailForm.leaveEntitlement}
+                                errors={$updateContractDetailError.leaveEntitlement}
+                            />
+                            <CustomTextField
+                                label="Tarikh Kuatkuasa Lantikan Semasa"
+                                bind:disabled={$updateContractDetailForm.isReadonly}
+                                id="effectiveDate"
+                                type="date"
+                                bind:val={$updateContractDetailForm.effectiveDate}
+                                errors={$updateContractDetailError.effectiveDate}
+                            />
+                            <CustomTextField
+                                label="Mula Dilantik Perkhidmatan Kerajaan"
+                                bind:disabled={$updateContractDetailForm.isReadonly}
+                                id="civilServiceStartDate"
+                                type="date"
+                                bind:val={$updateContractDetailForm.civilServiceStartDate}
+                                errors={$updateContractDetailError.civilServiceStartDate}
+                            />
+                            <CustomTextField
+                                label="Mula Dilantik Perkhidmatan LKIM"
+                                bind:disabled={$updateContractDetailForm.isReadonly}
+                                id="lkimServiceStartDate"
+                                type="date"
+                                bind:val={$updateContractDetailForm.lkimServiceStartDate}
+                                errors={$updateContractDetailError.lkimServiceStartDate}
+                            />
+                            <CustomTextField
+                                label="Mula Dilantik Perkhidmatan Sekarang"
+                                bind:disabled={$updateContractDetailForm.isReadonly}
+                                id="currentServiceStartDate"
+                                type="date"
+                                bind:val={$updateContractDetailForm.currentServiceStartDate}
+                                errors={$updateContractDetailError.currentServiceStartDate}
+                            />
+                            <CustomTextField
+                                label="Disahkan Dalam Jawatan Pertama LKIM"
+                                bind:disabled={$updateContractDetailForm.isReadonly}
+                                id="firstConfirmServiceDate"
+                                type="date"
+                                bind:val={$updateContractDetailForm.firstConfirmServiceDate}
+                                errors={$updateContractDetailError.firstConfirmServiceDate}
+                            />
+                            <CustomTextField
+                                label="Tarikh Perkhidmatan Pengesahan Semasa"
+                                bind:disabled={$updateContractDetailForm.isReadonly}
+                                id="currentConfirmServiceDate"
+                                type="date"
+                                bind:val={$updateContractDetailForm.currentConfirmServiceDate}
+                                errors={$updateContractDetailError.currentConfirmServiceDate}
                             />
                         </form>
                     </StepperContentBody>
                 </StepperContent>
 
                 <StepperContent>
-                    <StepperContentHeader title="Keputusan Penyokong">
-                        {#if !$supporterContractResultForm.isReadonly && data.currentRoleCode == UserRoleConstant.penyokong.code}
+                    <StepperContentHeader
+                        title="Keputusan Urus Setia Perjawatan"
+                    >
+                        {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code && !$secretaryContractResultForm.isReadonly}
                             <TextIconButton
                                 label="Simpan"
-                                form="supporterContractResultForm"
+                                form="secretaryContractResultForm"
                                 type="primary"
                                 icon="check"
                             />
                         {/if}
                     </StepperContentHeader>
                     <StepperContentBody>
-                        {#if $supporterContractResultForm.remark == '' && data.currentRoleCode !== UserRoleConstant.penyokong.code}
-                            <div class="flex w-full flex-col gap-10 px-3 pb-10">
-                                <Alert color="blue">
-                                    <p>
-                                        <span class="font-medium"
-                                            >Tiada Maklumat!</span
-                                        >
-                                        Menunggu keputusan daripada Penyokong.
-                                    </p>
-                                </Alert>
-                            </div>
-                        {:else}
-                            <form
-                                class="flex w-full flex-col justify-start gap-2.5 pb-10"
-                                method="POST"
-                                id="supporterContractResultForm"
-                                use:supporterContractResultEnhance
-                            >
-                                {#if $supporterContractResultForm.isReadonly}
-                                    <CustomTextField
-                                        label="Nama"
-                                        disabled
-                                        id="name"
-                                        val={$supporterContractResultForm.name}
-                                    />
-                                {/if}
-                                <CustomTextField
-                                    label="Tindakan/Ulasan Urus Setia Perjawatan"
-                                    bind:disabled={$supporterContractResultForm.isReadonly}
-                                    id="remark"
-                                    bind:val={$supporterContractResultForm.remark}
-                                    errors={$supporterContractResultError.remark}
-                                />
-                                <CustomRadioBoolean
-                                    label="Keputusan"
-                                    bind:disabled={$supporterContractResultForm.isReadonly}
-                                    id="status"
-                                    options={data.lookup.supportOption}
-                                    bind:val={$supporterContractResultForm.status}
-                                />
-                            </form>
-                        {/if}
-                    </StepperContentBody>
-                </StepperContent>
-
-                <StepperContent>
-                    <StepperContentHeader title="Keputusan Pelulus">
-                        {#if !$approverContractResultForm.isReadonly && data.currentRoleCode == UserRoleConstant.pelulus.code}
-                            <TextIconButton
-                                label="Simpan"
-                                form="approverContractResultForm"
-                                type="primary"
-                                icon="check"
-                            />
-                        {/if}
-                    </StepperContentHeader>
-                    <StepperContentBody>
-                        {#if $approverContractResultForm.remark == '' && data.currentRoleCode !== UserRoleConstant.pelulus.code}
-                            <div class="flex w-full flex-col gap-10 px-3 pb-10">
-                                <Alert color="blue">
-                                    <p>
-                                        <span class="font-medium"
-                                            >Tiada Maklumat!</span
-                                        >
-                                        Menunggu keputusan daripada Pelulus.
-                                    </p>
-                                </Alert>
-                            </div>
-                        {:else}
-                            <form
-                                class="flex w-full flex-col justify-start gap-2.5 pb-10"
-                                method="POST"
-                                id="approverContractResultForm"
-                                use:approverContractResultEnhance
-                            >
-                                {#if $approverContractResultForm.isReadonly}
-                                    <CustomTextField
-                                        label="Nama"
-                                        disabled
-                                        id="name"
-                                        val={$approverContractResultForm.name}
-                                    />
-                                {/if}
-                                <CustomTextField
-                                    label="Tindakan/Ulasan Urus Setia Perjawatan"
-                                    bind:disabled={$approverContractResultForm.isReadonly}
-                                    id="remark"
-                                    bind:val={$approverContractResultForm.remark}
-                                    errors={$approverContractResultError.remark}
-                                />
-                                <CustomRadioBoolean
-                                    label="Keputusan"
-                                    bind:disabled={$approverContractResultForm.isReadonly}
-                                    id="status"
-                                    options={data.lookup.approveOption}
-                                    bind:val={$approverContractResultForm.status}
-                                />
-                            </form>
-                        {/if}
-                    </StepperContentBody>
-                </StepperContent>
-            {/if}
-            {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code && $approverContractResultForm.status}
-                <StepperContent>
-                    <StepperContentHeader title="No. Pekerja Calon"
-                    ></StepperContentHeader>
-                    <StepperContentBody>
-                        <ContentHeader
-                            title="Tindakan: Tekan butang untuk memperolehi No. Pekerja kakitangan kontrak."
-                            borderClass="border-none"
-                        />
                         <form
                             class="flex w-full flex-col justify-start gap-2.5 pb-10"
                             method="POST"
-                            id="getContractEmployeeNumberForm"
-                            use:getContractEmployeeNumberEnhance
+                            id="secretaryContractResultForm"
+                            use:secretaryContractResultEnhance
                         >
-                            <div class="flex justify-start">
+                            {#if data.getSecretaryResult.name !== ''}
+                                <CustomTextField
+                                    label="Nama"
+                                    disabled
+                                    id="name"
+                                    val={$secretaryContractResultForm.name}
+                                />
+                            {/if}
+                            <CustomTextField
+                                label="Tindakan/Ulasan Urus Setia Perjawatan"
+                                disabled={$secretaryContractResultForm.isReadonly}
+                                id="remark"
+                                bind:val={$secretaryContractResultForm.remark}
+                                errors={$secretaryContractResultError.remark}
+                            />
+                            <CustomRadioBoolean
+                                label="Keputusan"
+                                disabled={$secretaryContractResultForm.isReadonly}
+                                id="status"
+                                options={certifyOptions}
+                                bind:val={$secretaryContractResultForm.status}
+                            />
+                        </form>
+                    </StepperContentBody>
+                </StepperContent>
+
+                {#if $secretaryContractResultForm.isReadonly && $secretaryContractResultForm.status !== false}
+                    <StepperContent>
+                        <StepperContentHeader
+                            title="Tetapkan Penyokong & Pelulus"
+                        >
+                            {#if !$setSupporterApproverForm.isReadonly && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                                 <TextIconButton
-                                    label="No. Pekerja"
-                                    icon="create"
+                                    label="Simpan"
+                                    form="setSupporterApproverForm"
                                     type="primary"
-                                    form="getContractEmployeeNumberForm"
+                                    icon="check"
                                 />
-                            </div>
-                            <CustomTextField
-                                id="employeeNumber"
-                                label="No. Pekerja"
-                                disabled
-                                placeholder=""
-                                bind:val={$getContractEmployeeNumberForm.employeeNumber}
+                            {/if}
+                        </StepperContentHeader>
+                        <StepperContentBody>
+                            <form
+                                class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                                method="POST"
+                                id="setSupporterApproverForm"
+                                use:setSupporterApproverEnhance
+                            >
+                                <CustomSelectField
+                                    label="Penyokong"
+                                    disabled={$setSupporterApproverForm.isReadonly}
+                                    id="supporterId"
+                                    options={data.lookup
+                                        .supporterApproverLookup}
+                                    bind:val={$setSupporterApproverForm.supporterId}
+                                    errors={$setSupporterApproverError.supporterId}
+                                />
+                                <CustomSelectField
+                                    label="Pelulus"
+                                    disabled={$setSupporterApproverForm.isReadonly}
+                                    id="approverId"
+                                    options={data.lookup
+                                        .supporterApproverLookup}
+                                    bind:val={$setSupporterApproverForm.approverId}
+                                    errors={$setSupporterApproverError.approverId}
+                                />
+                            </form>
+                        </StepperContentBody>
+                    </StepperContent>
+
+                    <StepperContent>
+                        <StepperContentHeader title="Keputusan Penyokong">
+                            {#if !$supporterContractResultForm.isReadonly && data.currentRoleCode == UserRoleConstant.penyokong.code}
+                                <TextIconButton
+                                    label="Simpan"
+                                    form="supporterContractResultForm"
+                                    type="primary"
+                                    icon="check"
+                                />
+                            {/if}
+                        </StepperContentHeader>
+                        <StepperContentBody>
+                            {#if $supporterContractResultForm.remark == '' && data.currentRoleCode !== UserRoleConstant.penyokong.code}
+                                <div
+                                    class="flex w-full flex-col gap-10 px-3 pb-10"
+                                >
+                                    <Alert color="blue">
+                                        <p>
+                                            <span class="font-medium"
+                                                >Tiada Maklumat!</span
+                                            >
+                                            Menunggu keputusan daripada Penyokong.
+                                        </p>
+                                    </Alert>
+                                </div>
+                            {:else}
+                                <form
+                                    class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                                    method="POST"
+                                    id="supporterContractResultForm"
+                                    use:supporterContractResultEnhance
+                                >
+                                    {#if $supporterContractResultForm.isReadonly}
+                                        <CustomTextField
+                                            label="Nama"
+                                            disabled
+                                            id="name"
+                                            val={$supporterContractResultForm.name}
+                                        />
+                                    {/if}
+                                    <CustomTextField
+                                        label="Tindakan/Ulasan Urus Setia Perjawatan"
+                                        bind:disabled={$supporterContractResultForm.isReadonly}
+                                        id="remark"
+                                        bind:val={$supporterContractResultForm.remark}
+                                        errors={$supporterContractResultError.remark}
+                                    />
+                                    <CustomRadioBoolean
+                                        label="Keputusan"
+                                        bind:disabled={$supporterContractResultForm.isReadonly}
+                                        id="status"
+                                        options={data.lookup.supportOption}
+                                        bind:val={$supporterContractResultForm.status}
+                                    />
+                                </form>
+                            {/if}
+                        </StepperContentBody>
+                    </StepperContent>
+
+                    <StepperContent>
+                        <StepperContentHeader title="Keputusan Pelulus">
+                            {#if !$approverContractResultForm.isReadonly && data.currentRoleCode == UserRoleConstant.pelulus.code}
+                                <TextIconButton
+                                    label="Simpan"
+                                    form="approverContractResultForm"
+                                    type="primary"
+                                    icon="check"
+                                />
+                            {/if}
+                        </StepperContentHeader>
+                        <StepperContentBody>
+                            {#if $approverContractResultForm.remark == '' && data.currentRoleCode !== UserRoleConstant.pelulus.code}
+                                <div
+                                    class="flex w-full flex-col gap-10 px-3 pb-10"
+                                >
+                                    <Alert color="blue">
+                                        <p>
+                                            <span class="font-medium"
+                                                >Tiada Maklumat!</span
+                                            >
+                                            Menunggu keputusan daripada Pelulus.
+                                        </p>
+                                    </Alert>
+                                </div>
+                            {:else}
+                                <form
+                                    class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                                    method="POST"
+                                    id="approverContractResultForm"
+                                    use:approverContractResultEnhance
+                                >
+                                    {#if $approverContractResultForm.isReadonly}
+                                        <CustomTextField
+                                            label="Nama"
+                                            disabled
+                                            id="name"
+                                            val={$approverContractResultForm.name}
+                                        />
+                                    {/if}
+                                    <CustomTextField
+                                        label="Tindakan/Ulasan Urus Setia Perjawatan"
+                                        bind:disabled={$approverContractResultForm.isReadonly}
+                                        id="remark"
+                                        bind:val={$approverContractResultForm.remark}
+                                        errors={$approverContractResultError.remark}
+                                    />
+                                    <CustomRadioBoolean
+                                        label="Keputusan"
+                                        bind:disabled={$approverContractResultForm.isReadonly}
+                                        id="status"
+                                        options={data.lookup.approveOption}
+                                        bind:val={$approverContractResultForm.status}
+                                    />
+                                </form>
+                            {/if}
+                        </StepperContentBody>
+                    </StepperContent>
+                {/if}
+                {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code && $approverContractResultForm.status}
+                    <StepperContent>
+                        <StepperContentHeader title="No. Pekerja Calon"
+                        ></StepperContentHeader>
+                        <StepperContentBody>
+                            <ContentHeader
+                                title="Tindakan: Tekan butang untuk memperolehi No. Pekerja kakitangan kontrak."
+                                borderClass="border-none"
                             />
-                        </form>
-                    </StepperContentBody>
-                </StepperContent>
+                            <form
+                                class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                                method="POST"
+                                id="getContractEmployeeNumberForm"
+                                use:getContractEmployeeNumberEnhance
+                            >
+                                <div class="flex justify-start">
+                                    <TextIconButton
+                                        label="No. Pekerja"
+                                        icon="create"
+                                        type="primary"
+                                        form="getContractEmployeeNumberForm"
+                                    />
+                                </div>
+                                <CustomTextField
+                                    id="employeeNumber"
+                                    label="No. Pekerja"
+                                    disabled
+                                    placeholder=""
+                                    bind:val={$getContractEmployeeNumberForm.employeeNumber}
+                                />
+                            </form>
+                        </StepperContentBody>
+                    </StepperContent>
+                {/if}
             {/if}
         {/if}
     </Stepper>

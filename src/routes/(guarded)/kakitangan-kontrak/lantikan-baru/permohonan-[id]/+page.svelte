@@ -3,7 +3,7 @@
     import TextIconButton from "$lib/components/button/TextIconButton.svelte";
     import ContentHeader from "$lib/components/headers/ContentHeader.svelte";
     import CustomTextField from "$lib/components/inputs/text-field/CustomTextField.svelte";
-    import { dateProxy, superForm } from "sveltekit-superforms/client";
+    import { superForm } from "sveltekit-superforms/client";
     import type { PageData } from "./$types";
     import { _addNewContractEmployeeSchema } from "$lib/schemas/mypsm/contract-employee/contract-employee-schemas";
     import { _submit } from "./+page";

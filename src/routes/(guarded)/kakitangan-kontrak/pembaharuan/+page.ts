@@ -112,3 +112,34 @@ export const _addSelectedContractForRenew = async (selectedContract: RenewContra
         return response
     }
 }
+
+//update near expired contract table
+export async function _updateTable(param: CommonListRequestDTO) {
+    const response: CommonResponseDTO = await ContractEmployeeServices.getRenewContractList(param);
+    return {
+        props: {
+            param,
+            response,
+        },
+    };
+}
+//update supporter approver table
+export async function _updateSupporterTable(param: CommonListRequestDTO) {
+    const response: CommonResponseDTO = await ContractEmployeeServices.getRenewContractSupporterTable(param);
+    return {
+        props: {
+            param,
+            response,
+        },
+    };
+}
+//update approver approver table
+export async function _updateApproverTable(param: CommonListRequestDTO) {
+    const response: CommonResponseDTO = await ContractEmployeeServices.getRenewContractApproverTable(param);
+    return {
+        props: {
+            param,
+            response,
+        },
+    };
+}

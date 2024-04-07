@@ -1,6 +1,5 @@
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant";
 import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
-import type { CommonFilterDTO } from "$lib/dto/core/common/common-filter.dto";
 import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
 import type { ContractEmployeeListDTO } from "$lib/dto/mypsm/kakitangan-kontrak/contract-employee-list.dto";
@@ -38,7 +37,7 @@ export const load = async () => {
         if (contractEmployeeListResponse.status == "success") {
             contractEmployeeList = contractEmployeeListResponse.data?.dataList as ContractEmployeeListDTO[];
         }
-    }   else if (currentRoleCode === UserRoleConstant.calonKontrak.code) {
+    } else if (currentRoleCode === UserRoleConstant.calonKontrak.code) {
         contractEmployeeListResponse =
             await ContractEmployeeServices.getContractEmployeeOfferList();
         if (contractEmployeeListResponse.status == "success") {
@@ -55,9 +54,22 @@ export const load = async () => {
     }
 }
 
-export async function _updateContractEmployeeListTable(param: CommonListRequestDTO) {
-    const response: CommonResponseDTO =
-        await ContractEmployeeServices.getContractEmployeeList(param);
+export async function _updateContractEmployeeListTable(param: CommonListRequestDTO, role: string | null) {
+    let response: CommonResponseDTO = {};
+
+    if (role === UserRoleConstant.urusSetiaPerjawatan.code) {
+        response =
+            await ContractEmployeeServices.getContractEmployeeList(param);
+
+    } else if (role === UserRoleConstant.penyokong.code) {
+        response =
+            await ContractEmployeeServices.getContractSupporterTable(param);
+
+    } else if (role === UserRoleConstant.pelulus.code) {
+        response =
+            await ContractEmployeeServices.getContractApproverTable(param);
+
+    }
 
     return {
         param,

@@ -208,7 +208,7 @@ export const load = async ({ params }) => {
 
 export const _submitEditNewContractEmployeeDetailForm = async (formData: EditNewContractEmployeeDetailDTO) => {
     const form = await superValidate(formData, zod(_editNewContractEmployeeSchema));
-    console.log(form)
+
     if (form.valid) {
         const { isReadonly, employeeName, employeePosition, ...tempObj } = form.data
         const response: CommonResponseDTO =
