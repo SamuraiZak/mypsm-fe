@@ -37,8 +37,6 @@
     // props: dictionary
     export let dictionary: DictionaryDTO[] = [];
 
-    export let translateRow: boolean = false;
-
     export let passData: any = {};
 
     // props: callback functions to handle sort and pagination actions
