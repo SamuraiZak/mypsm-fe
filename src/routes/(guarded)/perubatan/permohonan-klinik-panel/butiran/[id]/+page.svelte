@@ -12,46 +12,37 @@
     import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
-    import { _addClinicApplicationSchema, _clinicCommonResultSchema, _clinicSupporterApproverSchema } from '$lib/schemas/mypsm/medical/medical-schema';
+    import {
+        _addClinicApplicationSchema,
+        _addClinicContractSchema,
+        _clinicCommonResultSchema,
+        _clinicSupporterApproverSchema,
+    } from '$lib/schemas/mypsm/medical/medical-schema';
     import { zod } from 'sveltekit-superforms/adapters';
     import {
-        _submitClinicApplicationForm,
+        _submitApproverApprovalForm,
         _submitClinicContractForm,
         _submitSecretaryApprovalForm,
+        _submitSupporterApprovalForm,
         _submitSupporterApproverForm,
     } from './+page';
     import { superForm } from 'sveltekit-superforms/client';
-    import { approveOptions, certifyOptions, supportOptions } from '$lib/constants/core/radio-option-constants';
+    import {
+        approveOptions,
+        certifyOptions,
+        supportOptions,
+    } from '$lib/constants/core/radio-option-constants';
+    import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
+    import Alert from 'flowbite-svelte/Alert.svelte';
 
     export let data: PageData;
 
-    let notEditingclinicApplicationForm: boolean = false;
     let notEditingClinicContractForm: boolean = false;
     let notEditingVerificationForm: boolean = false;
     let notEditingSuppAppForm: boolean = false;
-    let newClinicApplicationId: number;
+    let notEditingSupporterForm: boolean = false;
+    let notEditingApproverForm: boolean = false;
 
-    const {
-        form: clinicApplicationForm,
-        errors: clinicApplicationError,
-        enhance: clinicApplicationEnhance,
-    } = superForm(data.clinicApplicationForm, {
-        SPA: true,
-        taintedMessage: false,
-        id: 'clinicDetailForm',
-        validators: zod(_addClinicApplicationSchema),
-        resetForm: false,
-        async onSubmit() {
-            const editMode = await _submitClinicApplicationForm(
-                $clinicApplicationForm,
-            );
-
-            if (editMode?.response.status == 'success') {
-                notEditingclinicApplicationForm = true;
-                newClinicApplicationId = editMode.response.data?.details.clinicId;
-            }
-        },
-    });
     const {
         form: clinicContractForm,
         errors: clinicContractError,
@@ -60,10 +51,10 @@
         SPA: true,
         taintedMessage: false,
         id: 'clinicContractForm',
-        validators: zod(_addClinicApplicationSchema),
+        validators: zod(_addClinicContractSchema),
         resetForm: false,
         async onSubmit() {
-            $clinicContractForm.id = newClinicApplicationId;
+            $clinicContractForm.id = data.clinicId.id;
             const editMode =
                 await _submitClinicContractForm($clinicContractForm);
 
@@ -83,9 +74,10 @@
         validators: zod(_clinicCommonResultSchema),
         resetForm: false,
         async onSubmit() {
-            $clinicVerificationForm.id = newClinicApplicationId;
-            const editMode =
-                await _submitSecretaryApprovalForm($clinicVerificationForm);
+            $clinicVerificationForm.id = data.clinicId.id;
+            const editMode = await _submitSecretaryApprovalForm(
+                $clinicVerificationForm,
+            );
 
             if (editMode?.response.status == 'success') {
                 notEditingVerificationForm = true;
@@ -103,29 +95,81 @@
         validators: zod(_clinicSupporterApproverSchema),
         resetForm: false,
         async onSubmit() {
-            $supporterApproverForm.id = newClinicApplicationId;
-            const editMode =
-                await _submitSupporterApproverForm($supporterApproverForm);
+            $supporterApproverForm.id = data.clinicId.id;
+            const editMode = await _submitSupporterApproverForm(
+                $supporterApproverForm,
+            );
 
             if (editMode?.response.status == 'success') {
                 notEditingSuppAppForm = true;
             }
         },
     });
+    const {
+        form: supporterApprovalForm,
+        errors: supporterApprovalError,
+        enhance: supporterApprovalEnhance,
+    } = superForm(data.supporterApprovalForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'supporterApprovalForm',
+        validators: zod(_clinicCommonResultSchema),
+        resetForm: false,
+        async onSubmit() {
+            $supporterApprovalForm.id = data.clinicId.id;
+            const editMode = await _submitSupporterApprovalForm(
+                $supporterApprovalForm,
+            );
+
+            if (editMode?.response.status == 'success') {
+                notEditingSupporterForm = true;
+            }
+        },
+    });
+    const {
+        form: approverApprovalForm,
+        errors: approverApprovalError,
+        enhance: approverApprovalEnhance,
+    } = superForm(data.approverApprovalForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'approverApprovalForm',
+        validators: zod(_clinicCommonResultSchema),
+        resetForm: false,
+        async onSubmit() {
+            $approverApprovalForm.id = data.clinicId.id;
+            const editMode = await _submitApproverApprovalForm(
+                $approverApprovalForm,
+            );
+
+            if (editMode?.response.status == 'success') {
+                notEditingApproverForm = true;
+            }
+        },
+    });
+
     $: {
-        if(data.clinicContractForm.data.panelAppointedDate !== ""){
+        if (data.clinicContractForm.data.panelAppointedDate !== '') {
             notEditingClinicContractForm = true;
         }
-
-        if(data.supporterApproverForm.data.approverName !== ""){
+        if (data.secretaryApprovalForm.data.remark !== '') {
+            notEditingVerificationForm = true;
+        }
+        if (data.supporterApproverForm.data.approverName !== '') {
             notEditingSuppAppForm = true;
+        }
+        if (data.supporterApprovalForm.data.remark !== '') {
+            notEditingSupporterForm = true;
+        }
+        if (data.approverApprovalForm.data.remark !== '') {
+            notEditingApproverForm = true;
         }
     }
 </script>
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Maklumat Kakitangan dan Kontrak">
+    <ContentHeader title="Maklumat Klinik">
         <TextIconButton
             icon="cancel"
             type="neutral"
@@ -140,168 +184,124 @@
 >
     <Stepper>
         <StepperContent>
-            <StepperContentHeader title="Maklumat Klinik">
-                {#if !data.isViewOnly && !notEditingclinicApplicationForm}
-                    <TextIconButton
-                        icon="check"
-                        type="primary"
-                        label="Simpan"
-                        form="clinicDetailForm"
-                    />
-                {/if}
-            </StepperContentHeader>
+            <StepperContentHeader title="Maklumat Klinik" />
             <StepperContentBody>
-                <form
+                <div
                     class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
-                    id="clinicDetailForm"
-                    method="POST"
-                    use:clinicApplicationEnhance
                 >
                     <CustomTextField
                         label="Nama Klinik"
                         id="name"
-                        disabled={notEditingclinicApplicationForm}
-                        bind:val={$clinicApplicationForm.name}
-                        errors={$clinicApplicationError.name}
+                        disabled
+                        bind:val={data.clinicDetail.name}
                     />
                     <CustomTextField
                         label="Emel Klinik"
                         id="email"
-                        disabled={notEditingclinicApplicationForm}
-                        bind:val={$clinicApplicationForm.email}
-                        errors={$clinicApplicationError.email}
+                        disabled
+                        bind:val={data.clinicDetail.email}
                     />
                     <CustomTextField
                         label="Alamat"
                         id="address"
-                        disabled={notEditingclinicApplicationForm}
-                        bind:val={$clinicApplicationForm.address}
-                        errors={$clinicApplicationError.address}
+                        disabled
+                        bind:val={data.clinicDetail.address}
                     />
                     <CustomTextField
                         label="Poskod"
                         id="postcode"
-                        disabled={notEditingclinicApplicationForm}
-                        bind:val={$clinicApplicationForm.postcode}
-                        errors={$clinicApplicationError.postcode}
+                        disabled
+                        bind:val={data.clinicDetail.postcode}
                     />
                     <CustomSelectField
                         label="Bandar"
                         id="cityId"
-                        disabled={notEditingclinicApplicationForm}
+                        disabled
                         options={data.lookup.cityLookup}
-                        bind:val={$clinicApplicationForm.cityId}
-                        errors={$clinicApplicationError.cityId}
+                        bind:val={data.clinicDetail.cityId}
                     />
                     <CustomSelectField
-                        label="Negeri"
+                        label="Daerah"
                         id="districtId"
-                        disabled={notEditingclinicApplicationForm}
-                        options={data.lookup.stateLookup}
-                        bind:val={$clinicApplicationForm.districtId}
-                        errors={$clinicApplicationError.districtId}
-                    />
-                    <CustomTextField
-                        label="Tarikh Lantikan Klinik Panel"
-                        id="panelAppointedDate"
-                        type="date"
-                        disabled={notEditingclinicApplicationForm}
-                        bind:val={$clinicApplicationForm.panelAppointedDate}
-                        errors={$clinicApplicationError.panelAppointedDate}
-                    />
-                    <CustomTextField
-                        label="Tarikh Tamat Kontrak Klinik Panel"
-                        id="panelContractEndDate"
-                        type="date"
-                        disabled={notEditingclinicApplicationForm}
-                        bind:val={$clinicApplicationForm.panelContractEndDate}
-                        errors={$clinicApplicationError.panelContractEndDate}
+                        disabled
+                        options={data.lookup.districtLookup}
+                        bind:val={data.clinicDetail.districtId}
                     />
                     <CustomTextField
                         label="No. Telefon"
                         id="contactNumber"
-                        disabled={notEditingclinicApplicationForm}
-                        bind:val={$clinicApplicationForm.contactNumber}
-                        errors={$clinicApplicationError.contactNumber}
+                        disabled
+                        bind:val={data.clinicDetail.contactNumber}
                     />
                     <CustomTextField
                         label="Nama Bank"
                         id="bankName"
-                        disabled={notEditingclinicApplicationForm}
-                        bind:val={$clinicApplicationForm.bankName}
-                        errors={$clinicApplicationError.bankName}
+                        disabled
+                        bind:val={data.clinicDetail.bankName}
                     />
                     <CustomTextField
                         label="No. Akaun Bank"
                         id="bankAccount"
-                        disabled={notEditingclinicApplicationForm}
-                        bind:val={$clinicApplicationForm.bankAccount}
-                        errors={$clinicApplicationError.bankAccount}
+                        disabled
+                        bind:val={data.clinicDetail.bankAccount}
                     />
                     <CustomTextField
                         label="Tarikh Pendaftaran Klinik"
                         id="foundationDate"
                         type="date"
-                        disabled={notEditingclinicApplicationForm}
-                        bind:val={$clinicApplicationForm.foundationDate}
-                        errors={$clinicApplicationError.foundationDate}
+                        disabled
+                        bind:val={data.clinicDetail.foundationDate}
                     />
                     <CustomTextField
                         label="Jenis Klinik"
                         id="clinicType"
-                        disabled={notEditingclinicApplicationForm}
-                        bind:val={$clinicApplicationForm.clinicType}
-                        errors={$clinicApplicationError.clinicType}
+                        disabled
+                        bind:val={data.clinicDetail.clinicType}
                     />
                     <CustomTextField
                         label="Status Pemilikan"
                         id="ownershipStatus"
-                        disabled={notEditingclinicApplicationForm}
-                        bind:val={$clinicApplicationForm.ownershipStatus}
-                        errors={$clinicApplicationError.ownershipStatus}
+                        disabled
+                        bind:val={data.clinicDetail.ownershipStatus}
                     />
                     <CustomTextField
                         label="Doktor Berdaftar"
                         id="registeredMedicalPractitioner"
-                        disabled={notEditingclinicApplicationForm}
-                        bind:val={$clinicApplicationForm.registeredMedicalPractitioner}
-                        errors={$clinicApplicationError.registeredMedicalPractitioner}
+                        disabled
+                        bind:val={data.clinicDetail
+                            .registeredMedicalPractitioner}
                     />
                     <CustomTextField
                         label="Bilangan Cawangan"
                         id="branchCount"
-                        disabled={notEditingclinicApplicationForm}
-                        bind:val={$clinicApplicationForm.branchCount}
-                        errors={$clinicApplicationError.branchCount}
+                        disabled
+                        bind:val={data.clinicDetail.branchCount}
                     />
                     <CustomTextField
                         label="Jarak Klinik Dari Pejabat"
                         id="clinicOfficeDistance"
-                        disabled={notEditingclinicApplicationForm}
-                        bind:val={$clinicApplicationForm.clinicOfficeDistance}
-                        errors={$clinicApplicationError.clinicOfficeDistance}
+                        disabled
+                        bind:val={data.clinicDetail.clinicOfficeDistance}
                     />
                     <CustomTextField
                         label="Jarak Klinik Terdekat Dari Pejabat"
                         id="nearestClinicDistance"
-                        disabled={notEditingclinicApplicationForm}
-                        bind:val={$clinicApplicationForm.nearestClinicDistance}
-                        errors={$clinicApplicationError.nearestClinicDistance}
+                        disabled
+                        bind:val={data.clinicDetail.nearestClinicDistance}
                     />
                     <CustomTextField
                         label="Jam Operasi"
                         id="operationHours"
-                        disabled={notEditingclinicApplicationForm}
-                        bind:val={$clinicApplicationForm.operationHours}
-                        errors={$clinicApplicationError.operationHours}
+                        disabled
+                        bind:val={data.clinicDetail.operationHours}
                     />
-                </form>
+                </div>
             </StepperContentBody>
         </StepperContent>
 
         <StepperContent>
             <StepperContentHeader title="Maklumat Lantikan">
-                {#if !data.isViewOnly && !notEditingClinicContractForm}
+                {#if !notEditingClinicContractForm}
                     <TextIconButton
                         icon="check"
                         type="primary"
@@ -367,9 +367,7 @@
         </StepperContent>
 
         <StepperContent>
-            <StepperContentHeader title="Pengesahan Permohonan Klinik Panel"
-                >
-                <!-- {#if !data.isViewOnly} -->
+            <StepperContentHeader title="Pengesahan Permohonan Klinik Panel">
                 {#if !notEditingVerificationForm}
                     <TextIconButton
                         icon="check"
@@ -409,9 +407,8 @@
         </StepperContent>
 
         <StepperContent>
-            <StepperContentHeader title="Penyokong dan Pelulus"
-                >
-                {#if !data.isViewOnly && !notEditingSuppAppForm}
+            <StepperContentHeader title="Penyokong dan Pelulus">
+                {#if !notEditingSuppAppForm}
                     <TextIconButton
                         icon="check"
                         type="primary"
@@ -447,105 +444,167 @@
             </StepperContentBody>
         </StepperContent>
 
-        <StepperContent>
-            <StepperContentHeader title="Keputusan Penyokong"
-                >{#if !data.isViewOnly}
-                    <TextIconButton
-                        icon="check"
-                        type="primary"
-                        label="Simpan"
-                        form="supporterApprovalForm"
-                    />
-                {/if}
-            </StepperContentHeader>
-            <StepperContentBody>
-                <form
-                    class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
-                    id="supporterApprovalForm"
-                    method="POST"
-                >
-                <CustomTextField
-                        label="Tindakan/Ulasan"
-                        id=""
-                        disabled={data.isViewOnly}
-                        val=""
-                        errors={[]}
-                    />
-                    <CustomRadioBoolean
-                        label="Keputusan"
-                        id=""
-                        disabled={data.isViewOnly}
-                        options={supportOptions}
-                        val={1}
-                        errors={[]}
-                    />
-                </form>
-            </StepperContentBody>
-        </StepperContent>
+        {#if data.clinicSecretaryApproval.remark !== null}
+            <StepperContent>
+                <StepperContentHeader title="Keputusan Penyokong">
+                    {#if !notEditingSupporterForm && data.currentRoleCode == UserRoleConstant.penyokong.code}
+                        <TextIconButton
+                            icon="check"
+                            type="primary"
+                            label="Simpan"
+                            form="supporterApprovalForm"
+                        />
+                    {/if}
+                </StepperContentHeader>
+                <StepperContentBody>
+                    {#if data.clinicSupporterApproval.remark == null && data.currentRoleCode !== UserRoleConstant.penyokong.code}
+                        <div class="flex w-full flex-col gap-10 px-3">
+                            <Alert color="blue">
+                                <p>
+                                    <span class="font-medium"
+                                        >Tiada Maklumat!</span
+                                    >
+                                    Menunggu keputusan daripada penyokong.
+                                </p>
+                            </Alert>
+                        </div>
+                    {:else}
+                        <form
+                            class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
+                            id="supporterApprovalForm"
+                            method="POST"
+                            use:supporterApprovalEnhance
+                        >
+                            <div class="w-full">
+                                <span
+                                    class="text-base font-semibold text-ios-labelColors-link-light"
+                                    >Penyokong</span
+                                >
+                            </div>
+                            {#if notEditingSupporterForm}
+                                <CustomTextField
+                                    label="Nama"
+                                    id="supporterName"
+                                    disabled
+                                    bind:val={data.clinicSupporterApproval
+                                        .supporterName}
+                                />
+                            {/if}
+                            <CustomTextField
+                                label="Tindakan/Ulasan"
+                                id="remark"
+                                disabled={notEditingSupporterForm}
+                                bind:val={$supporterApprovalForm.remark}
+                                errors={$supporterApprovalError.remark}
+                            />
+                            <CustomRadioBoolean
+                                label="Keputusan"
+                                id="status"
+                                disabled={notEditingSupporterForm}
+                                options={supportOptions}
+                                bind:val={$supporterApprovalForm.status}
+                                errors={$supporterApprovalError.status}
+                            />
+                        </form>
+                    {/if}
+                </StepperContentBody>
+            </StepperContent>
 
-        <StepperContent>
-            <StepperContentHeader title="Keputusan Pelulus"
-                >{#if !data.isViewOnly}
-                    <TextIconButton
-                        icon="check"
-                        type="primary"
-                        label="Simpan"
-                        form="approverApprovalForm"
-                    />
-                {/if}
-            </StepperContentHeader>
-            <StepperContentBody>
-                <form
-                    class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
-                    id="approverApprovalForm"
-                    method="POST"
-                >
-                <CustomTextField
-                        label="Tindakan/Ulasan"
-                        id=""
-                        disabled={data.isViewOnly}
-                        val=""
-                        errors={[]}
-                    />
-                    <CustomRadioBoolean
-                        label="Keputusan"
-                        id=""
-                        disabled={data.isViewOnly}
-                        options={approveOptions}
-                        val={1}
-                        errors={[]}
-                    />
-                </form>
-            </StepperContentBody>
-        </StepperContent>
+            <StepperContent>
+                <StepperContentHeader title="Keputusan Pelulus"
+                    >{#if !notEditingApproverForm && data.currentRoleCode == UserRoleConstant.pelulus.code}
+                        <TextIconButton
+                            icon="check"
+                            type="primary"
+                            label="Simpan"
+                            form="approverApprovalForm"
+                        />
+                    {/if}
+                </StepperContentHeader>
+                <StepperContentBody>
+                    {#if data.clinicApproverApproval.remark == null && data.currentRoleCode !== UserRoleConstant.pelulus.code}
+                        <div class="flex w-full flex-col gap-10 px-3">
+                            <Alert color="blue">
+                                <p>
+                                    <span class="font-medium"
+                                        >Tiada Maklumat!</span
+                                    >
+                                    Menunggu keputusan daripada pelulus.
+                                </p>
+                            </Alert>
+                        </div>
+                    {:else}
+                        <form
+                            class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
+                            id="approverApprovalForm"
+                            method="POST"
+                            use:approverApprovalEnhance
+                        >
+                            <div class="w-full">
+                                <span
+                                    class="text-base font-semibold text-ios-labelColors-link-light"
+                                    >Pelulus</span
+                                >
+                            </div>
+                            {#if notEditingApproverForm}
+                                <CustomTextField
+                                    label="Nama"
+                                    id="approverName"
+                                    disabled
+                                    bind:val={data.clinicApproverApproval
+                                        .approverName}
+                                />
+                            {/if}
+                            <CustomTextField
+                                label="Tindakan/Ulasan"
+                                id="remark"
+                                disabled={notEditingApproverForm}
+                                bind:val={$approverApprovalForm.remark}
+                                errors={$approverApprovalError.remark}
+                            />
+                            <CustomRadioBoolean
+                                label="Keputusan"
+                                id="status"
+                                disabled={notEditingApproverForm}
+                                options={approveOptions}
+                                bind:val={$approverApprovalForm.status}
+                                errors={$approverApprovalError.status}
+                            />
+                        </form>
+                    {/if}
+                </StepperContentBody>
+            </StepperContent>
 
-        <StepperContent>
-            <StepperContentHeader title="Surat Pelantikan Klinik Panel"
-                >{#if !data.isViewOnly}
-                    <TextIconButton
-                        icon="check"
-                        type="primary"
-                        label="Selesai"
-                        form=""
-                    />
-                {/if}
-            </StepperContentHeader>
-            <StepperContentBody>
-                <ContentHeader
-                    title="Cetak Surat Pelantikan Klinik Panel"
-                    borderClass="border-none"
-                />
-                <form
-                    class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
-                    id="clinicDetailForm"
-                    method="POST"
-                >
-                    <DownloadAttachment
-                        fileName="Surat Pelantikan Klinik Panel.pdf"
-                    />
-                </form>
-            </StepperContentBody>
-        </StepperContent>
+            {#if data.clinicApproverApproval.status}
+                <StepperContent>
+                    <StepperContentHeader title="Surat Pelantikan Klinik Panel"
+                        >{#if !data.isViewOnly}
+                            <TextIconButton
+                                icon="check"
+                                type="primary"
+                                label="Selesai"
+                                form=""
+                            />
+                        {/if}
+                    </StepperContentHeader>
+                    <StepperContentBody>
+                        <ContentHeader
+                            title="Cetak Surat Pelantikan Klinik Panel"
+                            borderClass="border-none"
+                        />
+                        <form
+                            class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
+                            id="clinicDetailForm"
+                            method="POST"
+                        >
+                            <DownloadAttachment
+                                fileName="Surat Pelantikan Klinik Panel.pdf"
+                            />
+                        </form>
+                    </StepperContentBody>
+                </StepperContent>
+            {/if}
+        {/if}
     </Stepper>
 </section>
 <Toaster />

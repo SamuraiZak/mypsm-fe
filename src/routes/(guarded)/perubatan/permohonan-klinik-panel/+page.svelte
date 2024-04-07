@@ -6,6 +6,7 @@
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterDateField from '$lib/components/table/filter/FilterDateField.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
+    import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import type { ClinicApplicationList } from '$lib/dto/mypsm/perubatan/permohonan-klinik/medical-clinic-application-list.dto';
     import type { PageData } from './$types';
@@ -45,12 +46,14 @@
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader title="Rekod Permohonan Klinik Panel">
+        {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerubatan.code}
         <TextIconButton
             icon="add"
             type="primary"
             label="Tambah Klinik Panel"
-            onClick={() => goto('./permohonan-klinik-panel/butiran/baru')}
+            onClick={() => goto('./permohonan-klinik-panel/baru')}
         />
+        {/if}
     </ContentHeader>
 </section>
 
