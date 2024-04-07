@@ -13,6 +13,7 @@ import {
     type CommonResponseDTO,
 } from '$lib/dto/core/common/common-response.dto';
 import type {
+    LookupCategoryDTO,
     LookupItemDTO,
     LookupTypeDTO,
 } from '$lib/dto/core/lookup/lookup-item.dto';
@@ -43,9 +44,77 @@ export class LookupManagementServices {
         }
     }
 
-    static async getTypeList(param: CommonListRequestDTO) {
+    // get category list
+    static async getLookupList(
+        param: CommonListRequestDTO,
+        type: LookupCategoryDTO,
+    ) {
         try {
-            let list: LookupTypeDTO[] = LookupItemConstant.list;
+            let url: Input = type.url + '/filter';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // add new lookup by category
+    static async add(param: object, type: LookupCategoryDTO) {
+        try {
+            let url: Input = type.url + '/add';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await getPromiseToast(promiseResponse);
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // edit lookup by category
+    static async edit(param: object, type: LookupCategoryDTO) {
+        try {
+            let url: Input = type.url + '/edit';
+
+            const promiseResponse: Promise<Response> = http
+                .put(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await getPromiseToast(promiseResponse);
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
@@ -80,56 +149,6 @@ export class LookupManagementServices {
                     body: CommonListRequestConvert.toJson(param),
                 })
                 .json();
-
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // add list
-    static async add(param: LookupItemDTO, type: LookupTypeDTO) {
-        try {
-            let url: Input = type.add;
-
-            const responsePromise: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            const response = await getPromiseToast(responsePromise);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // edit list
-    static async edit(param: LookupItemDTO, type: LookupTypeDTO) {
-        try {
-            let url: Input = type.edit;
-
-            const responsePromise: Promise<Response> = http
-                .put(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            const response = await getPromiseToast(responsePromise);
 
             const result = CommonResponseConvert.fromResponse(response);
 
