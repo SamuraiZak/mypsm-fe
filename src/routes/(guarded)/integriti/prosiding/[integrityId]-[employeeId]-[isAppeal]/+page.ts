@@ -2,9 +2,9 @@ import { goto } from '$app/navigation';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { RadioDTO } from '$lib/dto/core/radio/radio.dto.js';
+import type { ProceedingAppealResultDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-appeal.dto';
 import type { ProceedingApproverResultDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-approver-result.dto.js';
 import type { ProceedingAccusationListDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
-import type { ProceedingSentencingMeetingRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-create-sentencing-meeting-request.dto';
 import type { ProceedingEmployeeDetailResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-employee-detail-response.dto';
 import type {
     ProceedingIntegrityIdRequestDTO,
@@ -341,8 +341,6 @@ export const _addChargeDisciplineSecretaryApproval = async (
 ) => {
     const form = await superValidate(formData, zod(_proceedingApproverSchema));
 
-    console.log(form);
-
     if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
@@ -353,11 +351,6 @@ export const _addChargeDisciplineSecretaryApproval = async (
             form.data as ProceedingApproverResultDTO,
         );
 
-    if (response.status === 'success')
-        setTimeout(() => {
-            goto(`../prosiding`);
-        }, 1500);
-
     return { response };
 };
 
@@ -367,22 +360,97 @@ export const _addSentencingMeeting = async (formData: object) => {
         zod(_proceedingSentencingMeetingSchema),
     );
 
-    console.log(form);
-
     if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
     }
 
+    const modifiedRequest = {
+        integrityId: form.data.integrityId,
+        employeeId: form.data.employeeId,
+        meetingDate: form.data.meetingDate,
+        meetingName: form.data.meetingName,
+        meetingCount: form.data.meetingCount,
+        meetingCode: form.data.meetingCode,
+        meetingResult: [],
+    };
+
+    form.data.meetingResult.forEach((val) => {
+        const meetingResultItem = {
+            accusationListId: val.accusationListId,
+            result: val.result,
+            sentencing: [],
+        };
+
+        val.sentencing.forEach((sentence) => {
+            if (sentence.penaltyTypeCode === '01') {
+                const sentencingItem = {
+                    penaltyTypeCode: sentence.penaltyTypeCode,
+                    effectiveDate: sentence.effectiveDate,
+                };
+                meetingResultItem.sentencing.push(sentencingItem);
+            } else if (sentence.penaltyTypeCode === '02') {
+                const sentencingItem = {
+                    penaltyTypeCode: sentence.penaltyTypeCode,
+                    effectiveDate: sentence.effectiveDate,
+                    emolumenRight: sentence.emolumenRight,
+                };
+                meetingResultItem.sentencing.push(sentencingItem);
+            } else if (sentence.penaltyTypeCode === '03') {
+                const sentencingItem = {
+                    penaltyTypeCode: sentence.penaltyTypeCode,
+                    effectiveDate: sentence.effectiveDate,
+                    emolumenRight: sentence.emolumenRight,
+                    emolumenDate: [],
+                };
+
+                sentence.emolumenDate.forEach((date) => {
+                    const dateItem = {
+                        startDate: date.startDate,
+                        endDate: date.endDate,
+                    };
+
+                    sentencingItem.emolumenDate.push(dateItem);
+                });
+                meetingResultItem.sentencing.push(sentencingItem);
+            } else if (sentence.penaltyTypeCode === '04') {
+                const sentencingItem = {
+                    penaltyTypeCode: sentence.penaltyTypeCode,
+                    effectiveDate: sentence.effectiveDate,
+                    duration: sentence.duration,
+                };
+                meetingResultItem.sentencing.push(sentencingItem);
+            } else if (sentence.penaltyTypeCode === '05') {
+                const sentencingItem = {
+                    penaltyTypeCode: sentence.penaltyTypeCode,
+                    effectiveDate: sentence.effectiveDate,
+                    salaryMovementCount: sentence.salaryMovementCount,
+                    sentencingMonth: sentence.sentencingMonth,
+                };
+                meetingResultItem.sentencing.push(sentencingItem);
+            } else if (sentence.penaltyTypeCode === '06') {
+                const sentencingItem = {
+                    penaltyTypeCode: sentence.penaltyTypeCode,
+                    effectiveDate: sentence.effectiveDate,
+                    newGradeCode: sentence.newGradeCode,
+                };
+                meetingResultItem.sentencing.push(sentencingItem);
+            } else if (sentence.penaltyTypeCode === '07') {
+                const sentencingItem = {
+                    penaltyTypeCode: sentence.penaltyTypeCode,
+                    effectiveDate: sentence.effectiveDate,
+                };
+                meetingResultItem.sentencing.push(sentencingItem);
+            }
+        });
+
+        modifiedRequest.meetingResult.push(meetingResultItem);
+    });
+
     const response: CommonResponseDTO =
         await IntegrityProceedingServices.createProceedingSentencing(
-            form.data as ProceedingSentencingMeetingRequestDTO,
+            modifiedRequest,
         );
-
-    if (response.status === 'success')
-        setTimeout(() => {
-            goto(`../../prosiding`);
-        }, 1500);
 
     return { response };
 };
@@ -391,8 +459,6 @@ export const _addSentencingIntegrityDirectorApproval = async (
     formData: object,
 ) => {
     const form = await superValidate(formData, zod(_proceedingApproverSchema));
-
-    console.log(form);
 
     if (!form.valid) {
         getErrorToast();
@@ -404,10 +470,37 @@ export const _addSentencingIntegrityDirectorApproval = async (
             form.data as ProceedingApproverResultDTO,
         );
 
-    if (response.status === 'success')
-        setTimeout(() => {
-            goto(`../../prosiding`);
-        }, 1500);
+    return { response };
+};
+
+export const _addSentencingAppealDetail = async (formData: object) => {
+    const form = await superValidate(formData, zod(_proceedingAppealSchema));
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await IntegrityProceedingServices.createProceedingAppeal(
+            form.data as ProceedingAppealResultDTO,
+        );
+
+    return { response };
+};
+
+export const _addSentenceAppealConfirmation = async (formData: object) => {
+    const form = await superValidate(formData, zod(_proceedingApproverSchema));
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await IntegrityProceedingServices.createProceedingAppealIntegrityDirectorResult(
+            form.data as ProceedingApproverResultDTO,
+        );
 
     return { response };
 };

@@ -102,7 +102,7 @@
         <div
             class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
         >
-            {#if !data.roles.isStaffRole}
+            {#if data.roles.isDisciplineSecretaryRole || data.roles.isIntegritySecretaryRole}
                 <ContentHeader
                     title="Tekan butang disebelah untuk menambah rekod prosiding"
                     borderClass="border-none"
@@ -116,11 +116,11 @@
             {/if}
             <!-- Table filter placeholder -->
             <FilterCard onSearch={_updateProceedingChargeTable}>
-                <!-- <FilterSelectField
+                <FilterSelectField
                     label="Status"
                     options={data.selectionOptions.statusLookup}
                     bind:inputValue={proceedingChargeTable.param.filter.status}
-                ></FilterSelectField> -->
+                ></FilterSelectField>
             </FilterCard>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
@@ -133,7 +133,7 @@
                         bind:tableData={proceedingChargeTable}
                         bind:passData={rowData}
                         detailActions={() => {
-                            const route = `./prosiding/${rowData.integrityId}-${rowData.employeeId}`;
+                            const route = `./prosiding/${rowData.integrityId}-${rowData.employeeId}-${rowData.isAppeal}`;
 
                             goto(route);
                         }}
@@ -162,12 +162,12 @@
                 >
                     <!-- Table filter placeholder -->
                     <FilterCard onSearch={_updateProceedingChargeTable}>
-                        <!-- <FilterSelectField
+                        <FilterSelectField
                             label="Status"
                             options={data.selectionOptions.statusLookup}
                             bind:inputValue={proceedingChargeTable.param.filter
                                 .status}
-                        ></FilterSelectField> -->
+                        ></FilterSelectField>
                     </FilterCard>
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start"
@@ -179,7 +179,7 @@
                             bind:tableData={proceedingChargeTable}
                             bind:passData={rowData}
                             detailActions={() => {
-                                const route = `./prosiding/${rowData.integrityId}-${rowData.employeeId}`;
+                                const route = `./prosiding/${rowData.integrityId}-${rowData.employeeId}-${rowData.isAppeal}`;
 
                                 goto(route);
                             }}
@@ -192,12 +192,12 @@
                     class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
                 >
                     <FilterCard onSearch={_updateProceedingSuspensionTable}>
-                        <!-- <FilterSelectField
+                        <FilterSelectField
                             label="Status"
                             options={data.selectionOptions.statusLookup}
                             bind:inputValue={proceedingChargeTable.param.filter
                                 .status}
-                        ></FilterSelectField> -->
+                        ></FilterSelectField>
                     </FilterCard>
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start"

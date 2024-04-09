@@ -159,7 +159,7 @@ export const _emolumenDateSchema = z.object({
 });
 
 export const _sentenceSchema = z.object({
-    penaltyCode: codeSchema.nullish(),
+    penaltyTypeCode: codeSchema.nullish(),
     effectiveDate: dateStringSchema.nullish(),
     emolumenRight: numberSchema.nullish(),
     duration: numberSchema.nullish(),
@@ -185,7 +185,7 @@ export const _sentencingListSchema = z
                         path: ['effectiveDate'],
                     });
                 }
-                if (arr.penaltyCode === '02') {
+                if (arr.penaltyTypeCode === '02') {
                     if (arr.emolumenRight === undefined) {
                         ctx.addIssue({
                             code: 'custom',
@@ -193,7 +193,7 @@ export const _sentencingListSchema = z
                             path: ['emolumenRight'],
                         });
                     }
-                } else if (arr.penaltyCode === '03') {
+                } else if (arr.penaltyTypeCode === '03') {
                     if (arr.emolumenRight === undefined) {
                         ctx.addIssue({
                             code: 'custom',
@@ -217,7 +217,7 @@ export const _sentencingListSchema = z
                             });
                         }
                     });
-                } else if (arr.penaltyCode === '04') {
+                } else if (arr.penaltyTypeCode === '04') {
                     if (arr.duration === undefined) {
                         ctx.addIssue({
                             code: 'custom',
@@ -225,7 +225,7 @@ export const _sentencingListSchema = z
                             path: ['duration'],
                         });
                     }
-                } else if (arr.penaltyCode === '05') {
+                } else if (arr.penaltyTypeCode === '05') {
                     if (arr.duration === undefined) {
                         ctx.addIssue({
                             code: 'custom',
@@ -240,7 +240,7 @@ export const _sentencingListSchema = z
                             path: ['sentencingMonth'],
                         });
                     }
-                } else if (arr.penaltyCode === '06') {
+                } else if (arr.penaltyTypeCode === '06') {
                     if (arr.newGradeCode === undefined) {
                         ctx.addIssue({
                             code: 'custom',
@@ -271,7 +271,7 @@ export const _proceedingAppealSchema = z.object({
     meetingName: z.string(),
     meetingCode: codeSchema,
     meetingResult: booleanSchema,
-    appealResult: shortTextSchema,
+    appealResult: shortTextSchema.nullish(),
     result: z.array(_sentencingListSchema),
 });
 

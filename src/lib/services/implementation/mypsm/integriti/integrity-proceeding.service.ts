@@ -12,7 +12,6 @@ import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto'
 import type { ProceedingAppealResultDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-appeal.dto';
 import type { ProceedingApproverResultDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-approver-result.dto';
 import type { ProceedingCreateChargeRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-create-charges-request.dto';
-import type { ProceedingSentencingMeetingRequestDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-create-sentencing-meeting-request.dto';
 import type {
     ProceedingIntegrityIdRequestDTO,
     ProceedingStaffDetailRequestDTO,
@@ -52,6 +51,31 @@ export class IntegrityProceedingServices {
     static async getProceedingChargeRecordList(param: CommonListRequestDTO) {
         try {
             const url: Input = 'integrity/proceeding/accusation/list';
+
+            // get the promise response
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // get list of proceeding - charge appeal list
+    static async getProceedingChargeAppealList(param: CommonListRequestDTO) {
+        try {
+            const url: Input = 'integrity/proceeding/appeal/list';
 
             // get the promise response
             const response: Response = await http
@@ -220,9 +244,7 @@ export class IntegrityProceedingServices {
     }
 
     // create proceeding - add sentencing result
-    static async createProceedingSentencing(
-        param: ProceedingSentencingMeetingRequestDTO,
-    ) {
+    static async createProceedingSentencing<T>(param: T) {
         try {
             const url: Input = 'integrity/proceeding/sentencing/add';
 
