@@ -60,7 +60,8 @@
             />
             <FilterTextField
                 label="No. Kad Pengenalan"
-                bind:inputValue={finalPayslipTable.param.filter.identityCardNumber}
+                bind:inputValue={finalPayslipTable.param.filter
+                    .identityCardNumber}
             />
             <!-- <FilterTextField
                 label="Jenis Persaraan"
@@ -70,15 +71,15 @@
                 label="Status"
                 bind:inputValue={finalPayslipTable.param.filter.status}
             />
-       
+        </FilterCard>
 
         <CustomTable
-            title="Rekod Sijil Gaji Akhir"
+            title="Rekod Gaji Akhir"
             bind:tableData={finalPayslipTable}
             bind:passData={rowData}
             onUpdate={_search}
             enableDetail
-            detailActions={() => goto('./gaji-akhir/'+rowData.id)}
+            detailActions={() => goto('./gaji-akhir/' + rowData.id)}
         />
     </div>
 </section>
