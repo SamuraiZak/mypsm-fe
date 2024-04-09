@@ -1,4 +1,5 @@
-export interface AddNewInterimApplicationDetailDTO {
+export interface InterimApplicationResponse {
+    interimId?: number;
     gradeId: number;
     positionId: number;
     placementId: number;
@@ -7,4 +8,5 @@ export interface AddNewInterimApplicationDetailDTO {
     startDate: string;
     endDate: string;
     reason: string;
+    isReadOnly?: boolean;
 }

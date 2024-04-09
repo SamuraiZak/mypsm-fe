@@ -76,7 +76,7 @@
         </FilterCard>
 
         <CustomTable
-            title="Rekod Gaji Akhir"
+            title="Rekod Sijil Gaji Akhir"
             bind:tableData={finalPayslipTable}
             bind:passData={rowData}
             onUpdate={_search}

@@ -3,11 +3,18 @@ export interface EmployeeInterimApplicationListResponseDTO {
     employeeNumber:  string;
     name:            string;
     icNumber:        string;
-    applicationDate: Date | null;
-    startDate:       Date | null;
-    endDate:         Date | null;
+    applicationDate: string;
+    startDate:       string;
+    endDate:         string;
     status:          string | null;
     remark:          string | null;
+}
+
+export interface EmployeeInterimApplicationFilter {
+    employeeNumber: string | null;
+    name: string | null;
+    identityCardNumber: string | null;
+    applicationDate: string | null;
 }
 
 // Converts JSON strings to/from your types

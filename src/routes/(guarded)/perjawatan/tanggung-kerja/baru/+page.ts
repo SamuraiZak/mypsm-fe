@@ -2,18 +2,42 @@ import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.c
 import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
 import type { DropdownDTO } from "$lib/dto/core/dropdown/dropdown.dto";
-import type { AddNewInterimApplicationDetailDTO } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-employee-new-application-detail.dto";
+import type { InterimApplicationResponse } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-application-response.dto";
 import { _addNewInterimApplicationSchema } from "$lib/schemas/mypsm/employment/tanggung-kerja/interim-schemas";
 import { LookupServices } from "$lib/services/implementation/core/lookup/lookup.service";
 import { EmploymentInterimServices } from "$lib/services/implementation/mypsm/perjawatan/employment-interim.service";
+import { zod } from "sveltekit-superforms/adapters";
 import { superValidate } from "sveltekit-superforms/client";
 
 export const load = async () => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
-
+    let lookup = await getLookup();
     //form validation
-    const addNewInterimApplicationForm = await superValidate(_addNewInterimApplicationSchema)
+    const addNewInterimApplicationForm = await superValidate(zod(_addNewInterimApplicationSchema))
 
+    return {
+        currentRoleCode,
+        lookup,
+        addNewInterimApplicationForm,
+    }
+}
+
+export const _submitAddNewInterimApplicationForm = async (formData: InterimApplicationResponse) => {
+    const form = await superValidate(formData, zod(_addNewInterimApplicationSchema));
+
+    if (form.valid) {
+        if (form.valid) {
+            const { isReadOnly, interimId, ...tempObj } = form.data
+            const response: CommonResponseDTO =
+                await EmploymentInterimServices.addNewInterimApplication(
+                    tempObj as InterimApplicationResponse,
+                )
+            return { response };
+        }
+    }
+};
+
+const getLookup = async () => {
     // =======================================================
     // Dropdown Lookup =======================================
     // =======================================================
@@ -42,35 +66,12 @@ export const load = async () => {
         LookupServices.setSelectOptions(departmentLookupResponse)
     // -------------------------------------------------------
 
-
     return {
-        currentRoleCode,
-        addNewInterimApplicationForm,
-        selectionOptions: {
-            gradeLookup,
-            placementLookup,
-            positionLookup,
-            departmentLookup,
-        }
+
+        gradeLookup,
+        placementLookup,
+        positionLookup,
+        departmentLookup,
+
     }
 }
-
-export const _submitAddNewInterimApplicationForm = async (formData: object) => {
-    const addNewInterimApplicationForm = await superValidate(
-        formData,
-        _addNewInterimApplicationSchema,
-    );
-    if(addNewInterimApplicationForm.valid){
-        const response: CommonResponseDTO =
-            await EmploymentInterimServices.addNewInterimApplication(
-                addNewInterimApplicationForm.data as AddNewInterimApplicationDetailDTO,
-            )
-        if (addNewInterimApplicationForm.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
-    }
-};

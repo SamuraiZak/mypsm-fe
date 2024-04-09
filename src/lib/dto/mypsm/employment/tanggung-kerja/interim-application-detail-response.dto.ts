@@ -1,15 +1,15 @@
 export interface InterimApplicationDetailDTO {
-    view?:         View;
-    detail?:       Detail;
-    duration?:     Duration;
-    download?:     Download;
-    skipping?:     Skipping;
-    support?:      Support;
-    verification?: Support;
-    checklist?:    Checklist;
+    applicationDetail:         InterimApplicationDetail;
+    employeeDetail:            InterimEmployeeDetail;
+    duration:                  InterimDuration;
+    download:                  InterimDownload;
+    skipping:                  InterimSkipping;
+    support:                   InterimSupport;
+    verification:              InterimSupport;
+    checklist:                 InterimChecklist;
 }
 
-export interface Checklist {
+export interface InterimChecklist {
     interimId:                 number;
     preparer:                  string;
     checker:                   string;
@@ -31,48 +31,50 @@ export interface Checklist {
     justificationCheck:        boolean;
 }
 
-export interface Detail {
+export interface InterimEmployeeDetail {
     interimId:          number;
     name:               string;
     identityCardNumber: string;
-    confirmServiceDate: string;
+    confirmDate:        string;
+    serviceDate:        string;
     positionWithGrade:  string;
-    effectiveDate:      Date;
+    effectiveDate:      string;
     placement:          string;
 }
 
-export interface Download {
-    document: Document[];
+export interface InterimDownload {
+    document: InterimDocument[];
 }
 
-export interface Document {
+export interface InterimDocument {
+    name: string;
     document: string;
 }
 
-export interface Duration {
-    from:            Date;
-    to:              Date;
+export interface InterimDuration {
+    from:            string;
+    to:              string;
     previousInterim: PreviousInterim[];
 }
 
 export interface PreviousInterim {
-    from: Date;
-    to:   Date;
+    from: string;
+    to:   string;
 }
 
-export interface Skipping {
+export interface InterimSkipping {
     status: boolean;
-    remark: null;
+    remark: string;
 }
 
-export interface Support {
+export interface InterimSupport {
     name:              string;
     remark:            string;
     status:            string;
     statusDescription: string;
 }
 
-export interface View {
+export interface InterimApplicationDetail {
     interimId:       number;
     grade:           number;
     position:        number;
