@@ -390,7 +390,7 @@ const relationshipIsNonFamilyResponse: CommonResponseDTO =
 
     //==================================================
     //=============== Load Function ====================
-    //==================================================
+    //================================================== 
 
     const personalDetailResponse: CommonResponseDTO =
         await ProfileServices.getProfilePersonalDetails();
@@ -654,16 +654,6 @@ export const _personalInfoSubmit = async (formData: object) => {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
     }
-
-    // const modifiedForm = {
-    //     id: form.data.id,
-    //     examTypeId: form.data.examTypeId,
-    //     examTitle: form.data.examTitle,
-    //     startDate: form.data.startDate.toISOString().split('T')[0],
-    //     endDate: form.data.endDate.toISOString().split('T')[0],
-    //     examDate: form.data.examDate.toISOString().split('T')[0],
-    //     examLocation: form.data.examLocation,
-    // }; 
 
     const response: CommonResponseDTO =
         await ProfileServices.addProfilePersonalDetails(personalInfoForm.data as CandidatePersonalRequestDTO);

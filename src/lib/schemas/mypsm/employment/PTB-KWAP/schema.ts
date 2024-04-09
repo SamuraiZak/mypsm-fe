@@ -133,7 +133,7 @@ export const _serviceInfoSchema = z.object({
 //================== PTB KWAP Schema ===================
 //======================================================
 
-export const _PTBInfoSchema = z.object({
+export const _PTBPensionInfoSchema = z.object({
 
     applicationDate:dateSchema,
     PTBdate:dateSchema,

@@ -80,20 +80,16 @@ export class PTBKWAPServices {
     static async getPTBKWAPServiceDetails(
         param: PTBIDRequestBody,
     ) {
-        try {
-            const url: Input = 'employment/pension_detail/services/get';
 
-            // get the promise response
-            const promiseRes: Promise<Response> = http
+        try {
+            let url: Input = 'employment/pension_detail/services/get';
+
+            const response: Response = await http
                 .post(url, {
-                    body: JSON.stringify(param),
+                    body: commonIdRequestDTOConvert.toJson(param),
                 })
                 .json();
 
-            // await toast for resolved or rejected state
-            const response: Response = await promiseRes;
-
-            // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -107,26 +103,22 @@ export class PTBKWAPServices {
     }
 
      // ===========================================
-    // ============ Service Detail ==============
+    // ========== get Pension Detail =============
     // ===========================================
 
     static async getPTBKWAPpensionDetails(
         param: PTBIDRequestBody,
     ) {
-        try {
-            const url: Input = 'employment/pension_detail/get';
 
-            // get the promise response
-            const promiseRes: Promise<Response> = http
+        try {
+            let url: Input = 'employment/pension_detail/add';
+
+            const response: Response = await http
                 .post(url, {
-                    body: JSON.stringify(param),
+                    body: commonIdRequestDTOConvert.toJson(param),
                 })
                 .json();
 
-            // await toast for resolved or rejected state
-            const response: Response = await promiseRes;
-
-            // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -139,61 +131,23 @@ export class PTBKWAPServices {
         }
     }
 
-     // ===========================================
-    // ========== Add Service Detail =============
     // ===========================================
-
-    static async addPTBKWAPpensionDetails(
-        param: ptbPensionRequestDTO,
-    ) {
-        try {
-            const url: Input = 'employment/pension_detail/add';
-
-            // get the promise response
-            const promiseRes: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            // await toast for resolved or rejected state
-            const response: Response = await getPromiseToast(promiseRes);
-
-            // parse the json response to object
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                await invalidateAll();
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // ===========================================
-    // ======== roles Relate Result ==============
+    // ======== get roles Relate Result ==========
     // ===========================================
 
     static async getPTBKWAPRolesRelated(
         param: PTBIDRequestBody,
     ) {
-        try {
-            const url: Input = 'employment/pension_detail/roles_relateds/get';
 
-            // get the promise response
-            const promiseRes: Promise<Response> = http
+        try {
+            let url: Input = 'employment/pension_detail/roles_relateds/get';
+
+            const response: Response = await http
                 .post(url, {
-                    body: JSON.stringify(param),
+                    body: commonIdRequestDTOConvert.toJson(param),
                 })
                 .json();
 
-            // await toast for resolved or rejected state
-            const response: Response = await promiseRes;
-
-            // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -204,6 +158,64 @@ export class PTBKWAPServices {
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
+    }
+
+    // ===========================================
+    // ======== Support Result ===================
+    // ===========================================
+
+    static async getPTBKWAPSupport(
+        param: PTBIDRequestBody,
+    ) {
+        try {
+            let url: Input = 'employment/pension_detail/supports/get';
+
+            const response: Response = await http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // ===========================================
+    // ======== Approves Result ==============
+    // ===========================================
+
+    static async getPTBKWAPApprove(
+        param: PTBIDRequestBody,
+    ) {
+
+        try {
+            let url: Input = 'employment/pension_detail/approves/get';
+
+            const response: Response = await http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+        
     }
 
 
@@ -241,38 +253,7 @@ export class PTBKWAPServices {
         }
     }
 
-     // ===========================================
-    // ======== Support Result ==============
-    // ===========================================
-
-    static async getPTBKWAPSupport(
-        param: PTBIDRequestBody,
-    ) {
-        try {
-            const url: Input = 'employment/pension_detail/supports/get';
-
-            // get the promise response
-            const promiseRes: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            // await toast for resolved or rejected state
-            const response: Response = await promiseRes;
-
-            // parse the json response to object
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
+   
 
      // ===========================================
     // ========== add Support Result =============
@@ -299,39 +280,6 @@ export class PTBKWAPServices {
 
             if (result.status == 'success') {
                 await invalidateAll();
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-     // ===========================================
-    // ======== Approves Result ==============
-    // ===========================================
-
-    static async getPTBKWAPApprove(
-        param: PTBIDRequestBody,
-    ) {
-        try {
-            const url: Input = 'employment/pension_detail/approves/get';
-
-            // get the promise response
-            const promiseRes: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            // await toast for resolved or rejected state
-            const response: Response = await promiseRes;
-
-            // parse the json response to object
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
                 return result;
             } else {
                 return CommonResponseConstant.httpError;

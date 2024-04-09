@@ -93,127 +93,148 @@
                 <form class="flex w-full flex-col gap-2.5">
                     <b class="text-sm text-system-primary">Maklumat Peribadi</b>
                     <CustomTextField
+                    disabled
                         type="text"
                         id="staff-number"
                         label="No. Pekerja"
                         val=""
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         type="date"
                         id="service-status"
                         label="Status Pekerjaan"
                         val=""
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         type="date"
                         id="inactive-date-"
                         label="Tarikh Kuatkuasa Tidak Aktif"
                         val=""
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         type="text"
                         id="nama-penuh-"
                         label="Nama Penuh"
                         val=""
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         type="text"
                         id="nama-lain"
                         label="Nama Lain"
                         val=""
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         type="text"
                         id="ic-number-"
                         label="No. K/P"
                         val=""
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         type="text"
                         id="ic-color-"
                         label="Warna K/P"
                         val=""
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         type="date"
                         id="dob-"
                         label="Tarikh Lahir"
                         val=""
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         type="text"
                         id="place-of-birth-"
                         label="Tempat Lahir"
                         val=""
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         type="text"
                         id="citizenship-"
                         label="Warganegara"
                         val=""
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         type="text"
                         id="race-"
                         label="Bangsa"
                         val=""
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         type="text"
                         id="religion-"
                         label="Agama"
                         val=""
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         type="text"
                         id="gender-"
                         label="Jantina"
                         val=""
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         type="text"
                         id="status-"
                         label="Status"
                         val=""
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         type="email"
                         id="email-"
                         label="Emel"
                         val=""
                     ></CustomTextField>
-                    <CustomTextField id="address-" label="Alamat Rumah" val=""
+                    <CustomTextField disabled id="address-" label="Alamat Rumah" val=""
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         id="posting-address-"
                         label="Alamat Surat Menyurat (jika berlainan dari alamat rumah)"
                         val=""
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         type="text"
                         id="home-phone-"
                         label="No. Telefon Rumah"
                         val=""
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         type="text"
                         id="mobile-phone-"
                         label="No. Telefon Bimbit"
                         val=""
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         type="text"
                         id="home-"
                         label="Perumahan"
                         val=""
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         type="text"
                         id="loaned-home-"
                         label="Pinjaman Perumahan"
                         val=""
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         type="text"
                         id="loaned-vehicle-"
                         label="Pinjaman Kenderaam"
