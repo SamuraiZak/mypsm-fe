@@ -1,3 +1,5 @@
+import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
+import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type {
@@ -7,6 +9,35 @@ import type {
 import { AllowanceServices } from '$lib/services/implementation/mypsm/allowance/allowance.service';
 
 export async function load() {
+    const currentRoleCode: string =
+        localStorage.getItem(LocalStorageKeyConstant.currentRoleCode) ??
+        RoleConstant.kakitangan.code;
+
+    let mode: string = 'kakitangan';
+
+    switch (currentRoleCode) {
+        case RoleConstant.kakitangan.code:
+            mode = 'kakitangan';
+            break;
+        case RoleConstant.urusSetiaElaunElaunPerkhidmatan.code:
+            mode = 'urusetia';
+            break;
+        case RoleConstant.pengarahBahagian.code:
+            mode = 'pengarah';
+            break;
+        case RoleConstant.pengarahNegeri.code:
+            mode = 'pengarah';
+            break;
+        case RoleConstant.penyokong.code:
+            mode = 'penyokong';
+            break;
+        case RoleConstant.pelulus.code:
+            mode = 'pelulus';
+            break;
+        default:
+            mode = 'kakitangan';
+            break;
+    }
     // set filter
     const filter: AllowanceApplicationFilterDTO = {
         employeeNumber: null,
@@ -43,6 +74,7 @@ export async function load() {
             allowanceApplicationList,
             listParam,
             response,
+            mode,
         },
     };
 }
