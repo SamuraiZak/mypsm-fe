@@ -1,15 +1,21 @@
 import { CommonResponseConstant } from '$lib/constants/core/common-response.constant';
 import {
+    CommonListRequestConvert,
+    type CommonListRequestDTO,
+} from '$lib/dto/core/common/common-list-request.dto';
+import {
     CommonResponseConvert,
     type CommonResponseDTO,
 } from '$lib/dto/core/common/common-response.dto';
+import {
+    CommonEmployeeConvert,
+    type CommonEmployeeDTO,
+} from '$lib/dto/core/common/employee/employee.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { LookupClinic, LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
 import { LookupHelper } from '$lib/helpers/core/lookup.helper';
 import type { Input } from 'ky';
 import http from '../../service-provider.service';
-import { CommonEmployeeConvert, type CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
-import { CommonListRequestConvert, type CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 
 export class LookupServices {
     // =======================================
@@ -1027,7 +1033,7 @@ export class LookupServices {
 
             const response: Response = await http
                 .post(url, {
-                    body: CommonListRequestConvert.toJson(param)
+                    body: CommonListRequestConvert.toJson(param),
                 })
                 .json();
 
@@ -1071,7 +1077,7 @@ export class LookupServices {
 
             const response: Response = await http
                 .post(url, {
-                    body: CommonListRequestConvert.toJson(param)
+                    body: CommonListRequestConvert.toJson(param),
                 })
                 .json();
 
@@ -1088,7 +1094,41 @@ export class LookupServices {
         }
     }
 
+    static async getWelfareTypeEnums() {
+        try {
+            let url: Input = 'lookup/welfare_type';
 
+            const response: Response = await http.get(url).json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async getAreaEnums() {
+        try {
+            let url: Input = 'lookup/areas';
+
+            const response: Response = await http.get(url).json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 
     // Sets the dropdown selection options
     static setSelectOptions = (param: CommonResponseDTO): DropdownDTO[] => {
@@ -1125,28 +1165,38 @@ export class LookupServices {
     };
 
     static setSelectOptionSupporterAndApprover = (
-        param: CommonResponseDTO
+        param: CommonResponseDTO,
     ): DropdownDTO[] => {
         const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
         return LookupHelper.toDropdownSuppporterAndApprover(lookupItems);
-    }
+    };
 
-    static setSelectOptionSupporterAndApproverBothAreName = (
-        param: CommonResponseDTO
+    static setSelectOptionSupporterAndApproverKP = (
+        param: CommonResponseDTO,
     ): DropdownDTO[] => {
         const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
-        return LookupHelper.toDropdownSuppporterAndApproverValueIsName(lookupItems);
-    }
+        return LookupHelper.toDropdownSuppporterAndApproverKP(lookupItems);
+    };
+
+    static setSelectOptionSupporterAndApproverBothAreName = (
+        param: CommonResponseDTO,
+    ): DropdownDTO[] => {
+        const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
+        return LookupHelper.toDropdownSuppporterAndApproverValueIsName(
+            lookupItems,
+        );
+    };
 
     static setSelectOptionEmploymentStatus = (
-        param: CommonResponseDTO
+        param: CommonResponseDTO,
     ): DropdownDTO[] => {
         const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
         return LookupHelper.toDropdownEmploymentStatus(lookupItems);
-    }
+    };
 
     static setClinicOptions = (param: CommonResponseDTO): DropdownDTO[] => {
-        const lookupItems: LookupClinic[] = param.data?.dataList as LookupClinic[];
+        const lookupItems: LookupClinic[] = param.data
+            ?.dataList as LookupClinic[];
         return LookupHelper.toDropdownClinicList(lookupItems);
     };
 }
