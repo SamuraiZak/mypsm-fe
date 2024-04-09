@@ -10,7 +10,7 @@ export class AllowanceTypeConstant {
         stepper: {
             detail: true,
             upload: false,
-            directorFeedback: false,
+            directorFeedback: true,
             secretaryCheck: true,
             endorserDetail: true,
             supporterFeedback: true,
@@ -131,7 +131,7 @@ export class AllowanceTypeConstant {
     public static insurancePayment: AllowanceTypeDTO = {
         id: 8,
         code: 'c6a10d4f-75d5-4704-a58a-a12de70d1edb',
-        description: 'Insurans Kesihatan',
+        description: 'Insurans Perjalanan',
         url: 'insurance_payment',
         stepper: {
             detail: true,
@@ -169,6 +169,7 @@ export class AllowanceTypeConstant {
         this.winterClothing,
         this.stateVisit,
         this.funeralArrangement,
+        this.welfareFund,
         this.houseMoving,
         this.passportPayment,
         this.insurancePayment,
