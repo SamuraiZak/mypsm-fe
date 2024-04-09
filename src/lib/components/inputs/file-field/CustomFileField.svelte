@@ -5,7 +5,7 @@
 
     export let label: string = 'Sila Muatnaik Dokumen Sokongan';
     export let id: string;
-    export let disabled: boolean = false;
+    // export let disabled: boolean = false;
     export let files: FileList;
 
     function removeFile(fileToRemove: File) {
