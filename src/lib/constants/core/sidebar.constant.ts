@@ -566,12 +566,12 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Elaun',
+                    name: 'Elaun-elaun Perkhidmatan',
                     path: '',
                     subItems: [
                         {
-                            name: 'Permohonan Elaun',
-                            path: '/elaun/permohonan',
+                            name: 'Permohonan',
+                            path: '/elaun-elaun_perkhidmatan/permohonan',
                         },
                     ],
                 },
@@ -665,12 +665,12 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Elaun',
+                    name: 'Elaun-elaun Perkhidmatan',
                     path: '',
                     subItems: [
                         {
-                            name: 'Permohonan Elaun',
-                            path: '/elaun/permohonan',
+                            name: 'Permohonan',
+                            path: '/elaun-elaun_perkhidmatan/permohonan',
                         },
                     ],
                 },
