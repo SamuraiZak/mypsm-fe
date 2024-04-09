@@ -27,16 +27,16 @@ export const AllowanceFamilyDetailSchema = z.object({
 export const AllowanceCeremonyClothingSchema = z.object({
     allowanceTypeCode: z.string(),
     reason: z.string(),
-    personal: z.number(),
-    partner: z.number(),
+    personal: z.number().multipleOf(0.01),
+    partner: z.number().multipleOf(0.01),
 });
 
 //  2. winter clothing
 export const AllowanceWinterClothingSchema = z.object({
     allowanceTypeCode: z.string(),
     reason: z.string(),
-    personal: z.number(),
-    partner: z.number(),
+    personal: z.number().multipleOf(0.01),
+    partner: z.number().multipleOf(0.01),
 });
 
 //  3. state visit
