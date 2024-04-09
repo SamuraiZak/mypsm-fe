@@ -542,7 +542,7 @@ export class SidebarConstant {
                             path: '/perjawatan/pertukaran',
                         },
                         {
-                            name: 'tanggung Kerja',
+                            name: 'Tanggung Kerja',
                             path: '/perjawatan/tanggung-kerja',
                         },
                     ],
