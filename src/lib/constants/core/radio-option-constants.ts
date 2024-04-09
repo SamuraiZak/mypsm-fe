@@ -86,3 +86,14 @@ export const certifySurcajOptions: RadioDTO[] = [
         name: 'TIDAK SAH',
     },
 ];
+
+export const existOptions: RadioDTO[] = [
+    {
+        value: false,
+        name: 'Ada',
+    },
+    {
+        value: true,
+        name: 'Tidak Ada',
+    },
+];
