@@ -104,6 +104,11 @@ export const _clinicClaimDetailSchema = z.object({
     treatmentYear: numberSchema,
     total: numberSchema,
 })
+export const _clinicSuppAppIdSchema = z.object({
+    id: numberSchema,
+    supporterId: numberSchema,
+    approverId: numberSchema,
+})
 
 // =================================================
 // Tuntutan Kakitangan Schema

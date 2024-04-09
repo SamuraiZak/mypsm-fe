@@ -19,6 +19,7 @@ import { MedicalClaimsAddConvert, type MedicalClaimsAdd } from '$lib/dto/mypsm/p
 import type { MedicalClaimAllocationList } from '$lib/dto/mypsm/perubatan/medical-claim-allocation-list.dto';
 import { MedicalClinicApplicationConvert, type MedicalClinicApplication } from '$lib/dto/mypsm/perubatan/permohonan-klinik/medical-clinic-application.dto';
 import { ClinicContractConvert, type ClinicContract } from '$lib/dto/mypsm/perubatan/permohonan-klinik/medical-clinic-contract.dto';
+import { MedicalClinicClaimSuppAppConvert, type MedicalClinicClaimSuppApp } from '$lib/dto/mypsm/perubatan/tuntutan-klinik/clinic-claim-supporter-approver.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
@@ -197,6 +198,52 @@ export class MedicalServices {
             const response: Response = await http
                 .post(url, {
                     body: ClaimIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    // set supporter and approver
+    static async addMedicalClinicClaimSuppApp(param: MedicalClinicClaimSuppApp) {
+        try {
+            let url: Input = 'medical/clinic_claim/supporter_approver/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: MedicalClinicClaimSuppAppConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //get assigned supporter and approver
+    static async getMedicalClinicClaimSuppApp(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'medical/clinic_claim/supporter_approver/get';
+
+            const response: Response = await http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
                 })
                 .json();
 

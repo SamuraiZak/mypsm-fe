@@ -15,12 +15,89 @@
     import { Accordion, AccordionItem, Alert, Modal } from 'flowbite-svelte';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
-    import { certifyOptions } from '$lib/constants/core/radio-option-constants';
+    import {
+        approveOptions,
+        certifyOptions,
+        supportOptions,
+    } from '$lib/constants/core/radio-option-constants';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
+    import { _submitSupporterApprover } from './+page';
+    import { superForm } from 'sveltekit-superforms/client';
+    import { zod } from 'sveltekit-superforms/adapters';
+    import {
+        _clinicCommonResultSchema,
+        _clinicSuppAppIdSchema,
+    } from '$lib/schemas/mypsm/medical/medical-schema';
+    import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
 
     export let data: PageData;
     let tuntutanModal: boolean = false;
+
+    let secretaryResult: boolean = false;
+    let supporterApproverExist: boolean = false;
+    let supporterResult: boolean = false;
+    let approverResult: boolean = false;
+
+    const {
+        form: supporterApproverForm,
+        errors: supporterApproverError,
+        enhance: supporterApproverEnhance,
+    } = superForm(data.supporterApproverForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'supporterApproverForm',
+        validators: zod(_clinicSuppAppIdSchema),
+        resetForm: false,
+        async onSubmit() {
+            $supporterApproverForm.id = data.clinicId.id;
+            const res = await _submitSupporterApprover($supporterApproverForm);
+
+            if (res?.response.status == 'success') {
+                supporterApproverExist = true;
+            }
+        },
+    });
+
+    const {
+        form: supporterApprovalForm,
+        errors: supporterApprovalError,
+        enhance: supporterApprovalEnhance,
+    } = superForm(data.supporterApprovalForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'supporterApprovalForm',
+        validators: zod(_clinicCommonResultSchema),
+        resetForm: false,
+        async onSubmit() {
+            $supporterApprovalForm.id = data.clinicId.id;
+            // const res = await _submitSupporterApprover($supporterApprovalForm);
+
+            // if (res?.response.status == 'success') {
+            //     supporterApproverExist = true;
+            // }
+        },
+    });
+
+    const {
+        form: approverApprovalForm,
+        errors: approverApprovalError,
+        enhance: approverApprovalEnhance,
+    } = superForm(data.approverApprovalForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'approverApprovalForm',
+        validators: zod(_clinicCommonResultSchema),
+        resetForm: false,
+        async onSubmit() {
+            $approverApprovalForm.id = data.clinicId.id;
+            // const res = await _submitSupporterApprover($approverApprovalForm);
+
+            // if (res?.response.status == 'success') {
+            //     supporterApproverExist = true;
+            // }
+        },
+    });
 </script>
 
 <!-- content header starts here -->
@@ -225,40 +302,15 @@
         </StepperContent>
 
         <StepperContent>
-            <StepperContentHeader title="Dokumen Sokongan">
-                <TextIconButton
-                    icon="check"
-                    type="primary"
-                    label="Simpan"
-                    form="document"
-                />
-            </StepperContentHeader>
-            <StepperContentBody>
-                <form
-                    class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
-                    id="document"
-                    method="POST"
-                >
-                    <span
-                        class="text-sm text-ios-labelColors-secondaryLabel-light"
-                        >Dokumen-dokumen yang telah dimuat naik:</span
-                    >
-                    <DownloadAttachment
-                        fileName="Salinan maklumat klinik.pdf"
-                    />
-                    <DownloadAttachment fileName="Salinan maklumat bank.pdf" />
-                </form>
-            </StepperContentBody>
-        </StepperContent>
-
-        <StepperContent>
             <StepperContentHeader title="Pengesahan Tuntutan Klinik Panel">
-                <TextIconButton
-                    icon="check"
-                    type="primary"
-                    label="Simpan"
-                    form="clinicVerificationForm"
-                />
+                {#if !secretaryResult && data.currentRoleCode == UserRoleConstant.urusSetiaPerubatan.code}
+                    <TextIconButton
+                        icon="check"
+                        type="primary"
+                        label="Simpan"
+                        form="clinicVerificationForm"
+                    />
+                {/if}
             </StepperContentHeader>
             <StepperContentBody>
                 <ContentHeader
@@ -273,12 +325,14 @@
                     <CustomTextField
                         label="Tindakan/Ulasan"
                         id=""
-                        disabled={false}
+                        disabled={secretaryResult}
                         val=""
                         errors={[]}
                     />
                     <CustomRadioBoolean
                         label="Keputusan"
+                        id=""
+                        disabled={secretaryResult}
                         options={certifyOptions}
                         val={true}
                     />
@@ -288,60 +342,110 @@
 
         <StepperContent>
             <StepperContentHeader title="Penyokong dan Pelulus">
-                <TextIconButton
-                    icon="check"
-                    type="primary"
-                    label="Simpan"
-                    form="supporterApproverForm"
-                />
+                {#if !supporterApproverExist && data.currentRoleCode == UserRoleConstant.urusSetiaPerubatan.code}
+                    <TextIconButton
+                        icon="check"
+                        type="primary"
+                        label="Simpan"
+                        form="supporterApproverForm"
+                    />
+                {/if}
             </StepperContentHeader>
             <StepperContentBody>
                 <form
                     class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
                     id="supporterApproverForm"
                     method="POST"
+                    use:supporterApproverEnhance
                 >
                     <CustomSelectField
                         label="Nama Penyokong"
-                        id=""
-                        disabled={false}
-                        options={data.lookup.supporterApproverLookup}
-                        val=""
-                        errors={[]}
+                        id="supporterId"
+                        disabled={supporterApproverExist}
+                        options={data.lookup.supporterApproverIdLookup}
+                        bind:val={$supporterApproverForm.supporterId}
+                        errors={$supporterApproverError.supporterId}
                     />
                     <CustomSelectField
                         label="Nama Pelulus"
-                        id=""
-                        disabled={false}
-                        options={data.lookup.supporterApproverLookup}
-                        val=""
-                        errors={[]}
+                        id="approverId"
+                        disabled={supporterApproverExist}
+                        options={data.lookup.supporterApproverIdLookup}
+                        bind:val={$supporterApproverForm.approverId}
+                        errors={$supporterApproverError.approverId}
                     />
                 </form>
             </StepperContentBody>
         </StepperContent>
 
         <StepperContent>
-            <StepperContentHeader title="Surat Pelantikan Klinik Panel">
-                <TextIconButton
-                    icon="check"
-                    type="primary"
-                    label="Selesai"
-                    form=""
-                />
+            <StepperContentHeader title="Penyokong">
+                {#if !supporterResult}
+                    <TextIconButton
+                        icon="check"
+                        type="primary"
+                        label="Selesai"
+                        form="supporterApprovalForm"
+                    />
+                {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                <ContentHeader
-                    title="Cetak Surat Pelantikan Klinik Panel"
-                    borderClass="border-none"
-                />
                 <form
                     class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
-                    id="clinicDetailForm"
+                    id="supporterApprovalForm"
                     method="POST"
+                    use:supporterApprovalEnhance
                 >
-                    <DownloadAttachment
-                        fileName="Surat Pelantikan Klinik Panel.pdf"
+                    <CustomTextField
+                        label="Tindakan/Ulasan"
+                        id="remark"
+                        disabled={supporterResult}
+                        bind:val={$supporterApprovalForm.remark}
+                        errors={$supporterApprovalError.remark}
+                    />
+                    <CustomRadioBoolean
+                        label="Keputusan"
+                        id="status"
+                        disabled={supporterResult}
+                        options={supportOptions}
+                        bind:val={$supporterApprovalForm.status}
+                        errors={$supporterApprovalError.status}
+                    />
+                </form>
+            </StepperContentBody>
+        </StepperContent>
+
+        <StepperContent>
+            <StepperContentHeader title="Pelulus">
+                {#if !approverResult}
+                    <TextIconButton
+                        icon="check"
+                        type="primary"
+                        label="Simpan"
+                        form="approverApprovalForm"
+                    />
+                {/if}
+            </StepperContentHeader>
+            <StepperContentBody>
+                <form
+                    class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
+                    id="approverApprovalForm"
+                    method="POST"
+                    use:approverApprovalEnhance
+                >
+                    <CustomTextField
+                        label="Tindakan/Ulasan"
+                        id="remark"
+                        disabled={approverResult}
+                        bind:val={$approverApprovalForm.remark}
+                        errors={$approverApprovalError.remark}
+                    />
+                    <CustomRadioBoolean
+                        label="Keputusan"
+                        id="status"
+                        disabled={approverResult}
+                        options={approveOptions}
+                        bind:val={$approverApprovalForm.status}
                     />
                 </form>
             </StepperContentBody>
@@ -350,7 +454,7 @@
 </section>
 <Toaster />
 
-<Modal title="Tuntutan 1" bind:open={tuntutanModal}>
+<Modal title="Tuntutan" bind:open={tuntutanModal}>
     <div class="flex w-full flex-row items-start justify-evenly">
         <ContentHeader title="Klinik" borderClass="border-none" />
         <CustomTextField
