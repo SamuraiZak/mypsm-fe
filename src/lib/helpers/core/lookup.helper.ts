@@ -79,6 +79,15 @@ export class LookupHelper {
         return dropdownList;
     }
 
+    static toDropdownSuppporterAndApproverKP(lookupList: LookupDTO[]) {
+        const dropdownList: DropdownDTO[] = lookupList.map((lookup) => ({
+            value: lookup.identityCard,
+            name: lookup.name,
+        }));
+
+        return dropdownList;
+    }
+
     static toDropdownSuppporterAndApproverValueIsName(lookupList: LookupDTO[]) {
         const dropdownList: DropdownDTO[] = lookupList.map((lookup) => ({
             value: lookup.name,
