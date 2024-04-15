@@ -113,8 +113,7 @@
                         <DropdownItem href="/halaman-utama"
                             >Halaman Utama</DropdownItem
                         >
-                        <DropdownItem>Tetapan Akaun</DropdownItem>
-                        <DropdownItem>Tukar Peranan</DropdownItem>
+                        <DropdownItem href="/tetapan">Tetapan Akaun</DropdownItem>
                         <DropdownItem
                             slot="footer"
                             href="/log-masuk"
