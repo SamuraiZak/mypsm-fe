@@ -117,7 +117,7 @@
                         <DropdownItem>Tukar Peranan</DropdownItem>
                         <DropdownItem
                             slot="footer"
-                            href="/login"
+                            href="/log-masuk"
                             on:click={() => {
                                 localStorage.clear();
                             }}>Log Keluar</DropdownItem
@@ -166,7 +166,7 @@
 
                 <!-- content body wrapper starts here -->
                 <div
-                    class="flex max-h-[calc(100% - 80px)] h-full w-full flex-col items-start justify-start overflow-y-hidden bg-ios-basic-white"
+                    class="max-h-[calc(100% - 80px)] flex h-full w-full flex-col items-start justify-start overflow-y-hidden bg-ios-basic-white"
                 >
                     <slot />
                 </div>
