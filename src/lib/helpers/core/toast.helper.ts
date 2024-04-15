@@ -36,6 +36,20 @@ export const getLoginToast = async (promise: Promise<Response>) => {
     );
 };
 
+export const getResetPasswordToast = async (promise: Promise<Response>) => {
+    return toast.promise(
+        promise,
+        {
+            loading: 'Sedang diproses...',
+            success: 'Berjaya! Kata laluan baru telah dihantar ke emel anda.',
+            error: 'Tidak berjaya! Sila semak semula maklumat anda.',
+        },
+        {
+            style: 'background: #333; color: #fff;',
+        },
+    );
+};
+
 // =======================================================
 // general promise toast using resolved and rejected state
 // =======================================================
