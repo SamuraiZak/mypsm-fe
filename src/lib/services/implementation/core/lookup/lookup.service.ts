@@ -22,6 +22,24 @@ export class LookupServices {
     // Service Lookups
     // =======================================
 
+    static async getRoleEnums() {
+        try {
+            let url: Input = 'lookup/roles';
+
+            const response: Response = await http.get(url).json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     // Department Lookup Service
     static async getDepartmentEnums() {
         try {
