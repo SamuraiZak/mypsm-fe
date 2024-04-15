@@ -17,10 +17,11 @@
     import {
         _addEmployeeClaimsSchema,
         _clinicCommonResultSchema,
+        _clinicSuppAppIdSchema,
         _clinicSupporterApproverSchema,
     } from '$lib/schemas/mypsm/medical/medical-schema';
     import {
-    _submitApproverApprovalForm,
+        _submitApproverApprovalForm,
         _submitSecretaryApprovalForm,
         _submitSupporterApprovalForm,
         _submitSupporterApproverForm,
@@ -41,13 +42,13 @@
     if (data.secretaryApproval.remark !== null) {
         secretaryResult = true;
     }
-    if (data.supporterApprover.approverName !== '') {
+    if (data.supporterApprover.approverId !== 0) {
         supporterApproverExist = true;
     }
-    if (data.supporterApproval.remark !== null) {
+    if (data.supporterApproval.remark !== undefined) {
         supporterResult = true;
     }
-    if (data.approverApproval.remark !== null) {
+    if (data.approverApproval.remark !== undefined) {
         approverResult = true;
     }
 
@@ -80,7 +81,7 @@
         SPA: true,
         taintedMessage: false,
         id: 'supporterApproverForm',
-        validators: zod(_clinicSupporterApproverSchema),
+        validators: zod(_clinicSuppAppIdSchema),
         resetForm: false,
         async onSubmit() {
             $supporterApproverForm.id = data.claimId.id;
@@ -207,56 +208,44 @@
                 <div
                     class="flex w-full flex-col justify-start gap-2.5 px-3 pb-10 pt-5"
                 >
-                    <!-- <CustomTextField
+                    <CustomTextField
                         label="Tarikh Rawatan"
                         id="treatmentDate"
-                        disabled={submitSuccess}
+                        disabled
                         type="date"
-                        bind:val={$addClaimsForm.treatmentDate}
-                        errors={$addClaimsError.treatmentDate}
+                        bind:val={data.claimsDetail.treatmentDate}
                     />
                     <CustomSelectField
                         label="Klinik"
                         id="clinicId"
-                        disabled={submitSuccess}
+                        disabled
                         options={data.lookup.clinicLookup}
-                        bind:val={$addClaimsForm.clinicId}
-                        errors={$addClaimsError.clinicId}
+                        bind:val={data.claimsDetail.clinicId}
                     />
                     <CustomTextField
                         label="Bilangan Hari Cuti Sakit"
                         id="medicalLeave"
-                        disabled={submitSuccess}
+                        disabled
                         type="number"
-                        bind:val={$addClaimsForm.medicalLeave}
-                        errors={$addClaimsError.medicalLeave}
+                        bind:val={data.claimsDetail.medicalLeave}
                     />
                     <ContentHeader
                         title="Senarai Tuntutan"
                         borderClass="border-none"
-                    >
-                        {#if !submitSuccess}
-                            <TextIconButton
-                                label="Tambah"
-                                icon="add"
-                                type="neutral"
-                                onClick={() => (openModal = true)}
-                            />
-                        {/if}
-                    </ContentHeader>
-                    {#if $addClaimsForm.claims.length < 1}
+                    />
+                    {#if data.claimsDetail.claims.length < 1}
                         <div class="flex w-full flex-col gap-10 px-3">
                             <Alert color="blue">
                                 <p>
                                     <span class="font-medium"
                                         >Tiada Maklumat!</span
                                     >
-                                    Sila tambah tuntutan terlebih dahulu.
+                                    Kakitangan gagal menambah tuntutan.
                                 </p>
                             </Alert>
                         </div>
                     {:else}
-                        {#each $addClaimsForm.claims as claim, i}
+                        {#each data.claimsDetail.claims as claim, i}
                             <div
                                 class="flex w-full flex-col justify-start gap-2.5 rounded-md border border-ios-activeColors-activeBlue-light p-3"
                             >
@@ -266,14 +255,6 @@
                                     <span>
                                         Tuntutan {i + 1}
                                     </span>
-                                    {#if !submitSuccess}
-                                        <TextIconButton
-                                            label=""
-                                            icon="delete"
-                                            type="danger"
-                                            onClick={() => removeClaims(i)}
-                                        />
-                                    {/if}
                                 </div>
                                 <CustomTextField
                                     label="Jumlah Rawatan (RM)"
@@ -284,7 +265,7 @@
                                 />
                             </div>
                         {/each}
-                    {/if} -->
+                    {/if}
                 </div>
             </StepperContentBody>
         </StepperContent>
@@ -347,19 +328,19 @@
                 >
                     <CustomSelectField
                         label="Penyokong"
-                        id="supporterName"
+                        id="supporterId"
                         disabled={supporterApproverExist}
                         options={data.lookup.supporterApproverLookup}
-                        bind:val={$supporterApproverForm.supporterName}
-                        errors={$supporterApproverError.supporterName}
+                        bind:val={$supporterApproverForm.supporterId}
+                        errors={$supporterApproverError.supporterId}
                     />
                     <CustomSelectField
                         label="Pelulus"
-                        id="approverName"
+                        id="approverId"
                         disabled={supporterApproverExist}
                         options={data.lookup.supporterApproverLookup}
-                        bind:val={$supporterApproverForm.approverName}
-                        errors={$supporterApproverError.approverName}
+                        bind:val={$supporterApproverForm.approverId}
+                        errors={$supporterApproverError.approverId}
                     />
                 </form>
             </StepperContentBody>
@@ -394,11 +375,11 @@
                     >
                         <CustomSelectField
                             label="Penyokong"
-                            id="supporterName"
+                            id="supporterId"
                             disabled
                             options={data.lookup.supporterApproverLookup}
-                            bind:val={$supporterApproverForm.supporterName}
-                            errors={$supporterApproverError.supporterName}
+                            bind:val={$supporterApproverForm.supporterId}
+                            errors={$supporterApproverError.supporterId}
                         />
                         <CustomTextField
                             label="Tindakan/Ulasan"
@@ -448,11 +429,11 @@
                     >
                         <CustomSelectField
                             label="Pelulus"
-                            id="approverName"
+                            id="approverId"
                             disabled
                             options={data.lookup.supporterApproverLookup}
-                            bind:val={$supporterApproverForm.approverName}
-                            errors={$supporterApproverError.approverName}
+                            bind:val={$supporterApproverForm.approverId}
+                            errors={$supporterApproverError.approverId}
                         />
                         <CustomTextField
                             label="Tindakan/Ulasan"

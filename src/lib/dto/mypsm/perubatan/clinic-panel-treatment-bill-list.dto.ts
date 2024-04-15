@@ -6,8 +6,6 @@ export interface ClinicPanelTreatmentBillList {
     employeeName:       string;
     identityCardNumber: string;
     patientName:        string;
-    clinicCode:         string;
-    clinicName:         string;
     placement:          string;
     status:             string;
     remark:             string;

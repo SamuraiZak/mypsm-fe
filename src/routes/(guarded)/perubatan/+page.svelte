@@ -9,7 +9,6 @@
     import CustomTable from '$lib/components/table/CustomTable.svelte';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import type { PageData } from './$types';
-    import type { MedicalClaimList } from '$lib/dto/mypsm/perubatan/medical-claim-list.dto';
     import { goto } from '$app/navigation';
     import { _updateAllocationTable, _updateClaimTable } from './+page';
 

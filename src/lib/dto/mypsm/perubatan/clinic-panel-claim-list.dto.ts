@@ -1,11 +1,11 @@
 export interface ClinicPanelClaimList {
-    clinicId:        number;
+    id:        number;
     clinicCode:      string;
-    clinicName:      string;
-    state:           string;
+    name:      string;
+    address:           string;
     applicationDate: Date;
     status:          string;
-    totalClaimed:    number;
+    claim:    number;
 }
 
 // Converts JSON strings to/from your types

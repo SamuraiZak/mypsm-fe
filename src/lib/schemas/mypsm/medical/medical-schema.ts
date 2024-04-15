@@ -16,6 +16,10 @@ const stringToMaxDate = z.string({ required_error: 'Medan ini tidak boleh kosong
     return convertedStringToDate < currentDate;
 }, { message: "Tarikh tidak boleh lebih dari tarikh semasa." })
 
+const identificationCardSchema = z.string().refine(x => /^[0-9]+$/.test(x) && x.length == 12, {
+    message: "Sila nyatakan No. Kad Pengenalan dalam format yang dikehendaki."
+});
+
 export const numberSchema = z.coerce.number({
     required_error: 'Medan ini hendaklah diisi.',
     invalid_type_error: 'Sila pastikan medan ini ditaip dengan angka',
@@ -97,12 +101,15 @@ export const _clinicSupporterApproverSchema = z.object({
 // Bil Tuntutan Klinik Schema
 // =================================================
 export const _clinicClaimDetailSchema = z.object({
-    clinicName: shortTextSchema,
     invoiceDate: stringToMaxDate,
     invoiceNumber: shortTextSchema,
     treatmentMonth: numberSchema.default(1),
     treatmentYear: numberSchema,
     total: numberSchema,
+    documents: z.object({
+        base64: z.string(),
+        name: z.string(),
+    }).array()
 })
 export const _clinicSuppAppIdSchema = z.object({
     id: numberSchema,
@@ -118,4 +125,37 @@ export const _addEmployeeClaimsSchema = z.object({
     clinicId: numberSchema,
     medicalLeave: numberSchema,
     claims: numberSchema.array().min(1, {message: "Tuntutan tidak boleh kosong."}),
+})
+
+
+// =================================================
+// Maklumat Bil Rawatan Schema
+// =================================================
+export const _patientSchema = z.object({
+    name:shortTextSchema,
+    relationshipId: z.number(),
+    identityDocumentCard: identificationCardSchema,
+    placementId: z.number(),
+    date: stringToMinDate,
+})
+
+export const _addPatientSchema = z.object({
+    id: numberSchema,
+    employeeNumber: shortTextSchema,
+    patientList: _patientSchema.array(),
+})
+
+const treatmentSchema = z.object({
+    description: shortTextSchema,
+    amount: numberSchema,
+})
+
+const patientTreatmentSchema = z.object({
+    patientName: shortTextSchema,
+    treatmentList: treatmentSchema.array(),
+})
+
+export const _addTreatmentSchema = z.object({
+    claimId: numberSchema,
+    patientList: patientTreatmentSchema.array(),
 })
