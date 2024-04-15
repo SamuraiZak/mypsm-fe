@@ -696,13 +696,6 @@
                         placeholder="-"
                         bind:val={$suspensionMeetingForm.meetingName}
                     ></CustomTextField>
-                    <CustomTextField
-                        disabled={true}
-                        id="meetingCode"
-                        label="Kod Mesyuarat"
-                        placeholder="-"
-                        bind:val={$suspensionMeetingForm.meetingCode}
-                    ></CustomTextField>
                     <!-- Hidden for the time being!!!! -->
                     <CustomRadioField
                         disabled={true}
@@ -925,14 +918,6 @@
                                             placeholder="-"
                                             bind:val={$suspensionCriminalDetailForm.meetingName}
                                         ></CustomTextField>
-                                        <CustomTextField
-                                            disabled={$updateSuspendCrimePenaltyDetails}
-                                            errors={$suspensionCriminalDetailFormErrors.meetingCode}
-                                            id="meetingCode"
-                                            label="Kod Mesyuarat"
-                                            placeholder="-"
-                                            bind:val={$suspensionCriminalDetailForm.meetingCode}
-                                        ></CustomTextField>
                                         <div
                                             class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
                                         >
@@ -1020,11 +1005,11 @@
                                                             bind:val={$suspensionCriminalDetailForm
                                                                 .meetingResult
                                                                 .sentencing[i]
-                                                                .penaltyCode}
+                                                                .penaltyTypeCode}
                                                         ></CustomSelectField>
 
-                                                        {#if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyCode}
-                                                            {#if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyCode === '01'}
+                                                        {#if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyTypeCode}
+                                                            {#if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyTypeCode === '01'}
                                                                 <CustomTextField
                                                                     disabled={$updateSuspendCrimePenaltyDetails}
                                                                     id="title"
@@ -1039,7 +1024,7 @@
                                                                         .effectiveDate}
 
                                                                 ></CustomTextField>
-                                                            {:else if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyCode === '02'}
+                                                            {:else if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyTypeCode === '02'}
                                                                 <CustomTextField
                                                                     disabled={$updateSuspendCrimePenaltyDetails}
                                                                     id="title"
@@ -1068,7 +1053,7 @@
                                                                         .emolumenRight}
 
                                                                 ></CustomTextField>
-                                                            {:else if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyCode === '03'}
+                                                            {:else if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyTypeCode === '03'}
                                                                 <CustomTextField
                                                                     disabled={$updateSuspendCrimePenaltyDetails}
                                                                     id="title"
@@ -1188,7 +1173,7 @@
                                                                         {/each}
                                                                     {/if}
                                                                 </div>
-                                                            {:else if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyCode === '04'}
+                                                            {:else if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyTypeCode === '04'}
                                                                 <CustomTextField
                                                                     disabled={$updateSuspendCrimePenaltyDetails}
                                                                     id="title"
@@ -1217,7 +1202,7 @@
                                                                     ].duration}
 
                                                                 ></CustomSelectField>
-                                                            {:else if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyCode === '05'}
+                                                            {:else if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyTypeCode === '05'}
                                                                 <CustomTextField
                                                                     disabled={$updateSuspendCrimePenaltyDetails}
                                                                     id="title"
@@ -1262,7 +1247,7 @@
                                                                         .sentencingMonth}
 
                                                                 ></CustomSelectField>
-                                                            {:else if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyCode === '06'}
+                                                            {:else if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyTypeCode === '06'}
                                                                 <CustomTextField
                                                                     disabled={$updateSuspendCrimePenaltyDetails}
                                                                     id="title"
@@ -1301,7 +1286,7 @@
                                                                         .newGradeCode}
 
                                                                 ></CustomSelectField>
-                                                            {:else if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyCode === '07'}
+                                                            {:else if $suspensionCriminalDetailForm.meetingResult.sentencing[i].penaltyTypeCode === '07'}
                                                                 <CustomTextField
                                                                     disabled={$updateSuspendCrimePenaltyDetails}
                                                                     id="title"
