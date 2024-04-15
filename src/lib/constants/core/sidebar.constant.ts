@@ -443,7 +443,7 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Perkhidmatan (Bil Tuntutan Klinik)',
-                            path: '/perubatan/bil-tuntutan-klinik',
+                            path: '/klinik-panel/bil-tuntutan-klinik',
                         },
                         {
                             name: 'Perkhidmatan (Bil Tuntutan Kakitangan)',
@@ -899,7 +899,7 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Perkhidmatan (Bil Tuntutan Klinik)',
-                            path: '/perubatan/bil-tuntutan-klinik',
+                            path: '/klinik-panel/bil-tuntutan-klinik',
                         },
                         {
                             name: 'Perkhidmatan (Bil Tuntutan Kakitangan)',
@@ -1785,7 +1785,7 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Perkhidmatan (Bil Tuntutan Klinik)',
-                            path: '/perubatan/bil-tuntutan-klinik',
+                            path: '/klinik-panel/bil-tuntutan-klinik',
                         },
                         {
                             name: 'Perkhidmatan (Bil Tuntutan Kakitangan)',
