@@ -23,7 +23,6 @@ import { fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { ForgotPasswordSchema } from '../../../lib/schemas/core/login.schema';
-import { _forgotPasswordSchema } from '../login/forgot-password/+page';
 
 export async function load() {
     // get list of user role
@@ -60,7 +59,7 @@ export async function load() {
     loginClinicForm.data.userGroupCode = UserGroupConstant.clinic.code;
 
     // create forgot password
-    const forgotPasswordForm = await superValidate(zod(_forgotPasswordSchema));
+    const forgotPasswordForm = await superValidate(zod(ForgotPasswordSchema));
 
     return {
         props: {
@@ -93,7 +92,9 @@ export const _submitLoginForm = async (formData: AuthenticationRequestDTO) => {
     }
 };
 
-export const _submitLoginClinicForm = async (formData: AuthenticationRequestDTO) => {
+export const _submitLoginClinicForm = async (
+    formData: AuthenticationRequestDTO,
+) => {
     const form = await superValidate(formData, zod(LoginClinicSchema));
 
     if (form.valid) {
