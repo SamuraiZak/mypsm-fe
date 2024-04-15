@@ -15,9 +15,6 @@
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
 
     export let data: PageData;
-
-    // if (data.processType == 'baru') {
-    // }
 </script>
 
 <!-- content header starts here -->
@@ -99,7 +96,7 @@
         <StepperContent>
             <StepperContentHeader title="Maklumat Pesakit"
             ></StepperContentHeader>
-            <StepperContentBody>
+            <StepperContentBody paddingClass="p-none">
                 <CustomTab id="patientTab">
                     {#each data.patientDetail as patients, i}
                         <CustomTabContent title="Pesakit {i + 1}">
@@ -144,30 +141,26 @@
         <StepperContent>
             <StepperContentHeader title="Maklumat Rawatan"
             ></StepperContentHeader>
-            <StepperContentBody>
+            <StepperContentBody paddingClass="p-none">
                 <CustomTab id="treatmentTab">
                     {#each data.treatmentDetail as treatments, i}
-                        <CustomTabContent title="Rawatan {i + 1}">
-                            <CustomTextField
-                                label="Nama Pesakit"
-                                id="name"
-                                disabled
-                                bind:val={treatments.patientName}
-                            />
+                        <CustomTabContent title={treatments.patientName}>
                             {#each treatments.treatmentList as treatmentList, i}
-                                <CustomTextField
-                                    label="Jenis Rawatan"
-                                    id="name"
-                                    disabled
-                                    bind:val={treatmentList.description}
-                                />
-                                <CustomTextField
-                                    label="Jumlah (RM)"
-                                    id="name"
-                                    type="number"
-                                    disabled
-                                    bind:val={treatmentList.amount}
-                                />
+                                <div class="w-full flex flex-col justify-start gap-2.5 p-3 border rounded-md">
+                                    <CustomTextField
+                                        label="Jenis Rawatan"
+                                        id="name"
+                                        disabled
+                                        bind:val={treatmentList.description}
+                                    />
+                                    <CustomTextField
+                                        label="Jumlah (RM)"
+                                        id="name"
+                                        type="number"
+                                        disabled
+                                        bind:val={treatmentList.amount}
+                                    />
+                                </div>
                             {/each}
                         </CustomTabContent>
                     {/each}

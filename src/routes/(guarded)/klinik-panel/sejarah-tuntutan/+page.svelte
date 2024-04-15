@@ -22,7 +22,7 @@
         },
         data: data.claimHistoryList ?? [],
 
-        hiddenData: ['patientId', 'employeeId']
+        hiddenData: ['claimId', 'employeeId']
     }
 
     async function _searchTable() {
@@ -36,7 +36,7 @@
             };
             claimHistoryTable.param.pageSize = value.props.param.pageSize;
             claimHistoryTable.param.pageNum = value.props.param.pageNum;
-            claimHistoryTable.hiddenData = ['patientId', 'employeeId'];
+            claimHistoryTable.hiddenData = ['claimId', 'employeeId'];
         });
     }
 </script>
@@ -62,7 +62,7 @@
             bind:tableData={claimHistoryTable}
             bind:passData={rowData}
             enableDetail
-            detailActions={() => goto('/klinik-panel/sejarah-tuntutan/butiran/'+rowData.employeeId+'-'+rowData.patientId)}
+            detailActions={() => goto('/klinik-panel/sejarah-tuntutan/butiran/'+rowData.employeeId+'-'+rowData.claimId)}
         />
     </div>
 </section>

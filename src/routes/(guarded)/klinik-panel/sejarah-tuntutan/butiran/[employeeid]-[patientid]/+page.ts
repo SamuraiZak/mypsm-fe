@@ -11,7 +11,7 @@ export const load = async ({ params }) => {
     const employeeId: commonIdRequestDTO = {
         id: Number(params.employeeid)
     }
-    const patientId: commonIdRequestDTO = {
+    const claimId: commonIdRequestDTO = {
         id: Number(params.patientid)
     }
     let employeeDetail = {} as MedicalEmployeeDetail;
@@ -25,12 +25,12 @@ export const load = async ({ params }) => {
         employeeDetailResponse.data?.details as MedicalEmployeeDetail;
 
     const patientDetailResponse: CommonResponseDTO =
-        await MedicalServices.getClinicPanelClaimPatient(patientId)
+        await MedicalServices.getClinicPanelClaimPatient(claimId)
     patientDetail =
         patientDetailResponse.data?.details as ClinicPanelTreatmentPatientDetail[];
 
     const treatmentDetailResponse: CommonResponseDTO =
-        await MedicalServices.getClinicPanelClaimPatientTreatment(patientId)
+        await MedicalServices.getClinicPanelClaimPatientTreatment(claimId)
     treatmentDetail =
         treatmentDetailResponse.data?.dataList as ClinicPanelTreatmentDetailList[];
 
