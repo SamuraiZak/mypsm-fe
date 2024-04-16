@@ -15,7 +15,7 @@ export class LeaveTypeConstant {
         code: 'LT02',
         description: 'cuti_tanpa_rekod',
     };
-    public static halfPayLeave: LookupDTO = {
+    public static halfPaidLeave: LookupDTO = {
         id: 3,
         code: 'LT03',
         description: 'cuti_separuh_gaji',
@@ -25,17 +25,17 @@ export class LeaveTypeConstant {
         code: 'LT04',
         description: 'cuti_tanpa_gaji',
     };
-    public static maternityLeaveEarly: LookupDTO = {
+    public static earlyMaternityLeave: LookupDTO = {
         id: 5,
         code: 'LT05',
         description: 'cuti_bersalin_awal',
     };
-    public static maternityLeaveOfficer: LookupDTO = {
+    public static officerMaternityLeave: LookupDTO = {
         id: 6,
         code: 'LT06',
         description: 'cuti_bersalin_pegawai',
     };
-    public static maternityLeaveWife: LookupDTO = {
+    public static partnerMaternityLeave: LookupDTO = {
         id: 7,
         code: 'LT07',
         description: 'cuti_isteri_bersalin',
@@ -55,7 +55,7 @@ export class LeaveTypeConstant {
         code: 'LT10',
         description: 'cuti_menjaga_anak_tanpa_gaji',
     };
-    public static partTimeCourseLeave: LookupDTO = {
+    public static studyLeave: LookupDTO = {
         id: 11,
         code: 'LT11',
         description: 'cuti_kursus_sambilan',
@@ -89,15 +89,15 @@ export class LeaveTypeConstant {
     public static list: LookupDTO[] = [
         this.replacementLeave,
         this.unrecordedLeave,
-        this.halfPayLeave,
+        this.halfPaidLeave,
         this.unpaidLeave,
-        this.maternityLeaveEarly,
-        this.maternityLeaveOfficer,
-        this.maternityLeaveWife,
+        this.earlyMaternityLeave,
+        this.officerMaternityLeave,
+        this.partnerMaternityLeave,
         this.hajiLeave,
         this.quarantineLeave,
         this.unpaidNurseryLeave,
-        this.partTimeCourseLeave,
+        this.studyLeave,
         this.absenceLeave,
         this.extendedSickLeave,
         this.unpaidFollowPartnerLeave,
