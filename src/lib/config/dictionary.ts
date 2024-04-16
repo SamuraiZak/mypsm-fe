@@ -421,6 +421,19 @@ const dictionary: { [key: string]: string } = {
     identityCard: "No. Kad Pengenalan",
     claimAmount: "Jumlah Tuntutan (RM)",
     allocationBalance: "Baki Tuntutan (RM)",
+    totalClaim: "Jumlah Tuntutan (RM)",
+    claim: "Tuntutan (RM)",
+    totalClaims: "Jumlah Tuntutan (RM)",
+    totalCovered: "Jumlah Ditanggung (RM)",
+    totalNotCovered: "Jumlah Tidak Ditanggung (RM)",
+    district: "Daerah",
+    panelAppointedDate: "Tarikh Mula Pelantikkan",
+    panelContractEndDate: "Tarikh Tamat Pelantikkan",
+    totalToPay: "Baki Bayaran (RM)",
+    paymentType: "Jenis Bayaran (RM)",
+    totalAllocated: "Jumlah Peruntukkan (RM)",
+    allocationRemainder: "Baki Peruntukkan (RM)",
+    amountToPay: "Jumlah Perlu Dibayar (RM)",
     
 
     // PDP
