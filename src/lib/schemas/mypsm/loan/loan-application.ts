@@ -10,6 +10,17 @@ import {
     shortTextSchema,
 } from '$lib/schemas/common/schema-type';
 import { date, z } from 'zod';
+const stringToMinDate = z.string({ required_error: 'Medan ini tidak boleh kosong.', invalid_type_error: 'Medan ini tidak boleh kosong.' }).refine((val) => {
+    const convertedStringToDate = new Date(val);
+    const currentDate = new Date();
+    return convertedStringToDate > currentDate;
+}, { message: "Tarikh tidak boleh kurang dari tarikh semasa." })
+
+const stringToMaxDate = z.string({ required_error: 'Medan ini tidak boleh kosong.', invalid_type_error: 'Medan ini tidak boleh kosong.' }).refine((val) => {
+    const convertedStringToDate = new Date(val);
+    const currentDate = new Date();
+    return convertedStringToDate < currentDate;
+}, { message: "Tarikh tidak boleh lebih dari tarikh semasa." })
 
 ///=====================================================
 //================= Personal Detail ===================
@@ -17,17 +28,17 @@ import { date, z } from 'zod';
 
 export const _personalDetail = z.object({
     name: shortTextSchema,
-    identityDocumentNumber:numberSchema,
-    birthDate:dateSchema ,
-    age:numberSchema ,
-    positionId:numberIdSchema ,
-    serviceGroupId: numberIdSchema ,
-    gradeId:numberIdSchema ,
-    schemeId: numberIdSchema ,
-    serviceDate:dateSchema,
-    confirmServiceDate:dateSchema ,
-    baseSalary:shortTextSchema,
-    allowance:shortTextSchema ,
+    identityDocumentNumber: shortTextSchema,
+    birthDate: dateSchema,
+    age: numberSchema,
+    positionId: numberIdSchema,
+    serviceGroupId: numberIdSchema,
+    gradeId: numberIdSchema,
+    schemeId: numberIdSchema,
+    serviceDate: dateSchema,
+    confirmServiceDate: dateSchema,
+    baseSalary: numberSchema,
+    allowance: numberSchema,
 })
 
 ///=====================================================
@@ -36,21 +47,12 @@ export const _personalDetail = z.object({
 
 export const _loanDetail = z.object({
     id: numberIdSchema,
-    maxLoan:numberSchema,
-    requestedLoan:numberSchema ,
-    paymentPeriod:numberSchema ,
-    reason:shortTextSchema ,
-   
+    maxLoan: numberSchema,
+    requestedLoan: numberSchema,
+    paymentPeriod: numberSchema,
+    reason: shortTextSchema,
+
 })
-
-// export const _loanDetailResponseSchema =_loanDetail.omit ({
-//     id : true,
-// });
-
-// export const _loanDetailRequestSchema =_loanDetail.omit ({
-//     id: true,
-// });
-
 
 
 ///=====================================================
@@ -59,13 +61,13 @@ export const _loanDetail = z.object({
 
 export const _vehicleDetail = z.object({
     id: numberIdSchema,
-    condition:shortTextSchema,
-    vehicleType:shortTextSchema ,
-    brandModel:shortTextSchema ,
-    engineNumber:shortTextSchema ,
-    registrationNumber:shortTextSchema ,
-    registrationDate:shortTextSchema ,
-    nettPrice:shortTextSchema ,
+    condition: shortTextSchema,
+    vehicleType: shortTextSchema,
+    brandModel: shortTextSchema,
+    engineNumber: shortTextSchema,
+    registrationNumber: shortTextSchema,
+    registrationDate: stringToMaxDate,
+    nettPrice: numberSchema,
 })
 
 ///=====================================================
@@ -74,15 +76,15 @@ export const _vehicleDetail = z.object({
 
 export const _offerLoan = z.object({
     id: numberIdSchema,
-    loanType:shortTextSchema,
-    purchasePrice:shortTextSchema ,
-    deposit:shortTextSchema ,
-    govProfit:shortTextSchema ,
-    govFund:shortTextSchema ,
-    sellingPrice:shortTextSchema ,
-    installment:shortTextSchema ,
-    startLoanDate:dateSchema ,
-    paymentPeriod:shortTextSchema ,
+    loanType: shortTextSchema,
+    purchasePrice: numberSchema,
+    deposit: numberSchema,
+    govProfit: numberSchema,
+    govFund: numberSchema,
+    sellingPrice: numberSchema,
+    installment: numberSchema,
+    startLoanDate: stringToMinDate,
+    paymentPeriod: numberSchema,
 })
 
 ///=====================================================
@@ -91,9 +93,9 @@ export const _offerLoan = z.object({
 
 export const _supplier = z.object({
     id: numberIdSchema,
-    name:shortTextSchema,
-    address:shortTextSchema ,
-   
+    name: shortTextSchema,
+    address: shortTextSchema,
+
 })
 
 
@@ -101,33 +103,33 @@ export const _supplier = z.object({
 //================ Jadual Pertama (Kenderaan)  ========
 //=====================================================
 
-export const _carFirstSchedule = z.object({
+export const _vehicleFirstSchedule = z.object({
     id: numberIdSchema,
-    engineNumber:shortTextSchema,
-    chassisNumber:shortTextSchema ,
-    countryOrigin:shortTextSchema,
-    brandModel:shortTextSchema ,
-    engineHP:shortTextSchema,
-    fuelType:shortTextSchema ,
-    class:shortTextSchema,
-    bodyType:shortTextSchema ,
-    makeYear:numberSchema,
-    previousOwner:shortTextSchema ,
-    previousOwnerIC:shortTextSchema,
-    address:shortTextSchema ,
-   
+    engineNumber: shortTextSchema,
+    chassisNumber: shortTextSchema,
+    countryOrigin: shortTextSchema,
+    brandModel: shortTextSchema,
+    engineHP: shortTextSchema,
+    fuelType: shortTextSchema,
+    class: shortTextSchema,
+    bodyType: shortTextSchema,
+    makeYear: numberSchema,
+    previousOwner: shortTextSchema,
+    previousOwnerIC: shortTextSchema,
+    address: shortTextSchema,
+
 })
 
-///=====================================================
-//================ first Schedule ======================
+//=====================================================
+//================ first Schedule =====================
 //=====================================================
 
 export const _firstSchedule = z.object({
     id: numberIdSchema,
-    purchasePrice:numberSchema,
-    balancePayment:numberSchema ,
-    govFund:numberSchema ,
-   
+    purchasePrice: numberSchema,
+    balancePayment: numberSchema,
+    govFund: numberSchema,
+
 })
 
 ///=====================================================
@@ -136,12 +138,12 @@ export const _firstSchedule = z.object({
 
 export const _secondSchedule = z.object({
     id: numberIdSchema,
-    sellingPrice:numberSchema,
-    sellingBalance:numberSchema ,
-    govFund:numberSchema ,
-    installment:numberSchema ,
-    paymentPeriod:numberSchema ,
-   
+    sellingPrice: numberSchema,
+    sellingBalance: numberSchema,
+    govFund: numberSchema,
+    installment: numberSchema,
+    paymentPeriod: numberSchema,
+
 })
 
 
@@ -149,13 +151,13 @@ export const _secondSchedule = z.object({
 
 
 ///=====================================================
-//================ Supporter approval ======================
+//================ Supporter approval =================
 //=====================================================
 
 export const _supportApproval = z.object({
     id: numberIdSchema,
-    status:shortTextSchema,
-    remark:shortTextSchema ,
+    status: booleanSchema,
+    remark: shortTextSchema,
 })
 
 ///=====================================================
@@ -164,18 +166,18 @@ export const _supportApproval = z.object({
 
 export const _approver = z.object({
     id: numberIdSchema,
-    approverId:numberIdSchema,
-   
+    approverId: numberIdSchema,
+
 })
 
 ///=====================================================
-//================ Approver approval ======================
+//================ Approver approval =================
 //=====================================================
 
 export const _approverApproval = z.object({
     id: numberIdSchema,
-    status:shortTextSchema,
-    remark:shortTextSchema ,
+    status: booleanSchema,
+    remark: shortTextSchema,
 })
 
 

@@ -1,4 +1,4 @@
-export interface CarFirstSchedule {
+export interface VehicleFirstSchedule {
     id:              number;
     engineNumber:    string;
     chassisNumber:   string;
@@ -15,12 +15,12 @@ export interface CarFirstSchedule {
 }
 
 // Converts JSON strings to/from your types
-export class Convert {
-    public static fromJson(json: string): CarFirstSchedule {
+export class VehicleFirstScheduleConvert {
+    public static fromJson(json: string): VehicleFirstSchedule {
         return JSON.parse(json);
     }
 
-    public static toJson(value: CarFirstSchedule): string {
+    public static toJson(value: VehicleFirstSchedule): string {
         return JSON.stringify(value);
     }
 }

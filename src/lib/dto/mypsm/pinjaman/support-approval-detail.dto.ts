@@ -5,7 +5,7 @@ export interface SupportApprover {
 }
 
 // Converts JSON strings to/from your types
-export class Convert {
+export class SupportApproverConvert {
     public static fromJson(json: string): SupportApprover {
         return JSON.parse(json);
     }

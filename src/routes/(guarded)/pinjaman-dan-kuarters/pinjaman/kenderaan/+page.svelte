@@ -8,6 +8,28 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
+    import { superForm } from 'sveltekit-superforms';
+    import { zod } from 'sveltekit-superforms/adapters';
+    import type { PageData } from './$types';
+    import { _personalDetail } from '$lib/schemas/mypsm/loan/loan-application';
+
+    export let data: PageData;
+
+
+    // const {
+    //     form: personalInfoForm,
+    //     errors: personalInfoError,
+    //     enhance: personalInfoEnhance,
+    //     isTainted: personalDetailTainted,
+    // } = superForm(data.personalDetail, {
+    //     SPA: true,
+    //     id: 'personalDetail',
+    //     dataType: 'json',
+    //     multipleSubmits: 'allow',
+    //     validationMethod: 'oninput',
+    //     validators: zod(_personalDetail),
+
+    // });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -35,11 +57,7 @@
             ></CustomTextField>
             <CustomTextField id="" disabled label={'Tarikh Lahir'} val=""
             ></CustomTextField>
-            <CustomTextField
-                id=""
-                disabled
-                label={'Umur Pada Tarikh Memohon'}
-                val=""
+            <CustomTextField id="" disabled label={'Umur'} val=""
             ></CustomTextField>
             <CustomTextField id="" disabled label={'Jawatan Sekarang'} val=""
             ></CustomTextField>
@@ -51,15 +69,9 @@
             ></CustomTextField>
             <CustomTextField id="" disabled label={'Gred Jawatan'} val=""
             ></CustomTextField>
-            <CustomTextField disabled id="" label={'Kementerian'} val={'-'}
+            <CustomTextField id="" disabled label={'Skim'} val=""
             ></CustomTextField>
-            <CustomTextField disabled id="" label={'Jabatan'} val={'-'}
-            ></CustomTextField>
-            <CustomTextField
-                id=""
-                disabled
-                label={'Alamat Penuh Tempat Bertugas'}
-                val={'-'}
+            <CustomTextField id="" disabled label={'Tarikh Perkhidmatan'} val=""
             ></CustomTextField>
             <CustomTextField
                 id=""
@@ -67,17 +79,9 @@
                 label={'Tarikh Pengesahan Dalam Perkhidmatan'}
                 val=""
             ></CustomTextField>
-            <CustomTextField
-                id=""
-                disabled
-                label={'Tarikh Persaraan Wajib'}
-                val=""
-            ></CustomTextField>
             <CustomTextField id="" disabled label={'Gaji Pokok'} val=""
             ></CustomTextField>
             <CustomTextField id="" disabled label={'Jumlah Elaun-elaun'} val=""
-            ></CustomTextField>
-            <CustomTextField id="" disabled label={'Jumlah Potongan'} val=""
             ></CustomTextField>
         </StepperContentBody>
     </StepperContent>

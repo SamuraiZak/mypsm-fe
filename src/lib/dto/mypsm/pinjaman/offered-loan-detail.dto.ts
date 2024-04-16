@@ -7,11 +7,11 @@ export interface OfferedLoan {
     govFund:       number;
     sellingPrice:  number;
     installment:   number;
-    startLoanDate: Date;
+    startLoanDate: string;
     paymentPeriod: number;
 }
 
-export class Convert {
+export class OfferedLoanConvert {
     public static fromJson(json: string): OfferedLoan {
         return JSON.parse(json);
     }

@@ -12,6 +12,12 @@ import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
 
 export class LoanServices {
+    static getLoanDetails(): import("$lib/dto/core/common/common-response.dto").CommonResponseDTO | PromiseLike<import("$lib/dto/core/common/common-response.dto").CommonResponseDTO> {
+        throw new Error('Method not implemented.');
+    }
+    static getProfilePersonalDetails(): import("$lib/dto/core/common/common-response.dto").CommonResponseDTO | PromiseLike<import("$lib/dto/core/common/common-response.dto").CommonResponseDTO> {
+        throw new Error('Method not implemented.');
+    }
     static async method(param: CommonListRequestDTO) {
         try {
             let url: Input = '';

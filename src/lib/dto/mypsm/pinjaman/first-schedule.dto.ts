@@ -6,7 +6,7 @@ export interface FirstSchedule {
 }
 
 // Converts JSON strings to/from your types
-export class Convert {
+export class FirstScheduleConvert {
     public static fromJson(json: string): FirstSchedule {
         return JSON.parse(json);
     }

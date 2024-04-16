@@ -1,7 +1,4 @@
-export interface suppliers {
-    id:        number;
-    suppliers: Supplier[];
-}
+
 
 export interface Supplier {
     name:    string;
@@ -9,12 +6,12 @@ export interface Supplier {
 }
 
 // Converts JSON strings to/from your types
-export class Convert {
-    public static fromJson(json: string): suppliers {
+export class suppliersConvert {
+    public static fromJson(json: string): Supplier {
         return JSON.parse(json);
     }
 
-    public static toJson(value: suppliers): string {
+    public static toJson(value: Supplier): string {
         return JSON.stringify(value);
     }
 }
