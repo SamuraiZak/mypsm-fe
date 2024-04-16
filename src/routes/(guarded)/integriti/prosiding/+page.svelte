@@ -98,22 +98,20 @@
 <section
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
-    {#if !data.roles.isStaffRole}
+    {#if data.roles.isDisciplineSecretaryRole || data.roles.isIntegritySecretaryRole}
         <div
             class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
         >
-            {#if data.roles.isDisciplineSecretaryRole || data.roles.isIntegritySecretaryRole}
-                <ContentHeader
-                    title="Tekan butang disebelah untuk menambah rekod prosiding"
-                    borderClass="border-none"
-                >
-                    <TextIconButton
-                        label="Tambah Prosiding"
-                        type="primary"
-                        onClick={() => goto('./prosiding/tambah-prosiding')}
-                    ></TextIconButton>
-                </ContentHeader>
-            {/if}
+            <ContentHeader
+                title="Tekan butang disebelah untuk menambah rekod prosiding"
+                borderClass="border-none"
+            >
+                <TextIconButton
+                    label="Tambah Prosiding"
+                    type="primary"
+                    onClick={() => goto('./prosiding/tambah-prosiding')}
+                ></TextIconButton>
+            </ContentHeader>
             <!-- Table filter placeholder -->
             <FilterCard onSearch={_updateProceedingChargeTable}>
                 <FilterSelectField
@@ -125,7 +123,7 @@
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
-                {#if data.roles.isDisciplineSecretaryRole || data.roles.isIntegrityDirectorRole}
+                {#if data.roles.isDisciplineSecretaryRole}
                     <CustomTable
                         title="Senarai Rekod Prosiding - Pertuduhan/Hukuman"
                         onUpdate={_updateProceedingChargeTable}
@@ -138,7 +136,7 @@
                             goto(route);
                         }}
                     ></CustomTable>
-                {:else if data.roles.isIntegritySecretaryRole || data.roles.isIntegrityDirectorRole}
+                {:else if data.roles.isIntegritySecretaryRole}
                     <CustomTable
                         title="Senarai Rekod Prosiding - Tahan Kerja/Gantung Kerja"
                         onUpdate={_updateProceedingSuspensionTable}
@@ -154,9 +152,9 @@
                 {/if}
             </div>
         </div>
-    {:else if data.roles.isStaffRole}
+    {:else if data.roles.isStaffRole || data.roles.isIntegrityDirectorRole}
         <CustomTab>
-            <CustomTabContent title="Prosiding Pertuduhan">
+            <CustomTabContent title="Prosiding Pertuduhan/Hukuman">
                 <div
                     class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
                 >
@@ -209,7 +207,7 @@
                             bind:tableData={proceedingSuspensionTable}
                             bind:passData={rowData}
                             detailActions={() => {
-                                const route = `./prosiding/${rowData.integrityId}-${rowData.employeeId}`;
+                                const route = `./prosiding/suspend-${rowData.integrityId}-${rowData.employeeId}`;
 
                                 goto(route);
                             }}
