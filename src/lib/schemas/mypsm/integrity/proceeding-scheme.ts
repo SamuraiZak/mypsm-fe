@@ -284,7 +284,100 @@ export const _proceedingTypeChargeDetailsSchema = z.object({
     appealConfirmation: _proceedingApproverSchema,
 });
 
-// suspension meeting schema
+export const _proceedingSuspensionListSchema = z.object({
+    integrityId: z.number(),
+    employeeId: z.number(),
+    employeeNumber: z.string(),
+    employeeName: z.string(),
+    identityCardNumber: z.string(),
+    disciplinaryType: z.string(),
+    suspendMeetingResult: z.string(),
+    chargeMeetingDate: z.string(),
+    proceedingMeetingDate: z.string(),
+    isAppeal: z.boolean(),
+    declarationLetter: z.boolean(),
+    status: z.string(),
+});
+
+export const _proceedingSuspensionCriminalDetailSchema = z
+    .object({
+        integrityId: z.number().readonly(),
+        proceedingAction: z.string().min(1, { message: 'Sila buat pilihan.' }),
+        eligibleEmolumen: numberSchema.nullish(),
+        startDate: dateStringSchema.nullish(),
+        meetingDate: dateStringSchema.nullish(),
+        meetingName: shortTextSchema.nullish(),
+        meetingCount: numberSchema.nullish(),
+        meetingCode: codeSchema.nullish(),
+        meetingResult: _sentencingListSchema,
+    })
+    .superRefine(
+        (
+            {
+                proceedingAction,
+                startDate,
+                meetingDate,
+                meetingCount,
+                meetingName,
+                meetingCode,
+                meetingResult,
+            },
+            ctx,
+        ) => {
+            if (proceedingAction === 'Rayuan dikemukakan') {
+                if (startDate === null || startDate === undefined) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        message: 'Tarikh perlu diisi.',
+                        path: ['startDate'],
+                    });
+                }
+            } else if (proceedingAction === 'Prosiding Penentu Hukuman') {
+                if (meetingDate === null || meetingDate === undefined) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        message: 'Tarikh perlu diisi.',
+                        path: ['meetingDate'],
+                    });
+                }
+                if (meetingCount === null || meetingCount === undefined) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        message: 'Medan ini perlu diisi.',
+                        path: ['meetingCount'],
+                    });
+                }
+                if (meetingName === null || meetingName === undefined) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        message: 'Medan ini perlu diisi.',
+                        path: ['meetingName'],
+                    });
+                }
+                if (meetingCode === null || meetingCode === undefined) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        message: 'Medan ini perlu diisi.',
+                        path: ['meetingCode'],
+                    });
+                }
+                if (meetingResult === null || meetingResult === undefined) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        message: 'Medan ini perlu diisi.',
+                        path: ['meetingResult'],
+                    });
+                }
+            }
+        },
+    );
+
+export const _proceedingSuspensionCriminalCancelSchema = z.object({
+    integrityId: z.number().readonly(),
+    cancelSuspend: booleanSchema,
+});
+
+// suspend meeting schema
 export const _proceedingSuspensionSchema = z
     .object({
         employeeId: z.number().readonly(),
@@ -344,90 +437,20 @@ export const _proceedingSuspensionSchema = z
         },
     );
 
-export const _proceedingSuspensionListSchema = z.object({
-    integrityId: z.number(),
-    employeeId: z.number(),
-    employeeNumber: z.string(),
-    employeeName: z.string(),
-    identityCardNumber: z.string(),
-    disciplinaryType: z.string(),
-    suspendMeetingResult: z.string(),
-    chargeMeetingDate: z.string(),
-    proceedingMeetingDate: z.string(),
-    isAppeal: z.boolean(),
-    declarationLetter: z.boolean(),
-    status: z.string(),
+// suspend meeting schema
+export const _proceedingSuspensionViewSchema = z.object({
+    integrityId: z.number().readonly(),
+    employeeId: z.number().readonly(),
+    meetingDate: dateStringSchema.nullable(),
+    meetingName: shortTextSchema,
+    meetingCount: numberSchema,
+    meetingCode: codeSchema,
+    suspendMeetingResult: booleanSchema,
+    suspensionType: codeSchema.nullable(), // two types
+    startDate: dateStringSchema.nullish(),
+    endDate: dateStringSchema.nullish(),
+    eligibleEmolumen: numberSchema.nullish(),
+    confirmation: _proceedingApproverSchema,
+    editCriminalDetail: _proceedingSuspensionCriminalDetailSchema,
+    cancelCriminalDetail: _proceedingSuspensionCriminalCancelSchema,
 });
-
-export const _proceedingSuspensionCriminalDetailSchema = z
-    .object({
-        integrityId: z.number().readonly(),
-        proceedingAction: codeSchema,
-        eligibleEmolumen: numberSchema.nullish(),
-        startDate: dateStringSchema.nullish(),
-        meetingDate: dateStringSchema.nullish(),
-        meetingName: shortTextSchema.nullish(),
-        meetingCount: numberSchema.nullish(),
-        meetingCode: codeSchema.nullish(),
-        meetingResult: _sentencingListSchema,
-    })
-    .superRefine(
-        (
-            {
-                proceedingAction,
-                startDate,
-                meetingDate,
-                meetingCount,
-                meetingName,
-                meetingCode,
-                meetingResult,
-            },
-            ctx,
-        ) => {
-            if (proceedingAction === 'Batal Tahan Kerja') {
-                if (startDate === null || startDate === undefined) {
-                    ctx.addIssue({
-                        code: 'custom',
-                        message: 'Tarikh perlu diisi.',
-                        path: ['startDate'],
-                    });
-                }
-            } else if (proceedingAction === 'Rayuan dikemukakan') {
-                if (meetingDate === null || meetingDate === undefined) {
-                    ctx.addIssue({
-                        code: 'custom',
-                        message: 'Tarikh perlu diisi.',
-                        path: ['meetingDate'],
-                    });
-                }
-                if (meetingCount === null || meetingCount === undefined) {
-                    ctx.addIssue({
-                        code: 'custom',
-                        message: 'Medan ini perlu diisi.',
-                        path: ['meetingCount'],
-                    });
-                }
-                if (meetingName === null || meetingName === undefined) {
-                    ctx.addIssue({
-                        code: 'custom',
-                        message: 'Medan ini perlu diisi.',
-                        path: ['meetingName'],
-                    });
-                }
-                if (meetingCode === null || meetingCode === undefined) {
-                    ctx.addIssue({
-                        code: 'custom',
-                        message: 'Medan ini perlu diisi.',
-                        path: ['meetingCode'],
-                    });
-                }
-                if (meetingResult === null || meetingResult === undefined) {
-                    ctx.addIssue({
-                        code: 'custom',
-                        message: 'Medan ini perlu diisi.',
-                        path: ['meetingResult'],
-                    });
-                }
-            }
-        },
-    );
