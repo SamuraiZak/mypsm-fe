@@ -40,6 +40,7 @@ export const _proceedingChargeSchema = z.object({
     identityCardNumber: z.string(),
     disciplinaryType: z.string(),
     chargeMeetingDate: z.coerce.date(),
+    chargeMeetingResult: z.string(),
     proceedingMeetingDate: z.coerce.date(),
     isAppeal: z.boolean(),
     declarationLetter: z.boolean(),
@@ -226,11 +227,11 @@ export const _sentencingListSchema = z
                         });
                     }
                 } else if (arr.penaltyTypeCode === '05') {
-                    if (arr.duration === undefined) {
+                    if (arr.salaryMovementCount === undefined) {
                         ctx.addIssue({
                             code: 'custom',
                             message: 'Tempoh perlu diisi.',
-                            path: ['duration'],
+                            path: ['salaryMovementCount'],
                         });
                     }
                     if (arr.sentencingMonth === undefined) {
@@ -264,16 +265,28 @@ export const _proceedingSentencingMeetingSchema = z.object({
 });
 
 // appeal meeting schema
-export const _proceedingAppealSchema = z.object({
-    integrityId: z.number().readonly(),
-    meetingDate: z.string(),
-    meetingCount: z.number(),
-    meetingName: z.string(),
-    meetingCode: codeSchema,
-    meetingResult: booleanSchema,
-    appealResult: shortTextSchema.nullish(),
-    result: z.array(_sentencingListSchema),
-});
+export const _proceedingAppealSchema = z
+    .object({
+        integrityId: z.number().readonly(),
+        meetingDate: shortTextSchema,
+        meetingCount: numberSchema,
+        meetingName: shortTextSchema,
+        meetingCode: codeSchema,
+        meetingResult: booleanSchema,
+        appealResult: shortTextSchema.nullable(),
+        result: z.array(_sentencingListSchema),
+    })
+    .superRefine(({ meetingResult, appealResult }, ctx) => {
+        if (meetingResult) {
+            if (appealResult === null) {
+                ctx.addIssue({
+                    code: 'custom',
+                    message: 'Sila pilih satu pilihan.',
+                    path: ['appealResult'],
+                });
+            }
+        }
+    });
 
 export const _proceedingTypeChargeDetailsSchema = z.object({
     accusationList: _proceedingChargeMeetingRequestSchema,
