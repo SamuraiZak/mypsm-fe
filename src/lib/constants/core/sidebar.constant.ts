@@ -54,6 +54,14 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
+                            name: 'Peruntukan',
+                            path: '/cuti/peruntukan',
+                        },
+                        {
+                            name: 'Permohonan',
+                            path: '/cuti/permohonan',
+                        },
+                        {
                             name: 'Laporan Cuti',
                             path: '/cuti/laporan-cuti',
                         },
@@ -64,10 +72,6 @@ export class SidebarConstant {
                         {
                             name: 'Gantian Cuti Rehat',
                             path: '/cuti/gantian-cuti-rehat',
-                        },
-                        {
-                            name: 'Permohonan Cuti',
-                            path: '/cuti/permohonan-cuti',
                         },
                     ],
                 },
@@ -281,12 +285,16 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Pengeluaran Gantian Cuti Rehat (GCR) Awal',
-                            path: '/cuti/pengeluaran-gantian-cuti-rehat-awal',
+                            name: 'Peruntukan',
+                            path: '/cuti/peruntukan',
                         },
                         {
-                            name: 'Permohonan Cuti',
-                            path: '/cuti/permohonan-cuti',
+                            name: 'Permohonan',
+                            path: '/cuti/permohonan',
+                        },
+                        {
+                            name: 'Pengeluaran Gantian Cuti Rehat (GCR) Awal',
+                            path: '/cuti/pengeluaran-gantian-cuti-rehat-awal',
                         },
                     ],
                 },
@@ -319,6 +327,10 @@ export class SidebarConstant {
                     name: 'Cuti',
                     path: '',
                     subItems: [
+                        {
+                            name: 'Peruntukan',
+                            path: '/cuti/peruntukan',
+                        },
                         {
                             name: ' Gantian Cuti Rehat',
                             path: '/cuti/gantian-cuti-rehat',
@@ -456,8 +468,12 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Permohonan Cuti',
-                            path: '/cuti/permohonan-cuti',
+                            name: 'Peruntukan',
+                            path: '/cuti/peruntukan',
+                        },
+                        {
+                            name: 'Permohonan',
+                            path: '/cuti/permohonan',
                         },
                     ],
                 },
@@ -552,8 +568,12 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Permohonan Cuti',
-                            path: '/cuti/permohonan-cuti',
+                            name: 'Peruntukan',
+                            path: '/cuti/peruntukan',
+                        },
+                        {
+                            name: 'Permohonan',
+                            path: '/cuti/permohonan',
                         },
                         {
                             name: 'Pengumpulan Gantian Cuti Rehat',
@@ -651,8 +671,12 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Permohonan Cuti',
-                            path: '/cuti/permohonan-cuti',
+                            name: 'Peruntukan',
+                            path: '/cuti/peruntukan',
+                        },
+                        {
+                            name: 'Permohonan',
+                            path: '/cuti/permohonan',
                         },
                         {
                             name: 'Pengumpulan Gantian Cuti Rehat',
@@ -787,8 +811,12 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Permohonan Cuti',
-                            path: '/cuti/permohonan-cuti',
+                            name: 'Peruntukan',
+                            path: '/cuti/peruntukan',
+                        },
+                        {
+                            name: 'Permohonan',
+                            path: '/cuti/permohonan',
                         },
                     ],
                 },
@@ -860,8 +888,12 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Permohonan Cuti',
-                            path: '/cuti/permohonan-cuti',
+                            name: 'Peruntukan',
+                            path: '/cuti/peruntukan',
+                        },
+                        {
+                            name: 'Permohonan',
+                            path: '/cuti/permohonan',
                         },
                     ],
                 },
@@ -1037,6 +1069,10 @@ export class SidebarConstant {
                     name: 'Cuti',
                     path: '',
                     subItems: [
+                        {
+                            name: 'Peruntukan',
+                            path: '/cuti/peruntukan',
+                        },
                         {
                             name: 'Cuti (Rehat, Kecemasan, Sakit)',
                             path: '/cuti/cuti-rehat-kecemasan-sakit',
@@ -1247,6 +1283,10 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
+                            name: 'Peruntukan',
+                            path: '/cuti/peruntukan',
+                        },
+                        {
                             name: 'Laporan Cuti Kakitangan',
                             path: '/cuti/laporan-cuti',
                         },
@@ -1263,8 +1303,8 @@ export class SidebarConstant {
                             path: '/cuti/pengeluaran-gantian-cuti-rehat-awal',
                         },
                         {
-                            name: 'Permohonan Cuti',
-                            path: '/cuti/permohonan-cuti',
+                            name: 'Permohonan',
+                            path: '/cuti/permohonan',
                         },
                     ],
                 },
@@ -1412,6 +1452,10 @@ export class SidebarConstant {
                     name: 'Cuti',
                     path: '',
                     subItems: [
+                        {
+                            name: 'Peruntukan',
+                            path: '/cuti/peruntukan',
+                        },
                         {
                             name: 'Cuti (Rehat, Kecemasan, Sakit)',
                             path: '/cuti/cuti-rehat-kecemasan-sakit',
@@ -1932,6 +1976,10 @@ export class SidebarConstant {
                     name: 'Cuti',
                     path: '',
                     subItems: [
+                        {
+                            name: 'Peruntukan',
+                            path: '/cuti/peruntukan',
+                        },
                         {
                             name: 'Cuti (Rehat, Kecemasan, Sakit)',
                             path: '/cuti/cuti-rehat-kecemasan-sakit',

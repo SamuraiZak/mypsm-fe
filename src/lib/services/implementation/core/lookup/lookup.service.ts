@@ -904,6 +904,26 @@ export class LookupServices {
         }
     }
 
+    // Leave Type Lookup Service
+    static async getUnrecordedLeaveTypeEnums() {
+        try {
+            const url: Input = 'lookup/untrackedLeaveType';
+
+            const response: Response = await http.get(url, {}).json();
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     // Duration Computer Lookup Service
     static async getDurationComputerEnums() {
         try {

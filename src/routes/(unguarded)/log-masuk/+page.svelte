@@ -23,7 +23,6 @@
 
     export let data: PageData;
 
-
     let currentUserGroupCode: string = UserGroupConstant.employee.code;
 
     let forgotPassword: boolean = false;
@@ -92,6 +91,8 @@
                 break;
         }
         currentUserGroupCode = group.code;
+
+        console.log(group.code);
     }
 </script>
 
