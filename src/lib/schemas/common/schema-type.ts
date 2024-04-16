@@ -87,7 +87,7 @@ export const numberSchema = z.coerce
         required_error: 'Medan ini hendaklah diisi.',
         invalid_type_error: 'Sila pastikan medan ini ditaip dengan angka',
     })
-    .refine((x) => x > 0, { message: 'Medan ini tidak boleh dibiar kosong.' });
+    .refine((x) => x >= 0, { message: 'Medan ini tidak boleh dibiar kosong.' });
 
 export const numberIdSchema = z.coerce.number({
     required_error: 'Tidak tepat.',
