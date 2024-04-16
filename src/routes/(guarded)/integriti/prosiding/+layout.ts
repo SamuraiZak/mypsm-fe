@@ -35,11 +35,9 @@ export const load = async () => {
         orderBy: 'integrityId',
         orderType: 1,
         filter: {
-            identityCard: null, //string | null | undefined;
-            grade: null,
-            position: null,
-            year: null,
+            employeeNumber: null, //string | null | undefined;
             name: null,
+            identityCardNumber: null,
             status: null, // status code from lookup | null | undefined;
         },
     };
@@ -75,7 +73,7 @@ export const load = async () => {
         await LookupServices.getStatusEnums();
 
     const statusLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsInString(statusLookupResponse);
+        LookupServices.setSelectOptions(statusLookupResponse);
 
     // ===========================================================================
 
@@ -88,6 +86,7 @@ export const load = async () => {
         },
         responses: {
             proceedingListResponse,
+            proceedingSuspensionListResponse,
         },
         selectionOptions: {
             statusLookup,

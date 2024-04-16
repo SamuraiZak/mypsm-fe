@@ -24,12 +24,14 @@ export const load = async ({ parent }) => {
         pageNum: 1,
         pageSize: 5,
         orderBy: 'name',
-        orderType: null,
+        orderType: 0,
         filter: {
-            grade: null,
-            position: null,
-            year: null,
+            employeeNumber: null,
             name: null,
+            identityCardNumber: null,
+            position: null,
+            grade: null,
+            serviceYear: null,
         },
     };
 
@@ -42,11 +44,18 @@ export const load = async ({ parent }) => {
     // ==========================================================================
     // Get Lookup Functions
     // ==========================================================================
-    const statusLookupResponse: CommonResponseDTO =
-        await LookupServices.getStatusEnums();
+    const positionLookupResponse: CommonResponseDTO =
+        await LookupServices.getPositionEnums();
 
-    const statusLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsInString(statusLookupResponse);
+    const positionLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        positionLookupResponse,
+    );
+
+    const gradeLookupResponse: CommonResponseDTO =
+        await LookupServices.getServiceGradeEnums();
+
+    const gradeLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsBothAreCode(gradeLookupResponse);
 
     // ===========================================================================
 
@@ -60,7 +69,8 @@ export const load = async ({ parent }) => {
             proceedingListResponse,
         },
         selectionOptions: {
-            statusLookup,
+            positionLookup,
+            gradeLookup,
         },
     };
 };
