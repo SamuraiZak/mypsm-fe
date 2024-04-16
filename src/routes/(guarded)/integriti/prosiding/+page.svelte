@@ -8,9 +8,7 @@
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
-    import type {
-        TableSettingDTO,
-    } from '$lib/dto/core/table/table.dto';
+    import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import type {
         ProceedingChargeDetailResponseDTO,
         ProceedingChargeListResponseDTO,
@@ -37,12 +35,12 @@
         hiddenColumn: ['integrityId', 'employeeId', 'declarationLetter'],
         dictionary: [
             {
-                english: 'suspendMeetingDate',
-                malay: 'Tarikh Mesyuarat Tahan Kerja',
+                english: 'proceedingMeetingDate',
+                malay: 'Tarikh Mesyuarat Penentuan Hukuman',
             },
             {
-                english: 'suspendMeetingResult',
-                malay: 'Keputusan Mesyuarat Tahan Kerja',
+                english: 'chargeMeetingDate',
+                malay: 'Tarikh Mesyuarat Pertuduhan',
             },
             {
                 english: 'disciplinaryType',
@@ -53,7 +51,7 @@
                 malay: 'Rayuan Dikemuka',
             },
         ],
-        url: 'integrity/proceeding/suspension/list',
+        url: 'integrity/proceeding/accusation/list',
         id: 'chargeListTable',
         option: {
             checkbox: false,
