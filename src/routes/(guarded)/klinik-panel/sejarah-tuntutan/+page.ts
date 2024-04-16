@@ -9,14 +9,14 @@ export const load = async () => {
     let paramFilter: ClinicPanelClaimHistoryFilter = {
         name: null,
         patientName: "",
-        identityDocumentNumber: "",
+        employeeName: "",
     }
 
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
-        orderType: null,
+        orderBy: 'claimId',
+        orderType: 1,
         filter: paramFilter
     };
 

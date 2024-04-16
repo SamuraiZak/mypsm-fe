@@ -17,8 +17,8 @@ export const load = async () => {
     profile =
         clinicPanelProfileResponse.data?.details as ClinicPanelProfile;
 
-    const clinicPanelProfile = await superValidate(profile, zod(_editClinicProfileSchema), {errors: false})
-    
+    const clinicPanelProfile = await superValidate(profile, zod(_editClinicProfileSchema), { errors: false })
+
     return {
         clinicPanelProfile,
         lookup,
@@ -29,10 +29,9 @@ export const _submit = async (formData: ClinicPanelProfile) => {
     const form = await superValidate(formData, zod(_editClinicProfileSchema));
     if (form.valid) {
 
-        let response: CommonResponseDTO = {}
-
-        response = await MedicalServices.editClinicPanelProfile(form.data as ClinicPanelProfile
-        )
+        const {clinicId, ...tempobj} = form.data
+        let response: CommonResponseDTO =
+            await MedicalServices.editClinicPanelProfile(tempobj as ClinicPanelProfile)
         if (response.status == 'success') {
 
             return response

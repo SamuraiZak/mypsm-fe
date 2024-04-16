@@ -86,9 +86,9 @@
         <StepperContent>
             <StepperContentHeader title="Maklumat Pesakit"
             ></StepperContentHeader>
-            <StepperContentBody>
+            <StepperContentBody paddingClass="p-none">
                 {#if data.patientDetail.length < 1}
-                    <div class="flex w-full flex-col gap-10 px-3">
+                    <div class="flex w-full flex-col gap-10 p-3">
                         <Alert color="blue">
                             <p>
                                 <span class="font-medium">Tiada Maklumat!</span>
@@ -146,9 +146,9 @@
         <StepperContent>
             <StepperContentHeader title="Maklumat Rawatan"
             ></StepperContentHeader>
-            <StepperContentBody>
+            <StepperContentBody paddingClass="p-none">
                 {#if data.treatmentDetail.length < 1}
-                    <div class="flex w-full flex-col gap-10 px-3">
+                    <div class="flex w-full flex-col gap-10 p-3">
                         <Alert color="blue">
                             <p>
                                 <span class="font-medium">Tiada Maklumat!</span>
@@ -161,7 +161,7 @@
                         {#each data.treatmentDetail as treatments, i}
                             <CustomTabContent title={treatments.patientName}>
                                 <div
-                                    class="flex w-full flex-col justify-start gap-2.5 py-2"
+                                    class="flex w-full flex-col justify-start gap-2.5 py-2 pb-10"
                                 >
                                     {#each treatments.treatmentList as treatmentList, x}
                                         <div

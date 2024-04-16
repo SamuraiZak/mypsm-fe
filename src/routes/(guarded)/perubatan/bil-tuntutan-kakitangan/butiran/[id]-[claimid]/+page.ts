@@ -4,7 +4,6 @@ import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto
 import type { commonIdRequestDTO } from "$lib/dto/core/common/id-request.dto"
 import type { DropdownDTO } from "$lib/dto/core/dropdown/dropdown.dto"
 import type { ClinicCommonResult } from "$lib/dto/mypsm/perubatan/clinic-common-approval.dto"
-import type { ClinicSetSupporterApprover } from "$lib/dto/mypsm/perubatan/clinic-common-supporter-approver.dto"
 import type { MedicalClaimsAdd } from "$lib/dto/mypsm/perubatan/medical-claim-add.dto"
 import type { MedicalEmployeeDetail } from "$lib/dto/mypsm/perubatan/medical-employee-detail.dto"
 import type { MedicalClinicClaimSuppApp } from "$lib/dto/mypsm/perubatan/tuntutan-klinik/clinic-claim-supporter-approver.dto.js"
@@ -56,10 +55,10 @@ export const load = async ({ params }) => {
         approverApprovalResponse.data?.details as ClinicCommonResult;
 
     const secretaryApprovalForm = await superValidate(secretaryApproval, zod(_clinicCommonResultSchema), { errors: false });
-    const supporterApproverForm = await superValidate(supporterApprover, zod(_clinicSuppAppIdSchema), { errors: false })
-    const supporterApprovalForm = await superValidate(supporterApproval, zod(_clinicCommonResultSchema), { errors: false })
-    const approverApprovalForm = await superValidate(approverApproval, zod(_clinicCommonResultSchema), { errors: false })
-
+    const supporterApproverForm = await superValidate(supporterApprover, zod(_clinicSuppAppIdSchema), { errors: false });
+    const supporterApprovalForm = await superValidate(supporterApproval, zod(_clinicCommonResultSchema), { errors: false });
+    const approverApprovalForm = await superValidate(approverApproval, zod(_clinicCommonResultSchema), { errors: false });
+   
     return {
         currentRoleCode,
         claimId,

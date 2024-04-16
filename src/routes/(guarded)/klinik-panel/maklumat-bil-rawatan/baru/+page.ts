@@ -3,9 +3,10 @@ import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-requ
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto"
 import type { commonIdRequestDTO } from "$lib/dto/core/common/id-request.dto"
 import type { DropdownDTO } from "$lib/dto/core/dropdown/dropdown.dto"
-import type { ClinicPanelTreatmentDetailList, ClinicPanelTreatmentPatientDetail } from "$lib/dto/mypsm/perubatan/clinic-panel-treatment-patient-detail.dto"
-import type { MedicalEmployeeDetail } from "$lib/dto/mypsm/perubatan/medical-employee-detail.dto"
-import { _addPatientSchema, _addTreatmentSchema, _patientSchema } from "$lib/schemas/mypsm/medical/medical-schema"
+import type { ClinicPanelProfile } from "$lib/dto/mypsm/perubatan/clinic-panel-profile.dto"
+import type { TreatmentAddPatient } from "$lib/dto/mypsm/perubatan/clinic-panel-treatment-add-patient.dto"
+import type { TreatmentAddTreatmentDetail } from "$lib/dto/mypsm/perubatan/clinic-panel-treatment-add-treatment-detail.dto"
+import { _addPatientSchema, _addTreatmentSchema, _patientSchema, _patientTreatmentSchema, _treatmentSchema } from "$lib/schemas/mypsm/medical/medical-schema"
 import { LookupServices } from "$lib/services/implementation/core/lookup/lookup.service"
 import { MedicalServices } from "$lib/services/implementation/mypsm/perubatan/medical.service"
 import { superValidate } from "sveltekit-superforms"
@@ -14,36 +15,60 @@ import { zod } from "sveltekit-superforms/adapters"
 export const load = async () => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
     const lookup = await getLookup()
+    let profile = {} as ClinicPanelProfile;
 
+    const clinicPanelProfileResponse: CommonResponseDTO =
+        await MedicalServices.getClinicPanelProfile()
+    profile =
+        clinicPanelProfileResponse.data?.details as ClinicPanelProfile;
 
     const singlePatientForm = await superValidate(zod(_patientSchema));
     const patientForm = await superValidate(zod(_addPatientSchema));
+    const singleTreatmentForm = await superValidate(zod(_treatmentSchema));
     const treatmentForm = await superValidate(zod(_addTreatmentSchema));
-
     return {
         currentRoleCode,
         lookup,
         singlePatientForm,
         patientForm,
         treatmentForm,
+        singleTreatmentForm,
+        profile,
     }
 }
 
-export const _submitPatientForm = async (formData: object) => {
+export const _submitPatientForm = async (formData: TreatmentAddPatient) => {
     const form = await superValidate(formData, zod(_addPatientSchema));
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await MedicalServices.addClinicPanelClaimPatient(form.data as TreatmentAddPatient)
 
-    if(form.valid){
-
+        return { response }
     }
 }
 
 
-export const _submitTreatmentForm = async (formData: object) => {
+export const _submitTreatmentForm = async (formData: TreatmentAddTreatmentDetail) => {
     const form = await superValidate(formData, zod(_addTreatmentSchema));;
 
-    if(form.valid){
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await MedicalServices.addClinicPanelClaimTreatment(form.data as TreatmentAddTreatmentDetail)
 
+        return { response }
     }
+}
+
+export const _getEmployee = async (param: number) => {
+
+    const request: commonIdRequestDTO = {
+        id: param,
+    }
+
+    const response: CommonResponseDTO =
+        await MedicalServices.getMedicalEmployeeDetail(request)
+
+    return { response }
 }
 
 const getLookup = async () => {

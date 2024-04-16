@@ -301,7 +301,7 @@
 
         <StepperContent>
             <StepperContentHeader title="Maklumat Lantikan">
-                {#if !notEditingClinicContractForm}
+                {#if !notEditingClinicContractForm && data.currentRoleCode == UserRoleConstant.urusSetiaPerubatan.code}
                     <TextIconButton
                         icon="check"
                         type="primary"
@@ -311,33 +311,44 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                <form
-                    class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
-                    id="clinicContractForm"
-                    method="POST"
-                    use:clinicContractEnhance
-                >
-                    <CustomTextField
-                        label="Tarikh Mula Lantikan"
-                        id=""
-                        type="date"
-                        disabled={notEditingClinicContractForm}
-                        bind:val={$clinicContractForm.panelAppointedDate}
-                        errors={$clinicContractError.panelAppointedDate}
-                    />
-                    <CustomTextField
-                        label="Tarikh  Tamat Lantikan"
-                        id=""
-                        type="date"
-                        disabled={notEditingClinicContractForm}
-                        bind:val={$clinicContractForm.panelContractEndDate}
-                        errors={$clinicContractError.panelContractEndDate}
-                    />
-                </form>
+                {#if $clinicContractForm.panelAppointedDate == '' && data.currentRoleCode !== UserRoleConstant.urusSetiaPerubatan.code}
+                    <div class="flex w-full flex-col gap-10 px-3">
+                        <Alert color="blue">
+                            <p>
+                                <span class="font-medium">Tiada Maklumat!</span>
+                                Menunggu maklumat lantikan daripada Urus Setia Perubatan.
+                            </p>
+                        </Alert>
+                    </div>
+                {:else}
+                    <form
+                        class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
+                        id="clinicContractForm"
+                        method="POST"
+                        use:clinicContractEnhance
+                    >
+                        <CustomTextField
+                            label="Tarikh Mula Lantikan"
+                            id=""
+                            type="date"
+                            disabled={notEditingClinicContractForm}
+                            bind:val={$clinicContractForm.panelAppointedDate}
+                            errors={$clinicContractError.panelAppointedDate}
+                        />
+                        <CustomTextField
+                            label="Tarikh  Tamat Lantikan"
+                            id=""
+                            type="date"
+                            disabled={notEditingClinicContractForm}
+                            bind:val={$clinicContractForm.panelContractEndDate}
+                            errors={$clinicContractError.panelContractEndDate}
+                        />
+                    </form>
+                {/if}
             </StepperContentBody>
         </StepperContent>
 
-        <StepperContent>
+        <!-- <StepperContent>
             <StepperContentHeader title="Dokumen Sokongan"
                 >{#if !data.isViewOnly}
                     <TextIconButton
@@ -364,11 +375,11 @@
                     <DownloadAttachment fileName="Salinan maklumat bank.pdf" />
                 </form>
             </StepperContentBody>
-        </StepperContent>
+        </StepperContent> -->
 
         <StepperContent>
             <StepperContentHeader title="Pengesahan Permohonan Klinik Panel">
-                {#if !notEditingVerificationForm}
+                {#if !notEditingVerificationForm  && data.currentRoleCode == UserRoleConstant.urusSetiaPerubatan.code}
                     <TextIconButton
                         icon="check"
                         type="primary"
@@ -378,37 +389,48 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                <ContentHeader
-                    title="Ulasan Penyemakan Daripada Urus Setia"
-                    borderClass="border-none"
-                />
-                <form
-                    class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
-                    id="clinicVerificationForm"
-                    method="POST"
-                    use:clinicVerificationEnhance
-                >
-                    <CustomTextField
-                        label="Tindakan/Ulasan"
-                        id="remark"
-                        disabled={notEditingVerificationForm}
-                        bind:val={$clinicVerificationForm.remark}
-                        errors={$clinicVerificationError.remark}
+                {#if $clinicVerificationForm.remark == '' && data.currentRoleCode !== UserRoleConstant.urusSetiaPerubatan.code}
+                    <div class="flex w-full flex-col gap-10 px-3">
+                        <Alert color="blue">
+                            <p>
+                                <span class="font-medium">Tiada Maklumat!</span>
+                                Menunggu Pengesahan daripada Urus Setia Perubatan.
+                            </p>
+                        </Alert>
+                    </div>
+                {:else}
+                    <ContentHeader
+                        title="Ulasan Penyemakan Daripada Urus Setia"
+                        borderClass="border-none"
                     />
-                    <CustomRadioBoolean
-                        label="Keputusan"
-                        id="status"
-                        disabled={notEditingVerificationForm}
-                        options={certifyOptions}
-                        bind:val={$clinicVerificationForm.status}
-                    />
-                </form>
+                    <form
+                        class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
+                        id="clinicVerificationForm"
+                        method="POST"
+                        use:clinicVerificationEnhance
+                    >
+                        <CustomTextField
+                            label="Tindakan/Ulasan"
+                            id="remark"
+                            disabled={notEditingVerificationForm}
+                            bind:val={$clinicVerificationForm.remark}
+                            errors={$clinicVerificationError.remark}
+                        />
+                        <CustomRadioBoolean
+                            label="Keputusan"
+                            id="status"
+                            disabled={notEditingVerificationForm}
+                            options={certifyOptions}
+                            bind:val={$clinicVerificationForm.status}
+                        />
+                    </form>
+                {/if}
             </StepperContentBody>
         </StepperContent>
 
         <StepperContent>
             <StepperContentHeader title="Penyokong dan Pelulus">
-                {#if !notEditingSuppAppForm}
+                {#if !notEditingSuppAppForm && data.currentRoleCode == UserRoleConstant.urusSetiaPerubatan.code}
                     <TextIconButton
                         icon="check"
                         type="primary"
@@ -418,29 +440,40 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                <form
-                    class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
-                    id="supporterApproverForm"
-                    method="POST"
-                    use:supporterApproverEnhance
-                >
-                    <CustomSelectField
-                        label="Nama Penyokong"
-                        id="supporterName"
-                        disabled={notEditingSuppAppForm}
-                        options={data.lookup.supporterApproverLookup}
-                        bind:val={$supporterApproverForm.supporterName}
-                        errors={$supporterApproverError.supporterName}
-                    />
-                    <CustomSelectField
-                        label="Nama Pelulus"
-                        id="approverName"
-                        disabled={notEditingSuppAppForm}
-                        options={data.lookup.supporterApproverLookup}
-                        bind:val={$supporterApproverForm.approverName}
-                        errors={$supporterApproverError.approverName}
-                    />
-                </form>
+                {#if $supporterApproverForm.supporterName == "" && data.currentRoleCode !== UserRoleConstant.urusSetiaPerubatan.code}
+                    <div class="flex w-full flex-col gap-10 px-3">
+                        <Alert color="blue">
+                            <p>
+                                <span class="font-medium">Tiada Maklumat!</span>
+                                Menunggu Pemilihan daripada Urus Setia Perubatan.
+                            </p>
+                        </Alert>
+                    </div>
+                {:else}
+                    <form
+                        class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
+                        id="supporterApproverForm"
+                        method="POST"
+                        use:supporterApproverEnhance
+                    >
+                        <CustomSelectField
+                            label="Nama Penyokong"
+                            id="supporterName"
+                            disabled={notEditingSuppAppForm}
+                            options={data.lookup.supporterApproverLookup}
+                            bind:val={$supporterApproverForm.supporterName}
+                            errors={$supporterApproverError.supporterName}
+                        />
+                        <CustomSelectField
+                            label="Nama Pelulus"
+                            id="approverName"
+                            disabled={notEditingSuppAppForm}
+                            options={data.lookup.supporterApproverLookup}
+                            bind:val={$supporterApproverForm.approverName}
+                            errors={$supporterApproverError.approverName}
+                        />
+                    </form>
+                {/if}
             </StepperContentBody>
         </StepperContent>
 
@@ -575,7 +608,7 @@
                 </StepperContentBody>
             </StepperContent>
 
-            {#if data.clinicApproverApproval.status}
+            <!-- {#if data.clinicApproverApproval.status}
                 <StepperContent>
                     <StepperContentHeader title="Surat Pelantikan Klinik Panel"
                         >{#if !data.isViewOnly}
@@ -603,7 +636,7 @@
                         </form>
                     </StepperContentBody>
                 </StepperContent>
-            {/if}
+            {/if} -->
         {/if}
     </Stepper>
 </section>

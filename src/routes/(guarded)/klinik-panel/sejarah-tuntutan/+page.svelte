@@ -50,11 +50,11 @@
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
     <div class="flex w-full flex-col justify-start gap-2.5 p-5">
-        <FilterCard onSearch={() => {}}>
-            <FilterTextField label="Nama Pekerja" inputValue={''} />
-            <FilterTextField label="Nama Pesakit" inputValue={''} />
-            <FilterTextField label="Kad Pengenalan" inputValue={''} />
-        </FilterCard>
+        <!-- <FilterCard onSearch={_searchTable}>
+            <FilterTextField label="Nama Pekerja" inputValue={claimHistoryTable.param.filter.employeeName} />
+            <FilterTextField label="Nama Pesakit" inputValue={claimHistoryTable.param.filter.ICNumber} />
+            <FilterTextField label="Kad Pengenalan" inputValue={claimHistoryTable.param.filter.LKIMOffice} />
+        </FilterCard> -->
 
         <CustomTable
             title="Senarai Rekod"

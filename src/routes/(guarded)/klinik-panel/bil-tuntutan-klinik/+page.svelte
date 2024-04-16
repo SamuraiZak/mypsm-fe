@@ -66,7 +66,7 @@
     <div class="flex w-full flex-col justify-start gap-2.5 p-5">
         <div class="h h-fit w-full">
             <DataTable
-                title="Senarai Permohonan Tanggung Kerja"
+                title="Senarai Bil Tuntutan"
                 bind:tableData={claimListTable}
                 bind:passData={rowData}
                 detailActions={() => {
@@ -87,11 +87,11 @@
                         bind:inputValue={claimListTable.param
                             .filter.name}
                     />
-                    <FilterTextField
+                    <!-- <FilterTextField
                         label="Status"
                         bind:inputValue={claimListTable.param
                             .filter.status}
-                    />
+                    /> -->
                 </FilterWrapper>
             </DataTable>
         </div>

@@ -9,29 +9,52 @@
     import { zod } from 'sveltekit-superforms/adapters';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
-    import { goto } from '$app/navigation';
-    import type { PageData } from './$types';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
+    import { goto } from '$app/navigation';
+    import type { PageData } from './$types';
     import { Toaster } from 'svelte-french-toast';
     import {
         _addPatientSchema,
         _addTreatmentSchema,
         _patientSchema,
+        _patientTreatmentSchema,
+        _treatmentSchema,
     } from '$lib/schemas/mypsm/medical/medical-schema';
-    import { _submitPatientForm, _submitTreatmentForm } from './+page';
+    import {
+        _getEmployee,
+        _submitPatientForm,
+        _submitTreatmentForm,
+    } from './+page';
     import Alert from 'flowbite-svelte/Alert.svelte';
     import { Accordion, AccordionItem, Modal } from 'flowbite-svelte';
-    import type {
-        PatientList,
-        TreatmentAddPatient,
-    } from '$lib/dto/mypsm/perubatan/clinic-panel-treatment-add-patient.dto';
+    import type { PatientList } from '$lib/dto/mypsm/perubatan/clinic-panel-treatment-add-patient.dto';
     import { superValidate } from 'sveltekit-superforms';
+    import type { MedicalEmployeeDetail } from '$lib/dto/mypsm/perubatan/medical-employee-detail.dto';
+    import type {
+        TreatmentAddTreatmentDetail,
+        TreatmentDetailList,
+    } from '$lib/dto/mypsm/perubatan/clinic-panel-treatment-add-treatment-detail.dto';
 
     export let data: PageData;
 
     let patientModal: boolean = false;
+    let treatmentModal: boolean = false;
     let patientIndex: number = 0;
+    let eachIndex: number = 0;
+    let isSelected: boolean = false;
+    let selectedEmployee: number = 0;
+    let successAddPatients: boolean = false;
+    let successAddTreatments: boolean = false;
+    let employeeDetail: MedicalEmployeeDetail = {
+        employeeId: 0,
+        employeeNumber: '',
+        identityCardNumber: '',
+        fullName: '',
+        grade: '',
+        placement: '',
+        serviceGroup: '',
+    };
 
     const {
         form: singlePatientForm,
@@ -39,6 +62,7 @@
         enhance: singlePatientEnhance,
     } = superForm(data.singlePatientForm, {
         SPA: true,
+        dataType: 'json',
         taintedMessage: false,
         id: 'singlePatientForm',
         validators: zod(_patientSchema),
@@ -59,11 +83,16 @@
                     date: $singlePatientForm.date,
                 };
                 $patientForm.patientList.push(tempPatient);
-                console.log($patientForm.patientList.length)
-                setTimeout(() => (patientModal = false), 1000);
+                $treatmentForm.patientList[patientIndex] = {
+                    patientName: $singlePatientForm.name,
+                    treatmentList: [],
+                };
+                patientIndex += 1;
+                setTimeout(() => (patientModal = false), 50);
             }
         },
     });
+
     const {
         form: patientForm,
         errors: patientError,
@@ -75,33 +104,83 @@
         id: 'patientForm',
         validators: zod(_addPatientSchema),
         resetForm: false,
-        onSubmit() {
-            _submitPatientForm($patientForm);
+        async onSubmit() {
+            $patientForm.id = data.profile.clinicId;
+            $patientForm.employeeNumber = employeeDetail.employeeNumber;
+            const submitResponse = await _submitPatientForm($patientForm);
+
+            if (submitResponse?.response.status == 'success') {
+                $treatmentForm.claimId =
+                    submitResponse.response.data?.details.claimId;
+                successAddPatients = true;
+            }
         },
     });
 
+    const {
+        form: singleTreatmentForm,
+        errors: singleTreatmentError,
+        enhance: singleTreatmentEnhance,
+    } = superForm(data.singleTreatmentForm, {
+        SPA: true,
+        dataType: 'json',
+        taintedMessage: false,
+        id: 'singleTreatmentForm',
+        validators: zod(_treatmentSchema),
+        resetForm: true,
+        async onSubmit() {
+            const form = await superValidate(
+                $singleTreatmentForm,
+                zod(_treatmentSchema),
+            );
+
+            if (form.valid) {
+                let temptTreatment: TreatmentDetailList = {
+                    description: $singleTreatmentForm.description,
+                    amount: $singleTreatmentForm.amount,
+                };
+                $treatmentForm.patientList[eachIndex].treatmentList = [
+                    temptTreatment,
+                    ...$treatmentForm.patientList[eachIndex].treatmentList,
+                ];
+                treatmentModal = false;
+            }
+        },
+    });
     const {
         form: treatmentForm,
         errors: treatmentError,
         enhance: treatmentEnhance,
     } = superForm(data.treatmentForm, {
         SPA: true,
+        dataType: 'json',
         taintedMessage: false,
         id: 'treatmentForm',
         validators: zod(_addTreatmentSchema),
         resetForm: false,
-        onSubmit() {
-            _submitTreatmentForm($treatmentForm);
+        async onSubmit() {
+            const doneProcess = await _submitTreatmentForm($treatmentForm);
+
+            if (doneProcess?.response.status == 'success') {
+                successAddTreatments = true;
+            }
         },
     });
 
-    // const addPatient = () => {
-    //     // $patientForm.patientList = [...$patientForm.patientList, tempPatient];
+    const searchEmployee = async () => {
+        const employee = await _getEmployee(selectedEmployee);
 
-    //     patientIndex += 1;
-    //     // console.log($patientForm);
-    //     $patientForm.patientList[patientIndex] = tempPatient;
-    // };
+        employeeDetail = {
+            employeeId: employee.response.data?.details.employeeId,
+            employeeNumber: employee.response.data?.details.employeeNumber,
+            identityCardNumber:
+                employee.response.data?.details.identityCardNumber,
+            fullName: employee.response.data?.details.fullName,
+            grade: employee.response.data?.details.grade,
+            placement: employee.response.data?.details.placement,
+            serviceGroup: employee.response.data?.details.serviceGroup,
+        };
+    };
 </script>
 
 <!-- content header starts here -->
@@ -122,73 +201,86 @@
     <Stepper>
         <StepperContent>
             <StepperContentHeader title="Maklumat Kakitangan">
-                <TextIconButton label="Simpan" icon="check" form="" />
+                {#if !isSelected}
+                    <TextIconButton
+                        label="Simpan"
+                        icon="check"
+                        onClick={() => (isSelected = true)}
+                    />
+                {/if}
             </StepperContentHeader>
             <StepperContentBody>
                 <CustomSelectField
                     label="Nama"
-                    id="id"
+                    id="fullname"
+                    disabled={isSelected}
                     options={data.lookup.employeeList}
-                    val=""
-                    errors={[]}
+                    bind:val={selectedEmployee}
+                    onValueChange={() => searchEmployee()}
                 />
                 <CustomTextField
                     label="No. Pekerja"
                     id="employeeNumber"
                     placeholder=""
                     disabled
-                    val=""
-                    errors={[]}
+                    bind:val={employeeDetail.employeeNumber}
                 />
                 <CustomTextField
                     label="No. Kad Pengenalan"
                     id="identityCardNumber"
                     placeholder=""
                     disabled
-                    val=""
-                    errors={[]}
+                    bind:val={employeeDetail.identityCardNumber}
                 />
                 <CustomTextField
                     label="Gred"
                     id="grade"
                     placeholder=""
                     disabled
-                    val=""
-                    errors={[]}
+                    bind:val={employeeDetail.grade}
                 />
                 <CustomTextField
                     label="Penempatan"
                     id="placement"
                     placeholder=""
                     disabled
-                    val=""
-                    errors={[]}
+                    bind:val={employeeDetail.placement}
                 />
                 <CustomTextField
                     label="Kumpulan"
                     id="serviceGroup"
                     placeholder=""
                     disabled
-                    val=""
-                    errors={[]}
+                    bind:val={employeeDetail.serviceGroup}
                 />
             </StepperContentBody>
         </StepperContent>
 
         <StepperContent>
             <StepperContentHeader title="Maklumat Pesakit">
-                <TextIconButton
-                    label="Tambah Pesakit"
-                    type="neutral"
-                    icon="add"
-                    onClick={() => {
-                        patientModal = true;
-                    }}
-                />
-                <TextIconButton label="Hantar" icon="check" form="" />
+                {#if $patientError?._errors}
+                    <span class="text-sm text-ios-basic-destructiveRed"
+                        >{$patientError._errors}</span
+                    >
+                {/if}
+                {#if !successAddPatients}
+                    <TextIconButton
+                        label="Tambah Pesakit"
+                        type="neutral"
+                        icon="add"
+                        onClick={() => {
+                            patientModal = true;
+                        }}
+                    />
+                    <TextIconButton
+                        label="Hantar"
+                        icon="check"
+                        form="patientForm"
+                    />
+                {/if}
             </StepperContentHeader>
             <StepperContentBody paddingClass="p-none">
-                {#if $patientForm.patientList.length < 1 || $patientForm.patientList[0].name == ''}
+                {#if $patientForm.patientList.length < 1}
                     <div class="flex w-full flex-col gap-10 p-3">
                         <Alert color="blue">
                             <p>
@@ -197,17 +289,22 @@
                             </p>
                         </Alert>
                     </div>
-                    <!-- {:else if $patientForm.patientList[0].name == ""} -->
                 {:else}
                     <form
-                        class="flex w-full"
+                        class="flex w-full flex-col justify-start p-3"
                         method="POST"
                         use:patientEnhance
                         id="patientForm"
                     >
-                        <CustomTab>
+                        <Accordion id="patientAccordion">
                             {#each $patientForm.patientList as _, i}
-                                <CustomTabContent title="Pesakit {i + 1}">
+                                <AccordionItem>
+                                    <span
+                                        slot="header"
+                                        class="text-sm text-ios-labelColors-link-light"
+                                        >{$patientForm.patientList[i]
+                                            .name}</span
+                                    >
                                     <CustomTextField
                                         label="Nama Pesakit"
                                         id="name"
@@ -239,16 +336,16 @@
                                             .placementId}
                                     />
                                     <CustomTextField
-                                        label="Tarikh"
+                                        label="Tarikh Rawatan"
                                         id="date"
                                         type="date"
                                         disabled
                                         bind:val={$patientForm.patientList[i]
                                             .date}
                                     />
-                                </CustomTabContent>
+                                </AccordionItem>
                             {/each}
-                        </CustomTab>
+                        </Accordion>
                     </form>
                 {/if}
             </StepperContentBody>
@@ -256,36 +353,85 @@
 
         <StepperContent>
             <StepperContentHeader title="Maklumat Rawatan">
-                <TextIconButton label="Simpan" icon="check" form="" />
+                {#if !successAddTreatments}
+                    <TextIconButton
+                        label="Hantar"
+                        icon="check"
+                        form="treatmentForm"
+                    />
+                {/if}
             </StepperContentHeader>
             <StepperContentBody paddingClass="p-none">
-                <CustomTab id="treatmentTab">
-                    <!-- {#each data.treatmentDetail as treatments, i}
-                        <CustomTabContent title="Rawatan {i + 1}">
-                            <CustomTextField
-                                label="Nama Pesakit"
-                                id="name"
-                                disabled
-                                bind:val={treatments.patientName}
-                            />
-                            {#each treatments.treatmentList as treatmentList, i}
-                                <CustomTextField
-                                    label="Jenis Rawatan"
-                                    id="name"
-                                    disabled
-                                    bind:val={treatmentList.description}
-                                />
-                                <CustomTextField
-                                    label="Jumlah (RM)"
-                                    id="name"
-                                    type="number"
-                                    disabled
-                                    bind:val={treatmentList.amount}
-                                />
+                {#if $treatmentForm.patientList.length < 1}
+                    <div class="flex w-full flex-col gap-10 p-3">
+                        <Alert color="blue">
+                            <p>
+                                <span class="font-medium">Tiada Maklumat!</span>
+                                Sila tambah pesakit terlebih dahulu.
+                            </p>
+                        </Alert>
+                    </div>
+                {:else if $treatmentForm.patientList.length > 0}
+                    <form
+                        class="flex w-full flex-col justify-start p-3"
+                        method="POST"
+                        use:treatmentEnhance
+                        id="treatmentForm"
+                    >
+                        <Accordion id="patientAccordion">
+                            {#each $treatmentForm.patientList as _, i}
+                                <AccordionItem>
+                                    <span
+                                        slot="header"
+                                        class="text-sm text-ios-labelColors-link-light"
+                                        >{$treatmentForm.patientList[i]
+                                            .patientName}</span
+                                    >
+                                    {#if !successAddTreatments}
+                                        <TextIconButton
+                                            label="Tambah Rawatan"
+                                            type="neutral"
+                                            icon="add"
+                                            onClick={() => {
+                                                eachIndex = i;
+                                                treatmentModal = true;
+                                            }}
+                                        />
+                                    {/if}
+                                    <div
+                                        class="flex w-full flex-col gap-2.5 pt-3"
+                                    >
+                                        {#each $treatmentForm.patientList[i].treatmentList as _, x}
+                                            <div
+                                                class="flex w-full flex-col justify-start rounded-md border border-ios-activeColors-activeBlue-dark p-3"
+                                            >
+                                                <CustomTextField
+                                                    label="Jenis Rawatan"
+                                                    id="description"
+                                                    disabled
+                                                    val={$treatmentForm
+                                                        .patientList[i]
+                                                        .treatmentList[x]
+                                                        ?.description}
+                                                />
+                                                <CustomTextField
+                                                    label="Jumlah (RM)"
+                                                    id="amount"
+                                                    disabled
+                                                    type="number"
+                                                    val={$treatmentForm
+                                                        .patientList[i]
+                                                        .treatmentList[x]
+                                                        ?.amount}
+                                                />
+                                            </div>
+                                        {/each}
+                                    </div>
+                                </AccordionItem>
                             {/each}
-                        </CustomTabContent>
-                    {/each} -->
-                </CustomTab>
+                        </Accordion>
+                    </form>
+                {/if}
             </StepperContentBody>
         </StepperContent>
     </Stepper>
@@ -302,21 +448,18 @@
         <CustomTextField
             label="Nama Pesakit"
             id="name"
-            disabled={false}
             bind:val={$singlePatientForm.name}
             errors={$singlePatientError.name}
         />
         <CustomTextField
             label="No. Kad Pengenalan"
             id="identityDocumentCard"
-            disabled={false}
             bind:val={$singlePatientForm.identityDocumentCard}
             errors={$singlePatientError.identityDocumentCard}
         />
         <CustomSelectField
             label="Hubungan"
             id="relationshipId"
-            disabled={false}
             options={data.lookup.relationshipLookup}
             bind:val={$singlePatientForm.relationshipId}
             errors={$singlePatientError.relationshipId}
@@ -324,7 +467,6 @@
         <CustomSelectField
             label="Pejabat LKIM"
             id="placementId"
-            disabled={false}
             options={data.lookup.placementLookup}
             bind:val={$singlePatientForm.placementId}
             errors={$singlePatientError.placementId}
@@ -333,15 +475,33 @@
             label="Tarikh"
             id="date"
             type="date"
-            disabled={false}
             bind:val={$singlePatientForm.date}
             errors={$singlePatientError.date}
         />
-        <TextIconButton label="Simpan" icon="add" form="singlePatientForm" />
+        <TextIconButton label="Tambah" icon="add" form="singlePatientForm" />
     </form>
 </Modal>
 
-<!-- onClick={() => {
-    addPatient();
-    patientModal = false;
-}} -->
+<Modal title="Tambah Rawatan" bind:open={treatmentModal}>
+    <form
+        class="flex w-full flex-col gap-2.5"
+        id="singleTreatmentForm"
+        use:singleTreatmentEnhance
+        method="POST"
+    >
+        <CustomTextField
+            label="Jenis Rawatan"
+            id="description"
+            bind:val={$singleTreatmentForm.description}
+            errors={$singleTreatmentError.description}
+        />
+        <CustomTextField
+            label="Jumlah (RM)"
+            id="amount"
+            type="number"
+            bind:val={$singleTreatmentForm.amount}
+            errors={$singleTreatmentError.amount}
+        />
+        <TextIconButton label="Tambah" icon="add" form="singleTreatmentForm" />
+    </form>
+</Modal>

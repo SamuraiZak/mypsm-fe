@@ -55,11 +55,11 @@
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
     <div class="flex w-full flex-col justify-start gap-2.5 p-5">
-        <FilterCard onSearch={() => {}}>
+        <!-- <FilterCard onSearch={() => {}}>
             <FilterTextField label="No. Pekerja" inputValue={''} />
             <FilterTextField label="Nama Pekerja" inputValue={''} />
             <FilterTextField label="Kad Pengenalan" inputValue={''} />
-        </FilterCard>
+        </FilterCard> -->
 
         <CustomTable
             title="Senarai Kakitangan"

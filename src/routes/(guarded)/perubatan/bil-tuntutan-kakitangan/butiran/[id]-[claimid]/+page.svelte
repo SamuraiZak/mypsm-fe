@@ -39,7 +39,7 @@
     let supporterResult: boolean = false;
     let approverResult: boolean = false;
 
-    if (data.secretaryApproval.remark !== null) {
+    if (data.secretaryApproval.remark !== undefined) {
         secretaryResult = true;
     }
     if (data.supporterApprover.approverId !== 0) {

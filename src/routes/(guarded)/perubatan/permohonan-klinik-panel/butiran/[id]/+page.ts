@@ -63,7 +63,6 @@ export const load = async ({ params }) => {
     const supporterApproverForm = await superValidate(clinicSupporterAndApprover, zod(_clinicSupporterApproverSchema), { errors: false });
     const supporterApprovalForm = await superValidate(clinicSupporterApproval, zod(_clinicCommonResultSchema), { errors: false });
     const approverApprovalForm = await superValidate(clinicApproverApproval, zod(_clinicCommonResultSchema), { errors: false });
-
     return {
         currentRoleCode,
         clinicId,

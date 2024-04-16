@@ -11,7 +11,6 @@ import { MedicalServices } from "$lib/services/implementation/mypsm/perubatan/me
 export const load = async ({ params }) => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
     const lookup = await getLookup()
-    // const processType: string = params.employeeid;
     let employeeDetail = {} as MedicalEmployeeDetail;
     let patientDetail: ClinicPanelTreatmentPatientDetail[] = [];
     let treatmentDetail: ClinicPanelTreatmentDetailList[] = [];
@@ -21,8 +20,7 @@ export const load = async ({ params }) => {
     const claimId: commonIdRequestDTO = {
         id: Number(params.claimid)
     }
-    // if not new treatment
-    if (params.employeeid !== "baru") {
+
         //get employee detail
         const employeeDetailResponse: CommonResponseDTO =
             await MedicalServices.getClinicPanelEmployeeDetail(employeeId);
@@ -41,11 +39,10 @@ export const load = async ({ params }) => {
             await MedicalServices.getClinicPanelTreatmentDetail(claimId);
         treatmentDetail =
             treatmentDetailResponse.data?.dataList as ClinicPanelTreatmentDetailList[];
-    }
+
 
     return {
         currentRoleCode,
-        // processType,
         employeeDetail,
         patientDetail,
         treatmentDetail,

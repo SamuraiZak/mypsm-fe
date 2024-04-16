@@ -7,6 +7,7 @@
     import CustomTable from '$lib/components/table/CustomTable.svelte';
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
+    import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import type { MedicalClinicEmployeeAllocationClaimList } from '$lib/dto/mypsm/perubatan/tuntutan-kakitangan/clinic-employee-allocation-list.dto';
     import type { MedicalClinicEmployeePaymentList } from '$lib/dto/mypsm/perubatan/tuntutan-kakitangan/clinic-employee-payments-list.dto';
@@ -115,12 +116,12 @@
     <CustomTab>
         <CustomTabContent title="Senarai Tuntutan Kakitangan">
             <div class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10">
-                <FilterCard onSearch={() => {}}>
+                <!-- <FilterCard onSearch={() => {}}>
                     <FilterTextField label="Kod Klinik" inputValue={''} />
                     <FilterTextField label="Nama Klinik" inputValue={''} />
                     <FilterTextField label="Bulan" inputValue={''} />
                     <FilterTextField label="Negeri" inputValue={''} />
-                </FilterCard>
+                </FilterCard> -->
 
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
@@ -140,14 +141,15 @@
                 </div>
             </div>
         </CustomTabContent>
+        {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerubatan.code}
         <CustomTabContent title="Senarai Kakitangan - Peruntukan">
             <div class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10">
-                <FilterCard onSearch={() => {}}>
+                <!-- <FilterCard onSearch={() => {}}>
                     <FilterTextField label="Kod Klinik" inputValue={''} />
                     <FilterTextField label="Nama Klinik" inputValue={''} />
                     <FilterTextField label="Bulan" inputValue={''} />
                     <FilterTextField label="Negeri" inputValue={''} />
-                </FilterCard>
+                </FilterCard> -->
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
@@ -160,7 +162,7 @@
                 </div>
             </div>
         </CustomTabContent>
-        <CustomTabContent
+        <!-- <CustomTabContent
             title="Senarai Pembayaran Untuk Tuntutan Melebihi Peruntukan"
         >
             <div class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10">
@@ -185,9 +187,10 @@
                                     rowPaymentData.employeeId,
                             )}
                     />
-                    <!-- TODO: jana surat for enable detail -->
+                    TODO: jana surat for enable detail
                 </div>
             </div>
-        </CustomTabContent>
+        </CustomTabContent> -->
+        {/if}
     </CustomTab>
 </section>

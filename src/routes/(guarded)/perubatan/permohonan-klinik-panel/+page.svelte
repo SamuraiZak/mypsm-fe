@@ -46,7 +46,7 @@
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader title="Rekod Permohonan Klinik Panel">
-        {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerubatan.code}
+        {#if data.currentRoleCode == UserRoleConstant.unitBahagian.code || data.currentRoleCode == UserRoleConstant.unitNegeri.code}
         <TextIconButton
             icon="add"
             type="primary"
@@ -61,13 +61,13 @@
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
 >
     <div class="flex w-full flex-col justify-start gap-2.5 p-5">
-        <FilterCard onSearch={() => {}}>
+        <!-- <FilterCard onSearch={() => {}}>
             <FilterTextField label="Kod Klinik" inputValue={''} />
             <FilterTextField label="Nama Klinik" inputValue={''} />
             <FilterTextField label="Status" inputValue={''} />
             <FilterDateField label="Tarikh Dimohon" inputValue={undefined}/>
             <FilterDateField label="Tarikh Dilantik" inputValue={undefined} />
-        </FilterCard>
+        </FilterCard> -->
         <div class="flex max-h-full w-full flex-col items-start justify-start">
             <CustomTable
                 title="Rekod Permohonan Klinik Panel"

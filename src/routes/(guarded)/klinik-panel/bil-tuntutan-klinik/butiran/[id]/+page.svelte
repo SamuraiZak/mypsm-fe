@@ -27,6 +27,7 @@
     } from './+page';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import { Toaster } from 'svelte-french-toast';
+    import Alert from 'flowbite-svelte/Alert.svelte';
 
     export let data: PageData;
 
@@ -224,27 +225,38 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                <form
-                    class="flex w-full flex-col justify-start gap-2.5 p-3"
-                    id="secretaryApprovalForm"
-                    method="POST"
-                    use:secretaryApprovalEnhance
-                >
-                    <CustomTextField
-                        label="Ulasan/Tindakan"
-                        id="remark"
-                        disabled={secretaryApproved}
-                        bind:val={$secretaryApprovalForm.remark}
-                        errors={$secretaryApprovalError.remark}
-                    />
-                    <CustomRadioBoolean
-                        label="Keputusan"
-                        id="status"
-                        disabled={secretaryApproved}
-                        options={certifyOptions}
-                        bind:val={$secretaryApprovalForm.status}
-                    />
-                </form>
+                {#if data.claimDetail.secretaryApproval == null && data.currentRoleCode !== UserRoleConstant.urusSetiaPerubatan.code}
+                    <div class="flex w-full flex-col gap-10 px-3">
+                        <Alert color="blue">
+                            <p>
+                                <span class="font-medium">Tiada Maklumat!</span>
+                                Menunggu keputusan daripada Urus Setia Perubatan.
+                            </p>
+                        </Alert>
+                    </div>
+                {:else}
+                    <form
+                        class="flex w-full flex-col justify-start gap-2.5 p-3"
+                        id="secretaryApprovalForm"
+                        method="POST"
+                        use:secretaryApprovalEnhance
+                    >
+                        <CustomTextField
+                            label="Ulasan/Tindakan"
+                            id="remark"
+                            disabled={secretaryApproved}
+                            bind:val={$secretaryApprovalForm.remark}
+                            errors={$secretaryApprovalError.remark}
+                        />
+                        <CustomRadioBoolean
+                            label="Keputusan"
+                            id="status"
+                            disabled={secretaryApproved}
+                            options={certifyOptions}
+                            bind:val={$secretaryApprovalForm.status}
+                        />
+                    </form>
+                {/if}
             </StepperContentBody>
         </StepperContent>
 
@@ -259,29 +271,40 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                <form
-                    class="flex w-full flex-col justify-start gap-2.5 p-3"
-                    id="supporterApproverForm"
-                    use:supporterApproverEnhance
-                    method="POST"
-                >
-                    <CustomSelectField
-                        label="Penyokong"
-                        id="supporterId"
-                        disabled={suppAppExist}
-                        options={data.lookup.supporterApproverLookup}
-                        bind:val={$supporterApproverForm.supporterId}
-                        errors={$supporterApproverError.supporterId}
-                    />
-                    <CustomSelectField
-                        label="Pelulus"
-                        id="approverId"
-                        disabled={suppAppExist}
-                        options={data.lookup.supporterApproverLookup}
-                        bind:val={$supporterApproverForm.approverId}
-                        errors={$supporterApproverError.approverId}
-                    />
-                </form>
+                {#if data.claimDetail.supporterApprover == null && data.currentRoleCode !== UserRoleConstant.urusSetiaPerubatan.code}
+                    <div class="flex w-full flex-col gap-10 px-3">
+                        <Alert color="blue">
+                            <p>
+                                <span class="font-medium">Tiada Maklumat!</span>
+                                Menunggu pemilihan daripada Urus Setia Perubatan.
+                            </p>
+                        </Alert>
+                    </div>
+                {:else}
+                    <form
+                        class="flex w-full flex-col justify-start gap-2.5 p-3"
+                        id="supporterApproverForm"
+                        use:supporterApproverEnhance
+                        method="POST"
+                    >
+                        <CustomSelectField
+                            label="Penyokong"
+                            id="supporterId"
+                            disabled={suppAppExist}
+                            options={data.lookup.supporterApproverLookup}
+                            bind:val={$supporterApproverForm.supporterId}
+                            errors={$supporterApproverError.supporterId}
+                        />
+                        <CustomSelectField
+                            label="Pelulus"
+                            id="approverId"
+                            disabled={suppAppExist}
+                            options={data.lookup.supporterApproverLookup}
+                            bind:val={$supporterApproverForm.approverId}
+                            errors={$supporterApproverError.approverId}
+                        />
+                    </form>
+                {/if}
             </StepperContentBody>
         </StepperContent>
 
@@ -296,27 +319,38 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                <form
-                    class="flex w-full flex-col justify-start gap-2.5 p-3"
-                    id="supporterApprovalForm"
-                    method="POST"
-                    use:supporterApprovalEnhance
-                >
-                    <CustomTextField
-                        label="Ulasan/Tindakan"
-                        id="remark"
-                        disabled={supporterApproved}
-                        bind:val={$supporterApprovalForm.remark}
-                        errors={$supporterApprovalError.remark}
-                    />
-                    <CustomRadioBoolean
-                        label="Keputusan"
-                        id="status"
-                        disabled={supporterApproved}
-                        options={supportOptions}
-                        bind:val={$supporterApprovalForm.status}
-                    />
-                </form>
+                {#if data.claimDetail.supporter == null && data.currentRoleCode !== UserRoleConstant.penyokong.code}
+                    <div class="flex w-full flex-col gap-10 px-3">
+                        <Alert color="blue">
+                            <p>
+                                <span class="font-medium">Tiada Maklumat!</span>
+                                Menunggu keputusan daripada penyokong.
+                            </p>
+                        </Alert>
+                    </div>
+                {:else}
+                    <form
+                        class="flex w-full flex-col justify-start gap-2.5 p-3"
+                        id="supporterApprovalForm"
+                        method="POST"
+                        use:supporterApprovalEnhance
+                    >
+                        <CustomTextField
+                            label="Ulasan/Tindakan"
+                            id="remark"
+                            disabled={supporterApproved}
+                            bind:val={$supporterApprovalForm.remark}
+                            errors={$supporterApprovalError.remark}
+                        />
+                        <CustomRadioBoolean
+                            label="Keputusan"
+                            id="status"
+                            disabled={supporterApproved}
+                            options={supportOptions}
+                            bind:val={$supporterApprovalForm.status}
+                        />
+                    </form>
+                {/if}
             </StepperContentBody>
         </StepperContent>
 
@@ -331,27 +365,38 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                <form
-                    class="flex w-full flex-col justify-start gap-2.5 p-3"
-                    id="approverApprovalForm"
-                    method="POST"
-                    use:approverApprovalEnhance
-                >
-                    <CustomTextField
-                        label="Ulasan/Tindakan"
-                        id="remark"
-                        disabled={approverApproved}
-                        bind:val={$approverApprovalForm.remark}
-                        errors={$approverApprovalError.remark}
-                    />
-                    <CustomRadioBoolean
-                        label="Keputusan"
-                        id="status"
-                        disabled={approverApproved}
-                        options={approveOptions}
-                        bind:val={$approverApprovalForm.status}
-                    />
-                </form>
+                {#if data.claimDetail.approver == null && data.currentRoleCode !== UserRoleConstant.pelulus.code}
+                    <div class="flex w-full flex-col gap-10 px-3">
+                        <Alert color="blue">
+                            <p>
+                                <span class="font-medium">Tiada Maklumat!</span>
+                                Menunggu keputusan daripada pelulus.
+                            </p>
+                        </Alert>
+                    </div>
+                {:else}
+                    <form
+                        class="flex w-full flex-col justify-start gap-2.5 p-3"
+                        id="approverApprovalForm"
+                        method="POST"
+                        use:approverApprovalEnhance
+                    >
+                        <CustomTextField
+                            label="Ulasan/Tindakan"
+                            id="remark"
+                            disabled={approverApproved}
+                            bind:val={$approverApprovalForm.remark}
+                            errors={$approverApprovalError.remark}
+                        />
+                        <CustomRadioBoolean
+                            label="Keputusan"
+                            id="status"
+                            disabled={approverApproved}
+                            options={approveOptions}
+                            bind:val={$approverApprovalForm.status}
+                        />
+                    </form>
+                {/if}
             </StepperContentBody>
         </StepperContent>
     </Stepper>

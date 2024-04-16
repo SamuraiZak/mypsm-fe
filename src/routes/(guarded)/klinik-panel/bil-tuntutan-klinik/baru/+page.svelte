@@ -35,6 +35,7 @@
                     const editMode = await _submitClaimDetailForm($claimDetailForm);
                     if (editMode?.response.status == 'success') {
                         successSubmit = true;
+                        goto('/klinik-panel/bil-tuntutan-klinik');
                     }
                 })
                 .catch((error) => {
