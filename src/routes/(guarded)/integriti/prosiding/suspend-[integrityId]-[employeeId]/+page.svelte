@@ -218,8 +218,15 @@
 </script>
 
 <ContentHeader title="Maklumat Prosiding Tatatertib">
-    {#if $proceedingSuspendsIsApproved}
-        <Badge color="dark">Proses Prosiding Tahan/Gantung Kerja Tamat</Badge>
+    {#if $isReadOnlyProceedingSuspensionCriminal || $isReadOnlyProceedingEndedGantungKerja}
+        <Badge color="indigo">Dikemaskini</Badge>
+    {/if}
+    {#if $proceedingSuspendsIsApproved && !$isReadOnlyProceedingEndedGantungKerja}
+        <Badge color="dark">Proses Prosiding - Tahan Kerja Sah</Badge>
+    {:else if $isReadOnlyProceedingEndedGantungKerja}
+        <Badge color="dark">Proses Prosiding - Gantung Kerja Tamat</Badge>
+    {:else}
+        <Badge color="red">Proses Prosiding - Tahan/Gantung Kerja Tidak Sah</Badge>
     {/if}
 
     <TextIconButton
