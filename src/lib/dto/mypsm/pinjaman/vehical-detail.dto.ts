@@ -1,20 +1,16 @@
 export interface vechicalDetail {
-    name:                   string;
-    identityDocumentNumber: string;
-    birthDate:              Date;
-    age:                    number;
-    positionId:             number;
-    serviceGroupId:         number;
-    gradeId:                number;
-    schemeId:               number;
-    serviceDate:            Date;
-    confirmServiceDate:     Date;
-    baseSalary:             number;
-    allowance:              null;
+    id:                 number;
+    condition:          string;
+    vehicleType:        string;
+    brandModel:         string;
+    engineNumber:       string;
+    registrationNumber: string;
+    registrationDate:   string;
+    nettPrice:          number;
 }
 
 // Converts JSON strings to/from your types
-export class Convert {
+export class vechicalDetailConvert {
     public static fromJson(json: string): vechicalDetail {
         return JSON.parse(json);
     }

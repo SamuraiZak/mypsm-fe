@@ -4,7 +4,7 @@ export interface Approver {
 }
 
 // Converts JSON strings to/from your types
-export class Convert {
+export class ApproverConvert {
     public static fromJson(json: string): Approver {
         return JSON.parse(json);
     }

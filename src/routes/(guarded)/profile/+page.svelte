@@ -436,8 +436,6 @@
                     error(400);
                 }
 
-                
-
                 const editResulNextOfKin =
                     await _submitEditNextOfKinForm($nextOfKinInfoForm);
                 if (editResulNextOfKin.response.status === 'success') {
@@ -676,9 +674,9 @@
 
     function submitCreateNextOfKin() {
         _submitNextOfKinInfoForm(tempNextOfKin).then((result) => {
-                    data.nextOFKInInfoForm.data = result.nextOFKInInfoForm.data;
-                    // invalidateAll();
-                });
+            data.nextOFKInInfoForm.data = result.nextOFKInInfoForm.data;
+            // invalidateAll();
+        });
     }
 
     let isReadonlyHistoryMedicalFormStepper: boolean = true;
@@ -2482,7 +2480,8 @@
                                                 id="identityDocumentColor"
                                                 label={'Jenis Kad Pengenalan'}
                                                 disabled={!isEditableDependency}
-                                                options={data.selectionOptions.identityCardColorLookup}
+                                                options={data.selectionOptions
+                                                    .identityCardColorLookup}
                                                 bind:val={$dependencyInfoForm
                                                     .dependents[i]
                                                     .identityDocumentColor}

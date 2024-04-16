@@ -52,6 +52,13 @@
 
 <section class="flex w-full flex-col items-start justify-start gap-2.5 overflow-y-auto">
     <ContentHeader title="Rekod Pinjaman">
+        <TextIconButton 
+        type="primary"
+        label="Pinjaman Baru"
+        onClick={() => goto('')}
+
+
+        />
     </ContentHeader>
 
     <CustomTabContent title="Senarai Tindakan/Ulasan Tatatertib">
@@ -83,7 +90,7 @@
                 bind:tableData={employeeLoantable}
                 detailActions={() =>
                     goto(
-                        '/pinjaman-dan-kuarters/pinjaman/urusetia/butiran-' +
+                        '/pinjaman-dan-kuarters/pinjaman/butiran-' +
                             rowData.id 
                     )}
                 onUpdate={_search}

@@ -10,7 +10,7 @@ export interface PersonalDetail {
     serviceDate:            Date;
     confirmServiceDate:     Date;
     baseSalary:             number;
-    allowance:              null;
+    allowance:              number;
 }
 
 // Converts JSON strings to/from your types
