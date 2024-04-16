@@ -1,27 +1,24 @@
-import { goto } from '$app/navigation';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { RadioDTO } from '$lib/dto/core/radio/radio.dto.js';
 import type { ProceedingApproverResultDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-approver-result.dto.js';
-import type { ProceedingAccusationListDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
 import type { ProceedingEmployeeDetailResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-employee-detail-response.dto';
 import type {
     ProceedingIntegrityIdRequestDTO,
     ProceedingStaffDetailRequestDTO,
 } from '$lib/dto/mypsm/integrity/proceeding/proceeding-staff-detail-request.dto';
-import type { ProceedingSuspensionCriminalViewResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-suspension-criminal.dto';
+import type {
+    ProceedingSuspensionCriminalCancelRequestDTO,
+    ProceedingSuspensionCriminalRequestDTO,
+} from '$lib/dto/mypsm/integrity/proceeding/proceeding-suspension-criminal.dto';
 import type { ProceedingSuspensionViewResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-suspension.dto';
-import type { ProceedingTypeChargeDetailViewResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-type-charge-detail-view-response.dto';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
-    _chargesListSchema,
-    _proceedingAppealSchema,
     _proceedingApproverSchema,
-    _proceedingChargeMeetingRequestSchema,
-    _proceedingSentencingMeetingSchema,
     _proceedingStaffDetailResponseSchema,
+    _proceedingSuspensionCriminalCancelSchema,
     _proceedingSuspensionCriminalDetailSchema,
-    _proceedingSuspensionSchema,
+    _proceedingSuspensionViewSchema,
 } from '$lib/schemas/mypsm/integrity/proceeding-scheme';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { IntegrityProceedingServices } from '$lib/services/implementation/mypsm/integriti/integrity-proceeding.service';
@@ -47,19 +44,6 @@ export async function load({ params }) {
             idRequestBody,
         );
 
-    const proceedingChargeListResponse: CommonResponseDTO =
-        await IntegrityProceedingServices.getProceedingListOfCharges(
-            integrityId,
-        );
-
-    const proceedingTypeChargeDetailViewResponse: CommonResponseDTO =
-        await IntegrityProceedingServices.getProceedingTypeChargesnDetailsView(
-            integrityId,
-        );
-
-    const proceedingTypeChargeDetailView: ProceedingTypeChargeDetailViewResponseDTO =
-        proceedingTypeChargeDetailViewResponse.data?.details;
-
     const proceedingTypeSuspensionDetailViewResponse: CommonResponseDTO =
         await IntegrityProceedingServices.getProceedingTypeSuspensionDetailsView(
             integrityId,
@@ -68,13 +52,6 @@ export async function load({ params }) {
     const proceedingTypeSuspensionView: ProceedingSuspensionViewResponseDTO =
         proceedingTypeSuspensionDetailViewResponse.data?.details;
 
-    const proceedingTypeSuspensionCriminalDetailViewResponse: CommonResponseDTO =
-        await IntegrityProceedingServices.getProceedingTypeSuspensionCrimeDetailsView(
-            integrityId,
-        );
-
-    const proceedingTypeSuspensionCriminalView: ProceedingSuspensionCriminalViewResponseDTO =
-        proceedingTypeSuspensionCriminalDetailViewResponse.data?.details;
     // ============================================================
     // Supervalidated form initialization
     // ============================================================
@@ -85,99 +62,27 @@ export async function load({ params }) {
         { errors: false },
     );
 
-    const proceedingChargesMeetingForm = await superValidate(
-        proceedingTypeChargeDetailView.accusationList,
-        zod(_proceedingChargeMeetingRequestSchema),
-        { errors: false },
-    );
-
-    const proceedingIntegrityDirectorForm = await superValidate(
-        proceedingTypeChargeDetailView.confirmation,
-        zod(_proceedingApproverSchema),
-        { errors: false },
-    );
-
-    const proceedingChargesListForm = await superValidate(
-        proceedingChargeListResponse.data
-            ?.details as ProceedingAccusationListDTO,
-        zod(_chargesListSchema),
-        { errors: false },
-    );
-
-    const proceedingSentencingMeetingForm = await superValidate(
-        proceedingTypeChargeDetailView.sentencingDetails,
-        zod(_proceedingSentencingMeetingSchema),
-        { errors: false },
-    );
-
-    const proceedingSentencingConfirmationForm = await superValidate(
-        proceedingTypeChargeDetailView.sentencingConfirmation,
+    const proceedingSuspendsConfirmationForm = await superValidate(
+        proceedingTypeSuspensionView.confirmation,
         zod(_proceedingApproverSchema),
         { errors: false, id: 'proceedingSentencingConfirmationFormId' },
     );
 
-    // preset sentencing number of charges
-    const accusationList = (
-        proceedingChargeListResponse.data
-            ?.details as ProceedingAccusationListDTO
-    )?.accusationList;
-
-    if (accusationList) {
-        accusationList.forEach((charge, index) => {
-            proceedingSentencingMeetingForm.data.meetingResult[index] = {
-                accusationListId: charge.accusationListId,
-                result: proceedingSentencingMeetingForm.data.meetingResult[
-                    index
-                ].result
-                    ? proceedingSentencingMeetingForm.data.meetingResult[index]
-                          .result
-                    : false,
-                sentencing: proceedingSentencingMeetingForm.data.meetingResult[
-                    index
-                ].sentencing
-                    ? proceedingSentencingMeetingForm.data.meetingResult[index]
-                          .sentencing
-                    : [
-                          {
-                              emolumenDate: [
-                                  {
-                                      startDate: null,
-                                      endDate: null,
-                                  },
-                              ],
-                          },
-                      ],
-            };
-        });
-    }
-
-    const proceedingAppealMeetingForm = await superValidate(
-        proceedingTypeChargeDetailView.appealDetails,
-        zod(_proceedingAppealSchema),
-        { errors: false, id: 'proceedingAppealMeetingFormId' },
-    );
-
-    // initializes appeal info with sentencing data
-    if (!proceedingTypeChargeDetailView.appealDetails) {
-        proceedingAppealMeetingForm.data.result =
-            proceedingSentencingMeetingForm.data.meetingResult;
-    }
-
-    const proceedingAppealConfirmationForm = await superValidate(
-        proceedingTypeChargeDetailView.appealConfirmation,
-        zod(_proceedingApproverSchema),
-        { errors: false, id: 'proceedingAppealConfirmationFormId' },
-    );
-
     const proceedingSuspensionMeetingForm = await superValidate(
         proceedingTypeSuspensionView,
-        zod(_proceedingSuspensionSchema),
+        zod(_proceedingSuspensionViewSchema),
         { errors: false },
     );
 
     const proceedingSuspensionCriminalDetailForm = await superValidate(
-        proceedingTypeSuspensionCriminalView,
+        proceedingTypeSuspensionView.editCriminalDetail,
         zod(_proceedingSuspensionCriminalDetailSchema),
+        { errors: false },
+    );
+
+    const proceedingCriminalEndGantungKerjaForm = await superValidate(
+        proceedingTypeSuspensionView.cancelCriminalDetail,
+        zod(_proceedingSuspensionCriminalCancelSchema),
         { errors: false },
     );
 
@@ -322,29 +227,19 @@ export async function load({ params }) {
     // ===========================================================================
 
     return {
+        params,
         responses: {
             proceedingStaffDetailResponse,
-            proceedingTypeChargeDetailViewResponse,
         },
         view: {
-            proceedingTypeChargeDetailView,
             proceedingTypeSuspensionView,
-            proceedingTypeSuspensionCriminalView,
-        },
-        lists: {
-            accusationList,
         },
         forms: {
             proceedingStaffInfoForm,
-            proceedingChargesMeetingForm,
-            proceedingIntegrityDirectorForm,
-            proceedingChargesListForm,
-            proceedingSentencingMeetingForm,
-            proceedingSentencingConfirmationForm,
-            proceedingAppealMeetingForm,
-            proceedingAppealConfirmationForm,
+            proceedingSuspendsConfirmationForm,
             proceedingSuspensionMeetingForm,
             proceedingSuspensionCriminalDetailForm,
+            proceedingCriminalEndGantungKerjaForm,
         },
         lookups: {
             identityCardColorLookup,
@@ -360,10 +255,68 @@ export async function load({ params }) {
     };
 }
 
+export const _addSuspendsIntegrityDirectorConfirmation = async (
+    formData: object,
+) => {
+    const form = await superValidate(formData, zod(_proceedingApproverSchema));
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await IntegrityProceedingServices.createIntegrityDirectorSuspendsConfirmation(
+            form.data as ProceedingApproverResultDTO,
+        );
+
+    return { response };
+};
+
+export const _addCriminalCancelIntegrityDirectorConfirmation = async (
+    formData: object,
+) => {
+    const form = await superValidate(formData, zod(_proceedingApproverSchema));
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await IntegrityProceedingServices.createIntegrityDirectorCriminalConfirmation(
+            form.data as ProceedingApproverResultDTO,
+        );
+
+    return { response };
+};
+
 export const _updateSuspensionCriminalDetail = async (formData: object) => {
     const form = await superValidate(
         formData,
         zod(_proceedingSuspensionCriminalDetailSchema),
+    );
+    console.log(form);
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await IntegrityProceedingServices.updateProceedingCriminalDetail(
+            form.data as ProceedingSuspensionCriminalRequestDTO,
+        );
+
+    return { response };
+};
+
+export const _updateSuspensionCriminalCancelDetail = async (
+    formData: object,
+) => {
+    const form = await superValidate(
+        formData,
+        zod(_proceedingSuspensionCriminalCancelSchema),
     );
 
     console.log(form);
@@ -373,17 +326,12 @@ export const _updateSuspensionCriminalDetail = async (formData: object) => {
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    // const response: CommonResponseDTO =
-    //     await IntegrityProceedingServices.updateProceedingCriminalDetail(
-    //         form.data as ProceedingSuspensionCriminalRequestDTO,
-    //     );
+    const response: CommonResponseDTO =
+        await IntegrityProceedingServices.updateProceedingCriminalCancelDetail(
+            form.data as ProceedingSuspensionCriminalCancelRequestDTO,
+        );
 
-    // if (response.status === 'success')
-    //     setTimeout(() => {
-    //         goto(`../../prosiding`);
-    //     }, 1500);
-
-    // return { response };
+    return { response };
 };
 
 export const _addSentencingIntegrityDirectorApproval = async (
@@ -402,11 +350,6 @@ export const _addSentencingIntegrityDirectorApproval = async (
         await IntegrityProceedingServices.createProceedingSentencingIntegrityDirectorResult(
             form.data as ProceedingApproverResultDTO,
         );
-
-    if (response.status === 'success')
-        setTimeout(() => {
-            goto(`../../prosiding`);
-        }, 1500);
 
     return { response };
 };
