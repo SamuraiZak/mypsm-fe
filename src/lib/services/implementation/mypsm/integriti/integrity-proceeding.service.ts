@@ -450,6 +450,35 @@ export class IntegrityProceedingServices {
         }
     }
 
+    // create proceeding - integrity director suspends confirmation
+    static async createIntegrityDirectorSuspendsConfirmation<T>(param: T) {
+        try {
+            const url: Input = 'integrity/proceeding/suspension/confirmation';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     // update proceeding - criminal suspension
     static async updateProceedingCriminalDetail(
         param: ProceedingSuspensionCriminalRequestDTO,
@@ -471,7 +500,66 @@ export class IntegrityProceedingServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                // await invalidateAll();
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // update proceeding - criminal cancel detail
+    static async updateProceedingCriminalCancelDetail<T>(param: T) {
+        try {
+            const url: Input =
+                'integrity/proceeding/criminal/cancel_suspension';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // create proceeding - integrity director criminal confirmation
+    static async createIntegrityDirectorCriminalConfirmation<T>(param: T) {
+        try {
+            const url: Input = 'integrity/proceeding/criminal/confirmation';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -514,33 +602,6 @@ export class IntegrityProceedingServices {
     ) {
         try {
             const url: Input = 'integrity/proceeding/suspension/view';
-
-            // get the promise response
-            const response: Response = await http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            // parse the json response to object
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // get course proceeding - type suspension - criminal details view
-    static async getProceedingTypeSuspensionCrimeDetailsView(
-        param: ProceedingIntegrityIdRequestDTO,
-    ) {
-        try {
-            const url: Input = 'integrity/proceeding/criminal/view';
 
             // get the promise response
             const response: Response = await http
