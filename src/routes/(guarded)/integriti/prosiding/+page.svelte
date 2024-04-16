@@ -1,91 +1,123 @@
 <script lang="ts">
+    import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import type { LayoutData } from './$types';
     import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
-    import CustomTable from '$lib/components/table/CustomTable.svelte';
     import { _updateChargeTable, _updateSuspensionTable } from './+layout';
-    import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
-    import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
-    import TextIconButton from '$lib/components/button/TextIconButton.svelte';
+    import type {
+        TableSettingDTO,
+    } from '$lib/dto/core/table/table.dto';
     import type {
         ProceedingChargeDetailResponseDTO,
         ProceedingChargeListResponseDTO,
     } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
     import type { ProceedingsuspensionListResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-suspension-list-response.dto';
+    import DataTable from '$lib/components/table/DataTable.svelte';
 
     export let data: LayoutData;
     let rowData: ProceedingChargeDetailResponseDTO;
-    let param: CommonListRequestDTO = data.param;
 
     // Table list - Charge Table
-    let proceedingChargeTable: TableDTO = {
-        param: param,
+    let chargeListTable: TableSettingDTO = {
+        param: data.param,
         meta: data.responses.proceedingListResponse.data?.meta ?? {
+            pageSize: 1,
             pageNum: 1,
-            pageSize: 5,
-            totalData: 4,
+            totalData: 1,
             totalPage: 1,
         },
         data:
             (data.list.proceedingList as ProceedingChargeListResponseDTO) ?? [],
-        hiddenData: ['integrityId', 'employeeId'],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['integrityId', 'employeeId', 'declarationLetter'],
+        dictionary: [
+            {
+                english: 'suspendMeetingDate',
+                malay: 'Tarikh Mesyuarat Tahan Kerja',
+            },
+            {
+                english: 'suspendMeetingResult',
+                malay: 'Keputusan Mesyuarat Tahan Kerja',
+            },
+            {
+                english: 'disciplinaryType',
+                malay: 'Jenis Prosiding Tatatertib',
+            },
+            {
+                english: 'isAppeal',
+                malay: 'Rayuan Dikemuka',
+            },
+        ],
+        url: 'integrity/proceeding/suspension/list',
+        id: 'chargeListTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add:
+                data.roles.isIntegritySecretaryRole ||
+                data.roles.isDisciplineSecretaryRole,
+        },
     };
 
-    async function _updateProceedingChargeTable() {
-        _updateChargeTable(proceedingChargeTable.param).then((value) => {
-            proceedingChargeTable.data = value.response.data?.dataList ?? [];
-            proceedingChargeTable.meta = value.response.data?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            proceedingChargeTable.param.pageSize =
-                proceedingChargeTable.meta.pageSize;
-            proceedingChargeTable.param.pageNum =
-                proceedingChargeTable.meta.pageNum;
-        });
-    }
-
     // Suspension Table
-    let proceedingSuspensionTable: TableDTO = {
-        param: param,
-        meta: data.responses.proceedingListResponse.data?.meta ?? {
+    let suspendListTable: TableSettingDTO = {
+        param: data.param,
+        meta: data.responses.proceedingSuspensionListResponse.data?.meta ?? {
+            pageSize: 1,
             pageNum: 1,
-            pageSize: 5,
-            totalData: 4,
+            totalData: 1,
             totalPage: 1,
         },
         data:
             (data.list
                 .proceedingSuspensionList as ProceedingsuspensionListResponseDTO) ??
             [],
-        hiddenData: ['integrityId', 'employeeId'],
-    };
-
-    async function _updateProceedingSuspensionTable() {
-        _updateSuspensionTable(proceedingSuspensionTable.param).then(
-            (value) => {
-                proceedingSuspensionTable.data =
-                    value.response.data?.dataList ?? [];
-                proceedingSuspensionTable.meta = value.response.data?.meta ?? {
-                    pageSize: 1,
-                    pageNum: 1,
-                    totalData: 1,
-                    totalPage: 1,
-                };
-                proceedingSuspensionTable.param.pageSize =
-                    proceedingSuspensionTable.meta.pageSize;
-                proceedingSuspensionTable.param.pageNum =
-                    proceedingSuspensionTable.meta.pageNum;
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['integrityId', 'employeeId', 'declarationLetter'],
+        dictionary: [
+            {
+                english: 'suspendMeetingDate',
+                malay: 'Tarikh Mesyuarat Tahan Kerja',
             },
-        );
-    }
+            {
+                english: 'suspendMeetingResult',
+                malay: 'Keputusan Mesyuarat Tahan Kerja',
+            },
+            {
+                english: 'disciplinaryType',
+                malay: 'Jenis Prosiding Tatatertib',
+            },
+            {
+                english: 'isAppeal',
+                malay: 'Rayuan Dikemuka',
+            },
+        ],
+        url: 'integrity/proceeding/suspension/list',
+        id: 'suspendListTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add:
+                data.roles.isIntegritySecretaryRole ||
+                data.roles.isDisciplineSecretaryRole,
+        },
+    };
 </script>
 
 <!-- content header starts here -->
@@ -102,53 +134,86 @@
         <div
             class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
         >
-            <ContentHeader
-                title="Tekan butang disebelah untuk menambah rekod prosiding"
-                borderClass="border-none"
-            >
-                <TextIconButton
-                    label="Tambah Prosiding"
-                    type="primary"
-                    onClick={() => goto('./prosiding/tambah-prosiding')}
-                ></TextIconButton>
-            </ContentHeader>
             <!-- Table filter placeholder -->
-            <FilterCard onSearch={_updateProceedingChargeTable}>
-                <FilterSelectField
-                    label="Status"
-                    options={data.selectionOptions.statusLookup}
-                    bind:inputValue={proceedingChargeTable.param.filter.status}
-                ></FilterSelectField>
-            </FilterCard>
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
                 {#if data.roles.isDisciplineSecretaryRole}
-                    <CustomTable
+                    <DataTable
                         title="Senarai Rekod Prosiding - Pertuduhan/Hukuman"
-                        onUpdate={_updateProceedingChargeTable}
-                        enableDetail
-                        bind:tableData={proceedingChargeTable}
+                        bind:tableData={chargeListTable}
                         bind:passData={rowData}
                         detailActions={() => {
                             const route = `./prosiding/${rowData.integrityId}-${rowData.employeeId}-${rowData.isAppeal}`;
 
                             goto(route);
                         }}
-                    ></CustomTable>
+                        addActions={() => {
+                            goto('./prosiding/tambah-prosiding');
+                        }}
+                    >
+                        <FilterWrapper slot="filter">
+                            <FilterTextField
+                                label="No. Pekerja"
+                                bind:inputValue={chargeListTable.param.filter
+                                    .employeeNumber}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="Nama Kakitangan"
+                                bind:inputValue={chargeListTable.param.filter
+                                    .name}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="No. Kad Pengenalan"
+                                bind:inputValue={chargeListTable.param.filter
+                                    .identityCardNumber}
+                            ></FilterTextField>
+                            <FilterSelectField
+                                label="Status"
+                                options={data.selectionOptions.statusLookup}
+                                bind:inputValue={chargeListTable.param.filter
+                                    .status}
+                            ></FilterSelectField>
+                        </FilterWrapper>
+                    </DataTable>
                 {:else if data.roles.isIntegritySecretaryRole}
-                    <CustomTable
+                    <DataTable
                         title="Senarai Rekod Prosiding - Tahan Kerja/Gantung Kerja"
-                        onUpdate={_updateProceedingSuspensionTable}
-                        enableDetail
-                        bind:tableData={proceedingSuspensionTable}
+                        bind:tableData={suspendListTable}
                         bind:passData={rowData}
                         detailActions={() => {
                             const route = `./prosiding/suspend-${rowData.integrityId}-${rowData.employeeId}`;
 
                             goto(route);
                         }}
-                    ></CustomTable>
+                        addActions={() => {
+                            goto('./prosiding/tambah-prosiding');
+                        }}
+                    >
+                        <FilterWrapper slot="filter">
+                            <FilterTextField
+                                label="No. Pekerja"
+                                bind:inputValue={suspendListTable.param.filter
+                                    .employeeNumber}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="Nama Kakitangan"
+                                bind:inputValue={suspendListTable.param.filter
+                                    .name}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="No. Kad Pengenalan"
+                                bind:inputValue={suspendListTable.param.filter
+                                    .identityCardNumber}
+                            ></FilterTextField>
+                            <FilterSelectField
+                                label="Status"
+                                options={data.selectionOptions.statusLookup}
+                                bind:inputValue={suspendListTable.param.filter
+                                    .status}
+                            ></FilterSelectField>
+                        </FilterWrapper>
+                    </DataTable>
                 {/if}
             </div>
         </div>
@@ -158,30 +223,46 @@
                 <div
                     class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
                 >
-                    <!-- Table filter placeholder -->
-                    <FilterCard onSearch={_updateProceedingChargeTable}>
-                        <FilterSelectField
-                            label="Status"
-                            options={data.selectionOptions.statusLookup}
-                            bind:inputValue={proceedingChargeTable.param.filter
-                                .status}
-                        ></FilterSelectField>
-                    </FilterCard>
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start"
                     >
-                        <CustomTable
-                            title="Senarai Rekod Prosiding"
-                            onUpdate={_updateProceedingChargeTable}
-                            enableDetail
-                            bind:tableData={proceedingChargeTable}
+                        <DataTable
+                            title="Senarai Rekod Prosiding - Pertuduhan/Hukuman"
+                            bind:tableData={chargeListTable}
                             bind:passData={rowData}
                             detailActions={() => {
                                 const route = `./prosiding/${rowData.integrityId}-${rowData.employeeId}-${rowData.isAppeal}`;
 
                                 goto(route);
                             }}
-                        ></CustomTable>
+                            addActions={() => {
+                                goto('./prosiding/tambah-prosiding');
+                            }}
+                        >
+                            <FilterWrapper slot="filter">
+                                <FilterTextField
+                                    label="No. Pekerja"
+                                    bind:inputValue={chargeListTable.param
+                                        .filter.employeeNumber}
+                                ></FilterTextField>
+                                <FilterTextField
+                                    label="Nama Kakitangan"
+                                    bind:inputValue={chargeListTable.param
+                                        .filter.name}
+                                ></FilterTextField>
+                                <FilterTextField
+                                    label="No. Kad Pengenalan"
+                                    bind:inputValue={chargeListTable.param
+                                        .filter.identityCardNumber}
+                                ></FilterTextField>
+                                <FilterSelectField
+                                    label="Status"
+                                    options={data.selectionOptions.statusLookup}
+                                    bind:inputValue={chargeListTable.param
+                                        .filter.status}
+                                ></FilterSelectField>
+                            </FilterWrapper>
+                        </DataTable>
                     </div>
                 </div>
             </CustomTabContent>
@@ -189,29 +270,49 @@
                 <div
                     class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
                 >
-                    <FilterCard onSearch={_updateProceedingSuspensionTable}>
-                        <FilterSelectField
-                            label="Status"
-                            options={data.selectionOptions.statusLookup}
-                            bind:inputValue={proceedingChargeTable.param.filter
-                                .status}
-                        ></FilterSelectField>
-                    </FilterCard>
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start"
                     >
-                        <CustomTable
-                            title="Senarai Rekod Prosiding"
-                            onUpdate={_updateProceedingSuspensionTable}
-                            enableDetail
-                            bind:tableData={proceedingSuspensionTable}
-                            bind:passData={rowData}
-                            detailActions={() => {
-                                const route = `./prosiding/suspend-${rowData.integrityId}-${rowData.employeeId}`;
+                        <div class="h h-fit w-full">
+                            <DataTable
+                                title="Senarai Rekod Prosiding - Tahan Kerja/Gantung Kerja"
+                                bind:tableData={suspendListTable}
+                                bind:passData={rowData}
+                                detailActions={() => {
+                                    const route = `./prosiding/suspend-${rowData.integrityId}-${rowData.employeeId}`;
 
-                                goto(route);
-                            }}
-                        ></CustomTable>
+                                    goto(route);
+                                }}
+                                addActions={() => {
+                                    goto('./prosiding/tambah-prosiding');
+                                }}
+                            >
+                                <FilterWrapper slot="filter">
+                                    <FilterTextField
+                                        label="No. Pekerja"
+                                        bind:inputValue={suspendListTable.param
+                                            .filter.employeeNumber}
+                                    ></FilterTextField>
+                                    <FilterTextField
+                                        label="Nama Kakitangan"
+                                        bind:inputValue={suspendListTable.param
+                                            .filter.name}
+                                    ></FilterTextField>
+                                    <FilterTextField
+                                        label="No. Kad Pengenalan"
+                                        bind:inputValue={suspendListTable.param
+                                            .filter.identityCardNumber}
+                                    ></FilterTextField>
+                                    <FilterSelectField
+                                        label="Status"
+                                        options={data.selectionOptions
+                                            .statusLookup}
+                                        bind:inputValue={suspendListTable.param
+                                            .filter.status}
+                                    ></FilterSelectField>
+                                </FilterWrapper>
+                            </DataTable>
+                        </div>
                     </div>
                 </div>
             </CustomTabContent>
