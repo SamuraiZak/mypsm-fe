@@ -1,5 +1,5 @@
 export interface TreatmentAddPatient {
-    id:             number;
+    id?:             number;
     employeeNumber: string;
     patientList:    PatientList[];
 }

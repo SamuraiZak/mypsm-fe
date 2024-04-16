@@ -15,6 +15,8 @@ import { ClinicCommonResultConvert, type ClinicCommonResult } from '$lib/dto/myp
 import { ClinicSetSupporterApproverConvert, type ClinicSetSupporterApprover } from '$lib/dto/mypsm/perubatan/clinic-common-supporter-approver.dto';
 import { ClinicClaimDetailConvert, type ClinicClaimDetail } from '$lib/dto/mypsm/perubatan/clinic-panel-claim-detail.dto';
 import { ClinicPanelProfileConvert, type ClinicPanelProfile } from '$lib/dto/mypsm/perubatan/clinic-panel-profile.dto';
+import { TreatmentAddPatientConvert, type TreatmentAddPatient } from '$lib/dto/mypsm/perubatan/clinic-panel-treatment-add-patient.dto';
+import { TreatmentAddTreatmentDetailConvert, type TreatmentAddTreatmentDetail } from '$lib/dto/mypsm/perubatan/clinic-panel-treatment-add-treatment-detail.dto';
 import { MedicalClaimsAddConvert, type MedicalClaimsAdd } from '$lib/dto/mypsm/perubatan/medical-claim-add.dto';
 import { MedicalClinicApplicationConvert, type MedicalClinicApplication } from '$lib/dto/mypsm/perubatan/permohonan-klinik/medical-clinic-application.dto';
 import { ClinicContractConvert, type ClinicContract } from '$lib/dto/mypsm/perubatan/permohonan-klinik/medical-clinic-contract.dto';
@@ -1121,6 +1123,54 @@ export class MedicalServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //add patients
+    static async addClinicPanelClaimPatient(param: TreatmentAddPatient) {
+        try {
+            let url: Input = 'medical/clinic/patient/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: TreatmentAddPatientConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //add treatments
+    static async addClinicPanelClaimTreatment(param: TreatmentAddTreatmentDetail) {
+        try {
+            let url: Input = 'medical/clinic/treatment/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: TreatmentAddTreatmentDetailConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
                 return result;
             } else {
                 return CommonResponseConstant.httpError;

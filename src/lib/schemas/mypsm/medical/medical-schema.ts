@@ -40,6 +40,7 @@ const postcodeSchema = z.string().refine(x => /^[0-9]+$/.test(x) && x.length == 
 
 //profile
 export const _editClinicProfileSchema = z.object({
+    clinicId: numberSchema.optional(),
     clinicCode: shortTextSchema,
     clinicName: shortTextSchema,
     address: shortTextSchema,
@@ -136,26 +137,26 @@ export const _patientSchema = z.object({
     relationshipId: z.number(),
     identityDocumentCard: identificationCardSchema,
     placementId: z.number(),
-    date: stringToMinDate,
+    date: stringToMaxDate,
 })
 
 export const _addPatientSchema = z.object({
-    id: numberSchema,
+    id: z.number().optional(),
     employeeNumber: shortTextSchema,
-    patientList: _patientSchema.array(),
+    patientList: _patientSchema.array().min(1, {message: "Pesakit tidak boleh kosong."}),
 })
 
-const treatmentSchema = z.object({
+export const _treatmentSchema = z.object({
     description: shortTextSchema,
     amount: numberSchema,
 })
 
-const patientTreatmentSchema = z.object({
-    patientName: shortTextSchema,
-    treatmentList: treatmentSchema.array(),
+export const _patientTreatmentSchema = z.object({
+    patientName: shortTextSchema.default(""),
+    treatmentList: _treatmentSchema.array(),
 })
 
 export const _addTreatmentSchema = z.object({
     claimId: numberSchema,
-    patientList: patientTreatmentSchema.array(),
+    patientList: _patientTreatmentSchema.array(),
 })

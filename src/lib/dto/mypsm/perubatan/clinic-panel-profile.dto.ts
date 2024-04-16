@@ -1,4 +1,5 @@
 export interface ClinicPanelProfile {
+    clinicId?:            number;
     clinicCode:           string;
     clinicName:           string;
     address:              string;

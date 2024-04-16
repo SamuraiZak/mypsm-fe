@@ -10,7 +10,7 @@ export interface ClinicPanelClaimHistory {
 export interface ClinicPanelClaimHistoryFilter {
     name:         string | null;
     patientName:  string;
-    identityDocumentNumber: string;
+    employeeName: string;
 }
 
 // Converts JSON strings to/from your types

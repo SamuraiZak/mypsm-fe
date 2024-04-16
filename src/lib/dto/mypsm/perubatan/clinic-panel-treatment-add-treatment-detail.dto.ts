@@ -1,15 +1,16 @@
 export interface TreatmentAddTreatmentDetail {
-    id:             number;
-    employeeNumber: string;
-    patientList:    PatientList[];
+    claimId:     number;
+    patientList: TreatmentPatientList[];
 }
 
-export interface PatientList {
-    name:                 string;
-    relationship:         string;
-    identityDocumentCard: string;
-    placement:            string;
-    date:                 string;
+export interface TreatmentPatientList {
+    patientName:   string;
+    treatmentList: TreatmentDetailList[];
+}
+
+export interface TreatmentDetailList {
+    description: string;
+    amount:      number;
 }
 
 // Converts JSON strings to/from your types
