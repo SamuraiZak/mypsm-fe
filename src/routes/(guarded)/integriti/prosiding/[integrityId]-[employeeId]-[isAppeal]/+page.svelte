@@ -31,6 +31,7 @@
     import { writable } from 'svelte/store';
     import {
         _proceedingAppealSchema,
+        _proceedingApproverSchema,
         _proceedingSentencingMeetingSchema,
         _proceedingSuspensionSchema,
         _sentenceSchema,
@@ -50,6 +51,7 @@
     let isAppealed: boolean = false;
     let proceedingChargeIsCertified = writable<boolean>(false);
     let proceedingSentencingIsCertified = writable<boolean>(false);
+    let proceedingSentencingAppealIsCertified = writable<boolean>(false);
     let isReadOnlyProceedingChargeMeeting = writable<boolean>(false);
     let isReadOnlyProceedingChargeConfirmation = writable<boolean>(false);
     let isReadOnlyProceedingSentencingMeeting = writable<boolean>(false);
@@ -81,10 +83,13 @@
 
         if (data.view.proceedingTypeChargeDetailView.sentencingConfirmation) {
             isReadOnlyProceedingSentencingConfirmation.set(true);
-            proceedingSentencingIsCertified.set(true);
+
+            data.view.proceedingTypeChargeDetailView.sentencingConfirmation
+                .status === true
+                ? proceedingSentencingIsCertified.set(true)
+                : proceedingSentencingIsCertified.set(false);
         } else {
             isReadOnlyProceedingSentencingConfirmation.set(false);
-            proceedingSentencingIsCertified.set(false);
         }
 
         if (data.view.proceedingTypeChargeDetailView.appealDetails) {
@@ -96,9 +101,16 @@
             hasAppeal = false;
         }
 
-        data.view.proceedingTypeChargeDetailView.appealConfirmation
-            ? isReadOnlyProceedingAppealConfirmation.set(true)
-            : isReadOnlyProceedingAppealConfirmation.set(false);
+        if (data.view.proceedingTypeChargeDetailView.appealConfirmation) {
+            isReadOnlyProceedingAppealConfirmation.set(true);
+
+            data.view.proceedingTypeChargeDetailView.appealConfirmation
+                .status === true
+                ? proceedingSentencingAppealIsCertified.set(true)
+                : proceedingSentencingAppealIsCertified.set(false);
+        } else {
+            isReadOnlyProceedingAppealConfirmation.set(false);
+        }
     }
 
     // Superforms
@@ -126,7 +138,7 @@
         resetForm: false,
         multipleSubmits: 'allow',
         validationMethod: 'oninput',
-        validators: false,
+        validators: zod(_proceedingApproverSchema),
         taintedMessage: false,
         onSubmit() {
             $integrityDirectorApprovalForm.integrityId = Number(
@@ -181,7 +193,7 @@
         resetForm: false,
         multipleSubmits: 'allow',
         validationMethod: 'oninput',
-        validators: false,
+        validators: zod(_proceedingApproverSchema),
         taintedMessage: false,
         onSubmit() {
             $sentencingConfirmationForm.integrityId = Number(
@@ -207,15 +219,21 @@
         validators: zod(_proceedingAppealSchema),
         taintedMessage: false,
         onSubmit() {
+            if (!$appealMeetingForm.meetingResult) {
+                $appealMeetingForm.result =
+                    $sentencingMeetingForm.meetingResult;
+            }
+
             $appealMeetingForm.result.forEach((data, index) => {
-                if (!data.result) {
-                    $appealMeetingForm.result[index].sentencing = [];
-                }
                 data.sentencing.forEach((sentence, i) => {
                     if (sentence.penaltyTypeCode !== '03') {
                         $appealMeetingForm.result[index].sentencing[
                             i
                         ].emolumenDate = [];
+                    }
+
+                    if (!data.result) {
+                        $appealMeetingForm.result[index].sentencing = [];
                     }
                 });
             });
@@ -242,7 +260,7 @@
         resetForm: false,
         multipleSubmits: 'allow',
         validationMethod: 'oninput',
-        validators: false,
+        validators: zod(_proceedingApproverSchema),
         taintedMessage: false,
         onSubmit() {
             $appealConfirmationForm.integrityId = Number(
@@ -261,21 +279,14 @@
         },
     );
 
-    const {
-        form: suspensionCriminalDetailForm,
-        errors: suspensionCriminalDetailFormErrors,
-        enhance: suspensionCriminalDetailFormEnhance,
-    } = superForm(data.forms.proceedingSuspensionCriminalDetailForm, {
-        SPA: true,
-        dataType: 'json',
-        invalidateAll: true,
-        resetForm: false,
-        multipleSubmits: 'allow',
-        validationMethod: 'oninput',
-        validators: false,
-        taintedMessage: false,
-        onSubmit() {},
-    });
+    const { form: suspensionCriminalDetailForm } = superForm(
+        data.forms.proceedingSuspensionCriminalDetailForm,
+        {
+            SPA: true,
+            dataType: 'json',
+            validators: false,
+        },
+    );
 
     $suspensionCriminalDetailForm.proceedingAction === 'Rayuan dikemukakan'
         ? ($suspensionMeetingForm.eligibleEmolumen = 0)
@@ -369,10 +380,13 @@
 </script>
 
 <ContentHeader title="Maklumat Prosiding Tatatertib">
-    {#if $proceedingSentencingIsCertified}
+    {#if $isReadOnlyProceedingAppealMeeting}
+        <Badge color="indigo">Rayuan Dikemuka</Badge>
+    {/if}
+    {#if ($isReadOnlyProceedingChargeConfirmation && !$proceedingChargeIsCertified) || ($isReadOnlyProceedingSentencingConfirmation && !$proceedingSentencingIsCertified) || ($isReadOnlyProceedingAppealConfirmation && !$proceedingSentencingAppealIsCertified)}
+        <Badge color="red">Proses Prosiding Tidak Sah</Badge>
+    {:else if $proceedingSentencingIsCertified}
         <Badge color="dark">Proses Prosiding Tamat</Badge>
-    {:else if $isReadOnlyProceedingChargeConfirmation && !$proceedingChargeIsCertified}
-        <Badge color="red">Proses Prosiding DIBERHENTIKAN</Badge>
     {/if}
 
     <TextIconButton
@@ -987,7 +1001,7 @@
             </div>
         </StepperContentBody>
     </StepperContent>
-    {#if $isReadOnlyProceedingChargeConfirmation}
+    {#if $isReadOnlyProceedingChargeConfirmation && $proceedingChargeIsCertified}
         <StepperContent>
             <StepperContentHeader
                 title="Maklumat Keputusan Mesyuarat Prosiding Penentuan
@@ -1497,7 +1511,7 @@
                 </StepperContentBody>
             </StepperContent>
         {/if}
-        {#if (hasAppeal && $isReadOnlyProceedingSentencingConfirmation) || ($isReadOnlyProceedingSentencingConfirmation && data.roles.isDisciplineSecretaryRole)}
+        {#if $proceedingSentencingIsCertified && ((hasAppeal && $isReadOnlyProceedingSentencingConfirmation) || ($isReadOnlyProceedingSentencingConfirmation && data.roles.isDisciplineSecretaryRole))}
             <StepperContent>
                 <StepperContentHeader
                     title="Mesyuarat Keputusan Jawatankuasa Rayuan Tatatertib"
