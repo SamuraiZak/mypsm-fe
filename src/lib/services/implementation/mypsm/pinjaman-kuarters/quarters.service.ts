@@ -12,9 +12,10 @@ import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
 
 export class QuartersServices {
-    static async method(param: CommonListRequestDTO) {
+    //get moving in list
+    static async getMovingInList(param: CommonListRequestDTO) {
         try {
-            let url: Input = '';
+            let url: Input = 'quarter/moving_in/list';
 
             const response: Response = await http
                 .post(url, {
