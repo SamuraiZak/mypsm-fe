@@ -3,52 +3,70 @@
     import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
-    import CustomTable from '$lib/components/table/CustomTable.svelte';
     import { _updateChargeAppealTable } from './+layout';
-    import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
-    import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
-    import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
-    import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type {
+        TableSettingDTO,
+    } from '$lib/dto/core/table/table.dto';
     import type {
         ProceedingChargeDetailResponseDTO,
         ProceedingChargeListResponseDTO,
     } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
+    import DataTable from '$lib/components/table/DataTable.svelte';
+    import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
 
     export let data: LayoutData;
     let rowData: ProceedingChargeDetailResponseDTO;
-    let param: CommonListRequestDTO = data.param;
 
-    // Table list - Charge Table
-    let proceedingChargeAppealTable: TableDTO = {
-        param: param,
+    // Table list - Charge Appeal Table
+    let chargeListTable: TableSettingDTO = {
+        param: data.param,
         meta: data.responses.proceedingListResponse.data?.meta ?? {
+            pageSize: 1,
             pageNum: 1,
-            pageSize: 5,
-            totalData: 4,
+            totalData: 1,
             totalPage: 1,
         },
         data:
             (data.list.proceedingList as ProceedingChargeListResponseDTO) ?? [],
-        hiddenData: ['integrityId', 'employeeId'],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['integrityId', 'employeeId', 'declarationLetter'],
+        dictionary: [
+            {
+                english: 'proceedingMeetingDate',
+                malay: 'Tarikh Mesyuarat Prosiding',
+            },
+            {
+                english: 'chargeMeetingDate',
+                malay: 'Tarikh Mesyuarat Pertuduhan',
+            },
+            {
+                english: 'chargeMeetingResult',
+                malay: 'Keputusan Mesyuarat Pertuduhan',
+            },
+            {
+                english: 'disciplinaryType',
+                malay: 'Jenis Prosiding Tatatertib',
+            },
+            {
+                english: 'isAppeal',
+                malay: 'Rayuan Dikemuka',
+            },
+        ],
+        url: 'integrity/proceeding/appeal/list',
+        id: 'chargeListTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
     };
-
-    async function _updateProceedingChargeAppealTable() {
-        _updateChargeAppealTable(proceedingChargeAppealTable.param).then((value) => {
-            proceedingChargeAppealTable.data = value.response.data?.dataList ?? [];
-            proceedingChargeAppealTable.meta = value.response.data?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            proceedingChargeAppealTable.param.pageSize =
-                proceedingChargeAppealTable.meta.pageSize;
-            proceedingChargeAppealTable.param.pageNum =
-                proceedingChargeAppealTable.meta.pageNum;
-        });
-    }
 </script>
 
 <!-- content header starts here -->
@@ -64,27 +82,39 @@
     <div
         class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
     >
-        <!-- Table filter placeholder -->
-        <FilterCard onSearch={_updateProceedingChargeAppealTable}>
-            <FilterSelectField
-                label="Status"
-                options={data.selectionOptions.statusLookup}
-                bind:inputValue={proceedingChargeAppealTable.param.filter.status}
-            ></FilterSelectField>
-        </FilterCard>
         <div class="flex max-h-full w-full flex-col items-start justify-start">
-            <CustomTable
+            <DataTable
                 title="Senarai Rekod Prosiding - Pertuduhan/Hukuman"
-                onUpdate={_updateProceedingChargeAppealTable}
-                enableDetail
-                bind:tableData={proceedingChargeAppealTable}
+                bind:tableData={chargeListTable}
                 bind:passData={rowData}
                 detailActions={() => {
                     const route = `../integriti/prosiding/${rowData.integrityId}-${rowData.employeeId}-${rowData.isAppeal}`;
 
                     goto(route);
                 }}
-            ></CustomTable>
+            >
+                <FilterWrapper slot="filter">
+                    <FilterTextField
+                        label="No. Pekerja"
+                        bind:inputValue={chargeListTable.param.filter
+                            .employeeNumber}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="Nama Kakitangan"
+                        bind:inputValue={chargeListTable.param.filter.name}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="No. Kad Pengenalan"
+                        bind:inputValue={chargeListTable.param.filter
+                            .identityCardNumber}
+                    ></FilterTextField>
+                    <FilterSelectField
+                        label="Status"
+                        options={data.selectionOptions.statusLookup}
+                        bind:inputValue={chargeListTable.param.filter.status}
+                    ></FilterSelectField>
+                </FilterWrapper>
+            </DataTable>
         </div>
     </div>
 </section>
