@@ -63,3 +63,77 @@ export const SchemaHalfPayLeave = z
             });
         }
     });
+
+// ===========================================================
+// Revamps
+// ===========================================================
+
+// leave endorsment
+export const LeaveEndorsmentDtoSchema = z.object({
+    leaveId: z.number(),
+    leaveTypeCode: z.string(),
+    remark: z.string(),
+    status: z.boolean(),
+});
+
+// endorser details
+export const LeaveEndorserDetailsSchema = z.object({
+    leaveId: z.number(),
+    leaveTypeCode: z.string(),
+    supporter: z.string(),
+    approver: z.string(),
+});
+
+// common leave details
+export const LeaveCommonDetailsSchema = z.object({
+    leaveTypeCode: z.string(),
+    startDate: z.string(),
+    endDate: z.string(),
+    reason: z.string(),
+    startHalfDayOption: z.boolean(),
+    startHalfDayType: z.string(),
+    endHalfDayOption: z.boolean(),
+    endHalfDayType: z.string(),
+});
+
+// unrecorded leave
+export const LeaveUnrecordedDetailsSchema = z.object({
+    leaveTypeCode: z.string(),
+    startDate: z.string(),
+    endDate: z.string(),
+    category: z.string(),
+    reason: z.string(),
+    startHalfDayOption: z.boolean(),
+    startHalfDayType: z.string(),
+    endHalfDayOption: z.boolean(),
+    endHalfDayType: z.string(),
+});
+
+// delivery leave
+export const LeaveDeliveryDetailsSchema = z.object({
+    leaveTypeCode: z.string(),
+    expectedDeliveryDate: z.string(),
+    startDate: z.string(),
+    endDate: z.string(),
+    reason: z.string(),
+    startHalfDayOption: z.boolean(),
+    startHalfDayType: z.string(),
+    endHalfDayOption: z.boolean(),
+    endHalfDayType: z.string(),
+});
+
+// study leave
+export const LeaveStudyDetailsSchema = z.object({
+    leaveTypeCode: z.string(),
+    fieldOfStudy: z.string(),
+    institution: z.string(),
+    certificationType: z.string(),
+    courseName: z.string(),
+    startDate: z.string(),
+    endDate: z.string(),
+    startHalfDayOption: z.boolean(),
+    startHalfDayType: z.string(),
+    endHalfDayOption: z.boolean(),
+    endHalfDayType: z.string(),
+    reason: z.string(),
+});
