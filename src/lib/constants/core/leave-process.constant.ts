@@ -210,4 +210,23 @@ export class LeaveProcessConstant {
         meeting: false,
         document: true,
     };
+
+    public static list: LeaveApplicationProcessDTO[] = [
+        this.replacementLeave,
+        this.unrecordedLeave,
+        this.halfPaidLeave,
+        this.unpaidLeave,
+        this.earlyMaternityLeave,
+        this.officerMaternityLeave,
+        this.partnerMaternityLeave,
+        this.hajiLeave,
+        this.quarantineLeave,
+        this.unpaidNurseryLeave,
+        this.studyLeave,
+        this.absenceLeave,
+        this.extendedSickLeave,
+        this.unpaidFollowPartnerLeave,
+        this.cancerLeave,
+        this.tbLeave,
+    ];
 }
