@@ -62,10 +62,6 @@ export class SidebarConstant {
                             path: '/cuti/permohonan',
                         },
                         {
-                            name: 'Laporan Cuti',
-                            path: '/cuti/laporan-cuti',
-                        },
-                        {
                             name: 'Cuti Rehat, Kecemasan, Sakit',
                             path: '/cuti/cuti-rehat-kecemasan-sakit',
                         },
