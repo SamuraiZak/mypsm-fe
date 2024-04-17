@@ -21,13 +21,6 @@
     import { LeaveTypeConstant } from '$lib/constants/core/leave-type.constant';
     import { Alert } from 'flowbite-svelte';
     import { Toaster } from 'svelte-french-toast';
-    import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
-    import {
-        _leaveCommonFormSubmit,
-        _leaveDeliveryFormSubmit,
-        _leaveStudyFormSubmit,
-        _leaveUnrecordedFormSubmit,
-    } from './+page';
 
     export let data: PageData;
 
@@ -40,14 +33,7 @@
         id: 'leaveCommonForm',
         SPA: true,
         validators: zodClient(LeaveCommonDetailsSchema),
-        onSubmit(input) {
-            $leaveCommonForm.leaveTypeCode = data.props.currentLeaveType.code;
-
-            _leaveCommonFormSubmit(
-                $leaveCommonForm,
-                data.props.currentLeaveType,
-            );
-        },
+        onSubmit(input) {},
     });
 
     // unrecorded leave
@@ -59,15 +45,7 @@
         id: 'leaveUnrecordedForm',
         SPA: true,
         validators: zodClient(LeaveUnrecordedDetailsSchema),
-        onSubmit(input) {
-            $leaveUnrecordedForm.leaveTypeCode =
-                data.props.currentLeaveType.code;
-
-            _leaveUnrecordedFormSubmit(
-                $leaveUnrecordedForm,
-                data.props.currentLeaveType,
-            );
-        },
+        onSubmit(input) {},
     });
 
     // delivery leave
@@ -79,14 +57,7 @@
         id: 'leaveDeliveryForm',
         SPA: true,
         validators: zodClient(LeaveDeliveryDetailsSchema),
-        onSubmit(input) {
-            $leaveDeliveryForm.leaveTypeCode = data.props.currentLeaveType.code;
-
-            _leaveDeliveryFormSubmit(
-                $leaveDeliveryForm,
-                data.props.currentLeaveType,
-            );
-        },
+        onSubmit(input) {},
     });
 
     // study leave
@@ -98,21 +69,8 @@
         id: 'leaveStudyForm',
         SPA: true,
         validators: zodClient(LeaveStudyDetailsSchema),
-        onSubmit(input) {
-            $leaveStudyForm.leaveTypeCode = data.props.currentLeaveType.code;
-
-            _leaveStudyFormSubmit($leaveStudyForm, data.props.currentLeaveType);
-        },
+        onSubmit(input) {},
     });
-
-    function handleLeaveTypeChange() {
-        let currentLeaveType: LookupDTO =
-            LeaveTypeConstant.list.find(
-                (item) => item.code == data.props.currentLeaveTypeCode,
-            ) ?? LeaveTypeConstant.unrecordedLeave;
-
-        data.props.currentLeaveType = currentLeaveType;
-    }
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -167,7 +125,7 @@
             </StepperContentHeader>
             <StepperContentBody>
                 <div
-                    class="flex h-fit w-full flex-col items-start justify-start gap-4 p-4"
+                    class="flex h-fit w-full flex-col items-start justify-start gap-4"
                 >
                     <div class="flex w-full flex-col gap-10 lg:w-1/2">
                         <Alert color="blue">
@@ -188,9 +146,6 @@
                                 label={'Jenis Cuti'}
                                 bind:val={data.props.currentLeaveTypeCode}
                                 options={data.props.leaveTypeDropdown}
-                                onValueChange={() => {
-                                    handleLeaveTypeChange();
-                                }}
                             ></CustomSelectField>
                         </div>
                         {#if data.props.currentLeaveTypeCode == LeaveTypeConstant.unrecordedLeave.code}
@@ -492,10 +447,10 @@
                                             .halfDayOptionDropdown}
                                     ></CustomSelectField>
                                     <CustomSelectField
-                                        id="startHalfDayType"
+                                        id="startHalfDayOption"
                                         label={'Pagi / Petang'}
-                                        bind:val={$leaveCommonForm.startHalfDayType}
-                                        errors={$leaveCommonErrors.startHalfDayType}
+                                        bind:val={$leaveCommonForm.startHalfDayOption}
+                                        errors={$leaveCommonErrors.startHalfDayOption}
                                         options={data.props.halfDayTypeDropdown}
                                     ></CustomSelectField>
                                 </div>
@@ -519,10 +474,10 @@
                                             .halfDayOptionDropdown}
                                     ></CustomSelectField>
                                     <CustomSelectField
-                                        id="endHalfDayType"
+                                        id="startHalfDayOption"
                                         label={'Pagi / Petang'}
-                                        bind:val={$leaveCommonForm.endHalfDayType}
-                                        errors={$leaveCommonErrors.endHalfDayType}
+                                        bind:val={$leaveCommonForm.startHalfDayOption}
+                                        errors={$leaveCommonErrors.startHalfDayOption}
                                         options={data.props.halfDayTypeDropdown}
                                     ></CustomSelectField>
                                 </div>

@@ -141,15 +141,17 @@ export async function _leaveCommonFormSubmit(
     const form = await superValidate(formData, zod(LeaveCommonDetailsSchema));
 
     if (form.valid) {
-        const response =
-            await LeaveApplicationServices.addCommonLeave(formData);
+        const response = await LeaveApplicationServices.addCommonLeave(
+            formData,
+            leaveType.code,
+        );
 
         if (response.status == 'success') {
             const result: LeaveCommonDetailsDTO = response.data
                 ?.details as LeaveCommonDetailsDTO;
 
             let url =
-                '/cuti/permohonan/' +
+                '/cuti/permohonan_cuti/' +
                 leaveType.description +
                 '/' +
                 result.leaveId;
@@ -183,7 +185,7 @@ export async function _leaveUnrecordedFormSubmit(
                 ?.details as LeaveUnrecordedDetailsDTO;
 
             let url =
-                '/cuti/permohonan/' +
+                '/cuti/permohonan_cuti/' +
                 leaveType.description +
                 '/' +
                 result.leaveId;
@@ -206,15 +208,17 @@ export async function _leaveDeliveryFormSubmit(
     const form = await superValidate(formData, zod(LeaveDeliveryDetailsSchema));
 
     if (form.valid) {
-        const response =
-            await LeaveApplicationServices.addDeliveryLeave(formData);
+        const response = await LeaveApplicationServices.addDeliveryLeave(
+            formData,
+            leaveType.code,
+        );
 
         if (response.status == 'success') {
             const result: LeaveDeliveryDetailsDTO = response.data
                 ?.details as LeaveDeliveryDetailsDTO;
 
             let url =
-                '/cuti/permohonan/' +
+                '/cuti/permohonan_cuti/' +
                 leaveType.description +
                 '/' +
                 result.leaveId;
@@ -244,7 +248,7 @@ export async function _leaveStudyFormSubmit(
                 ?.details as LeaveStudyDetailsDTO;
 
             let url =
-                '/cuti/permohonan/' +
+                '/cuti/permohonan_cuti/' +
                 leaveType.description +
                 '/' +
                 result.leaveId;
