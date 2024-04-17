@@ -53,16 +53,48 @@
         },
     };
 
+    // Table list - Service Statement Table
+    let serviceStatementListTable: TableSettingDTO = {
+        param: data.param,
+        meta: data.responses.serviceStatementListResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: data.responses.serviceStatementListResponse.data?.dataList ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: [],
+        dictionary: [
+            {
+                english: 'proceedingMeetingDate',
+                malay: 'Tarikh Mesyuarat Prosiding',
+            },
+        ],
+        url: 'service_record/service_statement',
+        id: 'serviceStatementListTable',
+        option: {
+            checkbox: false,
+            detail: false,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
+    };
+
     // Superforms
-    const { form } = superForm(data.forms.proceedingStaffInfoForm, {
+    const { form } = superForm(data.forms.personalDetailForm, {
         SPA: true,
         dataType: 'json',
         validators: false,
     });
 
     const { form: academicInfoForm } = superForm(
-        data.forms.academicInfoForm,
-
+        data.forms.qualificationInfoForm,
         {
             SPA: true,
             dataType: 'json',
@@ -93,7 +125,7 @@
 >
     <CustomTab>
         <CustomTabContent title="Umum">
-            <div class="flex w-full flex-col gap-2">
+            <div class="flex w-full flex-col gap-2 px-4">
                 <!-- Maklumat Peperiksaan -->
                 <ContentHeader
                     title="Maklumat Pegawai"
@@ -617,21 +649,15 @@
                 >
                     <DataTable
                         title="Senarai Rekod Perkhidmatan"
-                        bind:tableData={chargeListTable}
-                        bind:passData={rowData}
-                        detailActions={() => {
-                            const route = `../integriti/prosiding/${rowData.integrityId}-${rowData.employeeId}-${rowData.isAppeal}`;
-
-                            goto(route);
-                        }}
+                        bind:tableData={serviceStatementListTable}
                     >
                         <FilterWrapper slot="filter">
                             <FilterSelectField label="Status"
                             ></FilterSelectField>
                             <FilterDateField
                                 label="Tarikh"
-                                bind:inputValue={chargeListTable.param.filter
-                                    .status}
+                                bind:inputValue={serviceStatementListTable.param
+                                    .filter.status}
                             ></FilterDateField>
                         </FilterWrapper>
                     </DataTable>
