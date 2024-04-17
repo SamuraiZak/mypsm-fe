@@ -255,41 +255,41 @@
                         borderClass="border-none"
                     />
                     <CustomTextField
-                        label="Jumlah Tunggakan (RM)"
+                        label="Jumlah Dibayar (RM)"
                         disabled
-                        id="amountToPay"
-                        bind:val={data.paymentDetail.amountToPay}
+                        id="totalPayment"
+                        bind:val={data.employeePaymentDetail.totalPayment}
                     />
                     <CustomTextField
                         label="Kaedah Pembayaran"
                         disabled
                         id="paymentMethod"
-                        bind:val={data.paymentDetail.paymentMethod}
+                        bind:val={data.employeePaymentDetail.paymentMethod}
                     />
                     <CustomTextField
                         label="No. Rujukan Transaksi"
                         disabled
                         id="transactionNumber"
-                        bind:val={data.paymentDetail.transactionNumber}
+                        bind:val={data.employeePaymentDetail.transactionNumber}
                     />
                     <CustomTextField
                         label="Bank Penerima"
                         disabled
                         id="receiverBank"
-                        bind:val={data.paymentDetail.receiverBank}
+                        bind:val={data.employeePaymentDetail.receiverBank}
                     />
                     <CustomTextField
                         label="No. Akaun Bank Penerima"
                         disabled
-                        id="receiverBankAcc"
-                        bind:val={data.paymentDetail.receiverBankAcc}
+                        id="receiverAcc"
+                        bind:val={data.employeePaymentDetail.receiverAcc}
                     />
                     <CustomTextField
                         label="Tarikh Transaksi"
                         disabled
                         type="date"
                         id="transactionDate"
-                        bind:val={data.paymentDetail.transactionDate}
+                        bind:val={data.employeePaymentDetail.transactionDate}
                     />
                 {/if}
             </div>

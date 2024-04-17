@@ -6,7 +6,7 @@ import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto.js';
 import type { ClinicCommonResult } from '$lib/dto/mypsm/perubatan/clinic-common-approval.dto.js';
 import type { MedicalClinicEmployeePaymentPersonalDetail } from '$lib/dto/mypsm/perubatan/tuntutan-kakitangan/clinic-employee-payment-personal-detail.dto';
 import type { MedicalEmployeeMakePayment } from '$lib/dto/mypsm/perubatan/tuntutan-kakitangan/employee-make-payment.dto';
-import type { MedicalEmployeeClaimPaymentDetail } from '$lib/dto/mypsm/perubatan/tuntutan-kakitangan/employee-payment-detail.dto';
+import type { MedicalEmployeeClaimPayment, MedicalEmployeeClaimPaymentDetail } from '$lib/dto/mypsm/perubatan/tuntutan-kakitangan/employee-payment-detail.dto';
 import { _clinicCommonResultSchema, _clinicPaymentSchema } from '$lib/schemas/mypsm/medical/medical-schema.js';
 import { MedicalServices } from '$lib/services/implementation/mypsm/perubatan/medical.service';
 import { superValidate } from 'sveltekit-superforms';
@@ -21,6 +21,7 @@ export const load = async ({ params }) => {
 
     let paymentPersonalDetail = {} as MedicalClinicEmployeePaymentPersonalDetail;
     let paymentDetail = {} as MedicalEmployeeClaimPaymentDetail;
+    let employeePaymentDetail = {} as MedicalEmployeeClaimPayment;
     let secretaryApproval = {} as ClinicCommonResult;
 
 
@@ -38,10 +39,10 @@ export const load = async ({ params }) => {
         secretaryApproval =
             secretaryApprovalResponse.data?.details as ClinicCommonResult;
     } else if (currentRoleCode == UserRoleConstant.kakitangan.code) {
-        const paymentDetailResponse: CommonResponseDTO =
+        const employeePaymentDetailResponse: CommonResponseDTO =
             await MedicalServices.getEmployeePaymenDetailForEmployee(currentId);
-        paymentDetail =
-            paymentDetailResponse.data?.details as MedicalEmployeeClaimPaymentDetail;
+            employeePaymentDetail =
+            employeePaymentDetailResponse.data?.details as MedicalEmployeeClaimPayment;
     }
 
     const paymentForm = await superValidate(zod(_clinicPaymentSchema))
@@ -54,6 +55,7 @@ export const load = async ({ params }) => {
         paymentForm,
         lookup,
         secretaryApprovalForm,
+        employeePaymentDetail,
     }
 }
 

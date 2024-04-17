@@ -7,6 +7,14 @@ export interface MedicalEmployeeClaimPaymentDetail {
     transactionDate:   string;
 }
 
+export interface MedicalEmployeeClaimPayment {
+    totalPayment:       number;
+    paymentMethod:     string;
+    transactionNumber: string;
+    receiverBank:      string;
+    receiverAcc:   string;
+    transactionDate:   string;
+}
 // Converts JSON strings to/from your types
 export class MedicalEmployeeClaimPaymentDetailConvert {
     public static fromJson(json: string): MedicalEmployeeClaimPaymentDetail {
