@@ -4,30 +4,50 @@ import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
 import type {
-    LeaveAddExtendedSickDTO,
-    LeaveAddHalfPayDTO,
-    LeaveAddUnrecordedDTO,
-    LeaveViewExtendedSickDTO,
-    LeaveViewHalfPayDTO,
-    LeaveViewUnrecordedDTO,
+    LeaveCommonDetailsDTO,
+    LeaveDeliveryDetailsDTO,
+    LeaveStudyDetailsDTO,
+    LeaveUnrecordedDetailsDTO,
 } from '$lib/dto/mypsm/leave/leave.dto';
 import { LookupHelper } from '$lib/helpers/core/lookup.helper';
+import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
-    SchemaExtendedSickLeave,
-    SchemaHalfPayLeave,
-    SchemaUnrecordedLeave,
+    LeaveCommonDetailsSchema,
+    LeaveDeliveryDetailsSchema,
+    LeaveStudyDetailsSchema,
+    LeaveUnrecordedDetailsSchema,
 } from '$lib/schemas/mypsm/leave/leave.schema';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
-import { LeaveServices } from '$lib/services/implementation/mypsm/leave/leave.service';
-import { fail } from '@sveltejs/kit';
+import { LeaveApplicationServices } from '$lib/services/implementation/mypsm/leave/leave-application.service';
+import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export async function load() {
-    // =======================================================================
-    // prep variables
-    // =======================================================================
-    // get list of leave type
+    // ============================================
+    // create forms
+    // ============================================
+    // leave common form
+    const leaveCommonForm = await superValidate(zod(LeaveCommonDetailsSchema));
+
+    // leave unrecorded form
+    const leaveUnrecordedForm = await superValidate(
+        zod(LeaveUnrecordedDetailsSchema),
+    );
+
+    // leave delivery form
+    const leaveDeliveryForm = await superValidate(
+        zod(LeaveDeliveryDetailsSchema),
+    );
+
+    // leave study form
+    const leaveStudyForm = await superValidate(zod(LeaveStudyDetailsSchema));
+
+    // ============================================
+    // get all enums
+    // ============================================
+
+    // get leave type
     let leaveTypeList: LookupDTO[] = [];
 
     const leaveTypeResponse: CommonResponseDTO =
@@ -45,9 +65,6 @@ export async function load() {
 
     const leaveTypeDropdown: DropdownDTO[] =
         LookupHelper.toDropdownProper(leaveTypeList);
-
-    // set current leave type code to default
-    let currentLeaveTypeCode: string = '';
 
     // get list of half day option
     const halfDayOptionDropdown: DropdownDTO[] = [
@@ -93,119 +110,151 @@ export async function load() {
     const unrecordedLeaveTypeDropdown: DropdownDTO[] =
         LookupHelper.toDropdownProper(unrecordedLeaveTypeList);
 
-    // =======================================================================
-    // create form
-    // =======================================================================
+    // set default current leave type code
+    const currentLeaveType: LookupDTO = LeaveTypeConstant.unrecordedLeave;
 
-    // unrecorded leave
-    const unrecordedLeaveForm = await superValidate(zod(SchemaUnrecordedLeave));
-
-    // extended sick leave
-    const extendedSickLeaveForm = await superValidate(
-        zod(SchemaExtendedSickLeave),
-    );
-
-    // half paid leave
-    const halfPayLeaveForm = await superValidate(zod(SchemaHalfPayLeave));
+    const currentLeaveTypeCode: string = currentLeaveType.code;
 
     return {
         props: {
+            currentLeaveType,
             currentLeaveTypeCode,
             leaveTypeDropdown,
-            halfDayOptionDropdown,
-            halfDayTypeDropdown,
             unrecordedLeaveTypeDropdown,
+            halfDayTypeDropdown,
+            halfDayOptionDropdown,
         },
         forms: {
-            unrecordedLeaveForm,
-            extendedSickLeaveForm,
-            halfPayLeaveForm,
+            leaveCommonForm,
+            leaveUnrecordedForm,
+            leaveDeliveryForm,
+            leaveStudyForm,
         },
     };
 }
 
-
-// submit unrecorded leave
-export async function _submitUnrecordedLeaveForm(
-    formData: LeaveAddUnrecordedDTO,
+// submit common leave form
+export async function _leaveCommonFormSubmit(
+    formData: LeaveCommonDetailsDTO,
+    leaveType: LookupDTO,
 ) {
-    const form = await superValidate(formData, zod(SchemaUnrecordedLeave));
+    const form = await superValidate(formData, zod(LeaveCommonDetailsSchema));
 
     if (form.valid) {
-        const response: CommonResponseDTO =
-            await LeaveServices.addUnrecordedLeave(formData);
+        const response =
+            await LeaveApplicationServices.addCommonLeave(formData);
 
         if (response.status == 'success') {
-            const applicationDetails: LeaveViewUnrecordedDTO = response.data
-                ?.details as LeaveViewUnrecordedDTO;
+            const result: LeaveCommonDetailsDTO = response.data
+                ?.details as LeaveCommonDetailsDTO;
 
             let url =
                 '/cuti/permohonan/' +
-                LeaveTypeConstant.unrecordedLeave.description +
+                leaveType.description +
                 '/' +
-                applicationDetails.alternateUntrackedLeaveId;
-
-            goto(url);
-        }
-    } else {
-        return fail(400, form);
-    }
-}
-
-// submit extended sick leave
-export async function _submitExtendedSickLeaveForm(
-    formData: LeaveAddExtendedSickDTO,
-) {
-    const form = await superValidate(formData, zod(SchemaUnrecordedLeave));
-
-    if (form.valid) {
-        const response: CommonResponseDTO =
-            await LeaveServices.addExtendedSickLeave(formData);
-
-        if (response.status == 'success') {
-            const applicationDetails: LeaveViewExtendedSickDTO = response.data
-                ?.details as LeaveViewExtendedSickDTO;
-
-            let url =
-                '/cuti/permohonan/' +
-                LeaveTypeConstant.extendedSickLeave.description +
-                '/' +
-                applicationDetails.extendedSickLeaveId;
+                result.leaveId;
 
             setTimeout(() => {
                 goto(url);
             }, 1000);
         }
     } else {
-        return fail(400, form);
+        getErrorToast('Sila semak semula maklumat permohonan.');
+        error(400, { message: '' });
     }
 }
 
-// submit half pay leave
-export async function _submitHalfPayLeaveForm(
-    formData: LeaveAddHalfPayDTO,
+// submit common leave form
+export async function _leaveUnrecordedFormSubmit(
+    formData: LeaveUnrecordedDetailsDTO,
+    leaveType: LookupDTO,
 ) {
-    const form = await superValidate(formData, zod(SchemaUnrecordedLeave));
+    const form = await superValidate(
+        formData,
+        zod(LeaveUnrecordedDetailsSchema),
+    );
 
     if (form.valid) {
-        const response: CommonResponseDTO =
-            await LeaveServices.addHalfPayLeave(formData);
+        const response =
+            await LeaveApplicationServices.addUnrecordedLeave(formData);
 
         if (response.status == 'success') {
-            const applicationDetails: LeaveViewHalfPayDTO = response.data
-                ?.details as LeaveViewHalfPayDTO;
+            const result: LeaveUnrecordedDetailsDTO = response.data
+                ?.details as LeaveUnrecordedDetailsDTO;
 
             let url =
                 '/cuti/permohonan/' +
-                LeaveTypeConstant.extendedSickLeave.description +
+                leaveType.description +
                 '/' +
-                applicationDetails.halfPayLeaveId;
+                result.leaveId;
 
             setTimeout(() => {
                 goto(url);
             }, 1000);
         }
     } else {
-        return fail(400, form);
+        getErrorToast('Sila semak semula maklumat permohonan.');
+        error(400, { message: '' });
+    }
+}
+
+// submit Delivery leave form
+export async function _leaveDeliveryFormSubmit(
+    formData: LeaveDeliveryDetailsDTO,
+    leaveType: LookupDTO,
+) {
+    const form = await superValidate(formData, zod(LeaveDeliveryDetailsSchema));
+
+    if (form.valid) {
+        const response =
+            await LeaveApplicationServices.addDeliveryLeave(formData);
+
+        if (response.status == 'success') {
+            const result: LeaveDeliveryDetailsDTO = response.data
+                ?.details as LeaveDeliveryDetailsDTO;
+
+            let url =
+                '/cuti/permohonan/' +
+                leaveType.description +
+                '/' +
+                result.leaveId;
+
+            setTimeout(() => {
+                goto(url);
+            }, 1000);
+        }
+    } else {
+        getErrorToast('Sila semak semula maklumat permohonan.');
+        error(400, { message: '' });
+    }
+}
+
+// submit common leave form
+export async function _leaveStudyFormSubmit(
+    formData: LeaveStudyDetailsDTO,
+    leaveType: LookupDTO,
+) {
+    const form = await superValidate(formData, zod(LeaveStudyDetailsSchema));
+
+    if (form.valid) {
+        const response = await LeaveApplicationServices.addStudyLeave(formData);
+
+        if (response.status == 'success') {
+            const result: LeaveStudyDetailsDTO = response.data
+                ?.details as LeaveStudyDetailsDTO;
+
+            let url =
+                '/cuti/permohonan/' +
+                leaveType.description +
+                '/' +
+                result.leaveId;
+
+            setTimeout(() => {
+                goto(url);
+            }, 1000);
+        }
+    } else {
+        getErrorToast('Sila semak semula maklumat permohonan.');
+        error(400, { message: '' });
     }
 }

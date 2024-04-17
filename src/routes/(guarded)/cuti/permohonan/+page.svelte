@@ -1,6 +1,5 @@
 <script lang="ts">
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
-    import type { PageData } from './$types';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
@@ -10,6 +9,7 @@
     import { goto } from '$app/navigation';
     import { LeaveTypeConstant } from '$lib/constants/core/leave-type.constant';
     import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
+    import type { PageData } from './$types';
 
     export let data: PageData;
 
@@ -26,15 +26,15 @@
         data: data.props.response.data?.dataList ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: [],
+        hiddenColumn: ['leaveId', 'employeeNumber', 'leaveCode'],
         dictionary: [
             {
                 english: 'identityCardNumber',
                 malay: 'No. Kad Pengenalan',
             },
         ],
-        url: 'leave/report/entitlement',
-        id: 'leaveEntitlementTable',
+        url: 'leave/application_list',
+        id: 'leaveApplicationTable',
         option: {
             checkbox: false,
             detail: true,

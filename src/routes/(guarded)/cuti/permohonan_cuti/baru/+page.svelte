@@ -22,6 +22,12 @@
     import { Alert } from 'flowbite-svelte';
     import { Toaster } from 'svelte-french-toast';
     import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
+    import {
+        _leaveCommonFormSubmit,
+        _leaveDeliveryFormSubmit,
+        _leaveStudyFormSubmit,
+        _leaveUnrecordedFormSubmit,
+    } from './+page';
 
     export let data: PageData;
 
@@ -34,7 +40,14 @@
         id: 'leaveCommonForm',
         SPA: true,
         validators: zodClient(LeaveCommonDetailsSchema),
-        onSubmit(input) {},
+        onSubmit(input) {
+            $leaveCommonForm.leaveTypeCode = data.props.currentLeaveType.code;
+
+            _leaveCommonFormSubmit(
+                $leaveCommonForm,
+                data.props.currentLeaveType,
+            );
+        },
     });
 
     // unrecorded leave
@@ -46,7 +59,15 @@
         id: 'leaveUnrecordedForm',
         SPA: true,
         validators: zodClient(LeaveUnrecordedDetailsSchema),
-        onSubmit(input) {},
+        onSubmit(input) {
+            $leaveUnrecordedForm.leaveTypeCode =
+                data.props.currentLeaveType.code;
+
+            _leaveUnrecordedFormSubmit(
+                $leaveUnrecordedForm,
+                data.props.currentLeaveType,
+            );
+        },
     });
 
     // delivery leave
@@ -58,7 +79,14 @@
         id: 'leaveDeliveryForm',
         SPA: true,
         validators: zodClient(LeaveDeliveryDetailsSchema),
-        onSubmit(input) {},
+        onSubmit(input) {
+            $leaveDeliveryForm.leaveTypeCode = data.props.currentLeaveType.code;
+
+            _leaveDeliveryFormSubmit(
+                $leaveDeliveryForm,
+                data.props.currentLeaveType,
+            );
+        },
     });
 
     // study leave
@@ -70,7 +98,11 @@
         id: 'leaveStudyForm',
         SPA: true,
         validators: zodClient(LeaveStudyDetailsSchema),
-        onSubmit(input) {},
+        onSubmit(input) {
+            $leaveStudyForm.leaveTypeCode = data.props.currentLeaveType.code;
+
+            _leaveStudyFormSubmit($leaveStudyForm, data.props.currentLeaveType);
+        },
     });
 
     function handleLeaveTypeChange() {
@@ -80,11 +112,6 @@
             ) ?? LeaveTypeConstant.unrecordedLeave;
 
         data.props.currentLeaveType = currentLeaveType;
-
-        $leaveCommonForm.leaveTypeCode = data.props.currentLeaveType.code;
-        $leaveUnrecordedForm.leaveTypeCode = data.props.currentLeaveType.code;
-        $leaveDeliveryForm.leaveTypeCode = data.props.currentLeaveType.code;
-        $leaveStudyForm.leaveTypeCode = data.props.currentLeaveType.code;
     }
 </script>
 
@@ -107,9 +134,7 @@
 >
     <Stepper>
         <StepperContent>
-            <StepperContentHeader
-                title="Butiran Permohonan"
-            >
+            <StepperContentHeader title="Butiran Permohonan">
                 {#if data.props.currentLeaveTypeCode == LeaveTypeConstant.unrecordedLeave.code}
                     <TextIconButton
                         form="leaveUnrecordedForm"

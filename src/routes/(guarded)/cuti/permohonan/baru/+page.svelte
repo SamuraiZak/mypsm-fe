@@ -1,74 +1,118 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
-    import SvgChevronLeft from '$lib/assets/svg/SvgChevronLeft.svelte';
-    import TextIconButton from '$lib/components/button/TextIconButton.svelte';
-    import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
-    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
-    import { Alert } from 'flowbite-svelte';
-    import type { PageData } from './$types';
     import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
     import { zodClient } from 'sveltekit-superforms/adapters';
     import {
-        SchemaExtendedSickLeave,
-        SchemaHalfPayLeave,
-        SchemaUnrecordedLeave,
+        LeaveCommonDetailsSchema,
+        LeaveDeliveryDetailsSchema,
+        LeaveStudyDetailsSchema,
+        LeaveUnrecordedDetailsSchema,
     } from '$lib/schemas/mypsm/leave/leave.schema';
-    import { LeaveTypeConstant } from '$lib/constants/core/leave-type.constant';
-    import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
+    import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
+    import TextIconButton from '$lib/components/button/TextIconButton.svelte';
+    import SvgChevronLeft from '$lib/assets/svg/SvgChevronLeft.svelte';
+    import { goto } from '$app/navigation';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
+    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
+    import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
-    import {
-        _submitExtendedSickLeaveForm,
-        _submitHalfPayLeaveForm,
-        _submitUnrecordedLeaveForm,
-    } from './+page';
+    import { LeaveTypeConstant } from '$lib/constants/core/leave-type.constant';
+    import { Alert } from 'flowbite-svelte';
     import { Toaster } from 'svelte-french-toast';
+    import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
+    import {
+        _leaveCommonFormSubmit,
+        _leaveDeliveryFormSubmit,
+        _leaveStudyFormSubmit,
+        _leaveUnrecordedFormSubmit,
+    } from './+page';
 
     export let data: PageData;
 
+    // common leave
+    const {
+        form: leaveCommonForm,
+        errors: leaveCommonErrors,
+        enhance: leaveCommonEnhance,
+    } = superForm(data.forms.leaveCommonForm, {
+        id: 'leaveCommonForm',
+        SPA: true,
+        validators: zodClient(LeaveCommonDetailsSchema),
+        onSubmit(input) {
+            $leaveCommonForm.leaveTypeCode = data.props.currentLeaveType.code;
+
+            _leaveCommonFormSubmit(
+                $leaveCommonForm,
+                data.props.currentLeaveType,
+            );
+        },
+    });
+
     // unrecorded leave
     const {
-        form: unrecordedLeaveForm,
-        errors: unrecordedLeaveErrors,
-        enhance: unrecordedLeaveEnhance,
-    } = superForm(data.forms.unrecordedLeaveForm, {
-        id: 'unrecordedLeaveForm',
+        form: leaveUnrecordedForm,
+        errors: leaveUnrecordedErrors,
+        enhance: leaveUnrecordedEnhance,
+    } = superForm(data.forms.leaveUnrecordedForm, {
+        id: 'leaveUnrecordedForm',
         SPA: true,
-        validators: zodClient(SchemaUnrecordedLeave),
+        validators: zodClient(LeaveUnrecordedDetailsSchema),
         onSubmit(input) {
-            _submitUnrecordedLeaveForm($unrecordedLeaveForm);
+            $leaveUnrecordedForm.leaveTypeCode =
+                data.props.currentLeaveType.code;
+
+            _leaveUnrecordedFormSubmit(
+                $leaveUnrecordedForm,
+                data.props.currentLeaveType,
+            );
         },
     });
 
-    // extended sick leave
+    // delivery leave
     const {
-        form: extendedSickLeaveForm,
-        errors: extendedSickLeaveErrors,
-        enhance: extendedSickLeaveEnhance,
-    } = superForm(data.forms.extendedSickLeaveForm, {
-        id: 'extendedSickLeaveForm',
+        form: leaveDeliveryForm,
+        errors: leaveDeliveryErrors,
+        enhance: leaveDeliveryEnhance,
+    } = superForm(data.forms.leaveDeliveryForm, {
+        id: 'leaveDeliveryForm',
         SPA: true,
-        validators: zodClient(SchemaExtendedSickLeave),
+        validators: zodClient(LeaveDeliveryDetailsSchema),
         onSubmit(input) {
-            _submitExtendedSickLeaveForm($extendedSickLeaveForm);
+            $leaveDeliveryForm.leaveTypeCode = data.props.currentLeaveType.code;
+
+            _leaveDeliveryFormSubmit(
+                $leaveDeliveryForm,
+                data.props.currentLeaveType,
+            );
         },
     });
 
-    // half pay leave
+    // study leave
     const {
-        form: halfPayLeaveForm,
-        errors: halfPayLeaveErrors,
-        enhance: halfPayLeaveEnhance,
-    } = superForm(data.forms.halfPayLeaveForm, {
-        id: 'halfPayLeaveForm',
+        form: leaveStudyForm,
+        errors: leaveStudyErrors,
+        enhance: leaveStudyEnhance,
+    } = superForm(data.forms.leaveStudyForm, {
+        id: 'leaveStudyForm',
         SPA: true,
-        validators: zodClient(SchemaHalfPayLeave),
+        validators: zodClient(LeaveStudyDetailsSchema),
         onSubmit(input) {
-            _submitHalfPayLeaveForm($halfPayLeaveForm);
+            $leaveStudyForm.leaveTypeCode = data.props.currentLeaveType.code;
+
+            _leaveStudyFormSubmit($leaveStudyForm, data.props.currentLeaveType);
         },
     });
+
+    function handleLeaveTypeChange() {
+        let currentLeaveType: LookupDTO =
+            LeaveTypeConstant.list.find(
+                (item) => item.code == data.props.currentLeaveTypeCode,
+            ) ?? LeaveTypeConstant.unrecordedLeave;
+
+        data.props.currentLeaveType = currentLeaveType;
+    }
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -93,21 +137,28 @@
             <StepperContentHeader title="Butiran Permohonan">
                 {#if data.props.currentLeaveTypeCode == LeaveTypeConstant.unrecordedLeave.code}
                     <TextIconButton
-                        form="unrecordedLeaveForm"
+                        form="leaveUnrecordedForm"
                         type="primary"
                         label="Hantar"
                         icon="check"
                     ></TextIconButton>
-                {:else if data.props.currentLeaveTypeCode == LeaveTypeConstant.extendedSickLeave.code}
+                {:else if data.props.currentLeaveTypeCode == LeaveTypeConstant.earlyMaternityLeave.code || data.props.currentLeaveTypeCode == LeaveTypeConstant.officerMaternityLeave.code || data.props.currentLeaveTypeCode == LeaveTypeConstant.partnerMaternityLeave.code}
                     <TextIconButton
-                        form="extendedSickLeaveForm"
+                        form="leaveDeliveryForm"
                         type="primary"
                         label="Hantar"
                         icon="check"
                     ></TextIconButton>
-                {:else if data.props.currentLeaveTypeCode == LeaveTypeConstant.halfPayLeave.code}
+                {:else if data.props.currentLeaveTypeCode == LeaveTypeConstant.studyLeave.code}
                     <TextIconButton
-                        form="halfPayLeaveForm"
+                        form="leaveStudyForm"
+                        type="primary"
+                        label="Hantar"
+                        icon="check"
+                    ></TextIconButton>
+                {:else}
+                    <TextIconButton
+                        form="leaveCommonForm"
                         type="primary"
                         label="Hantar"
                         icon="check"
@@ -116,7 +167,7 @@
             </StepperContentHeader>
             <StepperContentBody>
                 <div
-                    class="flex h-fit w-full flex-col items-start justify-start gap-4"
+                    class="flex h-fit w-full flex-col items-start justify-start gap-4 p-4"
                 >
                     <div class="flex w-full flex-col gap-10 lg:w-1/2">
                         <Alert color="blue">
@@ -137,60 +188,80 @@
                                 label={'Jenis Cuti'}
                                 bind:val={data.props.currentLeaveTypeCode}
                                 options={data.props.leaveTypeDropdown}
+                                onValueChange={() => {
+                                    handleLeaveTypeChange();
+                                }}
                             ></CustomSelectField>
                         </div>
                         {#if data.props.currentLeaveTypeCode == LeaveTypeConstant.unrecordedLeave.code}
                             <!-- UNRECORDED LEAVE -->
                             <form
-                                id="unrecordedLeaveForm"
+                                id="leaveUnrecordedForm"
                                 method="POST"
-                                use:unrecordedLeaveEnhance
+                                use:leaveUnrecordedEnhance
                                 class="flex w-full flex-col items-center justify-start gap-2"
                             >
                                 <div class="flex w-full flex-col">
                                     <CustomSelectField
-                                        id="untrackedLeaveTypeCode"
+                                        id="category"
                                         label={'Jenis Cuti Tanpa Rekod'}
-                                        bind:val={$unrecordedLeaveForm.untrackedLeaveTypeCode}
-                                        errors={$unrecordedLeaveErrors.untrackedLeaveTypeCode}
+                                        bind:val={$leaveUnrecordedForm.category}
+                                        errors={$leaveUnrecordedErrors.category}
                                         options={data.props
                                             .unrecordedLeaveTypeDropdown}
                                     ></CustomSelectField>
                                 </div>
-                                <div class="flex w-full flex-col gap-2">
+                                <div
+                                    class="flex w-full flex-row items-center justify-center gap-2"
+                                >
                                     <CustomTextField
                                         id="startDate"
                                         type="date"
                                         label={'Tarikh Mula'}
-                                        bind:val={$unrecordedLeaveForm.startDate}
-                                        errors={$unrecordedLeaveErrors.startDate}
+                                        bind:val={$leaveUnrecordedForm.startDate}
+                                        errors={$leaveUnrecordedErrors.startDate}
                                     ></CustomTextField>
+
+                                    <CustomSelectField
+                                        id="startHalfDayOption"
+                                        label={'Setengah Hari'}
+                                        bind:val={$leaveUnrecordedForm.startHalfDayOption}
+                                        errors={$leaveUnrecordedErrors.startHalfDayOption}
+                                        options={data.props
+                                            .halfDayOptionDropdown}
+                                    ></CustomSelectField>
+                                    <CustomSelectField
+                                        id="startHalfDayOption"
+                                        label={'Pagi / Petang'}
+                                        bind:val={$leaveUnrecordedForm.startHalfDayOption}
+                                        errors={$leaveUnrecordedErrors.startHalfDayOption}
+                                        options={data.props.halfDayTypeDropdown}
+                                    ></CustomSelectField>
                                 </div>
-                                <div class="flex w-full flex-col gap-2">
+                                <div
+                                    class="flex w-full flex-row items-center justify-center gap-2"
+                                >
                                     <CustomTextField
                                         id="endDate"
                                         type="date"
                                         label={'Tarikh Tamat'}
-                                        bind:val={$unrecordedLeaveForm.endDate}
-                                        errors={$unrecordedLeaveErrors.endDate}
+                                        bind:val={$leaveUnrecordedForm.endDate}
+                                        errors={$leaveUnrecordedErrors.endDate}
                                     ></CustomTextField>
-                                </div>
-                                <div class="flex w-full flex-col">
+
                                     <CustomSelectField
-                                        id="halfDayOption"
-                                        label={'Adakah Anda Ingin Mengambil Cuti Setengah Hari Sahaja?'}
-                                        bind:val={$unrecordedLeaveForm.halfDayOption}
-                                        errors={$unrecordedLeaveErrors.halfDayOption}
+                                        id="endHalfDayOption"
+                                        label={'Setengah Hari'}
+                                        bind:val={$leaveUnrecordedForm.endHalfDayOption}
+                                        errors={$leaveUnrecordedErrors.endHalfDayOption}
                                         options={data.props
                                             .halfDayOptionDropdown}
                                     ></CustomSelectField>
-                                </div>
-                                <div class="flex w-full flex-col">
                                     <CustomSelectField
-                                        id="halfDayOption"
-                                        label={'Jika Ya, Sila Pilih Jenis Cuti Setengah Hari Yang Berkenaan'}
-                                        bind:val={$unrecordedLeaveForm.halfDayType}
-                                        errors={$unrecordedLeaveErrors.halfDayType}
+                                        id="startHalfDayOption"
+                                        label={'Pagi / Petang'}
+                                        bind:val={$leaveUnrecordedForm.startHalfDayOption}
+                                        errors={$leaveUnrecordedErrors.startHalfDayOption}
                                         options={data.props.halfDayTypeDropdown}
                                     ></CustomSelectField>
                                 </div>
@@ -198,54 +269,80 @@
                                     <CustomTextField
                                         id="reason"
                                         type="text"
-                                        label={'Nyatakan Alasan Anda'}
-                                        bind:val={$unrecordedLeaveForm.reason}
-                                        errors={$unrecordedLeaveErrors.reason}
+                                        label={'Alasan Permohonan'}
+                                        bind:val={$leaveUnrecordedForm.reason}
+                                        errors={$leaveUnrecordedErrors.reason}
                                     ></CustomTextField>
                                 </div>
                             </form>
-                        {:else if data.props.currentLeaveTypeCode == LeaveTypeConstant.extendedSickLeave.code}
-                            <!-- EXTENDED SICK LEAVE -->
+                        {:else if data.props.currentLeaveTypeCode == LeaveTypeConstant.earlyMaternityLeave.code || data.props.currentLeaveTypeCode == LeaveTypeConstant.officerMaternityLeave.code || data.props.currentLeaveTypeCode == LeaveTypeConstant.partnerMaternityLeave.code}
+                            <!-- DELIVERY LEAVE -->
                             <form
-                                id="extendedSickLeaveForm"
+                                id="leaveDeliveryForm"
                                 method="POST"
-                                use:extendedSickLeaveEnhance
+                                use:leaveDeliveryEnhance
                                 class="flex w-full flex-col items-center justify-start gap-2"
                             >
                                 <div class="flex w-full flex-col gap-2">
                                     <CustomTextField
+                                        id="expectedDeliveryDate"
+                                        type="date"
+                                        label={'Tarikh Anggaran Bersalin'}
+                                        bind:val={$leaveDeliveryForm.expectedDeliveryDate}
+                                        errors={$leaveDeliveryErrors.expectedDeliveryDate}
+                                    ></CustomTextField>
+                                </div>
+                                <div
+                                    class="flex w-full flex-row items-center justify-center gap-2"
+                                >
+                                    <CustomTextField
                                         id="startDate"
                                         type="date"
                                         label={'Tarikh Mula'}
-                                        bind:val={$extendedSickLeaveForm.startDate}
-                                        errors={$extendedSickLeaveErrors.startDate}
+                                        bind:val={$leaveDeliveryForm.startDate}
+                                        errors={$leaveDeliveryErrors.startDate}
                                     ></CustomTextField>
+
+                                    <CustomSelectField
+                                        id="startHalfDayOption"
+                                        label={'Setengah Hari'}
+                                        bind:val={$leaveDeliveryForm.startHalfDayOption}
+                                        errors={$leaveDeliveryErrors.startHalfDayOption}
+                                        options={data.props
+                                            .halfDayOptionDropdown}
+                                    ></CustomSelectField>
+                                    <CustomSelectField
+                                        id="startHalfDayOption"
+                                        label={'Pagi / Petang'}
+                                        bind:val={$leaveDeliveryForm.startHalfDayOption}
+                                        errors={$leaveDeliveryErrors.startHalfDayOption}
+                                        options={data.props.halfDayTypeDropdown}
+                                    ></CustomSelectField>
                                 </div>
-                                <div class="flex w-full flex-col gap-2">
+                                <div
+                                    class="flex w-full flex-row items-center justify-center gap-2"
+                                >
                                     <CustomTextField
                                         id="endDate"
                                         type="date"
                                         label={'Tarikh Tamat'}
-                                        bind:val={$extendedSickLeaveForm.endDate}
-                                        errors={$extendedSickLeaveErrors.endDate}
+                                        bind:val={$leaveDeliveryForm.endDate}
+                                        errors={$leaveDeliveryErrors.endDate}
                                     ></CustomTextField>
-                                </div>
-                                <div class="flex w-full flex-col">
+
                                     <CustomSelectField
-                                        id="halfDayOption"
-                                        label={'Adakah Anda Ingin Mengambil Cuti Setengah Hari Sahaja?'}
-                                        bind:val={$extendedSickLeaveForm.halfDayOption}
-                                        errors={$extendedSickLeaveErrors.halfDayOption}
+                                        id="endHalfDayOption"
+                                        label={'Setengah Hari'}
+                                        bind:val={$leaveDeliveryForm.endHalfDayOption}
+                                        errors={$leaveDeliveryErrors.endHalfDayOption}
                                         options={data.props
                                             .halfDayOptionDropdown}
                                     ></CustomSelectField>
-                                </div>
-                                <div class="flex w-full flex-col">
                                     <CustomSelectField
-                                        id="halfDayOption"
-                                        label={'Jika Ya, Sila Pilih Jenis Cuti Setengah Hari Yang Berkenaan'}
-                                        bind:val={$extendedSickLeaveForm.halfDayType}
-                                        errors={$extendedSickLeaveErrors.halfDayType}
+                                        id="startHalfDayOption"
+                                        label={'Pagi / Petang'}
+                                        bind:val={$leaveDeliveryForm.startHalfDayOption}
+                                        errors={$leaveDeliveryErrors.startHalfDayOption}
                                         options={data.props.halfDayTypeDropdown}
                                     ></CustomSelectField>
                                 </div>
@@ -253,54 +350,107 @@
                                     <CustomTextField
                                         id="reason"
                                         type="text"
-                                        label={'Nyatakan Alasan Anda'}
-                                        bind:val={$extendedSickLeaveForm.reason}
-                                        errors={$extendedSickLeaveErrors.reason}
+                                        label={'Alasan Permohonan'}
+                                        bind:val={$leaveDeliveryForm.reason}
+                                        errors={$leaveDeliveryErrors.reason}
                                     ></CustomTextField>
                                 </div>
                             </form>
-                        {:else if data.props.currentLeaveTypeCode == LeaveTypeConstant.halfPayLeave.code}
-                            <!-- HALF PAY LEAVE -->
+                        {:else if data.props.currentLeaveTypeCode == LeaveTypeConstant.studyLeave.code}
+                            <!-- DELIVERY LEAVE -->
                             <form
-                                id="halfPayLeaveForm"
+                                id="leaveStudyForm"
                                 method="POST"
-                                use:halfPayLeaveEnhance
+                                use:leaveStudyEnhance
                                 class="flex w-full flex-col items-center justify-start gap-2"
                             >
                                 <div class="flex w-full flex-col gap-2">
                                     <CustomTextField
-                                        id="startDate"
-                                        type="date"
-                                        label={'Tarikh Mula'}
-                                        bind:val={$halfPayLeaveForm.startDate}
-                                        errors={$halfPayLeaveErrors.startDate}
+                                        id="certificationType"
+                                        type="text"
+                                        label={'Jenis Kursus/Sijil/Pengajian'}
+                                        bind:val={$leaveStudyForm.certificationType}
+                                        errors={$leaveStudyErrors.certificationType}
                                     ></CustomTextField>
                                 </div>
                                 <div class="flex w-full flex-col gap-2">
                                     <CustomTextField
-                                        id="endDate"
-                                        type="date"
-                                        label={'Tarikh Tamat'}
-                                        bind:val={$halfPayLeaveForm.endDate}
-                                        errors={$halfPayLeaveErrors.endDate}
+                                        id="fieldOfStudy"
+                                        type="text"
+                                        label={'Bidang Pengajian'}
+                                        bind:val={$leaveStudyForm.fieldOfStudy}
+                                        errors={$leaveStudyErrors.fieldOfStudy}
                                     ></CustomTextField>
                                 </div>
-                                <div class="flex w-full flex-col">
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomTextField
+                                        id="institution"
+                                        type="text"
+                                        label={'Bidang Pengajian'}
+                                        bind:val={$leaveStudyForm.institution}
+                                        errors={$leaveStudyErrors.institution}
+                                    ></CustomTextField>
+                                </div>
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomTextField
+                                        id="courseName"
+                                        type="text"
+                                        label={'Nama Kursus'}
+                                        bind:val={$leaveStudyForm.courseName}
+                                        errors={$leaveStudyErrors.courseName}
+                                    ></CustomTextField>
+                                </div>
+                                <div
+                                    class="flex w-full flex-row items-center justify-center gap-2"
+                                >
+                                    <CustomTextField
+                                        id="startDate"
+                                        type="date"
+                                        label={'Tarikh Mula'}
+                                        bind:val={$leaveStudyForm.startDate}
+                                        errors={$leaveStudyErrors.startDate}
+                                    ></CustomTextField>
+
                                     <CustomSelectField
-                                        id="halfDayOption"
-                                        label={'Adakah Anda Ingin Mengambil Cuti Setengah Hari Sahaja?'}
-                                        bind:val={$halfPayLeaveForm.halfDayOption}
-                                        errors={$halfPayLeaveErrors.halfDayOption}
+                                        id="startHalfDayOption"
+                                        label={'Setengah Hari'}
+                                        bind:val={$leaveStudyForm.startHalfDayOption}
+                                        errors={$leaveStudyErrors.startHalfDayOption}
                                         options={data.props
                                             .halfDayOptionDropdown}
                                     ></CustomSelectField>
-                                </div>
-                                <div class="flex w-full flex-col">
                                     <CustomSelectField
-                                        id="halfDayOption"
-                                        label={'Jika Ya, Sila Pilih Jenis Cuti Setengah Hari Yang Berkenaan'}
-                                        bind:val={$halfPayLeaveForm.halfDayType}
-                                        errors={$halfPayLeaveErrors.halfDayType}
+                                        id="startHalfDayOption"
+                                        label={'Pagi / Petang'}
+                                        bind:val={$leaveStudyForm.startHalfDayOption}
+                                        errors={$leaveStudyErrors.startHalfDayOption}
+                                        options={data.props.halfDayTypeDropdown}
+                                    ></CustomSelectField>
+                                </div>
+                                <div
+                                    class="flex w-full flex-row items-center justify-center gap-2"
+                                >
+                                    <CustomTextField
+                                        id="endDate"
+                                        type="date"
+                                        label={'Tarikh Tamat'}
+                                        bind:val={$leaveStudyForm.endDate}
+                                        errors={$leaveStudyErrors.endDate}
+                                    ></CustomTextField>
+
+                                    <CustomSelectField
+                                        id="endHalfDayOption"
+                                        label={'Setengah Hari'}
+                                        bind:val={$leaveStudyForm.endHalfDayOption}
+                                        errors={$leaveStudyErrors.endHalfDayOption}
+                                        options={data.props
+                                            .halfDayOptionDropdown}
+                                    ></CustomSelectField>
+                                    <CustomSelectField
+                                        id="startHalfDayOption"
+                                        label={'Pagi / Petang'}
+                                        bind:val={$leaveStudyForm.startHalfDayOption}
+                                        errors={$leaveStudyErrors.startHalfDayOption}
                                         options={data.props.halfDayTypeDropdown}
                                     ></CustomSelectField>
                                 </div>
@@ -308,9 +458,81 @@
                                     <CustomTextField
                                         id="reason"
                                         type="text"
-                                        label={'Nyatakan Alasan Anda'}
-                                        bind:val={$halfPayLeaveForm.reason}
-                                        errors={$halfPayLeaveErrors.reason}
+                                        label={'Alasan Permohonan'}
+                                        bind:val={$leaveStudyForm.reason}
+                                        errors={$leaveStudyErrors.reason}
+                                    ></CustomTextField>
+                                </div>
+                            </form>
+                        {:else}
+                            <!-- COMMON LEAVE -->
+                            <form
+                                id="leaveCommonForm"
+                                method="POST"
+                                use:leaveCommonEnhance
+                                class="flex w-full flex-col items-center justify-start gap-2"
+                            >
+                                <div
+                                    class="flex w-full flex-row items-center justify-center gap-2"
+                                >
+                                    <CustomTextField
+                                        id="startDate"
+                                        type="date"
+                                        label={'Tarikh Mula'}
+                                        bind:val={$leaveCommonForm.startDate}
+                                        errors={$leaveCommonErrors.startDate}
+                                    ></CustomTextField>
+
+                                    <CustomSelectField
+                                        id="startHalfDayOption"
+                                        label={'Setengah Hari'}
+                                        bind:val={$leaveCommonForm.startHalfDayOption}
+                                        errors={$leaveCommonErrors.startHalfDayOption}
+                                        options={data.props
+                                            .halfDayOptionDropdown}
+                                    ></CustomSelectField>
+                                    <CustomSelectField
+                                        id="startHalfDayType"
+                                        label={'Pagi / Petang'}
+                                        bind:val={$leaveCommonForm.startHalfDayType}
+                                        errors={$leaveCommonErrors.startHalfDayType}
+                                        options={data.props.halfDayTypeDropdown}
+                                    ></CustomSelectField>
+                                </div>
+                                <div
+                                    class="flex w-full flex-row items-center justify-center gap-2"
+                                >
+                                    <CustomTextField
+                                        id="endDate"
+                                        type="date"
+                                        label={'Tarikh Tamat'}
+                                        bind:val={$leaveCommonForm.endDate}
+                                        errors={$leaveCommonErrors.endDate}
+                                    ></CustomTextField>
+
+                                    <CustomSelectField
+                                        id="endHalfDayOption"
+                                        label={'Setengah Hari'}
+                                        bind:val={$leaveCommonForm.endHalfDayOption}
+                                        errors={$leaveCommonErrors.endHalfDayOption}
+                                        options={data.props
+                                            .halfDayOptionDropdown}
+                                    ></CustomSelectField>
+                                    <CustomSelectField
+                                        id="endHalfDayType"
+                                        label={'Pagi / Petang'}
+                                        bind:val={$leaveCommonForm.endHalfDayType}
+                                        errors={$leaveCommonErrors.endHalfDayType}
+                                        options={data.props.halfDayTypeDropdown}
+                                    ></CustomSelectField>
+                                </div>
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomTextField
+                                        id="reason"
+                                        type="text"
+                                        label={'Alasan Permohonan'}
+                                        bind:val={$leaveCommonForm.reason}
+                                        errors={$leaveCommonErrors.reason}
                                     ></CustomTextField>
                                 </div>
                             </form>
