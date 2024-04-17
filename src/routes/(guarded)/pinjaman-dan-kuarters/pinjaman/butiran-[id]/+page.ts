@@ -10,7 +10,9 @@ import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto.js'
 import type { ApproverApproval } from '$lib/dto/mypsm/pinjaman/approver-approval-detail.dto';
 import type { Approver } from '$lib/dto/mypsm/pinjaman/approver-detail.dto';
 import type { VehicleFirstSchedule } from '$lib/dto/mypsm/pinjaman/car-first-schedule-detail.dto';
+import type { DocumentCheck } from '$lib/dto/mypsm/pinjaman/document-check.dto';
 import type { LoanAgreementLetter, LoanDownload } from '$lib/dto/mypsm/pinjaman/document.dto.js';
+import type { Eligibility } from '$lib/dto/mypsm/pinjaman/eligibility.dto';
 import type { FirstSchedule } from '$lib/dto/mypsm/pinjaman/first-schedule.dto';
 import type { loanIdRequestDTO } from '$lib/dto/mypsm/pinjaman/loan-ID.dto';
 import type { loanDetail } from '$lib/dto/mypsm/pinjaman/loan-detail.dto';
@@ -22,7 +24,7 @@ import type { SupportApprover } from '$lib/dto/mypsm/pinjaman/support-approval-d
 import type { vechicalDetail } from '$lib/dto/mypsm/pinjaman/vehical-detail.dto';
 import type { CandidatePersonalResponseDTO } from '$lib/dto/mypsm/profile/personal-detail.dto';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
-import { _approver, _approverApproval, _firstSchedule, _loanDetail, _offerLoan, _personalDetail, _secondSchedule, _supplier, _supportApproval, _vehicleDetail, _vehicleFirstSchedule } from '$lib/schemas/mypsm/loan/loan-application';
+import { _approver, _approverApproval, _documentCheck, _eligibility, _firstSchedule, _loanDetail, _offerLoan, _personalDetail, _secondSchedule, _supplier, _supportApproval, _vehicleDetail, _vehicleFirstSchedule } from '$lib/schemas/mypsm/loan/loan-application';
 import { LoanServices } from '$lib/services/implementation/mypsm/pinjaman/loan.service';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -41,9 +43,15 @@ export async function load({ params }) {
         document: [{ document: "", name: "" }]
     }
 
-    let agreementFormDocument: LoanAgreementLetter = {
-        document: ""
+    let agreementDocument: LoanDownload = {
+        document: [{ document: "", name: "" }]
     }
+
+    //   loanDocumentDetail,
+    // agreementLetterDetail,
+    // loanPaymentDocumentDetail,
+
+    let agreementLetter = getAgreementLetter()
 
 
     //==================================================
@@ -75,26 +83,43 @@ export async function load({ params }) {
     const secondScheduleDetailResponse: CommonResponseDTO =
         await LoanServices.getSecondScheduleDetails(currentID);
 
+    const eligibilityDetailResponse: CommonResponseDTO =
+        await LoanServices.getEligibilityDetails(currentID);
+
+    const documentCheckDetailResponse: CommonResponseDTO =
+        await LoanServices.getDocumentCheckDetails(currentID);
+
     const approverDetailResponse: CommonResponseDTO =
         await LoanServices.getApproverDetails(currentID);
 
+    const supporterApprovalDetailResponse: CommonResponseDTO =
+        await LoanServices.getSupporterApprovalDetails(currentID);
+
+    const approverApprovalDetailResponse: CommonResponseDTO =
+        await LoanServices.getApproverApprovalDetails(currentID);
+
+    //==================== Document========================
 
     const loanDocumentResponse: CommonResponseDTO =
         await LoanServices.getDocument(currentID);
+
     loanDocument =
         loanDocumentResponse.data?.details as LoanDownload;
 
+    const agreementDocumentResponse: CommonResponseDTO =
+        await LoanServices.getAgreementLetter(currentID);
+    agreementDocument =
+        agreementDocumentResponse.data?.details as LoanDownload;
+
     const loanPaymentDocumentResponse: CommonResponseDTO =
         await LoanServices.getPaymentDocument(currentID);
-    loanPaymentDocument =
-        loanPaymentDocumentResponse.data?.details as LoanDownload;
+    if (loanPaymentDocumentResponse.data?.details.documents !== null) {
+        loanPaymentDocument =
+            loanPaymentDocumentResponse.data?.details as LoanDownload;
+    }
+    console.log(loanPaymentDocument)
 
-    const agreementFormResponse: CommonResponseDTO =
-        await LoanServices.getAgreementForm(currentID);
-    agreementFormDocument =
-        agreementFormResponse.data as LoanAgreementLetter;
 
-    console.log(agreementFormResponse)
     const personalDetail = await superValidate(personalDetailResponse.data?.details as PersonalDetail, zod(
         _personalDetail))
         ;
@@ -119,6 +144,7 @@ export async function load({ params }) {
     const firstScheduleDetails = await superValidate(firstDetailResponse.data?.details as FirstSchedule, zod(
         _firstSchedule))
         ;
+    
 
     const supplierDetails = await superValidate(supplierDetailResponse.data?.details as Supplier, zod(
         _supplier))
@@ -127,9 +153,24 @@ export async function load({ params }) {
         _secondSchedule))
         ;
 
+    const eligibilityDetails = await superValidate(eligibilityDetailResponse.data?.details as Eligibility, zod(
+        _eligibility))
+        ;
+
+    const documentCheckDetails = await superValidate(documentCheckDetailResponse.data?.details as DocumentCheck, zod(
+        _documentCheck))
+        ;
+
     const approverDetails = await superValidate(approverDetailResponse.data?.details as Approver, zod(
         _approver))
         ;
+    const supporterApprovalDetails = await superValidate(supporterApprovalDetailResponse.data?.details as SupportApprover, zod(
+        _supportApproval))
+        ;
+
+        const approverApprovalDetails = await superValidate(approverApprovalDetailResponse.data?.details as ApproverApproval, zod(
+            _approverApproval))
+            ;
 
     return {
         currentID,
@@ -140,7 +181,11 @@ export async function load({ params }) {
         firstDetailResponse,
         supplierDetailResponse,
         secondScheduleDetailResponse,
+        eligibilityDetailResponse,
+        documentCheckDetailResponse,
         approverDetailResponse,
+        supporterApprovalDetailResponse,
+        approverApprovalDetailResponse,
         vehicleDetailResponse,
 
         vehicleFirstScheduleDetails,
@@ -150,11 +195,16 @@ export async function load({ params }) {
         firstScheduleDetails,
         supplierDetails,
         secondScheduleDetails,
+        eligibilityDetails,
+        documentCheckDetails,
         approverDetails,
+        supporterApprovalDetails,
+        approverApprovalDetails,
         vehicleDetails,
         loanDocument,
         loanPaymentDocument,
-        agreementFormDocument,
+        agreementLetter,
+        agreementDocument,
     }
 
 }
@@ -283,6 +333,36 @@ export const _secondScheduleDetailSubmit = async (formData: object) => {
 };
 
 //============================================
+//========= Add Eligibility =================
+//============================================
+
+export const _eligibilityDetailSubmit = async (formData: object) => {
+    const eligibilityDetailsInfoForm = await superValidate(formData, (zod)(_eligibility));
+
+    if (eligibilityDetailsInfoForm.valid) {
+        const response: CommonResponseDTO =
+            await LoanServices.addEligibilityDetail(eligibilityDetailsInfoForm.data as Eligibility);
+        return { response };
+    }
+
+};
+
+//============================================
+//========= Document Check ===================
+//============================================
+
+export const _documentCheckDetailSubmit = async (formData: object) => {
+    const documentCheckDetailsInfoForm = await superValidate(formData, (zod)(_documentCheck));
+
+    if (documentCheckDetailsInfoForm.valid) {
+        const response: CommonResponseDTO =
+            await LoanServices.addDocumentCheckDetail(documentCheckDetailsInfoForm.data as DocumentCheck);
+        return { response };
+    }
+
+};
+
+//============================================
 //========= Add Support Approval ===============
 //============================================
 
@@ -313,7 +393,7 @@ export const _approverSubmit = async (formData: object) => {
 };
 
 ///=====================================================
-//================ Approver ===========================
+//================ Approver Approval ===================
 //=====================================================
 
 export const _approverApprovalSubmit = async (formData: object) => {
@@ -327,9 +407,21 @@ export const _approverApprovalSubmit = async (formData: object) => {
 
 };
 
+
+///=====================================================
+//================ Document ===========================
+//=====================================================
+
 export const _submitDocument = async (formData: string) => {
     const response: CommonResponseDTO =
         await LoanServices.addDocument(formData)
+
+    return { response }
+};
+
+export const _submitAgreementDocument = async (formData: string) => {
+    const response: CommonResponseDTO =
+        await LoanServices.addAgreementLetter(formData)
 
     return { response }
 };
@@ -382,4 +474,10 @@ function fetchBase64Data(file: File): Promise<DocumentBase64RequestDTO> {
         };
         reader.readAsDataURL(file);
     });
+}
+
+const getAgreementLetter = () => {
+    const url = "http://localhost:3333/loan/agreement_letter/vehicle_form"
+
+    return url
 }

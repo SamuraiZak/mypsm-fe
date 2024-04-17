@@ -146,6 +146,32 @@ export const _secondSchedule = z.object({
 
 })
 
+///=====================================================
+//================ eligibility ======================
+//=====================================================
+
+export const _eligibility = z.object({
+    id: numberSchema,
+    baseSalary:numberSchema,
+    salaryCut: numberSchema,
+    balance: numberSchema,
+    salaryAndAllowance:numberSchema,
+    newSalaryCut:numberSchema,
+    newBalance: numberSchema,
+
+})
+
+///=====================================================
+//================Document Check =======================
+//=====================================================
+
+export const _documentCheck = z.object({
+    id:numberSchema,
+    agreementReceived: booleanSchema,
+    agreementChecked:  booleanSchema,
+
+})
+
 
 // ======================================================================================//
 

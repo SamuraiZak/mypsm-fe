@@ -13,21 +13,10 @@
     import { superForm } from 'sveltekit-superforms';
     import type { PageData } from './$types';
     import { zod } from 'sveltekit-superforms/adapters';
-    import {
-        _approver,
-        _approverApproval,
-        _documentCheck,
-        _eligibility,
-        _firstSchedule,
-        _loanDetail,
-        _offerLoan,
-        _personalDetail,
-        _secondSchedule,
-        _supportApproval,
-        _vehicleDetail,
-        _vehicleFirstSchedule,
-    } from '$lib/schemas/mypsm/loan/loan-application';
     import { Toaster } from 'svelte-french-toast';
+    import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
+    import type { UploadDocuments } from '$lib/dto/mypsm/pinjaman/document.dto';
+    import { LoanServices } from '$lib/services/implementation/mypsm/pinjaman/loan.service';
     import {
         _approverApprovalSubmit,
         _approverSubmit,
@@ -45,9 +34,20 @@
         _vehicleDetailSubmit,
         _vehicleFirstScheduleDetailSubmit,
     } from './+page';
-    import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
-    import type { UploadDocuments } from '$lib/dto/mypsm/pinjaman/document.dto';
-    import { LoanServices } from '$lib/services/implementation/mypsm/pinjaman/loan.service';
+    import {
+        _approver,
+        _approverApproval,
+        _documentCheck,
+        _eligibility,
+        _firstSchedule,
+        _loanDetail,
+        _offerLoan,
+        _personalDetail,
+        _secondSchedule,
+        _supportApproval,
+        _vehicleDetail,
+        _vehicleFirstSchedule,
+    } from '$lib/schemas/mypsm/loan/loan-application';
 
     export let data: PageData;
     let files: FileList;
@@ -60,7 +60,7 @@
             _fileToBase64Object(files)
                 .then((result) => {
                     let Documents: UploadDocuments = {
-                        id: data.currentID.id,
+                        id: data.props.currentApplicationId,
                         documents: result,
                     };
                     _submitDocument(JSON.stringify(Documents));
@@ -78,7 +78,7 @@
             _fileToBase64Object(files)
                 .then((result) => {
                     let uploadAgreementDocument: UploadDocuments = {
-                        id: data.currentID.id,
+                        id: data.props.currentApplicationId,
                         documents: result,
                     };
                     _submitAgreementDocument(
@@ -98,7 +98,7 @@
             _fileToBase64Object(files)
                 .then((result) => {
                     let paymentDocuments: UploadDocuments = {
-                        id: data.currentID.id,
+                        id: data.props.currentApplicationId,
                         documents: result,
                     };
                     _submitPaymentDocument(JSON.stringify(paymentDocuments));
@@ -109,17 +109,12 @@
         }
     }
 
-    function percentage(partialValue: number, totalValue: number) {
-        var res = ((partialValue / totalValue) * 100).toFixed(2);
-        return res;
-    }
-
     const {
         form: personalInfoForm,
         errors: personalInfoError,
         enhance: personalInfoEnhance,
         isTainted: personalDetailTainted,
-    } = superForm(data.personalDetail, {
+    } = superForm(data.forms.personalDetailForm,{
         SPA: true,
         id: 'personalDetail',
         dataType: 'json',
@@ -133,7 +128,7 @@
         errors: loanInfoError,
         enhance: loanInfoEnhance,
         isTainted: loanDetailTainted,
-    } = superForm(data.loanDetails, {
+    } = superForm(data.forms.loanDetailsForm, {
         SPA: true,
         id: 'loanDetail',
         dataType: 'json',
@@ -149,7 +144,7 @@
         errors: vehicleInfoError,
         enhance: vehicleInfoEnhance,
         isTainted: vehicleDetailTainted,
-    } = superForm(data.vehicleDetails, {
+    } = superForm(data.forms.vehicleDetailsForm, {
         SPA: true,
         id: 'vehicleDetail',
         dataType: 'json',
@@ -166,7 +161,7 @@
         errors: approverInfoError,
         enhance: approverInfoEnhance,
         isTainted: approverDetailTainted,
-    } = superForm(data.approverDetails, {
+    } = superForm(data.forms.approverDetailsForm, {
         SPA: true,
         id: 'approverDetail',
         dataType: 'json',
@@ -183,7 +178,7 @@
         errors: approvalAndOfferDetailError,
         enhance: approvalAndOfferDetailEnhance,
         isTainted: approvalAndOfferDetailtaimted,
-    } = superForm(data.offerLoan, {
+    } = superForm(data.forms.offerLoanForm, {
         SPA: true,
         id: 'offerLoan',
         dataType: 'json',
@@ -200,7 +195,7 @@
         errors: vehicleFirstScheduleError,
         enhance: vehicleFirstScheduleEnhance,
         isTainted: vehicleFirstScheduleTainted,
-    } = superForm(data.vehicleFirstScheduleDetails, {
+    } = superForm(data.forms.vehicleFirstScheduleDetailsForm, {
         SPA: true,
         id: 'vehicleFirstSchedule',
         dataType: 'json',
@@ -217,7 +212,7 @@
         errors: firstScheduleError,
         enhance: firstScheduleEnhance,
         isTainted: firstScheduleTainted,
-    } = superForm(data.firstScheduleDetails, {
+    } = superForm(data.forms.firstScheduleDetailsForm, {
         SPA: true,
         id: 'firstScheduleDetail',
         dataType: 'json',
@@ -234,7 +229,7 @@
         errors: supplierError,
         enhance: supplierEnhance,
         isTainted: supplierTainted,
-    } = superForm(data.supplierDetails, {
+    } = superForm(data.forms.supplierDetailsForm, {
         SPA: true,
         id: 'supplierDetail',
         dataType: 'json',
@@ -251,7 +246,7 @@
         errors: secondScheduleError,
         enhance: secondScheduleEnhance,
         isTainted: secondScheduleTainted,
-    } = superForm(data.secondScheduleDetails, {
+    } = superForm(data.forms.secondScheduleDetailsForm, {
         SPA: true,
         id: 'secondScheduleDetail',
         dataType: 'json',
@@ -268,7 +263,7 @@
         errors: eligibilityError,
         enhance: eligibilityEnhance,
         isTainted: eligibilityTainted,
-    } = superForm(data.eligibilityDetails, {
+    } = superForm(data.forms.eligibilityDetailsForm, {
         SPA: true,
         id: 'eligibiltyDetail',
         dataType: 'json',
@@ -285,7 +280,7 @@
         errors: documentCheckError,
         enhance: documentCheckEnhance,
         isTainted: documentCheckTainted,
-    } = superForm(data.documentCheckDetails, {
+    } = superForm(data.forms.documentCheckDetailsForm, {
         SPA: true,
         id: 'documentCheckDetail',
         dataType: 'json',
@@ -302,7 +297,7 @@
         errors: supporterApprovalError,
         enhance: supporterApprovalEnhance,
         isTainted: supporterApprovalTainted,
-    } = superForm(data.supporterApprovalDetails, {
+    } = superForm(data.forms.supporterApprovalDetailsForm, {
         SPA: true,
         id: 'supporterApprovalDetail',
         dataType: 'json',
@@ -319,7 +314,7 @@
         errors: approverApprovalError,
         enhance: approverApprovalEnhance,
         isTainted: approverApprovalTainted,
-    } = superForm(data.approverApprovalDetails, {
+    } = superForm(data.forms.approverApprovalDetailsForm, {
         SPA: true,
         id: 'approverApprovalDetail',
         dataType: 'json',
@@ -336,17 +331,15 @@
     };
 </script>
 
-<section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Semak Maklumat Pinjaman"
-        ><TextIconButton
-            label="Kembali"
-            type="close"
-            onClick={() => {
-                window.history.back();
-            }}
-        ></TextIconButton></ContentHeader
-    >
-</section>
+<!-- <h1>{data.props.currentApplicationId}</h1>
+
+<p>{data.props.personalDetail?.name}</p>
+
+{#if data.props.userMode == 'kakitangan'}
+    <p>Kakitangan Mode</p>
+{:else if data.props.userMode == 'pelulus'}
+    <p>Pelulus Mode</p>
+{/if} -->
 
 <Stepper>
     <StepperContent>
@@ -478,58 +471,6 @@
     </StepperContent>
 
     <StepperContent>
-        <StepperContentHeader title="Maklumat Kenderaan yang Hendak Dibeli"
-            ><TextIconButton label="Simpan" icon="check" form="vehicleDetail" />
-
-            <TextIconButton></TextIconButton></StepperContentHeader
-        >
-        <StepperContentBody>
-            <form
-                id="vehicleDetail"
-                method="POST"
-                use:vehicleInfoEnhance
-                class="flex w-full flex-col gap-2"
-            >
-                <CustomTextField
-                    id="condition"
-                    label={'Kondisi Kenderaan'}
-                    bind:val={$vehicleInfoForm.condition}
-                ></CustomTextField>
-                <CustomTextField
-                    id="vehicleType"
-                    label={'Jenis Kenderaan'}
-                    bind:val={$vehicleInfoForm.vehicleType}
-                ></CustomTextField>
-                <CustomTextField
-                    id="brandModel"
-                    label={'Jenama san Model Kenderaan'}
-                    bind:val={$vehicleInfoForm.brandModel}
-                ></CustomTextField>
-                <CustomTextField
-                    id="engineNumber"
-                    label={'Sukatan Silinder/ No. Chasis/ No. Enjin'}
-                    bind:val={$vehicleInfoForm.engineNumber}
-                ></CustomTextField>
-                <CustomTextField
-                    type="date"
-                    id="registrationDate"
-                    label={'Tarikh Pendaftaran'}
-                    bind:val={$vehicleInfoForm.registrationDate}
-                ></CustomTextField>
-                <CustomTextField
-                    id="registrationNumber"
-                    label={'Nombor Pendaftaran'}
-                    bind:val={$vehicleInfoForm.registrationNumber}
-                ></CustomTextField>
-                <CustomTextField
-                    id="nettPrice"
-                    label={'Harga Bersih'}
-                    bind:val={$vehicleInfoForm.nettPrice}
-                ></CustomTextField>
-            </form></StepperContentBody
-        >
-    </StepperContent>
-    <StepperContent>
         <StepperContentHeader title="Dokumen Sokongan yang Berkaitan"
             ><TextIconButton></TextIconButton>
 
@@ -565,14 +506,14 @@
                         class="text-sm text-ios-labelColors-secondaryLabel-light"
                         >Borang-borang yang telah dimuat naik oleh kakitangan:</span
                     >
-                    {#each data.loanDocument.document as docs}
+                    <!-- {#each data.loanDocumentDetail.document as docs}
                         <a
                             href={docs.document}
                             download={docs.name}
                             class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
                             >{docs.name}</a
                         >
-                    {/each}
+                    {/each} -->
                 </div>
             </form>
         </StepperContentBody>
@@ -631,11 +572,11 @@
                             Urus Setia:</span
                         >
 
-                        <DownloadAttachment
+                        <!-- <DownloadAttachment
                             triggerDownload={() =>
                                 handleDownload(data.agreementLetter)}
                             fileName="Surat Perjanjian Pinjaman Kenderaan.pdf"
-                        />
+                        /> -->
                     </div>
                 </div>
             </form>
@@ -676,14 +617,14 @@
                         class="text-sm text-ios-labelColors-secondaryLabel-light"
                         >Borang-borang yang telah dimuat naik oleh kakitangan:</span
                     >
-                    {#each data.agreementDocument.document as docs}
+                    <!-- {#each data.agreementLetterDetail.document as docs}
                         <a
                             href={docs.document}
                             download={docs.name}
                             class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
                             >{docs.name}</a
                         >
-                    {/each}
+                    {/each} -->
                 </div>
             </form>
         </StepperContentBody>
@@ -834,126 +775,9 @@
                 </CustomTabContent>
                 <CustomTabContent title="Jadual Pertama">
                     <!-- {#if currEmpLoanRec[0].typeOfLoan == 'Kenderaan'} -->
-                    <ContentHeader
-                        title="Masukkan Maklumat dan Perihal Kenderaan"
-                    >
-                        <TextIconButton
-                            type="primary"
-                            label="Simpan"
-                            form="vehicleFirstSchedule"
-                        ></TextIconButton>
-                    </ContentHeader>
-                    <form
-                        id="vehicleFirstSchedule"
-                        method="POST"
-                        use:vehicleFirstScheduleEnhance
-                        class="flex w-full flex-col gap-2"
-                    >
-                        <CustomTextField
-                            id="engineNumber"
-                            label="No. Enjin"
-                            bind:val={$vehicleFirstScheduleForm.engineNumber}
-                        />
-                        <CustomTextField
-                            id="chassisNumber"
-                            label="No. Casis"
-                            bind:val={$vehicleFirstScheduleForm.chassisNumber}
-                        />
-                        <CustomTextField
-                            id="countryOrigin"
-                            label="Buatan"
-                            bind:val={$vehicleFirstScheduleForm.countryOrigin}
-                        />
-                        <CustomTextField
-                            id="brandModel"
-                            label="Nama Model"
-                            bind:val={$vehicleFirstScheduleForm.brandModel}
-                        />
-                        <CustomTextField
-                            id="engineHP"
-                            label="Kuasa Enjin"
-                            bind:val={$vehicleFirstScheduleForm.engineHP}
-                        />
-                        <CustomTextField
-                            id="fuelType"
-                            label="Bahan Bakar"
-                            bind:val={$vehicleFirstScheduleForm.fuelType}
-                        />
-                        <CustomTextField
-                            id="class"
-                            label="Kelas Kegunaan"
-                            bind:val={$vehicleFirstScheduleForm.class}
-                        />
-                        <CustomTextField
-                            id="bodyType"
-                            label="Jenis Badan"
-                            bind:val={$vehicleFirstScheduleForm.bodyType}
-                        />
-
-                        <CustomTextField
-                            id="makeYear"
-                            label="Tahun Dibuat"
-                            bind:val={$vehicleFirstScheduleForm.makeYear}
-                        />
-                        <ContentHeader
-                            title="Masukkan Butiran Penjualan/Tuan Asal"
-                        ></ContentHeader>
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2.5"
-                        >
-                            <CustomTextField
-                                id="previousOwner"
-                                label="Nama"
-                                bind:val={$vehicleFirstScheduleForm.previousOwner}
-                            />
-                            <CustomTextField
-                                id="previousOwnerIC"
-                                label="No. K/P"
-                                bind:val={$vehicleFirstScheduleForm.previousOwnerIC}
-                            />
-                            <CustomTextField
-                                id="address"
-                                label="Alamat"
-                                bind:val={$vehicleFirstScheduleForm.address}
-                            />
-                        </div>
-                    </form>
-                    <ContentHeader title="Masukkan Harga Belian Kenderaan">
-                        <TextIconButton
-                            type="primary"
-                            label="Simpan"
-                            form="firstScheduleDetail"
-                        ></TextIconButton>
-                    </ContentHeader>
-
-                    <form
-                        id="firstScheduleDetail"
-                        method="POST"
-                        use:firstScheduleEnhance
-                        class="flex w-full flex-col gap-2"
-                    >
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2.5"
-                        >
-                            <CustomTextField
-                                id="purchasePrice"
-                                label="Jumlah Harga Belian (RM)"
-                                bind:val={$firstScheduleForm.purchasePrice}
-                            />
-                            <CustomTextField
-                                id="balancePayment"
-                                label="Bayaran Baki (RM)"
-                                bind:val={$firstScheduleForm.balancePayment}
-                            />
-                            <CustomTextField
-                                id="govFund"
-                                label="Amaun Pembiayaan Kerajaan (RM)"
-                                bind:val={$firstScheduleForm.govFund}
-                            />
-                        </div>
-                    </form>
-
-                    <!-- <ContentHeader title="Masukkan Maklumat Pembekal">
+                 
+                    
+                    <ContentHeader title="Masukkan Maklumat Pembekal">
                             <TextIconButton type="add-supplier" />
                             <TextIconButton
                                 type="primary"
@@ -991,7 +815,7 @@
                                     />
                                 </div>
                             </div>
-                            </form> -->
+                            </form>
                 </CustomTabContent>
                 <CustomTabContent title="Jadual Kedua">
                     <!-- {#if currEmpLoanRec[0].typeOfLoan == 'Kenderaan'} -->
@@ -1124,14 +948,14 @@
                         class="text-sm text-ios-labelColors-secondaryLabel-light"
                         >Borang-borang yang telah dimuat naik oleh kakitangan:</span
                     >
-                    {#each data.loanPaymentDocument.document as docs}
+                    <!-- {#each data.loanPaymentDocumentDetail.document as docs}
                         <a
                             href={docs.document}
                             download={docs.name}
                             class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
                             >{docs.name}</a
                         >
-                    {/each}
+                    {/each} -->
                 </div>
             </form>
         </StepperContentBody>
@@ -1205,4 +1029,3 @@
         >
     </StepperContent>
 </Stepper>
-<Toaster />

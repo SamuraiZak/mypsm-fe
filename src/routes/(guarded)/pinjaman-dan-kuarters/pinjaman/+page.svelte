@@ -47,6 +47,31 @@
             employeeLoantable.param.pageNum = value.props.param.pageNum;
         });
     }
+
+    const newLoanType: IntDropdownOption[] = [
+        {
+            value: "",
+            name: "Kenderaan",
+            href: "/pinjaman-dan-kuarters/pinjaman/kenderaan/butiran_permohonan/Baru",
+        },
+        {
+            value: "",
+            name: "Komputer dan Telefon Pintar",
+            href: "/pinjaman-dan-kuarters/pinjaman/komputer-dan-telefon-pintar/butiran_permohonan/Baru",
+        },
+    ]
+
+    function viewDetails() {
+        let url: string = "";
+
+        if (rowData.loanType == "kenderaan") {
+            url = "/pinjaman-dan-kuarters/pinjaman/kenderaan/butiran_permohonan/" + rowData.id;
+        } else {
+            url = "/pinjaman-dan-kuarters/pinjaman/komputer-dan-telefon-pintar/butiran_permohonan/" + rowData.id;
+        }
+
+        goto(url);
+    }
     
 </script>
 
@@ -55,7 +80,7 @@
         <TextIconButton 
         type="primary"
         label="Pinjaman Baru"
-        onClick={() => goto('')}
+        options={newLoanType}
 
 
         />
@@ -89,10 +114,9 @@
                 bind:passData={rowData}
                 bind:tableData={employeeLoantable}
                 detailActions={() =>
-                    goto(
-                        '/pinjaman-dan-kuarters/pinjaman/butiran-' +
-                            rowData.id 
-                    )}
+                    {
+                        viewDetails();
+                    }}
                 onUpdate={_search}
             ></CustomTable>
         </div>

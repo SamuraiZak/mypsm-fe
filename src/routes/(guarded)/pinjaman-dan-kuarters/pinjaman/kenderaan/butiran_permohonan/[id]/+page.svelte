@@ -13,41 +13,13 @@
     import { superForm } from 'sveltekit-superforms';
     import type { PageData } from './$types';
     import { zod } from 'sveltekit-superforms/adapters';
-    import {
-        _approver,
-        _approverApproval,
-        _documentCheck,
-        _eligibility,
-        _firstSchedule,
-        _loanDetail,
-        _offerLoan,
-        _personalDetail,
-        _secondSchedule,
-        _supportApproval,
-        _vehicleDetail,
-        _vehicleFirstSchedule,
-    } from '$lib/schemas/mypsm/loan/loan-application';
     import { Toaster } from 'svelte-french-toast';
-    import {
-        _approverApprovalSubmit,
-        _approverSubmit,
-        _documentCheckDetailSubmit,
-        _eligibilityDetailSubmit,
-        _fileToBase64Object,
-        _firstScheduleDetailSubmit,
-        _loanDetailSubmit,
-        _offerLoanDetailSubmit,
-        _secondScheduleDetailSubmit,
-        _submitAgreementDocument,
-        _submitDocument,
-        _submitPaymentDocument,
-        _supportApprovalSubmit,
-        _vehicleDetailSubmit,
-        _vehicleFirstScheduleDetailSubmit,
-    } from './+page';
     import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     import type { UploadDocuments } from '$lib/dto/mypsm/pinjaman/document.dto';
     import { LoanServices } from '$lib/services/implementation/mypsm/pinjaman/loan.service';
+    import { _approverApprovalSubmit, _approverSubmit, _documentCheckDetailSubmit, _eligibilityDetailSubmit, _fileToBase64Object, _firstScheduleDetailSubmit, _loanDetailSubmit, _offerLoanDetailSubmit, _secondScheduleDetailSubmit, _submitAgreementDocument, _submitDocument, _submitPaymentDocument, _supportApprovalSubmit, _vehicleDetailSubmit, _vehicleFirstScheduleDetailSubmit } from './+page';
+    import { _approver, _approverApproval, _documentCheck, _eligibility, _firstSchedule, _loanDetail, _offerLoan, _personalDetail, _secondSchedule, _supportApproval, _vehicleDetail, _vehicleFirstSchedule } from '$lib/schemas/mypsm/loan/loan-application';
+
 
     export let data: PageData;
     let files: FileList;
@@ -60,7 +32,7 @@
             _fileToBase64Object(files)
                 .then((result) => {
                     let Documents: UploadDocuments = {
-                        id: data.currentID.id,
+                        id: data.props.currentApplicationId,
                         documents: result,
                     };
                     _submitDocument(JSON.stringify(Documents));
@@ -78,7 +50,7 @@
             _fileToBase64Object(files)
                 .then((result) => {
                     let uploadAgreementDocument: UploadDocuments = {
-                        id: data.currentID.id,
+                        id: data.props.currentApplicationId,
                         documents: result,
                     };
                     _submitAgreementDocument(
@@ -98,7 +70,7 @@
             _fileToBase64Object(files)
                 .then((result) => {
                     let paymentDocuments: UploadDocuments = {
-                        id: data.currentID.id,
+                        id: data.props.currentApplicationId,
                         documents: result,
                     };
                     _submitPaymentDocument(JSON.stringify(paymentDocuments));
@@ -109,17 +81,12 @@
         }
     }
 
-    function percentage(partialValue: number, totalValue: number) {
-        var res = ((partialValue / totalValue) * 100).toFixed(2);
-        return res;
-    }
-
     const {
         form: personalInfoForm,
         errors: personalInfoError,
         enhance: personalInfoEnhance,
         isTainted: personalDetailTainted,
-    } = superForm(data.personalDetail, {
+    } = superForm(data.forms.personalDetailForm,{
         SPA: true,
         id: 'personalDetail',
         dataType: 'json',
@@ -133,7 +100,7 @@
         errors: loanInfoError,
         enhance: loanInfoEnhance,
         isTainted: loanDetailTainted,
-    } = superForm(data.loanDetails, {
+    } = superForm(data.forms.loanDetailsForm, {
         SPA: true,
         id: 'loanDetail',
         dataType: 'json',
@@ -149,7 +116,7 @@
         errors: vehicleInfoError,
         enhance: vehicleInfoEnhance,
         isTainted: vehicleDetailTainted,
-    } = superForm(data.vehicleDetails, {
+    } = superForm(data.forms.vehicleDetailsForm, {
         SPA: true,
         id: 'vehicleDetail',
         dataType: 'json',
@@ -166,7 +133,7 @@
         errors: approverInfoError,
         enhance: approverInfoEnhance,
         isTainted: approverDetailTainted,
-    } = superForm(data.approverDetails, {
+    } = superForm(data.forms.approverDetailsForm, {
         SPA: true,
         id: 'approverDetail',
         dataType: 'json',
@@ -183,7 +150,7 @@
         errors: approvalAndOfferDetailError,
         enhance: approvalAndOfferDetailEnhance,
         isTainted: approvalAndOfferDetailtaimted,
-    } = superForm(data.offerLoan, {
+    } = superForm(data.forms.offerLoanForm, {
         SPA: true,
         id: 'offerLoan',
         dataType: 'json',
@@ -200,7 +167,7 @@
         errors: vehicleFirstScheduleError,
         enhance: vehicleFirstScheduleEnhance,
         isTainted: vehicleFirstScheduleTainted,
-    } = superForm(data.vehicleFirstScheduleDetails, {
+    } = superForm(data.forms.vehicleFirstScheduleDetailsForm, {
         SPA: true,
         id: 'vehicleFirstSchedule',
         dataType: 'json',
@@ -217,7 +184,7 @@
         errors: firstScheduleError,
         enhance: firstScheduleEnhance,
         isTainted: firstScheduleTainted,
-    } = superForm(data.firstScheduleDetails, {
+    } = superForm(data.forms.firstScheduleDetailsForm, {
         SPA: true,
         id: 'firstScheduleDetail',
         dataType: 'json',
@@ -234,7 +201,7 @@
         errors: supplierError,
         enhance: supplierEnhance,
         isTainted: supplierTainted,
-    } = superForm(data.supplierDetails, {
+    } = superForm(data.forms.loanDetailsForm, {
         SPA: true,
         id: 'supplierDetail',
         dataType: 'json',
@@ -251,7 +218,7 @@
         errors: secondScheduleError,
         enhance: secondScheduleEnhance,
         isTainted: secondScheduleTainted,
-    } = superForm(data.secondScheduleDetails, {
+    } = superForm(data.forms.secondScheduleDetailsForm, {
         SPA: true,
         id: 'secondScheduleDetail',
         dataType: 'json',
@@ -268,7 +235,7 @@
         errors: eligibilityError,
         enhance: eligibilityEnhance,
         isTainted: eligibilityTainted,
-    } = superForm(data.eligibilityDetails, {
+    } = superForm(data.forms.eligibilityDetailsForm, {
         SPA: true,
         id: 'eligibiltyDetail',
         dataType: 'json',
@@ -285,7 +252,7 @@
         errors: documentCheckError,
         enhance: documentCheckEnhance,
         isTainted: documentCheckTainted,
-    } = superForm(data.documentCheckDetails, {
+    } = superForm(data.forms.documentCheckDetailsForm, {
         SPA: true,
         id: 'documentCheckDetail',
         dataType: 'json',
@@ -302,7 +269,7 @@
         errors: supporterApprovalError,
         enhance: supporterApprovalEnhance,
         isTainted: supporterApprovalTainted,
-    } = superForm(data.supporterApprovalDetails, {
+    } = superForm(data.forms.supporterApprovalDetailsForm, {
         SPA: true,
         id: 'supporterApprovalDetail',
         dataType: 'json',
@@ -319,7 +286,7 @@
         errors: approverApprovalError,
         enhance: approverApprovalEnhance,
         isTainted: approverApprovalTainted,
-    } = superForm(data.approverApprovalDetails, {
+    } = superForm(data.forms.approverApprovalDetailsForm, {
         SPA: true,
         id: 'approverApprovalDetail',
         dataType: 'json',
@@ -334,19 +301,20 @@
     const handleDownload = async (url: string) => {
         await LoanServices.getAgreementForm(url);
     };
+
 </script>
 
-<section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Semak Maklumat Pinjaman"
-        ><TextIconButton
-            label="Kembali"
-            type="close"
-            onClick={() => {
-                window.history.back();
-            }}
-        ></TextIconButton></ContentHeader
-    >
-</section>
+<!-- <h1>{data.props.currentApplicationId}</h1>
+
+<p>{data.props.personalDetail?.name}</p>
+
+{#if data.props.userMode == 'kakitangan'}
+    <p>Kakitangan Mode</p>
+{:else if data.props.userMode == 'pelulus'}
+    <p>Pelulus Mode</p>
+{/if} -->
+
+
 
 <Stepper>
     <StepperContent>
@@ -565,14 +533,14 @@
                         class="text-sm text-ios-labelColors-secondaryLabel-light"
                         >Borang-borang yang telah dimuat naik oleh kakitangan:</span
                     >
-                    {#each data.loanDocument.document as docs}
+                    <!-- {#each data.loanDocumentDetail.document as docs}
                         <a
                             href={docs.document}
                             download={docs.name}
                             class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
                             >{docs.name}</a
                         >
-                    {/each}
+                    {/each} -->
                 </div>
             </form>
         </StepperContentBody>
@@ -631,11 +599,11 @@
                             Urus Setia:</span
                         >
 
-                        <DownloadAttachment
+                        <!-- <DownloadAttachment
                             triggerDownload={() =>
                                 handleDownload(data.agreementLetter)}
                             fileName="Surat Perjanjian Pinjaman Kenderaan.pdf"
-                        />
+                        /> -->
                     </div>
                 </div>
             </form>
@@ -676,14 +644,14 @@
                         class="text-sm text-ios-labelColors-secondaryLabel-light"
                         >Borang-borang yang telah dimuat naik oleh kakitangan:</span
                     >
-                    {#each data.agreementDocument.document as docs}
+                    <!-- {#each data.agreementLetterDetail.document as docs}
                         <a
                             href={docs.document}
                             download={docs.name}
                             class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
                             >{docs.name}</a
                         >
-                    {/each}
+                    {/each} -->
                 </div>
             </form>
         </StepperContentBody>
@@ -1124,14 +1092,14 @@
                         class="text-sm text-ios-labelColors-secondaryLabel-light"
                         >Borang-borang yang telah dimuat naik oleh kakitangan:</span
                     >
-                    {#each data.loanPaymentDocument.document as docs}
+                    <!-- {#each data.loanPaymentDocumentDetail.document as docs}
                         <a
                             href={docs.document}
                             download={docs.name}
                             class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
                             >{docs.name}</a
                         >
-                    {/each}
+                    {/each} -->
                 </div>
             </form>
         </StepperContentBody>
@@ -1205,4 +1173,3 @@
         >
     </StepperContent>
 </Stepper>
-<Toaster />
