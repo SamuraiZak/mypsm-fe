@@ -212,7 +212,7 @@
     } = superForm(data.forms.proceedingAppealMeetingForm, {
         SPA: true,
         dataType: 'json',
-        invalidateAll: true,
+        invalidateAll: false,
         resetForm: false,
         multipleSubmits: 'allow',
         validationMethod: 'oninput',
@@ -222,21 +222,29 @@
             if (!$appealMeetingForm.meetingResult) {
                 $appealMeetingForm.result =
                     $sentencingMeetingForm.meetingResult;
-            }
-
-            $appealMeetingForm.result.forEach((data, index) => {
-                data.sentencing.forEach((sentence, i) => {
-                    if (sentence.penaltyTypeCode !== '03') {
-                        $appealMeetingForm.result[index].sentencing[
-                            i
-                        ].emolumenDate = [];
-                    }
-
+            } else {
+                $appealMeetingForm.result =
+                    $sentencingMeetingForm.meetingResult;
+                $appealMeetingForm.result.forEach((data, index) => {
                     if (!data.result) {
                         $appealMeetingForm.result[index].sentencing = [];
+                    } else {
+                        $appealMeetingForm.result[index].sentencing =
+                            $sentencingMeetingForm.meetingResult[
+                                index
+                            ].sentencing;
+                    }
+                    if (data.sentencing) {
+                        data.sentencing.forEach((sentence, i) => {
+                            if (sentence.penaltyTypeCode !== '03') {
+                                $appealMeetingForm.result[index].sentencing[
+                                    i
+                                ].emolumenDate = [];
+                            }
+                        });
                     }
                 });
-            });
+            }
             $appealMeetingForm.integrityId = Number(data.params.integrityId);
             $appealMeetingForm.meetingCode = '19';
 
@@ -1549,7 +1557,7 @@
                                     disabled={$isReadOnlyProceedingAppealMeeting}
                                     id="isAppealed"
                                     options={commonOptions}
-                                    label={'Rayuan dibuat'}
+                                    label={'Rayuan Dibuat'}
                                     bind:val={isAppealed}
                                 ></CustomSelectField>
                             {:else}
@@ -1654,7 +1662,19 @@
                                                         color="system-primary"
                                                         fontWeight="bold"
                                                         borderClass="border-none"
-                                                    />
+                                                    >
+                                                        <span
+                                                            class="text-sm italic text-system-danger"
+                                                            >{!$sentencingMeetingForm
+                                                                .meetingResult[
+                                                                index
+                                                            ].result
+                                                                ? `Tiada
+                                                        hukuman dikenakan dalam mesyuarat
+                                                        penentuan hukuman yang lepas*`
+                                                                : ''}</span
+                                                        >
+                                                    </ContentHeader>
 
                                                     <input
                                                         hidden
@@ -1669,7 +1689,7 @@
                                                     >
                                                         <CustomRadioField
                                                             disabled={$isReadOnlyProceedingAppealMeeting}
-                                                            id="currentGrade"
+                                                            id="appealMeetingResult"
                                                             label="Keputusan Mesyuarat"
                                                             options={proceedingMeetingOptions}
                                                             bind:val={$appealMeetingForm
@@ -1679,7 +1699,7 @@
                                                     </div>
                                                     {#if $appealMeetingForm.result[index].result}
                                                         <ContentHeader
-                                                            title="Penentuan Hukuman"
+                                                            title="Penentuan Hukuman Yang Lebih Ringan"
                                                             borderClass="border-none"
                                                         />
                                                         <hr />
@@ -1701,9 +1721,27 @@
                                                                     disabled={$isReadOnlyProceedingAppealMeeting}
                                                                     id="title"
                                                                     label="Jenis Hukuman"
-                                                                    options={data
-                                                                        .lookups
-                                                                        .penaltyCodeLookup}
+                                                                    options={data.lookups.penaltyCodeLookup.filter(
+                                                                        (
+                                                                            options,
+                                                                        ) => {
+                                                                            return (
+                                                                                Number(
+                                                                                    options.value,
+                                                                                ) <=
+                                                                                Number(
+                                                                                    $sentencingMeetingForm
+                                                                                        .meetingResult[
+                                                                                        index
+                                                                                    ]
+                                                                                        .sentencing[
+                                                                                        i
+                                                                                    ]
+                                                                                        .penaltyTypeCode,
+                                                                                )
+                                                                            );
+                                                                        },
+                                                                    )}
                                                                     placeholder="-"
                                                                     bind:val={$appealMeetingForm
                                                                         .result[

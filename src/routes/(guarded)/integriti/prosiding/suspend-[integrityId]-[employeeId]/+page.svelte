@@ -55,16 +55,23 @@
     let isReadOnlyProceedingSuspendsConfirmation = writable<boolean>(false);
     let isReadOnlyProceedingSuspensionCriminal = writable<boolean>(false);
     let isReadOnlyProceedingEndedGantungKerja = writable<boolean>(false);
+    let isGantungKerjaEnded = writable<boolean>(false);
 
     $: {
         data.view.proceedingTypeSuspensionView.editCriminalDetail
             ? isReadOnlyProceedingSuspensionCriminal.set(true)
             : isReadOnlyProceedingSuspensionCriminal.set(false);
 
-        data.view.proceedingTypeSuspensionView.cancelCriminalDetail
-            .cancelSuspend
-            ? isReadOnlyProceedingEndedGantungKerja.set(true)
-            : isReadOnlyProceedingEndedGantungKerja.set(false);
+        if (data.view.proceedingTypeSuspensionView.cancelCriminalDetail) {
+            isReadOnlyProceedingEndedGantungKerja.set(true);
+
+            data.view.proceedingTypeSuspensionView.cancelCriminalDetail
+                .cancelSuspend === true
+                ? isGantungKerjaEnded.set(true)
+                : isGantungKerjaEnded.set(false);
+        } else {
+            isReadOnlyProceedingEndedGantungKerja.set(false);
+        }
 
         if (data.view.proceedingTypeSuspensionView.confirmation) {
             data.view.proceedingTypeSuspensionView.confirmation.status
@@ -221,12 +228,14 @@
     {#if $isReadOnlyProceedingSuspensionCriminal || $isReadOnlyProceedingEndedGantungKerja}
         <Badge color="indigo">Dikemaskini</Badge>
     {/if}
-    {#if $proceedingSuspendsIsApproved && !$isReadOnlyProceedingEndedGantungKerja}
+    {#if $isReadOnlyProceedingSuspendsConfirmation && $proceedingSuspendsIsApproved && !$isReadOnlyProceedingEndedGantungKerja}
         <Badge color="dark">Proses Prosiding - Tahan Kerja Sah</Badge>
     {:else if $isReadOnlyProceedingEndedGantungKerja}
         <Badge color="dark">Proses Prosiding - Gantung Kerja Tamat</Badge>
-    {:else}
-        <Badge color="red">Proses Prosiding - Tahan/Gantung Kerja Tidak Sah</Badge>
+    {:else if $isReadOnlyProceedingSuspendsConfirmation && !$proceedingSuspendsIsApproved}
+        <Badge color="red"
+            >Proses Prosiding - Tahan/Gantung Kerja Tidak Sah</Badge
+        >
     {/if}
 
     <TextIconButton
@@ -936,7 +945,7 @@
                                         borderClass="border-none"
                                         titlePadding={false}
                                     >
-                                        {#if $isReadOnlyProceedingSuspensionCriminal && !$isReadOnlyProceedingEndedGantungKerja}
+                                        {#if $isReadOnlyProceedingSuspensionCriminal && $isReadOnlyProceedingEndedGantungKerja && !$isGantungKerjaEnded}
                                             {#if !$updateCrimeOffenceAppealSuspendedInfo}
                                                 <TextIconButton
                                                     type="primary"
@@ -985,7 +994,7 @@
                                     ></CustomTextField>
                                 </form>
 
-                                {#if $isReadOnlyProceedingEndedGantungKerja || $updateCrimeOffenceAppealSuspendedInfo}
+                                {#if $isReadOnlyProceedingSuspensionCriminal || $updateCrimeOffenceAppealSuspendedInfo}
                                     <form
                                         id="endGantungKerjaForm"
                                         method="POST"
@@ -1000,7 +1009,8 @@
                                         >
                                         <Checkbox
                                             color="secondary"
-                                            disabled={$isReadOnlyProceedingEndedGantungKerja}
+                                            disabled={!$updateCrimeOffenceAppealSuspendedInfo &&
+                                                $isGantungKerjaEnded}
                                             value="cancelSuspend"
                                             bind:checked={$endGantungKerjaForm.cancelSuspend}
                                         />
@@ -1052,7 +1062,7 @@
                                         class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-primary p-2.5"
                                     >
                                         <ContentHeader
-                                            title="Pertuduhan"
+                                            title="Tahan Kerja - Penentuan Hukuman"
                                             color="system-primary"
                                             fontWeight="bold"
                                             borderClass="border-none"
@@ -1076,7 +1086,7 @@
                                                 title="Penentuan Hukuman"
                                                 borderClass="border-none"
                                             >
-                                                {#if data.roles.isIntegritySecretaryRole}
+                                                {#if data.roles.isIntegritySecretaryRole && !$isReadOnlyProceedingSuspensionCriminal}
                                                     <div class="mr-2">
                                                         <TextIconButton
                                                             type="primary"
@@ -1103,7 +1113,7 @@
                                                         borderClass="border-none"
                                                         color="system-primary"
                                                     >
-                                                        {#if data.roles.isIntegritySecretaryRole}
+                                                        {#if data.roles.isIntegritySecretaryRole && !$isReadOnlyProceedingSuspensionCriminal}
                                                             <div class="w-12">
                                                                 <Button
                                                                     outline={false}
@@ -1204,7 +1214,7 @@
                                                                 <ContentHeader
                                                                     title="Tarikh Dilucutkan Hak Emolumen"
                                                                 >
-                                                                    {#if !$isReadOnlyProceedingSuspensionCriminal}
+                                                                    {#if data.roles.isIntegritySecretaryRole && !$isReadOnlyProceedingSuspensionCriminal}
                                                                         <div
                                                                             class="mr-2"
                                                                         >
