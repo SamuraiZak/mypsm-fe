@@ -12,10 +12,12 @@
         TableDTO,
         TableSettingDTO,
     } from '$lib/dto/core/table/table.dto';
+    import type { MovingInKuarters } from '$lib/dto/mypsm/pinjaman/kuarters/moving-in-list.dto';
     import type { PageData } from './$types';
+    import { _applyQuarters } from './+page';
     export let data: PageData;
 
-    let rowData: any;
+    let rowData: MovingInKuarters;
     let kuartersTable: TableDTO = {
         param: data.param,
         meta: {
@@ -70,7 +72,18 @@
                     ? 'Baru'
                     : 'Luar'}"
                 icon="add"
-                onClick={() => goto('./permohonan-masuk-kuarters/butiran/baru')}
+                onClick={async () => {
+                    const res = await _applyQuarters();
+
+                    if (res?.response.status == 'success') {
+                        goto(
+                            './permohonan-masuk-kuarters/butiran/' +
+                                res.response.data?.details.id,
+                        );
+                    } else {
+                        alert('Gagal. Sila cuba sekali lagi.');
+                    }
+                }}
             />
         {/if}
     </ContentHeader>
@@ -87,16 +100,15 @@
             <FilterTextField label="Status" inputValue={''} />
         </FilterCard>
 
-        <CustomTable
-            title="Rekod Permohonan"
-            bind:tableData={kuartersTable}
-            bind:passData={rowData}
-            enableDetail
-            detailActions={() =>
-                goto('./permohonan-masuk-kuarters/butiran/' + rowData.id)}
-        />
         <div class="h h-fit w-full">
-            <DataTable title="Rekod Permohonan" tableData={quartersTable} />
+            <DataTable
+                title="Rekod Permohonan"
+                bind:tableData={quartersTable}
+                bind:passData={rowData}
+                detailActions={() => {
+                    goto('/pinjaman-dan-kuarters/permohonan-masuk-kuarters/butiran/'+rowData.id)
+                }}
+            />
         </div>
     </div>
 </section>

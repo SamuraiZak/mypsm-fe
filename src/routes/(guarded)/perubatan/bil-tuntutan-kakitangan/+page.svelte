@@ -162,7 +162,7 @@
                 </div>
             </div>
         </CustomTabContent>
-        <!-- <CustomTabContent
+        <CustomTabContent
             title="Senarai Pembayaran Untuk Tuntutan Melebihi Peruntukan"
         >
             <div class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10">
@@ -184,13 +184,13 @@
                         detailActions={() =>
                             goto(
                                 './bil-tuntutan-kakitangan/pembayaran/' +
-                                    rowPaymentData.employeeId,
+                                    rowPaymentData.medicalClaimId,
                             )}
                     />
-                    TODO: jana surat for enable detail
+                    <!-- TODO: jana surat for enable detail -->
                 </div>
             </div>
-        </CustomTabContent> -->
+        </CustomTabContent>
         {/if}
     </CustomTab>
 </section>

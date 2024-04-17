@@ -30,7 +30,7 @@ export const load = async () => {
         quartersList =
             quartersListResponse.data?.dataList as MovingInKuarters[];
     // }
-    console.log(quartersListResponse)
+
     return {
         currentRoleCode,
         param,
@@ -39,3 +39,14 @@ export const load = async () => {
         quartersList,
     }
 }   
+
+export const _applyQuarters = async () => {
+    const response: CommonResponseDTO = 
+        await QuartersServices.addMovingInApplication();
+    
+    if(response.status == "success"){
+        return { response }
+    } else {
+        new Error('Failed to create new application.')
+    }
+}

@@ -11,9 +11,10 @@
     import type { PageData } from './$types';
     import { goto } from '$app/navigation';
     import { _updateAllocationTable, _updateClaimTable } from './+page';
+    import type { MedicalClaimAllocationList } from '$lib/dto/mypsm/perubatan/medical-claim-allocation-list.dto';
 
     export let data: PageData;
-
+    let rowData: MedicalClaimAllocationList;
     let medicalClaimTable: TableDTO = {
         param: data.param,
         meta: data.medicalClaimListResponse.data?.meta ?? {
@@ -45,7 +46,7 @@
         meta: data.allocationListResponse.data?.meta ?? {
             pageSize: 5,
             pageNum: 1,
-            totalData: 4,
+            totalData: 0,
             totalPage: 1,
         },
         data: data.allocationList ?? [],
@@ -84,9 +85,9 @@
     <CustomTab>
         <CustomTabContent title="Tuntutan Perubatan">
             <div class="flex w-full flex-col justify-start gap-5 p-5">
-                <FilterCard>
+                <!-- <FilterCard>
                     <FilterTextField label="Nama" inputValue={''} />
-                </FilterCard>
+                </FilterCard> -->
                 <div class="flex w-full items-end justify-end">
                     <TextIconButton
                         label="Tuntutan Baru"
@@ -114,7 +115,14 @@
                     tableId="claimAllocationTable"
                     title="Senarai Baki Peruntukan Perubatan"
                     bind:tableData={medicalClaimAllocationTable}
+                    bind:passData={rowData}
                     onUpdate={_searchAllocationTable}
+                    enableDetail
+                    detailActions={() =>
+                        goto(
+                            '/perubatan/bil-tuntutan-kakitangan/pembayaran/' +
+                                rowData.id,
+                        )}
                 />
             </div>
         </CustomTabContent>

@@ -2,12 +2,9 @@ export interface MedicalClinicEmployeeGetAllocationList {
     employeeNumber:      string;
     name:                string;
     ICNumber:            string;
-    totalAllocated:      AllocationRemainder;
-    allocationRemainder: AllocationRemainder;
+    totalAllocated:      number;
+    allocationRemainder: number;
     amountToPay:         number;
-}
-
-export interface AllocationRemainder {
 }
 
 // Converts JSON strings to/from your types
