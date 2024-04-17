@@ -105,13 +105,13 @@
                         label="Gred"
                         options={data.selectionOptions.gradeLookup}
                         bind:inputValue={proceedingListTable.param.filter
-                            .status}
+                            .grade}
                     ></FilterSelectField>
                     <FilterSelectField
                         label="Jawatan"
                         options={data.selectionOptions.positionLookup}
                         bind:inputValue={proceedingListTable.param.filter
-                            .status}
+                            .position}
                     ></FilterSelectField>
                 </FilterWrapper>
             </DataTable>

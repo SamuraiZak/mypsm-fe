@@ -6,7 +6,7 @@
     export let label: string = 'Label';
     export let id: string;
     export let disabled: boolean = false;
-    export let val: string | number | Date | null | undefined;
+    export let val: string | number | Date | boolean | null | undefined;
     export let placeholder: string = 'Taip jawapan anda di sini';
     export let type: string = 'text' || 'number' || 'password' || 'email';
     export let errors: string[] | undefined = [] ?? undefined;

@@ -1,4 +1,3 @@
-import { goto } from '$app/navigation';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { RadioDTO } from '$lib/dto/core/radio/radio.dto.js';
@@ -288,7 +287,7 @@ export async function load({ params }) {
 
     for (let month = 12; month <= 36; month++) {
         const option: DropdownDTO = {
-            value: month, // Convert month to string if necessary
+            value: String(month), // Convert month to string if necessary
             name: `${month} bulan`,
         };
 

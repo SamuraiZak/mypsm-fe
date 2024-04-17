@@ -47,9 +47,8 @@ export const load = async ({ parent }) => {
     const positionLookupResponse: CommonResponseDTO =
         await LookupServices.getPositionEnums();
 
-    const positionLookup: DropdownDTO[] = LookupServices.setSelectOptions(
-        positionLookupResponse,
-    );
+    const positionLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsInString(positionLookupResponse);
 
     const gradeLookupResponse: CommonResponseDTO =
         await LookupServices.getServiceGradeEnums();
