@@ -69,7 +69,7 @@ export const SchemaHalfPayLeave = z
 // ===========================================================
 
 // leave endorsment
-export const LeaveEndorsmentDtoSchema = z.object({
+export const LeaveEndorsementSchema = z.object({
     leaveId: z.number(),
     leaveTypeCode: z.string(),
     remark: z.string(),
@@ -80,8 +80,10 @@ export const LeaveEndorsmentDtoSchema = z.object({
 export const LeaveEndorserDetailsSchema = z.object({
     leaveId: z.number(),
     leaveTypeCode: z.string(),
-    supporter: z.string(),
-    approver: z.string(),
+    supporterName: z.string().optional(),
+    supporterIC: z.string(),
+    approverName: z.string().optional(),
+    approverIC: z.string(),
 });
 
 // common leave details
