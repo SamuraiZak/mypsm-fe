@@ -7,6 +7,7 @@ import {
 } from '$lib/dto/core/common/common-list-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
 import type {
+    LeaveApplicationDetailRequestDTO,
     LeaveCommonDetailsDTO,
     LeaveDeliveryDetailsDTO,
     LeaveEndorserDetailsDTO,
@@ -23,58 +24,9 @@ export class LeaveApplicationServices {
     // Add application details
     // ======================================================
     // common leave
-    static async addCommonLeave(
-        param: LeaveCommonDetailsDTO,
-        typeCode: string,
-    ) {
+    static async addCommonLeave(param: LeaveCommonDetailsDTO) {
         try {
-            let url: Input = '';
-
-            switch (typeCode) {
-                case LeaveTypeConstant.halfPaidLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.hajiLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.quarantineLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidNurseryLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.absenceLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.extendedSickLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidFollowPartnerLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.cancerLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.tbLeave.code:
-                    url = 'abc';
-                    break;
-
-                default:
-                    url = 'abc';
-                    break;
-            }
+            let url: Input = 'leave/add';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -98,30 +50,9 @@ export class LeaveApplicationServices {
     }
 
     // delivery leave
-    static async addDeliveryLeave(
-        param: LeaveDeliveryDetailsDTO,
-        typeCode: string,
-    ) {
+    static async addDeliveryLeave(param: LeaveDeliveryDetailsDTO) {
         try {
-            let url: Input = '';
-
-            switch (typeCode) {
-                case LeaveTypeConstant.earlyMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.officerMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.partnerMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                default:
-                    url = 'abc';
-                    break;
-            }
+            let url: Input = 'leave/add';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -147,7 +78,7 @@ export class LeaveApplicationServices {
     // unrecorded leave
     static async addUnrecordedLeave(param: LeaveUnrecordedDetailsDTO) {
         try {
-            let url: Input = '';
+            let url: Input = 'leave/add';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -173,7 +104,7 @@ export class LeaveApplicationServices {
     // study leave
     static async addStudyLeave(param: LeaveStudyDetailsDTO) {
         try {
-            let url: Input = '';
+            let url: Input = 'leave/add';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -202,80 +133,9 @@ export class LeaveApplicationServices {
     // head of director feedback
     static async addHeadOfDirectorFeedback(
         param: LeaveEndorsmentDTO,
-        typeCode: string,
     ) {
         try {
-            let url: Input = '';
-
-            switch (typeCode) {
-                case LeaveTypeConstant.replacementLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unrecordedLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.halfPaidLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.earlyMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.officerMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.partnerMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.hajiLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.quarantineLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidNurseryLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.absenceLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.studyLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.extendedSickLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidFollowPartnerLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.cancerLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.tbLeave.code:
-                    url = 'abc';
-                    break;
-
-                default:
-                    url = 'abc';
-                    break;
-            }
+            let url: Input = 'leave/hod_feedback';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -301,80 +161,9 @@ export class LeaveApplicationServices {
     // director feedback
     static async addDirectorFeedback(
         param: LeaveEndorsmentDTO,
-        typeCode: string,
     ) {
         try {
-            let url: Input = '';
-
-            switch (typeCode) {
-                case LeaveTypeConstant.replacementLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unrecordedLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.halfPaidLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.earlyMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.officerMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.partnerMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.hajiLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.quarantineLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidNurseryLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.absenceLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.studyLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.extendedSickLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidFollowPartnerLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.cancerLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.tbLeave.code:
-                    url = 'abc';
-                    break;
-
-                default:
-                    url = 'abc';
-                    break;
-            }
+            let url: Input = 'leave/director_feedback';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -400,80 +189,9 @@ export class LeaveApplicationServices {
     // secretary verification
     static async addSecretaryVerification(
         param: LeaveEndorsmentDTO,
-        typeCode: string,
     ) {
         try {
-            let url: Input = '';
-
-            switch (typeCode) {
-                case LeaveTypeConstant.replacementLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unrecordedLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.halfPaidLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.earlyMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.officerMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.partnerMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.hajiLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.quarantineLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidNurseryLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.absenceLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.studyLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.extendedSickLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidFollowPartnerLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.cancerLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.tbLeave.code:
-                    url = 'abc';
-                    break;
-
-                default:
-                    url = 'abc';
-                    break;
-            }
+            let url: Input = 'leave/secretary_verification';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -499,80 +217,9 @@ export class LeaveApplicationServices {
     // supporter feedback
     static async addSupporterFeedback(
         param: LeaveEndorsmentDTO,
-        typeCode: string,
     ) {
         try {
-            let url: Input = '';
-
-            switch (typeCode) {
-                case LeaveTypeConstant.replacementLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unrecordedLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.halfPaidLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.earlyMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.officerMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.partnerMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.hajiLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.quarantineLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidNurseryLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.absenceLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.studyLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.extendedSickLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidFollowPartnerLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.cancerLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.tbLeave.code:
-                    url = 'abc';
-                    break;
-
-                default:
-                    url = 'abc';
-                    break;
-            }
+            let url: Input = 'leave/supporter_feedback';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -598,80 +245,9 @@ export class LeaveApplicationServices {
     // approver feedback
     static async addApproverFeedback(
         param: LeaveEndorsmentDTO,
-        typeCode: string,
     ) {
         try {
-            let url: Input = '';
-
-            switch (typeCode) {
-                case LeaveTypeConstant.replacementLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unrecordedLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.halfPaidLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.earlyMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.officerMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.partnerMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.hajiLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.quarantineLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidNurseryLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.absenceLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.studyLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.extendedSickLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidFollowPartnerLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.cancerLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.tbLeave.code:
-                    url = 'abc';
-                    break;
-
-                default:
-                    url = 'abc';
-                    break;
-            }
+            let url: Input = 'leave/approver_feedback';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -697,80 +273,9 @@ export class LeaveApplicationServices {
     // management feedback
     static async addManagementFeedback(
         param: LeaveEndorsmentDTO,
-        typeCode: string,
     ) {
         try {
-            let url: Input = '';
-
-            switch (typeCode) {
-                case LeaveTypeConstant.replacementLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unrecordedLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.halfPaidLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.earlyMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.officerMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.partnerMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.hajiLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.quarantineLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidNurseryLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.absenceLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.studyLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.extendedSickLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidFollowPartnerLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.cancerLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.tbLeave.code:
-                    url = 'abc';
-                    break;
-
-                default:
-                    url = 'abc';
-                    break;
-            }
+            let url: Input = 'leave/management_feedback';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -796,80 +301,9 @@ export class LeaveApplicationServices {
     // add endorser details
     static async addEndorserDetails(
         param: LeaveEndorserDetailsDTO,
-        typeCode: string,
     ) {
         try {
-            let url: Input = '';
-
-            switch (typeCode) {
-                case LeaveTypeConstant.replacementLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unrecordedLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.halfPaidLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.earlyMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.officerMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.partnerMaternityLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.hajiLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.quarantineLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidNurseryLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.absenceLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.studyLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.extendedSickLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.unpaidFollowPartnerLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.cancerLeave.code:
-                    url = 'abc';
-                    break;
-
-                case LeaveTypeConstant.tbLeave.code:
-                    url = 'abc';
-                    break;
-
-                default:
-                    url = 'abc';
-                    break;
-            }
+            let url: Input = 'leave/endorser';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -891,4 +325,30 @@ export class LeaveApplicationServices {
             return CommonResponseConstant.httpError;
         }
     }
+    
+
+    // get application detail
+    static async getApplicationDetail(param: LeaveApplicationDetailRequestDTO) {
+        try {
+            let url: Input = 'leave/view';
+
+            const response: Response = await http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+
 }
