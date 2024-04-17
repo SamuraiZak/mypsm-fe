@@ -23,7 +23,16 @@
     import { LeaveTypeConstant } from '$lib/constants/core/leave-type.constant';
     import { Alert } from 'flowbite-svelte';
     import { Toaster } from 'svelte-french-toast';
-    import { _submitApproverFeedbackForm, _submitDirectorFeedbackForm, _submitHeadOfDirectorFeedbackForm, _submitManagementFeedbackForm, _submitMeetingResultForm, _submitSecretaryVerificationForm, _submitSupporterFeedbackForm } from './+page';
+    import {
+        _submitApproverFeedbackForm,
+        _submitDirectorFeedbackForm,
+        _submitEndorserDetailsForm,
+        _submitHeadOfDirectorFeedbackForm,
+        _submitManagementFeedbackForm,
+        _submitMeetingResultForm,
+        _submitSecretaryVerificationForm,
+        _submitSupporterFeedbackForm,
+    } from './+page';
 
     export let data: PageData;
 
@@ -185,7 +194,9 @@
         id: 'endorserDetailForm',
         SPA: true,
         validators: zodClient(LeaveEndorsementSchema),
-        onSubmit(input) {},
+        onSubmit(input) {
+            _submitEndorserDetailsForm($endorserDetailForm);
+        },
     });
 </script>
 
@@ -688,7 +699,7 @@
                         <TextIconButton
                             label="Hantar"
                             icon="check"
-                            form="secretaryVerification"
+                            form="secretaryVerificationForm"
                         ></TextIconButton>
                     {/if}
                 </StepperContentHeader>
@@ -709,7 +720,7 @@
                             class="flex h-full w-full flex-col items-start justify-start"
                         >
                             <form
-                                id="secretaryVerification"
+                                id="secretaryVerificationForm"
                                 method="POST"
                                 use:secretaryVerificationEnhance
                                 class="flex w-full flex-col items-center justify-start space-y-2 p-2 lg:w-1/2"
