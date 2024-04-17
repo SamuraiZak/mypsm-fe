@@ -140,6 +140,11 @@ export interface LeaveViewHalfPayDTO {
 // Revamps
 // ===========================================================
 
+export interface LeaveApplicationDetailRequestDTO{
+    leaveId: number;
+    leaveTypeCode: string;
+}
+
 // leave endorsment
 export interface LeaveEndorsmentDTO {
     leaveId: number;
@@ -150,7 +155,7 @@ export interface LeaveEndorsmentDTO {
 
 // endorser details
 export interface LeaveEndorserDetailsDTO {
-    leaveId?: number;
+    leaveId: number;
     leaveTypeCode: string;
     supporterName?: string;
     supporterIC: string;
@@ -229,7 +234,7 @@ export interface LeaveStudyDetailsDTO {
 }
 
 export interface LeaveApplicationDetailDTO {
-    applicationDetail: any;
+    applicationDetail?: any | null;
     headOfDirectorFeedback?: LeaveEndorsmentDTO | null;
     directorFeedback?: LeaveEndorsmentDTO | null;
     secretaryVerification?: LeaveEndorsmentDTO | null;
