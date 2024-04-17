@@ -429,11 +429,14 @@ const dictionary: { [key: string]: string } = {
     district: "Daerah",
     panelAppointedDate: "Tarikh Mula Pelantikkan",
     panelContractEndDate: "Tarikh Tamat Pelantikkan",
-    totalToPay: "Baki Bayaran (RM)",
-    paymentType: "Jenis Bayaran (RM)",
+    totalToPay: "Jumlah Perlu Dibayar(RM)",
+    paymentType: "Jenis Bayaran",
     totalAllocated: "Jumlah Peruntukkan (RM)",
     allocationRemainder: "Baki Peruntukkan (RM)",
     amountToPay: "Jumlah Perlu Dibayar (RM)",
+    totalAllocation: "Jumlah Peruntukkan (RM)",
+    totalSuccessfulClaims: "Jumlah Tuntutan Berjaya (RM)",
+    remainderAllocation: "Baki Peruntukkan (RM)",
     
 
     // PDP

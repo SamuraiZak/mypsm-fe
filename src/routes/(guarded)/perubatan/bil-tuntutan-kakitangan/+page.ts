@@ -19,6 +19,13 @@ export const load = async () => {
         orderType: 1,
         filter: {}
     };
+    const paymentParam: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: 'medicalClaimId',
+        orderType: 1,
+        filter: {}
+    };
 
     const employeeAllocationListResponse: CommonResponseDTO =
         await MedicalServices.getClinicEmployeeAllocation(param);
@@ -29,7 +36,7 @@ export const load = async () => {
     employeeGetAllocation =
         employeeGetAllocationResponse.data?.dataList as MedicalClinicEmployeeGetAllocationList[];
     const employeePaymentListResponse: CommonResponseDTO =
-        await MedicalServices.getClinicEmployeePaymentList(param)
+        await MedicalServices.getClinicEmployeePaymentList(paymentParam)
     employeePaymentList =
         employeePaymentListResponse.data?.dataList as MedicalClinicEmployeePaymentList[];
 

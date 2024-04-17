@@ -1210,15 +1210,7 @@ export class SidebarConstant {
                         {
                             name: 'Perkhidmatan (Permohonan Panel Klinik)',
                             path: '/perubatan/permohonan-klinik-panel',
-                        },
-                        {
-                            name: 'Perkhidmatan (Bil Tuntutan Klinik)',
-                            path: '/perubatan/bil-tuntutan-klinik',
-                        },
-                        {
-                            name: 'Perkhidmatan (Bil Tuntutan Kakitangan)',
-                            path: 'perubatan/bil-tuntutan-kakitangan',
-                        },
+                        }
                     ],
                 },
                 {
@@ -1583,24 +1575,6 @@ export class SidebarConstant {
                         {
                             name: 'Kuarters - Permohonan Keluar Kuarter',
                             path: '/pinjaman-kuarters/permohonan-keluar-kuarter',
-                        },
-                    ],
-                },
-                {
-                    name: 'Perubatan',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Perkhidmatan (Permohonan Panel Klinik)',
-                            path: '/perubatan/permohonan-panel-klinik',
-                        },
-                        {
-                            name: 'Perkhidmatan (Bil Tuntutan Klinik)',
-                            path: '/perubatan/bil-tuntutan-klinik',
-                        },
-                        {
-                            name: 'Perkhidmatan (Bil Tuntutan Kakitangan)',
-                            path: '/perubatan/bil-tuntutan-kakitangan',
                         },
                     ],
                 },
@@ -2117,14 +2091,6 @@ export class SidebarConstant {
                         {
                             name: 'Perkhidmatan (Permohonan Panel Klinik)',
                             path: '/perubatan/permohonan-panel-klinik',
-                        },
-                        {
-                            name: 'Perkhidmatan (Bil Tuntutan Klinik)',
-                            path: '/perubatan/bil-tuntutan-klinik',
-                        },
-                        {
-                            name: 'Perkhidmatan (Bil Tuntutan Kakitangan)',
-                            path: 'perubatan/bil-tuntutan-kakitangan',
                         },
                     ],
                 },

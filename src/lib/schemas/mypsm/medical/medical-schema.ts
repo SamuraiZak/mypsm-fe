@@ -160,3 +160,10 @@ export const _addTreatmentSchema = z.object({
     claimId: numberSchema,
     patientList: _patientTreatmentSchema.array(),
 })
+
+export const _clinicPaymentSchema = z.object({
+    id: z.number(),
+    paymentType: shortTextSchema,
+    transactionNumber: shortTextSchema,
+    transactionDate: stringToMaxDate,
+})

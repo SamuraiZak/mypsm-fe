@@ -5,8 +5,36 @@
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import type { PageData } from './$types';
+    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import CustomTable from '$lib/components/table/CustomTable.svelte';
+    import { _updateTable } from './+page';
 
     export let data: PageData;
+
+    let dependantTable: TableDTO = {
+        param: data.param,
+        meta: data.employeeDependantResponse.data?.meta ?? {
+            pageSize: 5,
+            pageNum: 1,
+            totalData: 0,
+            totalPage: 1,
+        },
+        data: data.employeeDependant ?? [],
+    };
+
+    async function _searchTable() {
+        _updateTable(dependantTable.param).then((value) => {
+            dependantTable.data = value.props.response.data?.dataList ?? [];
+            dependantTable.meta = value.props.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            dependantTable.param.pageSize = value.props.param.pageSize;
+            dependantTable.param.pageNum = value.props.param.pageNum;
+        });
+    }
 </script>
 
 <!-- content header starts here -->
@@ -22,10 +50,10 @@
 </section>
 
 <section
-    class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
+    class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
-    <div class="flex w-full flex-col gap-2.5 pb-10">
-        <div class="flex w-full flex-col justify-start gap-2.5 md:w-1/2 p-5">
+    <div class="flex w-full flex-col gap-2.5 p-5 pb-10">
+        <div class="flex w-full flex-col justify-start gap-2.5 md:w-1/2">
             <CustomTextField
                 label="Nama"
                 disabled
@@ -63,5 +91,10 @@
                 bind:val={data.employeeDetail.serviceGroup}
             />
         </div>
+        <CustomTable
+        title="Senarai Tanggungan"
+        bind:tableData={dependantTable}
+        onUpdate={_searchTable}
+    />
     </div>
 </section>
