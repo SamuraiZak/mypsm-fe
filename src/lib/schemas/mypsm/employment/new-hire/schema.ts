@@ -34,54 +34,67 @@ export const _addNewHireSchema = z.object({
         .email({ message: 'Pastikan emel adalah betul dan lengkap' }),
 });
 
-export const _personalInfoResponseSchema = z
-    .object({
-        id: z.number().readonly(),
-        name: shortTextSchema,
-        alternativeName: z.string(),
-        identityDocumentNumber: shortTextSchema,
-        identityDocumentColor: codeSchema,
-        email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
-        assetDeclarationStatusId: numberIdSchema,
-        propertyDeclarationDate: dateStringSchema.nullable(),
-        birthDate: z.coerce.string({
-            required_error: 'Pastikan tarikh adalah betul.',
-        }),
-        birthStateId: numberIdSchema,
-        birthCountryId: numberIdSchema,
-        genderId: numberIdSchema,
-        nationalityId: numberIdSchema,
-        religionId: numberIdSchema,
-        raceId: numberIdSchema,
-        titleId: numberIdSchema,
-        ethnicId: numberIdSchema,
-        maritalId: numberIdSchema,
-        homeAddress: shortTextSchema,
-        homeCountryId: numberIdSchema,
-        homeStateId: numberIdSchema,
-        homeCityId: numberIdSchema,
-        homePostcode: shortTextSchema,
-        mailAddress: shortTextSchema,
-        mailCountryId: numberIdSchema,
-        mailStateId: numberIdSchema,
-        mailCityId: numberIdSchema,
-        mailPostcode: shortTextSchema,
-        isExPoliceOrSoldier: booleanSchema,
-        isInternalRelationship: booleanSchema,
-        employeeNumber: z.string().nullable(),
-        employeeName: z.string(),
-        employeePosition: z.string(),
-        relationshipId: z.number().nullable(),
-        isReadOnly: z.boolean().readonly(),
-    })
-    .partial({
-        alternativeName: true,
-        propertyDeclarationDate: true,
-        employeeNumber: true,
-        employeeName: true,
-        employeePosition: true,
-        relationshipId: true,
-    });
+export const _personalInfoResponseSchema = z.object({
+    id: z.number().readonly(),
+    name: shortTextSchema,
+    alternativeName: z.string().nullable(),
+    identityDocumentNumber: shortTextSchema,
+    identityDocumentColor: codeSchema,
+    email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
+    assetDeclarationStatusId: numberIdSchema.refine((val) => val > 0, {
+        message: 'Sila Tetapkan Pilihan',
+    }),
+    propertyDeclarationDate: dateStringSchema.nullable(),
+    birthDate: z.coerce.string({
+        required_error: 'Pastikan tarikh adalah betul.',
+    }),
+    birthStateId: numberIdSchema,
+    birthCountryId: numberIdSchema,
+    genderId: numberIdSchema,
+    nationalityId: numberIdSchema,
+    religionId: numberIdSchema,
+    raceId: numberIdSchema,
+    titleId: numberIdSchema,
+    ethnicId: numberIdSchema,
+    maritalId: numberIdSchema,
+    homeAddress: shortTextSchema,
+    homeCountryId: numberIdSchema.refine((val) => val > 0, {
+        message: 'Sila Tetapkan Pilihan',
+    }),
+    homeStateId: numberIdSchema.refine((val) => val > 0, {
+        message: 'Sila Tetapkan Pilihan',
+    }),
+    homeCityId: numberIdSchema.refine((val) => val > 0, {
+        message: 'Sila Tetapkan Pilihan',
+    }),
+    homePostcode: shortTextSchema,
+    mailAddress: shortTextSchema,
+    mailCountryId: numberIdSchema.refine((val) => val > 0, {
+        message: 'Sila Tetapkan Pilihan',
+    }),
+    mailStateId: numberIdSchema.refine((val) => val > 0, {
+        message: 'Sila Tetapkan Pilihan',
+    }),
+    mailCityId: numberIdSchema.refine((val) => val > 0, {
+        message: 'Sila Tetapkan Pilihan',
+    }),
+    mailPostcode: shortTextSchema,
+    isExPoliceOrSoldier: booleanSchema,
+    isInternalRelationship: booleanSchema,
+    employeeNumber: z.string().nullable(),
+    employeeName: z.string().nullable(),
+    employeePosition: z.string().nullable(),
+    relationshipId: z.number().nullable(),
+    isReadOnly: z.boolean().readonly(),
+});
+// .partial({
+//     alternativeName: true,
+//     propertyDeclarationDate: true,
+//     employeeNumber: true,
+//     employeeName: true,
+//     employeePosition: true,
+//     relationshipId: true,
+// });
 
 export const _personalInfoRequestSchema = _personalInfoResponseSchema
     .omit({
@@ -144,7 +157,9 @@ export const _personalInfoRequestSchema = _personalInfoResponseSchema
 export const _academicInfoSchema = z
     .object({
         id: z.number().readonly(),
-        majorId: numberIdSchema,
+        majorId: numberIdSchema.refine((val) => val > 0, {
+            message: 'Sila Tetapkan Pilihan',
+        }),
         minorId: numberIdSchema,
         countryId: numberIdSchema,
         institutionId: numberIdSchema,
