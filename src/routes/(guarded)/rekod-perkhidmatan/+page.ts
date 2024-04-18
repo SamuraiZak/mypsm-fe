@@ -1,16 +1,13 @@
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
-import type { ProceedingChargeListResponseDTO } from '$lib/dto/mypsm/integrity/proceeding/proceeding-charges-response.dto';
 import type { academicResponseDTO } from '$lib/dto/mypsm/profile/academic-detail.dto';
-import { _proceedingStaffDetailResponseSchema } from '$lib/schemas/mypsm/integrity/proceeding-scheme';
 import {
     _academicListResponseSchema,
-    _nextOfKinListResponseSchema,
 } from '$lib/schemas/mypsm/profile/profile-schemas';
+import { _serviceRecordPersonalDetailSchema } from '$lib/schemas/mypsm/service-record/service-record.schema';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { ServiceRecordServices } from '$lib/services/implementation/mypsm/buku-rekod-perkhidmatan/service-record.service';
-import { IntegrityProceedingServices } from '$lib/services/implementation/mypsm/integriti/integrity-proceeding.service';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
@@ -31,12 +28,8 @@ export const load = async () => {
     };
 
     // proceeding - charge appeal list
-    const proceedingListResponse: CommonResponseDTO =
-        await IntegrityProceedingServices.getProceedingChargeAppealList(param);
-
-    const proceedingList =
-        (proceedingListResponse.data
-            ?.dataList as ProceedingChargeListResponseDTO) ?? [];
+    const personalDetailResponse: CommonResponseDTO =
+        await ServiceRecordServices.getPersonalDetails();
 
     // get qualification list
     const qualificationListResponse =
@@ -46,22 +39,26 @@ export const load = async () => {
     const serviceStatementListResponse =
         await ServiceRecordServices.getServiceStatementList(param);
 
+    // get leave statemens list
+    const leaveStatementListResponse =
+        await ServiceRecordServices.getLeaveStatementList(param);
+
+    // get behaviour histories list
+    const behaviourHistoriesListResponse =
+        await ServiceRecordServices.getBehaviourHistoriesList(param);
+
     // ============================================================
     // Supervalidated form initialization
     // ============================================================
     const personalDetailForm = await superValidate(
-        // personalDetailResponse.data?.details as CandidatePersonalResponseDTO,
-        zod(_proceedingStaffDetailResponseSchema),
+        personalDetailResponse.data?.details,
+        zod(_serviceRecordPersonalDetailSchema),
         { errors: false },
     );
 
     const qualificationInfoForm = await superValidate(
         qualificationListResponse.data?.details as academicResponseDTO,
         zod(_academicListResponseSchema),
-    );
-
-    const nextOFKInInfoForm = await superValidate(
-        zod(_nextOfKinListResponseSchema),
     );
     // ==========================================================================
     // Get Lookup Functions
@@ -74,22 +71,67 @@ export const load = async () => {
 
     // ===========================================================================
 
+    const countryLookupResponse: CommonResponseDTO =
+        await LookupServices.getCountryEnums();
+
+    const countryLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        countryLookupResponse,
+    );
+
+    // ===========================================================================
+    const institutionLookupResponse: CommonResponseDTO =
+        await LookupServices.getInstitutionEnums();
+
+    const institutionLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        institutionLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const educationLookupResponse: CommonResponseDTO =
+        await LookupServices.getHighestEducationEnums();
+
+    const educationLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        educationLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const sponsorshipLookupResponse: CommonResponseDTO =
+        await LookupServices.getSponsorshipEnums();
+
+    const sponsorshipLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        sponsorshipLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const majorMinorLookupResponse: CommonResponseDTO =
+        await LookupServices.getMajorMinorEnums();
+
+    const majorMinorLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        majorMinorLookupResponse,
+    );
+
     return {
         param,
-        list: {
-            proceedingList,
-        },
         forms: {
             personalDetailForm,
-            nextOFKInInfoForm,
             qualificationInfoForm,
         },
         responses: {
-            proceedingListResponse,
+            personalDetailResponse,
             serviceStatementListResponse,
+            leaveStatementListResponse,
+            behaviourHistoriesListResponse,
         },
         selectionOptions: {
             statusLookup,
+            countryLookup,
+            institutionLookup,
+            educationLookup,
+            sponsorshipLookup,
+            majorMinorLookup,
         },
     };
 };

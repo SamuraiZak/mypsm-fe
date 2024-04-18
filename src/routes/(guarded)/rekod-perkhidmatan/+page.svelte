@@ -3,6 +3,7 @@
     import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
+    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import FilterDateField from '$lib/components/table/filter/FilterDateField.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
@@ -19,40 +20,6 @@
     export let data: PageData;
     let rowData: ProceedingChargeDetailResponseDTO;
 
-    // Table list - Charge Appeal Table
-    let chargeListTable: TableSettingDTO = {
-        param: data.param,
-        meta: data.responses.proceedingListResponse.data?.meta ?? {
-            pageSize: 1,
-            pageNum: 1,
-            totalData: 1,
-            totalPage: 1,
-        },
-        data:
-            (data.list.proceedingList as ProceedingChargeListResponseDTO) ?? [],
-        selectedData: [],
-        exportData: [],
-        hiddenColumn: ['integrityId', 'employeeId', 'declarationLetter'],
-        dictionary: [
-            {
-                english: 'proceedingMeetingDate',
-                malay: 'Tarikh Mesyuarat Prosiding',
-            },
-        ],
-        url: 'integrity/proceeding/appeal/list',
-        id: 'chargeListTable',
-        option: {
-            checkbox: false,
-            detail: true,
-            edit: false,
-            select: false,
-            filter: true,
-        },
-        controls: {
-            add: false,
-        },
-    };
-
     // Table list - Service Statement Table
     let serviceStatementListTable: TableSettingDTO = {
         param: data.param,
@@ -68,12 +35,115 @@
         hiddenColumn: [],
         dictionary: [
             {
-                english: 'proceedingMeetingDate',
-                malay: 'Tarikh Mesyuarat Prosiding',
+                english: 'permission',
+                malay: 'Kebenaran',
+            },
+            {
+                english: 'transferDetails',
+                malay: 'Butiran Pertukaran',
+            },
+            {
+                english: 'serviceStartDate',
+                malay: 'Tarikh Mula Perkhidmatan',
+            },
+            {
+                english: 'isRetired',
+                malay: 'Bersara',
+            },
+            {
+                english: 'monthlySalary',
+                malay: 'Gaji Bulanan',
+            },
+            {
+                english: 'Course',
+                malay: 'Latihan',
+            },
+            {
+                english: 'Loans',
+                malay: 'Pinjaman',
+            },
+            {
+                english: 'Medical',
+                malay: 'Perubatan',
             },
         ],
         url: 'service_record/service_statement',
         id: 'serviceStatementListTable',
+        option: {
+            checkbox: false,
+            detail: false,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
+    };
+
+    // Table list - Leave Statement Table
+    let leaveStatementListTable: TableSettingDTO = {
+        param: data.param,
+        meta: data.responses.leaveStatementListResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: data.responses.leaveStatementListResponse.data?.dataList ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: [],
+        dictionary: [
+            {
+                english: 'permission',
+                malay: 'Kebenaran',
+            },
+        ],
+        url: 'service_record/leave_statement',
+        id: 'leaveStatementListTable',
+        option: {
+            checkbox: false,
+            detail: false,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
+    };
+
+    // Table list - Behaviour Histories Table
+    let behaviourHistoriesListTable: TableSettingDTO = {
+        param: data.param,
+        meta: data.responses.behaviourHistoriesListResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data:
+            data.responses.behaviourHistoriesListResponse.data?.dataList ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: [],
+        dictionary: [
+            {
+                english: 'permission',
+                malay: 'Kebenaran',
+            },
+            {
+                english: 'appraisalDetail',
+                malay: 'Butiran Penilaian',
+            },
+            {
+                english: 'verifiedBy',
+                malay: 'Disahkan Oleh',
+            },
+        ],
+        url: 'service_record/behaviour_histories',
+        id: 'behaviourHistoriesListTable',
         option: {
             checkbox: false,
             detail: false,
@@ -101,16 +171,6 @@
             validators: false,
         },
     );
-
-    const { form: nextOfKinInfoForm } = superForm(
-        data.forms.nextOFKInInfoForm,
-
-        {
-            SPA: true,
-            dataType: 'json',
-            validators: false,
-        },
-    );
 </script>
 
 <!-- content header starts here -->
@@ -125,7 +185,7 @@
 >
     <CustomTab>
         <CustomTabContent title="Umum">
-            <div class="flex w-full flex-col gap-2 px-4">
+            <div class="flex w-full flex-col gap-2 px-2.5">
                 <!-- Maklumat Peperiksaan -->
                 <ContentHeader
                     title="Maklumat Pegawai"
@@ -135,14 +195,6 @@
                     color="system-primary"
                     titlePadding={false}
                 ></ContentHeader>
-                <CustomTextField
-                    disabled
-                    id="employeeNumber"
-                    label={'No. Pekerja'}
-                    type="text"
-                    placeholder="-"
-                    bind:val={$form.employeeDetail.employeeNumber}
-                ></CustomTextField>
 
                 <CustomTextField
                     disabled
@@ -150,16 +202,7 @@
                     label={'Nama Penuh'}
                     type="text"
                     placeholder="-"
-                    bind:val={$form.employeeDetail.fullName}
-                ></CustomTextField>
-
-                <CustomTextField
-                    disabled
-                    id="alternativeName"
-                    label={'Nama Lain'}
-                    type="text"
-                    placeholder="-"
-                    bind:val={$form.employeeDetail.alternativeName}
+                    bind:val={$form.name}
                 ></CustomTextField>
 
                 <CustomTextField
@@ -168,24 +211,7 @@
                     label={'No. Kad Pengenalan'}
                     type="text"
                     placeholder="-"
-                    bind:val={$form.employeeDetail.identityCardNumber}
-                ></CustomTextField>
-
-                <CustomTextField
-                    disabled
-                    id="icColour"
-                    label={'Jenis Kad Pengenalan'}
-                    placeholder="-"
-                    bind:val={$form.employeeDetail.icColour}
-                ></CustomTextField>
-
-                <CustomTextField
-                    disabled
-                    id="email"
-                    label={'Emel'}
-                    type="text"
-                    placeholder="-"
-                    bind:val={$form.employeeDetail.email}
+                    bind:val={$form.ICNumber}
                 ></CustomTextField>
 
                 <CustomTextField
@@ -194,39 +220,15 @@
                     id="birthDate"
                     label="Tarikh Lahir"
                     placeholder="-"
-                    bind:val={$form.employeeDetail.birthDate}
+                    bind:val={$form.birthDate}
                 ></CustomTextField>
 
                 <CustomTextField
                     disabled
-                    id="birthplace"
+                    id="birhtplace"
                     label="Tempat Lahir"
                     placeholder="-"
-                    bind:val={$form.employeeDetail.birthplace}
-                ></CustomTextField>
-
-                <CustomTextField
-                    disabled
-                    id="nationality"
-                    label="Warganegara"
-                    placeholder="-"
-                    bind:val={$form.employeeDetail.nationality}
-                ></CustomTextField>
-
-                <CustomTextField
-                    disabled
-                    id="race"
-                    label="Bangsa"
-                    placeholder="-"
-                    bind:val={$form.employeeDetail.race}
-                ></CustomTextField>
-
-                <CustomTextField
-                    disabled
-                    id="ethnic"
-                    label="Etnik"
-                    placeholder="-"
-                    bind:val={$form.employeeDetail.ethnic}
+                    bind:val={$form.birhtplace}
                 ></CustomTextField>
 
                 <CustomTextField
@@ -234,115 +236,8 @@
                     id="religion"
                     label="Agama"
                     placeholder="-"
-                    bind:val={$form.employeeDetail.religion}
+                    bind:val={$form.religion}
                 ></CustomTextField>
-
-                <CustomTextField
-                    disabled
-                    id="gender"
-                    label="Jantina"
-                    placeholder="-"
-                    bind:val={$form.employeeDetail.gender}
-                ></CustomTextField>
-
-                <CustomTextField
-                    disabled
-                    id="marital"
-                    label="Status Perkahwinan"
-                    placeholder="-"
-                    bind:val={$form.employeeDetail.marital}
-                ></CustomTextField>
-
-                <CustomTextField
-                    disabled
-                    id="homeAddress"
-                    label="Alamat Rumah"
-                    placeholder="-"
-                    bind:val={$form.employeeDetail.homeAddress}
-                />
-
-                <CustomTextField
-                    disabled
-                    id="mailAddress"
-                    label="Alamat Surat Menyurat"
-                    placeholder="-"
-                    bind:val={$form.employeeDetail.mailAddress}
-                />
-
-                <CustomTextField
-                    disabled
-                    type="number"
-                    id="houseLoanType"
-                    label="Perumahan"
-                    placeholder="-"
-                    bind:val={$form.employeeDetail.houseLoanType}
-                />
-
-                <CustomTextField
-                    disabled
-                    type="number"
-                    id="houseLoan"
-                    label="Pinjaman Perumahan"
-                    placeholder="-"
-                    bind:val={$form.employeeDetail.houseLoan}
-                />
-
-                <CustomTextField
-                    disabled
-                    type="number"
-                    id="vehicleLoan"
-                    label="Pinjaman Kenderaan"
-                    placeholder="-"
-                    bind:val={$form.employeeDetail.vehicleLoan}
-                />
-
-                <CustomTextField
-                    disabled
-                    id="isExPolice"
-                    label="Bekas Polis / Tentera"
-                    placeholder="-"
-                    bind:val={$form.employeeDetail.isExPolice}
-                ></CustomTextField>
-
-                <CustomTextField
-                    disabled
-                    id="isRelatedToLKIM"
-                    label="Perhubungan Dengan Kakitangan LKIM"
-                    placeholder="-"
-                    bind:val={$form.employeeDetail.isRelatedToLKIM}
-                ></CustomTextField>
-
-                {#if $form.employeeDetail.isRelatedToLKIM}
-                    <CustomTextField
-                        disabled
-                        id="employeeNumber"
-                        label="No. Pekerja LKIM"
-                        bind:val={$form.employeeDetail.relationDetail
-                            .employeeNumber}
-                    ></CustomTextField>
-
-                    <CustomTextField
-                        disabled
-                        id="employeeName"
-                        label={'Nama Kakitangan LKIM'}
-                        bind:val={$form.employeeDetail.relationDetail.fullName}
-                    ></CustomTextField>
-
-                    <CustomTextField
-                        disabled
-                        id="relationDetailPosition"
-                        label="Jawatan Kakitangan LKIM"
-                        bind:val={$form.employeeDetail.relationDetail.position}
-                    ></CustomTextField>
-
-                    <CustomTextField
-                        disabled
-                        id="relationDetailRelationship"
-                        label="Hubungan"
-                        bind:val={$form.employeeDetail.relationDetail
-                            .relationship}
-                    ></CustomTextField>
-                {/if}
                 <hr />
                 <ContentHeader
                     title="Maklumat Waris"
@@ -352,183 +247,33 @@
                     color="system-primary"
                     titlePadding={false}
                 ></ContentHeader>
-                {#if $nextOfKinInfoForm.nextOfKins.length < 1}
+                {#if $form.nextOfKins.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
                         Tiada maklumat.
                     </div>
                 {:else}
-                    <CustomTab id="nextOfKins">
-                        {#each $nextOfKinInfoForm.nextOfKins as _, i}
-                            <CustomTabContent
-                                title={i +
-                                    1 +
-                                    '. ' +
-                                    $nextOfKinInfoForm.nextOfKins[i].name}
-                            >
-                                <CustomTextField
-                                    id="name"
-                                    label={'Nama'}
-                                    type="text"
-                                    disabled
-                                    bind:val={$nextOfKinInfoForm.nextOfKins[i]
-                                        .name}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    id="alternativeName"
-                                    label={'Nama Lain'}
-                                    type="text"
-                                    disabled
-                                    bind:val={$nextOfKinInfoForm.nextOfKins[i]
-                                        .alternativeName}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    id="identityDocumentColor"
-                                    label={'Jenis Kad Pengenalan'}
-                                    disabled
-                                    bind:val={$nextOfKinInfoForm.nextOfKins[i]
-                                        .identityDocumentColor}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    id="identityDocumentNumber"
-                                    type="number"
-                                    label={'Nombor Kad Pengenalan'}
-                                    disabled
-                                    bind:val={$nextOfKinInfoForm.nextOfKins[i]
-                                        .identityDocumentNumber}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    id="address"
-                                    label={'Alamat'}
-                                    disabled
-                                    bind:val={$nextOfKinInfoForm.nextOfKins[i]
-                                        .address}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    id="postcode"
-                                    label={'Poskod'}
-                                    type="text"
-                                    disabled
-                                    bind:val={$nextOfKinInfoForm.nextOfKins[i]
-                                        .postcode}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    disabled
-                                    type="date"
-                                    id="birthDate"
-                                    label={'Tarikh Lahir'}
-                                    bind:val={$nextOfKinInfoForm.nextOfKins[i]
-                                        .birthDate}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    id="birthCountryId"
-                                    label={'Negara Kelahiran'}
-                                    disabled
-                                    bind:val={$nextOfKinInfoForm.nextOfKins[i]
-                                        .birthCountryId}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    id="birthStateId"
-                                    label={'Negeri Kelahiran'}
-                                    bind:val={$nextOfKinInfoForm.nextOfKins[i]
-                                        .birthStateId}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    id="relationshipId"
-                                    label={'Hubungan'}
-                                    disabled
-                                    bind:val={$nextOfKinInfoForm.nextOfKins[i]
-                                        .relationshipId}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    id="educationLevelId"
-                                    label={'Taraf Pendidikan'}
-                                    disabled
-                                    bind:val={$nextOfKinInfoForm.nextOfKins[i]
-                                        .educationLevelId}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    id="raceId"
-                                    label={'Bangsa'}
-                                    disabled
-                                    bind:val={$nextOfKinInfoForm.nextOfKins[i]
-                                        .raceId}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    id="nationalityId"
-                                    label={'Kewarganegaraan'}
-                                    disabled
-                                    bind:val={$nextOfKinInfoForm.nextOfKins[i]
-                                        .nationalityId}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    id="maritalId"
-                                    label={'Status Perkhahwinan'}
-                                    disabled
-                                    bind:val={$nextOfKinInfoForm.nextOfKins[i]
-                                        .maritalId}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    id="genderId"
-                                    label={'Jantina'}
-                                    bind:val={$nextOfKinInfoForm.nextOfKins[i]
-                                        .genderId}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    id="workAddress"
-                                    label={'Alamat Majikan'}
-                                    type="text"
-                                    disabled
-                                    bind:val={$nextOfKinInfoForm.nextOfKins[i]
-                                        .workAddress}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    id="workPostcode"
-                                    label={'Poskod Majikan'}
-                                    type="text"
-                                    disabled
-                                    bind:val={$nextOfKinInfoForm.nextOfKins[i]
-                                        .workPostcode}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    id="phoneNumber"
-                                    label={'Nombor Telefon Bimbit'}
-                                    type="text"
-                                    disabled
-                                    bind:val={$nextOfKinInfoForm.nextOfKins[i]
-                                        .phoneNumber}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    disabled
-                                    type="date"
-                                    id="marriageDate"
-                                    label={'Tarikh Kahwin'}
-                                    bind:val={$nextOfKinInfoForm.nextOfKins[i]
-                                        .marriageDate}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    id="inSchool"
-                                    label={'Bersekolah'}
-                                    disabled
-                                    bind:val={$nextOfKinInfoForm.nextOfKins[i]
-                                        .inSchool}
-                                ></CustomTextField>
+                    <CustomTab pill={true} id="nextOfKins">
+                        {#each $form.nextOfKins as _, i}
+                            <CustomTabContent title={$form.nextOfKins[i].name}>
+                                <div
+                                    class="w-full rounded-lg border border-system-primary p-2.5"
+                                >
+                                    <CustomTextField
+                                        id="name"
+                                        label={'Nama'}
+                                        type="text"
+                                        disabled
+                                        placeholder="-"
+                                        bind:val={$form.nextOfKins[i].name}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        id="address"
+                                        label={'Alamat'}
+                                        disabled
+                                        placeholder="-"
+                                        bind:val={$form.nextOfKins[i].address}
+                                    ></CustomTextField>
+                                </div>
                             </CustomTabContent>
                         {/each}
                     </CustomTab>
@@ -542,98 +287,115 @@
                         Tiada maklumat.
                     </div>
                 {:else}
-                    <CustomTab id="academics">
+                    <CustomTab pill={true} id="academics">
                         {#each $academicInfoForm.academics as _, i}
                             <CustomTabContent title={`Akademik #${i + 1}`}>
-                                <input
-                                    type="text"
-                                    hidden
-                                    bind:value={$academicInfoForm.academics[i]
-                                        .educationId}
-                                />
-                                <CustomTextField
-                                    disabled
-                                    id="majorId"
-                                    label={'Jurusan'}
-                                    bind:val={$academicInfoForm.academics[i]
-                                        .majorId}
-                                ></CustomTextField>
+                                <div
+                                    class="w-full rounded-lg border border-system-primary p-2.5"
+                                >
+                                    <input
+                                        type="text"
+                                        hidden
+                                        bind:value={$academicInfoForm.academics[
+                                            i
+                                        ].educationId}
+                                    />
+                                    <CustomSelectField
+                                        disabled
+                                        id="majorId"
+                                        label={'Jurusan'}
+                                        options={data.selectionOptions
+                                            .majorMinorLookup}
+                                        bind:val={$academicInfoForm.academics[i]
+                                            .majorId}
+                                    ></CustomSelectField>
 
-                                <CustomTextField
-                                    disabled
-                                    id="minorId"
-                                    label={'Bidang'}
-                                    bind:val={$academicInfoForm.academics[i]
-                                        .minorId}
-                                ></CustomTextField>
+                                    <CustomSelectField
+                                        disabled
+                                        id="minorId"
+                                        label={'Bidang'}
+                                        bind:val={$academicInfoForm.academics[i]
+                                            .minorId}
+                                        options={data.selectionOptions
+                                            .majorMinorLookup}
+                                    ></CustomSelectField>
 
-                                <CustomTextField
-                                    disabled
-                                    id="countryId"
-                                    label={'Negara'}
-                                    bind:val={$academicInfoForm.academics[i]
-                                        .countryId}
-                                ></CustomTextField>
+                                    <CustomSelectField
+                                        disabled
+                                        id="countryId"
+                                        label={'Negara'}
+                                        bind:val={$academicInfoForm.academics[i]
+                                            .countryId}
+                                        options={data.selectionOptions
+                                            .countryLookup}
+                                    ></CustomSelectField>
 
-                                <CustomTextField
-                                    disabled
-                                    id="institutionId"
-                                    label={'Institusi'}
-                                    bind:val={$academicInfoForm.academics[i]
-                                        .institutionId}
-                                ></CustomTextField>
+                                    <CustomSelectField
+                                        disabled
+                                        id="institutionId"
+                                        label={'Institusi'}
+                                        bind:val={$academicInfoForm.academics[i]
+                                            .institutionId}
+                                        options={data.selectionOptions
+                                            .institutionLookup}
+                                    ></CustomSelectField>
 
-                                <CustomTextField
-                                    disabled
-                                    id="educationLevelId"
-                                    label={'Taraf Pendidikan'}
-                                    bind:val={$academicInfoForm.academics[i]
-                                        .educationLevelId}
-                                ></CustomTextField>
+                                    <CustomSelectField
+                                        disabled
+                                        id="educationLevelId"
+                                        label={'Taraf Pendidikan'}
+                                        bind:val={$academicInfoForm.academics[i]
+                                            .educationLevelId}
+                                        options={data.selectionOptions
+                                            .educationLookup}
+                                    ></CustomSelectField>
 
-                                <CustomTextField
-                                    disabled
-                                    id="sponsorshipId"
-                                    label={'Penajaan'}
-                                    bind:val={$academicInfoForm.academics[i]
-                                        .sponsorshipId}
-                                ></CustomTextField>
+                                    <CustomSelectField
+                                        disabled
+                                        id="sponsorshipId"
+                                        label={'Penajaan'}
+                                        bind:val={$academicInfoForm.academics[i]
+                                            .sponsorshipId}
+                                        options={data.selectionOptions
+                                            .sponsorshipLookup}
+                                    ></CustomSelectField>
 
-                                <CustomTextField
-                                    disabled
-                                    id="name"
-                                    label={'Nama Sijil/Pencapaian'}
-                                    type="text"
-                                    bind:val={$academicInfoForm.academics[i]
-                                        .name}
-                                ></CustomTextField>
+                                    <CustomTextField
+                                        disabled
+                                        id="name"
+                                        label={'Nama Sijil/Pencapaian'}
+                                        type="text"
+                                        bind:val={$academicInfoForm.academics[i]
+                                            .name}
+                                    ></CustomTextField>
 
-                                <CustomTextField
-                                    disabled
-                                    id="completionDate"
-                                    label="Tarikh Tamat Pembelajaran"
-                                    type="date"
-                                    bind:val={$academicInfoForm.academics[i]
-                                        .completionDate}
-                                ></CustomTextField>
+                                    <CustomTextField
+                                        disabled
+                                        id="completionDate"
+                                        label="Tarikh Tamat Pembelajaran"
+                                        type="date"
+                                        bind:val={$academicInfoForm.academics[i]
+                                            .completionDate}
+                                    ></CustomTextField>
 
-                                <CustomTextField
-                                    disabled
-                                    id="finalGrade"
-                                    label={'Ijazah/ CGPA/ Gred'}
-                                    type="text"
-                                    bind:val={$academicInfoForm.academics[i]
-                                        .finalGrade}
-                                ></CustomTextField>
+                                    <CustomTextField
+                                        disabled
+                                        id="finalGrade"
+                                        label={'Ijazah/ CGPA/ Gred'}
+                                        type="text"
+                                        bind:val={$academicInfoForm.academics[i]
+                                            .finalGrade}
+                                    ></CustomTextField>
 
-                                <CustomTextField
-                                    disabled
-                                    id="field"
-                                    label={'Bidang'}
-                                    type="text"
-                                    bind:val={$academicInfoForm.academics[i]
-                                        .field}
-                                ></CustomTextField>
+                                    <CustomTextField
+                                        disabled
+                                        id="field"
+                                        label={'Bidang'}
+                                        type="text"
+                                        bind:val={$academicInfoForm.academics[i]
+                                            .field}
+                                    ></CustomTextField>
+                                </div>
                             </CustomTabContent>
                         {/each}
                     </CustomTab>
@@ -652,7 +414,11 @@
                         bind:tableData={serviceStatementListTable}
                     >
                         <FilterWrapper slot="filter">
-                            <FilterSelectField label="Status"
+                            <FilterSelectField
+                                label="Status"
+                                options={data.selectionOptions.statusLookup}
+                                bind:inputValue={serviceStatementListTable.param
+                                    .filter.status}
                             ></FilterSelectField>
                             <FilterDateField
                                 label="Tarikh"
@@ -673,7 +439,7 @@
                 >
                     <DataTable
                         title="Senarai Kenyataan Cuti"
-                        bind:tableData={chargeListTable}
+                        bind:tableData={leaveStatementListTable}
                         bind:passData={rowData}
                         detailActions={() => {
                             const route = `../integriti/prosiding/${rowData.integrityId}-${rowData.employeeId}-${rowData.isAppeal}`;
@@ -682,17 +448,21 @@
                         }}
                     >
                         <FilterWrapper slot="filter">
-                            <FilterSelectField label="Status"
+                            <FilterSelectField
+                                label="Status"
+                                options={data.selectionOptions.statusLookup}
+                                bind:inputValue={leaveStatementListTable.param
+                                    .filter.status}
                             ></FilterSelectField>
                             <FilterDateField
                                 label="Tarikh Daripada"
-                                bind:inputValue={chargeListTable.param.filter
-                                    .status}
+                                bind:inputValue={leaveStatementListTable.param
+                                    .filter.status}
                             ></FilterDateField>
                             <FilterDateField
                                 label="Tarikh Sehingga"
-                                bind:inputValue={chargeListTable.param.filter
-                                    .status}
+                                bind:inputValue={leaveStatementListTable.param
+                                    .filter.status}
                             ></FilterDateField>
                         </FilterWrapper>
                     </DataTable>
@@ -708,7 +478,7 @@
                 >
                     <DataTable
                         title="Senarai Rekod Kelakuan"
-                        bind:tableData={chargeListTable}
+                        bind:tableData={behaviourHistoriesListTable}
                         bind:passData={rowData}
                         detailActions={() => {
                             const route = `../integriti/prosiding/${rowData.integrityId}-${rowData.employeeId}-${rowData.isAppeal}`;
@@ -721,8 +491,8 @@
                             ></FilterSelectField>
                             <FilterDateField
                                 label="Tarikh"
-                                bind:inputValue={chargeListTable.param.filter
-                                    .status}
+                                bind:inputValue={behaviourHistoriesListTable
+                                    .param.filter.status}
                             ></FilterDateField>
                         </FilterWrapper>
                     </DataTable>
