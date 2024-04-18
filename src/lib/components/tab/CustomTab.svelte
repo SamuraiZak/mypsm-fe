@@ -7,6 +7,7 @@
     let contentList: any;
     let tabList: any[] = [];
     let tempTabList: any[] = [];
+    export let pill: boolean = false;
 
     // Run logic whenever activeTab changes
     afterUpdate(() => {
@@ -39,10 +40,13 @@
     class="flex h-full max-h-full w-full max-w-[calc(100vw-200px)] flex-col items-center justify-start bg-bgr-primary"
 >
     <div
-        class="flex h-[40px] max-h-[40px] min-h-[40px] w-full flex-row items-center justify-start border-b border-bdr-primary bg-bgr-primary"
+        class="flex h-[40px] max-h-[40px] min-h-[40px] w-full flex-row items-center justify-start {pill
+            ? 'border-none'
+            : 'border-b border-bdr-primary bg-bgr-primary'} "
     >
         {#each tabList as item, index}
             <CustomTabButton
+                {pill}
                 id={id + index + 1}
                 label={item}
                 active={activeIndex == index}
@@ -53,10 +57,7 @@
         {/each}
     </div>
 
-    <ul
-        id={id}
-        class="h-full max-h-full w-full max-w-full overflow-hidden"
-    >
+    <ul {id} class="h-full max-h-full w-full max-w-full overflow-hidden">
         <slot />
     </ul>
 </div>

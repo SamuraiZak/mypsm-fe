@@ -2,20 +2,26 @@
     export let label: string = 'Label';
     export let active: boolean = false;
     export let onClick = () => {};
-    export let id:string="buttonID";
+    export let id: string = 'buttonID';
+    export let pill: boolean = false;
 </script>
 
 <button
-id={id}
+    {id}
     on:click={onClick}
-    class="flex h-full max-h-full min-h-full flex-row items-center justify-center bg-ios-basic-white px-2.5  hover:bg-ios-systemColors-quaternarySystemFill-light {active
-        ? 'border-b-2 border-ios-systemColors-systemBlue-light'
-        : 'border-none'}"
+    class="flex h-full min-w-10 max-h-full min-h-full flex-row items-center justify-center {pill
+        ? 'm-1 rounded-xl'
+        : ''}  bg-ios-basic-white px-2.5 hover:bg-ios-systemColors-quaternarySystemFill-light {active
+        ? `${
+              pill ? 'border' : 'border-b-2'
+          }  border-ios-systemColors-systemBlue-light`
+        : `${pill ? 'border' : 'border-none'}
+          `}"
 >
     <p
-        class="text-base  {active
-            ? 'text-ios-systemColors-systemBlue-light font-medium'
-            : ' text-ios-basic-inactiveGray font-normal'}"
+        class="text-base {active
+            ? `font-medium text-ios-systemColors-systemBlue-light`
+            : ` font-normal text-ios-basic-inactiveGray`}"
     >
         {label}
     </p>
