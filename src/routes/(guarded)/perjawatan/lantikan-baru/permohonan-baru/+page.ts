@@ -5,10 +5,11 @@ import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import { _addNewHireSchema } from '$lib/schemas/mypsm/employment/new-hire/schema';
 import { EmploymentServices } from '$lib/services/implementation/mypsm/perjawatan/employment.service';
 import { error } from '@sveltejs/kit';
+import { zod } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms/client';
 
 export const load = async () => {
-    const candidateForm = await superValidate(_addNewHireSchema);
+    const candidateForm = await superValidate(zod(_addNewHireSchema));
 
     return { candidateForm };
 };
@@ -17,9 +18,7 @@ export const load = async () => {
 //=============== Submit Functions =================
 //==================================================
 export const _submitCandidateForm = async (formData: object) => {
-    const form = await superValidate(formData, _addNewHireSchema);
-
-    console.log(form.data);
+    const form = await superValidate(formData, zod(_addNewHireSchema));
 
     if (!form.valid) {
         getErrorToast();
@@ -31,7 +30,7 @@ export const _submitCandidateForm = async (formData: object) => {
             form.data as NewHireAddCandidateDTO,
         );
 
-    if (response.status !== 'success') {
+    if (response.status === 'success') {
         setTimeout(() => goto('../lantikan-baru'), 1500);
     }
 

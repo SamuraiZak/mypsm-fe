@@ -8,6 +8,7 @@
     import { _submitCandidateForm } from './+page';
     import type { PageData } from './$types';
     import { Toaster } from 'svelte-french-toast';
+    import { zod } from 'sveltekit-superforms/adapters';
 
     // =============================================================================
     // Variables
@@ -26,7 +27,7 @@
         taintedMessage: false,
         resetForm: false,
         multipleSubmits: 'prevent',
-        validators: _addNewHireSchema,
+        validators: zod(_addNewHireSchema),
         onSubmit() {
             _submitCandidateForm($form);
         },

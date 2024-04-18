@@ -77,6 +77,7 @@ import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.
 import { EmploymentServices } from '$lib/services/implementation/mypsm/perjawatan/employment.service';
 import { EmployeeServices } from '$lib/services/implementation/mypsm/shared/employee.service';
 import { error, fail } from '@sveltejs/kit';
+import { zod } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms/client';
 
 //==================================================
@@ -225,79 +226,109 @@ export async function load({ params }) {
     // ============================================================
     const personalInfoForm = await superValidate(
         personalDetailResponse.data?.details as CandidatePersonalResponseDTO,
-        _personalInfoResponseSchema,
+        zod(_personalInfoResponseSchema),
+        { errors: false },
     );
 
     const academicInfoForm = await superValidate(
         academicInfoResponse.data
             ?.details as CandidateAcademicDetailResponseDTO,
-        _academicListResponseSchema,
+        zod(_academicListResponseSchema),
+        { errors: false },
     );
 
     const experienceInfoForm = await superValidate(
         experienceInfoResponse.data
             ?.details as CandidateExperiencesDetailResponseDTO,
-        _experienceListResponseSchema,
+        zod(_experienceListResponseSchema),
+        { errors: false },
     );
     const activityInfoForm = await superValidate(
         activityInfoResponse.data
             ?.details as CandidateActivityDetailResponseDTO,
-        _activityListResponseSchema,
+        zod(_activityListResponseSchema),
+        { errors: false },
     );
 
     const familyInfoForm = await superValidate(
         familyInfoResponse.data?.details as CandidateFamilyDetailResponseDTO,
-        _dependencyListResponseSchema,
+        zod(_dependencyListResponseSchema),
+        { errors: false, id: 'familyFormId' },
     );
 
     const dependencyInfoForm = await superValidate(
         dependencyInfoResponse.data
             ?.details as CandidateDependenciesDetailResponseDTO,
-        _dependencyListResponseSchema,
+        zod(_dependencyListResponseSchema),
+        { errors: false, id: 'dependencyFormId' },
     );
     const nextOfKinInfoForm = await superValidate(
         nextOfKinInfoResponse.data
             ?.details as CandidateNextOfKinDetailResponseDTO,
-        _dependencyListResponseSchema,
+        zod(_dependencyListResponseSchema),
+        { errors: false, id: 'nextOfKinFormId' },
     );
 
-    const addAcademicModal = await superValidate(_academicInfoSchema);
-    const addExperienceModal = await superValidate(_experienceInfoSchema);
-    const addActivityModal = await superValidate(_activityInfoSchema);
-    const addFamilyModal = await superValidate(_relationsSchema);
-    const addNonFamilyModal = await superValidate(_relationsSchema);
-    const addNextOfKinModal = await superValidate(_relationsSchema);
+    const addAcademicModal = await superValidate(zod(_academicInfoSchema), {
+        errors: false,
+    });
+    const addExperienceModal = await superValidate(zod(_experienceInfoSchema), {
+        errors: false,
+    });
+    const addActivityModal = await superValidate(zod(_activityInfoSchema), {
+        errors: false,
+    });
+    const addFamilyModal = await superValidate(zod(_relationsSchema), {
+        errors: false,
+        id: 'addFamilyModalId',
+    });
+    const addNonFamilyModal = await superValidate(zod(_relationsSchema), {
+        errors: false,
+        id: 'addNonFamilyModalId',
+    });
+    const addNextOfKinModal = await superValidate(zod(_relationsSchema), {
+        errors: false,
+        id: 'addNextOfKinModalId',
+    });
 
     const serviceInfoForm = await superValidate(
         serviceDetails,
-        _serviceInfoResponseSchema,
+        zod(_serviceInfoResponseSchema),
+        { errors: false },
     );
 
     const secretaryApprovalInfoForm = await superValidate(
         secretaryApprovalDetailResponse,
-        _approvalResultSchema,
+        zod(_approvalResultSchema),
+        { errors: false, id: 'secretaryApprovalInfoFormId' },
     );
     const supporterApprovalForm = await superValidate(
         supporterResultResponse.data
             ?.details as CandidateNewHireApproverResultDTO,
-        _approvalResultSchema,
+        zod(_approvalResultSchema),
+        { errors: false, id: 'supporterApprovalId' },
     );
     const approverApprovalForm = await superValidate(
         approverResultResponse.data
             ?.details as CandidateNewHireApproverResultDTO,
-        _approvalResultSchema,
+        zod(_approvalResultSchema),
+        { errors: false, id: 'approverApprovalId' },
     );
 
     const secretarySetApproversForm = await superValidate(
         secretaryGetApproversResponse.data?.details as NewHireGetApproversDTO,
-        _setApproversSchema,
+        zod(_setApproversSchema),
+        { errors: false },
     );
 
     const submittedDocuments = await superValidate(
         documentInfoResponse.data?.details as NewHireDocumentsDTO,
-        _documentsSchema,
+        zod(_documentsSchema),
+        { errors: false },
     );
-    const newHireDocumentForm = await superValidate(_uploadDocumentsSchema);
+    const newHireDocumentForm = await superValidate(
+        zod(_uploadDocumentsSchema),
+    );
 
     // serviceInfoForm.data.candidateId = candidateIdRequestBody.candidateId;
     // secretarySetApproversForm.data.candidateId =
@@ -600,7 +631,7 @@ export async function load({ params }) {
 //=============== Submit Functions =================
 //==================================================
 export const _submitPersonalForm = async (formData: object) => {
-    const form = await superValidate(formData, _personalInfoRequestSchema);
+    const form = await superValidate(formData, zod(_personalInfoRequestSchema));
 
     console.log(form);
 
@@ -618,7 +649,7 @@ export const _submitPersonalForm = async (formData: object) => {
 };
 
 export const _submitAcademicForm = async (formData: object) => {
-    const form = await superValidate(formData, _academicListRequestSchema);
+    const form = await superValidate(formData, zod(_academicListRequestSchema));
 
     if (!form.valid) {
         getErrorToast();
@@ -634,7 +665,10 @@ export const _submitAcademicForm = async (formData: object) => {
 };
 
 export const _submitExperienceForm = async (formData: object) => {
-    const form = await superValidate(formData, _experienceListRequestSchema);
+    const form = await superValidate(
+        formData,
+        zod(_experienceListRequestSchema),
+    );
 
     if (!form.valid) {
         getErrorToast();
@@ -650,7 +684,7 @@ export const _submitExperienceForm = async (formData: object) => {
 };
 
 export const _submitActivityForm = async (formData: object) => {
-    const form = await superValidate(formData, _activityListRequestSchema);
+    const form = await superValidate(formData, zod(_activityListRequestSchema));
 
     if (!form.valid) {
         getErrorToast();
@@ -666,7 +700,7 @@ export const _submitActivityForm = async (formData: object) => {
 };
 
 export const _submitFamilyForm = async (formData: object) => {
-    const form = await superValidate(formData, _familyListRequestSchema);
+    const form = await superValidate(formData, zod(_familyListRequestSchema));
 
     if (!form.valid) {
         getErrorToast();
@@ -682,7 +716,10 @@ export const _submitFamilyForm = async (formData: object) => {
 };
 
 export const _submitDependencyForm = async (formData: object) => {
-    const form = await superValidate(formData, _dependencyListRequestSchema);
+    const form = await superValidate(
+        formData,
+        zod(_dependencyListRequestSchema),
+    );
 
     if (!form.valid) {
         getErrorToast();
@@ -698,7 +735,10 @@ export const _submitDependencyForm = async (formData: object) => {
 };
 
 export const _submitNextOfKinForm = async (formData: object) => {
-    const form = await superValidate(formData, _nextOfKinListRequestSchema);
+    const form = await superValidate(
+        formData,
+        zod(_nextOfKinListRequestSchema),
+    );
 
     if (!form.valid) {
         getErrorToast();
@@ -714,7 +754,7 @@ export const _submitNextOfKinForm = async (formData: object) => {
 };
 
 export const _submitServiceForm = async (formData: object) => {
-    const form = await superValidate(formData, _serviceInfoRequestSchema);
+    const form = await superValidate(formData, zod(_serviceInfoRequestSchema));
 
     if (!form.valid) {
         getErrorToast();
@@ -730,7 +770,7 @@ export const _submitServiceForm = async (formData: object) => {
 };
 
 export const _submitSecretaryApprovalForm = async (formData: object) => {
-    const form = await superValidate(formData, _approvalResultSchema);
+    const form = await superValidate(formData, zod(_approvalResultSchema));
 
     if (!form.valid) {
         getErrorToast();
@@ -746,7 +786,7 @@ export const _submitSecretaryApprovalForm = async (formData: object) => {
 };
 
 export const _submitSupporterApprovalForm = async (formData: object) => {
-    const form = await superValidate(formData, _approvalResultSchema);
+    const form = await superValidate(formData, zod(_approvalResultSchema));
 
     if (!form.valid) {
         getErrorToast();
@@ -762,7 +802,7 @@ export const _submitSupporterApprovalForm = async (formData: object) => {
 };
 
 export const _submitApproverApprovalForm = async (formData: object) => {
-    const form = await superValidate(formData, _approvalResultSchema);
+    const form = await superValidate(formData, zod(_approvalResultSchema));
 
     if (!form.valid) {
         getErrorToast();
@@ -778,7 +818,7 @@ export const _submitApproverApprovalForm = async (formData: object) => {
 };
 
 export const _submitSecretarySetApproverForm = async (formData: object) => {
-    const form = await superValidate(formData, _setApproversSchema);
+    const form = await superValidate(formData, zod(_setApproversSchema));
 
     if (!form.valid) {
         getErrorToast();
@@ -798,7 +838,7 @@ export const _submitDocumentsForm = async (file: File | null | undefined) => {
 
     documentData.append('document', file as File);
 
-    const form = await superValidate(documentData, _uploadDocumentsSchema);
+    const form = await superValidate(documentData, zod(_uploadDocumentsSchema));
 
     if (!form.valid) {
         getErrorToast();
