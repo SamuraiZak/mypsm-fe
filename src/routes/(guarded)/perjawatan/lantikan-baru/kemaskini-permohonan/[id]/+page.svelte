@@ -5,7 +5,6 @@
     import type { Activity } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-activity.dto';
     import type { Academic } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-academic-details.dto';
     import type { Experience } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-experience-details.dto';
-    import type { CandidatePersonalResponseDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto';
     import { EmploymentServices } from '$lib/services/implementation/mypsm/perjawatan/employment.service';
     import FileInputField from '$lib/components/inputs/file-input-field/FileInputField.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
@@ -88,6 +87,8 @@
     import { getErrorToast } from '$lib/helpers/core/toast.helper.js';
     import { error } from '@sveltejs/kit';
     import { writable } from 'svelte/store';
+    import { zod } from 'sveltekit-superforms/adapters';
+    import SuperDebug from 'sveltekit-superforms';
     export let data: PageData;
 
     let isReadonlyPersonalFormStepper = writable<boolean>();
@@ -182,7 +183,7 @@
         resetForm: false,
         multipleSubmits: 'prevent',
         validationMethod: 'oninput',
-        validators: _personalInfoResponseSchema,
+        validators: zod(_personalInfoResponseSchema),
         onSubmit() {
             _submitPersonalForm($form);
         },
@@ -201,7 +202,7 @@
         resetForm: false,
         multipleSubmits: 'prevent',
         validationMethod: 'oninput',
-        validators: _serviceInfoResponseSchema,
+        validators: zod(_serviceInfoResponseSchema),
         onSubmit(formData) {
             _submitServiceForm(formData.formData);
         },
@@ -219,7 +220,7 @@
         resetForm: false,
         multipleSubmits: 'prevent',
         validationMethod: 'oninput',
-        validators: _approvalResultSchema,
+        validators: zod(_approvalResultSchema),
         onSubmit(formData) {
             _submitSecretaryApprovalForm(formData.formData);
         },
@@ -237,7 +238,7 @@
         resetForm: false,
         multipleSubmits: 'prevent',
         validationMethod: 'oninput',
-        validators: _approvalResultSchema,
+        validators: zod(_approvalResultSchema),
         onSubmit(formData) {
             _submitSupporterApprovalForm(formData.formData);
         },
@@ -255,7 +256,7 @@
         resetForm: false,
         multipleSubmits: 'prevent',
         validationMethod: 'oninput',
-        validators: _approvalResultSchema,
+        validators: zod(_approvalResultSchema),
         onSubmit(formData) {
             _submitApproverApprovalForm(formData.formData);
         },
@@ -273,24 +274,16 @@
         resetForm: false,
         multipleSubmits: 'prevent',
         validationMethod: 'oninput',
-        validators: _setApproversSchema,
+        validators: zod(_setApproversSchema),
         onSubmit(formData) {
             _submitSecretarySetApproverForm(formData.formData);
         },
     });
 
-    const {
-        form: academicInfoForm,
-        errors: academicInfoErrors,
-        enhance: academicInfoEnhance,
-    } = superForm(data.academicInfoForm, {
+    const { form: academicInfoForm } = superForm(data.academicInfoForm, {
         SPA: true,
         dataType: 'json',
-        invalidateAll: true,
-        taintedMessage: false,
-        resetForm: true,
-        multipleSubmits: 'prevent',
-        validators: _academicListResponseSchema,
+        validators: false,
     });
 
     const {
@@ -304,7 +297,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
-        validators: _experienceListResponseSchema,
+        validators: zod(_experienceListResponseSchema),
     });
 
     const {
@@ -318,7 +311,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
-        validators: _activityListResponseSchema,
+        validators: zod(_activityListResponseSchema),
     });
 
     const {
@@ -332,7 +325,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
-        validators: _dependencyListResponseSchema,
+        validators: zod(_dependencyListResponseSchema),
     });
 
     const {
@@ -346,7 +339,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
-        validators: _dependencyListResponseSchema,
+        validators: zod(_dependencyListResponseSchema),
     });
 
     const {
@@ -360,7 +353,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'prevent',
-        validators: _dependencyListResponseSchema,
+        validators: zod(_dependencyListResponseSchema),
     });
 
     const {
@@ -371,7 +364,7 @@
         SPA: true,
         invalidateAll: false,
         taintedMessage: false,
-        validators: _uploadDocumentsSchema,
+        validators: zod(_uploadDocumentsSchema),
         onSubmit() {
             _submitDocumentsForm($documentForm.document);
         },
@@ -390,11 +383,11 @@
         resetForm: true,
         multipleSubmits: 'allow',
         validationMethod: 'oninput',
-        validators: _academicInfoSchema,
+        validators: zod(_academicInfoSchema),
         async onSubmit(formData) {
             const result = await superValidate(
                 formData.formData,
-                _academicInfoSchema,
+                zod(_academicInfoSchema),
             );
 
             console.log('Result: ', result);
@@ -424,14 +417,14 @@
         resetForm: true,
         multipleSubmits: 'allow',
         validationMethod: 'oninput',
-        validators: _experienceInfoSchema,
+        validators: zod(_experienceInfoSchema),
         async onSubmit(formData) {
             for (const pair of formData.formData.entries()) {
                 console.log(pair[0], pair[1]);
             }
             const result = await superValidate(
                 formData.formData,
-                _experienceInfoSchema,
+                zod(_experienceInfoSchema),
             );
 
             console.log('Result: ', result);
@@ -461,11 +454,11 @@
         resetForm: true,
         multipleSubmits: 'allow',
         validationMethod: 'oninput',
-        validators: _activityInfoSchema,
+        validators: zod(_activityInfoSchema),
         async onSubmit(formData) {
             const result = await superValidate(
                 formData.formData,
-                _activityInfoSchema,
+                zod(_activityInfoSchema),
             );
 
             console.log('Result: ', result);
@@ -495,11 +488,11 @@
         resetForm: true,
         multipleSubmits: 'allow',
         validationMethod: 'oninput',
-        validators: _relationsSchema,
+        validators: zod(_relationsSchema),
         async onSubmit(formData) {
             const result = await superValidate(
                 formData.formData,
-                _relationsSchema,
+                zod(_relationsSchema),
             );
 
             console.log('Result: ', result);
@@ -526,11 +519,11 @@
         resetForm: true,
         multipleSubmits: 'allow',
         validationMethod: 'oninput',
-        validators: _relationsSchema,
+        validators: zod(_relationsSchema),
         async onSubmit(formData) {
             const result = await superValidate(
                 formData.formData,
-                _relationsSchema,
+                zod(_relationsSchema),
             );
 
             console.log('Result: ', result);
@@ -559,11 +552,11 @@
         resetForm: true,
         multipleSubmits: 'allow',
         validationMethod: 'oninput',
-        validators: _relationsSchema,
+        validators: zod(_relationsSchema),
         async onSubmit(formData) {
             const result = await superValidate(
                 formData.formData,
-                _relationsSchema,
+                zod(_relationsSchema),
             );
 
             console.log('Result: ', result);
@@ -661,7 +654,7 @@
 
     <StepperContent>
         <StepperContentHeader title="Maklumat Peribadi">
-            {#if !isReadonlyPersonalFormStepper && data.isCandidateRole}
+            {#if !$isReadonlyPersonalFormStepper && data.isCandidateRole}
                 <TextIconButton
                     type="primary"
                     label="Simpan"
@@ -679,6 +672,7 @@
             >
                 <p class={stepperFormTitleClass}>Maklumat Peribadi</p>
                 <CustomTextField
+                    placeholder="-"
                     disabled
                     id="identityDocumentNumber"
                     label={'No. Kad Pengenalan'}
@@ -687,6 +681,7 @@
                 ></CustomTextField>
 
                 <CustomTextField
+                    placeholder="-"
                     disabled
                     errors={$errors.name}
                     id="name"
@@ -705,6 +700,7 @@
                 ></CustomSelectField>
 
                 <CustomTextField
+                    placeholder="-"
                     disabled={$isReadonlyPersonalFormStepper}
                     id="alternativeName"
                     label={'Nama Lain'}
@@ -713,6 +709,7 @@
                 ></CustomTextField>
 
                 <CustomTextField
+                    placeholder="-"
                     disabled={$isReadonlyPersonalFormStepper}
                     id="statusPekerjaan"
                     label="Emel Pekerja"
@@ -729,6 +726,7 @@
                 ></CustomSelectField>
 
                 <CustomTextField
+                    placeholder="-"
                     disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.birthDate}
                     type="date"
@@ -809,6 +807,7 @@
                 ></CustomSelectField>
 
                 <CustomTextField
+                    placeholder="-"
                     errors={$errors.homeAddress}
                     disabled={$isReadonlyPersonalFormStepper}
                     id="homeAddress"
@@ -844,6 +843,7 @@
                 ></CustomSelectField>
 
                 <CustomTextField
+                    placeholder="-"
                     errors={$errors.homePostcode}
                     disabled={$isReadonlyPersonalFormStepper}
                     id="homePostcode"
@@ -852,6 +852,7 @@
                 />
 
                 <CustomTextField
+                    placeholder="-"
                     errors={$errors.mailAddress}
                     disabled={$isReadonlyPersonalFormStepper}
                     id="mailAddress"
@@ -887,6 +888,7 @@
                 ></CustomSelectField>
 
                 <CustomTextField
+                    placeholder="-"
                     errors={$errors.mailPostcode}
                     disabled={$isReadonlyPersonalFormStepper}
                     id="mailPostcode"
@@ -905,6 +907,7 @@
 
                 {#if $form.assetDeclarationStatusId === 12 || $form.assetDeclarationStatusId === 14 || $form.assetDeclarationStatusId === 15 || $form.assetDeclarationStatusId === 17 || $form.assetDeclarationStatusId === 18 || $form.assetDeclarationStatusId === 22}
                     <CustomTextField
+                        placeholder="-"
                         errors={$errors.propertyDeclarationDate}
                         disabled={$isReadonlyPersonalFormStepper}
                         id="propertyDeclarationDate"
@@ -949,6 +952,7 @@
 
                         {#if !!data.personalDetailResponse.data?.details.employeeNumber}
                             <CustomTextField
+                                placeholder="-"
                                 disabled={$isReadonlyPersonalFormStepper}
                                 errors={$errors.employeeName}
                                 id="employeeName"
@@ -989,7 +993,7 @@
         <StepperContentHeader
             title="Maklumat Akademik / Kelayakan / Latihan yang Lalu"
         >
-            {#if !isReadonlyAcademicFormStepper && data.isCandidateRole}
+            {#if !$isReadonlyAcademicFormStepper && data.isCandidateRole}
                 <TextIconButton
                     type="primary"
                     label="Simpan"
@@ -998,7 +1002,7 @@
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
-            {#if !isReadonlyAcademicFormStepper && data.isCandidateRole}
+            {#if !$isReadonlyAcademicFormStepper && data.isCandidateRole}
                 {#if tempAcademicRecord.length > 0}
                     <div
                         class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
@@ -1025,18 +1029,13 @@
                     </TextIconButton>
                 </div>
             {/if}
-            <form
-                id="academicInfoForm"
-                class="flex w-full flex-col gap-2"
-                use:academicInfoEnhance
-                method="POST"
-            >
+            <div class="flex w-full flex-col gap-2">
                 {#if $academicInfoForm.academics.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
                         Tiada maklumat.
                     </div>
                 {:else}
-                    <CustomTab id="academics">
+                    <CustomTab pill={true} id="academics">
                         {#each $academicInfoForm.academics as _, i}
                             <CustomTabContent title={`Akademik #${i + 1}`}>
                                 <CustomSelectField
@@ -1100,6 +1099,7 @@
                                 ></CustomSelectField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     disabled
                                     id="certName"
                                     label={'Nama Sijil/Pencapaian'}
@@ -1109,6 +1109,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     disabled
                                     id="completionDate"
                                     label="Tarikh Tamat Pembelajaran"
@@ -1118,6 +1119,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     disabled
                                     id="finalGrade"
                                     label={'Ijazah/ CGPA/ Gred'}
@@ -1127,6 +1129,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     disabled
                                     id="field"
                                     label={'Catatan'}
@@ -1138,7 +1141,7 @@
                         {/each}
                     </CustomTab>
                 {/if}
-            </form>
+            </div>
         </StepperContentBody>
     </StepperContent>
 
@@ -1185,21 +1188,17 @@
                     </TextIconButton>
                 </div>
             {/if}
-            <form
-                id="experienceInfoForm"
-                class="flex w-full flex-col gap-2"
-                use:experienceInfoEnhance
-                method="POST"
-            >
+            <div class="flex w-full flex-col gap-2">
                 {#if $experienceInfoForm.experiences.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
                         Tiada maklumat.
                     </div>
                 {:else}
-                    <CustomTab id="experiences">
+                    <CustomTab pill={true} id="experiences">
                         {#each $experienceInfoForm.experiences as _, i}
                             <CustomTabContent title={`Pengalaman #${i + 1}`}>
                                 <CustomTextField
+                                    placeholder="-"
                                     disabled
                                     id="company"
                                     label={'Nama Majikan'}
@@ -1209,6 +1208,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     disabled
                                     id="address"
                                     label={'Alamat Majikan'}
@@ -1218,6 +1218,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     disabled
                                     id="position"
                                     label={'Jawatan'}
@@ -1227,6 +1228,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     disabled
                                     id="positionCode"
                                     label={'Kod Jawatan (jika ada)'}
@@ -1235,6 +1237,7 @@
                                         .positionCode}
                                 ></CustomTextField>
                                 <CustomTextField
+                                    placeholder="-"
                                     type="date"
                                     disabled
                                     id="startDate"
@@ -1244,6 +1247,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     type="date"
                                     disabled
                                     id="endDate"
@@ -1253,6 +1257,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     disabled
                                     id="salary"
                                     label={'Gaji'}
@@ -1264,7 +1269,7 @@
                         {/each}
                     </CustomTab>
                 {/if}
-            </form>
+            </div>
         </StepperContentBody>
     </StepperContent>
 
@@ -1312,21 +1317,17 @@
                     </TextIconButton>
                 </div>
             {/if}
-            <form
-                id="activityInfoForm"
-                class="flex w-full flex-col gap-2"
-                use:activityInfoEnhance
-                method="POST"
-            >
+            <div class="flex w-full flex-col gap-2">
                 {#if $activityInfoForm.activities.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
                         Tiada maklumat.
                     </div>
                 {:else}
-                    <CustomTab id="activities">
+                    <CustomTab pill={true} id="activities">
                         {#each $activityInfoForm.activities as _, i}
                             <CustomTabContent title={`Aktiviti #${i + 1}`}>
                                 <CustomTextField
+                                    placeholder="-"
                                     disabled={$isReadonlyActivityFormStepper}
                                     id="addName"
                                     label={'Nama Kegiatan'}
@@ -1336,6 +1337,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     disabled={$isReadonlyActivityFormStepper}
                                     type="date"
                                     id="addJoinDate"
@@ -1345,6 +1347,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     disabled={$isReadonlyActivityFormStepper}
                                     id="addPosition"
                                     label={'Jawatan'}
@@ -1354,6 +1357,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     disabled={$isReadonlyActivityFormStepper}
                                     id="addDescription"
                                     label={'Catatan'}
@@ -1365,7 +1369,7 @@
                         {/each}
                     </CustomTab>
                 {/if}
-            </form></StepperContentBody
+            </div></StepperContentBody
         >
     </StepperContent>
 
@@ -1415,18 +1419,13 @@
                 </div>
             {/if}
 
-            <form
-                id="familyInfoForm"
-                class="flex w-full flex-col gap-2"
-                use:familyInfoEnhance
-                method="POST"
-            >
+            <div class="flex w-full flex-col gap-2">
                 {#if $familyInfoForm.dependencies.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
                         Tiada maklumat.
                     </div>
                 {:else}
-                    <CustomTab id="families">
+                    <CustomTab pill={true} id="families">
                         {#each Object.entries($familyInfoForm.dependencies) as [key, _], i}
                             <CustomTabContent
                                 title={i +
@@ -1435,6 +1434,7 @@
                                     $familyInfoForm.dependencies[i].name}
                             >
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addName"
                                     label={'Nama'}
                                     type="text"
@@ -1444,6 +1444,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addAlternativeName"
                                     label={'Nama Lain'}
                                     type="text"
@@ -1461,6 +1462,7 @@
                                         .identityDocumentColor}
                                 ></CustomSelectField>
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addIdentityDocumentNumber"
                                     type="number"
                                     label={'Nombor Kad Pengenalan'}
@@ -1470,6 +1472,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addAddress"
                                     label={'Alamat'}
                                     disabled={$isReadonlyFamilyFormStepper}
@@ -1478,6 +1481,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addPostcode"
                                     label={'Poskod'}
                                     type="text"
@@ -1487,6 +1491,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     disabled={$isReadonlyFamilyFormStepper}
                                     type="date"
                                     id="addBirthDate"
@@ -1573,6 +1578,7 @@
                                 ></CustomSelectField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addWorkAddress"
                                     label={'Alamat Majikan'}
                                     type="text"
@@ -1582,6 +1588,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addWorkPostcode"
                                     label={'Poskod Majikan'}
                                     type="text"
@@ -1591,6 +1598,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addPhoneNumber"
                                     label={'Nombor Mobil'}
                                     type="text"
@@ -1601,6 +1609,7 @@
 
                                 {#if key.includes('marriageDate')}
                                     <CustomTextField
+                                        placeholder="-"
                                         type="date"
                                         id="addMarriageDate"
                                         label={'Tarikh Kahwin'}
@@ -1623,7 +1632,7 @@
                         {/each}
                     </CustomTab>
                 {/if}
-            </form>
+            </div>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -1672,18 +1681,13 @@
                 </div>
             {/if}
 
-            <form
-                id="dependencyInfoForm"
-                class="flex w-full flex-col gap-2"
-                use:dependencyInfoEnhance
-                method="POST"
-            >
+            <div class="flex w-full flex-col gap-2">
                 {#if $dependencyInfoForm.dependencies.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
                         Tiada maklumat.
                     </div>
                 {:else}
-                    <CustomTab id="dependencies">
+                    <CustomTab pill={true} id="dependencies">
                         {#each Object.entries($dependencyInfoForm.dependencies) as [key, _], i}
                             <CustomTabContent
                                 title={i +
@@ -1692,6 +1696,7 @@
                                     $dependencyInfoForm.dependencies[i].name}
                             >
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addName"
                                     label={'Nama'}
                                     type="text"
@@ -1702,6 +1707,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addAlternativeName"
                                     label={'Nama Lain'}
                                     type="text"
@@ -1721,6 +1727,7 @@
                                     ].identityDocumentColor}
                                 ></CustomSelectField>
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addIdentityDocumentNumber"
                                     type="number"
                                     label={'Nombor Kad Pengenalan'}
@@ -1731,6 +1738,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addAddress"
                                     label={'Alamat'}
                                     disabled={$isReadonlyFamilyFormStepper}
@@ -1740,6 +1748,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addPostcode"
                                     label={'Poskod'}
                                     type="text"
@@ -1750,6 +1759,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     disabled={$isReadonlyFamilyFormStepper}
                                     type="date"
                                     id="addBirthDate"
@@ -1845,6 +1855,7 @@
                                 ></CustomSelectField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addWorkAddress"
                                     label={'Alamat Majikan'}
                                     type="text"
@@ -1855,6 +1866,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addWorkPostcode"
                                     label={'Poskod Majikan'}
                                     type="text"
@@ -1865,6 +1877,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addPhoneNumber"
                                     label={'Nombor Mobil'}
                                     type="text"
@@ -1876,6 +1889,7 @@
 
                                 {#if key.includes('marriageDate')}
                                     <CustomTextField
+                                        placeholder="-"
                                         type="date"
                                         id="addMarriageDate"
                                         label={'Tarikh Kahwin'}
@@ -1898,7 +1912,7 @@
                         {/each}
                     </CustomTab>
                 {/if}
-            </form>
+            </div>
         </StepperContentBody>
     </StepperContent>
 
@@ -1947,18 +1961,13 @@
                 </div>
             {/if}
 
-            <form
-                id="nextOfKinInfoForm"
-                class="flex w-full flex-col gap-2"
-                use:nextOfKinInfoEnhance
-                method="POST"
-            >
+            <div class="flex w-full flex-col gap-2">
                 {#if $nextOfKinInfoForm.dependencies.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
                         Tiada maklumat.
                     </div>
                 {:else}
-                    <CustomTab id="nextOfKins">
+                    <CustomTab pill={true} id="nextOfKins">
                         {#each Object.entries($nextOfKinInfoForm.dependencies) as [key, _], i}
                             <CustomTabContent
                                 title={i +
@@ -1967,6 +1976,7 @@
                                     $nextOfKinInfoForm.dependencies[i].name}
                             >
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addName"
                                     label={'Nama'}
                                     type="text"
@@ -1976,6 +1986,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addAlternativeName"
                                     label={'Nama Lain'}
                                     type="text"
@@ -1993,6 +2004,7 @@
                                         .identityDocumentColor}
                                 ></CustomSelectField>
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addIdentityDocumentNumber"
                                     type="number"
                                     label={'Nombor Kad Pengenalan'}
@@ -2002,6 +2014,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addAddress"
                                     label={'Alamat'}
                                     disabled={$isReadonlyFamilyFormStepper}
@@ -2010,6 +2023,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addPostcode"
                                     label={'Poskod'}
                                     type="text"
@@ -2019,6 +2033,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     disabled={$isReadonlyFamilyFormStepper}
                                     type="date"
                                     id="addBirthDate"
@@ -2105,6 +2120,7 @@
                                 ></CustomSelectField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addWorkAddress"
                                     label={'Alamat Majikan'}
                                     type="text"
@@ -2114,6 +2130,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addWorkPostcode"
                                     label={'Poskod Majikan'}
                                     type="text"
@@ -2123,6 +2140,7 @@
                                 ></CustomTextField>
 
                                 <CustomTextField
+                                    placeholder="-"
                                     id="addPhoneNumber"
                                     label={'Nombor Mobil'}
                                     type="text"
@@ -2133,6 +2151,7 @@
 
                                 {#if key.includes('marriageDate')}
                                     <CustomTextField
+                                        placeholder="-"
                                         type="date"
                                         id="addMarriageDate"
                                         label={'Tarikh Kahwin'}
@@ -2154,7 +2173,7 @@
                         {/each}
                     </CustomTab>
                 {/if}
-            </form>
+            </div>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
@@ -2228,7 +2247,7 @@
                                     <FileInputFieldChildren
                                         childrenType="grid"
                                         handleDelete={() => handleDelete()}
-                                        fileName={$documentForm.document?.name}
+                                        document={$documentForm.document}
                                     />
                                 {/if}
                                 <!-- {/each} -->
@@ -2402,6 +2421,7 @@
                     ></CustomSelectField>
 
                     <CustomTextField
+                        placeholder="-"
                         type="date"
                         disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.effectiveDate}
@@ -2420,6 +2440,7 @@
                     ></CustomSelectField>
 
                     <CustomTextField
+                        placeholder="-"
                         disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.epfNumber}
                         id="epfNumber"
@@ -2428,6 +2449,7 @@
                     ></CustomTextField>
 
                     <CustomTextField
+                        placeholder="-"
                         disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.socsoNumber}
                         id="socsoNumber"
@@ -2435,6 +2457,7 @@
                         bind:val={$serviceInfoForm.socsoNumber}
                     ></CustomTextField>
                     <CustomTextField
+                        placeholder="-"
                         disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.incomeNumber}
                         id="incomeNumber"
@@ -2443,6 +2466,7 @@
                     ></CustomTextField>
 
                     <CustomTextField
+                        placeholder="-"
                         disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.bankName}
                         id="bankName"
@@ -2451,6 +2475,7 @@
                     ></CustomTextField>
 
                     <CustomTextField
+                        placeholder="-"
                         disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.bankAccount}
                         id="bankAccount"
@@ -2459,6 +2484,7 @@
                     ></CustomTextField>
 
                     <CustomTextField
+                        placeholder="-"
                         disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.eligibleLeaveCount}
                         id="eligibleLeaveCount"
@@ -2467,6 +2493,7 @@
                     ></CustomTextField>
 
                     <CustomTextField
+                        placeholder="-"
                         type="date"
                         disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.civilServiceStartDate}
@@ -2475,6 +2502,7 @@
                         bind:val={$serviceInfoForm.civilServiceStartDate}
                     ></CustomTextField>
                     <CustomTextField
+                        placeholder="-"
                         type="date"
                         disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.firstServiceDate}
@@ -2483,6 +2511,7 @@
                         bind:val={$serviceInfoForm.firstServiceDate}
                     ></CustomTextField>
                     <CustomTextField
+                        placeholder="-"
                         type="date"
                         disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.serviceDate}
@@ -2491,6 +2520,7 @@
                         bind:val={$serviceInfoForm.serviceDate}
                     ></CustomTextField>
                     <CustomTextField
+                        placeholder="-"
                         type="date"
                         disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.firstConfirmServiceDate}
@@ -2499,6 +2529,7 @@
                         bind:val={$serviceInfoForm.firstConfirmServiceDate}
                     ></CustomTextField>
                     <CustomTextField
+                        placeholder="-"
                         type="date"
                         disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.confirmDate}
@@ -2508,6 +2539,7 @@
                     ></CustomTextField>
 
                     <CustomTextField
+                        placeholder="-"
                         type="date"
                         disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.firstEffectiveDate}
@@ -2516,6 +2548,7 @@
                         bind:val={$serviceInfoForm.firstEffectiveDate}
                     ></CustomTextField>
                     <CustomTextField
+                        placeholder="-"
                         type="date"
                         disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.newRecruitEffectiveDate}
@@ -2525,6 +2558,7 @@
                     ></CustomTextField>
 
                     <CustomTextField
+                        placeholder="-"
                         disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.pensionNumber}
                         id="pensionNumber"
@@ -2542,6 +2576,7 @@
                     ></CustomSelectField>
 
                     <CustomTextField
+                        placeholder="-"
                         disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.kgt}
                         id="kgt"
@@ -2551,6 +2586,7 @@
                     ></CustomTextField>
 
                     <CustomTextField
+                        placeholder="-"
                         type="date"
                         disabled={$isReadonlyServiceFormStepper}
                         errors={$serviceInfoErrors.retirementDate}
@@ -2565,6 +2601,7 @@
                     <div class="grid grid-cols-2 gap-10">
                         <div class="space-y-2.5">
                             <!-- <CustomTextField
+                                placeholder="-"
                             errors={$serviceInfoErrors.salaryDateOfEffect}
                             idame="salaryDateOfEffect"
                             label={'Tarikh Berkuatkuasa'}
@@ -2577,6 +2614,7 @@
                             >
                         {/if} -->
                             <CustomTextField
+                                placeholder="-"
                                 disabled={$isReadonlyServiceFormStepper}
                                 errors={$serviceInfoErrors.maximumSalary}
                                 id="maximumSalary"
@@ -2586,6 +2624,7 @@
                             ></CustomTextField>
 
                             <CustomTextField
+                                placeholder="-"
                                 disabled={$isReadonlyServiceFormStepper}
                                 errors={$serviceInfoErrors.baseSalary}
                                 id="baseSalary"
@@ -2595,6 +2634,7 @@
                         </div>
                         <div class="space-y-2.5">
                             <CustomTextField
+                                placeholder="-"
                                 disabled={$isReadonlyServiceFormStepper}
                                 errors={$serviceInfoErrors.itka}
                                 id="itka"
@@ -2602,6 +2642,7 @@
                                 bind:val={$serviceInfoForm.itka}
                             ></CustomTextField>
                             <CustomTextField
+                                placeholder="-"
                                 disabled={$isReadonlyServiceFormStepper}
                                 errors={$serviceInfoErrors.itp}
                                 id="itp"
@@ -2609,6 +2650,7 @@
                                 bind:val={$serviceInfoForm.itp}
                             ></CustomTextField>
                             <CustomTextField
+                                placeholder="-"
                                 disabled={$isReadonlyServiceFormStepper}
                                 errors={$serviceInfoErrors.epw}
                                 id="epw"
@@ -2616,6 +2658,7 @@
                                 bind:val={$serviceInfoForm.epw}
                             ></CustomTextField>
                             <CustomTextField
+                                placeholder="-"
                                 disabled={$isReadonlyServiceFormStepper}
                                 errors={$serviceInfoErrors.cola}
                                 id="la"
@@ -2663,6 +2706,7 @@
                     <input hidden bind:value={$secretaryApprovalInfoForm.id} />
 
                     <CustomTextField
+                        placeholder="-"
                         disabled={$isReadonlySecretaryApprovalResult}
                         errors={$secretaryApprovalInfoErrors.remark}
                         id="remark"
@@ -2753,6 +2797,7 @@
                                 >
                             </div>
                             <CustomTextField
+                                placeholder="-"
                                 disabled={$isReadonlySupporterApprovalResult}
                                 errors={$supporterApprovalErrors.remark}
                                 id="supporterRemark"
@@ -2781,6 +2826,7 @@
                                 >
                             </div>
                             <CustomTextField
+                                placeholder="-"
                                 disabled={$isReadonlySupporterApprovalResult}
                                 errors={$approverApprovalErrors.remark}
                                 id="approverRemark"
@@ -2802,6 +2848,7 @@
                             <b class="text-sm text-system-primary">Pelulus</b>
                         </div>
                         <CustomTextField
+                            placeholder="-"
                             disabled
                             type="text"
                             id="approver-name"
@@ -2810,6 +2857,7 @@
                         ></CustomTextField>
                         {#if $isReadonlyApproverApprovalResult}
                             <CustomTextField
+                                placeholder="-"
                                 disabled
                                 id="approverRemark"
                                 label="Tindakan/Ulasan"
@@ -2833,6 +2881,7 @@
                             <b class="text-sm text-system-primary">Penyokong</b>
                         </div>
                         <CustomTextField
+                            placeholder="-"
                             disabled
                             type="text"
                             id="supporter-name"
@@ -2842,6 +2891,7 @@
                         ></CustomTextField>
                         {#if $isReadonlyApproverApprovalResult}
                             <CustomTextField
+                                placeholder="-"
                                 disabled
                                 id="supporterRemark"
                                 label="Tindakan/Ulasan"
@@ -2868,6 +2918,7 @@
                             >
                         </div>
                         <CustomTextField
+                            placeholder="-"
                             disabled
                             type="text"
                             id="emplyomentSecretaryName"
@@ -2877,6 +2928,7 @@
                         ></CustomTextField>
                         {#if $isReadonlySecretaryApprovalResult}
                             <CustomTextField
+                                placeholder="-"
                                 disabled
                                 id="service-secretary-remark"
                                 label="Tindakan/Ulasan"
@@ -2904,6 +2956,7 @@
                 <StepperContentBody>
                     <div class="flex w-full flex-col gap-2.5">
                         <CustomTextField
+                            placeholder="-"
                             disabled
                             id="employeeNumber"
                             label="Nombor Pekerja (Dijana secara automatik oleh sistem setelah lulus."
@@ -2979,12 +3032,14 @@
         ></CustomSelectField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addAcademicInfoErrors.name}
             id="name"
             label={'Nama Pencapaian/Sijil'}
             bind:val={$addAcademicInfoModal.name}
         ></CustomTextField>
         <CustomTextField
+            placeholder="-"
             errors={$addAcademicInfoErrors.completionDate}
             id="completionDate"
             label="Tarikh Kelulusan"
@@ -2992,12 +3047,14 @@
             bind:val={$addAcademicInfoModal.completionDate}
         ></CustomTextField>
         <CustomTextField
+            placeholder="-"
             errors={$addAcademicInfoErrors.finalGrade}
             id="finalGrade"
             label={'Pencapaian Akhir (Gred)'}
             bind:val={$addAcademicInfoModal.finalGrade}
         ></CustomTextField>
         <CustomTextField
+            placeholder="-"
             errors={$addAcademicInfoErrors.field}
             id="field"
             label={'Catatan'}
@@ -3020,6 +3077,7 @@
         class="flex w-full flex-col gap-2"
     >
         <CustomTextField
+            placeholder="-"
             errors={$addExperienceModalErrors.company}
             id="company"
             label={'Nama Majikan'}
@@ -3028,6 +3086,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addExperienceModalErrors.address}
             id="address"
             label={'Alamat Majikan'}
@@ -3036,6 +3095,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addExperienceModalErrors.position}
             id="position"
             label={'Jawatan'}
@@ -3044,6 +3104,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addExperienceModalErrors.positionCode}
             id="positionCode"
             label={'Kod Jawatan'}
@@ -3052,6 +3113,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             type="date"
             errors={$addExperienceModalErrors.startDate}
             id="startDate"
@@ -3059,6 +3121,7 @@
             bind:val={$addExperienceModalForm.startDate}
         ></CustomTextField>
         <CustomTextField
+            placeholder="-"
             type="date"
             errors={$addExperienceModalErrors.endDate}
             id="endDate"
@@ -3067,6 +3130,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addExperienceModalErrors.salary}
             id="salary"
             label={'Gaji'}
@@ -3090,6 +3154,7 @@
         method="POST"
     >
         <CustomTextField
+            placeholder="-"
             errors={$addActivityModalErrors.name}
             id="name"
             label={'Nama Kegiatan'}
@@ -3098,6 +3163,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addActivityModalErrors.joinDate}
             id="joinDate"
             type="date"
@@ -3106,6 +3172,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addActivityModalErrors.position}
             id="position"
             label={'Jawatan'}
@@ -3114,6 +3181,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addActivityModalErrors.description}
             id="description"
             label={'Catatan'}
@@ -3140,6 +3208,7 @@
         method="POST"
     >
         <CustomTextField
+            placeholder="-"
             errors={$addFamilyErrors.name}
             id="name"
             label={'Nama'}
@@ -3148,6 +3217,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addFamilyErrors.alternativeName}
             id="alternativeName"
             label={'Nama Lain'}
@@ -3162,6 +3232,7 @@
             bind:val={$addFamilyModal.identityDocumentColor}
         ></CustomSelectField>
         <CustomTextField
+            placeholder="-"
             errors={$addFamilyErrors.identityDocumentNumber}
             id="identityDocumentNumber"
             type="text"
@@ -3170,6 +3241,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addFamilyErrors.address}
             id="address"
             label={'Alamat'}
@@ -3177,6 +3249,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addFamilyErrors.postcode}
             id="postcode"
             label={'Poskod'}
@@ -3185,6 +3258,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             type="date"
             errors={$addFamilyErrors.birthDate}
             id="birthDate"
@@ -3249,6 +3323,7 @@
         ></CustomSelectField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addFamilyErrors.workAddress}
             id="workAddress"
             label={'Alamat Majikan'}
@@ -3257,6 +3332,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addFamilyErrors.workPostcode}
             id="workPostcode"
             label={'Poskod Majikan'}
@@ -3265,6 +3341,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addFamilyErrors.phoneNumber}
             id="phoneNumber"
             label={'Nombor Mobil'}
@@ -3282,6 +3359,7 @@
 
         {#if $addFamilyModal.maritalId === 3}
             <CustomTextField
+                placeholder="-"
                 type="date"
                 errors={$addFamilyErrors.marriageDate}
                 id="marriageDate"
@@ -3318,6 +3396,7 @@
         method="POST"
     >
         <CustomTextField
+            placeholder="-"
             errors={$addNonFamilyErrors.name}
             id="name"
             label={'Nama'}
@@ -3326,6 +3405,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addNonFamilyErrors.alternativeName}
             id="alternativeName"
             label={'Nama Lain'}
@@ -3340,6 +3420,7 @@
             bind:val={$addNonFamilyModal.identityDocumentColor}
         ></CustomSelectField>
         <CustomTextField
+            placeholder="-"
             errors={$addNonFamilyErrors.identityDocumentNumber}
             id="identityDocumentNumber"
             type="number"
@@ -3348,6 +3429,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addNonFamilyErrors.address}
             id="address"
             label={'Alamat'}
@@ -3355,6 +3437,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addNonFamilyErrors.postcode}
             id="postcode"
             label={'Poskod'}
@@ -3363,6 +3446,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             type="date"
             errors={$addNonFamilyErrors.birthDate}
             id="birthDate"
@@ -3427,6 +3511,7 @@
         ></CustomSelectField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addNonFamilyErrors.workAddress}
             id="workAddress"
             label={'Alamat Majikan'}
@@ -3435,6 +3520,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addNonFamilyErrors.workPostcode}
             id="workPostcode"
             label={'Poskod Majikan'}
@@ -3443,6 +3529,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addNonFamilyErrors.phoneNumber}
             id="phoneNumber"
             label={'Nombor Mobil'}
@@ -3460,6 +3547,7 @@
 
         {#if $addNonFamilyModal.maritalId === 3}
             <CustomTextField
+                placeholder="-"
                 type="date"
                 errors={$addNonFamilyErrors.marriageDate}
                 id="marriageDate"
@@ -3496,6 +3584,7 @@
         class="flex w-full flex-col gap-2"
     >
         <CustomTextField
+            placeholder="-"
             errors={$addNextOfKinErrors.name}
             id="name"
             label={'Nama'}
@@ -3504,6 +3593,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addNextOfKinErrors.alternativeName}
             id="alternativeName"
             label={'Nama Lain'}
@@ -3518,6 +3608,7 @@
             bind:val={$addNextOfKinModal.identityDocumentColor}
         ></CustomSelectField>
         <CustomTextField
+            placeholder="-"
             errors={$addNextOfKinErrors.identityDocumentNumber}
             id="identityDocumentNumber"
             type="number"
@@ -3526,6 +3617,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addNextOfKinErrors.address}
             id="address"
             label={'Alamat'}
@@ -3533,6 +3625,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addNextOfKinErrors.postcode}
             id="postcode"
             label={'Poskod'}
@@ -3541,6 +3634,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             type="date"
             errors={$addNextOfKinErrors.birthDate}
             id="birthDate"
@@ -3605,6 +3699,7 @@
         ></CustomSelectField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addNextOfKinErrors.workAddress}
             id="workAddress"
             label={'Alamat Majikan'}
@@ -3613,6 +3708,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addNextOfKinErrors.workPostcode}
             id="workPostcode"
             label={'Poskod Majikan'}
@@ -3621,6 +3717,7 @@
         ></CustomTextField>
 
         <CustomTextField
+            placeholder="-"
             errors={$addNextOfKinErrors.phoneNumber}
             id="phoneNumber"
             label={'Nombor Mobil'}
@@ -3638,6 +3735,7 @@
 
         {#if $addNextOfKinModal.maritalId === 3}
             <CustomTextField
+                placeholder="-"
                 type="date"
                 errors={$addNextOfKinErrors.marriageDate}
                 id="marriageDate"
