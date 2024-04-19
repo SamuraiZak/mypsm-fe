@@ -6,7 +6,7 @@ export interface MovingInKuarters {
     applicationDate:        string;
     approvedDate:           string;
     isOccupied:             boolean;
-    status:                 string;
+    status?:                 string;
 }
 
 // Converts JSON strings to/from your types
