@@ -41,7 +41,7 @@ export const load = async ({ params }) => {
     clinicContract =
         clinicContractResponse.data?.details as ClinicContract;
         if(clinicContractResponse.status == "success"){
-            clinicContractForm.data = clinicContract;
+            clinicContractForm.data = clinicContract;   
         }
 
     const clinicSecretaryApprovalResponse: CommonResponseDTO =
