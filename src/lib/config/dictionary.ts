@@ -378,6 +378,10 @@ const dictionary: { [key: string]: string } = {
     loanEndDate: 'Tarikh Tamat Pinjaman',
     quartersEntryDate: 'Tarikh Masuk Kuarter',
     unitAndQuarter: 'Unit Dan Kuarter',
+    loanType: 'Jenis Pinjaman',
+    startLoanDate: 'Tarikh Mula Pinjaman',
+    endLoanDate: 'Tarikh Tamat Pinjaman',
+    approvedLoan: 'Kelulusan Pinjaman',
 
     // Add more dictionary here...
     LNPT: 'LNPT',
@@ -437,7 +441,7 @@ const dictionary: { [key: string]: string } = {
     totalAllocation: "Jumlah Peruntukkan (RM)",
     totalSuccessfulClaims: "Jumlah Tuntutan Berjaya (RM)",
     remainderAllocation: "Baki Peruntukkan (RM)",
-    
+
 
     // PDP
     disciplinaryReview: 'Tapisan Tatatertib',
@@ -501,7 +505,7 @@ const dictionary: { [key: string]: string } = {
 
     // surcaj
     surchargeId: "Surcaj ID",
-    employeeNo:  "No Pekerja",
+    employeeNo: "No Pekerja",
     meetingDate: "Tarikh Mesyuarat",
     surchargeAmount: "Jumlah Surcaj (RM)",
     paymentPeriod: "Tempoh Bayaran Balik (Bulan)",

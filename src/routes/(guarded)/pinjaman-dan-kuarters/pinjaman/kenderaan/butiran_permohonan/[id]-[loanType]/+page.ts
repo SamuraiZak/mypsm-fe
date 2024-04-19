@@ -1,7 +1,10 @@
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant.js';
 import { UserRoleConstant } from '$lib/constants/core/user-role.constant.js';
 import type { DocumentBase64RequestDTO } from '$lib/dto/core/common/base-64-document-request.dto';
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
+import type { addLoan } from '$lib/dto/mypsm/pinjaman/add-loan.dto';
 import type { ApproverApproval } from '$lib/dto/mypsm/pinjaman/approver-approval-detail.dto';
 import type { Approver } from '$lib/dto/mypsm/pinjaman/approver-detail.dto';
 import type { VehicleFirstSchedule } from '$lib/dto/mypsm/pinjaman/car-first-schedule-detail.dto';
@@ -18,6 +21,7 @@ import type { Supplier } from '$lib/dto/mypsm/pinjaman/supplier-detail.dto';
 import type { SupportApprover } from '$lib/dto/mypsm/pinjaman/support-approval-detail.dto';
 import type { vechicalDetail } from '$lib/dto/mypsm/pinjaman/vehical-detail.dto';
 import { _approver, _approverApproval, _documentCheck, _eligibility, _firstSchedule, _loanDetail, _offerLoan, _personalDetail, _secondSchedule, _supplier, _supportApproval, _vehicleDetail, _vehicleFirstSchedule } from '$lib/schemas/mypsm/loan/loan-application';
+import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { LoanServices } from '$lib/services/implementation/mypsm/pinjaman/loan.service';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -25,17 +29,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 export async function load({ params }) {
 
     let agreementLetter = getAgreementLetter()
-    // let loanDocumentDetail: LoanDownload = {
-    //     document: [{ document: "", name: "" }]
-    // }
-
-    // let loanPaymentDocumentDetail: LoanDownload = {
-    //     document: [{ document: "", name: "" }]
-    // }
-
-    // let agreementLetterDetail: LoanDownload = {
-    //     document: [{ document: "", name: "" }]
-    // }
+    let loan = params.loanType
 
     // set default application id
     let currentApplicationId: number = 0;
@@ -44,218 +38,61 @@ export async function load({ params }) {
         // reset application id to actual application id if not new
         currentApplicationId = parseInt(params.id);
     }
-    // ===============
-    // personal Detail
-    // ===============
-    let personalDetail: PersonalDetail | null = null;
 
-    let personalDetailRequestBody: loanIdRequestDTO = {
-        id: currentApplicationId
+        // ==========================================================
+    // =================== Lookup ================================
+    // -------------------------------------------------------
+    const positionLookupResponse: CommonResponseDTO =
+        await LookupServices.getPositionEnums();
+
+    const positionLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        positionLookupResponse,
+    );
+    // -------------------------------------------------------
+    const serviceGroupLookupResponse: CommonResponseDTO =
+        await LookupServices.getServiceGroupEnums();
+
+    const serviceGroupLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        serviceGroupLookupResponse,
+    );
+    // -------------------------------------------------------
+     
+      const gradeLookupResponse: CommonResponseDTO =
+      await LookupServices.getServiceGradeEnums();
+
+  const gradeLookup: DropdownDTO[] =
+      LookupServices.setSelectOptions(gradeLookupResponse);
+
+// -------------------------------------------------------
+    const schemeLookupResponse: CommonResponseDTO =
+    await LookupServices.getSchemeEnums();
+
+const schemeLookup: DropdownDTO[] =
+    LookupServices.setSelectOptions(schemeLookupResponse);
+
+     // -------------------------------------------------------
+     const suppAppResponse: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 350,
+        orderBy: null,
+        orderType: null,
+        filter: {
+            program: "TETAP",
+            employeeNumber: null,
+            name: null,
+            identityCard: null,
+            scheme: null,
+            grade: null,
+            position: null,
+        },
     }
+    const supporterApproverResponse: CommonResponseDTO =
+        await LookupServices.getEmployeeList(suppAppResponse);
 
-    const personalDetailResponse: CommonResponseDTO =
-        await LoanServices.getProfilePersonalDetails(personalDetailRequestBody);
-
-    if (personalDetailResponse.status == 'success') {
-        personalDetail = personalDetailResponse.data?.details as PersonalDetail;
-    }
-
-    // ===============
-    // Loan Detail
-    // ===============
-
-    let loanDetail: loanDetail | null = null;
-
-    let loanDetailRequestBody: loanIdRequestDTO = {
-        id: currentApplicationId
-    }
-
-    const loanDetailResponse: CommonResponseDTO =
-        await LoanServices.getLoanDetails
-            (loanDetailRequestBody);
-
-    if (loanDetailResponse.status == 'success') {
-        loanDetail = loanDetailResponse.data?.details as loanDetail;
-    }
-
-    // ===============
-    // Vehicle Detail
-    // ===============
-
-    let vehicleDetail: vechicalDetail | null = null;
-
-    let vehicleDetailRequestBody: loanIdRequestDTO = {
-        id: currentApplicationId
-    }
-
-    const vehicleDetailResponse: CommonResponseDTO =
-        await LoanServices.getVehicleDetails
-            (vehicleDetailRequestBody);
-
-    if (vehicleDetailResponse.status == 'success') {
-        vehicleDetail = vehicleDetailResponse.data?.details as vechicalDetail;
-    }
-
-    // ===============
-    // Offer Loan
-    // ===============
-
-    let offerLoanDetail: OfferedLoan | null = null;
-
-    let offerLoanDetailRequestBody: loanIdRequestDTO = {
-        id: currentApplicationId
-    }
-
-    const offerLoanDetailResponse: CommonResponseDTO =
-        await LoanServices.getOfferLoanDetails
-            (offerLoanDetailRequestBody);
-
-    if (offerLoanDetailResponse.status == 'success') {
-        offerLoanDetail = offerLoanDetailResponse.data?.details as OfferedLoan;
-    }
-
-    // ===============
-    // Vehicle First Schedule
-    // ===============
-
-    let vehicleFirstScheduleDetail: VehicleFirstSchedule | null = null;
-
-    let vehicleFirstScheduleDetailRequestBody: loanIdRequestDTO = {
-        id: currentApplicationId
-    }
-
-    const vehicleFirstScheduleDetailResponse: CommonResponseDTO =
-        await LoanServices.getVehicleFirstScheduleDetails
-            (vehicleFirstScheduleDetailRequestBody);
-
-    if (vehicleFirstScheduleDetailResponse.status == 'success') {
-        vehicleFirstScheduleDetail = vehicleFirstScheduleDetailResponse.data?.details as VehicleFirstSchedule;
-    }
-    // ===============
-    //  First Schedule
-    // ===============
-
-    let firstScheduleDetail: FirstSchedule | null = null;
-
-    let firstScheduleDetailRequestBody: loanIdRequestDTO = {
-        id: currentApplicationId
-    }
-
-    const firstScheduleDetailResponse: CommonResponseDTO =
-        await LoanServices.getFirstScheduleDetails
-            (firstScheduleDetailRequestBody);
-
-    if (firstScheduleDetailResponse.status == 'success') {
-        firstScheduleDetail = firstScheduleDetailResponse.data?.details as FirstSchedule;
-    }
-
-    // ===============
-    //  Second Schedule
-    // ===============
-
-    let secondScheduleDetail: SecondSchedule | null = null;
-
-    let secondScheduleDetailRequestBody: loanIdRequestDTO = {
-        id: currentApplicationId
-    }
-
-    const secondScheduleDetailResponse: CommonResponseDTO =
-        await LoanServices.getSecondScheduleDetails
-            (secondScheduleDetailRequestBody);
-
-    if (secondScheduleDetailResponse.status == 'success') {
-        secondScheduleDetail = secondScheduleDetailResponse.data?.details as SecondSchedule;
-    }
-
-    // ===============
-    // Eligibility
-    // ===============
-
-    let eligibilityDetail: Eligibility | null = null;
-
-    let eligibilityDetailRequestBody: loanIdRequestDTO = {
-        id: currentApplicationId
-    }
-
-    const eligibilityDetailResponse: CommonResponseDTO =
-        await LoanServices.getEligibilityDetails
-            (eligibilityDetailRequestBody);
-
-    if (eligibilityDetailResponse.status == 'success') {
-        eligibilityDetail = eligibilityDetailResponse.data?.details as Eligibility;
-    }
-
-    // ===============
-    // Document Check
-    // ===============
-
-    let documentCheckDetail: DocumentCheck | null = null;
-
-    let documentCheckDetailRequestBody: loanIdRequestDTO = {
-        id: currentApplicationId
-    }
-
-    const documentCheckDetailResponse: CommonResponseDTO =
-        await LoanServices.getDocumentCheckDetails
-            (documentCheckDetailRequestBody);
-
-    if (documentCheckDetailResponse.status == 'success') {
-        documentCheckDetail = documentCheckDetailResponse.data?.details as DocumentCheck;
-    }
-
-    // ===============
-    // Approver
-    // ===============
-
-    let approverDetail: Approver | null = null;
-
-    let approverDetailRequestBody: loanIdRequestDTO = {
-        id: currentApplicationId
-    }
-
-    const approverDetailResponse: CommonResponseDTO =
-        await LoanServices.getApproverDetails
-            (approverDetailRequestBody);
-
-    if (approverDetailResponse.status == 'success') {
-        approverDetail = approverDetailResponse.data?.details as Approver;
-    }
-
-    // ===============
-    // Support Approval
-    // ===============
-
-    let supportApprovalDetail: SupportApprover | null = null;
-
-    let supportApprovalDetailRequestBody: loanIdRequestDTO = {
-        id: currentApplicationId
-    }
-
-    const supportApprovalDetailResponse: CommonResponseDTO =
-        await LoanServices.getSupporterApprovalDetails
-            (supportApprovalDetailRequestBody);
-
-    if (supportApprovalDetailResponse.status == 'success') {
-        supportApprovalDetail = supportApprovalDetailResponse.data?.details as SupportApprover;
-    }
-
-    // ===============
-    // Support Approval
-    // ===============
-
-    let approverApprovalDetail: ApproverApproval | null = null;
-
-    let approverApprovalDetailRequestBody: loanIdRequestDTO = {
-        id: currentApplicationId
-    }
-
-    const approverApprovalDetailResponse: CommonResponseDTO =
-        await LoanServices.getApproverApprovalDetails
-            (approverApprovalDetailRequestBody);
-
-    if (approverApprovalDetailResponse.status == 'success') {
-        approverApprovalDetail = approverApprovalDetailResponse.data?.details as ApproverApproval;
-    }
+    const supporterApproverLookup: DropdownDTO[] = LookupServices.setSelectOptionSupporterAndApprover(
+        supporterApproverResponse,
+    );
+    
 
 
     //==================== Document ========================
@@ -264,7 +101,9 @@ export async function load({ params }) {
     // loan Document
     // ===============
 
-    let loanDocumentDetail: LoanDownload | null = null;
+    let loanDocumentDetail: LoanDownload = {
+        document: []
+    };
 
     let loanDocumentDetailRequestBody: loanIdRequestDTO = {
         id: currentApplicationId
@@ -275,14 +114,21 @@ export async function load({ params }) {
             (loanDocumentDetailRequestBody);
 
     if (loanDocumentDetailResponse.status == 'success') {
-        loanDocumentDetail = loanDocumentDetailResponse.data?.details as LoanDownload;
+
+        let tempLoanDocumentDetail: LoanDownload = loanDocumentDetailResponse.data?.details as LoanDownload;
+
+        if (tempLoanDocumentDetail.document !== null) {
+            loanDocumentDetail.document = tempLoanDocumentDetail.document;
+        }
     }
 
     // ===============
     // Agreement Letter
     // ===============
 
-    let agreementLetterDetail: LoanDownload | null = null;
+    let agreementLetterDetail: LoanDownload = {
+        document: []
+    };
 
     let agreementLetterDetailRequestBody: loanIdRequestDTO = {
         id: currentApplicationId
@@ -293,14 +139,20 @@ export async function load({ params }) {
             (agreementLetterDetailRequestBody);
 
     if (agreementLetterDetailResponse.status == 'success') {
-        agreementLetterDetail = agreementLetterDetailResponse.data?.details as LoanDownload;
+
+        let tempLoanDocumentDetail: LoanDownload = agreementLetterDetailResponse.data?.details as LoanDownload;
+        if (tempLoanDocumentDetail.document !== null) {
+            agreementLetterDetail.document = tempLoanDocumentDetail.document;
+        }
     }
 
     // ===============
     // Loan Payment
     // ===============
 
-    let loanPaymentDocumentDetail: LoanDownload | null = null;
+    let loanPaymentDocumentDetail: LoanDownload = {
+        document: []
+    };
 
     let loanPaymentDocumentDetailRequestBody: loanIdRequestDTO = {
         id: currentApplicationId
@@ -311,62 +163,330 @@ export async function load({ params }) {
             (loanPaymentDocumentDetailRequestBody);
 
     if (loanPaymentDocumentDetailResponse.status == 'success') {
-        loanPaymentDocumentDetail = loanPaymentDocumentDetailResponse.data?.details as LoanDownload;
+        let tempLoanDocumentDetail: LoanDownload = loanPaymentDocumentDetailResponse.data?.details as LoanDownload;
+        if (tempLoanDocumentDetail.document !== null) {
+            loanPaymentDocumentDetail.document = tempLoanDocumentDetail.document;
+        }
     }
 
 
     // =========================================
     // =========== Form ========================
-    const personalDetailForm = await superValidate(personalDetailResponse.data?.details as PersonalDetail, zod(
+    const personalDetailForm = await superValidate(zod(
         _personalDetail))
         ;
 
-    const loanDetailsForm = await superValidate(loanDetailResponse.data?.details as loanDetail, zod(
+    const loanDetailsForm = await superValidate(zod(
         _loanDetail))
         ;
 
-    const vehicleDetailsForm = await superValidate(vehicleDetailResponse.data?.details as vechicalDetail, zod(
+    const vehicleDetailsForm = await superValidate(zod(
         _vehicleDetail))
         ;
 
-
-    const offerLoanForm = await superValidate(offerLoanDetailResponse.data?.details as OfferedLoan, zod(
+    const offerLoanForm = await superValidate(zod(
         _offerLoan))
         ;
+        offerLoanForm.data.loanType = loan;
 
-    const vehicleFirstScheduleDetailsForm = await superValidate(vehicleFirstScheduleDetailResponse.data?.details as VehicleFirstSchedule, zod(
+    const vehicleFirstScheduleDetailsForm = await superValidate(zod(
         _vehicleFirstSchedule))
         ;
 
-    const firstScheduleDetailsForm = await superValidate(firstScheduleDetailResponse.data?.details as FirstSchedule, zod(
+    const firstScheduleDetailsForm = await superValidate(zod(
         _firstSchedule))
         ;
 
-    const secondScheduleDetailsForm = await superValidate(secondScheduleDetailResponse.data?.details as SecondSchedule, zod(
+    const secondScheduleDetailsForm = await superValidate(zod(
         _secondSchedule))
         ;
 
-    const eligibilityDetailsForm = await superValidate(eligibilityDetailResponse.data?.details as Eligibility, zod(
+    const eligibilityDetailsForm = await superValidate(zod(
         _eligibility))
         ;
 
-    const documentCheckDetailsForm = await superValidate(documentCheckDetailResponse.data?.details as DocumentCheck, zod(
+    const documentCheckDetailsForm = await superValidate(zod(
         _documentCheck))
         ;
 
-    const approverDetailsForm = await superValidate(approverDetailResponse.data?.details as Approver, zod(
+    const approverDetailsForm = await superValidate(zod(
         _approver))
         ;
-    const supporterApprovalDetailsForm = await superValidate(supportApprovalDetailResponse.data?.details as SupportApprover, zod(
+    const supporterApprovalDetailsForm = await superValidate(zod(
         _supportApproval))
         ;
 
-    const approverApprovalDetailsForm = await superValidate(approverApprovalDetailResponse.data?.details as ApproverApproval, zod(
+    const approverApprovalDetailsForm = await superValidate(zod(
         _approverApproval))
         ;
 
+    // ===============
+    // personal Detail
+    // ===============
+    let personalDetail: PersonalDetail | null = null;
 
+    
+    if (currentApplicationId !== 0) {
+        // if application exist
+        let personalDetailRequestBody: loanIdRequestDTO = {
+            id: currentApplicationId
+        }
 
+        const personalDetailResponse: CommonResponseDTO =
+            await LoanServices.getProfilePersonalDetails(personalDetailRequestBody);
+
+        if (personalDetailResponse.status == 'success') {
+            personalDetail = personalDetailResponse.data?.details as PersonalDetail;
+
+            personalDetailForm.data = personalDetail;
+        }
+    }else{
+        // if application is new
+        let personalDetailRequestBody: loanIdRequestDTO = {
+            id: currentApplicationId
+        }
+
+        const personalDetailResponse: CommonResponseDTO =
+            await LoanServices.getOwnProfilePersonalDetails();
+
+        if (personalDetailResponse.status == 'success') {
+            personalDetail = personalDetailResponse.data?.details as PersonalDetail;
+
+            personalDetailForm.data = personalDetail;
+        }
+    }
+
+    // ===============
+    // Loan Detail
+    // ===============
+
+    let loanDetail: loanDetail | null = null;
+
+    if (currentApplicationId !== 0) {
+    let loanDetailRequestBody: loanIdRequestDTO = {
+        id: currentApplicationId
+    }
+
+    const loanDetailResponse: CommonResponseDTO =
+        await LoanServices.getLoanDetails
+            (loanDetailRequestBody);
+
+    if (loanDetailResponse.status == 'success') {
+        loanDetail = loanDetailResponse.data?.details as loanDetail;
+
+        loanDetailsForm.data = loanDetail;
+    }}
+
+    // ===============
+    // Vehicle Detail
+    // ===============
+
+    let vehicleDetail: vechicalDetail | null = null;
+
+    if (currentApplicationId !== 0) {
+    let vehicleDetailRequestBody: loanIdRequestDTO = {
+        id: currentApplicationId
+    }
+
+    const vehicleDetailResponse: CommonResponseDTO =
+        await LoanServices.getVehicleDetails
+            (vehicleDetailRequestBody);
+
+    if (vehicleDetailResponse.status == 'success') {
+        vehicleDetail = vehicleDetailResponse.data?.details as vechicalDetail;
+
+        vehicleDetailsForm.data = vehicleDetail;
+    }}
+
+  
+
+    // ===============
+    // Offer Loan
+    // ===============
+
+    let offerLoanDetail: OfferedLoan | null = null;
+
+    if (currentApplicationId !== 0) {
+    let offerLoanDetailRequestBody: loanIdRequestDTO = {
+        id: currentApplicationId
+    }
+
+    const offerLoanDetailResponse: CommonResponseDTO =
+        await LoanServices.getOfferLoanDetails
+            (offerLoanDetailRequestBody);
+
+    if (offerLoanDetailResponse.status == 'success') {
+        offerLoanDetail = offerLoanDetailResponse.data?.details as OfferedLoan;
+
+        offerLoanForm.data = offerLoanDetail;
+    }}
+
+    // ===============
+    // Vehicle First Schedule
+    // ===============
+
+    let vehicleFirstScheduleDetail: VehicleFirstSchedule | null = null;
+
+    if (currentApplicationId !== 0) {
+    let vehicleFirstScheduleDetailRequestBody: loanIdRequestDTO = {
+        id: currentApplicationId
+    }
+
+    const vehicleFirstScheduleDetailResponse: CommonResponseDTO =
+        await LoanServices.getVehicleFirstScheduleDetails
+            (vehicleFirstScheduleDetailRequestBody);
+
+    if (vehicleFirstScheduleDetailResponse.status == 'success') {
+        vehicleFirstScheduleDetail = vehicleFirstScheduleDetailResponse.data?.details as VehicleFirstSchedule;
+
+        vehicleFirstScheduleDetailsForm.data = vehicleFirstScheduleDetail;
+    }}
+    // ===============
+    //  First Schedule
+    // ===============
+
+    let firstScheduleDetail: FirstSchedule | null = null;
+
+    if (currentApplicationId !== 0) {
+    let firstScheduleDetailRequestBody: loanIdRequestDTO = {
+        id: currentApplicationId
+    }
+
+    const firstScheduleDetailResponse: CommonResponseDTO =
+        await LoanServices.getFirstScheduleDetails
+            (firstScheduleDetailRequestBody);
+
+    if (firstScheduleDetailResponse.status == 'success') {
+        firstScheduleDetail = firstScheduleDetailResponse.data?.details as FirstSchedule;
+
+        firstScheduleDetailsForm.data = firstScheduleDetail;
+    }}
+
+    // ===============
+    //  Second Schedule
+    // ===============
+
+    let secondScheduleDetail: SecondSchedule | null = null;
+
+    if (currentApplicationId !== 0) {
+    let secondScheduleDetailRequestBody: loanIdRequestDTO = {
+        id: currentApplicationId
+    }
+
+    const secondScheduleDetailResponse: CommonResponseDTO =
+        await LoanServices.getSecondScheduleDetails
+            (secondScheduleDetailRequestBody);
+
+    if (secondScheduleDetailResponse.status == 'success') {
+        secondScheduleDetail = secondScheduleDetailResponse.data?.details as SecondSchedule;
+
+        secondScheduleDetailsForm.data = secondScheduleDetail;
+    }}
+
+    // ===============
+    // Eligibility
+    // ===============
+
+    let eligibilityDetail: Eligibility | null = null;
+
+    if (currentApplicationId !== 0) {
+    let eligibilityDetailRequestBody: loanIdRequestDTO = {
+        id: currentApplicationId
+    }
+
+    const eligibilityDetailResponse: CommonResponseDTO =
+        await LoanServices.getEligibilityDetails
+            (eligibilityDetailRequestBody);
+
+    if (eligibilityDetailResponse.status == 'success') {
+        eligibilityDetail = eligibilityDetailResponse.data?.details as Eligibility;
+
+        eligibilityDetailsForm.data = eligibilityDetail;
+    }}
+
+    // ===============
+    // Document Check
+    // ===============
+
+    let documentCheckDetail: DocumentCheck | null = null;
+
+    if (currentApplicationId !== 0) {
+    let documentCheckDetailRequestBody: loanIdRequestDTO = {
+        id: currentApplicationId
+    }
+
+    const documentCheckDetailResponse: CommonResponseDTO =
+        await LoanServices.getDocumentCheckDetails
+            (documentCheckDetailRequestBody);
+
+    if (documentCheckDetailResponse.status == 'success') {
+        documentCheckDetail = documentCheckDetailResponse.data?.details as DocumentCheck;
+
+        documentCheckDetailsForm.data = documentCheckDetail;
+    }}
+
+    // ===============
+    // Approver
+    // ===============
+
+    let approverDetail: Approver | null = null;
+
+    if (currentApplicationId !== 0) {
+    let approverDetailRequestBody: loanIdRequestDTO = {
+        id: currentApplicationId
+    }
+
+    const approverDetailResponse: CommonResponseDTO =
+        await LoanServices.getApproverDetails
+            (approverDetailRequestBody);
+
+    if (approverDetailResponse.status == 'success') {
+        approverDetail = approverDetailResponse.data?.details as Approver;
+
+        approverDetailsForm.data = approverDetail;
+    }}
+
+    // ===============
+    // Support Approval
+    // ===============
+
+    let supportApprovalDetail: SupportApprover | null = null;
+
+    if (currentApplicationId !== 0) {
+    let supportApprovalDetailRequestBody: loanIdRequestDTO = {
+        id: currentApplicationId
+    }
+
+    const supportApprovalDetailResponse: CommonResponseDTO =
+        await LoanServices.getSupporterApprovalDetails
+            (supportApprovalDetailRequestBody);
+
+    if (supportApprovalDetailResponse.status == 'success') {
+        supportApprovalDetail = supportApprovalDetailResponse.data?.details as SupportApprover;
+
+        supporterApprovalDetailsForm.data = supportApprovalDetail;
+    }}
+
+    // ===============
+    // Support Approval
+    // ===============
+
+    let approverApprovalDetail: ApproverApproval | null = null;
+
+    if (currentApplicationId !== 0) {
+    let approverApprovalDetailRequestBody: loanIdRequestDTO = {
+        id: currentApplicationId
+    }
+
+    const approverApprovalDetailResponse: CommonResponseDTO =
+        await LoanServices.getApproverApprovalDetails
+            (approverApprovalDetailRequestBody);
+
+    if (approverApprovalDetailResponse.status == 'success') {
+        approverApprovalDetail = approverApprovalDetailResponse.data?.details as ApproverApproval;
+
+        approverApprovalDetailsForm.data = approverApprovalDetail;
+    }}
 
     // =============================
     // set mode
@@ -389,6 +509,10 @@ export async function load({ params }) {
             userMode = "ketua Seksyen";
             break;
 
+        case UserRoleConstant.urusSetiaPentadbiran.code:
+            userMode = "urusetia";
+            break;
+
         default:
             break;
     }
@@ -399,6 +523,7 @@ export async function load({ params }) {
             userMode,
 
             personalDetail,
+            loanDetail,
             vehicleDetail,
             offerLoanDetail,
             vehicleFirstScheduleDetail,
@@ -429,7 +554,12 @@ export async function load({ params }) {
             vehicleFirstScheduleDetailsForm,
             firstScheduleDetailsForm,
 
-        }
+        },
+        supporterApproverLookup,
+        positionLookup,
+        serviceGroupLookup,
+        gradeLookup,
+        schemeLookup,
 
 
     }
@@ -695,4 +825,21 @@ const getAgreementLetter = () => {
     const url = "http://localhost:3333/loan/agreement_letter/vehicle_form"
 
     return url
+}
+
+export const _applyLoan = async () => {
+    
+    let selectedType: addLoan = {
+        loanType: 'kenderaan',
+    }
+   
+    const response: CommonResponseDTO =
+        await LoanServices.addLoan(selectedType);
+ 
+    if (response.status == "success") {
+
+        return { response }
+    } else {
+        new Error('Failed to create new application.')
+    }
 }

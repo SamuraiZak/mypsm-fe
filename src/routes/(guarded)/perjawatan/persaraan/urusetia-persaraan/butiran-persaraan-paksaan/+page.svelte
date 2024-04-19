@@ -29,6 +29,7 @@
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
+    import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     
     export let data: PageData;
     export let disabled = true;
@@ -110,11 +111,17 @@
                         label={'Tindakan/ Ulasan'}
                         val={'Dokumen-dokumen telah disemak'}
                     ></CustomTextField>
-                    <div class="flex w-full flex-row text-sm">
+                    <!-- <div class="flex w-full flex-row text-sm">
                         <label for="staffing-sec-result" class="w-[220px]"
                             >Keputusan</label
                         ><Badge border color="green">DIPERAKU</Badge>
-                    </div>
+                    </div> -->
+                    <CustomRadioBoolean
+                    disabled={false}
+                    id="resultOption"
+                    label="Keputusan"
+                    val=""
+                ></CustomRadioBoolean>
                 </div>
             </div></StepperContentBody
         >
@@ -152,11 +159,14 @@
                         }}
                     ></DynamicTable> -->
 
-                    <CustomTable
+                    <!-- <CustomTable
                     onUpdate={_search}
                     enableDetail
                     bind:tableData={table}
-                ></CustomTable>
+                ></CustomTable> -->
+
+
+                Table
                 </div>
             </div></StepperContentBody
         >
@@ -180,11 +190,11 @@
                         val=""
                     />
 
-                    <!-- <RadioSingle
-                            {options}
-                            name="resultOption"
-                            bind:userSelected={$verificationRetirementApplicationForm.resultOption}
-                        ></RadioSingle> -->
+                    <CustomRadioBoolean
+                    disabled={false}
+                    id="resultOption"
+                    val=""
+                ></CustomRadioBoolean>
                 </div>
             </div>
         </StepperContentBody>
@@ -234,11 +244,11 @@
                         val=""
                     />
 
-                    <!-- <RadioSingle
-                            {options}
-                            name="resultOptionVRD"
-                            bind:userSelected={$verificationRetirementDocumentsForm.resultOptionVRD}
-                        ></RadioSingle> -->
+                    <CustomRadioBoolean
+                    disabled={false}
+                    id="resultOption"
+                    val=""
+                ></CustomRadioBoolean>
                 </div>
             </div>
         </StepperContentBody>
@@ -277,11 +287,11 @@
                         val=""
                     />
 
-                    <!-- <RadioSingle
-                            {options}
-                            name="resultOptionUADI"
-                            bind:userSelected={$updateApplicationDeliveryInformationForm.resultOptionUADI}
-                        ></RadioSingle> -->
+                    <CustomRadioBoolean
+                    disabled={false}
+                    id="resultOption"
+                    val=""
+                ></CustomRadioBoolean>
                 </div>
             </div>
         </StepperContentBody>

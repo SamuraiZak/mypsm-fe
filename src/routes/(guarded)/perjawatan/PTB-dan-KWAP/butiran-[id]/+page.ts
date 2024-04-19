@@ -9,18 +9,20 @@ import { EmploymentServices } from '$lib/services/implementation/mypsm/perjawata
 import { EmployeeServices } from '$lib/services/implementation/mypsm/shared/employee.service';
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/client';
-
-
-import {
-    _personalInfoSchema, _serviceInfoSchema, _PTBInfoSchema, _resultInfoSchema, _meetingInfoSchema, _supporterInfoSchema, _passerInfoSchema
-} from '$lib/schemas/mypsm/employment/PTB-KWAP/schema';
-import { getErrorToast } from '$lib/helpers/core/toast.helper';
-import type { PTBIDRequestBody } from '$lib/dto/mypsm/employment/PTB-KWAP/ptb-kwap-employeeid-request.view-dto';
 import { PTBKWAPServices } from '$lib/services/implementation/mypsm/PTB-KWAP/PTB.service';
 import type { PTBPersonalDTO } from '$lib/dto/mypsm/employment/PTB-KWAP/PTB-KWAP-personal-detail.dto';
 import type { PTBServiceDTO } from '$lib/dto/mypsm/employment/PTB-KWAP/ptb-kwap-service-detail.dto';
-import type { ptbPensionResponseDTO } from '$lib/dto/mypsm/employment/PTB-KWAP/ptb-kwap-pension-detail.dto';
 import type { ptbPensionRequestDTO } from '$lib/dto/mypsm/employment/PTB-KWAP/add-ptb-kwap-service-detail.dto';
+import { zod } from 'sveltekit-superforms/adapters';
+import type { PTBIDRequestBody } from '$lib/dto/mypsm/employment/ptb-dan-kwap/id-request.dto';
+import { _PTBPensionInfoSchema, _approveInfoSchema, _personalInfoSchema, _rolesRelatedEditSchema, _salaryInfoSchema, _serviceInfoSchema, _supporterInfoSchema } from '$lib/schemas/mypsm/employment/PTB-KWAP/schema';
+import type { PensionDetailDTO } from '$lib/dto/mypsm/employment/ptb-dan-kwap/pension-detail.dto';
+import type { PersonalDetailDTO } from '$lib/dto/mypsm/employment/ptb-dan-kwap/personal-detail.dto';
+import type { ServiceDetailDTO } from '$lib/dto/mypsm/employment/ptb-dan-kwap/service-detail.dto';
+import type { SalaryDetailDTO } from '$lib/dto/mypsm/employment/ptb-dan-kwap/salary-detail.dto';
+import type { RolesRelatedDetailDTO } from '$lib/dto/mypsm/employment/ptb-dan-kwap/roles-related.dto';
+import type { SupportDetailDTO } from '$lib/dto/mypsm/employment/ptb-dan-kwap/support-detail.dto';
+import type { ApproveDetailDTO } from '$lib/dto/mypsm/employment/ptb-dan-kwap/approve-detail.dto';
 
 
 
@@ -33,99 +35,6 @@ import type { ptbPensionRequestDTO } from '$lib/dto/mypsm/employment/PTB-KWAP/ad
 //     UserRoleConstants.calon
 
 export async function load({ params }) {
-
-
-    const candidateIdRequestBody: PTBIDRequestBody = {
-        id: Number(params.id),
-    };
-
-    const personalDetailResponse: CommonResponseDTO =
-        await PTBKWAPServices.getPTBKWAPPersonalDetails(
-            candidateIdRequestBody,
-        );
-
-    const personalDetails: PTBPersonalDTO = personalDetailResponse.data
-        ?.details as PTBPersonalDTO;
-
-
-    const serviceDetailResponse: CommonResponseDTO =
-        await PTBKWAPServices.getPTBKWAPServiceDetails(
-            candidateIdRequestBody,
-        );
-
-    const serviceDetails: PTBServiceDTO = serviceDetailResponse.data
-        ?.details as PTBServiceDTO;
-
-        const pensionDetailResponse: CommonResponseDTO =
-        await PTBKWAPServices.getPTBKWAPpensionDetails(
-            candidateIdRequestBody,
-        );
-
-    const pensionDetails: ptbPensionResponseDTO = pensionDetailResponse.data
-        ?.details as ptbPensionResponseDTO;
-
-console.log(pensionDetails)
-    
-    const personalInfoForm = await superValidate(
-        _personalInfoSchema,
-    );
-    const serviceInfoForm = await superValidate(
-        _serviceInfoSchema,
-    )
-
-    const PTBInfoForm = await superValidate(
-        pensionDetails,
-        _PTBInfoSchema,
-    )
-    const resultInfoForm = await superValidate(
-        _resultInfoSchema,
-    )
-
-    const meetingInfoForm = await superValidate(
-        _meetingInfoSchema,
-    )
-    const supporterInfoForm = await superValidate(
-        _supporterInfoSchema,
-    )
-
-    const passerInfoForm = await superValidate(
-        _passerInfoSchema,
-    )
-    // filter
-    const filter: CommonFilterDTO = {
-        program: 'SEMUA',
-        identityCard: null,
-        employeeNumber: null,
-        name: null,
-        position: null,
-        status: null,
-        grade: null,
-        scheme: null,
-    };
-
-    // request body
-    const param: CommonListRequestDTO = {
-        pageNum: 1,
-        pageSize: 5,
-        orderBy: null,
-        orderType: null,
-        filter: filter,
-    };
-
-    // fetch apc history
-    const response: CommonResponseDTO =
-        await EmployeeServices.getEmployeeList(param);
-
-    // convert to apcdto
-    const employeeLookup: DropdownDTO[] = (
-        response.data?.dataList as CommonEmployeeDTO[]
-    ).map((data) => ({
-        value: data.employeeId,
-        name: data.name,
-    }));
-
-
-
 
 
 
@@ -302,8 +211,73 @@ console.log(pensionDetails)
 
     // ===========================================================================
 
-    return {
+    const candidateIdRequestBody: PTBIDRequestBody = {
+        id: Number(params.id),
+    };
 
+    const pensionDetailResponse: CommonResponseDTO =
+        await PTBKWAPServices.getPTBKWAPpensionDetails(
+            candidateIdRequestBody,
+        );
+
+    const personalDetailResponse: CommonResponseDTO =
+        await PTBKWAPServices.getPTBKWAPPersonalDetails(
+            candidateIdRequestBody,
+        );
+
+    const serviceDetailResponse: CommonResponseDTO =
+        await PTBKWAPServices.getPTBKWAPServiceDetails(
+            candidateIdRequestBody,
+        );
+
+    const salaryDetailResponse: CommonResponseDTO =
+        await PTBKWAPServices.getPTBKWAPSalaryDetails(
+            candidateIdRequestBody,
+        );
+
+    const rolesRelatedDetailResponse: CommonResponseDTO =
+        await PTBKWAPServices.getPTBKWAPRolesRelated(
+            candidateIdRequestBody,
+        );
+
+    const supportDetailResponse: CommonResponseDTO =
+        await PTBKWAPServices.getPTBKWAPSupport(
+            candidateIdRequestBody,
+        );
+
+    const approveDetailResponse: CommonResponseDTO =
+        await PTBKWAPServices.getPTBKWAPApprove(
+            candidateIdRequestBody,
+        );
+
+    // ===============================form=============================
+    // ===============================================================
+
+    const personalDetailForm = await superValidate(personalDetailResponse.data?.details as PersonalDetailDTO, zod(
+        _personalInfoSchema))
+        ;
+    const serviceDetailForm = await superValidate(serviceDetailResponse.data?.details as ServiceDetailDTO, zod(
+        _serviceInfoSchema))
+        ;
+    const pensionDetailForm = await superValidate(pensionDetailResponse.data?.details as PensionDetailDTO, zod(
+        _PTBPensionInfoSchema))
+        ;
+    const salaryDetailForm = await superValidate(salaryDetailResponse.data?.details as SalaryDetailDTO, zod(
+        _salaryInfoSchema))
+        ;
+    const rolesRelatedDetailForm = await superValidate(rolesRelatedDetailResponse.data?.details as RolesRelatedDetailDTO, zod(
+        _rolesRelatedEditSchema))
+        ;
+    const supportDetailForm = await superValidate(supportDetailResponse.data?.details as SupportDetailDTO, zod(
+        _supporterInfoSchema))
+        ;
+    const approveDetailForm = await superValidate(approveDetailResponse.data?.details as ApproveDetailDTO, zod(
+        _approveInfoSchema))
+        ;
+
+
+
+    return {
         selectionOptions: {
             identityCardColorLookup,
             cityLookup,
@@ -323,216 +297,153 @@ console.log(pensionDetails)
             majorMinorLookup,
             titleLookup,
             generalLookup,
-            employeeLookup,
             assetDeclarationLookup,
 
         },
-        personalInfoForm,
-        serviceInfoForm,
-        PTBInfoForm,
-        resultInfoForm,
-        meetingInfoForm,
-        supporterInfoForm,
-        passerInfoForm,
-        personalDetails,
-        serviceDetails,
-        pensionDetails,
+        candidateIdRequestBody,
+        pensionDetailResponse,
+        personalDetailResponse,
+        serviceDetailResponse,
+        salaryDetailResponse,
+        rolesRelatedDetailResponse,
+        supportDetailResponse,
+        approveDetailResponse,
+        personalDetailForm,
+        serviceDetailForm,
+        pensionDetailForm,
+        salaryDetailForm,
+        rolesRelatedDetailForm,
+        supportDetailForm,
+        approveDetailForm,
+
     }
-};
+}
 
 
 
 
 
+//
+//     const supporterInfoForm = await superValidate(
+//         _supporterInfoSchema,
+//     )
 
+//     const passerInfoForm = await superValidate(
+//         _passerInfoSchema,
+//     )
+//     // filter
+//     const filter: CommonFilterDTO = {
+//         program: 'SEMUA',
+//         identityCard: null,
+//         employeeNumber: null,
+//         name: null,
+//         position: null,
+//         status: null,
+//         grade: null,
+//         scheme: null,
+//     };
+
+//     // request body
+//     const param: CommonListRequestDTO = {
+//         pageNum: 1,
+//         pageSize: 5,
+//         orderBy: null,
+//         orderType: null,
+//         filter: filter,
+//     };
+
+//     // fetch apc history
+//     const response: CommonResponseDTO =
+//         await EmployeeServices.getEmployeeList(param);
+
+//     // convert to apcdto
+//     const employeeLookup: DropdownDTO[] = (
+//         response.data?.dataList as CommonEmployeeDTO[]
+//     ).map((data) => ({
+//         value: data.employeeId,
+//         name: data.name,
+//     }));
 
 
 
 //==================================================
 //=============== Submit Functions =================
 //==================================================
-export const _personalInfoSubmit = async (formData: object) => {
-    const personalInfoForm = await superValidate(
-        formData,
-        _personalInfoSchema,
-    );
-    console.log(personalInfoForm)
-    if (personalInfoForm.valid) {
-        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(personalInfoForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        if (personalInfoForm.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
-    }
-}
-
-export const _serviceInfoSubmit = async (formData: object) => {
-    const serviceInfoForm = await superValidate(
-        formData,
-        _serviceInfoSchema,
-    );
-    console.log(serviceInfoForm)
-    if (serviceInfoForm.valid) {
-        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(serviceInfoForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        if (serviceInfoForm.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
-    }
-}
 
 
 
-export const _PTBInfoSubmit = async (formData: object) => {
-    const form = await superValidate(formData, _PTBInfoSchema);
+// ========================================================================================
+// =========================== add ========================================================
+// ========================================================================================
 
-    if (!form.valid) {
-        getErrorToast();
-        error(400, { message: 'Validation Not Passed!' });
+// ================================================================
+// ==========  Add Pension Detail ====================================
+// ================================================================
+export const _pensionDetailSubmit = async (formData: object) => {
+    const pensionDetailsInfoForm = await superValidate(formData, (zod)(_PTBPensionInfoSchema));
+
+    if (pensionDetailsInfoForm.valid) {
+        const response: CommonResponseDTO =
+            await PTBKWAPServices.addPTBKWAPSupport(pensionDetailsInfoForm.data as PensionDetailDTO);
+        return { response };
     }
 
-    const response: CommonResponseDTO =
-        await PTBKWAPServices.addPTBKWAPpensionDetails(
-            form.data as ptbPensionRequestDTO,
-        );
-
-    return { response };
 };
 
+// ========================================================================================
+// =========================== Edit ========================================================
+// ========================================================================================
 
+// ================================================================
+// ==========  Edit Pension Detail ====================================
+// ================================================================
+export const _editpensionDetailSubmit = async (formData: object) => {
+    const editPensionDetailsInfoForm = await superValidate(formData, (zod)(_PTBPensionInfoSchema));
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-export const _resultInfoSubmit = async (formData: object) => {
-    const resultInfoForm = await superValidate(
-        formData,
-        _resultInfoSchema,
-    );
-    console.log(resultInfoForm)
-    if (resultInfoForm.valid) {
-        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(resultInfoForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        if (resultInfoForm.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
+    if (editPensionDetailsInfoForm.valid) {
+        const response: CommonResponseDTO =
+            await PTBKWAPServices.editPTBKWAPpensionDetails(editPensionDetailsInfoForm.data as PensionDetailDTO);
+        return { response };
     }
-}
 
-export const _meetingInfoSubmit = async (formData: object) => {
-    const meetingInfoForm = await superValidate(
-        formData,
-        _meetingInfoSchema,
-    );
-    console.log(meetingInfoForm)
-    if (meetingInfoForm.valid) {
-        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(meetingInfoForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        if (meetingInfoForm.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
+};
+
+// ================================================================
+// ==========  Edit Pension Detail ====================================
+// ================================================================
+export const _editrolesRelatedDetailSubmit = async (formData: object) => {
+    const editrolesRelatedDetailsInfoForm = await superValidate(formData, (zod)(_rolesRelatedEditSchema));
+
+    if (editrolesRelatedDetailsInfoForm.valid) {
+        const response: CommonResponseDTO =
+            await PTBKWAPServices.editRolesRelatedDetails(editrolesRelatedDetailsInfoForm.data as RolesRelatedDetailDTO);
+        return { response };
     }
-}
-export const _supporterInfoSubmit = async (formData: object) => {
-    const supporterInfoForm = await superValidate(
-        formData,
-        _supporterInfoSchema,
-    );
-    console.log(supporterInfoForm)
-    if (supporterInfoForm.valid) {
-        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(supporterInfoForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        if (supporterInfoForm.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
+
+};
+// ================================================================
+// ==========  Edit Pelulus =======================================
+// ================================================================
+export const _editSupporterDetailSubmit = async (formData: object) => {
+    const editSupporterDetailsInfoForm = await superValidate(formData, (zod)(_supporterInfoSchema));
+
+    if (editSupporterDetailsInfoForm.valid) {
+        const response: CommonResponseDTO =
+            await PTBKWAPServices.editRolesRelatedDetails(editSupporterDetailsInfoForm.data as SupportDetailDTO);
+        return { response };
     }
-}
-export const _passerInfoSubmit = async (formData: object) => {
-    const passerInfoForm = await superValidate(
-        formData,
-        _passerInfoSchema,
-    );
-    console.log(passerInfoForm)
-    if (passerInfoForm.valid) {
-        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(passerInfoForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        if (passerInfoForm.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
+
+};
+// ================================================================
+// ==========  Edit Penyokong ====================================
+// ================================================================
+export const _editApproverDetailSubmit = async (formData: object) => {
+    const editApproverDetailsInfoForm = await superValidate(formData, (zod)(_approveInfoSchema));
+
+    if (editApproverDetailsInfoForm.valid) {
+        const response: CommonResponseDTO =
+            await PTBKWAPServices.editRolesRelatedDetails(editApproverDetailsInfoForm.data as ApproveDetailDTO);
+        return { response };
     }
-}
+
+};

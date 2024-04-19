@@ -12,22 +12,10 @@
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
+    import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
 
     export let disabled = true;
-    
 
-    // const options: RadioOption[] = [
-    //     {
-    //         val: 'lulus',
-    //         label: 'Lulus',
-    //     },
-    //     {
-    //         val: 'tidakLulus',
-    //         label: 'Tidak Lulus',
-    //     },
-    // ];
-
-   
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -179,14 +167,13 @@
                            val=""
                         />
                        
-<!-- 
-                        <RadioSingle
-                            {options}
-                            name="resultOption"
-                            legend="Keputusan"
-                            bind:userSelected={$retirementApplicationApprovalForm.resultOption}
-                        ></RadioSingle>
-                        -->
+
+                        <CustomRadioBoolean
+                            id="resultOption"
+                            label="Keputusan"
+                           val=""
+                        ></CustomRadioBoolean>
+                       
                     </div>
                 </div>
             </StepperContentBody
