@@ -2,33 +2,21 @@
     import { goto } from '$app/navigation';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
-    import CustomTable from '$lib/components/table/CustomTable.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
-    import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
-    import type {
-        TableDTO,
-        TableSettingDTO,
-    } from '$lib/dto/core/table/table.dto';
+    import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import type { MovingInKuarters } from '$lib/dto/mypsm/pinjaman/kuarters/moving-in-list.dto';
     import type { PageData } from './$types';
     import { _applyQuarters } from './+page';
+    import { _outsiderApplication } from '$lib/schemas/mypsm/quarters/quarters-schema';
+    import { Toaster } from 'svelte-french-toast';
+    import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     export let data: PageData;
 
     let rowData: MovingInKuarters;
-    let kuartersTable: TableDTO = {
-        param: data.param,
-        meta: {
-            pageSize: 5,
-            pageNum: 1,
-            totalData: 4,
-            totalPage: 1,
-        },
-        data: data.dataList ?? [],
-        hiddenData: ['id'],
-    };
+    let applicationModal: boolean = false;
     let quartersTable: TableSettingDTO = {
         param: data.param,
         meta: data.quartersListResponse.data?.meta ?? {
@@ -54,7 +42,7 @@
             detail: true,
             edit: false,
             select: false,
-            filter: false,
+            filter: true,
         },
         controls: {
             add: false,
@@ -73,15 +61,31 @@
                     : 'Luar'}"
                 icon="add"
                 onClick={async () => {
-                    const res = await _applyQuarters();
+                    if (
+                        data.currentRoleCode == UserRoleConstant.kakitangan.code
+                    ) {
+                        const res = await _applyQuarters();
 
-                    if (res?.response.status == 'success') {
+                        if (res?.response.status == 'success') {
+                            goto(
+                                './permohonan-masuk-kuarters/butiran/' +
+                                    res.response.data?.details.id +
+                                    '-' +
+                                    'kakitangan',
+                            );
+                        } else {
+                            alert('Gagal. Sila cuba sekali lagi.');
+                        }
+                    } else if (
+                        data.currentRoleCode ==
+                        UserRoleConstant.urusSetiaPeringkatNegeri.code
+                    ) {
                         goto(
                             './permohonan-masuk-kuarters/butiran/' +
-                                res.response.data?.details.id,
+                                undefined +
+                                '-' +
+                                'luar',
                         );
-                    } else {
-                        alert('Gagal. Sila cuba sekali lagi.');
                     }
                 }}
             />
@@ -93,22 +97,48 @@
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
     <div class="flex w-full flex-col justify-start gap-2.5 p-10">
-        <FilterCard>
-            <FilterTextField label="No. Pemohon" inputValue={''} />
-            <FilterTextField label="Nama Pemohon" inputValue={''} />
-            <FilterTextField label="Jenis Pemohon" inputValue={''} />
-            <FilterTextField label="Status" inputValue={''} />
-        </FilterCard>
-
         <div class="h h-fit w-full">
             <DataTable
                 title="Rekod Permohonan"
                 bind:tableData={quartersTable}
                 bind:passData={rowData}
                 detailActions={() => {
-                    goto('/pinjaman-dan-kuarters/permohonan-masuk-kuarters/butiran/'+rowData.id)
+                    if (rowData.employeeNumber !== null) {
+                        goto(
+                            '/pinjaman-dan-kuarters/permohonan-masuk-kuarters/butiran/' +
+                                rowData.id +
+                                '-' +
+                                'kakitangan',
+                        );
+                    } else {
+                        goto(
+                            '/pinjaman-dan-kuarters/permohonan-masuk-kuarters/butiran/' +
+                                rowData.id +
+                                '-' +
+                                'luar',
+                        );
+                    }
                 }}
-            />
+            >
+                <FilterWrapper slot="filter">
+                    <FilterTextField
+                        label="Nama Pemohon"
+                        bind:inputValue={quartersTable.param.filter
+                            .employeeName}
+                    />
+                    <FilterTextField
+                        label="No. Pekerja"
+                        bind:inputValue={quartersTable.param.filter
+                            .employeeNumber}
+                    />
+                    <FilterTextField
+                        label="No. Kad Pengenalan"
+                        bind:inputValue={quartersTable.param.filter
+                            .identityDocumentNumber}
+                    />
+                </FilterWrapper>
+            </DataTable>
         </div>
     </div>
 </section>
+<Toaster />
