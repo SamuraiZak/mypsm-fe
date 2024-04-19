@@ -20,7 +20,9 @@
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
-    
+    import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
+    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
+
     // export let data: PageData;
 
     export let disabled = true;
@@ -48,12 +50,10 @@
     // ];
 
     //Verification Retirement Application
-    
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader
-        title="Rekod Permohonan Persaraan Pilihan 0282378L"
+    <ContentHeader title="Rekod Permohonan Persaraan Pilihan 0282378L"
         ><TextIconButton
             type="close"
             onClick={() => {
@@ -85,11 +85,17 @@
                         label={'Tindakan/ Review'}
                         val={'Dokumen-dokumen telah disemak'}
                     ></CustomTextField>
-                    <div class="flex w-full flex-row text-sm">
+                    <!-- <div class="flex w-full flex-row text-sm">
                         <label for="staffing-sec-result" class="w-[220px]"
                             >Result</label
                         ><Badge border color="green">DIPERAKU</Badge>
-                    </div>
+                    </div> -->
+                    <CustomRadioBoolean
+                        disabled={false}
+                        id="resultOption"
+                        label="Keputusan"
+                        val=""
+                    ></CustomRadioBoolean>
                 </div>
             </div></StepperContentBody
         >
@@ -97,7 +103,7 @@
     <StepperContent>
         <StepperContentHeader title="Pengesahan Permohonan Persaraan"
             ><TextIconButton
-                type=primary
+                type="primary"
                 label="Simpan"
                 form="FormStepperVerificationRetirementApplication"
             >
@@ -109,20 +115,17 @@
                 <div
                     class="flex h-fit w-full flex-col items-center justify-start"
                 >
-                    
-                        <CustomTextField
-                            id="actionRemark"
-                            label="Tindakan / Ulasan"
-                            val=""
-                        />
-                        
-                        <!-- <RadioSingle
-                            {options}
-                            name="resultOption"
-                            bind:userSelected={$verificationRetirementApplicationForm.resultOption}
-                        ></RadioSingle> -->
-                      
-                    
+                    <CustomTextField
+                        id="actionRemark"
+                        label="Tindakan / Ulasan"
+                        val=""
+                    />
+
+                    <CustomRadioBoolean
+                        disabled={false}
+                        id="resultOption"
+                        val=""
+                    ></CustomRadioBoolean>
                 </div>
             </div></StepperContentBody
         >
@@ -130,7 +133,7 @@
     <StepperContent>
         <StepperContentHeader title="Penyokong & Pelulus"
             ><TextIconButton
-                type=primary
+                type="primary"
                 label="Simpan"
                 form="FormStepperSupporterApprover"
             >
@@ -138,46 +141,28 @@
             </TextIconButton></StepperContentHeader
         >
         <StepperContentBody
-            ><form
-                
-            >
+            ><form>
                 <div class="flex w-full flex-col gap-2">
                     <div>
-                        <!-- <DropdownSelect
-                          
-                            dropdownType="label-left-full"
+                        <CustomSelectField
                             id="supporter1Option"
                             label="Nama Penyokong #1"
-                            bind:val={$supporterApproverForm.supporter1Option}
-                        
-                        ></DropdownSelect> -->
-                       
+                            val=""
+                        ></CustomSelectField>
                     </div>
                     <div>
-                        <!-- <DropdownSelect
-                            hasError={$supporterApproverErrors.supporter2Option
-                                ? true
-                                : false}
-                            dropdownType="label-left-full"
-                            id="supporter2Option"
-                            label="Nama Penyokong #1"
-                            bind:val={$supporterApproverForm.supporter2Option}
-                            options={data.employeeListLookup}
-                        ></DropdownSelect> -->
-                        
+                        <CustomSelectField
+                            id="supporter1Option"
+                            label="Nama Penyokong #2"
+                            val=""
+                        ></CustomSelectField>
                     </div>
                     <div>
-                        <!-- <DropdownSelect
-                            hasError={$supporterApproverErrors.approverOption
-                                ? true
-                                : false}
-                            dropdownType="label-left-full"
-                            id="approverOption"
+                        <CustomSelectField
+                            id="supporter1Option"
                             label="Nama Pelulus"
-                            bind:val={$supporterApproverForm.approverOption}
-                            options={data.employeeListLookup}
-                        ></DropdownSelect> -->
-                        
+                            val=""
+                        ></CustomSelectField>
                     </div>
                 </div>
             </form></StepperContentBody
@@ -204,11 +189,18 @@
                         label={'Tindakan/ Ulasan'}
                         val={'Layak disokong'}
                     ></CustomTextField>
-                    <div class="flex w-full flex-row text-sm">
+                    <!-- <div class="flex w-full flex-row text-sm">
                         <label for="staffing-sec-result" class="w-[220px]"
                             >Keputusan</label
                         ><Badge border color="green">SOKONG</Badge>
-                    </div>
+                    </div> -->
+
+                    <CustomRadioBoolean
+                    disabled={false}
+                    id="resultOption"
+                    label="Keputusan"
+                    val=""
+                ></CustomRadioBoolean>
                 </div>
             </div>
             <div class="flex w-full flex-col gap-2">
@@ -228,11 +220,17 @@
                         label={'Tindakan/ Ulasan'}
                         val={'Layak disokong'}
                     ></CustomTextField>
-                    <div class="flex w-full flex-row text-sm">
+                    <!-- <div class="flex w-full flex-row text-sm">
                         <label for="staffing-sec-result" class="w-[220px]"
                             >Keputusan</label
                         ><Badge border color="green">SOKONG</Badge>
-                    </div>
+                    </div> -->
+                    <CustomRadioBoolean
+                    disabled={false}
+                    id="resultOption"
+                    label="Keputusan"
+                    val=""
+                ></CustomRadioBoolean>
                 </div>
             </div>
             <div class="flex w-full flex-col gap-2">
@@ -252,11 +250,17 @@
                         label={'Tindakan/ Ulasan'}
                         val={'Setuju diluluskan'}
                     ></CustomTextField>
-                    <div class="flex w-full flex-row text-sm">
+                    <!-- <div class="flex w-full flex-row text-sm">
                         <label for="staffing-sec-result" class="w-[220px]"
                             >Keputusan</label
                         ><Badge border color="green">LULUS</Badge>
-                    </div>
+                    </div> -->
+                    <CustomRadioBoolean
+                    disabled={false}
+                    id="resultOption"
+                    label="Keputusan"
+                    val=""
+                ></CustomRadioBoolean>
                 </div>
             </div></StepperContentBody
         >
@@ -264,62 +268,55 @@
     <StepperContent>
         <StepperContentHeader title="Kelulusan Permohonan Persaraan"
             ><TextIconButton
-                type=primary
+                type="primary"
                 label="Simpan"
                 form="FormStepperRetirementApplicationApproval"
             >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
-        <StepperContentBody
-            >
-                <div class="flex w-full flex-col gap-2">
-                    <div>
-                        <CustomTextField
-                           
-                            id="actionRemark"
-                            label="Tindakan / Ulasan"
-                           val=""
-                        />
-                        <!-- <RadioSingle
-                        options={approveOptions}
-                            name="resultOptionRAA"
-                            bind:userSelected={$retirementApplicationApprovalForm.resultOptionRAA}
-                        ></RadioSingle>
-                       -->
+        <StepperContentBody>
+            <div class="flex w-full flex-col gap-2">
+                <div>
+                    <CustomTextField
+                        id="actionRemark"
+                        label="Tindakan / Ulasan"
+                        val=""
+                    />
+                       <CustomRadioBoolean
+                       disabled={false}
+                       id="resultOption"
+                       val=""
+                   ></CustomRadioBoolean>
 
-                        <p class="text-sm">
-                            Nota: Notifikasi akan dihantar ke kakitangan untuk
-                            mengisi borang persaraan
-                        </p>
-                    </div>
+                    <p class="text-sm">
+                        Nota: Notifikasi akan dihantar ke kakitangan untuk
+                        mengisi borang persaraan
+                    </p>
                 </div>
-            
+            </div>
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Pengesahan Dokumen Persaraan"
             ><TextIconButton
-                type=primary
+                type="primary"
                 label="Simpan"
                 form="FormStepperVerificationRetirementDocuments"
             >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
-        <StepperContentBody
+        <StepperContentBody>
+            <div
+                class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
             >
-                <div
-                    class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+                <p class="text-sm font-bold">Dokumen Persaraan Kakitangan</p>
+                <p class="text-sm">Fail-fail yang dimuat naik:</p>
+                <ul
+                    class="flex w-full list-decimal flex-col gap-2 pl-4 text-sm"
                 >
-                    <p class="text-sm font-bold">
-                        Dokumen Persaraan Kakitangan
-                    </p>
-                    <p class="text-sm">Fail-fail yang dimuat naik:</p>
-                    <ul
-                        class="flex w-full list-decimal flex-col gap-2 pl-4 text-sm"
-                    >
-                        <!-- <li>
+                    <!-- <li>
                             <DownloadAttachment
                                 fileName="JPA.BP.SPPP.B01a-Maklumat Pesara.pdf"
                             />
@@ -334,77 +331,72 @@
                                 fileName="JPA.BP.SPPP.B01a-Maklumat Pesara.pdf"
                             />
                         </li> -->
-                    </ul>
+                </ul>
+            </div>
+            <div
+                class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+            >
+                <p class="text-sm font-bold">Pengesahan Urus Setia</p>
+                <div>
+                    <CustomTextField
+                        id="actionRemarkVRD"
+                        label="Tindakan / Ulasan"
+                        val=""
+                    />
+
+                    <CustomRadioBoolean
+                    disabled={false}
+                    id="resultOption"
+                    val=""
+                ></CustomRadioBoolean>
                 </div>
-                <div
-                    class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
-                >
-                    <p class="text-sm font-bold">Pengesahan Urus Setia</p>
-                    <div>
-                        <CustomTextField
-                            id="actionRemarkVRD"
-                            label="Tindakan / Ulasan"
-                           val=""
-                        />
-                       
-                        <!-- <RadioSingle
-                            {options}
-                            name="resultOptionVRD"
-                            bind:userSelected={$verificationRetirementDocumentsForm.resultOptionVRD}
-                        ></RadioSingle> -->
-                      
-                    </div>
-                </div>
-           </StepperContentBody
-        >
+            </div>
+        </StepperContentBody>
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Kemaskini Maklumat Penghantaran Permohonan"
             ><TextIconButton
-                type=primary
+                type="primary"
                 label="Simpan"
                 form="FormStepperUpdateApplicationDeliveryInformation"
             >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
-        <StepperContentBody
+        <StepperContentBody>
+            <div
+                class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
             >
-                <div
-                    class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+                <p class="text-sm font-bold">Cetak Surat Iringan</p>
+                <ul
+                    class="flex w-full list-decimal flex-col gap-2 pl-4 text-sm"
                 >
-                    <p class="text-sm font-bold">Cetak Surat Iringan</p>
-                    <ul
-                        class="flex w-full list-decimal flex-col gap-2 pl-4 text-sm"
-                    >
-                        <!-- <li>
+                    <!-- <li>
                             <DownloadAttachment fileName="Surat Iringan" />
                         </li> -->
-                    </ul>
+                </ul>
+            </div>
+            <div
+                class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+            >
+                <p class="text-sm font-bold">
+                    Maklumat Penghantaran Permohonan
+                </p>
+                <div>
+                    <CustomTextField
+                        id="actionRemarkUADI"
+                        label="Tindakan / Ulasan"
+                        val=""
+                    />
+
+                    <CustomRadioBoolean
+                    disabled={false}
+                    id="resultOption"
+                    val=""
+                ></CustomRadioBoolean>
                 </div>
-                <div
-                    class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
-                >
-                    <p class="text-sm font-bold">
-                        Maklumat Penghantaran Permohonan
-                    </p>
-                    <div>
-                        <CustomTextField
-                            id="actionRemarkUADI"
-                            label="Tindakan / Ulasan"
-                           val=""
-                        />
-                       
-                        <!-- <RadioSingle
-                            {options}
-                            name="resultOptionUADI"
-                            bind:userSelected={$updateApplicationDeliveryInformationForm.resultOptionUADI}
-                        ></RadioSingle> -->
-                      
-                    </div>
-                </div>
-           </StepperContentBody
-        >
+            </div>
+        </StepperContentBody>
     </StepperContent>
 </Stepper>
 <Toaster />

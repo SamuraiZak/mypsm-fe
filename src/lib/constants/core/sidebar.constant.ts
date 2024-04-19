@@ -108,7 +108,7 @@ export class SidebarConstant {
                             path: '/latihan/rekod-peperiksaan',
                         },
                         {
-                            name: 'Pembiayaan Pembelajaran',
+                            name: 'Pembiayaan Pembelajaran', 
                             path: '/latihan/pembiayaan',
                         },
                         {
@@ -339,7 +339,7 @@ export class SidebarConstant {
                     subItems: [
                         {
                             name: 'Pinjaman Komputer, Telefon Pintar dan Kenderaan',
-                            path: '/pinjaman',
+                            path: '/pinjaman-dan-kuarters/pinjaman',
                         },
                     ],
                 },
@@ -384,6 +384,30 @@ export class SidebarConstant {
                 },
             ],
         },
+
+        // Urusetia Pendatdiran
+        {
+            role: RoleConstant.urusSetiaPentadbiran.code,
+            navItems: [
+                {
+                    name: 'Halaman Utama',
+                    path: '/halaman-utama',
+                },
+                 {
+                    name: 'Pinjaman dan Kuarters',
+                    path: '',
+                    subItems: [
+                        {
+                            name: 'Pinjaman Komputer, Telefon Pintar dan Kenderaan',
+                            path: '/pinjaman-dan-kuarters/pinjaman',
+                        },
+                    ],
+                },
+               
+            ],
+        },
+
+
 
         // Pelulus
         {
@@ -489,7 +513,7 @@ export class SidebarConstant {
                     subItems: [
                         {
                             name: 'Pinjaman Komputer, Telefon Pintar dan Kenderaan',
-                            path: '/pinjaman-kuarters/pinjaman',
+                            path: '/pinjaman-dan-kuarters/pinjaman',
                         },
                     ],
                 },

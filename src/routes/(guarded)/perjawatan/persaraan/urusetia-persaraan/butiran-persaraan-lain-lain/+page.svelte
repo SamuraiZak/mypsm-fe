@@ -18,6 +18,7 @@
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import CustomBanner from '$lib/components/banner/CustomBanner.svelte';
+    import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
 
     export let selectedFiles: any = [];
    
@@ -144,6 +145,7 @@
                             );
                         }}
                     ></DynamicTable> -->
+                    table
                 </div>
             </div>
             <div class="flex w-full flex-col gap-2">
@@ -162,6 +164,7 @@
                             );
                         }}
                     ></DynamicTable> -->
+                    table
                 </div>
             </div></StepperContentBody
         >
@@ -185,6 +188,7 @@
                             goto('');
                         }}
                     ></DynamicTable> -->
+                    table
                 </div>
             </div></StepperContentBody
         >
@@ -329,12 +333,12 @@
                             val=""
                         />
                        
-                        <!-- <RadioSingle
-                            {options}
-                            name="resultOption"
-                            bind:userSelected={$retirementVerificationForm.resultOption}
-                        ></RadioSingle>
-                        -->
+                        <CustomRadioBoolean
+                        disabled={false}
+                        id="resultOption"
+                        label="Keputusan"
+                        val=""
+                    ></CustomRadioBoolean>
                     </div>
                 </div>
             </StepperContentBody

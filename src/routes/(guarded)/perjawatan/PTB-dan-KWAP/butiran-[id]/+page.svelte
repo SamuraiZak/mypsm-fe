@@ -22,28 +22,18 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
 
     import {
-        _personalInfoSubmit,
-        _serviceInfoSubmit,
-        _resultInfoSubmit,
-        _PTBInfoSubmit,
-        _meetingInfoSubmit,
-        _supporterInfoSubmit,
-        _passerInfoSubmit,
-    } from './+page';
-    import {
-        _personalInfoSchema,
-        _serviceInfoSchema,
-        _PTBInfoSchema,
-        _resultInfoSchema,
-        _meetingInfoSchema,
-        _supporterInfoSchema,
-        _passerInfoSchema,
-    } from '$lib/schemas/mypsm/employment/PTB-KWAP/schema';
-
-    import {
         getErrorToast,
         getLoginSuccessToast,
     } from '$lib/helpers/core/toast.helper';
+    import { zod } from 'sveltekit-superforms/adapters';
+    import {
+        _PTBPensionInfoSchema,
+        _approveInfoSchema,
+        _personalInfoSchema,
+        _rolesRelatedEditSchema,
+        _serviceInfoSchema,
+        _supporterInfoSchema,
+    } from '$lib/schemas/mypsm/employment/PTB-KWAP/schema';
 
     let currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
@@ -94,146 +84,90 @@
         form: personalInfoForm,
         errors: personalInfoError,
         enhance: personalInfoEnhance,
-    } = superForm(data.personalInfoForm, {
+        isTainted: personalDetailTainted,
+    } = superForm(data.personalDetailForm, {
         SPA: true,
         id: 'personalDetail',
-        validators: _personalInfoSchema,
-        onUpdate(event) {},
-        onSubmit() {
-            _personalInfoSubmit($personalInfoForm).then((value) => {
-                result = value?.result;
-                if (result == 'success') {
-                    getLoginSuccessToast();
-                } else {
-                    getErrorToast();
-                }
-            });
-        },
+        dataType: 'json',
+        multipleSubmits: 'allow',
+        resetForm: false,
+        validationMethod: 'oninput',
+        validators: zod(_personalInfoSchema),
     });
 
     const {
         form: serviceInfoForm,
         errors: serviceInfoError,
         enhance: serviceInfoEnhance,
-    } = superForm(data.serviceInfoForm, {
+        isTainted: serviceDetailTainted,
+    } = superForm(data.serviceDetailForm, {
         SPA: true,
         id: 'serviceDetail',
-        validators: _serviceInfoSchema,
-        onUpdate(event) {},
-        onSubmit() {
-            _serviceInfoSubmit($serviceInfoForm).then((value) => {
-                result = value?.result;
-                if (result == 'success') {
-                    getLoginSuccessToast();
-                } else {
-                    getErrorToast();
-                }
-            });
-        },
-    });
-    const {
-        form: PTBInfoForm,
-        errors: PTBInfoError,
-        enhance: PTBInfoEnhance,
-    } = superForm(data.PTBInfoForm, {
-        SPA: true,
-        id: 'PTBDetail',
-        validators: _PTBInfoSchema,
-        onUpdate(event) {},
-        onSubmit() {
-            _PTBInfoSubmit($PTBInfoForm).then((value) => {
-                result = value?.result;
-                if (result == 'success') {
-                    getLoginSuccessToast();
-                } else {
-                    getErrorToast();
-                }
-            });
-        },
+        dataType: 'json',
+        multipleSubmits: 'allow',
+        resetForm: false,
+        validationMethod: 'oninput',
+        validators: zod(_serviceInfoSchema),
     });
 
     const {
-        form: resultInfoForm,
-        errors: resultInfoError,
-        enhance: resultInfoEnhance,
-    } = superForm(data.resultInfoForm, {
+        form: PTBPensionInfoForm,
+        errors: PTBPensionInfoError,
+        enhance: PTBPensionInfoEnhance,
+        isTainted: PTBPensionDetailTainted,
+    } = superForm(data.pensionDetailForm, {
         SPA: true,
-        id: 'resultDetail',
-        validators: _resultInfoSchema,
-        onUpdate(event) {},
-        onSubmit() {
-            _resultInfoSubmit($resultInfoForm).then((value) => {
-                result = value?.result;
-                if (result == 'success') {
-                    getLoginSuccessToast();
-                } else {
-                    getErrorToast();
-                }
-            });
-        },
+        id: 'PTBPensionDetail',
+        dataType: 'json',
+        multipleSubmits: 'allow',
+        resetForm: false,
+        validationMethod: 'oninput',
+        validators: zod(_PTBPensionInfoSchema),
     });
     const {
-        form: meetingInfoForm,
-        errors: meetingInfoError,
-        enhance: meetingInfoEnhance,
-    } = superForm(data.meetingInfoForm, {
+        form: rolesRelatedInfoForm,
+        errors: rolesRelatedInfoError,
+        enhance: rolesRelatedInfoEnhance,
+        isTainted: rolesRelatedDetailTainted,
+    } = superForm(data.rolesRelatedDetailForm, {
         SPA: true,
-        id: 'meetingDetail',
-        validators: _meetingInfoSchema,
-        onUpdate(event) {},
-        onSubmit() {
-            _meetingInfoSubmit($meetingInfoForm).then((value) => {
-                result = value?.result;
-                if (result == 'success') {
-                    getLoginSuccessToast();
-                } else {
-                    getErrorToast();
-                }
-            });
-        },
+        id: 'rolesRelatedDetail',
+        dataType: 'json',
+        multipleSubmits: 'allow',
+        resetForm: false,
+        validationMethod: 'oninput',
+        validators: zod(_rolesRelatedEditSchema),
     });
 
     const {
         form: supporterInfoForm,
         errors: supporterInfoError,
         enhance: supporterInfoEnhance,
-    } = superForm(data.supporterInfoForm, {
+        isTainted: supporterDetailTainted,
+    } = superForm(data.supportDetailForm, {
         SPA: true,
         id: 'supporterDetail',
-        validators: _supporterInfoSchema,
-        onUpdate(event) {},
-        onSubmit() {
-            _supporterInfoSubmit($supporterInfoForm).then((value) => {
-                result = value?.result;
-                if (result == 'success') {
-                    getLoginSuccessToast();
-                } else {
-                    getErrorToast();
-                }
-            });
-        },
+        dataType: 'json',
+        multipleSubmits: 'allow',
+        resetForm: false,
+        validationMethod: 'oninput',
+        validators: zod(_supporterInfoSchema),
     });
+
     const {
-        form: passerInfoForm,
-        errors: passerInfoError,
-        enhance: passerInfoEnhance,
-    } = superForm(data.passerInfoForm, {
+        form: approverInfoForm,
+        errors: approverInfoError,
+        enhance: approverInfoEnhance,
+        isTainted: approverDetailTainted,
+    } = superForm(data.approveDetailForm, {
         SPA: true,
-        id: 'passerDetail',
-        validators: _passerInfoSchema,
-        onUpdate(event) {},
-        onSubmit() {
-            _passerInfoSubmit($passerInfoForm).then((value) => {
-                result = value?.result;
-                if (result == 'success') {
-                    getLoginSuccessToast();
-                } else {
-                    getErrorToast();
-                }
-            });
-        },
+        id: 'approverDetail',
+        dataType: 'json',
+        multipleSubmits: 'allow',
+        resetForm: false,
+        validationMethod: 'oninput',
+        validators: zod(_approveInfoSchema),
     });
-    console.log(data.serviceDetails);
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -256,41 +190,28 @@
             ></StepperContentHeader>
             <!-- {#if editingCandidateList} -->
             <StepperContentBody>
+                <b class="text-sm text-system-primary">Maklumat Peribadi</b>
                 <form
                     class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
                     id="personalDetail"
                     method="POST"
                     use:personalInfoEnhance
                 >
-                    <b class="text-sm text-system-primary">Maklumat Peribadi</b>
-
                     <CustomTextField
                         disabled
                         type="text"
                         id="employeeNo"
                         label="No. Pekerja"
                         errors={$personalInfoError.employeeNo}
-                        val={data.personalDetails.employeeNo}
+                        bind:val={$personalInfoForm.employeeNo}
                     ></CustomTextField>
-                    <!-- <CustomTextField
-                        type="date"
-                        id="service-status"
-                        label="Status Pekerjaan"
-                        val=""
-                    ></CustomTextField> -->
-                    <!-- <CustomTextField
-                        type="date"
-                        id="inactive-date-"
-                        label="Tarikh Kuatkuasa Tidak Aktif"
-                        val=""
-                    ></CustomTextField> -->
                     <CustomTextField
                         disabled
                         type="text"
                         id="name"
                         label="Nama Penuh"
                         errors={$personalInfoError.name}
-                        bind:val={data.personalDetails.name}
+                        bind:val={$personalInfoForm.name}
                     ></CustomTextField>
                     <CustomTextField
                         disabled
@@ -298,7 +219,7 @@
                         id="otherName"
                         label="Nama Lain"
                         errors={$personalInfoError.otherName}
-                        bind:val={data.personalDetails.otherName}
+                        bind:val={$personalInfoForm.otherName}
                     ></CustomTextField>
                     <CustomTextField
                         disabled
@@ -306,209 +227,111 @@
                         id="identityCard"
                         label="No. K/P"
                         errors={$personalInfoError.identityCard}
-                        bind:val={data.personalDetails.identityCard}
+                        bind:val={$personalInfoForm.identityCard}
                     ></CustomTextField>
-                    <CustomSelectField
+                    <CustomTextField
                         disabled
                         id="identityCardColor"
                         label="Warna K/P"
                         errors={$personalInfoError.identityCardColor}
-                        bind:val={data.personalDetails.identityCardColor}
-                        options={data.selectionOptions.identityCardColorLookup}
-                    ></CustomSelectField>
+                        bind:val={$personalInfoForm.identityCardColor}
+                    />
                     <CustomTextField
                         disabled
                         type="text"
                         id="dateOfBirth"
                         label="Tarikh Lahir"
                         errors={$personalInfoError.dateOfBirth}
-                        bind:val={data.personalDetails.dateOfBirth}
+                        bind:val={$personalInfoForm.dateOfBirth}
                     ></CustomTextField>
 
-                    <CustomSelectField
+                    <CustomTextField
                         disabled
                         id="placeOfBirth"
                         label="Tempat Lahir"
                         errors={$personalInfoError.placeOfBirth}
-                        bind:val={data.personalDetails.placeOfBirth}
-                        options={data.selectionOptions.stateLookup}
-                    ></CustomSelectField>
-                    <CustomSelectField
+                        bind:val={$personalInfoForm.placeOfBirth}
+                    />
+                    <CustomTextField
                         disabled
                         id="nationality"
                         label="Warganegara"
                         errors={$personalInfoError.nationality}
-                        bind:val={data.personalDetails.nationality}
-                        options={data.selectionOptions.nationalityLookup}
-                    ></CustomSelectField>
-                    <CustomSelectField
+                        bind:val={$personalInfoForm.nationality}
+                    />
+                    <CustomTextField
                         disabled
                         id="race-"
                         label="Bangsa"
                         errors={$personalInfoError.race}
-                        bind:val={data.personalDetails.race}
-                        options={data.selectionOptions.raceLookup}
-                    ></CustomSelectField>
-                    <CustomSelectField
+                        bind:val={$personalInfoForm.race}
+                    ></CustomTextField>
+                    <CustomTextField
                         disabled
                         id="religion"
                         label="Agama"
                         errors={$personalInfoError.religion}
-                        bind:val={data.personalDetails.religion}
-                        options={data.selectionOptions.religionLookup}
-                    ></CustomSelectField>
-                    <CustomSelectField
+                        bind:val={$personalInfoForm.religion}
+                    ></CustomTextField>
+                    <CustomTextField
                         disabled
                         id="gender"
                         label="Jantina"
                         errors={$personalInfoError.gender}
-                        bind:val={data.personalDetails.gender}
-                        options={data.selectionOptions.genderLookup}
-                    ></CustomSelectField>
+                        bind:val={$personalInfoForm.gender}
+                    ></CustomTextField>
                     <CustomTextField
                         disabled
                         type="text"
                         id="status"
                         label="Status"
                         errors={$personalInfoError.status}
-                        bind:val={data.personalDetails.status}
+                        bind:val={$personalInfoForm.status}
                     ></CustomTextField>
-                    <!-- <CustomTextField
-                        type="email"
-                        id="email"
-                        label="Emel"
-                        errors={$personalInfoError.email}
-                        bind:val={data.personalDetails.email}
-                    ></CustomTextField> -->
                     <CustomTextField
                         disabled
                         id="homeAddress"
                         label="Alamat Rumah"
                         errors={$personalInfoError.homeAddress}
-                        bind:val={data.personalDetails.homeAddress}
+                        bind:val={$personalInfoForm.homeAddress}
                     ></CustomTextField>
                     <CustomTextField
                         disabled
                         id="homeNo"
                         label="Telefon Rumah"
                         errors={$personalInfoError.homeNo}
-                        bind:val={data.personalDetails.homeNo}
+                        bind:val={$personalInfoForm.homeNo}
                     ></CustomTextField>
                     <CustomTextField
                         disabled
                         id="mobileNo"
                         label="Telefon Sendiri"
                         errors={$personalInfoError.mobileNo}
-                        bind:val={data.personalDetails.mobileNo}
+                        bind:val={$personalInfoForm.mobileNo}
                     ></CustomTextField>
                     <CustomTextField
                         disabled
                         id="housing"
                         label="Perumahan"
                         errors={$personalInfoError.housing}
-                        bind:val={data.personalDetails.housing}
+                        bind:val={$personalInfoForm.housing}
                     ></CustomTextField>
                     <CustomTextField
                         disabled
                         id="houseLoan"
                         label="Pinjaman Rumah"
                         errors={$personalInfoError.houseLoan}
-                        bind:val={data.personalDetails.houseLoan}
-                    ></CustomTextField>
-                    <!-- <CustomTextField
-                        type="text"
-                        id="home-phone-"
-                        label="No. Telefon Rumah"
-                        val=""
+                        bind:val={$personalInfoForm.houseLoan}
                     ></CustomTextField>
                     <CustomTextField
-                        type="text"
-                        id="mobile-phone-"
-                        label="No. Telefon Bimbit"
-                        val=""
-                    ></CustomTextField>
-                    <CustomTextField
-                        type="text"
-                        id="home-"
-                        label="Perumahan"
-                        val=""
-                    ></CustomTextField>
-                    <CustomTextField
-                        type="text"
-                        id="loaned-home-"
-                        label="Pinjaman Perumahan"
-                        val=""
-                    ></CustomTextField>
-                    <CustomTextField
-                        type="text"
-                        id="loaned-vehicle-"
-                        label="Pinjaman Kenderaam"
-                        val=""
-                    ></CustomTextField> -->
-                    <CustomSelectField
                         disabled
                         id="isExPoliceOrSoldier"
                         label="Bekas Polis/Tentera"
                         errors={$personalInfoError.isExPoliceOrSoldier}
-                        bind:val={data.personalDetails.isExPoliceOrSoldier}
-                        options={data.selectionOptions.generalLookup}
+                        bind:val={$personalInfoForm.isExPoliceOrSoldier}
                     />
-                    <div class="pt-5">
-                        <b class="text-sm text-system-primary"
-                            >Maklumat Pertalian Dengan Kakitangan LKIM
-                        </b>
-                    </div>
-                    <!-- <RadioSingle
-        
-        {options}
-        legend="Pertalian Dengan Kakitangan LKIM"
-        bind:userSelected={radioValueRelationToStaff}
-    /> -->
-                    <CustomSelectField
-                        disabled
-                        id="isInternalRelationship"
-                        label="Pertalian Dengan Kakitangan LKIM"
-                        errors={$personalInfoError.isInternalRelationship}
-                        bind:val={data.personalDetails.isInternalRelationship}
-                        options={data.selectionOptions.generalLookup}
-                    />
-                    <CustomTextField
-                        disabled
-                        type="text"
-                        id="employeeNumber"
-                        label="No. Pekerja Kakitangan LKIM"
-                        errors={$personalInfoError.employeeNumber}
-                        bind:val={data.personalDetails.employeeNumber}
-                    ></CustomTextField>
-                    <CustomSelectField
-                        disabled
-                        id="employeeName"
-                        label="Nama Kakitangan LKIM"
-                        errors={$personalInfoError.employeeName}
-                        bind:val={data.personalDetails.employeeName}
-                        options={data.selectionOptions.employeeLookup}
-                    ></CustomSelectField>
-                    <CustomSelectField
-                        disabled
-                        id="employeePosition"
-                        label="Jawatan Kakitangan LKIM"
-                        errors={$personalInfoError.employeePosition}
-                        bind:val={data.personalDetails.employeePosition}
-                        options={data.selectionOptions.positionLookup}
-                    ></CustomSelectField>
-                    <CustomSelectField
-                        disabled
-                        id="relationshipId"
-                        label="Hubungan dengan Kakitangan LKIM"
-                        errors={$personalInfoError.relationshipId}
-                        bind:val={data.personalDetails.relationshipId}
-                        options={data.selectionOptions.relationshipLookup}
-                    ></CustomSelectField>
                 </form>
             </StepperContentBody>
-            <!-- {:else} -->
-
-            <!-- {/if} -->
         </StepperContent>
 
         <!-- Maklumat Perkhidmatan -->
@@ -562,16 +385,8 @@
                         bind:val={$serviceInfoForm.serviceLevel}
                     ></CustomTextField>
 
-                    <!-- <RadioButton
-                        
-                        options={faedahPersaraanOptions}
-                        legend={'Faedah Persaraan'}
-                        bind:userSelected={isFaedahKWSP}
-                    ></RadioButton>  -->
-
-                    <CustomRadioBoolean
+                    <CustomTextField
                         id="retirementType"
-                        options={retirementBenefitOption}
                         label="Faedah Persaraan"
                         errors={$serviceInfoError.retirementType}
                         bind:val={$serviceInfoForm.retirementType}
@@ -662,91 +477,6 @@
                         bind:val={$serviceInfoForm.currentServiceConfirmedDate}
                     ></CustomTextField>
 
-                    <!-- <AccordianField
-                        disabled={editable}
-                        label="Sejarah Lantikan Jawatan LKIM (Gred, Jawatan, Tarikh Disahkan Jawatan, Tarikh Lantikan)"
-                        header={'maklumatPerkhidmatanData.sejarahLantikanJawatanLKIM[0]'}
-                    > 
-
-                        <{#each maklumatPerkhidmatanData.sejarahLantikanJawatanLKIM as val, i} -->
-
-                    <!-- <label
-                            for=""
-                            class="border-1 active:border-1 w-full rounded-[3px] border-bdr-primary text-base {!editable
-                                ? 'text-txt-tertiary'
-                                : 'text-txt-primary'}
-                                                    hover:border-system-primary focus:border-system-primary focus:outline-none focus:ring-0"
-                            >{'i + 1'}. {'val'}</label
-                        > -->
-                    <!-- {/each} -->
-                    <!-- </AccordianField>
-                             -->
-                    <!-- <CustomTextField
-                            id="tarikhKelulusanPercantumanPerkhidmatanLepas"
-                            label={'Tarikh Kelulusan Percantuman Perkhidmatan Lepas'}
-                            type="text"
-                            val=""
-                            placeholder=""
-                        ></CustomTextField> -->
-                    <!-- <CustomTextField
-                        id="currentActing"
-                        label={'Pemangkuan Sekarang'}
-                        type="text"
-                        errors={$serviceInfoError.currentActing}
-                        bind:val={data.serviceDetails.currentActing}
-                    ></CustomTextField>
-                    <CustomTextField
-                        id="confirmDate"
-                        label={'Tarikh Disahkan'}
-                        type="text"
-                        errors={$serviceInfoError.confirmDate}
-                        bind:val={data.serviceDetails.confirmDate}
-                    ></CustomTextField> -->
-                    <!-- <CustomTextField
-                            id="tanggungKerjaSekarang"
-                            label={'Tanggung Kerja Sekarang'}
-                            type="text"
-                            val=""
-                            placeholder=""
-                        ></CustomTextField> -->
-                    <!-- <CustomTextField
-                            id="skimPencen"
-                            label={'Skim Pencen'}
-                            type="text"
-                            val=""
-                            placeholder=""
-                        ></CustomTextField> -->
-                    <!-- <CustomTextField
-                            id="lastSalary"
-                            label={'Kenaikan Gaji Akhir'}
-                            type="text"
-                            errors={$serviceInfoError.lastSalary}
-                            bind:val={data.serviceDetails.lastSalary}
-                        ></CustomTextField>
-                        <CustomTextField
-                            id="lastPromotion"
-                            label={'Kenaikan Pangkat Akhir'}
-                            type="text"
-                            errors={$serviceInfoError.lastPromotion}
-                            bind:val={data.serviceDetails.lastPromotion}
-                        ></CustomTextField>
-                    <CustomTextField
-                        id="kgt"
-                        label={'Bulan KGT'}
-                        type="text"
-                        errors={$serviceInfoError.kgt}
-                        bind:val={data.serviceDetails.kgt}
-                    ></CustomTextField>
-                    <CustomTextField
-                        id="retirementDate"
-                        label={'Tarikh Bersara'}
-                        type="text"
-                        errors={$serviceInfoError.retirementDate}
-                        bind:val={data.serviceDetails.retirementDate}
-                    ></CustomTextField>
-                    <b class="text-sm text-system-primary"
-                        >Maklumat Gaji dan Elaun - Elaun</b
-                    > -->
                     <div class="grid grid-cols-2 gap-10">
                         <!-- <div class="space-y-2.5">
                              <CustomTextField
@@ -831,66 +561,45 @@
                         class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
                         id="PTBDetail"
                         method="POST"
-                        use:PTBInfoEnhance
+                        use:PTBPensionInfoEnhance
                     >
-                        <CustomTextField
-                            id="applicationDate"
-                            type="date"
-                            label="Tarikh Permohonan"
-                            errors={$PTBInfoError.applicationDate}
-                            bind:val={$PTBInfoForm.applicationDate}
-                        ></CustomTextField>
                         <CustomTextField
                             id="PTBdate"
                             type="date"
                             label="Tarikh Diberi PTB"
-                            errors={$PTBInfoError.PTBdate}
-                            bind:val={$PTBInfoForm.PTBdate}
+                            errors={$PTBPensionInfoError.PTBDate}
+                            bind:val={$PTBPensionInfoForm.PTBDate}
                         ></CustomTextField>
                         <CustomTextField
                             id="referenceNumber"
                             type="text"
                             label="No. Rujukan Surat JPA"
-                            errors={$PTBInfoError.referenceNumber}
-                            bind:val={$PTBInfoForm.referenceNumber}
+                            errors={$PTBPensionInfoError.referenceNumber}
+                            bind:val={$PTBPensionInfoForm.referenceNumber}
                         ></CustomTextField>
 
                         <CustomTextField
                             id="referenceDate"
                             type="date"
                             label="Tarikh Rujukan"
-                            errors={$PTBInfoError.refrenceDate}
-                            bind:val={$PTBInfoForm.refrenceDate}
-                        ></CustomTextField>
-                        <CustomTextField
-                            id="status"
-                            type="date"
-                            label="Status"
-                            errors={$PTBInfoError.status}
-                            bind:val={$PTBInfoForm.status}
-                        ></CustomTextField>
-                        <CustomTextField
-                            id="remark"
-                            type="date"
-                            label="Catatan"
-                            errors={$PTBInfoError.remark}
-                            bind:val={$PTBInfoForm.remark}
+                            errors={$PTBPensionInfoError.referenceDate}
+                            bind:val={$PTBPensionInfoForm.referenceDate}
                         ></CustomTextField>
 
                         <CustomTextField
                             id="pensionNumber"
                             type="date"
                             label="No. Pencen"
-                            errors={$PTBInfoError.pensionNumber}
-                            bind:val={$PTBInfoForm.pensionNumber}
+                            errors={$PTBPensionInfoError.pensionNumber}
+                            bind:val={$PTBPensionInfoForm.pensionNumber}
                         ></CustomTextField>
 
                         <CustomTextField
                             id="KWAPEmailDate"
                             type="date"
                             label="Tarikh Emel (KWAP)"
-                            errors={$PTBInfoError.KWAPEmailDate}
-                            bind:val={$PTBInfoForm.KWAPEmailDate}
+                            errors={$PTBPensionInfoError.KWAPEmailDate}
+                            bind:val={$PTBPensionInfoForm.KWAPEmailDate}
                         ></CustomTextField>
                     </form></StepperContentBody
                 >
@@ -947,203 +656,94 @@
                         class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
                         id="resultDetail"
                         method="POST"
-                        use:resultInfoEnhance
+                        use:rolesRelatedInfoEnhance
                     >
                         <div class="flex w-full flex-col gap-2.5">
-                            {#if status === 'SOKONG'}
-                                <div
-                                    class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                                >
-                                    <div class="mb-5">
-                                        <b class="text-sm text-system-primary"
-                                            >Penyokong</b
-                                        >
-                                    </div>
-                                    <CustomTextField
-                                        type="text"
-                                        id="supporterName"
-                                        label="Nama"
-                                        errors={$resultInfoError.supporterName}
-                                        bind:val={$resultInfoForm.supporterName}
-                                    ></CustomTextField>
-                                    <CustomTextField
-                                        id="supportedStatus"
-                                        label="TUlasan"
-                                        errors={$resultInfoError.supportedStatus}
-                                        bind:val={$resultInfoForm.supportedStatus}
-                                    ></CustomTextField>
-                                    <CustomTextField
+                            <div
+                                class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                            >
+                                <div class="mb-5">
+                                    <b class="text-sm text-system-primary"
+                                        >Penyokong</b
+                                    >
+                                </div>
+                                <CustomTextField
+                                    type="text"
+                                    id="supporterName"
+                                    label="Nama"
+                                    errors={$rolesRelatedInfoError.supporterName}
+                                    bind:val={$rolesRelatedInfoForm.supporterName}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    id="supportedStatus"
+                                    label="Ulasan"
+                                    errors={$rolesRelatedInfoError.supportedStatus}
+                                    bind:val={$rolesRelatedInfoForm.supportedStatus}
+                                ></CustomTextField>
+                                <CustomTextField
                                     id="supportedRemark"
                                     label="Tindakan"
-                                    errors={$resultInfoError.supportedRemark}
-                                    bind:val={$resultInfoForm.supportedRemark}
+                                    errors={$rolesRelatedInfoError.supportedRemark}
+                                    bind:val={$rolesRelatedInfoForm.supportedRemark}
                                 ></CustomTextField>
-                                    <div class="flex w-full flex-row text-sm">
-                                        <label
-                                            for="supporter-result"
-                                            class="w-[220px]">Keputusan</label
-                                        >
-                                    </div>
-                                </div>
-                                <div
-                                    class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                                >
-                                    <div class="mb-5">
-                                        <b class="text-sm text-system-primary"
-                                            >Pelulus</b
-                                        >
-                                    </div>
-                                    <CustomTextField
-                                        type="text"
-                                        id="approverName"
-                                        label="Nama"
-                                        errors={$resultInfoError.approverName}
-                                        bind:val={$resultInfoForm.approverName}
-                                    ></CustomTextField>
-                                    <div class="text-sm text-system-primary">
+                                <CustomTextField
+                                type="text"
+                                id="supportedDate"
+                                label="Tarikh"
+                                errors={$rolesRelatedInfoError.supportedDate}
+                                bind:val={$rolesRelatedInfoForm.supportedDate}
+                            ></CustomTextField>
+
+                                <!-- <div class="text-sm text-system-primary">
                                         <i class=""
                                             ><li>
                                                 ● Menunggu keputusan daripada
                                                 PENYOKONG.
                                             </li></i
                                         >
-                                    </div>
+                                    </div> -->
+                            </div>
+                            <div
+                                class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                            >
+                                <div class="mb-5">
+                                    <b class="text-sm text-system-primary"
+                                        >Pelulus</b
+                                    >
                                 </div>
-                            {:else if status === 'LULUS'}
-                                <div
-                                    class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                                >
-                                    <div class="mb-5">
-                                        <b class="text-sm text-system-primary"
-                                            >Penyokong</b
-                                        >
-                                    </div>
-                                    <CustomTextField
-                                        type="text"
-                                        id="supporterName"
-                                        label="Nama"
-                                        errors={$resultInfoError.supporterName}
-                                        bind:val={$resultInfoForm.supporterName}
-                                    ></CustomTextField>
-                                    <CustomTextField
-                                        id="supportedStatus"
-                                        label="Tindakan/Ulasan"
-                                        errors={$resultInfoError.supportedStatus}
-                                        bind:val={$resultInfoForm.supportedStatus}
-                                    ></CustomTextField>
-                                    <div class="flex w-full flex-row text-sm">
-                                        <label
-                                            for="supporter-result"
-                                            class="w-[220px]">Keputusan</label
-                                        >
-                                    </div>
-                                </div>
-                                <div
-                                    class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                                >
-                                    <div class="mb-5">
-                                        <b class="text-sm text-system-primary"
-                                            >Pelulus</b
-                                        >
-                                    </div>
-                                    <CustomTextField
-                                        type="text"
-                                        id="approverName"
-                                        label="Nama"
-                                        errors={$resultInfoError.approverName}
-                                        bind:val={$resultInfoForm.approverName}
-                                    ></CustomTextField>
-                                    <CustomTextField
-                                        id="approvedStatus"
-                                        label="Ulasan"
-                                        errors={$resultInfoError.approvedStatus}
-                                        bind:val={$resultInfoForm.approvedStatus}
-                                    ></CustomTextField>
-                                    <CustomTextField
-                                        id="approvedRemark"
-                                        label="Tindakan"
-                                        errors={$resultInfoError.approvedRemark}
-                                        bind:val={$resultInfoForm.approvedRemark}
-                                    ></CustomTextField>
-                                    <div class="flex w-full flex-row text-sm">
-                                        <label
-                                            for="approver-result"
-                                            class="w-[220px]">Keputusan</label
-                                        >
-                                    </div>
-                                </div>
-                            {/if}
+                                <CustomTextField
+                                    type="text"
+                                    id="approverName"
+                                    label="Nama"
+                                    errors={$rolesRelatedInfoError.approverName}
+                                    bind:val={$rolesRelatedInfoForm.approverName}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    id="approvedStatus"
+                                    label="Ulasan"
+                                    errors={$rolesRelatedInfoError.approvedStatus}
+                                    bind:val={$rolesRelatedInfoForm.approvedStatus}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    id="approvedRemark"
+                                    label="Tindakan"
+                                    errors={$rolesRelatedInfoError.approvedRemark}
+                                    bind:val={$rolesRelatedInfoForm.approvedRemark}
+                                ></CustomTextField>
+                                <CustomTextField
+                                type="text"
+                                id="approvedDate"
+                                label="Tarikh"
+                                errors={$rolesRelatedInfoError.approvedDate}
+                                bind:val={$rolesRelatedInfoForm.approvedDate}
+                            ></CustomTextField>
+                            </div>
                         </div>
                     </form></StepperContentBody
                 >
             </StepperContent>
 
-            <!-- Kemaskini Maklumat Temuduga -->
-            <StepperContent>
-                <StepperContentHeader title="Maklumat PTB dan KWAP">
-                    <TextIconButton
-                        label="simpan"
-                        type="primary"
-                        icon="check"
-                        form="meetingDetail"
-                    ></TextIconButton></StepperContentHeader
-                >
-                <StepperContentBody>
-                    <ContentHeader
-                        title="Semak dan kemaskini maklumat temuduga bagi calon-calon berikut untuk menjana surat tawaran temuduga"
-                    ></ContentHeader>
-                    <StepperContent>
-                        <StepperContentBody>
-                            <form
-                                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
-                                id="meetingDetail"
-                                method="POST"
-                                use:meetingInfoEnhance
-                            >
-                                <CustomTextField
-                                    id="PTBDate"
-                                    type="date"
-                                    label="Tarikh Diberi PTB"
-                                    errors={$meetingInfoError.PTBDate}
-                                    bind:val={$meetingInfoForm.PTBDate}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    id="referenceNumber"
-                                    type="text"
-                                    label="No. Rujukan Surat JPA"
-                                    errors={$meetingInfoError.referenceNumber}
-                                    bind:val={$meetingInfoForm.referenceNumber}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    id="referenceDate"
-                                    type="date"
-                                    label="Tarikh Rujukan"
-                                    errors={$meetingInfoError.referenceDate}
-                                    bind:val={$meetingInfoForm.referenceDate}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    id="pensionNumber"
-                                    type="date"
-                                    label="No. Pencen"
-                                    errors={$meetingInfoError.pensionNumber}
-                                    bind:val={$meetingInfoForm.pensionNumber}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    id="KWAPEmailDate"
-                                    type="date"
-                                    label="Tarikh Emel (KWAP)"
-                                    errors={$meetingInfoError.KWAPEmailDate}
-                                    bind:val={$meetingInfoForm.KWAPEmailDate}
-                                ></CustomTextField>
-                            </form></StepperContentBody
-                        >
-                    </StepperContent>
-                </StepperContentBody>
-            </StepperContent>
+           
             {#if currentRoleCode === penyokong}
                 <StepperContent>
                     <StepperContentHeader
@@ -1206,41 +806,9 @@
                                     errors={$supporterInfoError.supportedDate}
                                     bind:val={$supporterInfoForm.supportedDate}
                                 ></CustomTextField>
-                                <!-- <RadioSingle
-                        name="supporterResult"
-                        disabled={!editable}
-                        options={supportOptions}
-                        legend={'Keputusan'}
-                        bind:userSelected={isSupported}
-                        ></RadioSingle> -->
-
                                 <hr />
                             </div>
-                            <!-- Pelulus Card -->
-                            <!-- <div
-                                class="flex max-h-full w-full flex-col items-start justify-start"
-                            >
-                                <div>
-                                    <b class="text-sm text-system-primary"
-                                        >Pelulus</b
-                                    >
-                                </div>
-                                <CustomTextField
-                                    type="text"
-                                    id="passerName"
-                                    label="Nama"
-                                    errors={$supporterInfoError.supporterName}
-                                    bind:val={$supporterInfoForm.supporterName}
-                                ></CustomTextField>
-                                <div class="text-sm text-system-primary">
-                                    <i class=""
-                                        ><li>
-                                            ● Menunggu keputusan daripada
-                                            PENYOKONG.
-                                        </li></i
-                                    >
-                                </div>
-                            </div> -->
+
                         </form>
                     </StepperContentBody>
                 </StepperContent>
@@ -1266,39 +834,8 @@
                             class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
                             id="supporterDetail"
                             method="POST"
-                            use:supporterInfoEnhance
+                            use:approverInfoEnhance
                         >
-                            <div
-                                class="flex max-h-full w-full flex-col items-start justify-start"
-                            >
-                                <!-- Penyokong Card -->
-
-                                <!-- <b class="text-sm text-system-primary"
-                                    >Keputusan Penyokong</b
-                                > -->
-
-                                <!-- <CustomTextField
-                                    id="supporterResult"
-                                    label="Tindakan/Ulasan"
-                                    errors={$passerInfoError.supporterResult}
-                                    bind:val={$passerInfoForm.supporterResult}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    id="supporterRemark"
-                                    label="Tindakan/Ulasan"
-                                    errors={$passerInfoError.supporterRemark}
-                                    bind:val={$passerInfoForm.supporterRemark}
-                                ></CustomTextField> -->
-                                <!-- <RadioSingle
-                        name="supporterResult"
-                        disabled={!editable}
-                        options={supportOptions}
-                        legend={'Keputusan'}
-                        bind:userSelected={isSupported}
-                        ></RadioSingle> -->
-
-                                <hr />
-                            </div>
                             <!-- Pelulus Card -->
                             <div
                                 class="flex max-h-full w-full flex-col items-start justify-start"
@@ -1312,27 +849,27 @@
                                     type="text"
                                     id="approverName"
                                     label="Nama"
-                                    errors={$passerInfoError.approverName}
-                                    bind:val={$passerInfoForm.approverName}
+                                    errors={$approverInfoError.approverName}
+                                    bind:val={$approverInfoForm.approverName}
                                 ></CustomTextField>
                                 <CustomTextField
                                     id="approvedStatus"
                                     label="Status"
-                                    errors={$passerInfoError.approvedStatus}
-                                    bind:val={$passerInfoForm.approvedStatus}
+                                    errors={$approverInfoError.approvedStatus}
+                                    bind:val={$approverInfoForm.approvedStatus}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     id="approvedRemark"
                                     label="Tindakan/Ulasan"
-                                    errors={$passerInfoError.approvedRemark}
-                                    bind:val={$passerInfoForm.approvedRemark}
+                                    errors={$approverInfoError.approvedRemark}
+                                    bind:val={$approverInfoForm.approvedRemark}
                                 ></CustomTextField>
                                 <CustomTextField
                                     id="approvedDate"
                                     label="Tarikh Diluluskan"
-                                    errors={$passerInfoError.approvedDate}
-                                    bind:val={$passerInfoForm.approvedDate}
+                                    errors={$approverInfoError.approvedDate}
+                                    bind:val={$approverInfoForm.approvedDate}
                                 ></CustomTextField>
                                 <div class="flex w-full flex-row text-sm">
                                     <label

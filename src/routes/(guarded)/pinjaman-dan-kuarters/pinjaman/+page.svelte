@@ -2,7 +2,6 @@
     import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
-
     import CustomTable from '$lib/components/table/CustomTable.svelte';
     import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
@@ -10,17 +9,16 @@
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
-
     import type { PageData } from './$types';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterDateField from '$lib/components/table/filter/FilterDateField.svelte';
-    import { _updateTable } from './+page';
+    import { _applyLoan, _updateTable } from './+page';
     export let data: PageData;
     let param: CommonListRequestDTO = data.param;
     let rowData: any;
-
+    let lType: string = '';
 
     let employeeLoantable: TableDTO = {
         param: param,
@@ -32,7 +30,6 @@
         },
         data: data.loanViewTable ?? [],
     };
-
 
     async function _search() {
         _updateTable(employeeLoantable.param).then((value) => {
@@ -50,76 +47,85 @@
 
     const newLoanType: IntDropdownOption[] = [
         {
-            value: "",
-            name: "Kenderaan",
-            href: "/pinjaman-dan-kuarters/pinjaman/kenderaan/butiran_permohonan/Baru",
+            value: 'Kenderaan',
+            name: 'Kenderaan',
+            href: '/pinjaman-dan-kuarters/pinjaman/permohonan/kenderaan/Baru',
         },
         {
-            value: "",
-            name: "Komputer dan Telefon Pintar",
-            href: "/pinjaman-dan-kuarters/pinjaman/komputer-dan-telefon-pintar/butiran_permohonan/Baru",
+            value: 'Komputer dan Telefon Pintar',
+            name: 'Komputer dan Telefon Pintar',
+            href: '/pinjaman-dan-kuarters/pinjaman/permohonan/komputer_dan_telefon_pintar/Baru',
         },
-    ]
+    ];
 
     function viewDetails() {
-        let url: string = "";
+        let url: string = '';
 
-        if (rowData.loanType == "kenderaan") {
-            url = "/pinjaman-dan-kuarters/pinjaman/kenderaan/butiran_permohonan/" + rowData.id;
+        if (rowData.loanType == 'Kenderaan') {
+            url =
+                '/pinjaman-dan-kuarters/pinjaman/permohonan/kenderaan/' +
+                rowData.id;
         } else {
-            url = "/pinjaman-dan-kuarters/pinjaman/komputer-dan-telefon-pintar/butiran_permohonan/" + rowData.id;
+            url =
+                '/pinjaman-dan-kuarters/pinjaman/permohonan/komputer_dan_telefon_pintar/' +
+                rowData.id;
         }
 
         goto(url);
     }
-    
 </script>
 
-<section class="flex w-full flex-col items-start justify-start gap-2.5 overflow-y-auto">
+<section
+    class="flex w-full flex-col items-start justify-start gap-2.5 overflow-y-auto"
+>
     <ContentHeader title="Rekod Pinjaman">
-        <TextIconButton 
-        type="primary"
-        label="Pinjaman Baru"
-        options={newLoanType}
-
-
-        />
+        {#if data.userMode == 'kakitangan'}
+            <TextIconButton
+                type="primary"
+                label="Pinjaman Baru"
+                options={newLoanType}
+                bind:val={lType}
+            />
+        {/if}
     </ContentHeader>
 
     <CustomTabContent title="Senarai Tindakan/Ulasan Tatatertib">
-        <div
-            class="flex max-h-full w-full flex-col items-start justify-start"
-        >
-        <FilterCard onSearch={_search}>
-            <FilterTextField
-                label="No. Pekerja"
-                bind:inputValue={employeeLoantable.param.filter.employeeNumber}
-            />
-            <FilterTextField
-                label="Nama"
-                bind:inputValue={employeeLoantable.param.filter.name}
-            />
-            <FilterTextField
-                label="No. Kad Pengenalan"
-                bind:inputValue={employeeLoantable.param.filter.identityCardNumber}
-            />
-            <FilterDateField
-                label="Tarikh Permohonan"
-                bind:inputValue={employeeLoantable.param.filter.applicationDate}
-            />
-        </FilterCard>
+        <div class="flex max-h-full w-full flex-col items-start justify-start">
+            <FilterCard onSearch={_search}>
+                <FilterTextField
+                    label="Nama"
+                    bind:inputValue={employeeLoantable.param.filter
+                        .employeeName}
+                />
+                <FilterTextField
+                    label="Jenis Pinjaman"
+                    bind:inputValue={employeeLoantable.param.filter.loanType}
+                />
+                <FilterDateField
+                    label="Tarikh Permohonan"
+                    bind:inputValue={employeeLoantable.param.filter
+                        .applicationDate}
+                />
+                <FilterTextField
+                    label="No Pekerja"
+                    bind:inputValue={employeeLoantable.param.filter
+                        .employeeNumber}
+                />
+                <FilterTextField
+                    label="Status"
+                    bind:inputValue={employeeLoantable.param.filter.status}
+                />
+            </FilterCard>
             <CustomTable
-            title="Senarai Permohonan yang "
+                title="Senarai Permohonan yang "
                 enableDetail
                 bind:passData={rowData}
                 bind:tableData={employeeLoantable}
-                detailActions={() =>
-                    {
-                        viewDetails();
-                    }}
+                detailActions={() => {
+                    viewDetails();
+                }}
                 onUpdate={_search}
             ></CustomTable>
         </div>
     </CustomTabContent>
-
 </section>

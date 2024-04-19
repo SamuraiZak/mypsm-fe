@@ -19,6 +19,7 @@
     export let icon: string = '';
     export let label: string = 'Label';
     export let options: IntDropdownOption[] = [];
+    export let val: string = '';
     export let onClick = () => {};
 </script>
 
@@ -88,7 +89,7 @@
     <Dropdown containerClass="z-50 border border-bdr-primary min-w-[200px]">
         {#if options.length > 0}
             {#each options as item}
-                <DropdownItem href={item.href}>
+                <DropdownItem data-sveltekit-preload-data="false" href={item.href != "" ? item.href: ""} on:click={() => {val = item.value;}}>
                     {item.name}
                 </DropdownItem>
             {/each}

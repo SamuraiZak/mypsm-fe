@@ -22,6 +22,7 @@ import { ApproverConvert, type Approver } from '$lib/dto/mypsm/pinjaman/approver
 import { ApproverApprovalConvert, type ApproverApproval } from '$lib/dto/mypsm/pinjaman/approver-approval-detail.dto';
 import { EligibilityConvert, type Eligibility } from '$lib/dto/mypsm/pinjaman/eligibility.dto';
 import { DocumentCheckConvert, type DocumentCheck } from '$lib/dto/mypsm/pinjaman/document-check.dto';
+import { addLoanConvert, type addLoan } from '$lib/dto/mypsm/pinjaman/add-loan.dto';
 
 export class LoanServices{
     // table
@@ -66,6 +67,28 @@ export class LoanServices{
                 .post(url, {
                     body: loanIdRequestDTOConvert.toJson(param),
                 })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+      //============================================
+    //========= Get Personal Detail ==============
+    //============================================
+    static async getOwnProfilePersonalDetails() {
+        try {
+            let url: Input = 'loan/personal_detail';
+
+            const response: Response = await http
+                .get(url)
                 .json();
 
             const result = CommonResponseConvert.fromResponse(response);
@@ -520,13 +543,13 @@ static async getApproverApprovalDetails(param: loanIdRequestDTO) {
  //========= Add Loan ==================
 //============================================
 
-static async addLoan(param: loanIdRequestDTO) {
+static async addLoan(param: addLoan) {
     try {
-        let url: Input = 'loan/addd';
+        let url: Input = 'loan/add';
 
         const promiseRes: Promise<Response> = http
             .post(url, {
-                body: loanIdRequestDTOConvert.toJson(param),
+                body: addLoanConvert.toJson(param),
             })
             .json();
 

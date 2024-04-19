@@ -18,9 +18,9 @@
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
+    import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
 
     export let disabled = true;
-   
 
     // const options: RadioOption[] = [
     //     {
@@ -32,13 +32,10 @@
     //         label: 'Tidak Sokong',
     //     },
     // ];
-
-    
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader
-        title="Rekod Permohonan Persaraan Pilihan 0282378L"
+    <ContentHeader title="Rekod Permohonan Persaraan Pilihan 0282378L"
         ><TextIconButton
             type="close"
             onClick={() => {
@@ -112,36 +109,19 @@
     <StepperContent>
         <StepperContentHeader title="Penyokong Permohonan Persaraan"
             ><TextIconButton
-                type=primary
+                type="primary"
                 label="Simpan"
                 form="FormStepperRetirementApplicationSupporter"
             >
                 <SvgCheck></SvgCheck>
             </TextIconButton></StepperContentHeader
         >
-        <StepperContentBody
-            >
-                <div class="flex w-full flex-col gap-2">
-                    <p class="text-sm font-bold">Penyokong #2</p>
-                    <div
-                        class="flex h-fit w-full flex-col justify-start border-b border-bdr-primary"
-                    >
-                        <CustomTextField
-                            id="actionRemark"
-                            label="Tindakan / Ulasan"
-                           val=""
-                        />
-
-                        <!-- <RadioSingle
-                            {options}
-                            name="resultOption"
-                            legend="Keputusan"
-                            bind:userSelected={$retirementApplicationSupporterForm.resultOption}
-                        ></RadioSingle> -->
-                        
-                    </div>
-                    <div class="flex w-full items-center justify-center"></div>
-                    <p class="text-sm font-bold">Penyokong #1</p>
+        <StepperContentBody>
+            <div class="flex w-full flex-col gap-2">
+                <p class="text-sm font-bold">Penyokong #2</p>
+                <div
+                    class="flex h-fit w-full flex-col justify-start border-b border-bdr-primary"
+                >
                     <CustomTextField
                         {disabled}
                         id="nama"
@@ -149,19 +129,40 @@
                         val={'Ikhwan Bin Ahmad'}
                     ></CustomTextField>
                     <CustomTextField
-                        {disabled}
-                        id="ulasanTindakan"
-                        label={'Ulasan/Tindakan'}
-                        val={'Maklumat Lengkap'}
-                    ></CustomTextField>
-                    <div class="flex w-full flex-row text-sm">
-                        <label for="staffing-sec-result" class="w-[220px]"
-                            >Keputusan</label
-                        ><Badge border color="green">SOKONG</Badge>
-                    </div>
+                        id="actionRemark"
+                        label="Tindakan / Ulasan"
+                        val=""
+                    />
+
+                    <CustomRadioBoolean
+                        id="resultOption"
+                        label="Keputusan"
+                        val=""
+                    ></CustomRadioBoolean>
                 </div>
-            </StepperContentBody
-        >
+                <div class="flex w-full items-center justify-center"></div>
+                <p class="text-sm font-bold">Penyokong #1</p>
+                <CustomTextField
+                    {disabled}
+                    id="nama"
+                    label={'Nama'}
+                    val={'Ikhwan Bin Ahmad'}
+                ></CustomTextField>
+                <CustomTextField
+                    {disabled}
+                    id="ulasanTindakan"
+                    label={'Ulasan/Tindakan'}
+                    val={'Maklumat Lengkap'}
+                ></CustomTextField>
+                <CustomRadioBoolean id="resultOption" label="Keputusan" val=""
+                ></CustomRadioBoolean>
+                <!-- <div class="flex w-full flex-row text-sm">
+                    <label for="staffing-sec-result" class="w-[220px]"
+                        >Keputusan</label
+                    ><Badge border color="green">SOKONG</Badge>
+                </div> -->
+            </div>
+        </StepperContentBody>
     </StepperContent>
 </Stepper>
 <Toaster />

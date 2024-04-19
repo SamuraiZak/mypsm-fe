@@ -66,7 +66,7 @@ export const _vehicleDetail = z.object({
     brandModel: shortTextSchema,
     engineNumber: shortTextSchema,
     registrationNumber: shortTextSchema,
-    registrationDate: stringToMaxDate,
+    registrationDate: stringToMinDate,
     nettPrice: numberSchema,
 })
 
@@ -90,11 +90,13 @@ export const _offerLoan = z.object({
 ///=====================================================
 //================ Supplier   ==========================
 //=====================================================
-
-export const _supplier = z.object({
-    id: numberIdSchema,
+const singleSupplier = z.object({
     name: shortTextSchema,
     address: shortTextSchema,
+})
+export const _supplier = z.object({
+    id: numberIdSchema,
+    suppliers: singleSupplier.array()
 
 })
 

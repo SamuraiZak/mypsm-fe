@@ -274,19 +274,7 @@ export const _offerLoanDetailSubmit = async (formData: object) => {
 
 };
 
-// ================================================================
-// ========== Add Supplier Detail =================================
-// ================================================================
-export const _supplierDetailSubmit = async (formData: object) => {
-    const supplierDetailsInfoForm = await superValidate(formData, (zod)(_supplier));
 
-    if (supplierDetailsInfoForm.valid) {
-        const response: CommonResponseDTO =
-            await LoanServices.supplierDetail(supplierDetailsInfoForm.data as Supplier);
-        return { response };
-    }
-
-};
 
 //============================================
 //===== Add Jadual Pertama (Kenderaan) =======
