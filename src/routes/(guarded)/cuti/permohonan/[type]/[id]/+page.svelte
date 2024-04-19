@@ -268,9 +268,7 @@
 >
     <Stepper>
         <StepperContent>
-            <StepperContentHeader
-                title="Butiran Permohonan {data.props.currentApplicationProcess
-                    .type.description}"
+            <StepperContentHeader title="Butiran Permohonan"
             ></StepperContentHeader>
             <StepperContentBody>
                 <div
