@@ -13,12 +13,6 @@ export const load = async () => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
     let clinicPanelClaimList: ClinicPanelClaimList[] = [];
     let clinicPanelClaimListResponse: CommonResponseDTO = {};
-    let clinicPanelAllocations: ClinicAllocation = {
-        year: 0,
-        currentAllocation: 0,
-        remainingAllocation: 0,
-        newAllocation: 0,
-    }
 
     const param: CommonListRequestDTO = {
         pageNum: 1,
@@ -43,13 +37,7 @@ export const load = async () => {
         clinicPanelClaimList =
             clinicPanelClaimListResponse.data?.dataList as ClinicPanelClaimList[];
 
-        if (currentRoleCode == UserRoleConstant.urusSetiaPerubatan.code) {
-            const clinicPanelAllocationResponse: CommonResponseDTO =
-                await MedicalServices.getClinicPanelAllocations();
-            clinicPanelAllocations =
-                clinicPanelAllocationResponse.data?.details as ClinicAllocation;
-            allocationForm.data = clinicPanelAllocations
-        }
+        
     }
 
 
@@ -59,18 +47,5 @@ export const load = async () => {
         clinicPanelClaimListResponse,
         clinicPanelClaimList,
         allocationForm,
-    }
-}
-
-export const _submit = async (formData: ClinicAllocation) => {
-    const form = await superValidate(formData, zod(_editAllocations));
-
-    if (form.valid) {
-        const { year, ...tempObj } = form.data;
-
-        const response: CommonResponseDTO =
-            await MedicalServices.editAllocations(tempObj as ClinicAllocation)
-
-            return { response }
     }
 }

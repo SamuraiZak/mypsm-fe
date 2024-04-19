@@ -2,6 +2,7 @@
     import { goto } from '$app/navigation';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
+    import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
@@ -16,8 +17,13 @@
     } from '$lib/dto/core/table/table.dto';
     import type { MedicalClinicEmployeeAllocationClaimList } from '$lib/dto/mypsm/perubatan/tuntutan-kakitangan/clinic-employee-allocation-list.dto';
     import type { MedicalClinicEmployeePaymentList } from '$lib/dto/mypsm/perubatan/tuntutan-kakitangan/clinic-employee-payments-list.dto';
+    import Alert from 'flowbite-svelte/Alert.svelte';
     import type { PageData } from './$types';
-    import { _updatePaymentTable } from './+page';
+    import { _submit, _updatePaymentTable } from './+page';
+    import { superForm } from 'sveltekit-superforms/client';
+    import { _editAllocations } from '$lib/schemas/mypsm/medical/medical-schema';
+    import { zod } from 'sveltekit-superforms/adapters';
+    import { Toaster } from 'svelte-french-toast';
 
     export let data: PageData;
     let rowData: MedicalClinicEmployeeAllocationClaimList;
@@ -106,6 +112,22 @@
             add: false,
         },
     };
+    let readOnly: boolean = true;
+
+    const { form, enhance } = superForm(data.allocationForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'allocationForm',
+        validators: zod(_editAllocations),
+        resetForm: false,
+        async onSubmit() {
+            const res = await _submit($form);
+
+            if (res?.response.status == 'success') {
+                readOnly = true;
+            }
+        },
+    });
 </script>
 
 <!-- content header starts here -->
@@ -116,6 +138,77 @@
 <section
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
 >
+{#if data.currentRoleCode === UserRoleConstant.urusSetiaPerubatan.code}
+            <div
+                class="flex w-full flex-col items-end justify-start gap-3 border-b border-ios-activeColors-activeBlue-light p-5"
+            >
+                <Alert class="flex w-full flex-row justify-between items-center" color="blue">
+                    <p class="font-medium text-lg">
+                        Tetapan
+                    </p>
+                    {#if readOnly}
+                        <TextIconButton
+                            label="Kemaskini"
+                            type="neutral"
+                            onClick={() => {
+                                readOnly = false;
+                            }}
+                        />
+                    {:else}
+                        <div class="flex flex-row items-end gap-2.5">
+                            <TextIconButton
+                                label="Batal"
+                                icon="cancel"
+                                type="neutral"
+                                onClick={() => {
+                                    readOnly = true;
+                                }}
+                            />
+                            <TextIconButton
+                                label="Simpan"
+                                icon="check"
+                                form="allocationForm"
+                            />
+                        </div>
+                    {/if}
+                </Alert>
+                <form
+                    class="grid w-full grid-cols-2 justify-start gap-5"
+                    id="allocationForm"
+                    method="POST"
+                    use:enhance
+                >
+                    <CustomTextField
+                        label="Peruntukkan Tahun Semasa (RM)"
+                        id="currentAllocation"
+                        disabled={readOnly}
+                        type="number"
+                        bind:val={$form.currentAllocation}
+                    />
+                    <CustomTextField
+                        label="Baki Peruntukkan Tahun Semasa (RM)"
+                        id="remainingAllocation"
+                        disabled={readOnly}
+                        type="number"
+                        bind:val={$form.remainingAllocation}
+                    />
+                    <CustomTextField
+                        label="Peruntukkan Tahun Baru (RM)"
+                        id="newAllocation"
+                        disabled={readOnly}
+                        type="number"
+                        bind:val={$form.newAllocation}
+                    />
+                    <CustomTextField
+                        label="Tahun"
+                        id="year"
+                        disabled
+                        type="number"
+                        bind:val={$form.year}
+                    />
+                </form>
+            </div>
+        {/if}
     <CustomTab>
         <CustomTabContent title="Senarai Tuntutan Kakitangan">
             <div class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10">
@@ -227,3 +320,5 @@
         {/if}
     </CustomTab>
 </section>
+
+<Toaster/>

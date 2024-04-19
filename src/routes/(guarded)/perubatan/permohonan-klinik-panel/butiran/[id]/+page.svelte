@@ -349,7 +349,7 @@
                         <div
                             class="flex h-fit w-full flex-col justify-start gap-2 px-3 pb-5 text-sm text-ios-labelColors-secondaryLabel-light"
                         >
-                            <span>Dokumen-dokumen yang perlu dibuat naik:</span>
+                            <span>Dokumen-dokumen yang perlu dimuat naik:</span>
                             <span>1. Salinan Maklumat Klinik.pdf</span>
                             <span>2. Salinan Maklumat Bank Klinik.pdf</span>
                         </div>
