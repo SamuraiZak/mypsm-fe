@@ -4,7 +4,7 @@
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
-    import FilterDateField from '$lib/components/table/filter/FilterDateField.svelte';
+    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import type {
@@ -32,39 +32,39 @@
         data: data.responses.serviceStatementListResponse.data?.dataList ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: [],
+        hiddenColumn: ['id'],
         dictionary: [
             {
                 english: 'permission',
                 malay: 'Kebenaran',
             },
             {
-                english: 'transferDetails',
-                malay: 'Butiran Pertukaran',
+                english: 'changes',
+                malay: 'Perubahan',
+            },
+            {
+                english: 'serviceDetails',
+                malay: 'Butiran Perkhidmatan',
             },
             {
                 english: 'serviceStartDate',
                 malay: 'Tarikh Mula Perkhidmatan',
             },
             {
-                english: 'isRetired',
-                malay: 'Bersara',
+                english: 'retirementStatus',
+                malay: 'Status Persaraan',
             },
             {
                 english: 'monthlySalary',
                 malay: 'Gaji Bulanan',
             },
             {
-                english: 'Course',
-                malay: 'Latihan',
+                english: 'modifiedBy',
+                malay: 'Diubah Oleh',
             },
             {
-                english: 'Loans',
-                malay: 'Pinjaman',
-            },
-            {
-                english: 'Medical',
-                malay: 'Perubatan',
+                english: 'modifiedAt',
+                malay: 'Diubah Pada',
             },
         ],
         url: 'service_record/service_statement',
@@ -93,11 +93,23 @@
         data: data.responses.leaveStatementListResponse.data?.dataList ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: [],
+        hiddenColumn: ['id'],
         dictionary: [
             {
-                english: 'permission',
-                malay: 'Kebenaran',
+                english: 'durationDays',
+                malay: 'Tempoh Hari',
+            },
+            {
+                english: 'paid',
+                malay: 'Cuti Bergaji',
+            },
+            {
+                english: 'halfPaid',
+                malay: 'Cuti Setengah Gaji',
+            },
+            {
+                english: 'unPaid',
+                malay: 'Cuti Tanpa Gaji',
             },
         ],
         url: 'service_record/leave_statement',
@@ -127,7 +139,7 @@
             data.responses.behaviourHistoriesListResponse.data?.dataList ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: [],
+        hiddenColumn: ['id'],
         dictionary: [
             {
                 english: 'permission',
@@ -415,16 +427,17 @@
                     >
                         <FilterWrapper slot="filter">
                             <FilterSelectField
-                                label="Status"
-                                options={data.selectionOptions.statusLookup}
+                                label="Gred"
+                                options={data.selectionOptions.gradeLookup}
                                 bind:inputValue={serviceStatementListTable.param
-                                    .filter.status}
+                                    .filter.grade}
                             ></FilterSelectField>
-                            <FilterDateField
-                                label="Tarikh"
+                            <FilterSelectField
+                                label="Tahun Perubahan"
+                                options={data.selectionOptions.yearLookup}
                                 bind:inputValue={serviceStatementListTable.param
-                                    .filter.status}
-                            ></FilterDateField>
+                                    .filter.year}
+                            ></FilterSelectField>
                         </FilterWrapper>
                     </DataTable>
                 </div>
@@ -448,22 +461,17 @@
                         }}
                     >
                         <FilterWrapper slot="filter">
+                            <FilterTextField
+                                label="Jenis Cuti"
+                                bind:inputValue={leaveStatementListTable.param
+                                    .filter.leaveType}
+                            ></FilterTextField>
                             <FilterSelectField
-                                label="Status"
-                                options={data.selectionOptions.statusLookup}
+                                label="Tahun"
+                                options={data.selectionOptions.yearLookup}
                                 bind:inputValue={leaveStatementListTable.param
-                                    .filter.status}
+                                    .filter.year}
                             ></FilterSelectField>
-                            <FilterDateField
-                                label="Tarikh Daripada"
-                                bind:inputValue={leaveStatementListTable.param
-                                    .filter.status}
-                            ></FilterDateField>
-                            <FilterDateField
-                                label="Tarikh Sehingga"
-                                bind:inputValue={leaveStatementListTable.param
-                                    .filter.status}
-                            ></FilterDateField>
                         </FilterWrapper>
                     </DataTable>
                 </div>
@@ -487,13 +495,17 @@
                         }}
                     >
                         <FilterWrapper slot="filter">
-                            <FilterSelectField label="Pengesah"
-                            ></FilterSelectField>
-                            <FilterDateField
-                                label="Tarikh"
+                            <FilterTextField
+                                label="Nota"
                                 bind:inputValue={behaviourHistoriesListTable
-                                    .param.filter.status}
-                            ></FilterDateField>
+                                    .param.filter.description}
+                            ></FilterTextField>
+                            <FilterSelectField
+                                label="Tahun"
+                                options={data.selectionOptions.yearLookup}
+                                bind:inputValue={behaviourHistoriesListTable
+                                    .param.filter.year}
+                            ></FilterSelectField>
                         </FilterWrapper>
                     </DataTable>
                 </div>

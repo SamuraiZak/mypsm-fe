@@ -1,10 +1,9 @@
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
+import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
 import type { academicResponseDTO } from '$lib/dto/mypsm/profile/academic-detail.dto';
-import {
-    _academicListResponseSchema,
-} from '$lib/schemas/mypsm/profile/profile-schemas';
+import { _academicListResponseSchema } from '$lib/schemas/mypsm/profile/profile-schemas';
 import { _serviceRecordPersonalDetailSchema } from '$lib/schemas/mypsm/service-record/service-record.schema';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { ServiceRecordServices } from '$lib/services/implementation/mypsm/buku-rekod-perkhidmatan/service-record.service';
@@ -18,12 +17,10 @@ export const load = async () => {
         orderBy: 'integrityId',
         orderType: 1,
         filter: {
-            identityCard: null, //string | null | undefined;
             grade: null,
-            position: null,
             year: null,
-            name: null,
-            status: null, // status code from lookup | null | undefined;
+            leaveType: null,
+            description: null,
         },
     };
 
@@ -113,6 +110,26 @@ export const load = async () => {
         majorMinorLookupResponse,
     );
 
+    // ===========================================================================
+
+    const gradeLookupResponse: CommonResponseDTO =
+        await LookupServices.getServiceGradeEnums();
+
+    const gradeLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsBothAreCode(gradeLookupResponse);
+
+    // ===========================================================================
+
+    const yearLookupResponse: CommonResponseDTO =
+        await LookupServices.getYearEnums();
+
+    const yearLookup: DropdownDTO[] = (
+        yearLookupResponse.data?.dataList as LookupDTO[]
+    ).map((data) => ({
+        value: data.year,
+        name: String(data.year),
+    }));
+
     return {
         param,
         forms: {
@@ -132,6 +149,8 @@ export const load = async () => {
             educationLookup,
             sponsorshipLookup,
             majorMinorLookup,
+            gradeLookup,
+            yearLookup,
         },
     };
 };
