@@ -12,6 +12,9 @@ import type {
     LeaveApplicationProcessDTO,
     LeaveCommonDetailsDTO,
     LeaveDeliveryDetailsDTO,
+    LeaveDocumentAddDTO,
+    LeaveDocumentUploadDTO,
+    LeaveDocumentViewDTO,
     LeaveEndorserDetailsDTO,
     LeaveEndorsmentDTO,
     LeaveStudyDetailsDTO,
@@ -30,10 +33,12 @@ import {
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { LeaveApplicationServices } from '$lib/services/implementation/mypsm/leave/leave-application.service.js';
 import { error } from '@sveltejs/kit';
+import { resolve } from 'path-browserify';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export async function load({ params }) {
+    console.log(params.type);
     // get the current type
     const currentLeaveType: LookupDTO =
         LeaveTypeConstant.list.find(
@@ -41,9 +46,9 @@ export async function load({ params }) {
         ) ?? LeaveTypeConstant.unrecordedLeave;
 
     const currentApplicationProcess: LeaveApplicationProcessDTO =
-        LeaveProcessConstant.list.find((item) => {
-            item.type.code == currentLeaveType.code;
-        }) ?? LeaveProcessConstant.unrecordedLeave;
+        LeaveProcessConstant.list.find(
+            (item) => item.type.description == currentLeaveType.description,
+        ) ?? LeaveProcessConstant.unrecordedLeave;
 
     // get current application Id
     const currentApplicationId: number = parseInt(params.id);
@@ -218,7 +223,7 @@ export async function load({ params }) {
     );
 
     // secretary verification
-    const secretaryVerificationForm = await superValidate(
+    let secretaryVerificationForm = await superValidate(
         zod(LeaveEndorsementSchema),
     );
 
@@ -265,6 +270,8 @@ export async function load({ params }) {
         meeting: null,
         document: null,
     };
+
+    let documents: LeaveDocumentViewDTO[] = [];
 
     const applicationDetailRequestBody: LeaveApplicationDetailRequestDTO = {
         leaveId: currentApplicationId,
@@ -328,6 +335,9 @@ export async function load({ params }) {
             if (currentApplicationDetail.directorFeedback !== null) {
                 directorFeedbackForm.data =
                     currentApplicationDetail.directorFeedback as LeaveEndorsmentDTO;
+
+                directorFeedbackForm.data.status =
+                    currentApplicationDetail.directorFeedback?.status ?? false;
             } else {
                 directorFeedbackForm.data.leaveId = currentApplicationId;
                 directorFeedbackForm.data.leaveTypeCode = currentLeaveType.code;
@@ -337,6 +347,11 @@ export async function load({ params }) {
             if (currentApplicationDetail.secretaryVerification !== null) {
                 secretaryVerificationForm.data =
                     currentApplicationDetail.secretaryVerification as LeaveEndorsmentDTO;
+
+                secretaryVerificationForm = await superValidate(
+                    currentApplicationDetail.secretaryVerification,
+                    zod(LeaveEndorsementSchema),
+                );
             } else {
                 secretaryVerificationForm.data.leaveId = currentApplicationId;
                 secretaryVerificationForm.data.leaveTypeCode =
@@ -389,6 +404,10 @@ export async function load({ params }) {
                 endorserDetailForm.data.leaveId = currentApplicationId;
                 endorserDetailForm.data.leaveTypeCode = currentLeaveType.code;
             }
+
+            if (currentApplicationDetail.document !== null) {
+                documents = currentApplicationDetail.document;
+            }
         }
     }
 
@@ -405,6 +424,7 @@ export async function load({ params }) {
             leaveTypeDropdown,
             leaveEndorsementDropdown,
             endorserDropdown,
+            documents,
         },
         forms: {
             leaveCommonForm,
@@ -447,6 +467,10 @@ export async function _submitDirectorFeedbackForm(
     if (form.valid) {
         const response =
             await LeaveApplicationServices.addDirectorFeedback(formData);
+
+        return {
+            response,
+        };
     } else {
         getErrorToast('Sila semak semula maklumat anda.');
         error(400, { message: '' });
@@ -461,6 +485,10 @@ export async function _submitSecretaryVerificationForm(
     if (form.valid) {
         const response =
             await LeaveApplicationServices.addSecretaryVerification(formData);
+
+        return {
+            response,
+        };
     } else {
         getErrorToast('Sila semak semula maklumat anda.');
         error(400, { message: '' });
@@ -475,6 +503,10 @@ export async function _submitSupporterFeedbackForm(
     if (form.valid) {
         const response =
             await LeaveApplicationServices.addSupporterFeedback(formData);
+
+        return {
+            response,
+        };
     } else {
         getErrorToast('Sila semak semula maklumat anda.');
         error(400, { message: '' });
@@ -489,6 +521,10 @@ export async function _submitApproverFeedbackForm(
     if (form.valid) {
         const response =
             await LeaveApplicationServices.addApproverFeedback(formData);
+
+        return {
+            response,
+        };
     } else {
         getErrorToast('Sila semak semula maklumat anda.');
         error(400, { message: '' });
@@ -503,15 +539,17 @@ export async function _submitManagementFeedbackForm(
     if (form.valid) {
         const response =
             await LeaveApplicationServices.addManagementFeedback(formData);
+
+        return {
+            response,
+        };
     } else {
         getErrorToast('Sila semak semula maklumat anda.');
         error(400, { message: '' });
     }
 }
 
-export async function _submitMeetingResultForm(
-    formData: LeaveEndorsmentDTO,
-) {
+export async function _submitMeetingResultForm(formData: LeaveEndorsmentDTO) {
     const form = await superValidate(formData, zod(LeaveEndorsementSchema));
 
     if (form.valid) {
@@ -535,4 +573,60 @@ export async function _submitEndorserDetailsForm(
         getErrorToast('Sila semak semula maklumat anda.');
         error(400, { message: '' });
     }
+}
+
+export const _submitDocument = async (
+    formData: string,
+    currentType: LookupDTO,
+) => {
+    const response: CommonResponseDTO =
+        await LeaveApplicationServices.uploadDocument(formData, currentType);
+
+    return { response };
+};
+
+export function _prepDocumentUpload(
+    fileList: FileList,
+): Promise<LeaveDocumentAddDTO[]> {
+    return new Promise((resolve, reject) => {
+        const fileArray: File[] = Array.from(fileList);
+
+        const filesPromiseArray: Promise<LeaveDocumentAddDTO>[] = [];
+
+        fileArray.forEach((file) => {
+            const filePromise = _convertToBase64(file);
+
+            filesPromiseArray.push(filePromise);
+        });
+
+        Promise.all(filesPromiseArray)
+            .then((files) => {
+                resolve(files);
+            })
+            .catch((error) => {
+                reject(error);
+            });
+    });
+}
+
+export function _convertToBase64(file: File): Promise<LeaveDocumentAddDTO> {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+            const base64String = event.target?.result as string;
+            const fileName = file.name;
+            const fileObject: LeaveDocumentAddDTO = {
+                name: fileName,
+                base64: base64String,
+            };
+
+            resolve(fileObject);
+        };
+
+        reader.onerror = (error) => {
+            reject(error);
+        };
+        reader.readAsDataURL(file);
+    });
 }

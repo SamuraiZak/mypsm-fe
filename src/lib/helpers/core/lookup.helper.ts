@@ -24,6 +24,15 @@ export class LookupHelper {
         return dropdownList;
     }
 
+    static toDropdownProperId(lookupList: LookupDTO[]) {
+        const dropdownList: DropdownDTO[] = lookupList.map((lookup) => ({
+            value: lookup.id,
+            name: TextAppearanceHelper.toProper(lookup.description),
+        }));
+
+        return dropdownList;
+    }
+
     static toDropdownId(lookupList: LookupDTO[]) {
         const dropdownList: DropdownDTO[] = lookupList.map((lookup) => ({
             value: Number(lookup.id),

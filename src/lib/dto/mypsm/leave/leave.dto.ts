@@ -175,6 +175,11 @@ export interface LeaveDocumentAddDTO {
     base64: string;
 }
 
+export interface LeaveDocumentUploadDTO{
+    leaveId: number;
+    documents: LeaveDocumentAddDTO[];
+}
+
 // common leave details
 export interface LeaveCommonDetailsDTO {
     leaveId?: number;
@@ -243,7 +248,7 @@ export interface LeaveApplicationDetailDTO {
     approverFeedback?: LeaveEndorsmentDTO | null;
     managementFeedback?: LeaveEndorsmentDTO | null;
     meeting?: LeaveEndorsmentDTO | null;
-    document?: LeaveDocumentViewDTO[] | null;
+    document: LeaveDocumentViewDTO[] | null;
 }
 
 export interface LeaveApplicationProcessDTO {

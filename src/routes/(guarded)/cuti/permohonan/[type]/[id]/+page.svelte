@@ -23,9 +23,12 @@
     import { LeaveTypeConstant } from '$lib/constants/core/leave-type.constant';
     import { Alert } from 'flowbite-svelte';
     import { Toaster } from 'svelte-french-toast';
+    import CustomFileField from '$lib/components/inputs/file-field/CustomFileField.svelte';
     import {
+        _prepDocumentUpload,
         _submitApproverFeedbackForm,
         _submitDirectorFeedbackForm,
+        _submitDocument,
         _submitEndorserDetailsForm,
         _submitHeadOfDirectorFeedbackForm,
         _submitManagementFeedbackForm,
@@ -33,8 +36,11 @@
         _submitSecretaryVerificationForm,
         _submitSupporterFeedbackForm,
     } from './+page';
+    import type { LeaveDocumentUploadDTO } from '$lib/dto/mypsm/leave/leave.dto';
 
     export let data: PageData;
+
+    let files: FileList;
 
     // common leave
     const {
@@ -96,8 +102,10 @@
         id: 'headOfDirectorFeedbackForm',
         SPA: true,
         validators: zodClient(LeaveEndorsementSchema),
-        onSubmit(input) {
-            _submitHeadOfDirectorFeedbackForm($headOfDirectorFeedbackForm);
+        async onSubmit(input) {
+            const response = _submitHeadOfDirectorFeedbackForm(
+                $headOfDirectorFeedbackForm,
+            );
         },
     });
 
@@ -109,9 +117,15 @@
     } = superForm(data.forms.directorFeedbackForm, {
         id: 'directorFeedbackForm',
         SPA: true,
+        taintedMessage: false,
+        resetForm: false,
+        validationMethod: 'oninput',
+        invalidateAll: true,
         validators: zodClient(LeaveEndorsementSchema),
-        onSubmit(input) {
-            _submitDirectorFeedbackForm($directorFeedbackForm);
+        async onSubmit(input) {
+            const response = await _submitDirectorFeedbackForm(
+                $directorFeedbackForm,
+            );
         },
     });
 
@@ -123,9 +137,15 @@
     } = superForm(data.forms.secretaryVerificationForm, {
         id: 'secretaryVerificationForm',
         SPA: true,
+        taintedMessage: false,
+        resetForm: false,
+        validationMethod: 'oninput',
+        invalidateAll: true,
         validators: zodClient(LeaveEndorsementSchema),
-        onSubmit(input) {
-            _submitSecretaryVerificationForm($secretaryVerificationForm);
+        async onSubmit(input) {
+            const response = await _submitSecretaryVerificationForm(
+                $secretaryVerificationForm,
+            );
         },
     });
 
@@ -138,8 +158,10 @@
         id: 'supporterFeedbackForm',
         SPA: true,
         validators: zodClient(LeaveEndorsementSchema),
-        onSubmit(input) {
-            _submitSupporterFeedbackForm($supporterFeedbackForm);
+        async onSubmit(input) {
+            const response = _submitSupporterFeedbackForm(
+                $supporterFeedbackForm,
+            );
         },
     });
 
@@ -152,8 +174,8 @@
         id: 'approverFeedbackForm',
         SPA: true,
         validators: zodClient(LeaveEndorsementSchema),
-        onSubmit(input) {
-            _submitApproverFeedbackForm($approverFeedbackForm);
+        async onSubmit(input) {
+            const response = _submitApproverFeedbackForm($approverFeedbackForm);
         },
     });
 
@@ -165,9 +187,15 @@
     } = superForm(data.forms.managementFeedbackForm, {
         id: 'managementFeedbackForm',
         SPA: true,
+        taintedMessage: false,
+        resetForm: false,
+        validationMethod: 'oninput',
+        invalidateAll: true,
         validators: zodClient(LeaveEndorsementSchema),
-        onSubmit(input) {
-            _submitManagementFeedbackForm($managementFeedbackForm);
+        async onSubmit(input) {
+            const response = _submitManagementFeedbackForm(
+                $managementFeedbackForm,
+            );
         },
     });
 
@@ -198,6 +226,27 @@
             _submitEndorserDetailsForm($endorserDetailForm);
         },
     });
+
+    function uploadDocument() {
+        if (files == undefined) {
+            alert('Dokumen sokongan tidak boleh kosong.');
+        } else {
+            _prepDocumentUpload(files)
+                .then((result) => {
+                    let interimDocuments: LeaveDocumentUploadDTO = {
+                        leaveId: data.props.currentApplicationId,
+                        documents: result,
+                    };
+                    _submitDocument(
+                        JSON.stringify(interimDocuments),
+                        data.props.currentLeaveType,
+                    );
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    }
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -621,6 +670,64 @@
         </StepperContent>
 
         <!-- ================================================================ -->
+        <!-- DOCUMENT UPLOAD -->
+        <!-- ================================================================ -->
+
+        {#if data.props.currentApplicationProcess.document}
+            <StepperContent>
+                <StepperContentHeader title="Dokumen Sokongan">
+                    {#if data.props.currentApplicationDetail.document == null && data.props.userMode == 'employee'}
+                        <TextIconButton
+                            label="Hantar"
+                            icon="check"
+                            onClick={() => {
+                                uploadDocument();
+                            }}
+                        ></TextIconButton>
+                    {/if}
+                </StepperContentHeader>
+                <StepperContentBody>
+                    {#if data.props.currentApplicationDetail.document !== null}
+                        <div
+                            class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                        >
+                            <p
+                                class="block w-full text-start text-sm font-medium leading-tight text-ios-labelColors-secondaryLabel-light"
+                            >
+                                Dokumen Sokongan
+                            </p>
+                            {#each data.props.documents as doc}
+                                <a
+                                    href={doc.document}
+                                    target="_blank"
+                                    download={doc.name}
+                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                    >{doc.name}</a
+                                >
+                            {/each}
+                        </div>
+                    {:else}
+                        <div
+                            class="flex h-full w-full flex-col items-start justify-start"
+                        >
+                            <form
+                                id="documentUploadForm"
+                                method="POST"
+                                class="flex w-full flex-col items-center justify-start space-y-2 p-2 lg:w-1/2"
+                            >
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomFileField
+                                        id="supportingDocument"
+                                        bind:files
+                                    ></CustomFileField>
+                                </div>
+                            </form>
+                        </div>
+                    {/if}
+                </StepperContentBody>
+            </StepperContent>
+        {/if}
+        <!-- ================================================================ -->
         <!-- DIRECTOR FEEDBACK -->
         <!-- ================================================================ -->
 
@@ -662,7 +769,7 @@
                                         disabled={data.props
                                             .currentApplicationDetail
                                             .directorFeedback !== null ||
-                                            data.props.userMode != 'pengarah'}
+                                            data.props.userMode != 'director'}
                                         id="directorApprove"
                                         label={'Adakah Permohonan Ini Sah?'}
                                         bind:val={$directorFeedbackForm.status}
@@ -675,7 +782,7 @@
                                         disabled={data.props
                                             .currentApplicationDetail
                                             .directorFeedback !== null ||
-                                            data.props.userMode != 'pengarah'}
+                                            data.props.userMode != 'director'}
                                         id="remark"
                                         label={'Ulasan'}
                                         errors={$directorFeedbackErrors.remark}
@@ -729,8 +836,7 @@
                                     <CustomSelectField
                                         disabled={data.props
                                             .currentApplicationDetail
-                                            .secretaryVerification !== null ||
-                                            data.props.userMode != 'secretary'}
+                                            .secretaryVerification !== null}
                                         id="status"
                                         label={'Adakah Permohonan Ini Sah?'}
                                         bind:val={$secretaryVerificationForm.status}
@@ -742,8 +848,7 @@
                                     <CustomTextField
                                         disabled={data.props
                                             .currentApplicationDetail
-                                            .secretaryVerification !== null ||
-                                            data.props.userMode != 'secretary'}
+                                            .secretaryVerification !== null}
                                         id="remark"
                                         label={'Ulasan'}
                                         errors={$secretaryVerificationErrors.remark}

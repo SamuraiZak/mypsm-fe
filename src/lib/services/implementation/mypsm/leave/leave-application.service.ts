@@ -6,6 +6,7 @@ import {
     type CommonListRequestDTO,
 } from '$lib/dto/core/common/common-list-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
+import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
 import type {
     LeaveApplicationDetailRequestDTO,
     LeaveCommonDetailsDTO,
@@ -131,9 +132,7 @@ export class LeaveApplicationServices {
     // Processes
     // ======================================================
     // head of director feedback
-    static async addHeadOfDirectorFeedback(
-        param: LeaveEndorsmentDTO,
-    ) {
+    static async addHeadOfDirectorFeedback(param: LeaveEndorsmentDTO) {
         try {
             let url: Input = 'leave/hod_feedback';
 
@@ -159,9 +158,7 @@ export class LeaveApplicationServices {
     }
 
     // director feedback
-    static async addDirectorFeedback(
-        param: LeaveEndorsmentDTO,
-    ) {
+    static async addDirectorFeedback(param: LeaveEndorsmentDTO) {
         try {
             let url: Input = 'leave/director_feedback';
 
@@ -187,9 +184,7 @@ export class LeaveApplicationServices {
     }
 
     // secretary verification
-    static async addSecretaryVerification(
-        param: LeaveEndorsmentDTO,
-    ) {
+    static async addSecretaryVerification(param: LeaveEndorsmentDTO) {
         try {
             let url: Input = 'leave/secretary_verification';
 
@@ -215,9 +210,7 @@ export class LeaveApplicationServices {
     }
 
     // supporter feedback
-    static async addSupporterFeedback(
-        param: LeaveEndorsmentDTO,
-    ) {
+    static async addSupporterFeedback(param: LeaveEndorsmentDTO) {
         try {
             let url: Input = 'leave/supporter_feedback';
 
@@ -243,9 +236,7 @@ export class LeaveApplicationServices {
     }
 
     // approver feedback
-    static async addApproverFeedback(
-        param: LeaveEndorsmentDTO,
-    ) {
+    static async addApproverFeedback(param: LeaveEndorsmentDTO) {
         try {
             let url: Input = 'leave/approver_feedback';
 
@@ -271,9 +262,7 @@ export class LeaveApplicationServices {
     }
 
     // management feedback
-    static async addManagementFeedback(
-        param: LeaveEndorsmentDTO,
-    ) {
+    static async addManagementFeedback(param: LeaveEndorsmentDTO) {
         try {
             let url: Input = 'leave/management_feedback';
 
@@ -299,9 +288,7 @@ export class LeaveApplicationServices {
     }
 
     // add endorser details
-    static async addEndorserDetails(
-        param: LeaveEndorserDetailsDTO,
-    ) {
+    static async addEndorserDetails(param: LeaveEndorserDetailsDTO) {
         try {
             let url: Input = 'leave/endorser';
 
@@ -325,7 +312,6 @@ export class LeaveApplicationServices {
             return CommonResponseConstant.httpError;
         }
     }
-    
 
     // get application detail
     static async getApplicationDetail(param: LeaveApplicationDetailRequestDTO) {
@@ -350,5 +336,71 @@ export class LeaveApplicationServices {
         }
     }
 
+    static async uploadDocument(param: string, currentType: LookupDTO) {
+        try {
+            let url: Input = '';
 
+            switch (currentType.code) {
+                case LeaveTypeConstant.extendedSickLeave.code:
+                    url = 'leave/extended_sick_leave/upload';
+                    break;
+                case LeaveTypeConstant.studyLeave.code:
+                    url = 'leave/extra_course_leave/upload';
+                    break;
+                case LeaveTypeConstant.earlyMaternityLeave.code:
+                    url = 'leave/maternity_leave/upload';
+                    break;
+                case LeaveTypeConstant.officerMaternityLeave.code:
+                    url = 'leave/maternity_leave/upload';
+                    break;
+                case LeaveTypeConstant.partnerMaternityLeave.code:
+                    url = 'leave/paternity_leave/upload';
+                    break;
+                case LeaveTypeConstant.quarantineLeave.code:
+                    url = 'leave/other_leave/upload';
+                    break;
+                case LeaveTypeConstant.absenceLeave.code:
+                    url = 'leave/other_leave/upload';
+                    break;
+                case LeaveTypeConstant.unpaidFollowPartnerLeave.code:
+                    url = 'leave/other_leave/upload';
+                    break;
+                case LeaveTypeConstant.cancerLeave.code:
+                    url = 'leave/other_leave/upload';
+                    break;
+                case LeaveTypeConstant.tbLeave.code:
+                    url = 'leave/other_leave/upload';
+                    break;
+                case LeaveTypeConstant.hajiLeave.code:
+                    url = 'leave/remote_religious_leave/upload';
+                    break;
+                case LeaveTypeConstant.unpaidLeave.code:
+                    url = 'leave/without_pay_leave/upload';
+                    break;
+
+                default:
+                    url = 'leave/extended_sick_leave/upload';
+                    break;
+            }
+
+            const promiseResponse: Promise<Response> = http
+                .put(url, {
+                    body: param,
+                })
+                .json();
+
+            const response = await getPromiseToast(promiseResponse);
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 }
