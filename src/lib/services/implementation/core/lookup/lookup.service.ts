@@ -1174,6 +1174,13 @@ export class LookupServices {
         return LookupHelper.toDropdownId(lookupItems);
     };
 
+    static setSelectOptionsRelationship = (
+        param: CommonResponseDTO,
+    ): DropdownDTO[] => {
+        const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
+        return LookupHelper.toDropdownRelationship(lookupItems);
+    };
+
     static setSelectOptionsInString = (
         param: CommonResponseDTO,
     ): DropdownDTO[] => {
