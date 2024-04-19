@@ -32,6 +32,10 @@
                 english: 'identityCardNumber',
                 malay: 'No. Kad Pengenalan',
             },
+            {
+                english: 'durationDays',
+                malay: 'Jumlah Hari',
+            },
         ],
         url: 'leave/application_list',
         id: 'leaveApplicationTable',
