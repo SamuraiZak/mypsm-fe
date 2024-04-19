@@ -195,6 +195,7 @@
             notEditingApproverForm = true;
         }
     }
+    console.log(data.applicationDoc.document)
 </script>
 
 <!-- content header starts here -->
@@ -331,7 +332,7 @@
 
         <StepperContent>
             <StepperContentHeader title="Dokumen Sokongan">
-                {#if !successUpload && data.currentRoleCode == UserRoleConstant.unitBahagian.code || data.currentRoleCode == UserRoleConstant.unitNegeri.code}
+                {#if (!successUpload && data.currentRoleCode == UserRoleConstant.unitBahagian.code) || data.currentRoleCode == UserRoleConstant.unitNegeri.code}
                     <TextIconButton
                         icon="check"
                         type="primary"
@@ -344,7 +345,7 @@
                 <div
                     class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
                 >
-                    {#if data.applicationDoc.document == null && data.currentRoleCode == UserRoleConstant.unitBahagian.code || data.currentRoleCode == UserRoleConstant.unitNegeri.code}
+                    {#if (data.applicationDoc.document == null && data.currentRoleCode == UserRoleConstant.unitBahagian.code) || data.currentRoleCode == UserRoleConstant.unitNegeri.code}
                         <div
                             class="flex h-fit w-full flex-col justify-start gap-2 px-3 pb-5 text-sm text-ios-labelColors-secondaryLabel-light"
                         >
@@ -364,17 +365,18 @@
                             class="flex h-fit w-full flex-col justify-start gap-2 px-3 pb-5 text-sm text-ios-labelColors-secondaryLabel-light"
                         >
                             <span
-                                >Dokumen-dokumen sokongan yang telah dimuat naik :</span
+                                >Dokumen-dokumen sokongan yang telah dimuat naik
+                                :</span
                             >
                             {#if data.applicationDoc.document !== null}
-                            {#each data.applicationDoc?.document as documents}
-                                <a
-                                    href={documents.document}
-                                    download={documents.name}
-                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                    >{documents.name}</a
-                                >
-                            {/each}
+                                {#each data.applicationDoc?.document as documents}
+                                    <a
+                                        href={documents.document}
+                                        download={documents.name}
+                                        class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                        >{documents.name}</a
+                                    >
+                                {/each}
                             {/if}
                         </div>
                     {/if}

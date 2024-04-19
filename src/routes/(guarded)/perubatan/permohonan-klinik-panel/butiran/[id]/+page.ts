@@ -34,10 +34,15 @@ export const load = async ({ params }) => {
     clinicDetail =
         clinicDetailResponse.data?.details as MedicalClinicApplication;
 
+    const clinicContractForm = await superValidate(zod(_addClinicContractSchema), { errors: false });
+
     const clinicContractResponse: CommonResponseDTO =
         await MedicalServices.getClinicContractDetail(clinicId)
     clinicContract =
         clinicContractResponse.data?.details as ClinicContract;
+        if(clinicContractResponse.status == "success"){
+            clinicContractForm.data = clinicContract;
+        }
 
     const clinicSecretaryApprovalResponse: CommonResponseDTO =
         await MedicalServices.getClinicSecretaryApproval(clinicId)
@@ -66,7 +71,6 @@ export const load = async ({ params }) => {
 
 
     //supervalidate
-    const clinicContractForm = await superValidate(clinicContract, zod(_addClinicContractSchema), { errors: false });
     const secretaryApprovalForm = await superValidate(clinicSecretaryApproval, zod(_clinicCommonResultSchema), { errors: false });
     const supporterApproverForm = await superValidate(clinicSupporterAndApprover, zod(_clinicSupporterApproverSchema), { errors: false });
     const supporterApprovalForm = await superValidate(clinicSupporterApproval, zod(_clinicCommonResultSchema), { errors: false });

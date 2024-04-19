@@ -68,7 +68,7 @@
     <div class="flex w-full flex-col justify-start gap-2.5 p-5">
         <div class="h h-fit w-full">
             <DataTable
-                title="Senarai Bil Tuntutan"
+                title="Senarai Permohonan Klinik Panel"
                 bind:tableData={clinicApplicationTable}
                 bind:passData={rowData}
                 detailActions={() => {
