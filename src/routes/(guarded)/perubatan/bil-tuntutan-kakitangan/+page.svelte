@@ -2,107 +2,132 @@
     import { goto } from '$app/navigation';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
+    import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
+    import DataTable from '$lib/components/table/DataTable.svelte';
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
+    import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type {
+        TableDTO,
+        TableSettingDTO,
+    } from '$lib/dto/core/table/table.dto';
     import type { MedicalClinicEmployeeAllocationClaimList } from '$lib/dto/mypsm/perubatan/tuntutan-kakitangan/clinic-employee-allocation-list.dto';
     import type { MedicalClinicEmployeePaymentList } from '$lib/dto/mypsm/perubatan/tuntutan-kakitangan/clinic-employee-payments-list.dto';
+    import Alert from 'flowbite-svelte/Alert.svelte';
     import type { PageData } from './$types';
-    import { _updateAllocationTable, _updatePaymentTable, _updateTable } from './+page';
+    import { _submit, _updatePaymentTable } from './+page';
+    import { superForm } from 'sveltekit-superforms/client';
+    import { _editAllocations } from '$lib/schemas/mypsm/medical/medical-schema';
+    import { zod } from 'sveltekit-superforms/adapters';
+    import { Toaster } from 'svelte-french-toast';
 
     export let data: PageData;
     let rowData: MedicalClinicEmployeeAllocationClaimList;
     let rowPaymentData: MedicalClinicEmployeePaymentList;
 
     // table tuntutan kakitangan
-    let employeeAllocationClaimsTable: TableDTO = {
+    let employeeAllocationClaimsTable: TableSettingDTO = {
         param: data.param,
         meta: data.employeeAllocationListResponse.data?.meta ?? {
-            pageSize: 5,
+            pageSize: 1,
             pageNum: 1,
-            totalData: 4,
+            totalData: 1,
             totalPage: 1,
         },
         data: data.employeeAllocationList ?? [],
-        hiddenData: ['claimId', 'employeeId'],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['claimId', 'employeeId'],
+        dictionary: [],
+        url: 'medical/allocation/claim/list',
+        id: 'employeeAllocationClaimsTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
     };
 
     //table peruntukan kakitangan
-    let employeeAllocationTable: TableDTO = {
+    let employeeAllocationTable: TableSettingDTO = {
         param: data.param,
         meta: data.employeeGetAllocationResponse.data?.meta ?? {
-            pageSize: 5,
+            pageSize: 1,
             pageNum: 1,
-            totalData: 4,
+            totalData: 1,
             totalPage: 1,
         },
         data: data.employeeGetAllocation ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: [],
+        dictionary: [],
+        url: 'medical/allocation/list',
+        id: 'employeeAllocationTable',
+        option: {
+            checkbox: false,
+            detail: false,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
     };
-    
+
     //table pembayaran
-    let employeePaymentTable: TableDTO = {
-        param: data.param,
+    let employeePaymentTable: TableSettingDTO = {
+        param: data.paymentParam,
         meta: data.employeePaymentListResponse.data?.meta ?? {
-            pageSize: 5,
+            pageSize: 1,
             pageNum: 1,
-            totalData: 4,
+            totalData: 1,
             totalPage: 1,
         },
         data: data.employeePaymentList ?? [],
-        hiddenData: ['medicalClaimId','employeeId'],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['medicalClaimId', 'employeeId'],
+        dictionary: [],
+        url: 'medical/allocation/payment/list',
+        id: 'employeePaymentTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
     };
+    let readOnly: boolean = true;
 
-    async function _search() {
-        _updateTable(employeeAllocationClaimsTable.param).then((value) => {
-            employeeAllocationClaimsTable.data =
-                value.props.response.data?.dataList ?? [];
-            employeeAllocationClaimsTable.meta = value.props.response.data
-                ?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            employeeAllocationClaimsTable.param.pageSize =
-                value.props.param.pageSize;
-            employeeAllocationClaimsTable.param.pageNum =
-                value.props.param.pageNum;
-            employeeAllocationClaimsTable.hiddenData = ['claimId', 'employeeId'];
-        });
-    }
-    async function _searchAllocation() {
-        _updateAllocationTable(employeeAllocationTable.param).then((value) => {
-            employeeAllocationTable.data =
-                value.props.response.data?.dataList ?? [];
-            employeeAllocationTable.meta = value.props.response.data?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            employeeAllocationTable.param.pageSize = value.props.param.pageSize;
-            employeeAllocationTable.param.pageNum = value.props.param.pageNum;
-        });
-    }
-    async function _searchPayments() {
-        _updatePaymentTable(employeePaymentTable.param).then((value) => {
-            employeePaymentTable.data =
-                value.props.response.data?.dataList ?? [];
-            employeePaymentTable.meta = value.props.response.data?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            employeePaymentTable.param.pageSize = value.props.param.pageSize;
-            employeePaymentTable.param.pageNum = value.props.param.pageNum;
-            employeePaymentTable.hiddenData = ['medicalClaimId','employeeId'];
-        });
-    }
+    const { form, enhance } = superForm(data.allocationForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'allocationForm',
+        validators: zod(_editAllocations),
+        resetForm: false,
+        async onSubmit() {
+            const res = await _submit($form);
+
+            if (res?.response.status == 'success') {
+                readOnly = true;
+            }
+        },
+    });
 </script>
 
 <!-- content header starts here -->
@@ -113,84 +138,187 @@
 <section
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
 >
+{#if data.currentRoleCode === UserRoleConstant.urusSetiaPerubatan.code}
+            <div
+                class="flex w-full flex-col items-end justify-start gap-3 border-b border-ios-activeColors-activeBlue-light p-5"
+            >
+                <Alert class="flex w-full flex-row justify-between items-center" color="blue">
+                    <p class="font-medium text-lg">
+                        Tetapan
+                    </p>
+                    {#if readOnly}
+                        <TextIconButton
+                            label="Kemaskini"
+                            type="neutral"
+                            onClick={() => {
+                                readOnly = false;
+                            }}
+                        />
+                    {:else}
+                        <div class="flex flex-row items-end gap-2.5">
+                            <TextIconButton
+                                label="Batal"
+                                icon="cancel"
+                                type="neutral"
+                                onClick={() => {
+                                    readOnly = true;
+                                }}
+                            />
+                            <TextIconButton
+                                label="Simpan"
+                                icon="check"
+                                form="allocationForm"
+                            />
+                        </div>
+                    {/if}
+                </Alert>
+                <form
+                    class="grid w-full grid-cols-2 justify-start gap-5"
+                    id="allocationForm"
+                    method="POST"
+                    use:enhance
+                >
+                    <CustomTextField
+                        label="Peruntukkan Tahun Semasa (RM)"
+                        id="currentAllocation"
+                        disabled={readOnly}
+                        type="number"
+                        bind:val={$form.currentAllocation}
+                    />
+                    <CustomTextField
+                        label="Baki Peruntukkan Tahun Semasa (RM)"
+                        id="remainingAllocation"
+                        disabled={readOnly}
+                        type="number"
+                        bind:val={$form.remainingAllocation}
+                    />
+                    <CustomTextField
+                        label="Peruntukkan Tahun Baru (RM)"
+                        id="newAllocation"
+                        disabled={readOnly}
+                        type="number"
+                        bind:val={$form.newAllocation}
+                    />
+                    <CustomTextField
+                        label="Tahun"
+                        id="year"
+                        disabled
+                        type="number"
+                        bind:val={$form.year}
+                    />
+                </form>
+            </div>
+        {/if}
     <CustomTab>
         <CustomTabContent title="Senarai Tuntutan Kakitangan">
             <div class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10">
-                <!-- <FilterCard onSearch={() => {}}>
-                    <FilterTextField label="Kod Klinik" inputValue={''} />
-                    <FilterTextField label="Nama Klinik" inputValue={''} />
-                    <FilterTextField label="Bulan" inputValue={''} />
-                    <FilterTextField label="Negeri" inputValue={''} />
-                </FilterCard> -->
-
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
-                    <CustomTable
-                        title="Rekod Bil Tuntutan Kakitangan"
-                        onUpdate={_search}
+                    <DataTable
+                        title="Senarai Bil Tuntutan"
                         bind:tableData={employeeAllocationClaimsTable}
                         bind:passData={rowData}
-                        enableDetail
-                        detailActions={() =>
+                        detailActions={() => {
                             goto(
                                 './bil-tuntutan-kakitangan/butiran/' +
-                                    rowData.employeeId+'-'+rowData.claimId,
-                            )}
-                    />
+                                    rowData.employeeId +
+                                    '-' +
+                                    rowData.claimId,
+                            );
+                        }}
+                    >
+                        <FilterWrapper slot="filter">
+                            <FilterTextField
+                                label="No. Pekerja"
+                                bind:inputValue={employeeAllocationClaimsTable
+                                    .param.filter.employeeNumber}
+                            />
+                            <FilterTextField
+                                label="Nama Kakitangan"
+                                bind:inputValue={employeeAllocationClaimsTable
+                                    .param.filter.name}
+                            />
+                        </FilterWrapper>
+                    </DataTable>
                 </div>
             </div>
         </CustomTabContent>
         {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerubatan.code}
-        <CustomTabContent title="Senarai Kakitangan - Peruntukan">
-            <div class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10">
-                <!-- <FilterCard onSearch={() => {}}>
-                    <FilterTextField label="Kod Klinik" inputValue={''} />
-                    <FilterTextField label="Nama Klinik" inputValue={''} />
-                    <FilterTextField label="Bulan" inputValue={''} />
-                    <FilterTextField label="Negeri" inputValue={''} />
-                </FilterCard> -->
+            <CustomTabContent title="Senarai Kakitangan - Peruntukan">
                 <div
-                    class="flex max-h-full w-full flex-col items-start justify-start"
+                    class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10"
                 >
-                    <CustomTable
-                        title="Rekod Peruntukan bagi Kakitangan"
-                        onUpdate={_searchAllocation}
-                        bind:tableData={employeeAllocationTable}
-                    />
+                    <!-- <div
+                        class="flex max-h-full w-full flex-col items-start justify-start"
+                    >
+                        <CustomTable
+                            title="Rekod Peruntukan bagi Kakitangan"
+                            onUpdate={_searchAllocation}
+                            bind:tableData={employeeAllocationTable}
+                        />
+                    </div> -->
                     <!-- TODO: jana surat for enable detail -->
+                    <div class="h h-fit w-full">
+                        <DataTable
+                            title="Rekod Peruntukan bagi Kakitangan"
+                            bind:tableData={employeeAllocationTable}
+                            bind:passData={rowData}
+                        >
+                            <FilterWrapper slot="filter">
+                                <FilterTextField
+                                    label="No. Pekerja"
+                                    bind:inputValue={employeeAllocationTable
+                                        .param.filter.employeeNumber}
+                                />
+                                <FilterTextField
+                                    label="Nama Kakitangan"
+                                    bind:inputValue={employeeAllocationTable
+                                        .param.filter.name}
+                                />
+                            </FilterWrapper>
+                        </DataTable>
+                    </div>
                 </div>
-            </div>
-        </CustomTabContent>
-        <CustomTabContent
-            title="Senarai Pembayaran Untuk Tuntutan Melebihi Peruntukan"
-        >
-            <div class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10">
-                <FilterCard onSearch={() => {}}>
-                    <FilterTextField label="Kod Klinik" inputValue={''} />
-                    <FilterTextField label="Nama Klinik" inputValue={''} />
-                    <FilterTextField label="Bulan" inputValue={''} />
-                    <FilterTextField label="Negeri" inputValue={''} />
-                </FilterCard>
+            </CustomTabContent>
+            <CustomTabContent
+                title="Senarai Pembayaran Untuk Tuntutan Melebihi Peruntukan"
+            >
                 <div
-                    class="flex max-h-full w-full flex-col items-start justify-start"
+                    class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10"
                 >
-                    <CustomTable
-                        title="Rekod Pembayaran untuk Tuntutan Melebihi Peruntukan"
-                        onUpdate={_searchPayments}
-                        bind:tableData={employeePaymentTable}
-                        bind:passData={rowPaymentData}
-                        enableDetail
-                        detailActions={() =>
-                            goto(
-                                './bil-tuntutan-kakitangan/pembayaran/' +
-                                    rowPaymentData.medicalClaimId,
-                            )}
-                    />
-                    <!-- TODO: jana surat for enable detail -->
+                    <div
+                        class="flex max-h-full w-full flex-col items-start justify-start"
+                    >
+                        <DataTable
+                            title="Rekod Pembayaran"
+                            bind:tableData={employeePaymentTable}
+                            bind:passData={rowPaymentData}
+                            detailActions={() => {
+                                goto(
+                                    './bil-tuntutan-kakitangan/pembayaran/' +
+                                        rowPaymentData.medicalClaimId,
+                                );
+                            }}
+                        >
+                            <FilterWrapper slot="filter">
+                                <FilterTextField
+                                    label="No. Pekerja"
+                                    bind:inputValue={employeePaymentTable
+                                        .param.filter.employeeNumber}
+                                />
+                                <FilterTextField
+                                    label="Nama Kakitangan"
+                                    bind:inputValue={employeePaymentTable
+                                        .param.filter.name}
+                                />
+                            </FilterWrapper>
+                        </DataTable>
+                    </div>
                 </div>
-            </div>
-        </CustomTabContent>
+            </CustomTabContent>
         {/if}
     </CustomTab>
 </section>
+
+<Toaster/>

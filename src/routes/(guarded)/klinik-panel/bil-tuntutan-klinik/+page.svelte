@@ -10,6 +10,7 @@
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import type { ClinicPanelClaimList } from '$lib/dto/mypsm/perubatan/clinic-panel-claim-list.dto';
     import type { PageData } from './$types';
+    import { _editAllocations } from '$lib/schemas/mypsm/medical/medical-schema';
 
     export let data: PageData;
     let rowData: ClinicPanelClaimList;
@@ -32,7 +33,10 @@
                 malay: 'Nama',
             },
         ],
-        url: data.currentRoleCode == UserRoleConstant.klinikPanel.code ? 'medical/clinic/claims/list_by_clinic' : 'medical/clinic/claims/list',
+        url:
+            data.currentRoleCode == UserRoleConstant.klinikPanel.code
+                ? 'medical/clinic/claims/list_by_clinic'
+                : 'medical/clinic/claims/list',
         id: 'clinicPanelClaimsTable',
         option: {
             checkbox: false,
@@ -45,25 +49,28 @@
             add: false,
         },
     };
+
+    
 </script>
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader title="Rekod Bil Tuntutan Klinik Panel">
         {#if data.currentRoleCode == UserRoleConstant.klinikPanel.code}
-        <TextIconButton
-            label="Tambah Bil Tuntutan"
-            icon="add"
-            onClick={() => goto('/klinik-panel/bil-tuntutan-klinik/baru')}
-        />
+            <TextIconButton
+                label="Tambah Bil Tuntutan"
+                icon="add"
+                onClick={() => goto('/klinik-panel/bil-tuntutan-klinik/baru')}
+            />
         {/if}
     </ContentHeader>
 </section>
 
 <section
-    class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
+    class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
     <div class="flex w-full flex-col justify-start gap-2.5 p-5">
+        
         <div class="h h-fit w-full">
             <DataTable
                 title="Senarai Bil Tuntutan"
@@ -79,19 +86,12 @@
                 <FilterWrapper slot="filter">
                     <FilterTextField
                         label="Kod Klinik"
-                        bind:inputValue={claimListTable.param
-                            .filter.clinicCode}
+                        bind:inputValue={claimListTable.param.filter.clinicCode}
                     />
                     <FilterTextField
                         label="Nama Klinik"
-                        bind:inputValue={claimListTable.param
-                            .filter.name}
+                        bind:inputValue={claimListTable.param.filter.name}
                     />
-                    <!-- <FilterTextField
-                        label="Status"
-                        bind:inputValue={claimListTable.param
-                            .filter.status}
-                    /> -->
                 </FilterWrapper>
             </DataTable>
         </div>

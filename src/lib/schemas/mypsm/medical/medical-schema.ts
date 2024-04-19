@@ -134,7 +134,7 @@ export const _addEmployeeClaimsSchema = z.object({
 // =================================================
 export const _patientSchema = z.object({
     name:shortTextSchema,
-    relationshipId: z.number(),
+    relationshipId: z.number().nullable(),
     identityDocumentCard: identificationCardSchema,
     placementId: z.number(),
     date: stringToMaxDate,
@@ -161,9 +161,22 @@ export const _addTreatmentSchema = z.object({
     patientList: _patientTreatmentSchema.array(),
 })
 
+const uploadDocument = z.object({
+    name: z.string(),
+    base64: z.string(),
+})
+
 export const _clinicPaymentSchema = z.object({
     id: z.number(),
     paymentType: shortTextSchema,
     transactionNumber: shortTextSchema,
     transactionDate: stringToMaxDate,
+    documents: uploadDocument.array(),
+})
+
+export const _editAllocations = z.object({
+    currentAllocation: z.number(),
+    remainingAllocation: z.number(),
+    newAllocation: z.number(),
+    year: z.number().optional(),
 })

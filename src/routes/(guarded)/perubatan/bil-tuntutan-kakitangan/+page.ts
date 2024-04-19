@@ -1,10 +1,15 @@
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant";
+import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
 import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
 import type { MedicalClinicEmployeeAllocationClaimList } from "$lib/dto/mypsm/perubatan/tuntutan-kakitangan/clinic-employee-allocation-list.dto";
 import type { MedicalClinicEmployeeGetAllocationList } from "$lib/dto/mypsm/perubatan/tuntutan-kakitangan/clinic-employee-get-allocation.dto";
 import type { MedicalClinicEmployeePaymentList } from "$lib/dto/mypsm/perubatan/tuntutan-kakitangan/clinic-employee-payments-list.dto";
+import type { ClinicAllocation } from "$lib/dto/mypsm/perubatan/tuntutan-klinik/clinic-allocation.dto";
+import { _editAllocations } from "$lib/schemas/mypsm/medical/medical-schema";
 import { MedicalServices } from "$lib/services/implementation/mypsm/perubatan/medical.service";
+import { zod } from "sveltekit-superforms/adapters";
+import { superValidate } from "sveltekit-superforms/client";
 
 export const load = async () => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
@@ -26,6 +31,14 @@ export const load = async () => {
         orderType: 1,
         filter: {}
     };
+    let clinicPanelAllocations: ClinicAllocation = {
+        year: 0,
+        currentAllocation: 0,
+        remainingAllocation: 0,
+        newAllocation: 0,
+    }
+
+    const allocationForm = await superValidate(zod(_editAllocations))
 
     const employeeAllocationListResponse: CommonResponseDTO =
         await MedicalServices.getClinicEmployeeAllocation(param);
@@ -39,39 +52,27 @@ export const load = async () => {
         await MedicalServices.getClinicEmployeePaymentList(paymentParam)
     employeePaymentList =
         employeePaymentListResponse.data?.dataList as MedicalClinicEmployeePaymentList[];
-
+    if (currentRoleCode == UserRoleConstant.urusSetiaPerubatan.code) {
+        const clinicPanelAllocationResponse: CommonResponseDTO =
+            await MedicalServices.getClinicPanelAllocations();
+        clinicPanelAllocations =
+            clinicPanelAllocationResponse.data?.details as ClinicAllocation;
+        allocationForm.data = clinicPanelAllocations
+    }
     return {
         currentRoleCode,
         param,
+        paymentParam,
         employeeAllocationListResponse,
         employeeAllocationList,
         employeeGetAllocationResponse,
         employeeGetAllocation,
         employeePaymentListResponse,
         employeePaymentList,
+        allocationForm,
     }
 }
 
-//update tuntutan kakitangan table
-export async function _updateTable(param: CommonListRequestDTO) {
-    const response: CommonResponseDTO = await MedicalServices.getClinicEmployeeAllocation(param);
-    return {
-        props: {
-            param,
-            response,
-        },
-    };
-}
-//update table peruntukkan
-export async function _updateAllocationTable(param: CommonListRequestDTO) {
-    const response: CommonResponseDTO = await MedicalServices.getClinicEmployeeAllocationTable(param);
-    return {
-        props: {
-            param,
-            response,
-        },
-    };
-}
 //update table pembayaran
 export async function _updatePaymentTable(param: CommonListRequestDTO) {
     const response: CommonResponseDTO = await MedicalServices.getClinicEmployeePaymentList(param);
@@ -81,4 +82,17 @@ export async function _updatePaymentTable(param: CommonListRequestDTO) {
             response,
         },
     };
+}
+
+export const _submit = async (formData: ClinicAllocation) => {
+    const form = await superValidate(formData, zod(_editAllocations));
+
+    if (form.valid) {
+        const { year, ...tempObj } = form.data;
+
+        const response: CommonResponseDTO =
+            await MedicalServices.editAllocations(tempObj as ClinicAllocation)
+
+        return { response }
+    }
 }

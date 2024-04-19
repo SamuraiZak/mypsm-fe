@@ -7,6 +7,7 @@ import type { ClinicCommonResult } from "$lib/dto/mypsm/perubatan/clinic-common-
 import type { MedicalClaimsAdd } from "$lib/dto/mypsm/perubatan/medical-claim-add.dto"
 import type { MedicalEmployeeDetail } from "$lib/dto/mypsm/perubatan/medical-employee-detail.dto"
 import type { MedicalClinicClaimSuppApp } from "$lib/dto/mypsm/perubatan/tuntutan-klinik/clinic-claim-supporter-approver.dto.js"
+import type { QuartersGetDocument } from "$lib/dto/mypsm/pinjaman/kuarters/application-get-document.dto.js"
 import { _addEmployeeClaimsSchema, _clinicCommonResultSchema, _clinicSuppAppIdSchema, _clinicSupporterApproverSchema } from "$lib/schemas/mypsm/medical/medical-schema"
 import { LookupServices } from "$lib/services/implementation/core/lookup/lookup.service"
 import { MedicalServices } from "$lib/services/implementation/mypsm/perubatan/medical.service"
@@ -28,6 +29,7 @@ export const load = async ({ params }) => {
     let supporterApprover = {} as MedicalClinicClaimSuppApp;
     let supporterApproval = {} as ClinicCommonResult;
     let approverApproval = {} as ClinicCommonResult;
+    let employeeClaimDocument = {} as QuartersGetDocument;
 
     const employeeDetailResponse: CommonResponseDTO =
         await MedicalServices.getMedicalEmployeeDetail(employeeId)
@@ -53,12 +55,16 @@ export const load = async ({ params }) => {
         await MedicalServices.getEmployeeClaimApproverApproval(claimId)
     approverApproval =
         approverApprovalResponse.data?.details as ClinicCommonResult;
+    const employeeClaimDocumentResponse: CommonResponseDTO =
+        await MedicalServices.getEmployeeClaimDocument(claimId);
+    employeeClaimDocument =
+        employeeClaimDocumentResponse.data?.details as QuartersGetDocument;
 
     const secretaryApprovalForm = await superValidate(secretaryApproval, zod(_clinicCommonResultSchema), { errors: false });
     const supporterApproverForm = await superValidate(supporterApprover, zod(_clinicSuppAppIdSchema), { errors: false });
     const supporterApprovalForm = await superValidate(supporterApproval, zod(_clinicCommonResultSchema), { errors: false });
     const approverApprovalForm = await superValidate(approverApproval, zod(_clinicCommonResultSchema), { errors: false });
-   
+
     return {
         currentRoleCode,
         claimId,
@@ -73,6 +79,7 @@ export const load = async ({ params }) => {
         supporterApprovalForm,
         approverApproval,
         approverApprovalForm,
+        employeeClaimDocument,
     }
 }
 

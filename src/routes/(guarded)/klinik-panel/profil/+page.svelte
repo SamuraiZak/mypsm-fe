@@ -77,44 +77,44 @@
         <CustomTextField
             label="Nama Klinik"
             id="clinicName"
-            bind:disabled={notEditing}
+            disabled
             bind:val={$form.clinicName}
             errors={$errors.clinicName}
         />
         <CustomTextField
             label="Alamat"
             id="address"
-            bind:disabled={notEditing}
+            disabled
             bind:val={$form.address}
             errors={$errors.address}
         />
         <CustomSelectField
             label="Daerah"
             id="districtId"
+            disabled
             options={data.lookup.districtLookup}
-            bind:disabled={notEditing}
             bind:val={$form.districtId}
             errors={$errors.address}
         />
         <CustomSelectField
             label="Bandar"
             id="cityId"
+            disabled
             options={data.lookup.cityLookup}
-            bind:disabled={notEditing}
             bind:val={$form.cityId}
             errors={$errors.cityId}
         />
         <CustomTextField
             label="Poskod"
             id="postcode"
-            bind:disabled={notEditing}
+            disabled
             bind:val={$form.postcode}
             errors={$errors.postcode}
         />
         <CustomTextField
             label="No. Telefon"
             id="contactNumber"
-            bind:disabled={notEditing}
+            disabled
             bind:val={$form.contactNumber}
             errors={$errors.contactNumber}
         />

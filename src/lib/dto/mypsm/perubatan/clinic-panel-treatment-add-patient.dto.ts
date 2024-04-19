@@ -6,7 +6,7 @@ export interface TreatmentAddPatient {
 
 export interface PatientList {
     name:                 string;
-    relationshipId:         number;
+    relationshipId:         number | null;
     identityDocumentCard: string;
     placementId:            number;
     date:                 string;

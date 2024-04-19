@@ -1,11 +1,14 @@
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant"
 import { UserRoleConstant } from "$lib/constants/core/user-role.constant"
 import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto"
+import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto"
+import type { MovingInKuarters } from "$lib/dto/mypsm/pinjaman/kuarters/moving-in-list.dto"
+import { QuartersServices } from "$lib/services/implementation/mypsm/pinjaman-kuarters/quarters.service"
 
 export const load = async () => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
-    let dataList: any = [];
-
+    let quartersList: MovingInKuarters[] = [];
+    let quartersListResponse: CommonResponseDTO = {};
 
     let param: CommonListRequestDTO = {
         pageNum: 1,
@@ -14,20 +17,16 @@ export const load = async () => {
         orderType: null,
         filter: {}
     }
-    if (currentRoleCode === UserRoleConstant.urusSetiaPeringkatNegeri.code) {
-        dataList = [
-            { id: 1, noPemohon: "K204", namaPemohon: "Florence Lo", noKadPengenalan: "990011135664", jenisPemohon: "Kakitangan LKIM", tarikhMemohon: "2022-04-22", status: "Baru", ulasan: "Menunggu Keputusan Urus Setia" },
-            { id: 2, noPemohon: "K404", namaPemohon: "Kim Ji Won", noKadPengenalan: "990011135664", jenisPemohon: "Agensi/Jabatan Luar", tarikhMemohon: "2020-04-22", status: "Selesai", ulasan: "Diluluskan" }
-        ]
-    } else if (currentRoleCode === UserRoleConstant.kakitangan.code) {
-        dataList = [
-            { id: 1, noPemohon: "K204", namaPemohon: "Florence Lo", noKadPengenalan: "990011135664", jenisPemohon: "Kakitangan LKIM", tarikhMemohon: "2022-04-22", status: "Baru", ulasan: "Menunggu Keputusan Urus Setia" },
-        ]
-    }
+
+    quartersListResponse =
+        await QuartersServices.getMovingOutList(param);
+    quartersList =
+        quartersListResponse.data?.dataList as MovingInKuarters[];
 
     return {
         currentRoleCode,
         param,
-        dataList,
+        quartersList,
+        quartersListResponse,
     }
 }

@@ -271,6 +271,39 @@
         </StepperContent>
 
         <StepperContent>
+            <StepperContentHeader title="Dokumen Sokongan" />
+            <StepperContentBody>
+                {#if data.employeeClaimDocument?.document !== null}
+                    <div
+                        class="flex h-fit w-full flex-col justify-start gap-2 px-3 pb-5 text-sm text-ios-labelColors-secondaryLabel-light"
+                    >
+                        <span
+                            >Dokumen-dokumen sokongan yang telah dimuat naik
+                            oleh kakitangan :</span
+                        >
+                        {#each data.employeeClaimDocument?.document as documents}
+                            <a
+                                href={documents.document}
+                                download={documents.name}
+                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                >{documents.name}</a
+                            >
+                        {/each}
+                    </div>
+                {:else}
+                    <div class="flex w-full flex-col gap-10 px-3">
+                        <Alert color="blue">
+                            <p>
+                                <span class="font-medium">Tiada Maklumat!</span>
+                                Kakitangan gagal menambah tuntutan.
+                            </p>
+                        </Alert>
+                    </div>
+                {/if}
+            </StepperContentBody>
+        </StepperContent>
+
+        <StepperContent>
             <StepperContentHeader title="Pengesahan Urus Setia">
                 {#if !secretaryResult}
                     <TextIconButton

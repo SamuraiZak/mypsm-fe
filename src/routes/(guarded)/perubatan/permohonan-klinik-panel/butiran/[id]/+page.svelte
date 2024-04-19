@@ -20,11 +20,13 @@
     } from '$lib/schemas/mypsm/medical/medical-schema';
     import { zod } from 'sveltekit-superforms/adapters';
     import {
+        _fileToBase64Object,
         _submitApproverApprovalForm,
         _submitClinicContractForm,
         _submitSecretaryApprovalForm,
         _submitSupporterApprovalForm,
         _submitSupporterApproverForm,
+        _uploadClinicApplicationForm,
     } from './+page';
     import { superForm } from 'sveltekit-superforms/client';
     import {
@@ -34,6 +36,8 @@
     } from '$lib/constants/core/radio-option-constants';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import Alert from 'flowbite-svelte/Alert.svelte';
+    import CustomFileField from '$lib/components/inputs/file-field/CustomFileField.svelte';
+    import type { QuartersUploadDocuments } from '$lib/dto/mypsm/pinjaman/kuarters/quarters-upload-document.dto';
 
     export let data: PageData;
 
@@ -42,6 +46,8 @@
     let notEditingSuppAppForm: boolean = false;
     let notEditingSupporterForm: boolean = false;
     let notEditingApproverForm: boolean = false;
+    let successUpload: boolean = false;
+    let files: FileList;
 
     const {
         form: clinicContractForm,
@@ -148,6 +154,30 @@
         },
     });
 
+    function uploadDocument() {
+        if (files == undefined) {
+            alert('Dokumen sokongan tidak boleh kosong.');
+        } else {
+            _fileToBase64Object(files)
+                .then(async (result) => {
+                    let quartersDocument: QuartersUploadDocuments = {
+                        id: data.clinicId.id,
+                        documents: result,
+                    };
+                    const res = await _uploadClinicApplicationForm(
+                        JSON.stringify(quartersDocument),
+                    );
+
+                    if (res.response.status == 'success') {
+                        successUpload = true;
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    }
+
     $: {
         if (data.clinicContractForm.data.panelAppointedDate !== '') {
             notEditingClinicContractForm = true;
@@ -165,6 +195,7 @@
             notEditingApproverForm = true;
         }
     }
+    console.log(data.applicationDoc.document)
 </script>
 
 <!-- content header starts here -->
@@ -278,13 +309,13 @@
                         bind:val={data.clinicDetail.branchCount}
                     />
                     <CustomTextField
-                        label="Jarak Klinik Dari Pejabat"
+                        label="Jarak Klinik Dari Pejabat (KM)"
                         id="clinicOfficeDistance"
                         disabled
                         bind:val={data.clinicDetail.clinicOfficeDistance}
                     />
                     <CustomTextField
-                        label="Jarak Klinik Terdekat Dari Pejabat"
+                        label="Jarak Klinik Terdekat Dari Pejabat (KM)"
                         id="nearestClinicDistance"
                         disabled
                         bind:val={data.clinicDetail.nearestClinicDistance}
@@ -295,6 +326,60 @@
                         disabled
                         bind:val={data.clinicDetail.operationHours}
                     />
+                </div>
+            </StepperContentBody>
+        </StepperContent>
+
+        <StepperContent>
+            <StepperContentHeader title="Dokumen Sokongan">
+                {#if (!successUpload && data.currentRoleCode == UserRoleConstant.unitBahagian.code) || data.currentRoleCode == UserRoleConstant.unitNegeri.code}
+                    <TextIconButton
+                        icon="check"
+                        type="primary"
+                        label="Simpan"
+                        onClick={() => uploadDocument()}
+                    />
+                {/if}
+            </StepperContentHeader>
+            <StepperContentBody>
+                <div
+                    class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
+                >
+                    {#if (data.applicationDoc.document == null && data.currentRoleCode == UserRoleConstant.unitBahagian.code) || data.currentRoleCode == UserRoleConstant.unitNegeri.code}
+                        <div
+                            class="flex h-fit w-full flex-col justify-start gap-2 px-3 pb-5 text-sm text-ios-labelColors-secondaryLabel-light"
+                        >
+                            <span>Dokumen-dokumen yang perlu dimuat naik:</span>
+                            <span>1. Salinan Maklumat Klinik.pdf</span>
+                            <span>2. Salinan Maklumat Bank Klinik.pdf</span>
+                        </div>
+                        <div class="flex w-full flex-col gap-2 px-3">
+                            <CustomFileField
+                                label="Dokumen Sokongan"
+                                id="employeeClaimDocument"
+                                bind:files
+                            ></CustomFileField>
+                        </div>
+                    {:else}
+                        <div
+                            class="flex h-fit w-full flex-col justify-start gap-2 px-3 pb-5 text-sm text-ios-labelColors-secondaryLabel-light"
+                        >
+                            <span
+                                >Dokumen-dokumen sokongan yang telah dimuat naik
+                                :</span
+                            >
+                            {#if data.applicationDoc.document !== null}
+                                {#each data.applicationDoc?.document as documents}
+                                    <a
+                                        href={documents.document}
+                                        download={documents.name}
+                                        class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                        >{documents.name}</a
+                                    >
+                                {/each}
+                            {/if}
+                        </div>
+                    {/if}
                 </div>
             </StepperContentBody>
         </StepperContent>
@@ -348,38 +433,9 @@
             </StepperContentBody>
         </StepperContent>
 
-        <!-- <StepperContent>
-            <StepperContentHeader title="Dokumen Sokongan"
-                >{#if !data.isViewOnly}
-                    <TextIconButton
-                        icon="check"
-                        type="primary"
-                        label="Simpan"
-                        form="document"
-                    />
-                {/if}
-            </StepperContentHeader>
-            <StepperContentBody>
-                <form
-                    class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
-                    id="document"
-                    method="POST"
-                >
-                    <span
-                        class="text-sm text-ios-labelColors-secondaryLabel-light"
-                        >Dokumen-dokumen yang telah dimuat naik:</span
-                    >
-                    <DownloadAttachment
-                        fileName="Salinan maklumat klinik.pdf"
-                    />
-                    <DownloadAttachment fileName="Salinan maklumat bank.pdf" />
-                </form>
-            </StepperContentBody>
-        </StepperContent> -->
-
         <StepperContent>
             <StepperContentHeader title="Pengesahan Permohonan Klinik Panel">
-                {#if !notEditingVerificationForm  && data.currentRoleCode == UserRoleConstant.urusSetiaPerubatan.code}
+                {#if !notEditingVerificationForm && data.currentRoleCode == UserRoleConstant.urusSetiaPerubatan.code}
                     <TextIconButton
                         icon="check"
                         type="primary"
@@ -440,7 +496,7 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                {#if $supporterApproverForm.supporterName == "" && data.currentRoleCode !== UserRoleConstant.urusSetiaPerubatan.code}
+                {#if $supporterApproverForm.supporterName == '' && data.currentRoleCode !== UserRoleConstant.urusSetiaPerubatan.code}
                     <div class="flex w-full flex-col gap-10 px-3">
                         <Alert color="blue">
                             <p>
