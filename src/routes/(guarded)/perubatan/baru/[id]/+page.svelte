@@ -9,18 +9,32 @@
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import { Toaster } from 'svelte-french-toast';
-    import { Accordion, AccordionItem, Alert, Modal } from 'flowbite-svelte';
-    import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
-    import { superForm, superValidate } from 'sveltekit-superforms/client';
+    import { Alert, Modal } from 'flowbite-svelte';
+    import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import { zod } from 'sveltekit-superforms/adapters';
     import { _addEmployeeClaimsSchema } from '$lib/schemas/mypsm/medical/medical-schema';
-    import { _submitAddClaimsForm } from './+page';
+    import {
+        _fileToBase64Object,
+        _getUploadedDocument,
+        _submitAddClaimsForm,
+        _submitEmployeeClaimDocument,
+    } from './+page';
+    import type { QuartersUploadDocuments } from '$lib/dto/mypsm/pinjaman/kuarters/quarters-upload-document.dto';
+    import type { QuartersGetDocument } from '$lib/dto/mypsm/pinjaman/kuarters/application-get-document.dto';
+    import CustomFileField from '$lib/components/inputs/file-field/CustomFileField.svelte';
     export let data: PageData;
 
     let openModal: boolean = false;
     let tempClaims: number = 0;
     let submitSuccess: boolean = false;
+    let successUpload: boolean = false;
+    let medicalId: number = 0;
+    let files: FileList;
+    let docs: QuartersGetDocument = {
+        id: 0,
+        document: [],
+    };
 
     const {
         form: addClaimsForm,
@@ -37,6 +51,7 @@
 
             if (res?.response.status == 'success') {
                 submitSuccess = true;
+                medicalId = res.response.data?.details.medicalClaimId;
             }
         },
     });
@@ -49,6 +64,37 @@
         $addClaimsForm.claims.splice(index, 1);
 
         $addClaimsForm.claims = [...$addClaimsForm.claims];
+    }
+    function uploadDocument() {
+        if (files == undefined) {
+            alert('Dokumen sokongan tidak boleh kosong.');
+        } else {
+            _fileToBase64Object(files)
+                .then(async (result) => {
+                    let quartersDocument: QuartersUploadDocuments = {
+                        id: medicalId,
+                        documents: result,
+                    };
+                    const res = await _submitEmployeeClaimDocument(
+                        JSON.stringify(quartersDocument),
+                    );
+
+                    if (res.response.status == 'success') {
+                        successUpload = true;
+                    }
+                    let tempDocs = await _getUploadedDocument(medicalId);
+
+                    if (tempDocs.response.status == 'success') {
+                        docs = {
+                            id: tempDocs.response.data?.details.id,
+                            document: tempDocs.response.data?.details.document,
+                        };
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
     }
 </script>
 
@@ -216,6 +262,56 @@
                         {/each}
                     {/if}
                 </form>
+            </StepperContentBody>
+        </StepperContent>
+
+        <StepperContent>
+            <StepperContentHeader title="Dokumen Sokongan">
+                {#if !successUpload}
+                    <TextIconButton
+                        label="Simpan"
+                        icon="check"
+                        onClick={() => {
+                            uploadDocument();
+                        }}
+                    />
+                {/if}
+            </StepperContentHeader>
+            <StepperContentBody>
+                {#if docs?.document.length < 1}
+                    <div
+                        class="flex h-fit w-full flex-col justify-start gap-2 px-3 pb-5 text-sm text-ios-labelColors-secondaryLabel-light"
+                    >
+                        <span
+                            >Muat naik resit dan dokumen-dokumen sokongan yang
+                            berkaitan.</span
+                        >
+                    </div>
+                    <div class="flex w-full flex-col gap-2 px-3">
+                        <CustomFileField
+                            label="Dokumen Sokongan"
+                            id="employeeClaimDocument"
+                            bind:files
+                        ></CustomFileField>
+                    </div>
+                {:else}
+                    <div
+                        class="flex h-fit w-full flex-col justify-start gap-2 px-3 pb-5 text-sm text-ios-labelColors-secondaryLabel-light"
+                    >
+                        <span
+                            >Dokumen-dokumen sokongan yang telah dimuat naik
+                            oleh kakitangan :</span
+                        >
+                        {#each docs?.document as documents}
+                            <a
+                                href={documents.document}
+                                download={documents.name}
+                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                >{documents.name}</a
+                            >
+                        {/each}
+                    </div>
+                {/if}
             </StepperContentBody>
         </StepperContent>
     </Stepper>

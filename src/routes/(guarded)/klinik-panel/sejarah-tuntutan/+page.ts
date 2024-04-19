@@ -31,14 +31,3 @@ export const load = async () => {
         claimHistoryListResponse,
     }
 }
-
-//update employee list table
-export async function _updateTable(param: CommonListRequestDTO) {
-    const response: CommonResponseDTO = await MedicalServices.getClinicPanelClaimHistory(param);
-    return {
-        props: {
-            param,
-            response,
-        },
-    };
-}

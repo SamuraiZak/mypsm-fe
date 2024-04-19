@@ -52,24 +52,3 @@ export const load = async () => {
         allocationList,
     }
 }
-//update allocation list table
-export async function _updateClaimTable(param: CommonListRequestDTO) {
-    const response: CommonResponseDTO = await MedicalServices.getMedicalClaimList(param);
-    return {
-        props: {
-            param,
-            response,
-        },
-    };
-}
-
-//update allocation list table
-export async function _updateAllocationTable(param: CommonListRequestDTO) {
-    const response: CommonResponseDTO = await MedicalServices.getMedicalAllocationList(param);
-    return {
-        props: {
-            param,
-            response,
-        },
-    };
-}

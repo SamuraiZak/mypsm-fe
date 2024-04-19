@@ -2,76 +2,71 @@
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
-    import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
-    import CustomTable from '$lib/components/table/CustomTable.svelte';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type {
+        TableSettingDTO,
+    } from '$lib/dto/core/table/table.dto';
     import type { PageData } from './$types';
     import { goto } from '$app/navigation';
-    import { _updateAllocationTable, _updateClaimTable } from './+page';
     import type { MedicalClaimAllocationList } from '$lib/dto/mypsm/perubatan/medical-claim-allocation-list.dto';
+    import DataTable from '$lib/components/table/DataTable.svelte';
 
     export let data: PageData;
     let rowData: MedicalClaimAllocationList;
-    let medicalClaimTable: TableDTO = {
+    let medicalClaimTable: TableSettingDTO = {
         param: data.param,
         meta: data.medicalClaimListResponse.data?.meta ?? {
-            pageSize: 5,
+            pageSize: 1,
             pageNum: 1,
-            totalData: 4,
+            totalData: 1,
             totalPage: 1,
         },
         data: data.medicalClaimList ?? [],
-        hiddenData: ['medicalClaimId'],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['medicalClaimId'],
+        dictionary: [],
+        url: 'medical/employee_claim/list',
+        id: 'medicalClaimTable',
+        option: {
+            checkbox: false,
+            detail: false,
+            edit: false,
+            select: false,
+            filter: false,
+        },
+        controls: {
+            add: false,
+        },
     };
-    async function _searchClaimTable() {
-        _updateClaimTable(medicalClaimTable.param).then((value) => {
-            medicalClaimTable.data = value.props.response.data?.dataList ?? [];
-            medicalClaimTable.meta = value.props.response.data?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            medicalClaimTable.param.pageSize = value.props.param.pageSize;
-            medicalClaimTable.param.pageNum = value.props.param.pageNum;
-            medicalClaimTable.hiddenData = ['medicalClaimId'];
-        });
-    }
-
-    let medicalClaimAllocationTable: TableDTO = {
+    let medicalClaimAllocationTable: TableSettingDTO = {
         param: data.param,
         meta: data.allocationListResponse.data?.meta ?? {
-            pageSize: 5,
+            pageSize: 1,
             pageNum: 1,
-            totalData: 0,
+            totalData: 1,
             totalPage: 1,
         },
         data: data.allocationList ?? [],
-        hiddenData: ['id'],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['id'],
+        dictionary: [],
+        url: 'medical/payment/list',
+        id: 'medicalClaimAllocationTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: false,
+        },
+        controls: {
+            add: false,
+        },
     };
-    async function _searchAllocationTable() {
-        _updateAllocationTable(medicalClaimAllocationTable.param).then(
-            (value) => {
-                medicalClaimAllocationTable.data =
-                    value.props.response.data?.dataList ?? [];
-                medicalClaimAllocationTable.meta = value.props.response.data
-                    ?.meta ?? {
-                    pageSize: 1,
-                    pageNum: 1,
-                    totalData: 1,
-                    totalPage: 1,
-                };
-                medicalClaimAllocationTable.param.pageSize =
-                    value.props.param.pageSize;
-                medicalClaimAllocationTable.param.pageNum =
-                    value.props.param.pageNum;
-                medicalClaimAllocationTable.hiddenData = ['id'];
-            },
-        );
-    }
 </script>
 
 <!-- content header starts here -->
@@ -100,30 +95,37 @@
                         }}
                     />
                 </div>
-                <CustomTable
-                    tableId="claimTable"
-                    title="Senarai Rekod Tuntutan"
-                    onUpdate={_searchClaimTable}
-                    bind:tableData={medicalClaimTable}
-                />
+                <div class="h h-fit w-full">
+                    <DataTable
+                        title="Senarai Rekod Tuntutan"
+                        bind:tableData={medicalClaimTable}
+                    >
+                        <!-- <FilterWrapper slot="filter">
+                            <FilterTextField
+                                label="Nama Klinik"
+                                bind:inputValue={clinicApplicationTable.param.filter.name}
+                            />
+                        </FilterWrapper> -->
+                    </DataTable>
+                </div>
             </div>
         </CustomTabContent>
 
         <CustomTabContent title="Perkhidmatan">
             <div class="flex w-full flex-col justify-start gap-5 p-5">
-                <CustomTable
-                    tableId="claimAllocationTable"
-                    title="Senarai Baki Peruntukan Perubatan"
-                    bind:tableData={medicalClaimAllocationTable}
-                    bind:passData={rowData}
-                    onUpdate={_searchAllocationTable}
-                    enableDetail
-                    detailActions={() =>
-                        goto(
-                            '/perubatan/bil-tuntutan-kakitangan/pembayaran/' +
-                                rowData.id,
-                        )}
-                />
+                <div class="h h-fit w-full">
+                    <DataTable
+                        title="Senarai Baki Peruntukan Perubatan"
+                        bind:tableData={medicalClaimAllocationTable}
+                        bind:passData={rowData}
+                        detailActions={() => {
+                            goto(
+                                '/perubatan/bil-tuntutan-kakitangan/pembayaran/' +
+                                    rowData.id,
+                            );
+                        }}
+                    ></DataTable>
+                </div>
             </div>
         </CustomTabContent>
     </CustomTab>

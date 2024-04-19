@@ -139,6 +139,7 @@
                 <CustomTextField
                     label="Jenis Klinik"
                     id="clinicType"
+                    placeholder="Cth: Klinik Gigi"
                     bind:val={$clinicApplicationForm.clinicType}
                     errors={$clinicApplicationError.clinicType}
                 />
@@ -161,13 +162,13 @@
                     errors={$clinicApplicationError.branchCount}
                 />
                 <CustomTextField
-                    label="Jarak Klinik Dari Pejabat"
+                    label="Jarak Klinik Dari Pejabat (KM)"
                     id="clinicOfficeDistance"
                     bind:val={$clinicApplicationForm.clinicOfficeDistance}
                     errors={$clinicApplicationError.clinicOfficeDistance}
                 />
                 <CustomTextField
-                    label="Jarak Klinik Terdekat Dari Pejabat"
+                    label="Jarak Klinik Terdekat Dari Pejabat (KM)"
                     id="nearestClinicDistance"
                     bind:val={$clinicApplicationForm.nearestClinicDistance}
                     errors={$clinicApplicationError.nearestClinicDistance}
@@ -175,6 +176,7 @@
                 <CustomTextField
                     label="Jam Operasi"
                     id="operationHours"
+                    placeholder="Cth: 8.00am - 10.00pm"
                     bind:val={$clinicApplicationForm.operationHours}
                     errors={$clinicApplicationError.operationHours}
                 />

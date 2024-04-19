@@ -43,6 +43,7 @@ export const load = async () => {
     return {
         currentRoleCode,
         param,
+        paymentParam,
         employeeAllocationListResponse,
         employeeAllocationList,
         employeeGetAllocationResponse,
@@ -52,26 +53,6 @@ export const load = async () => {
     }
 }
 
-//update tuntutan kakitangan table
-export async function _updateTable(param: CommonListRequestDTO) {
-    const response: CommonResponseDTO = await MedicalServices.getClinicEmployeeAllocation(param);
-    return {
-        props: {
-            param,
-            response,
-        },
-    };
-}
-//update table peruntukkan
-export async function _updateAllocationTable(param: CommonListRequestDTO) {
-    const response: CommonResponseDTO = await MedicalServices.getClinicEmployeeAllocationTable(param);
-    return {
-        props: {
-            param,
-            response,
-        },
-    };
-}
 //update table pembayaran
 export async function _updatePaymentTable(param: CommonListRequestDTO) {
     const response: CommonResponseDTO = await MedicalServices.getClinicEmployeePaymentList(param);

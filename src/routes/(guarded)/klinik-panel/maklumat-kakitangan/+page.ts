@@ -25,14 +25,3 @@ export const load = async () => {
         clinicPanelEmployeeList,
     }
 }
-
-//update employee list table
-export async function _updateTable(param: CommonListRequestDTO) {
-    const response: CommonResponseDTO = await MedicalServices.getClinicPanelEmployeeList(param);
-    return {
-        props: {
-            param,
-            response,
-        },
-    };
-}

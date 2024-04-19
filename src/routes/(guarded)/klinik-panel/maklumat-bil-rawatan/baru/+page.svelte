@@ -27,14 +27,11 @@
         _submitTreatmentForm,
     } from './+page';
     import Alert from 'flowbite-svelte/Alert.svelte';
-    import { Accordion, AccordionItem, Modal } from 'flowbite-svelte';
+    import { Accordion, AccordionItem, Checkbox, Modal } from 'flowbite-svelte';
     import type { PatientList } from '$lib/dto/mypsm/perubatan/clinic-panel-treatment-add-patient.dto';
     import { superValidate } from 'sveltekit-superforms';
     import type { MedicalEmployeeDetail } from '$lib/dto/mypsm/perubatan/medical-employee-detail.dto';
-    import type {
-        TreatmentAddTreatmentDetail,
-        TreatmentDetailList,
-    } from '$lib/dto/mypsm/perubatan/clinic-panel-treatment-add-treatment-detail.dto';
+    import type { TreatmentDetailList } from '$lib/dto/mypsm/perubatan/clinic-panel-treatment-add-treatment-detail.dto';
 
     export let data: PageData;
 
@@ -42,11 +39,12 @@
     let treatmentModal: boolean = false;
     let patientIndex: number = 0;
     let eachIndex: number = 0;
+    let patientIsEmployee: boolean = false;
     let isSelected: boolean = false;
     let selectedEmployee: number = 0;
     let successAddPatients: boolean = false;
     let successAddTreatments: boolean = false;
-    let employeeDetail: MedicalEmployeeDetail = {
+    let employeeDetail = {
         employeeId: 0,
         employeeNumber: '',
         identityCardNumber: '',
@@ -87,8 +85,10 @@
                     patientName: $singlePatientForm.name,
                     treatmentList: [],
                 };
+                patientIsEmployee = false;
                 patientIndex += 1;
                 setTimeout(() => (patientModal = false), 50);
+                patientIsEmployee = false;
             }
         },
     });
@@ -181,6 +181,19 @@
             serviceGroup: employee.response.data?.details.serviceGroup,
         };
     };
+
+    $: {
+        if (patientIsEmployee) {
+            $singlePatientForm.name = employeeDetail.fullName;
+            $singlePatientForm.relationshipId = null;
+            $singlePatientForm.identityDocumentCard =
+                employeeDetail.identityCardNumber;
+        } else {
+            $singlePatientForm.name = "";
+            $singlePatientForm.relationshipId = 0;
+            $singlePatientForm.identityDocumentCard = "";
+        }
+    }
 </script>
 
 <!-- content header starts here -->
@@ -445,21 +458,27 @@
         use:singlePatientEnhance
         method="POST"
     >
+        <Checkbox class="text-sm font-base text-ios-systemColors-systemGrey-light" bind:checked={patientIsEmployee}
+            >Pesakit ialah kakitangan</Checkbox
+        >
         <CustomTextField
             label="Nama Pesakit"
             id="name"
+            disabled={patientIsEmployee}
             bind:val={$singlePatientForm.name}
             errors={$singlePatientError.name}
         />
         <CustomTextField
             label="No. Kad Pengenalan"
             id="identityDocumentCard"
+            disabled={patientIsEmployee}
             bind:val={$singlePatientForm.identityDocumentCard}
             errors={$singlePatientError.identityDocumentCard}
         />
         <CustomSelectField
             label="Hubungan"
             id="relationshipId"
+            disabled={patientIsEmployee}
             options={data.lookup.relationshipLookup}
             bind:val={$singlePatientForm.relationshipId}
             errors={$singlePatientError.relationshipId}

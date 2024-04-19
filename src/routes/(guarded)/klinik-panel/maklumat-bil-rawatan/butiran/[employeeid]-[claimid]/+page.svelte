@@ -5,8 +5,6 @@
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
-    import { superForm } from 'sveltekit-superforms/client';
-    import { zod } from 'sveltekit-superforms/adapters';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import { goto } from '$app/navigation';
@@ -19,7 +17,7 @@
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Makluamt Rawatan">
+    <ContentHeader title="Maklumat Rawatan">
         <TextIconButton
             label="Kembali"
             type="neutral"
@@ -37,13 +35,6 @@
             <StepperContentHeader title="Maklumat Kakitangan"
             ></StepperContentHeader>
             <StepperContentBody>
-                <!-- <CustomSelectField
-                    label="Nama"
-                    id="id"
-                    options={data.lookup.employeeList}
-                    val=""
-                    errors={[]}
-                /> -->
                 <CustomTextField
                     label="Nama"
                     id="fullName"
@@ -56,7 +47,6 @@
                     placeholder=""
                     disabled
                     bind:val={data.employeeDetail.employeeNumber}
-                    errors={[]}
                 />
                 <CustomTextField
                     label="No. Kad Pengenalan"
@@ -64,7 +54,6 @@
                     placeholder=""
                     disabled
                     bind:val={data.employeeDetail.identityCardNumber}
-                    errors={[]}
                 />
                 <CustomTextField
                     label="Gred"
@@ -72,7 +61,6 @@
                     placeholder=""
                     disabled
                     bind:val={data.employeeDetail.grade}
-                    errors={[]}
                 />
                 <CustomTextField
                     label="Penempatan"
@@ -80,7 +68,6 @@
                     placeholder=""
                     disabled
                     bind:val={data.employeeDetail.placement}
-                    errors={[]}
                 />
                 <CustomTextField
                     label="Kumpulan"
@@ -88,7 +75,6 @@
                     placeholder=""
                     disabled
                     bind:val={data.employeeDetail.serviceGroup}
-                    errors={[]}
                 />
             </StepperContentBody>
         </StepperContent>
