@@ -7,6 +7,7 @@ import {
     codeSchema,
     dateStringSchema,
     longTextSchema,
+    nricSchema,
     numberIdSchema,
     numberSchema,
     shortTextSchema,
@@ -241,9 +242,12 @@ export const _relationsSchema = z
         maritalId: numberIdSchema,
         genderId: numberIdSchema,
         name: shortTextSchema,
-        alternativeName: z.string(),
+        alternativeName: z.string({
+            required_error: 'Medan ini tidak boleh kosong.',
+            invalid_type_error: 'Medan ini tidak boleh kosong.',
+        }),
         identityDocumentColor: codeSchema,
-        identityDocumentNumber: shortTextSchema,
+        identityDocumentNumber: nricSchema,
         address: shortTextSchema,
         postcode: shortTextSchema,
         birthDate: dateStringSchema,
@@ -392,6 +396,5 @@ export const _uploadDocumentsSchema = z.object({
     document: z
         .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
         .refine((f) => f.size < 1_000_000, 'Maximum 1 MB saiz muat naik.')
-        .nullish(),
-    // .array(),
+        .array(),
 });

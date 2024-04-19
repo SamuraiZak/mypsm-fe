@@ -5,12 +5,24 @@ import { z } from 'zod';
 
 // =========================================================================
 export const shortTextSchema = z
-    .string({ required_error: 'Medan ini tidak boleh kosong.', invalid_type_error: 'Medan ini tidak boleh kosong.' })
+    .string({
+        required_error: 'Medan ini tidak boleh kosong.',
+        invalid_type_error: 'Medan ini tidak boleh kosong.',
+    })
     .min(4, {
         message: 'Medan ini hendaklah lebih daripada 4 karakter.',
     })
     .max(124, {
         message: 'Medan ini tidak boleh melebihi 124 karakter.',
+    })
+    .trim();
+export const nricSchema = z.coerce
+    .string()
+    .min(12, {
+        message: 'NRIC hendaklah lebih daripada 12 karakter.',
+    })
+    .max(12, {
+        message: 'NRIC tidak boleh melebihi 12 karakter.',
     })
     .trim();
 
@@ -102,9 +114,7 @@ export const requiredDateStringSchema = z.coerce.string({
     required_error: 'Pastikan tarikh adalah betul.',
 });
 
-export const numberSchem0 = z.coerce
-    .number({
-        required_error: 'Medan ini hendaklah diisi.',
-        invalid_type_error: 'Sila pastikan medan ini ditaip dengan angka',
-    })
-    
+export const numberSchem0 = z.coerce.number({
+    required_error: 'Medan ini hendaklah diisi.',
+    invalid_type_error: 'Sila pastikan medan ini ditaip dengan angka',
+});
