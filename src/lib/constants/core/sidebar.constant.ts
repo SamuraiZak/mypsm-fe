@@ -602,12 +602,12 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Pinjaman',
+                    name: 'Pinjaman dan Kuarters',
                     path: '',
                     subItems: [
                         {
                             name: 'Permohonan Kuarters',
-                            path: '/pinjaman/permohonan-kuarters',
+                            path: '/pinjaman-dan-kuarters/permohonan-masuk-kuarters',
                         },
                     ],
                 },
@@ -705,12 +705,12 @@ export class SidebarConstant {
                     ],
                 },
                 {
-                    name: 'Pinjaman',
+                    name: 'Pinjaman dan Kuarters',
                     path: '',
                     subItems: [
                         {
                             name: 'Permohonan Kuarters',
-                            path: '/pinjaman/permohonan-kuarters',
+                            path: '/pinjaman-dan-kuarters/permohonan-masuk-kuarters',
                         },
                     ],
                 },
