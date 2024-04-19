@@ -9,6 +9,7 @@ export interface LookupDTO {
     year?: number;
     url?: string;
     countryCode?: string;
+    isFamily?: boolean;
 
     //for approver and supporter
     employeeId?: number;

@@ -115,4 +115,15 @@ export class LookupHelper {
 
         return dropdownList;
     }
+
+    // relationship lookup based on isFamily
+    static toDropdownRelationship(lookupList: LookupDTO[]) {
+        const dropdownList: DropdownDTO[] = lookupList.map((lookup) => ({
+            value: Number(lookup.id),
+            name: lookup.description,
+            isFamily: lookup.isFamily,
+        }));
+
+        return dropdownList;
+    }
 }
