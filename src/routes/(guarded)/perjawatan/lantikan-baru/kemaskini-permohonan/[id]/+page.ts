@@ -1,5 +1,6 @@
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
+import type { DocumentBase64RequestDTO } from '$lib/dto/core/common/base-64-document-request.dto';
 import type { CandidateIDRequestBody } from '$lib/dto/core/common/candidate-id-request.view-dto';
 import type { CommonFilterDTO } from '$lib/dto/core/common/common-filter.dto';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
@@ -48,6 +49,7 @@ import type {
     NewHireSecretaryServiceUpdateResponseDTO,
 } from '$lib/dto/mypsm/employment/new-hire/new-hire-secretary-service-update.dto.js';
 import type { NewHireSetApproversDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-set-approvers.dto';
+import { _fileToBase64String } from '$lib/helpers/core/fileToBase64String.helper';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
     _academicInfoSchema,
@@ -89,6 +91,8 @@ import { superValidate } from 'sveltekit-superforms/client';
 // ];
 export async function load({ params }) {
     // const currentLoggedInUser = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode);
+
+    const newHireId: number = Number(params.id);
 
     let newHireStatusResponse: CommonResponseDTO = {};
 
@@ -436,9 +440,8 @@ export async function load({ params }) {
     const relationshipLookupResponse: CommonResponseDTO =
         await LookupServices.getRelationshipEnums();
 
-    const relationshipLookup: DropdownDTO[] = LookupServices.setSelectOptions(
-        relationshipLookupResponse,
-    );
+    const relationshipLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsRelationship(relationshipLookupResponse);
 
     // ===========================================================================
 
@@ -561,6 +564,7 @@ export async function load({ params }) {
     // ===========================================================================
 
     return {
+        newHireId,
         newHireStatusResponse,
         personalDetailResponse,
         personalInfoForm,
@@ -596,6 +600,7 @@ export async function load({ params }) {
         newHireDocumentForm,
         submittedDocuments,
         mypsmIDResponse,
+        relationshipLookupResponse,
         selectionOptions: {
             identityCardColorLookup,
             cityLookup,
@@ -833,20 +838,37 @@ export const _submitSecretarySetApproverForm = async (formData: object) => {
     return { response };
 };
 
-export const _submitDocumentsForm = async (file: File | null | undefined) => {
+export const _submitDocumentForm = async (id: number, files: File[]) => {
     const documentData = new FormData();
 
-    documentData.append('document', file as File);
+    // check file size validation
+    files.forEach((file) => {
+        documentData.append('document', file, file.name);
+    });
 
     const form = await superValidate(documentData, zod(_uploadDocumentsSchema));
 
-    if (!form.valid) {
+    if (!form.valid || id === undefined) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
     }
 
+    // turns file into base 64 format
+    const base64String = await _fileToBase64String(files[0]);
+
+    const requestBody: {
+        id: number;
+        document?: DocumentBase64RequestDTO | undefined;
+    } = {
+        document: {
+            base64: base64String,
+            name: files[0].name,
+        },
+        id: id,
+    };
+
     const response: CommonResponseDTO =
-        await EmploymentServices.createCurrentCandidateDocuments(documentData);
+        await EmploymentServices.createCurrentCandidateDocuments(requestBody);
 
     return { response };
 };

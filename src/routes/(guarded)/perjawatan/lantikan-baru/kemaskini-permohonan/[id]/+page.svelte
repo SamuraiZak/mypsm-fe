@@ -37,7 +37,7 @@
         _submitApproverApprovalForm,
         _submitDependencyForm,
         _submitDependencyInfoForm,
-        _submitDocumentsForm,
+        _submitDocumentForm,
         _submitExperienceForm,
         _submitExperienceInfoForm,
         _submitFamilyForm,
@@ -127,21 +127,27 @@
         isReadonlyNextOfKinFormStepper.set(
             data.nextOfKinInfoResponse?.data?.details?.isReadonly,
         );
-        isReadonlyDocumentFormStepper.set(
-            !!data.documentInfoResponse?.data?.details?.attachment,
-        );
+
+        if (data.documentInfoResponse?.data?.details?.isReadonly) {
+            isReadonlyDocumentFormStepper.set(true);
+        }
+
         isReadonlyServiceFormStepper.set(
             data.serviceResponse?.data?.details?.isReadonly,
         );
+
         isReadonlySecretaryApprovalResult.set(
             !!data.secretaryApprovalResponse?.data?.details?.status,
         );
+
         isReadonlySetApproversFormStepper.set(
             data.secretaryGetApproversResponse?.data?.details?.isReadonly,
         );
+
         isReadonlySupporterApprovalResult.set(
             !!data.supporterResultResponse?.data?.details?.status,
         );
+
         isReadonlyApproverApprovalResult.set(
             !!data.approverResultResponse?.data?.details?.status,
         );
@@ -366,7 +372,7 @@
         taintedMessage: false,
         validators: zod(_uploadDocumentsSchema),
         onSubmit() {
-            _submitDocumentsForm($documentForm.document);
+            _submitDocumentForm(data.newHireId, $documentForm.document);
         },
     });
 
@@ -526,8 +532,6 @@
                 zod(_relationsSchema),
             );
 
-            console.log('Result: ', result);
-
             if (!result.valid) {
                 getErrorToast();
                 error(400, 'Validation not passed, please check every fields.');
@@ -559,18 +563,17 @@
                 zod(_relationsSchema),
             );
 
-            console.log('Result: ', result);
-
             if (!result.valid) {
                 getErrorToast();
                 error(400, 'Validation not passed, please check every fields.');
             }
 
-            tempNextOfKinFromFamily = [
-                ...tempNextOfKinFromFamily,
+            tempNextOfKinRecord = [
+                ...tempNextOfKinRecord,
                 result.data as NextOfKin,
             ];
-            openFamilyInfoModal = false;
+
+            openNextOfKinInfoModal = false;
         },
     });
 
@@ -623,9 +626,13 @@
     };
 
     const handleOnInput = (e: Event) => {
-        $documentForm.document =
-            ((e.currentTarget as HTMLInputElement)?.files?.item(0) as File) ??
-            null;
+        const additionalFiles: File[] = Array.from(
+            (e.currentTarget as HTMLInputElement)?.files ?? [],
+        );
+
+        additionalFiles.forEach((file) => {
+            $documentForm.document = [...$documentForm.document, file];
+        });
     };
 
     const handleDownload = async (url: string) => {
@@ -633,9 +640,11 @@
     };
 
     // Function to handle the file deletion
-    function handleDelete() {
-        $documentForm.document = null;
-    }
+    const handleDelete = (i: number) => {
+        $documentForm.document = $documentForm.document.filter((_, index) => {
+            return index !== i;
+        });
+    };
 </script>
 
 <ContentHeader title="Maklumat Lantikan Baru"
@@ -2223,15 +2232,18 @@
                         use:documentFormEnhance
                         enctype="multipart/form-data"
                     >
+                        {#if $documentFormErrors.document}
+                            <span
+                                class="font-sans text-sm italic text-system-danger"
+                                >Sila muat naik dokumen barkaitan dan pastikan
+                                tidak melebihi 4MB.</span
+                            >
+                        {/if}
                         <ContentHeader
-                            title="Dokumen Sokongan"
+                            title="Sila pastikan dokumen berkenaan dimuat naik"
                             borderClass="border-none"
                         >
-                            <div
-                                hidden={!(
-                                    $documentForm.document instanceof File
-                                )}
-                            >
+                            <div hidden={$documentForm.document.length < 1}>
                                 <FileInputField
                                     id="document"
                                     handleOnInput={(e) => handleOnInput(e)}
@@ -2239,34 +2251,22 @@
                             </div>
                         </ContentHeader>
                         <div
-                            class="border-bdr-primaryp-5 flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border p-2.5"
+                            class="flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border border-bdr-primary p-2.5"
                         >
                             <div class="flex flex-wrap gap-3">
-                                <!-- {#each $documentForm.document as item, index} -->
-                                {#if $documentForm.document instanceof File}
+                                {#each $documentForm.document as _, i}
                                     <FileInputFieldChildren
                                         childrenType="grid"
-                                        handleDelete={() => handleDelete()}
-                                        document={$documentForm.document}
+                                        handleDelete={() => handleDelete(i)}
+                                        document={$documentForm.document[i]}
                                     />
-                                {/if}
-                                <!-- {/each} -->
+                                {/each}
                             </div>
-                            <div
-                                class="flex flex-col items-center justify-center gap-2.5"
-                            >
-                                <p
-                                    class=" text-sm text-txt-tertiary"
-                                    hidden={$documentForm.document instanceof
-                                        File}
-                                >
-                                    Pilih fail dari peranti anda.
-                                </p>
+                            {#if $documentForm.document.length < 1}
                                 <div
-                                    class="text-txt-tertiary"
-                                    hidden={$documentForm.document instanceof
-                                        File}
+                                    class="flex flex-col items-center justify-center gap-2.5 text-sm text-txt-tertiary"
                                 >
+                                    <span>Pilih fail dari peranti anda.</span>
                                     <svg
                                         width={40}
                                         height={40}
@@ -2282,17 +2282,18 @@
                                             d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
                                         />
                                     </svg>
-                                </div>
-                                <div
-                                    hidden={$documentForm.document instanceof
-                                        File}
-                                >
-                                    <FileInputField id="document"
+                                    <FileInputField
+                                        id="document"
+                                        handleOnInput={(e) => handleOnInput(e)}
                                     ></FileInputField>
                                 </div>
-                            </div>
+                            {/if}
                         </div>
                     </form>
+                {:else if data.documentInfoResponse?.data?.details?.attachment}
+                    <div class="text-center text-sm italic text-system-primary">
+                        Tiada maklumat.
+                    </div>
                 {:else}
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
@@ -2326,8 +2327,7 @@
                             ></DownloadAttachment>
                         </div>
                         <!-- {/each} -->
-                    </div>
-                {/if}
+                    </div>{/if}
             </div></StepperContentBody
         >
     </StepperContent>
@@ -3286,7 +3286,9 @@
             errors={$addFamilyErrors.relationshipId}
             id="relationshipId"
             label={'Hubungan'}
-            options={data.selectionOptions.relationshipLookup}
+            options={data.selectionOptions.relationshipLookup.filter((data) => {
+                return data.isFamily;
+            })}
             bind:val={$addFamilyModal.relationshipId}
         ></CustomSelectField>
 
@@ -3386,7 +3388,7 @@
 
 <!-- Non Family Info Modal -->
 <Modal
-    title={'Tambah Maklumat Suami/Isteri & Anak'}
+    title={'Tambah Maklumat Selain Suami/Isteri & Anak'}
     bind:open={openNonFamilyInfoModal}
 >
     <form
@@ -3474,7 +3476,11 @@
             errors={$addNonFamilyErrors.relationshipId}
             id="relationshipId"
             label={'Hubungan'}
-            options={data.selectionOptions.relationshipLookup}
+            options={data.selectionOptions.relationshipLookup.filter(
+                (value) => {
+                    return !value.isFamily;
+                },
+            )}
             bind:val={$addNonFamilyModal.relationshipId}
         ></CustomSelectField>
 
