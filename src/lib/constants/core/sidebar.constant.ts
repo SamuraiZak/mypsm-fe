@@ -62,12 +62,8 @@ export class SidebarConstant {
                             path: '/cuti/permohonan',
                         },
                         {
-                            name: 'Cuti Rehat, Kecemasan, Sakit',
-                            path: '/cuti/cuti-rehat-kecemasan-sakit',
-                        },
-                        {
-                            name: 'Gantian Cuti Rehat',
-                            path: '/cuti/gantian-cuti-rehat',
+                            name: 'HRMIS',
+                            path: '/cuti/HRMIS',
                         },
                     ],
                 },
@@ -288,10 +284,6 @@ export class SidebarConstant {
                             name: 'Permohonan',
                             path: '/cuti/permohonan',
                         },
-                        {
-                            name: 'Pengeluaran Gantian Cuti Rehat (GCR) Awal',
-                            path: '/cuti/pengeluaran-gantian-cuti-rehat-awal',
-                        },
                     ],
                 },
                 {
@@ -326,10 +318,6 @@ export class SidebarConstant {
                         {
                             name: 'Peruntukan',
                             path: '/cuti/peruntukan',
-                        },
-                        {
-                            name: ' Gantian Cuti Rehat',
-                            path: '/cuti/gantian-cuti-rehat',
                         },
                     ],
                 },
@@ -571,14 +559,6 @@ export class SidebarConstant {
                             name: 'Permohonan',
                             path: '/cuti/permohonan',
                         },
-                        {
-                            name: 'Pengumpulan Gantian Cuti Rehat',
-                            path: '/cuti/pengumpulan-gantian-cuti-rehat',
-                        },
-                        {
-                            name: 'Pengeluaran Gantian Cuti Rehat Awal',
-                            path: '/cuti/pengeluaran-gantian-cuti-rehat-awal',
-                        },
                     ],
                 },
                 {
@@ -673,14 +653,6 @@ export class SidebarConstant {
                         {
                             name: 'Permohonan',
                             path: '/cuti/permohonan',
-                        },
-                        {
-                            name: 'Pengumpulan Gantian Cuti Rehat',
-                            path: '/cuti/pengumpulan-gantian-cuti-rehat',
-                        },
-                        {
-                            name: 'Pengeluaran Gantian Cuti Rehat Awal',
-                            path: '/cuti/pengeluaran-gantian-cuti-rehat-awal',
                         },
                     ],
                 },
@@ -1070,20 +1042,8 @@ export class SidebarConstant {
                             path: '/cuti/peruntukan',
                         },
                         {
-                            name: 'Cuti (Rehat, Kecemasan, Sakit)',
-                            path: '/cuti/cuti-rehat-kecemasan-sakit',
-                        },
-                        {
-                            name: 'Pengumpulan Gantian Cuti Rehat',
-                            path: '/cuti/pengumpulan-gantian-cuti-rehat',
-                        },
-                        {
-                            name: 'Pengeluaran Gantian Cuti Rehat Awal',
-                            path: '/cuti/pengeluaran-gantian-cuti-rehat-awal',
-                        },
-                        {
-                            name: 'Kelulusan Cuti',
-                            path: '/cuti/kelulusan-cuti',
+                            name: 'Permohonan',
+                            path: '/cuti/permohonan',
                         },
                     ],
                 },
@@ -1275,22 +1235,6 @@ export class SidebarConstant {
                             path: '/cuti/peruntukan',
                         },
                         {
-                            name: 'Laporan Cuti Kakitangan',
-                            path: '/cuti/laporan-cuti',
-                        },
-                        {
-                            name: 'Cuti (Rehat, Kecemasan, Sakit)',
-                            path: '/cuti/cuti-rehat-kecemasan-sakit',
-                        },
-                        {
-                            name: 'Pengumpulan Gantian Cuti Rehat',
-                            path: '/cuti/pengumpulan-gantian-cuti-rehat',
-                        },
-                        {
-                            name: 'Pengeluaran Gantian Cuti Rehat Awal',
-                            path: '/cuti/pengeluaran-gantian-cuti-rehat-awal',
-                        },
-                        {
                             name: 'Permohonan',
                             path: '/cuti/permohonan',
                         },
@@ -1443,22 +1387,6 @@ export class SidebarConstant {
                         {
                             name: 'Peruntukan',
                             path: '/cuti/peruntukan',
-                        },
-                        {
-                            name: 'Cuti (Rehat, Kecemasan, Sakit)',
-                            path: '/cuti/cuti-rehat-kecemasan-sakit',
-                        },
-                        {
-                            name: 'Pengumpulan Gantian Cuti Rehat',
-                            path: '/cuti/pengumpulan-gantian-cuti-rehat',
-                        },
-                        {
-                            name: 'Pengeluaran Gantian Cuti Rehat Awal',
-                            path: '/cuti/pengeluaran-gantian-cuti-rehat-awal',
-                        },
-                        {
-                            name: 'Kelulusan Cuti',
-                            path: '/cuti/kelulusan-cuti',
                         },
                     ],
                 },
@@ -1949,22 +1877,6 @@ export class SidebarConstant {
                         {
                             name: 'Peruntukan',
                             path: '/cuti/peruntukan',
-                        },
-                        {
-                            name: 'Cuti (Rehat, Kecemasan, Sakit)',
-                            path: '/cuti/cuti-rehat-kecemasan-sakit',
-                        },
-                        {
-                            name: 'Pengumpulan Gantian Cuti Rehat',
-                            path: '/cuti/pengumpulan-gantian-cuti-rehat',
-                        },
-                        {
-                            name: 'Pengeluaran Gantian Cuti Rehat Awal',
-                            path: '/cuti/pengeluaran-gantian-cuti-rehat-awal',
-                        },
-                        {
-                            name: 'Kelulusan Cuti',
-                            path: '/cuti/kelulusan-cuti',
                         },
                     ],
                 },
