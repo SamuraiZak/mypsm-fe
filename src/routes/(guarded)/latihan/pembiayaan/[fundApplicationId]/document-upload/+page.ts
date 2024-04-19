@@ -4,6 +4,7 @@ import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { DocumentBase64RequestDTO } from '$lib/dto/core/common/base-64-document-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { CourseFundReimbursementUploadDocumentsBase64RequestDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement-document.dto';
+import { _fileToBase64String } from '$lib/helpers/core/fileToBase64String.helper';
 import {
     getErrorToast,
 } from '$lib/helpers/core/toast.helper';
@@ -12,7 +13,6 @@ import { CourseFundApplicationServices } from '$lib/services/implementation/myps
 import { error } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms/client';
-import { _fileToBase64String } from '../../../../elaun-elaun-perkhidmatan/permohonan/[applicationId]/[typeCode]/+page';
 
 //==================================================
 //=============== Load Function ====================
