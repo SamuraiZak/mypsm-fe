@@ -178,7 +178,7 @@ export class TransferApplicationServices {
     // add common transfer postpone result
     static async addCommonPostponeApproval(param: TransferCommonEndorsement) {
         try {
-            let url: Input = 'employment/forced_transfer/add_postpone_result';
+            let url: Input = 'employment/forced_transfer/add_postpone_approval';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -258,11 +258,61 @@ export class TransferApplicationServices {
     static async addCommonApproverFeedback(param: TransferCommonEndorsement) {
         try {
             let url: Input =
-                'employment/forced_transfer/add_supporter_approval';
+                'employment/forced_transfer/add_approver_approval';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
                     body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await getPromiseToast(promiseResponse);
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async uploadCommonTransferDocument(param: string) {
+        try {
+            let url: Input = 'employment/forced_transfer/upload_document';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: param,
+                })
+                .json();
+
+            const response = await getPromiseToast(promiseResponse);
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async uploadCommonPostponeDocument(param: string) {
+        try {
+            let url: Input = 'employment/forced_transfer/upload_postpone_document';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: param,
                 })
                 .json();
 

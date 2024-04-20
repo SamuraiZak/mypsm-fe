@@ -1,11 +1,11 @@
-export interface TranserDocumentDTO {
+export interface TransferDocumentDTO {
     name: string;
     base64: string;
 }
 
 export interface TransferDocumentAddDTO {
     id: number;
-    documents: TranserDocumentDTO[];
+    documents: TransferDocumentDTO[];
 }
 
 export interface TransferCommonEndorsementDTO {
@@ -71,8 +71,9 @@ export interface TransferCommonMeetingDTO {
     id: number;
     name: string;
     date: string;
-    result: string;
+    result: boolean;
     placementId: number;
+    programmeId: number;
     effectiveDate: string;
     referenceNo: string;
     referenceDate: string;

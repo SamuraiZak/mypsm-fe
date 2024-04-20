@@ -1,5 +1,8 @@
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
-import { TransferTypeConstant } from '$lib/constants/core/transfer.constant.js';
+import {
+    TransferStatusConstant,
+    TransferTypeConstant,
+} from '$lib/constants/core/transfer.constant.js';
 import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto.js';
@@ -8,6 +11,8 @@ import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
 import type {
     TransferApplicationDetailRequestDTO,
     TransferCommonApplicationDetailDTO,
+    TransferDocumentAddDTO,
+    TransferDocumentDTO,
 } from '$lib/dto/mypsm/employment/transfer/transfer.dto';
 import { LookupHelper } from '$lib/helpers/core/lookup.helper';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
@@ -31,7 +36,7 @@ import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-export async function load({ params }) {
+export async function load({params}) {
     // set default application id
     let currentApplicationId: number = 0;
 
@@ -63,14 +68,20 @@ export async function load({ params }) {
             break;
         case UserRoleConstant.urusSetiaPerjawatan.code:
             userMode = 'secretary';
-            currentApplicationType =
-                TransferTypeConstant.management.description;
             break;
-
+        case UserRoleConstant.pelulus.code:
+            userMode = 'approver';
+            break;
+        case UserRoleConstant.penyokong.code:
+            userMode = 'supporter';
+            break;
         default:
             userMode = 'employee';
             break;
     }
+
+    // set the current steps
+    let currentStep: LookupDTO = TransferStatusConstant.step0;
 
     // create forms
     // application details form
@@ -139,8 +150,17 @@ export async function load({ params }) {
             );
 
         if (currentApplicationDetailResponse.status == 'success') {
+            // assign the current application detail to the vairable
             currentApplicationDetail = currentApplicationDetailResponse.data
                 ?.details as TransferCommonApplicationDetailDTO;
+
+            if (currentApplicationDetail.status !== null) {
+                currentStep =
+                    TransferStatusConstant.list.find(
+                        (item) =>
+                            item.description == currentApplicationDetail.status,
+                    ) ?? TransferStatusConstant.step0;
+            }
 
             // application detail
             if (currentApplicationDetail.applicationDetail !== null) {
@@ -156,6 +176,15 @@ export async function load({ params }) {
                 meetingResultForm.data = currentApplicationDetail.meeting;
             } else {
                 meetingResultForm.data.id = currentApplicationId;
+
+                if (
+                    currentApplicationDetail.applicationDetail
+                        ?.newPlacementId !== undefined
+                ) {
+                    meetingResultForm.data.placementId =
+                        currentApplicationDetail.applicationDetail
+                            ?.newPlacementId;
+                }
             }
 
             // postpone application form
@@ -211,7 +240,7 @@ export async function load({ params }) {
     }
 
     // enums
-    // get list of unrecorded leave type
+    // get list of placement
     let placementList: LookupDTO[] = [];
 
     const unrecordedLeaveTypeResponse: CommonResponseDTO =
@@ -228,6 +257,23 @@ export async function load({ params }) {
 
     const placementListDropdown: DropdownDTO[] =
         LookupHelper.toDropdownProperId(placementList);
+
+    // get list of programme
+    let programmeList: LookupDTO[] = [];
+
+    const programmeListResponse: CommonResponseDTO =
+        await LookupServices.getProgrammeEnums();
+
+    if (programmeListResponse.status == 'success') {
+        programmeList = programmeListResponse.data?.dataList as LookupDTO[];
+    }
+
+    programmeList = programmeList
+        .slice()
+        .sort((a, b) => a.description.localeCompare(b.description));
+
+    const programmeListDropdown: DropdownDTO[] =
+        LookupHelper.toDropdownProperId(programmeList);
 
     // endorser list
     const endorserRequest: CommonListRequestDTO = {
@@ -273,6 +319,28 @@ export async function load({ params }) {
     const employeeDropdown: DropdownDTO[] =
         LookupServices.setSelectOptionSupporterAndApproverKP(employeeResponse);
 
+    let meetingResultOption: DropdownDTO[] = [
+        {
+            value: true,
+            name: 'Lulus',
+        },
+        {
+            value: false,
+            name: 'Tidak Lulus',
+        },
+    ];
+
+    let endorsementDropdown: DropdownDTO[] = [
+        {
+            value: true,
+            name: 'Ya',
+        },
+        {
+            value: false,
+            name: 'Tidak',
+        },
+    ];
+
     return {
         props: {
             userMode,
@@ -280,9 +348,13 @@ export async function load({ params }) {
             currentApplicationId,
             currentApplicationDetail,
             currentApplicationType,
+            currentStep,
             placementListDropdown,
             endorserDropdown,
+            endorsementDropdown,
             employeeDropdown,
+            programmeListDropdown,
+            meetingResultOption,
         },
         forms: {
             applicationDetailForm,
@@ -452,4 +524,68 @@ export async function _submitApproverFeedbackForm(
         getErrorToast('Sila semak semula maklumat anda.');
         error(400, { message: '' });
     }
+}
+
+export const _submitDocument = async (formData: string) => {
+    const response: CommonResponseDTO =
+        await TransferApplicationServices.uploadCommonTransferDocument(
+            formData,
+        );
+
+    return { response };
+};
+
+export const _submitPostponeDocument = async (formData: string) => {
+    const response: CommonResponseDTO =
+        await TransferApplicationServices.uploadCommonPostponeDocument(
+            formData,
+        );
+
+    return { response };
+};
+
+export function _convertToBase64(file: File): Promise<TransferDocumentDTO> {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+            const base64String = event.target?.result as string;
+            const fileName = file.name;
+            const fileObject: TransferDocumentDTO = {
+                name: fileName,
+                base64: base64String,
+            };
+
+            resolve(fileObject);
+        };
+
+        reader.onerror = (error) => {
+            reject(error);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+export function _prepDocumentUpload(
+    fileList: FileList,
+): Promise<TransferDocumentDTO[]> {
+    return new Promise((resolve, reject) => {
+        const fileArray: File[] = Array.from(fileList);
+
+        const filesPromiseArray: Promise<TransferDocumentDTO>[] = [];
+
+        fileArray.forEach((file) => {
+            const filePromise = _convertToBase64(file);
+
+            filesPromiseArray.push(filePromise);
+        });
+
+        Promise.all(filesPromiseArray)
+            .then((files) => {
+                resolve(files);
+            })
+            .catch((error) => {
+                reject(error);
+            });
+    });
 }

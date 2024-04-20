@@ -25,6 +25,12 @@ export class TransferTypeConstant {
 }
 
 export class TransferStatusConstant {
+    
+    public static step0: LookupDTO = {
+        id: 0,
+        code: 'step0',
+        description: 'Baru',
+    };
     public static step1: LookupDTO = {
         id: 1,
         code: 'step1',
@@ -44,12 +50,12 @@ export class TransferStatusConstant {
     public static step4: LookupDTO = {
         id: 4,
         code: 'step4',
-        description: 'Menunggu keputusan penangguhan',
+        description: 'Menunggu semakan permohonan penangguhan',
     };
     public static step5: LookupDTO = {
         id: 5,
         code: 'step5',
-        description: 'Menunggu pengesahan keputusan penangguhan',
+        description: 'Menunggu keputusan permohonan penangguhan',
     };
     public static step6: LookupDTO = {
         id: 6,
@@ -76,4 +82,17 @@ export class TransferStatusConstant {
         code: 'step10',
         description: 'Selesai',
     };
+
+    public static list: LookupDTO[] = [
+        this.step1,
+        this.step2,
+        this.step3,
+        this.step4,
+        this.step5,
+        this.step6,
+        this.step7,
+        this.step8,
+        this.step9,
+        this.step10,
+    ];
 }
