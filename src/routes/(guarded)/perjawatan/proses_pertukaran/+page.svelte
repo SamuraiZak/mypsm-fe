@@ -10,7 +10,7 @@
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
-    import type { PageData } from './$types';
+    import type { PageData } from '../pertukaran/$types';
 
     export let data: PageData;
 

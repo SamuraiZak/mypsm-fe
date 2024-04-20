@@ -1,7 +1,20 @@
 <script lang="ts">
-    import { superForm } from 'sveltekit-superforms/client';
-    import { zodClient } from 'sveltekit-superforms/adapters';
-    import { Badge } from 'flowbite-svelte';
+    import { goto } from '$app/navigation';
+    import SvgChevronLeft from '$lib/assets/svg/SvgChevronLeft.svelte';
+    import TextIconButton from '$lib/components/button/TextIconButton.svelte';
+    import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
+    import CustomFileField from '$lib/components/inputs/file-field/CustomFileField.svelte';
+    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
+    import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
+    import Stepper from '$lib/components/stepper/Stepper.svelte';
+    import StepperContent from '$lib/components/stepper/StepperContent.svelte';
+    import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
+    import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
+    import { TransferTypeConstant } from '$lib/constants/core/transfer.constant';
+    import type {
+        TransferCommonDetailDTO,
+        TransferDocumentAddDTO,
+    } from '$lib/dto/mypsm/employment/transfer/transfer.dto';
     import {
         TransferCommonDetailSchema,
         TransferCommonEndorsementSchema,
@@ -10,17 +23,10 @@
         TransferCommonPostponeApplicationSchema,
         TransferCommonPostponeResultSchema,
     } from '$lib/schemas/mypsm/employment/transfer/transfer.schema';
-    import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
-    import TextIconButton from '$lib/components/button/TextIconButton.svelte';
-    import SvgChevronLeft from '$lib/assets/svg/SvgChevronLeft.svelte';
-    import { goto } from '$app/navigation';
-    import Stepper from '$lib/components/stepper/Stepper.svelte';
-    import StepperContent from '$lib/components/stepper/StepperContent.svelte';
-    import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
-    import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
-    import { Alert } from 'flowbite-svelte';
-    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
-    import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
+    import { Alert, Badge } from 'flowbite-svelte';
+    import { Toaster } from 'svelte-french-toast';
+    import { zodClient } from 'sveltekit-superforms/adapters';
+    import { superForm } from 'sveltekit-superforms/client';
     import {
         _prepDocumentUpload,
         _submitApplicationDetailForm,
@@ -34,14 +40,6 @@
         _submitPostponeResultForm,
         _submitSupporterFeedbackForm,
     } from './+page';
-    import { Toaster } from 'svelte-french-toast';
-    import type {
-        TransferCommonDetailDTO,
-        TransferDocumentAddDTO,
-    } from '$lib/dto/mypsm/employment/transfer/transfer.dto';
-    import { TransferTypeConstant } from '$lib/constants/core/transfer.constant';
-    import CustomFileField from '$lib/components/inputs/file-field/CustomFileField.svelte';
-    import type { PageData } from './$types';
 
     export let data: PageData;
 
