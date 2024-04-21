@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from 'zod';
 
 // ======================================================
 // VOLUNTARY SHARED
@@ -17,8 +17,9 @@ export const RetirementEndorserDetailSchema = z.object({
     approver: z.string(),
     isReadOnly: z.boolean(),
 });
-export type RetirementEndorserDetail = z.infer<typeof RetirementEndorserDetailSchema>;
-
+export type RetirementEndorserDetail = z.infer<
+    typeof RetirementEndorserDetailSchema
+>;
 
 // ======================================================
 // VOLUNTARY
@@ -29,8 +30,9 @@ export const RetirementVoluntaryDetailSchema = z.object({
     newRetirementDate: z.string(),
     reason: z.string(),
 });
-export type RetirementVoluntaryDetail = z.infer<typeof RetirementVoluntaryDetailSchema>;
-
+export type RetirementVoluntaryDetail = z.infer<
+    typeof RetirementVoluntaryDetailSchema
+>;
 
 // ======================================================
 // FORCED
@@ -41,11 +43,13 @@ export type RetirementVoluntaryDetail = z.infer<typeof RetirementVoluntaryDetail
 // ======================================================
 export const RetirementForcedEndorsementSchema = z.object({
     forceId: z.number(),
+    name: z.string().nullish(),
     status: z.boolean(),
     remark: z.string(),
 });
-export type RetirementForcedEndorsement = z.infer<typeof RetirementForcedEndorsementSchema>;
-
+export type RetirementForcedEndorsement = z.infer<
+    typeof RetirementForcedEndorsementSchema
+>;
 
 // ======================================================
 // UNSPECIFY
@@ -63,34 +67,36 @@ export const UpdateListSchema = z.object({
 export type UpdateList = z.infer<typeof UpdateListSchema>;
 
 export const DetailsSchema = z.object({
-    "updateList": z.array(UpdateListSchema),
+    updateList: z.array(UpdateListSchema),
 });
 export type UpdateDetails = z.infer<typeof DetailsSchema>;
 
 export const UpdateRetirementUnspecifyDetailSchema = z.object({
-    "details": DetailsSchema,
+    details: DetailsSchema,
 });
-export type UpdateRetirementUnspecifyDetail = z.infer<typeof UpdateRetirementUnspecifyDetailSchema>;
-
-
+export type UpdateRetirementUnspecifyDetail = z.infer<
+    typeof UpdateRetirementUnspecifyDetailSchema
+>;
 
 // ======================================================
 // UNSPECIFY
 
 export const DocumetnUpdateListSchema = z.object({
-    "groupId": z.number(),
-    "employeeId": z.number(),
-    "remark": z.string(),
-    "status": z.boolean(),
+    groupId: z.number(),
+    employeeId: z.number(),
+    remark: z.string(),
+    status: z.boolean(),
 });
 export type DocumentUpdateList = z.infer<typeof UpdateListSchema>;
 
 export const DocumentDetailsSchema = z.object({
-    "updateList": z.array(UpdateListSchema),
+    updateList: z.array(UpdateListSchema),
 });
 export type DocumentDetails = z.infer<typeof DetailsSchema>;
 
 export const DocumentRetirementUnspecifyDetailSchema = z.object({
-    "details": DetailsSchema,
+    details: DetailsSchema,
 });
-export type DocumentRetirementUnspecifyDetail = z.infer<typeof DocumentRetirementUnspecifyDetailSchema>;
+export type DocumentRetirementUnspecifyDetail = z.infer<
+    typeof DocumentRetirementUnspecifyDetailSchema
+>;
