@@ -73,6 +73,21 @@ export const _serviceInfoSchema = z.object({
 
 });
 
+
+//======================================================
+//================== Salary ===================
+//======================================================
+
+export const _salaryInfoSchema = z.object({
+    effectiveDate: dateSchema,
+    baseSalary: numberSchema,
+    ITKA: shortTextSchema,
+    ITP: numberSchema,
+    EPW: numberSchema,
+    COLA: shortTextSchema,
+    
+});
+
 //======================================================
 //================== PTB KWAP Schema ===================
 //======================================================
@@ -87,21 +102,6 @@ export const _PTBPensionInfoSchema = z.object({
     KWAPEmailDate: dateSchema,
 
 });
-
-//======================================================
-//================== Salary ===================
-//======================================================
-
-export const _salaryInfoSchema = z.object({
-    effectiveDate: dateSchema,
-    baseSalary: numberSchema,
-    ITKA: shortTextSchema,
-    ITP: numberSchema,
-    EPW: numberSchema,
-    COLA: shortTextSchema,
-
-});
-
 //======================================================
 //========= edit Peranan -Peranan Berkaitan ============
 //======================================================

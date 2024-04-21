@@ -23,6 +23,7 @@ import type { SalaryDetailDTO } from '$lib/dto/mypsm/employment/ptb-dan-kwap/sal
 import type { RolesRelatedDetailDTO } from '$lib/dto/mypsm/employment/ptb-dan-kwap/roles-related.dto';
 import type { SupportDetailDTO } from '$lib/dto/mypsm/employment/ptb-dan-kwap/support-detail.dto';
 import type { ApproveDetailDTO } from '$lib/dto/mypsm/employment/ptb-dan-kwap/approve-detail.dto';
+import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto.js';
 
 
 
@@ -215,6 +216,9 @@ export async function load({ params }) {
         id: Number(params.id),
     };
 
+    const employeeeIdRequestBody: commonIdRequestDTO = {
+        id: Number(params.id),
+    };
     const pensionDetailResponse: CommonResponseDTO =
         await PTBKWAPServices.getPTBKWAPpensionDetails(
             candidateIdRequestBody,
@@ -301,6 +305,7 @@ export async function load({ params }) {
 
         },
         candidateIdRequestBody,
+        employeeeIdRequestBody,
         pensionDetailResponse,
         personalDetailResponse,
         serviceDetailResponse,

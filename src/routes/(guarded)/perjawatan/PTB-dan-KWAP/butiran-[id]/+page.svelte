@@ -34,6 +34,7 @@
         _serviceInfoSchema,
         _supporterInfoSchema,
     } from '$lib/schemas/mypsm/employment/PTB-KWAP/schema';
+    import { _editpensionDetailSubmit } from './+page';
 
     let currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
@@ -123,6 +124,9 @@
         resetForm: false,
         validationMethod: 'oninput',
         validators: zod(_PTBPensionInfoSchema),
+        onSubmit() {
+            _editpensionDetailSubmit($PTBPensionInfoForm);
+        },
     });
     const {
         form: rolesRelatedInfoForm,
@@ -355,6 +359,7 @@
                         >Maklumat Perkhidmatan</b
                     >
                     <CustomTextField
+                    disabled
                         id="grade"
                         label={'Gred Semasa'}
                         type="text"
@@ -362,6 +367,7 @@
                         bind:val={$serviceInfoForm.grade}
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         id="position"
                         label={'Jawatan'}
                         type="text"
@@ -370,6 +376,7 @@
                     ></CustomTextField>
 
                     <CustomTextField
+                    disabled
                         id="placement"
                         label={'Penempatan'}
                         type="text"
@@ -378,6 +385,7 @@
                     ></CustomTextField>
 
                     <CustomTextField
+                    disabled
                         id="serviceLevel"
                         label={'Taraf Perkhidmatan'}
                         type="text"
@@ -386,6 +394,7 @@
                     ></CustomTextField>
 
                     <CustomTextField
+                    disabled
                         id="retirementType"
                         label="Faedah Persaraan"
                         errors={$serviceInfoError.retirementType}
@@ -393,6 +402,7 @@
                     />
 
                     <CustomTextField
+                    disabled
                         id="EPFNumber"
                         label={'No. KWSP'}
                         type="text"
@@ -400,6 +410,7 @@
                         bind:val={$serviceInfoForm.EPFNumber}
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         id="SOCSONumber"
                         label={'No. SOCSO'}
                         type="text"
@@ -407,6 +418,7 @@
                         bind:val={$serviceInfoForm.SOCSONumber}
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         id="incomeNumber"
                         label={'No. Cukai (LHDN)'}
                         type="text"
@@ -414,6 +426,7 @@
                         bind:val={$serviceInfoForm.incomeNumber}
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         id="bankName"
                         label={'Bank'}
                         type="text"
@@ -421,6 +434,7 @@
                         bind:val={$serviceInfoForm.bankName}
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         id="bankAccount"
                         label={'No. Akaun'}
                         type="text"
@@ -428,6 +442,7 @@
                         bind:val={$serviceInfoForm.bankAccount}
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         id="program"
                         label={'Program'}
                         type="text"
@@ -435,6 +450,7 @@
                         bind:val={$serviceInfoForm.program}
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         id="leaveEntitlement"
                         label={'Kelayakan Cuti'}
                         type="text"
@@ -442,6 +458,7 @@
                         bind:val={$serviceInfoForm.leaveEntitlement}
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         id="hireByGovermentDate"
                         label={'Mula Dilantik Perkhidmatan Kerajaan'}
                         type="text"
@@ -449,6 +466,7 @@
                         bind:val={$serviceInfoForm.hireByGovermentDate}
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         id="hireByLKIMDate"
                         label={'Mula Dilantik Perkhidmatan LKIM'}
                         type="text"
@@ -456,6 +474,7 @@
                         bind:val={$serviceInfoForm.hireByLKIMDate}
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         id="currentServiceStartDate"
                         label={'Mula Dilantik Perkhidmatan Sekarang'}
                         type="text"
@@ -463,6 +482,7 @@
                         bind:val={$serviceInfoForm.currentServiceStartDate}
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         id="firstServiceConfirmedDate"
                         label={'Disahkan Dalam Jawatan Pertama LKIM'}
                         type="text"
@@ -470,6 +490,7 @@
                         bind:val={$serviceInfoForm.firstServiceConfirmedDate}
                     ></CustomTextField>
                     <CustomTextField
+                    disabled
                         id="currentServiceConfirmedDate"
                         label={'Disahkan Dalam Jawatan Semasa LKIM'}
                         type="text"
@@ -553,13 +574,13 @@
                         label="simpan"
                         type="primary"
                         icon="check"
-                        form="PTBDetail"
+                        form="PTBPensionDetail"
                     ></TextIconButton>
                 </StepperContentHeader>
                 <StepperContentBody>
                     <form
                         class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
-                        id="PTBDetail"
+                        id="PTBPensionDetail"
                         method="POST"
                         use:PTBPensionInfoEnhance
                     >
@@ -604,6 +625,7 @@
                     </form></StepperContentBody
                 >
             </StepperContent>
+            {/if}
 
             <!-- Peranan -Peranan Berkaitan -->
             <StepperContent>
@@ -744,7 +766,7 @@
             </StepperContent>
 
            
-            {#if currentRoleCode === penyokong}
+           
                 <StepperContent>
                     <StepperContentHeader
                         title="Sila Tetapkan Keputusan Anda - Penyokong"
@@ -812,9 +834,7 @@
                         </form>
                     </StepperContentBody>
                 </StepperContent>
-            {/if}
-
-            {#if currentRoleCode === pelulus}
+   
                 <StepperContent>
                     <StepperContentHeader
                         title="Sila Tetapkan Keputusan Anda - Penyokong"
@@ -881,7 +901,7 @@
                         </form>
                     </StepperContentBody>
                 </StepperContent>
-            {/if}
-        {/if}
+          
+    
     </Stepper>
 </section>

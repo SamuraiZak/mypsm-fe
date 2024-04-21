@@ -7,7 +7,7 @@
     import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type { TableDTO, TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
 
@@ -17,6 +17,9 @@
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterDateField from '$lib/components/table/filter/FilterDateField.svelte';
     import { _updateUnspecifyTable, _updatevoluntaryTable } from './+page';
+    import DataTable from '$lib/components/table/DataTable.svelte';
+    import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
+    import FilterNumberField from '$lib/components/table/filter/FilterNumberField.svelte';
 
     export let data: PageData;
     let param: CommonListRequestDTO = data.param;
@@ -35,7 +38,120 @@
 
     let rowData: any;
 
- 
+    // voluntay table
+    let voluntaryApplicationtable: TableSettingDTO = {
+        param: data.param,
+        meta: data.voluntaryViewResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: data.voluntaryViewResponse.data?.dataList ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: [],
+        dictionary: [
+            {
+                english: 'identityCardNumber',
+                malay: 'No. Kad Pengenalan',
+            },
+            {
+                english: 'durationDays',
+                malay: 'Jumlah Hari',
+            },
+        ],
+        url: 'employment/retirement/voluntary/list',
+        id: 'voluntaryApplicationtable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: data.props.currentRoleCode == UserRoleConstant.kakitangan.code,
+        },
+    };
+
+       // Forced table
+
+    let forceApplicationtable: TableSettingDTO = {
+        param: data.param,
+        meta: data.forceViewResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: data.forceViewResponse.data?.dataList ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: [],
+        dictionary: [
+            {
+                english: 'identityCardNumber',
+                malay: 'No. Kad Pengenalan',
+            },
+            {
+                english: 'durationDays',
+                malay: 'Jumlah Hari',
+            },
+        ],
+        url: 'employment/retirement/force/list',
+        id: 'forceApplicationtable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: data.props.currentRoleCode == UserRoleConstant.kakitangan.code,
+        },
+    };
+
+    // Unspecify table
+
+    let unspecifyApplicationtable: TableSettingDTO = {
+        param: data.param,
+        meta: data.unspecifyViewResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: data.unspecifyViewResponse.data?.dataList ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: [],
+        dictionary: [
+            {
+                english: 'identityCardNumber',
+                malay: 'No. Kad Pengenalan',
+            },
+            {
+                english: 'durationDays',
+                malay: 'Jumlah Hari',
+            },
+        ],
+        url: 'employment/retirement/unspecify/list',
+        id: 'unspecifyApplicationtable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: data.props.currentRoleCode == UserRoleConstant.kakitangan.code,
+        },
+    };
+
+
     let voluntarytable: TableDTO = {
         param: data.param,
         meta: data.voluntaryViewResponse.data?.meta ?? {
@@ -68,7 +184,6 @@
         },
         data: data.unspecifyViewTable ?? [],
     };
-
 
     async function _searchVoluntary() {
         _updatevoluntaryTable(voluntarytable.param).then((value) => {
@@ -111,106 +226,111 @@
             unspecifytable.param.pageNum = value.props.param.pageNum;
         });
     }
-
-
-
 </script>
 
+<section class="flex w-full flex-col items-start justify-start">
+    <ContentHeader title="Persaraan">
+    </ContentHeader>
+</section>
 
-
-    <section class="flex w-full flex-col items-start justify-start  overflow-y-auto">
-       
-       <CustomTab> <CustomTabContent title="Permohonan Sendiri">
+<section class="flex w-full flex-col items-start justify-start overflow-y-auto">
+    <CustomTab>
+        <CustomTabContent title="Permohonan Sendiri">
             <div
-                class="flex max-h-full w-full flex-col items-start justify-start"
+            class="flex h-full max-h-full w-full flex-col justify-start gap-2 overflow-y-auto bg-ios-basic-white px-10 py-4"
             >
-            <FilterCard onSearch={_searchVoluntary}>
-                <FilterTextField
-                    label="No. Pekerja"
-                    bind:inputValue={voluntarytable.param.filter.employeeNumber}
-                />
-                <FilterTextField
-                    label="Nama"
-                    bind:inputValue={voluntarytable.param.filter.name}
-                />
-                <FilterTextField
-                    label="No. Kad Pengenalan"
-                    bind:inputValue={voluntarytable.param.filter.identityCardNumber}
-                />
-                <FilterTextField
-                    label="Tarikh Permohonan"
-                    bind:inputValue={voluntarytable.param.filter.applicationDate}
-                />
-            </FilterCard>
-                <CustomTable
-                title="Rekod Surcaj"
-                    bind:passData={rowData}
-                    bind:tableData={voluntarytable}
-                    onUpdate={_searchVoluntary}
-                ></CustomTable>
+
+                <div class="h h-fit w-full">
+                    <DataTable
+                        title="Senarai Permohonan Cuti"
+                        bind:tableData={voluntaryApplicationtable}
+                        bind:passData={rowData}
+                        addActions={() => {
+                            // addApplication();
+                            let url = "/perjawatan/persaraan/persaraan_pilihan/Baru"
+                            goto(url)
+                        }}
+                        detailActions={() => {
+                            let url = "/perjawatan/persaraan/persaraan_pilihan/" + rowData.retirementId
+                            goto(url)
+                        }}
+                    >
+                        <FilterWrapper slot="filter">
+                            <FilterNumberField
+                                label="Tahun"
+                                bind:inputValue={voluntaryApplicationtable.param.filter
+                                    .year}
+                            ></FilterNumberField>
+                        </FilterWrapper>
+                    </DataTable>
+                </div>
             </div>
         </CustomTabContent>
+        <!-- forceApplicationtable -->
         <CustomTabContent title="Persaraan Paksaan">
             <div
-                class="flex max-h-full w-full flex-col items-start justify-start"
+            class="flex h-full max-h-full w-full flex-col justify-start gap-2 overflow-y-auto bg-ios-basic-white px-10 py-4"
             >
-            <FilterCard onSearch={_searchForce}>
-                <FilterTextField
-                    label="No. Pekerja"
-                    bind:inputValue={voluntarytable.param.filter.employeeNumber}
-                />
-                <FilterTextField
-                    label="Nama"
-                    bind:inputValue={voluntarytable.param.filter.name}
-                />
-                <FilterTextField
-                    label="No. Kad Pengenalan"
-                    bind:inputValue={voluntarytable.param.filter.identityCardNumber}
-                />
-                <FilterTextField
-                    label="Tarikh Permohonan"
-                    bind:inputValue={voluntarytable.param.filter.applicationDate}
-                />
-            </FilterCard>
-                <CustomTable
-                title="Rekod Surcaj"
-                    bind:passData={rowData}
-                    bind:tableData={forcetable}
-                    onUpdate={_searchForce}
-                ></CustomTable>
+
+                <div class="h h-fit w-full">
+                    <DataTable
+                        title="Senarai Permohonan Cuti"
+                        bind:tableData={forceApplicationtable}
+                        bind:passData={rowData}
+                        addActions={() => {
+                            // addApplication();
+                            let url = "/perjawatan/persaraan/persaraan_paksaan/Baru"
+                            goto(url)
+                        }}
+                        detailActions={() => {
+                            let url = "/perjawatan/persaraan/persaraan_paksaan/" + rowData.retirementId
+                            goto(url)
+                        }}
+                    >
+                        <FilterWrapper slot="filter">
+                            <FilterNumberField
+                                label="Tahun"
+                                bind:inputValue={forceApplicationtable.param.filter
+                                    .year}
+                            ></FilterNumberField>
+                        </FilterWrapper>
+                    </DataTable>
+                </div>
             </div>
         </CustomTabContent>
+
+        <!-- unspecifyApplicationtable -->
 
         <CustomTabContent title="Persaraan lain-lain">
             <div
-                class="flex max-h-full w-full flex-col items-start justify-start"
+            class="flex h-full max-h-full w-full flex-col justify-start gap-2 overflow-y-auto bg-ios-basic-white px-10 py-4"
             >
-            <FilterCard onSearch={_searchForce}>
-                <FilterTextField
-                    label="No. Pekerja"
-                    bind:inputValue={voluntarytable.param.filter.employeeNumber}
-                />
-                <FilterTextField
-                    label="Nama"
-                    bind:inputValue={voluntarytable.param.filter.name}
-                />
-                <FilterTextField
-                    label="No. Kad Pengenalan"
-                    bind:inputValue={voluntarytable.param.filter.identityCardNumber}
-                />
-                <FilterTextField
-                    label="Tarikh Permohonan"
-                    bind:inputValue={voluntarytable.param.filter.applicationDate}
-                />
-            </FilterCard>
-                <CustomTable
-                title="Rekod Surcaj"
-                    bind:passData={rowData}
-                    bind:tableData={unspecifytable}
-                    onUpdate={_searchUnspecify}
-                ></CustomTable>
+
+                <div class="h h-fit w-full">
+                    <DataTable
+                        title="Senarai Permohonan Cuti"
+                        bind:tableData={unspecifyApplicationtable}
+                        bind:passData={rowData}
+                        addActions={() => {
+                            // addApplication();
+                            let url = "/perjawatan/persaraan/persaran_lain-lain/Baru"
+                            goto(url)
+                        }}
+                        detailActions={() => {
+                            let url = "/perjawatan/persaraan/persaran_lain-lain/" + rowData.retirementId
+                            goto(url)
+                        }}
+                    >
+                        <FilterWrapper slot="filter">
+                            <FilterNumberField
+                                label="Tahun"
+                                bind:inputValue={unspecifyApplicationtable.param.filter
+                                    .year}
+                            ></FilterNumberField>
+                        </FilterWrapper>
+                    </DataTable>
+                </div>
             </div>
         </CustomTabContent>
     </CustomTab>
-    </section>
-
+</section>

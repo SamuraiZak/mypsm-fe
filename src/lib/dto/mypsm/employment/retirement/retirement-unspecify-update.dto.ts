@@ -14,11 +14,11 @@ export interface UpdateList {
 
 // Converts JSON strings to/from your types
 export class UnspecifyUpdateDetailDTOConvert {
-    public static toLetterCertificationDetailDTO(json: string): UnspecifyUpdateDetailDTO {
+    public static fromJson(json: string): UnspecifyUpdateDetailDTO {
         return JSON.parse(json);
     }
 
-    public static letterCertificationDetailDTOToJson(value: UnspecifyUpdateDetailDTO): string {
+    public static toJson(value: UnspecifyUpdateDetailDTO): string {
         return JSON.stringify(value);
-    }
+}
 }

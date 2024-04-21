@@ -1,7 +1,8 @@
 export interface UnspecifydDocumentCertificationDetailDTO {
-    id:     number;
-    remark: string;
-    status: boolean;
+    groupId:    number;
+    employeeId: number;
+    remark:     string;
+    status:     boolean;
 }
 
 // Converts JSON strings to/from your types

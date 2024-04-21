@@ -141,6 +141,18 @@ export const _retirementVoluntarySupportApproverInfoSchema = z.object({
 
 });
 
+export const _addRetirementVoluntaryInfoSchema = z.object({
+    retirementDate:dateSchema,
+    newRetirementDate:dateSchema,
+    reason:shortTextSchema,
+
+});
+
+
+
+
+
+
 
 //=====================================================
 //================== Forced ===========================
@@ -151,7 +163,7 @@ export const _retirementVoluntarySupportApproverInfoSchema = z.object({
 //======================================================
 
 export const _retirementForceStatusInfoSchema = z.object({
-    voluntaryId: numberSchema,
+    forcedId: numberSchema,
     status: booleanSchema,
     remark: shortTextSchema,
 
@@ -172,3 +184,15 @@ export const _retirementUnspecifyStatusInfoSchema = z.object({
 
 });
 
+//======================================================
+//========== Unspecify Update =========================
+//======================================================
+export const _retirementUnspecifyUpdateinfoSchema = z.object({
+    groupId: numberSchema,
+    employeeId: numberSchema,
+    employeeNumber: numberSchema,
+    employeeName: shortTextSchema,
+    identityCardNumber: numberSchema,
+    retirementTypeId: numberSchema,
+    retirementDate: dateSchema,
+});

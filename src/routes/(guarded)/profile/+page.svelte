@@ -2147,7 +2147,7 @@
                                     Tiada maklumat.
                                 </div>
                             {:else}
-                                <CustomTab id="families">
+                                <CustomTab pill={true} id="families">
                                     {#each Object.entries($familyInfoForm.families) as [key, _], i}
                                         <CustomTabContent
                                             title={i +

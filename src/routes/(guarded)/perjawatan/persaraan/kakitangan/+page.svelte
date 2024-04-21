@@ -70,6 +70,7 @@
     > <TextIconButton 
     type="primary"
     label="Permohonan Baru"
+    onClick={() => goto('/persaraan/surcaj/tambah-rekod-surcaj')}
      />
 </ContentHeader>
 </section>

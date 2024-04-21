@@ -2,7 +2,6 @@ import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.c
 import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
 import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
-import type { addLoan } from "$lib/dto/mypsm/pinjaman/add-loan.dto";
 import { retirementServices } from "$lib/services/implementation/mypsm/perjawatan/retirement.service";
 import { LoanServices } from "$lib/services/implementation/mypsm/pinjaman/loan.service";
 

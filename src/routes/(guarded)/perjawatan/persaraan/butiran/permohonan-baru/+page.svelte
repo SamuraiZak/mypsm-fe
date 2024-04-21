@@ -13,11 +13,35 @@
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
+    import { zod } from 'sveltekit-superforms/adapters';
+    import { _retirementDetailSubmit } from './+page';
+    import { _addRetirementVoluntaryInfoSchema } from '$lib/schemas/mypsm/employment/retirement/schema';
 
+
+    
     export let data: PageData;
 
 
     export let disabled = true;
+
+
+    const {
+        form: retirementVoluntaryInfoForm,
+        errors: retirementVoluntaryInfoError,
+        enhance: retirementVoluntaryInfoEnhance,
+        isTainted: retirementVoluntaryDetailTainted,
+    } = superForm(data.retirementDetailForm, {
+        SPA: true,
+        id: 'retirementVoluntaryDetail',
+        dataType: 'json',
+        multipleSubmits: 'allow',
+        resetForm: false,
+        validationMethod: 'oninput',
+        validators: zod(_addRetirementVoluntaryInfoSchema),
+        onSubmit() {
+            _retirementDetailSubmit($retirementVoluntaryInfoForm);
+        },
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -28,7 +52,10 @@
             onClick={() => {
                 goto('/urus-setia/perjawatan/persaraan');
             }}
-        /></ContentHeader
+        />
+        <TextIconButton label="Simpan" icon="check" form="retirementVoluntaryDetail" />
+
+        </ContentHeader
     >
 </section>
 
@@ -37,29 +64,42 @@
         <StepperContentHeader title="Permohonan Persaraan"
         ></StepperContentHeader>
         <StepperContentBody>
+            <form
+                id="retirementVoluntaryDetail"
+                method="POST"
+                use:retirementVoluntaryInfoEnhance
+                class="flex w-full flex-col gap-2"
+            >
             <div class="flex w-full flex-col gap-2">
                 <div>
                     <CustomTextField    
-                        id="supporter1Option"
+                    type="date"
+                        id="retirementDate"
                         label="Tarikh Bersara Awal"
-                        val=""
+                        bind:val={$retirementVoluntaryInfoForm.retirementDate}
                     ></CustomTextField>
                 </div>
                 <div>
-                    <CustomTextField    
-                        id="supporter2Option"
+                    <CustomTextField   
+                    type="date" 
+                        id="newRetirementDate"
                         label="Tarikh Permohonan Persaraan Pilihan"
-                        val=""
+                        bind:val={$retirementVoluntaryInfoForm.newRetirementDate}
                     ></CustomTextField>
                 </div>
                 <div>
                     <CustomTextField    
-                        id="approverOption"
+                        id="reason"
                         label="Tujuan Permohonan"
-                        val=""
+                        bind:val={$retirementVoluntaryInfoForm.reason}
                     ></CustomTextField>
                 </div>
             </div>
+
+            
+</form>
+
+
         </StepperContentBody>
     </StepperContent>
 </Stepper>

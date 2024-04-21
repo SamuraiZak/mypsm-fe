@@ -16,7 +16,7 @@
     export let data: PageData;
     let param: CommonListRequestDTO = data.param;
     let currentRoleCode = localStorage.getItem(
-        LocalStorageKeyConstant.currentRoleCode,
+        LocalStorageKeyConstant.currentRoleCode, 
     );
     // urusetia
     let urusetia = UserRoleConstant.urusSetiaPerjawatan.code;

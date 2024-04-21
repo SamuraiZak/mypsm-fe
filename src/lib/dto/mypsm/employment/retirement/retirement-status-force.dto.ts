@@ -1,5 +1,5 @@
 export interface ForceStatusDetailDTO {
-    voluntaryId: number;
+    forcedId: number;
     status:      boolean;
     remark:      string;
 }
