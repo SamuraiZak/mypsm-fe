@@ -1,3 +1,6 @@
+// =========================================================
+//  SHARED
+// =========================================================
 export interface TransferDocumentDTO {
     name: string;
     base64: string;
@@ -8,6 +11,9 @@ export interface TransferDocumentAddDTO {
     documents: TransferDocumentDTO[];
 }
 
+// =========================================================
+//  COMMON
+// =========================================================
 export interface TransferCommonEndorsementDTO {
     id: number;
     status: boolean;
@@ -92,3 +98,28 @@ export interface TransferCommonPostponeResultDTO {
     finalEffectiveDate: string;
     approverIC: string;
 }
+
+// =========================================================
+//  SELF
+// =========================================================
+export interface TransferSelfHistoryDTO {
+    id:                     number;
+    employeeNumber:         string;
+    empooyeeName:           string;
+    identityDocumentNumber: string;
+    transferType:           string;
+    applicationDate:        null;
+    status:                 null;
+    result:                 string;
+}
+
+export interface TransferSelfHistoryFilterDTO{
+
+}
+
+export interface TransferSelfDetailDTO {
+    transferType:   string;
+    firstChoiceId:  number;
+    secondChoiceId: number;
+}
+

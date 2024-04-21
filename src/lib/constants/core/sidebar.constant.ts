@@ -37,7 +37,7 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Pertukaran',
-                            path: '/perjawatan/pertukaran',
+                            path: '/perjawatan/proses_pertukaran',
                         },
                         {
                             name: 'Tanggung Kerja',
@@ -104,7 +104,7 @@ export class SidebarConstant {
                             path: '/latihan/rekod-peperiksaan',
                         },
                         {
-                            name: 'Pembiayaan Pembelajaran', 
+                            name: 'Pembiayaan Pembelajaran',
                             path: '/latihan/pembiayaan',
                         },
                         {
@@ -381,7 +381,7 @@ export class SidebarConstant {
                     name: 'Halaman Utama',
                     path: '/halaman-utama',
                 },
-                 {
+                {
                     name: 'Pinjaman dan Kuarters',
                     path: '',
                     subItems: [
@@ -391,11 +391,8 @@ export class SidebarConstant {
                         },
                     ],
                 },
-               
             ],
         },
-
-
 
         // Pelulus
         {
@@ -431,7 +428,7 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Pertukaran',
-                            path: '/perjawatan/pertukaran',
+                            path: '/perjawatan/proses_pertukaran',
                         },
                         {
                             name: 'Persaraan',
@@ -563,7 +560,7 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Pertukaran',
-                            path: '/perjawatan/pertukaran',
+                            path: '/perjawatan/proses_pertukaran',
                         },
                         {
                             name: 'Tanggung Kerja',
@@ -658,7 +655,7 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Pertukaran',
-                            path: '/perjawatan/pertukaran',
+                            path: '/perjawatan/proses_pertukaran',
                         },
                         {
                             name: 'tanggung Kerja',
@@ -867,7 +864,7 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Pertukaran',
-                            path: '/perjawatan/pertukaran',
+                            path: '/perjawatan/proses_pertukaran',
                         },
                         {
                             name: 'Persaraan',
@@ -1045,7 +1042,7 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Pertukaran',
-                            path: '/perjawatan/pertukaran',
+                            path: '/perjawatan/proses_pertukaran',
                         },
                         {
                             name: 'Tanggung Kerja',
@@ -1190,7 +1187,7 @@ export class SidebarConstant {
                         {
                             name: 'Perkhidmatan (Permohonan Panel Klinik)',
                             path: '/perubatan/permohonan-klinik-panel',
-                        }
+                        },
                     ],
                 },
                 {
@@ -1392,7 +1389,7 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Pertukaran',
-                            path: '/perjawatan/pertukaran',
+                            path: '/perjawatan/proses_pertukaran',
                         },
                         {
                             name: 'Tanggung Kerja',
@@ -1649,7 +1646,7 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Pertukaran',
-                            path: '/perjawatan/pertukaran',
+                            path: '/perjawatan/proses_pertukaran',
                         },
                         {
                             name: 'Tanggung Kerja',
@@ -1715,7 +1712,7 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Pertukaran',
-                            path: '/perjawatan/pertukaran',
+                            path: '/perjawatan/proses_pertukaran',
                         },
                         {
                             name: 'Tanggung Kerja',
@@ -1882,7 +1879,7 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Pertukaran',
-                            path: '/perjawatan/pertukaran',
+                            path: '/perjawatan/proses_pertukaran',
                         },
                         {
                             name: 'Tanggung Kerja',

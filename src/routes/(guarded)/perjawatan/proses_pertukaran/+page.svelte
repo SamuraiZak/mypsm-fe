@@ -10,7 +10,7 @@
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
-    import type { PageData } from '../pertukaran/$types';
+    import type { PageData } from './$types';
 
     export let data: PageData;
 
@@ -79,26 +79,26 @@
         switch (data.props.userMode) {
             case 'director':
                 url =
-                    '/perjawatan/pertukaran-new/' +
+                    '/perjawatan/proses_pertukaran/' +
                     TransferTypeConstant.director.description +
                     '/Baru';
                 break;
             case 'secretary':
                 url =
-                    '/perjawatan/pertukaran-new/' +
+                    '/perjawatan/proses_pertukaran/' +
                     TransferTypeConstant.management.description +
                     '/Baru';
                 break;
             case 'employee':
                 url =
-                    '/perjawatan/pertukaran-new/' +
+                    '/perjawatan/proses_pertukaran/' +
                     TransferTypeConstant.self.description +
                     '/Baru';
                 break;
 
             default:
                 url =
-                    '/perjawatan/pertukaran-new/' +
+                    '/perjawatan/proses_pertukaran/' +
                     TransferTypeConstant.self.description +
                     '/Baru';
                 break;
@@ -114,7 +114,7 @@
             ) ?? TransferTypeConstant.director;
 
         let url =
-            '/perjawatan/pertukaran-new/' +
+            '/perjawatan/proses_pertukaran/' +
             selectedApplicationType.description +
             '/' +
             selectedData.id;
@@ -131,6 +131,33 @@
     </section>
 
     <CustomTab>
+        <CustomTabContent title="Pertukaran Atas Pilihan Sendiri">
+            <div
+                class="flex h-full max-h-full w-full flex-col justify-start gap-2 overflow-y-auto bg-ios-basic-white px-4"
+            >
+                <div class="h-fit w-full">
+                    <DataTable
+                        title="Senarai Permohonan Pertukaran"
+                        bind:tableData={directorApplicationTable}
+                        bind:passData={selectedData}
+                        addActions={() => {
+                            addApplication();
+                        }}
+                        detailActions={() => {
+                            viewDetails();
+                        }}
+                    >
+                        <FilterWrapper slot="filter">
+                            <FilterNumberField
+                                label="Tahun"
+                                bind:inputValue={directorApplicationTable.param
+                                    .filter.year}
+                            ></FilterNumberField>
+                        </FilterWrapper>
+                    </DataTable>
+                </div>
+            </div>
+        </CustomTabContent>
         <CustomTabContent title="Pertukaran Atas Arahan Pengarah">
             <div
                 class="flex h-full max-h-full w-full flex-col justify-start gap-2 overflow-y-auto bg-ios-basic-white px-4"

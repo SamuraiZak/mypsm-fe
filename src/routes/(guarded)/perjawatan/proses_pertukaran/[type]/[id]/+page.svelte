@@ -27,18 +27,19 @@
     import { Toaster } from 'svelte-french-toast';
     import { zodClient } from 'sveltekit-superforms/adapters';
     import { superForm } from 'sveltekit-superforms/client';
+    import type { PageData } from './$types';
     import {
-        _prepDocumentUpload,
         _submitApplicationDetailForm,
-        _submitApproverFeedbackForm,
-        _submitDocument,
-        _submitEndorserDetailForm,
         _submitMeetingResultForm,
         _submitPostponeApplicationForm,
-        _submitPostponeApprovalForm,
-        _submitPostponeDocument,
         _submitPostponeResultForm,
+        _submitPostponeApprovalForm,
+        _submitEndorserDetailForm,
         _submitSupporterFeedbackForm,
+        _submitApproverFeedbackForm,
+        _prepDocumentUpload,
+        _submitDocument,
+        _submitPostponeDocument,
     } from './+page';
 
     export let data: PageData;
@@ -74,7 +75,7 @@
                         TransferTypeConstant.director.description;
 
                     let url =
-                        '/perjawatan/pertukaran-new/' +
+                        '/perjawatan/proses_pertukaran/' +
                         currentApplicationType +
                         '/' +
                         applicationDetail.id;
@@ -263,7 +264,7 @@
             type="neutral"
             label="Kembali"
             onClick={() => {
-                goto('/perjawatan/pertukaran-new');
+                goto('/perjawatan/proses_pertukaran');
             }}
         >
             <SvgChevronLeft />
